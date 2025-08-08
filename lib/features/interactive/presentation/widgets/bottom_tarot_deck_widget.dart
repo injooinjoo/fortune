@@ -25,8 +25,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   
   final int cardCount = 30;
   final double cardWidth = 60;
-  final double cardHeight = 84;  // Maintaining,
-    1:1.4 ratio (5:7)
+  final double cardHeight = 84;  // Maintaining 1:1.4 ratio (5:7)
   
   double _dragStartX = 0;
   double _currentRotation = 0;
@@ -45,7 +44,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
       begin: 1.0,
       end: 0.0).animate(CurvedAnimation(
       parent: _slideUpController,
-      curve: Curves.easeOutCubic);
+      curve: Curves.easeOutCubic));
     
     // Fan animation
     _fanController = AnimationController(
@@ -56,7 +55,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _fanController,
-      curve: Curves.easeOutBack);
+      curve: Curves.easeOutBack));
     
     // Rotation animation for drag gestures
     _rotationController = AnimationController(
@@ -67,7 +66,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
       begin: 0.0,
       end: 0.0).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: Curves.easeOut);
+      curve: Curves.easeOut));
     
     // Start animations
     _startAnimations();
@@ -173,7 +172,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
       begin: _currentRotation,
       end: targetRotation).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: Curves.easeOut);
+      curve: Curves.easeOut));
     
     _rotationController.forward(from: 0).then((_) {
       setState(() {
@@ -200,11 +199,11 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
         borderRadius: BorderRadius.circular(8),
         boxShadow: isCenter ? [
           BoxShadow(
-            color: Colors.blue.withValues(alpha: 0.6),
+            color: Colors.blue.withOpacity(0.6),
             blurRadius: 20,
             spreadRadius: 5)] : [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 5,
             offset: const Offset(0, 3))]),
       child: ClipRRect(
@@ -234,8 +233,8 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isCenter 
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.white.withValues(alpha: 0.2),
+                      ? Colors.white.withOpacity(0.5)
+                      : Colors.white.withOpacity(0.2),
                   width: isCenter ? 2 : 1)))])));
   }
 }
@@ -249,15 +248,13 @@ class TarotCardBackPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 0.5;
+      ..strokeWidth = 0.5;
     
     // Center design
     final center = Offset(size.width / 2, size.height / 2);
     
     // Draw stars pattern
-    paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
+    paint.color = Colors.white.withOpacity(isHighlighted ? 0.4 : 0.2);
     
     // Center star
     _drawStar(canvas, center, size.width * 0.15, paint);

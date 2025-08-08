@@ -1,145 +1,164 @@
+import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:flutter/material.dart';
 import '../../domain/entities/fortune.dart';
-import '../../core/theme/app_theme.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class TimeSpecificFortuneCard extends StatelessWidget {
   final TimeSpecificFortune fortune;
   final VoidCallback? onTap;
   final bool isExpanded;
 
-  const TimeSpecificFortuneCard(
-    {
-    Key? key,
+  const TimeSpecificFortuneCard({
+    super.key,
     required this.fortune,
     this.onTap,
-    this.isExpanded = false)}) : super(key: key);
+    this.isExpanded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scoreColor = _getScoreColor(fortune.score);
+
     return Card(
-      elevation: isExpanded ? 4 : 2),
-        margin: EdgeInsets.symmetric(vertica,
-      l: AppSpacing.spacing1),
-      shape: RoundedRectangleBorder(,
-      borderRadius: AppDimensions.borderRadiusMedium),
-      child: InkWell(,
-      onTap: onTap,
+      elevation: isExpanded ? 4 : 2,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+      shape: RoundedRectangleBorder(
         borderRadius: AppDimensions.borderRadiusMedium,
-        child: AnimatedContainer(,
-      duration: AppAnimations.durationMedium,
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppDimensions.borderRadiusMedium,
+        child: Container(
           padding: AppSpacing.paddingAll16,
-          decoration: BoxDecoration(,
-      borderRadius: AppDimensions.borderRadiusMedium,
-            gradient: LinearGradient(,
-      begin: Alignment.topLeft,
-              end: Alignment.bottomRight),
-        colors: [
-                _getScoreColor(fortune.score).withOpacity(0.1),
-                _getScoreColor(fortune.score).withOpacity(0.05)]))),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+          decoration: BoxDecoration(
+            borderRadius: AppDimensions.borderRadiusMedium,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                scoreColor.withOpacity(0.10),
+                scoreColor.withOpacity(0.05),
+              ],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          fortune.time),
-              style: Theme.of(context).textTheme.titleMedium,
-                        SizedBox(height: AppSpacing.spacing1),
+                          fortune.time,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           fortune.title,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
-      color: AppColors.textSecondary)
-                      ])))
-                  _buildScoreIndicator()])
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildScoreIndicator(context, fortune.score),
+                ],
+              ),
               if (isExpanded) ...[
-                SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: AppSpacing.spacing3),
                 Text(
-                  fortune.description),
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
-      color: AppColors.textPrimary)), height: 1.5),
+                  fortune.description,
+                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
+                ),
                 if (fortune.recommendation != null) ...[
-                  SizedBox(height: AppSpacing.spacing2),
+                  const SizedBox(height: AppSpacing.spacing2),
                   Container(
-                    padding: AppSpacing.paddingAll12),
-        decoration: BoxDecoration(,
-      color: AppTheme.primaryColor.withValues(alp,
-      ha: 0.1),
-                      borderRadius: AppDimensions.borderRadiusSmall),
-      child: Row(,
-      crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: AppSpacing.paddingAll12,
+                    decoration: BoxDecoration(
+                      color: scoreColor.withOpacity(0.08),
+                      borderRadius: AppDimensions.borderRadiusSmall,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
                           Icons.lightbulb_outline,
                           size: AppDimensions.iconSizeSmall,
-                          color: AppTheme.primaryColor);
-                        SizedBox(width: AppSpacing.spacing2),
+                          color: scoreColor,
+                        ),
+                        const SizedBox(width: AppSpacing.spacing2),
                         Expanded(
                           child: Text(
-                            fortune.recommendation!),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
-      color: AppColors.textPrimary)
-                      ])))
-                ]
-              ]
-            ])))))))
+                            fortune.recommendation!,
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget _buildScoreIndicator() {
+  Widget _buildScoreIndicator(BuildContext context, int score) {
+    final scoreColor = _getScoreColor(score);
+    final theme = Theme.of(context);
     return Container(
       width: 60,
       height: AppSpacing.spacing15,
-      decoration: BoxDecoration(,
-      shape: BoxShape.circle),
-        color: _getScoreColor(fortune.score).withValues(alph,
-      a: 0.2),
-        border: Border.all(,
-      color: _getScoreColor(fortune.score),
-          width: 3)),
-      child: Center(,
-      child: Column(
-      mainAxisSize: MainAxisSize.min,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: scoreColor.withOpacity(0.2),
+        border: Border.all(color: scoreColor, width: 3),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '${fortune.score}'),
-        style: Theme.of(context).textTheme.headlineMedium,
+              '$score',
+              style: theme.textTheme.headlineSmall,
+            ),
             Text(
-              '점'),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(colo,
-      r: _getScoreColor(fortune.score)
-          ])
+              '점',
+              style: theme.textTheme.bodyMedium?.copyWith(color: scoreColor),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.success;
-    if (score >= 60) return AppColors.primary;
-    if (score >= 40) return AppColors.warning;
-    return AppColors.error;
+    if (score >= 80) return Colors.green;
+    if (score >= 60) return Colors.blue;
+    if (score >= 40) return Colors.amber;
+    return Colors.red;
   }
 }
 
-// List widget for multiple time-specific fortunes
 class TimeSpecificFortuneList extends StatefulWidget {
   final List<TimeSpecificFortune> fortunes;
   final String? title;
 
-  const TimeSpecificFortuneList(
-    {
-    Key? key,
+  const TimeSpecificFortuneList({
+    super.key,
     required this.fortunes,
-    this.title)}) : super(key: key);
+    this.title,
+  });
 
   @override
-  _TimeSpecificFortuneListState createState() => _TimeSpecificFortuneListState();
+  State<TimeSpecificFortuneList> createState() => _TimeSpecificFortuneListState();
 }
 
 class _TimeSpecificFortuneListState extends State<TimeSpecificFortuneList> {
@@ -147,30 +166,37 @@ class _TimeSpecificFortuneListState extends State<TimeSpecificFortuneList> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+      children: [
         if (widget.title != null) ...[
           Padding(
-            padding: EdgeInsets.symmetric(horizonta,
-      l: AppSpacing.spacing1, vertical: AppSpacing.spacing2),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.spacing1,
+              vertical: AppSpacing.spacing2,
+            ),
             child: Text(
-              widget.title!),
-        style: Theme.of(context).textTheme.titleLarge]
+              widget.title!,
+              style: theme.textTheme.titleLarge,
+            ),
+          ),
+        ],
         ...widget.fortunes.asMap().entries.map((entry) {
           final index = entry.key;
           final fortune = entry.value;
           final isExpanded = expandedIndex == index;
-
           return TimeSpecificFortuneCard(
             fortune: fortune,
-            isExpanded: isExpanded),
-        onTap: () {
+            isExpanded: isExpanded,
+            onTap: () {
               setState(() {
                 expandedIndex = isExpanded ? null : index;
               });
-            })
-        }).toList()]
+            },
+          );
+        }).toList(),
+      ],
     );
   }
 }

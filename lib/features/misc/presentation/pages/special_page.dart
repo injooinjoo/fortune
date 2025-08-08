@@ -208,7 +208,7 @@ class SpecialPage extends ConsumerWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withValues(alpha: 0.7)]))),
+                    Colors.black.withOpacity(0.7)]))),
             
             // Content
             Positioned(
@@ -257,7 +257,7 @@ class SpecialPage extends ConsumerWidget {
                     item.description,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: fontSize,
-                      color: Colors.white.withValues(alpha: 0.9)))]))])));
+                      color: Colors.white.withOpacity(0.9)))]))])));
   }
 
   Widget _buildSection(
@@ -351,7 +351,7 @@ class SpecialPage extends ConsumerWidget {
                           item.description,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontSize: fontSize - 2,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                            color: theme.colorScheme.onSurface.withOpacity(0.7)),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis)]))])),
             
@@ -395,8 +395,8 @@ class SpecialPage extends ConsumerWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.1),
-          theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+          theme.colorScheme.primary.withOpacity(0.1),
+          theme.colorScheme.secondary.withOpacity(0.1)]),
       child: Column(
         children: [
           Icon(
@@ -415,7 +415,7 @@ class SpecialPage extends ConsumerWidget {
             '매주 새로운 운세가 추가됩니다',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+              color: theme.colorScheme.onSurface.withOpacity(0.7)),
             textAlign: TextAlign.center)]));
   }
 }

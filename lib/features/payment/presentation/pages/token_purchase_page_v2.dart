@@ -162,7 +162,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                 ? Icons.all_inclusive 
                 : Icons.toll,
               size: 40,
-              color: AppColors.primary.withValues(alpha: 0.3))])).animate()
+              color: AppColors.primary.withOpacity(0.3))])).animate()
         .fadeIn(duration: 600.ms)
         .slideX(begin: -0.1, end: 0);
   }
@@ -214,8 +214,8 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.primary.withValues(alpha: 0.05)],
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.primary.withOpacity(0.05)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight)
             : null,
@@ -231,7 +231,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? AppColors.primary.withValues(alpha: 0.1)
+                  ? AppColors.primary.withOpacity(0.1)
                   : AppColors.surface,
                 borderRadius: BorderRadius.circular(12)),
               child: Center(

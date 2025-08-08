@@ -578,7 +578,9 @@ class SocialAuthService {
   Future<void> unlinkProvider(String provider) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) throw Exception('User not authenticated')
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
       
       // Get all user identities
       final identities = user.identities ?? [];

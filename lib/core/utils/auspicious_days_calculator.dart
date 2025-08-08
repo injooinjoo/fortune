@@ -47,31 +47,21 @@ class AuspiciousDaysCalculator {
     final lunarDay = lunar.getDay();
     
     switch (lunarDay) {
-      case,
-    1:
-      case,
-    2:
+      case 1:
+      case 2:
         return ['동쪽'];
-      case,
-    3:
-      case,
-    4:
+      case 3:
+      case 4:
         return ['남쪽'];
-      case,
-    5:
-      case,
-    6:
+      case 5:
+      case 6:
         return ['서쪽'];
-      case,
-    7:
-      case,
-    8:
+      case 7:
+      case 8:
         return ['북쪽'];
-      case,
-    9:
-      case,
-    10:
-        return ['동쪽': '서쪽': '남쪽', '북쪽': null,
+      case 9:
+      case 10:
+        return ['동쪽', '서쪽', '남쪽', '북쪽'];
     default:
         return [];
     }
@@ -131,7 +121,7 @@ class AuspiciousDaysCalculator {
     final targetGan = targetLunar.getDayGan(); // 이사일의 일간
     
     // 상생 관계 확인 (목->화->토->금->수->목)
-    final ganCycle = ['甲': '乙': '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+    final ganCycle = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     final birthIndex = ganCycle.indexOf(birthGan);
     final targetIndex = ganCycle.indexOf(targetGan);
     

@@ -46,7 +46,15 @@
       "Bash(timeout 10 dart analyze lib/features/fortune/presentation/pages/)",
       "Bash(timeout 10 dart analyze:*)",
       "Bash(timeout 15 dart analyze:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(for:*)",
+      "Bash(do)",
+      "Bash(echo \"Fixing $file\")",
+      "Bash(done)",
+      "Bash(if [ -f \"$file\" ])",
+      "Bash(then)",
+      "Bash(echo \"Fixing: $file\")",
+      "Bash(fi)"
     ],
     "deny": []
   },

@@ -108,7 +108,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       debugPrint('fortune: ${widget.fortuneType}');
       
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Share error: $e');
       Toast.error(context, '공유 중 오류가 발생했습니다');
     }
   }
@@ -270,7 +270,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: GlassContainer(
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -296,8 +296,6 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                     _fortuneResult = null;
                   });
                 },
-                child: const Text('다시 시도'))]))
-      )
-    );
+                child: const Text('다시 시도'))]))));
   }
 }

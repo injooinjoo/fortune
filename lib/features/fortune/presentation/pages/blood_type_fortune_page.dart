@@ -170,8 +170,16 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
                               color: theme.colorScheme.onSurface.withOpacity(0.6)),
                             textAlign: TextAlign.center,
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis)])));
-                }).toList())),
+                            overflow: TextOverflow.ellipsis)
+                        ]
+                      )
+                    )
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         GlassCard(
           padding: const EdgeInsets.all(20),
@@ -188,7 +196,13 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
                     child: _buildRhOption('+', 'RH+')),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildRhOption('-', 'RH-'))])])),
+                    child: _buildRhOption('-', 'RH-'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 20),
         SizedBox(
           width: double.infinity,
@@ -214,8 +228,7 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
                     }
                   }
                 : null,
-            child: const Text('혈액형 운세 확인하기'),
-          ))],
+            child: const Text('혈액형 운세 확인하기')))],
     );
   }
 
@@ -266,7 +279,7 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
   }
 
   Widget _buildBloodTypeHeader() {
-    if (_selectedBloodType == null) return const SizedBox.shrink();;
+    if (_selectedBloodType == null) return const SizedBox.shrink();
     
     final info = _bloodTypeInfo[_selectedBloodType!]!;
     final theme = Theme.of(context);

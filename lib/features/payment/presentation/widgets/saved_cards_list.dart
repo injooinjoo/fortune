@@ -99,7 +99,7 @@ class SavedCardsList extends StatelessWidget {
             color: isSelected ? AppColors.primary : AppColors.divider);
             width: isSelected ? 2 : 1)),
     color: isSelected 
-              ? AppColors.primary.withValues(alpha: 0.05) 
+              ? AppColors.primary.withOpacity(0.05) 
               : AppColors.surface)),
     child: Padding(
           padding: const EdgeInsets.all(16)),

@@ -36,37 +36,37 @@ class TodoRepositoryImpl implements TodoRepository {
       final queryBuilder = supabase
           .from(_tableName)
           .select()
-          .eq('user_id': userId)
-          .eq('is_deleted': false);
+          .eq('user_id', userId)
+          .eq('is_deleted', false);
 
       dynamic query = queryBuilder;
 
       if (status != null) {
-        query = query.eq('status': status.name);
+        query = query.eq('status', status.name);
       }
 
       if (priority != null) {
-        query = query.eq('priority': priority.name);
+        query = query.eq('priority', priority.name);
       }
 
       if (dueBefore != null) {
-        query = query.lte('due_date': dueBefore.toIso8601String());
+        query = query.lte('due_date', dueBefore.toIso8601String());
       }
 
       if (dueAfter != null) {
-        query = query.gte('due_date': dueAfter.toIso8601String());
+        query = query.gte('due_date', dueAfter.toIso8601String());
       }
 
       if (tags != null && tags.isNotEmpty) {
-        query = query.contains('tags': tags);
+        query = query.contains('tags', tags);
       }
 
       if (searchQuery != null && searchQuery.isNotEmpty) {
         final sanitizedQuery = _sanitizeSearchQuery(searchQuery);
-        query = query.textSearch('title': sanitizedQuery);
+        query = query.textSearch('title', sanitizedQuery);
       }
 
-      query = query.order('created_at': ascending: false);
+      query = query.order('created_at', ascending: false);
 
       if (limit != null) {
         query = query.limit(limit);
@@ -102,9 +102,9 @@ class TodoRepositoryImpl implements TodoRepository {
       final response = await _executeWithRetry(() => supabase
           .from(_tableName)
           .select()
-          .eq('id': todoId)
-          .eq('user_id': userId)
-          .eq('is_deleted': false)
+          .eq('id', todoId)
+          .eq('user_id', userId)
+          .eq('is_deleted', false)
           .single());
 
       final todo = TodoModel.fromJson(response);
@@ -154,7 +154,7 @@ class TodoRepositoryImpl implements TodoRepository {
         'due_date': dueDate?.toIso8601String(),
         'tags': tags?.map(_sanitizeInput).take(10).toList() ?? [],
         'created_at': now.toIso8601String(),
-        'updated_at': null};
+        'updated_at': DateTime.now().toIso8601String()};
 
       final response = await _executeWithRetry(() => supabase
           .from(_tableName)
@@ -187,7 +187,7 @@ class TodoRepositoryImpl implements TodoRepository {
       }
 
       final updates = <String, dynamic>{
-        'updated_at': null};
+        'updated_at': DateTime.now().toIso8601String()};
 
       if (title != null) {
         if (title.isEmpty || title.length > 200) {
@@ -222,9 +222,9 @@ class TodoRepositoryImpl implements TodoRepository {
       final response = await _executeWithRetry(() => supabase
           .from(_tableName)
           .update(updates)
-          .eq('id': todoId)
-          .eq('user_id': userId)
-          .eq('is_deleted': false)
+          .eq('id', todoId)
+          .eq('user_id', userId)
+          .eq('is_deleted', false)
           .select()
           .single());
 
@@ -254,9 +254,9 @@ class TodoRepositoryImpl implements TodoRepository {
           .from(_tableName)
           .update({
             'is_deleted': true,
-            'updated_at': null})
-          .eq('id': todoId)
-          .eq('user_id': userId));
+            'updated_at': DateTime.now().toIso8601String()})
+          .eq('id', todoId)
+          .eq('user_id', userId));
 
       return const Right(null);
     } on PostgrestException catch (e) {
@@ -291,9 +291,9 @@ class TodoRepositoryImpl implements TodoRepository {
           .from(_tableName)
           .update({
             'is_deleted': true,
-            'updated_at': null})
-          .eq('user_id': userId)
-          .filter('id': 'in': '(${todoIds.join(',')})'));
+            'updated_at': DateTime.now().toIso8601String()})
+          .eq('user_id', userId)
+          .filter('id', 'in', '(${todoIds.join(',')})'));
 
       return const Right(null);
     } on PostgrestException catch (e) {
@@ -321,10 +321,10 @@ class TodoRepositoryImpl implements TodoRepository {
       final response = await _executeWithRetry(() => supabase
           .from(_tableName)
           .select()
-          .eq('user_id': userId)
-          .eq('is_deleted': false)
-          .textSearch('title': sanitizedQuery)
-          .order('created_at': ascending: false)
+          .eq('user_id', userId)
+          .eq('is_deleted', false)
+          .textSearch('title', sanitizedQuery)
+          .order('created_at', ascending: false)
           .limit(limit ?? 20));
 
       final todos = (response as List)
@@ -348,7 +348,7 @@ class TodoRepositoryImpl implements TodoRepository {
       }
 
       final response = await _executeWithRetry(() => 
-          supabase.rpc('get_todo_stats': params: {'p_user_id': userId}));
+          supabase.rpc('get_todo_stats', params: {'p_user_id': userId}));
 
       final stats = <TodoStatus, int>{};
       for (final row in response as List) {
@@ -455,22 +455,22 @@ class TodoRepositoryImpl implements TodoRepository {
   String _sanitizeInput(String input) {
     return input
         .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
-        .replaceAll('<': '')
-        .replaceAll('>': '')
-        .replaceAll('"': '')
+        .replaceAll('<', '')
+        .replaceAll('>', '')
+        .replaceAll('"', '')
         .replaceAll("'", '')
-        .replaceAll('&': '')
+        .replaceAll('&', '')
         .trim();
   }
 
   String _sanitizeSearchQuery(String query) {
     // Remove SQL injection attempts and special characters
     return query
-        .replaceAll(';': '')
+        .replaceAll(';', '')
         .replaceAll("'", '')
-        .replaceAll('"': '')
-        .replaceAll('\\': '')
-        .replaceAll(RegExp(r'\b(DROP|DELETE|INSERT|UPDATE|ALTER|CREATE)\b': caseSensitive: false, '')
+        .replaceAll('"', '')
+        .replaceAll('\\', '')
+        .replaceAll(RegExp(r'\b(DROP|DELETE|INSERT|UPDATE|ALTER|CREATE)\b', caseSensitive: false), '')
         .trim();
   }
 

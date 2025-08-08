@@ -157,11 +157,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.05),
-                  theme.colorScheme.primary.withValues(alpha: 0.02)]),
+                  theme.colorScheme.primary.withOpacity(0.05),
+                  theme.colorScheme.primary.withOpacity(0.02)]),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1))),
+                color: theme.colorScheme.primary.withOpacity(0.1))),
             child: Row(
               children: [
                 Icon(
@@ -174,7 +174,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                     _getPersonalizedInsight(statistics),
                     style: TextStyle(
                       fontSize: 14 * fontScale,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8))))]))]));
+                      color: theme.colorScheme.onSurface.withOpacity(0.8))))]))]));
   }
   
   Widget _buildStatCard({
@@ -190,8 +190,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          color.withValues(alpha: 0.1),
-          color.withValues(alpha: 0.05)]),
+          color.withOpacity(0.1),
+          color.withOpacity(0.05)]),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -209,7 +209,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                   title,
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7)))]),
             Text(
               value,
               style: TextStyle(
@@ -356,7 +356,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                               '${entry.key} (${entry.value}회)',
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+                                color: theme.colorScheme.onSurface.withOpacity(0.8)),
                               overflow: TextOverflow.ellipsis))]));
                   }).toList()))])]));
   }
@@ -387,7 +387,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: 0.1))),
+                color: theme.colorScheme.outline.withOpacity(0.1))),
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
@@ -396,7 +396,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                   horizontalInterval: 5,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                      color: theme.colorScheme.outline.withOpacity(0.1),
                       strokeWidth: 1);
                   }),
                 titlesData: FlTitlesData(
@@ -417,7 +417,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                           return Text(
                             DateFormat('M월'),
                             style: TextStyle(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
                               fontSize: 12));
                         }
                         return const Text('');
@@ -431,17 +431,17 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                         return Text(
                           value.toInt().toString(),
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
                             fontSize: 12));
                       }))),
                 borderData: FlBorderData(
                   show: true,
                   border: Border(
                     bottom: BorderSide(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      color: theme.colorScheme.outline.withOpacity(0.2),
                       width: 1),
                     left: BorderSide(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      color: theme.colorScheme.outline.withOpacity(0.2),
                       width: 1))),
                 minX: 0,
                 maxX: months.length - 1,
@@ -467,7 +467,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                       }),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1)))])))]));
+                      color: theme.colorScheme.primary.withOpacity(0.1)))])))]));
   }
   
   List<FortuneHistory> _filterHistory(List<FortuneHistory> history) {
@@ -548,10 +548,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.05),
+          color: color.withOpacity(0.05),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: color.withValues(alpha: 0.2))),
+            color: color.withOpacity(0.2))),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -568,7 +568,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                     label,
                     style: TextStyle(
                       fontSize: 10 * fontScale,
-                      color: color.withValues(alpha: 0.8))),
+                      color: color.withOpacity(0.8))),
                   Text(
                     value,
                     style: TextStyle(
@@ -663,13 +663,13 @@ https://fortune.app''';
                         decoration: BoxDecoration(
                           color: isCurrentMonth 
                               ? theme.colorScheme.primary 
-                              : theme.colorScheme.primary.withValues(alpha: 0.5),
+                              : theme.colorScheme.primary.withOpacity(0.5),
                           shape: BoxShape.circle)),
                       if (month != sortedMonths.last)
                         Container(
                           width: 2,
                           height: 80,
-                          color: theme.colorScheme.primary.withValues(alpha: 0.2))]),
+                          color: theme.colorScheme.primary.withOpacity(0.2))]),
                   const SizedBox(width: 16),
                   
                   // Content
@@ -677,10 +677,10 @@ https://fortune.app''';
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withValues(alpha: 0.1))),
+                          color: theme.colorScheme.outline.withOpacity(0.1))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -698,7 +698,7 @@ https://fortune.app''';
                                     horizontal: 8,
                                     vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: _getScoreColor(avgScore).withValues(alpha: 0.1),
+                                    color: _getScoreColor(avgScore).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12)),
                                   child: Text(
                                     '평균 ${avgScore}점',
@@ -718,7 +718,7 @@ https://fortune.app''';
                                   horizontal: 8,
                                   vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                  color: theme.colorScheme.primary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8)},
                                 child: Text(
                                   '${entry.key} x${entry.value}',
@@ -771,7 +771,7 @@ https://fortune.app''';
                   height: 4,
                   margin: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                    color: theme.colorScheme.outline.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(2))),
                 
                 // Header
@@ -783,7 +783,7 @@ https://fortune.app''';
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.1),
+                          color: color.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12)),
                         child: Center(
                           child: Text(
@@ -801,7 +801,7 @@ https://fortune.app''';
                             Text(
                               DateFormat('HH:mm')$1',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                                color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () => Navigator.of(context).pop())])),
@@ -823,8 +823,8 @@ https://fortune.app''';
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  color.withValues(alpha: 0.1),
-                                  color.withValues(alpha: 0.05)]),
+                                  color.withOpacity(0.1),
+                                  color.withOpacity(0.05)]),
                               borderRadius: BorderRadius.circular(12)),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -865,9 +865,9 @@ https://fortune.app''';
                             children: (item.summary['keywords'] as List).map<Widget>((keyword) {
                               return Chip(
                                 label: Text(keyword.toString()),
-                                backgroundColor: color.withValues(alpha: 0.1),
+                                backgroundColor: color.withOpacity(0.1),
                                 side: BorderSide(
-                                  color: color.withValues(alpha: 0.3))};
+                                  color: color.withOpacity(0.3))};
                             }).toList()),
                           const SizedBox(height: 20)],
                         
@@ -908,7 +908,7 @@ https://fortune.app''';
                                   Text(
                                     label,
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+                                      color: theme.colorScheme.onSurface.withOpacity(0.7))),
                                   const Spacer(),
                                   Text(
                                     entry.value.toString(),
@@ -974,7 +974,7 @@ https://fortune.app''';
                         Text(
                           error.toString(),
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                            color: theme.colorScheme.onSurface.withOpacity(0.7)),
                           textAlign: TextAlign.center),
                         const SizedBox(height: 24),
                         GlassButton(
@@ -1053,7 +1053,7 @@ https://fortune.app''';
                                           border: Border.all(
                                             color: _selectedDateRange != null
                                                 ? theme.colorScheme.primary
-                                                : theme.colorScheme.outline.withValues(alpha: 0.3))),
+                                                : theme.colorScheme.outline.withOpacity(0.3))),
                                         child: Row(
                                           children: [
                                             Icon(
@@ -1061,7 +1061,7 @@ https://fortune.app''';
                                               size: 20,
                                               color: _selectedDateRange != null
                                                   ? theme.colorScheme.primary
-                                                  : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                                                  : theme.colorScheme.onSurface.withOpacity(0.6)),
                                             const SizedBox(width: 8),
                                             Expanded(
                                               child: Text(
@@ -1072,7 +1072,7 @@ https://fortune.app''';
                                                   fontSize: 14 * fontScale,
                                                   color: _selectedDateRange != null
                                                       ? theme.colorScheme.primary
-                                                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                                      : theme.colorScheme.onSurface.withOpacity(0.6),
                                                   fontWeight: _selectedDateRange != null
                                                       ? FontWeight.w600
                                                       : FontWeight.normal))),
@@ -1081,7 +1081,7 @@ https://fortune.app''';
                                                 icon: Icon(
                                                   Icons.clear,
                                                   size: 18,
-                                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                                                  color: theme.colorScheme.onSurface.withOpacity(0.6)),
                                                 onPressed: () {
                                                   setState(() {
                                                     _selectedDateRange = null;
@@ -1123,8 +1123,8 @@ https://fortune.app''';
                                     _selectedFilter = filter;
                                   });
                                 },
-                                selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
-                                backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
+                                selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                                backgroundColor: theme.colorScheme.surface.withOpacity(0.8),
                                 checkmarkColor: theme.colorScheme.primary));
                           }))])),
                       
@@ -1138,13 +1138,13 @@ https://fortune.app''';
                                       Icon(
                                         Icons.history,
                                         size: 64,
-                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                                        color: theme.colorScheme.onSurface.withOpacity(0.3)),
                                       const SizedBox(height: 16),
                                       Text(
                                         '운세 기록이 없습니다',
                                         style: TextStyle(
                                           fontSize: 18 * fontScale,
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])))
+                                          color: theme.colorScheme.onSurface.withOpacity(0.7)))])))
                             : SliverPadding(
                                 padding: const EdgeInsets.all(16),
                                 sliver: SliverList(
@@ -1170,15 +1170,15 @@ https://fortune.app''';
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              color.withValues(alpha: 0.15),
-                                              color.withValues(alpha: 0.05)]),
+                                              color.withOpacity(0.15),
+                                              color.withOpacity(0.05)]),
                                           borderRadius: BorderRadius.circular(20),
                                           border: Border.all(
-                                            color: color.withValues(alpha: 0.2),
+                                            color: color.withOpacity(0.2),
                                             width: 1.5),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: color.withValues(alpha: 0.1),
+                                              color: color.withOpacity(0.1),
                                               blurRadius: 10,
                                               offset: const Offset(0, 4))]),
                                         child: ClipRRect(
@@ -1192,8 +1192,8 @@ https://fortune.app''';
                                                 decoration: BoxDecoration(
                                                   gradient: LinearGradient(
                                                     colors: [
-                                                      color.withValues(alpha: 0.3),
-                                                      color.withValues(alpha: 0.15)])),
+                                                      color.withOpacity(0.3),
+                                                      color.withOpacity(0.15)])),
                                                 child: Row(
                                                   children: [
                                                     // Icon and title
@@ -1201,11 +1201,11 @@ https://fortune.app''';
                                                       width: 48,
                                                       height: 48,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.white.withValues(alpha: 0.9),
+                                                        color: Colors.white.withOpacity(0.9),
                                                         borderRadius: BorderRadius.circular(12),
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: color.withValues(alpha: 0.3),
+                                                            color: color.withOpacity(0.3),
                                                             blurRadius: 8,
                                                             offset: const Offset(0, 2))]),
                                                       child: Center(
@@ -1228,7 +1228,7 @@ https://fortune.app''';
                                                             DateFormat('HH:mm'), 'ko': null,
                                                             style: TextStyle(
                                                               fontSize: 12 * fontScale,
-                                                              color: Colors.white.withValues(alpha: 0.8)))])),
+                                                              color: Colors.white.withOpacity(0.8)))])),
                                                     // Score gauge
                                                     if (score > 0)
                                                       Stack(
@@ -1240,7 +1240,7 @@ https://fortune.app''';
                                                             child: CircularProgressIndicator(
                                                               value: score / 100,
                                                               strokeWidth: 6,
-                                                              backgroundColor: Colors.white.withValues(alpha: 0.2),
+                                                              backgroundColor: Colors.white.withOpacity(0.2),
                                                               valueColor: AlwaysStoppedAnimation<Color>(
                                                                 _getScoreColor(score)))),
                                                           Text(
@@ -1267,10 +1267,10 @@ https://fortune.app''';
                                                               horizontal: 12,
                                                               vertical: 6),
                                                             decoration: BoxDecoration(
-                                                              color: color.withValues(alpha: 0.1),
+                                                              color: color.withOpacity(0.1),
                                                               borderRadius: BorderRadius.circular(16),
                                                               border: Border.all(
-                                                                color: color.withValues(alpha: 0.3))),
+                                                                color: color.withOpacity(0.3))),
                                                             child: Text(
                                                               keyword.toString(),
                                                               style: TextStyle(
@@ -1283,7 +1283,7 @@ https://fortune.app''';
                                                         item.summary['brief'] ?? '',
                                                         style: TextStyle(
                                                           fontSize: 14 * fontScale,
-                                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                                                          color: theme.colorScheme.onSurface.withOpacity(0.8),
                                                           height: 1.4),
                                                         maxLines: 2,
                                                         overflow: TextOverflow.ellipsis),
@@ -1322,12 +1322,12 @@ https://fortune.app''';
                                                             color: theme.colorScheme.surface,
                                                             borderRadius: BorderRadius.circular(12),
                                                             border: Border.all(
-                                                              color: theme.colorScheme.outline.withValues(alpha: 0.2))),
+                                                              color: theme.colorScheme.outline.withOpacity(0.2))),
                                                           child: Text(
                                                             FortuneTypeNames.getCategory(item.fortuneType),
                                                             style: TextStyle(
                                                               fontSize: 11 * fontScale,
-                                                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))),
+                                                              color: theme.colorScheme.onSurface.withOpacity(0.7)))),
                                                         // Token info
                                                         Row(
                                                           children: [

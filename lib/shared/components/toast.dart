@@ -9,9 +9,7 @@ import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 enum ToastType {
-  
   success, error, warning, info
-  
 }
 
 class Toast {
@@ -39,7 +37,9 @@ class Toast {
         onDismiss: () {
           _currentToast?.remove();
           _currentToast = null;
-        }));
+        },
+      ),
+    );
 
     _currentToast = toast;
     overlay.insert(toast);
@@ -82,7 +82,8 @@ class _ToastWidget extends StatefulWidget {
     required this.type,
     required this.duration,
     required this.onDismiss,
-    this.onTap});
+    this.onTap,
+  });
 
   @override
   State<_ToastWidget> createState() => _ToastWidgetState();
@@ -99,20 +100,24 @@ class _ToastWidgetState extends State<_ToastWidget>
     super.initState();
     _controller = AnimationController(
       duration: AppAnimations.durationMedium,
-      vsync: this
+      vsync: this,
     );
 
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0, -1),
-      end: Offset.zero).animate(CurvedAnimation(
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutBack)));
+      curve: Curves.easeOutBack,
+    ));
 
     _fadeAnimation = Tween<double>(
       begin: 0,
-      end: 1).animate(CurvedAnimation(
+      end: 1,
+    ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeIn)));
+      curve: Curves.easeIn,
+    ));
 
     _controller.forward();
   }
@@ -166,59 +171,79 @@ class _ToastWidgetState extends State<_ToastWidget>
       child: SlideTransition(
         position: _offsetAnimation,
         child: FadeTransition(
-        opacity: _fadeAnimation,
+          opacity: _fadeAnimation,
           child: Material(
-        color: Colors.transparent,
+            color: Colors.transparent,
             child: GestureDetector(
-        onTap: widget.onTap ?? _dismiss,
+              onTap: widget.onTap ?? _dismiss,
               onHorizontalDragEnd: (details) {
                 if (details.primaryVelocity!.abs() > 100) {
                   _dismiss();
                 }
               },
               child: ShimmerGlass(
-        shimmerColor: _color,
+                shimmerColor: _color,
                 borderRadius: AppDimensions.borderRadiusLarge,
                 child: GlassContainer(
-        padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.spacing4,
-                    vertical: AppSpacing.spacing3),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.spacing4,
+                    vertical: AppSpacing.spacing3,
+                  ),
                   borderRadius: AppDimensions.borderRadiusLarge,
                   blur: 20,
                   boxShadow: GlassEffects.glassShadow(
-        color: _color,
-                    elevation: 8),
+                    color: _color,
+                    elevation: 8,
+                  ),
                   child: Row(
-        children: [
+                    children: [
                       Container(
                         padding: AppSpacing.paddingAll8,
                         decoration: BoxDecoration(
-        color: _color.withValues(alpha: 0.2),
-                          borderRadius: AppDimensions.borderRadiusMedium),
+                          color: _color.withOpacity(0.2),
+                          borderRadius: AppDimensions.borderRadiusMedium,
+                        ),
                         child: Icon(
                           _icon,
                           color: _color,
-                          size: AppDimensions.iconSizeMedium)),
+                          size: AppDimensions.iconSizeMedium,
+                        ),
+                      ),
                       SizedBox(width: AppSpacing.spacing3),
                       Expanded(
                         child: Text(
                           widget.message,
                           style: theme.textTheme.bodyMedium,
                           maxLines: 3,
-                          overflow: TextOverflow.ellipsis)),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       SizedBox(width: AppSpacing.spacing2),
                       IconButton(
                         onPressed: _dismiss,
                         icon: Icon(
                           Icons.close_rounded,
                           size: AppDimensions.iconSizeSmall,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints())]))))))).animate().scale(
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ).animate().scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1, 1),
             duration: 300.ms,
-            curve: Curves.easeOutBack));
+            curve: Curves.easeOutBack,
+          ),
+        ),
+      );
   }
 }
 
@@ -243,25 +268,33 @@ class SnackBarHelper {
     BuildContext context,
     String message,
     Color color,
-    IconData icon) {
+    IconData icon,
+  ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
-        children: [
+          children: [
             Icon(icon, color: AppColors.textPrimaryDark, size: AppDimensions.iconSizeSmall),
             SizedBox(width: AppSpacing.spacing3),
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(color: AppColors.textPrimaryDark)))]),
+                style: const TextStyle(color: AppColors.textPrimaryDark),
+              ),
+            ),
+          ],
+        ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-        borderRadius: AppDimensions.borderRadiusMedium),
+          borderRadius: AppDimensions.borderRadiusMedium,
+        ),
         margin: AppSpacing.paddingAll16,
-        dismissDirection: DismissDirection.horizontal));
+        dismissDirection: DismissDirection.horizontal,
+      ),
+    );
   }
 }

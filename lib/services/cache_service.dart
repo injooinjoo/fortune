@@ -79,7 +79,8 @@ class CacheService {
 
   Future<FortuneModel?> getCachedFortune(
     String fortuneType,
-    Map<String, dynamic> params) async {
+    Map<String, dynamic> params,
+  ) async {
     try {
       final key = _generateCacheKey(fortuneType, params);
       final cacheEntry = _cacheMetaBox.get(key);
@@ -122,7 +123,8 @@ class CacheService {
 
   Future<void> removeCachedFortune(
     String fortuneType,
-    Map<String, dynamic> params) async {
+    Map<String, dynamic> params,
+  ) async {
     try {
       final key = _generateCacheKey(fortuneType, params);
       await _fortuneBox.delete(key);

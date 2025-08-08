@@ -76,7 +76,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getPageTitle(),
+        title: Text(_getPageTitle()),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
@@ -114,7 +114,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
           const Icon(Icons.child_care, size: 48),
           const SizedBox(height: 8),
           const Text(
-            '로그인하고 자녀와 가족을 위한 특별한 운세를 확인해보세요!',),
+            '로그인하고 자녀와 가족을 위한 특별한 운세를 확인해보세요!',
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.center),
           const SizedBox(height: 12),
@@ -133,7 +133,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
           children: [
             Text(
               _selectedFortuneType == 'pregnancy' ? '예비 부모 정보' : '자녀 정보',
-              style: Theme.of(context).textTheme.titleMedium)),
+              style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 16),
             if (_selectedFortuneType != 'pregnancy') ...[
               TextFormField(
@@ -155,7 +155,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
                     initialDate: DateTime.now(),
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
-                    locale: const Locale('ko', 'KR');
+                    locale: const Locale('ko', 'KR'));
                   if (date != null) {
                     setState(() {
                       _childBirthDate = date;
@@ -247,9 +247,9 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
         return '육아 운세';
       case 'pregnancy':
         return '태교 운세';
-      case , 'family-harmony': return '가족 화합 운세';
+      case 'family-harmony': return '가족 화합 운세';
       default:
-        return '자녀 운세';}
+        return '자녀 운세';
     }
   }
 
@@ -271,7 +271,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
               const SizedBox(width: 8),
               Text(
                 _getParentingTipsTitle(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith()
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
@@ -284,7 +284,8 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
                 Expanded(
                   child: Text(
                     tip,
-                    style: Theme.of(context).textTheme.bodyMedium))])).toList()]));)
+                    style: Theme.of(context).textTheme.bodyMedium))])))).toList()]));
+  }
   }
 
   String _getParentingTipsTitle() {
@@ -292,7 +293,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
       case 'pregnancy': return '태교 팁';
       case 'parenting':
         return '육아 팁';
-      case , 'family-harmony': return '가족 화합 팁';
+      case 'family-harmony': return '가족 화합 팁';
       default:
         return '자녀 교육 팁';}
     }

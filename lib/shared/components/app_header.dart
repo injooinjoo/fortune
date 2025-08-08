@@ -131,8 +131,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                 border: Border(
                   bottom: BorderSide(
                     color: isDark
-                        ? AppColors.textPrimaryDark.withValues(alpha: 0.1)
-                        : AppColors.textPrimary.withValues(alpha: 0.1),
+                        ? AppColors.textPrimaryDark.withOpacity(0.1)
+                        : AppColors.textPrimary.withOpacity(0.1),
                     width: 0.5)),
                 boxShadow: elevation > 0
                     ? GlassEffects.glassShadow(elevation: elevation)
@@ -174,7 +174,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                       if (showTokenBalance) ...[
                         const TokenBalanceWidget(),
                         SizedBox(width: AppSpacing.spacing2)],
-                      if (showActions && actions != null) ...actions!]))))))))
+                      if (showActions && actions != null) ...actions!]))))));
   }
 }
 
@@ -255,7 +255,7 @@ class _SizeButton extends StatelessWidget {
           vertical: AppSpacing.spacing1),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.primaryColor.withValues(alpha: 0.2)
+              ? theme.primaryColor.withOpacity(0.2)
               : Colors.transparent,
           borderRadius: AppDimensions.borderRadiusMedium),
         child: Text(

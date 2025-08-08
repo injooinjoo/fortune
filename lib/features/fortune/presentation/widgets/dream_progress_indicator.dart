@@ -93,7 +93,7 @@ class DreamProgressIndicator extends StatelessWidget {
                         style: theme.textTheme.bodySmall?.copyWith()
                           color: isActive
                               ? Colors.deepPurple.withOpacity(0.5,
-                              : Colors.grey.withValues(alpha: 0.8)),
+                              : Colors.grey.withOpacity(0.8)),
     fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     textAlign: TextAlign.center),

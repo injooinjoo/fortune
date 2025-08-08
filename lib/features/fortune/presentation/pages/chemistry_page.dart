@@ -69,10 +69,10 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '두 사람의 궁합을 확인해보세요',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '두 사람의 궁합을 확인해보세요',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Person 1 Section
@@ -141,8 +141,8 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
                 borderRadius: BorderRadius.circular(12)),
     backgroundColor: theme.colorScheme.primary),
     child: Text(
-              '궁합 확인하기',),
-              style: theme.textTheme.titleMedium?.copyWith()
+              '궁합 확인하기',
+              style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold))))])
     );
@@ -163,7 +163,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
       children: [
         Text(
           title,
-          style: theme.textTheme.titleLarge?.copyWith()
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.primary)),
         const SizedBox(height: 16),
@@ -176,7 +176,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
             hintText: '이름을 입력하세요',
     prefixIcon: const Icon(Icons.person_outline),
     border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12)))),
+              borderRadius: BorderRadius.circular(12))),
         const SizedBox(height: 16),
         
         // Zodiac Selection
@@ -197,8 +197,8 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
         
         // Personality Traits
         Text(
-          '성격 특성 (선택)',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '성격 특성 (선택)',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Wrap(
@@ -212,7 +212,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
               onSelected: (selected) => onTraitToggled(trait, selected),
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               checkmarkColor: theme.colorScheme.primary);
-          }).toList())]),
+          }).toList()])],
     );
   }
 }
@@ -275,38 +275,38 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
     child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center);
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      person1Name);
-                      style: theme.textTheme.titleLarge?.copyWith()
-                        color: Colors.white);
+                      person1Name,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.bold)),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
     child: Icon(Icons.favorite, color: Colors.white, size: 32)),
                     Text(
-                      person2Name);
-                      style: theme.textTheme.titleLarge?.copyWith()
-                        color: Colors.white);
+                      person2Name,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 24),
                 Text(
-                  '종합 궁합 점수',),
-                  style: theme.textTheme.titleMedium?.copyWith()
+                  '종합 궁합 점수',
+                  style: theme.textTheme.titleMedium?.copyWith(
                     color: Colors.white.withOpacity(0.9))),
                 const SizedBox(height: 8),
                 Text(
-                  'Fortune cached',),
-                  style: theme.textTheme.displayLarge?.copyWith()
-                    color: Colors.white);
-                    fontWeight: FontWeight.w900),
+                  'Fortune cached',
+                  style: theme.textTheme.displayLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
     fontSize: 64 + _getFontSizeOffset(fontSize))),
                 const SizedBox(height: 8),
                 Text(
                   _getScoreDescription(overallScore),
-    style: theme.textTheme.titleMedium?.copyWith()
-                    color: Colors.white);
+    style: theme.textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.w600))]))),
         const SizedBox(height: 24),
         
@@ -318,17 +318,17 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '항목별 점수',),
-                  style: theme.textTheme.titleMedium?.copyWith()
+                  '항목별 점수',
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
-                _buildScoreItem(context, '감정적 교감': emotionalScore, Icons.favorite),
+                _buildScoreItem(context, '감정적 교감', emotionalScore, Icons.favorite),
                 const SizedBox(height: 12),
-                _buildScoreItem(context, '의사소통': communicationScore, Icons.chat_bubble),
+                _buildScoreItem(context, '의사소통', communicationScore, Icons.chat_bubble),
                 const SizedBox(height: 12),
-                _buildScoreItem(context, '라이프스타일': lifestyleScore, Icons.home),
+                _buildScoreItem(context, '라이프스타일', lifestyleScore, Icons.home),
                 const SizedBox(height: 12),
-                _buildScoreItem(context, '미래 전망': futureScore, Icons.trending_up)]))),
+                _buildScoreItem(context, '미래 전망', futureScore, Icons.trending_up)]))),
         const SizedBox(height: 20),
         
         // Main Fortune Content
@@ -344,13 +344,13 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '궁합 분석',),
-                        style: theme.textTheme.titleMedium?.copyWith()
+                        '궁합 분석',
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 12),
                   Text(
                     widget.result.mainFortune!,
-                    style: theme.textTheme.bodyLarge?.copyWith()
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       height: 1.6,
                       fontSize: 16 + _getFontSizeOffset(fontSize)))]))),
           const SizedBox(height: 20)],
@@ -368,8 +368,8 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '인사이트',),
-                        style: theme.textTheme.titleMedium?.copyWith()
+                        '인사이트',
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...insights.map((insight) => Padding(

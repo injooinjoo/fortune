@@ -39,7 +39,7 @@ class TokenBalanceWidget extends ConsumerWidget {
             Container(
               padding: AppSpacing.paddingAll4,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                color: theme.colorScheme.primary.withOpacity(0.2),
                 shape: BoxShape.circle),
               child: Icon(
                 Icons.auto_awesome_rounded,
@@ -88,11 +88,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.primary.withValues(alpha: 0.1),
-              AppColors.secondary.withValues(alpha: 0.1)]),
+              AppColors.primary.withOpacity(0.1),
+              AppColors.secondary.withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
           border: Border.all(
-            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+            color: theme.colorScheme.primary.withOpacity(0.2),
             width: 1)),
         child: Column(
           children: [
@@ -126,7 +126,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                   Container(
                     padding: EdgeInsets.all(AppSpacing.spacing3),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
                       shape: BoxShape.circle),
                     child: Icon(
                       Icons.auto_awesome,
@@ -144,7 +144,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                       Text(
                         '영혼',
                         style: AppTypography.bodySmall.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])]),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7)))])]),
             
             SizedBox(height: AppSpacing.spacing4),
             
@@ -181,7 +181,7 @@ class TokenBalanceStats extends ConsumerWidget {
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4))]),
       child: Column(
@@ -244,7 +244,7 @@ class TokenBalanceStats extends ConsumerWidget {
             Text(
               label,
               style: AppTypography.bodySmall.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]),
+                color: theme.colorScheme.onSurface.withOpacity(0.7)))]),
         Text(
           value,
           style: AppTypography.bodyMedium.copyWith(

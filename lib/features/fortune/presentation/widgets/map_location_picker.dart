@@ -55,7 +55,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         _showSnackBar('위치 서비스를 활성화해주세요');
         setState(() => _isLoading = false);
         return;
-}
+      }
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -64,26 +64,26 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           _showSnackBar('위치 권한이 거부되었습니다');
           setState(() => _isLoading = false);
           return;
-}
+        }
       }
 
       if (permission == LocationPermission.deniedForever) {
         _showSnackBar('위치 권한이 영구적으로 거부되었습니다. 설정에서 변경해주세요.');
         setState(() => _isLoading = false);
         return;
-}
+      }
 
       Position position = await Geolocator.getCurrentPosition();
       LatLng currentLocation = LatLng(position.latitude, position.longitude);
       
       _mapController.move(currentLocation, 15);
       await _updateLocationAndAddress(currentLocation);
-} catch (e) {
+    } catch (e) {
       _showSnackBar('현재 위치를 가져올 수 없습니다');
-}
+    }
     
     setState(() => _isLoading = false);
-}
+  }
 
   Future<void> _searchLocation(String query) async {
     if (query.isEmpty) return;
@@ -96,7 +96,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         LatLng newLocation = LatLng(locations.first.latitude, locations.first.longitude);
         _mapController.move(newLocation, 15);
         await _updateLocationAndAddress(newLocation);
-} else {
+      } else {
         _showSnackBar('주소를 찾을 수 없습니다');
 }
     } catch (e) {
@@ -141,8 +141,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message),;
-}
+      SnackBar(content: Text(message)));
+  }
 
   Widget _buildDirectionOverlay() {
     if (!widget.showDirectionOverlay || widget.auspiciousDirections == null) {
@@ -150,17 +150,17 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 }
     
     final directions = {
-      '동쪽': {, 'angle': 0.0, 'color': Colors.blue},
-      '서쪽': {, 'angle': 180.0, 'color': Colors.orange},
-      '남쪽': {, 'angle': 90.0, 'color': Colors.red},
-      '북쪽': {, 'angle': 270.0, 'color': null};
+      '동쪽': {'angle': 0.0, 'color': Colors.blue},
+      '서쪽': {'angle': 180.0, 'color': Colors.orange},
+      '남쪽': {'angle': 90.0, 'color': Colors.red},
+      '북쪽': {'angle': 270.0, 'color': Colors.purple}};
     
     return Positioned.fill(
       child: IgnorePointer(
         child: CustomPaint(
           painter: DirectionOverlayPainter(
             auspiciousDirections: widget.auspiciousDirections!,
-            directions: directions));
+            directions: directions))));
 }
 
   @override
@@ -186,7 +186,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                     border: OutlineInputBorder(
                       borderRadius: AppDimensions.borderRadiusMedium),
                     filled: true,
-                    fillColor: Colors.grey.withOpacity(0.9),
+                    fillColor: Colors.grey.withOpacity(0.9)),
                   onSubmitted: _searchLocation),
               const SizedBox(width: AppSpacing.spacing2),
               IconButton(
@@ -194,7 +194,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 onPressed: _isLoading ? null : _getCurrentLocation,
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white)]),
+                  foregroundColor: Colors.white))])),
         
         // 지도
         Expanded(
@@ -205,7 +205,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 options: MapOptions(
                   initialCenter: _selectedLocation!,
                   initialZoom: 13.0,
-                  onTap: (tapPosition, point) => _updateLocationAndAddress(point),
+                  onTap: (tapPosition, point) => _updateLocationAndAddress(point)),
                 children: [
                   TileLayer(
                     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -219,12 +219,12 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                           child: Icon(
                             Icons.location_pin,
                             color: Theme.of(context).primaryColor,
-                            size: 40)])]),
+                            size: 40))])]),
               _buildDirectionOverlay(),
               if (_isLoading) Container(
                   color: Colors.black26,
                   child: Center(
-                    child: CircularProgressIndicator())]),
+                    child: CircularProgressIndicator()))])),
         
         // 선택된 주소 표시
         if (_selectedAddress.isNotEmpty) Container(
@@ -233,18 +233,18 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.9),
               border: Border(
-                top: BorderSide(color: Colors.grey.withOpacity(0.5)),
+                top: BorderSide(color: Colors.grey.withOpacity(0.5)))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '선택된 주소',),
-                  style: Theme.of(context).textTheme.labelMedium)),
+                  '선택된 주소',
+                  style: Theme.of(context).textTheme.labelMedium),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   _selectedAddress,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.w500)])]);
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500))]))]));
 }
 }
 
@@ -270,9 +270,8 @@ class DirectionOverlayPainter extends CustomPainter {
       
       final paint = Paint()
         ..color = isAuspicious 
-            ?,
-      color.withOpacity(0.4) 
-            : Colors.grey.withOpacity(0.2),
+            ? color.withOpacity(0.4) 
+            : Colors.grey.withOpacity(0.2)
         ..style = PaintingStyle.fill;
       
       // 방향별 섹터 그리기
@@ -292,7 +291,10 @@ class DirectionOverlayPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: direction,
-          style: Theme.of(context).textTheme.bodyMedium),
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.bold)),
         textDirection: TextDirection.ltr);
       textPainter.layout();
       

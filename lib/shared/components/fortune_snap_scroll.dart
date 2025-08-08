@@ -223,8 +223,8 @@ class FortuneSnapCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      AppColors.textPrimary.withValues(alpha: 0.3),
-                      AppColors.textPrimary.withValues(alpha: 0.7)],
+                      AppColors.textPrimary.withOpacity(0.3),
+                      AppColors.textPrimary.withOpacity(0.7)],
                     stops: const [0.5, 0.8, 1.0])),
                 padding: EdgeInsets.all(contentPadding),
                 alignment: Alignment.bottomLeft,
@@ -239,16 +239,16 @@ class FortuneSnapCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
-                            color: AppColors.textPrimary.withValues(alpha: 0.8),
+                            color: AppColors.textPrimary.withOpacity(0.8),
                             blurRadius: 8)])),
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       description,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.9),
+                        color: AppColors.textPrimaryDark.withOpacity(0.9),
                         shadows: [
                           Shadow(
-                            color: AppColors.textPrimary.withValues(alpha: 0.8),
+                            color: AppColors.textPrimary.withOpacity(0.8),
                             blurRadius: 6)]))]))),
             
             // Content Section

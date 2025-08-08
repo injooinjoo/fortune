@@ -23,8 +23,8 @@ class TermsOfServicePage extends ConsumerWidget {
                   child: GlassContainer(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withValues(alpha: 0.1),
-                        Colors.white.withValues(alpha: 0.05)]),
+                        Colors.white.withOpacity(0.1),
+                        Colors.white.withOpacity(0.05)]),
                     borderRadius: BorderRadius.circular(20),
                     padding: const EdgeInsets.all(24),
                     child: Column(
@@ -85,7 +85,7 @@ class TermsOfServicePage extends ConsumerWidget {
                         Text(
                           '시행일: 2025년 1월 1일',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: Colors.white.withOpacity(0.6),
                             fontSize: 14))]))))]))));
   }
 
@@ -106,7 +106,7 @@ class TermsOfServicePage extends ConsumerWidget {
             content,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
               height: 1.6))]));
   }
 }

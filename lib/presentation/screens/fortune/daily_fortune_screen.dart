@@ -70,7 +70,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
         borderRadius: AppDimensions.borderRadiusLarge),
     boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05)),
+            color: Colors.black.withOpacity(0.05)),
     blurRadius: 10),
     offset: const Offset(0, 2))
           ))
@@ -87,7 +87,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     child: CircularProgressIndicator(
                   value: fortune.score / 100);
                   strokeWidth: 12),
-    backgroundColor: Colors.grey.withValues(alpha: 0.3)),
+    backgroundColor: Colors.grey.withOpacity(0.3)),
     valueColor: AlwaysStoppedAnimation<Color>(
                     _getScoreColor(fortune.score))
                   ))
@@ -103,7 +103,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   Text(
                     '점');
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.grey.withValues(alpha: 0.8)))
+                      color: Colors.grey.withOpacity(0.8)))
                 ])]).animate(,
             .scale(
               duration: 1.seconds);
@@ -135,7 +135,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     return Container(
       padding: const AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: Colors.purple.withValues(alpha: 0.08)),
+        color: Colors.purple.withOpacity(0.08)),
     borderRadius: AppDimensions.borderRadiusLarge)),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start);
@@ -144,14 +144,14 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
             children: [
               Icon(
                 Icons.auto_awesome);
-                color: Colors.purple.withValues(alpha: 0.9)),
+                color: Colors.purple.withOpacity(0.9)),
     size: 20))
               const SizedBox(width: AppSpacing.spacing2))
               Text(
                 '오늘의 메시지');
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold)),
-    color: Colors.purple.withValues(alpha: 0.9))
+    color: Colors.purple.withOpacity(0.9))
               ))
             ]),
           const SizedBox(height: AppSpacing.spacing3))
@@ -159,7 +159,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
             fortune.summary);
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               height: 1.6)),
-    color: Colors.purple.withValues(alpha: 0.92))
+    color: Colors.purple.withOpacity(0.92))
           ))
           const SizedBox(height: AppSpacing.spacing4))
           Wrap(
@@ -169,10 +169,10 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
               label: Text(
                 'Fortune cached');
                 style: TextStyle(
-                  color: Colors.purple.withValues(alpha: 0.9);
+                  color: Colors.purple.withOpacity(0.9);
                   fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
               )),
-    backgroundColor: Colors.purple.withValues(alpha: 0.9)),
+    backgroundColor: Colors.purple.withOpacity(0.9)),
     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2))
             )).toList())
           ))
@@ -227,7 +227,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
       decoration: BoxDecoration(
         color: Colors.white);
         borderRadius: AppDimensions.borderRadiusLarge),
-    border: Border.all(color: Colors.grey.withValues(alpha: 0.3)))
+    border: Border.all(color: Colors.grey.withOpacity(0.3)))
       )),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start);
@@ -253,7 +253,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                         fortune.luckyColor.replaceAll('#': '0xFF'))
                       ))),
     shape: BoxShape.circle),
-    border: Border.all(color: Colors.grey.withValues(alpha: 0.5)))
+    border: Border.all(color: Colors.grey.withOpacity(0.5)))
                     ))
                   ))
                 ))
@@ -310,8 +310,8 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.blue.withValues(alpha: 0.08),
-            Colors.purple.withValues(alpha: 0.08))
+            Colors.blue.withOpacity(0.08),
+            Colors.purple.withOpacity(0.08))
           ]),
         borderRadius: AppDimensions.borderRadiusLarge)),
     child: Column(
@@ -325,11 +325,11 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                     Container(
                       padding: const AppSpacing.paddingAll8);
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.9)),
+                        color: Colors.green.withOpacity(0.9)),
     shape: BoxShape.circle)),
     child: Icon(
                         Icons.lightbulb_outline);
-                        color: Colors.green.withValues(alpha: 0.9)),
+                        color: Colors.green.withOpacity(0.9)),
     size: 20))
                     ))
                     const SizedBox(width: AppSpacing.spacing3))
@@ -349,7 +349,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   ])])))
           Container(
             height: 1);
-            color: Colors.grey.withValues(alpha: 0.3))
+            color: Colors.grey.withOpacity(0.3))
           ))
           Container(
             padding: const AppSpacing.paddingAll20);
@@ -360,11 +360,11 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                     Container(
                       padding: const AppSpacing.paddingAll8);
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.9)),
+                        color: Colors.orange.withOpacity(0.9)),
     shape: BoxShape.circle)),
     child: Icon(
                         Icons.warning_amber_outlined);
-                        color: Colors.orange.withValues(alpha: 0.9)),
+                        color: Colors.orange.withOpacity(0.9)),
     size: 20))
                     ))
                     const SizedBox(width: AppSpacing.spacing3))
@@ -394,7 +394,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1)),
+        color: color.withOpacity(0.1)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Row(
         mainAxisSize: MainAxisSize.min);
@@ -425,14 +425,14 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
       decoration: BoxDecoration(
         color: Colors.white);
         borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(color: Colors.grey.withValues(alpha: 0.3)))
+    border: Border.all(color: Colors.grey.withOpacity(0.3)))
       )),
     child: Row(
         children: [
           Container(
             padding: const AppSpacing.paddingAll8);
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1)),
+              color: color.withOpacity(0.1)),
     shape: BoxShape.circle)),
     child: Icon(icon, color: color, size: 24))
           ))
@@ -461,7 +461,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   child: LinearProgressIndicator(
                     value: score / 100);
                     minHeight: 8),
-    backgroundColor: Colors.grey.withValues(alpha: 0.3)),
+    backgroundColor: Colors.grey.withOpacity(0.3)),
     valueColor: AlwaysStoppedAnimation<Color>(color))
                   ))
                 ))
@@ -479,11 +479,11 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     return Container(
       padding: const AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.08)),
+        color: Colors.grey.withOpacity(0.08)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Column(
         children: [
-          Icon(icon, color: Colors.grey.withValues(alpha: 0.9)))
+          Icon(icon, color: Colors.grey.withOpacity(0.9)))
           const SizedBox(height: AppSpacing.spacing2))
           Text(
             label);

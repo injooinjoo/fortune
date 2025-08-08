@@ -79,7 +79,7 @@ class GlassLoadingOverlay extends StatelessWidget {
             child: GestureDetector(
               onTap: () {}, // Prevent taps from passing through
               child: Container(
-                color: AppColors.textPrimary.withValues(alpha: 0.3),
+                color: AppColors.textPrimary.withOpacity(0.3),
                 child: Center(
                   child: GlassContainer(
                     padding: AppSpacing.paddingAll24,
@@ -116,11 +116,11 @@ class SkeletonLoader extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: isDark 
-        ? AppColors.textSecondary.withValues(alpha: 0.8) 
-        : AppColors.textSecondary.withValues(alpha: 0.3),
+        ? AppColors.textSecondary.withOpacity(0.8) 
+        : AppColors.textSecondary.withOpacity(0.3),
       highlightColor: isDark 
-        ? AppColors.textSecondary.withValues(alpha: 0.7) 
-        : AppColors.textSecondary.withValues(alpha: 0.1),
+        ? AppColors.textSecondary.withOpacity(0.7) 
+        : AppColors.textSecondary.withOpacity(0.1),
       child: Container(
         width: width,
         height: height ?? 20,

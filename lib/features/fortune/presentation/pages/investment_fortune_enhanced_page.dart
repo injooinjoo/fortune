@@ -57,21 +57,18 @@ enum InvestmentSector {
 
 // 데이터 모델
 class InvestmentFortuneData {
-  // Step,
-    '1: 투자 프로필'
+  // Step 1: 투자 프로필
   String? riskTolerance; // conservative, moderate, aggressive
   String? investmentExperience; // beginner, intermediate, expert
   double? currentAssets; // 현재 자산 규모
   String? investmentGoal; // wealth, stability, speculation
   int? investmentHorizon; // 투자 기간 (개월)
   
-  // Step,
-    '2: 관심 섹터'
+  // Step 2: 관심 섹터
   List<InvestmentSector> selectedSectors = [];
   Map<InvestmentSector, double> sectorPriorities = {};
   
-  // Step,
-    '3: 상세 분석'
+  // Step 3: 상세 분석
   bool wantPortfolioReview = false;
   bool wantMarketTiming = false;
   bool wantLuckyNumbers = false;

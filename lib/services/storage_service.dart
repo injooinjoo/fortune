@@ -59,7 +59,8 @@ class StorageService {
     fortunes.insert(0, {
       'path': path,
       'title': title,
-      'visitedAt': null});
+      'visitedAt': DateTime.now().toIso8601String(),
+    });
     
     // 최대 10개까지만 저장
     if (fortunes.length > 10) {

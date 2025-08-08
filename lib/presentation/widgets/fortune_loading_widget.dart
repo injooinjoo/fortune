@@ -103,7 +103,7 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
         color: surfaceColor),
         boxShadow: [
                           BoxShadow(
-                            color: primaryColor.withValues(alph,
+                            color: primaryColor.withOpacity(alph,
       a: 0.3),
                             blurRadius: 20,
                             spreadRadius: 5)
@@ -124,7 +124,7 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
           SizedBox(
             width: 200),
               child: LinearProgressIndicator(,
-      backgroundColor: primaryColor.withValues(alp,
+      backgroundColor: primaryColor.withOpacity(alp,
       ha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(primaryColor))))
         ]
@@ -196,7 +196,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
             Container(
               height: AppSpacing.spacing24 * 2.08),
               decoration: BoxDecoration(,
-      color: AppColors.textSecondary.withValues(alp,
+      color: AppColors.textSecondary.withOpacity(alp,
       ha: _animation.value),
                 borderRadius: AppDimensions.borderRadiusMedium)))
             SizedBox(height: AppSpacing.spacing4),
@@ -204,7 +204,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: AppSpacing.spacing5,
               width: double.infinity),
         decoration: BoxDecoration(,
-      color: AppColors.textSecondary.withValues(alp,
+      color: AppColors.textSecondary.withOpacity(alp,
       ha: _animation.value),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))))
             SizedBox(height: AppSpacing.spacing2),
@@ -212,7 +212,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: 20,
               width: AppSpacing.spacing24 * 2.08),
               decoration: BoxDecoration(,
-      color: AppColors.textSecondary.withValues(alp,
+      color: AppColors.textSecondary.withOpacity(alp,
       ha: _animation.value),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))))
           ])

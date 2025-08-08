@@ -56,9 +56,9 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     // 화면 조회 이벤트 로깅
     await _abTestManager.logScreenView(
       screenName: 'token_purchase_page',
-      screenClass: 'TokenPurchasePageABTest');
+      screenClass: 'TokenPurchasePageABTest',
       additionalParams: {
-        'payment_layout': _paymentLayout)
+        'payment_layout': _paymentLayout
       });
     
     // 인앱 결제 초기화
@@ -75,13 +75,11 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       // 에러 로깅
       await _abTestManager.logError(
         errorType: 'payment_initialization',
-        errorMessage: e.toString())
-      );
+        errorMessage: e.toString());
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('결제 시스템을 초기화할 수 없습니다')))
-        );
+          const SnackBar(content: Text('결제 시스템을 초기화할 수 없습니다')));
       }
     } finally {
       if (mounted) {
@@ -110,13 +108,12 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: '토큰 구매'))
+            const AppHeader(title: '토큰 구매'),
             Expanded(
               child: _isLoading 
                 ? const Center(child: CircularProgressIndicator())
                 : _buildContent())
-            ))
-          ])))
+          ]))
     );
   }
 
@@ -126,11 +123,9 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Text(
-            '인앱결제를 사용할 수 없습니다.\n앱스토어 설정을 확인해주세요.');
-            textAlign: TextAlign.center),
-    style: AppTextStyles.body1))
-        ))
-      );
+            '인앱결제를 사용할 수 없습니다.\n앱스토어 설정을 확인해주세요.',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.body1)));
     }
 
     if (_products.isEmpty) {
@@ -138,11 +133,9 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Text(
-            '상품을 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.');
-            textAlign: TextAlign.center),
-    style: AppTextStyles.body1))
-        ))
-      );
+            '상품을 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.body1)));
     }
 
     // 레이아웃에 따라 다른 UI 렌더링
@@ -163,47 +156,45 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
   /// 분리된 레이아웃 (구독과 토큰 구분,
   Widget _buildSplitLayout() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16)),
-    child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCurrentBalance())
-          const SizedBox(height: 24))
-          _buildSubscriptionSection())
-          const SizedBox(height: 32))
-          _buildTokenSection())
-          const SizedBox(height: 24))
-          _buildPurchaseButton())
-          const SizedBox(height: 16))
-          _buildRestoreButton())
-          const SizedBox(height: 32))
-          _buildDescription())
+          _buildCurrentBalance(),
+          const SizedBox(height: 24),
+          _buildSubscriptionSection(),
+          const SizedBox(height: 32),
+          _buildTokenSection(),
+          const SizedBox(height: 24),
+          _buildPurchaseButton(),
+          const SizedBox(height: 16),
+          _buildRestoreButton(),
+          const SizedBox(height: 32),
+          _buildDescription()
         ]));
   }
 
-  /// 통합 레이아웃 (모든 옵션 함께,
+  /// 통합 레이아웃 (모든 옵션 함께)
   Widget _buildUnifiedLayout() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16)),
-    child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCurrentBalance())
-          const SizedBox(height: 24))
+          _buildCurrentBalance(),
+          const SizedBox(height: 24),
           Text(
-            '구매 옵션');
+            '구매 옵션',
             style: AppTextStyles.heading3.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          ))
-          const SizedBox(height: 16))
-          _buildAllOptionsUnified())
-          const SizedBox(height: 24))
-          _buildPurchaseButton())
-          const SizedBox(height: 16))
-          _buildRestoreButton())
-          const SizedBox(height: 32))
-          _buildDescription())
+              fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          _buildAllOptionsUnified(),
+          const SizedBox(height: 24),
+          _buildPurchaseButton(),
+          const SizedBox(height: 16),
+          _buildRestoreButton(),
+          const SizedBox(height: 32),
+          _buildDescription()
         ]));
   }
 
@@ -212,19 +203,19 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCurrentBalance())
-          const SizedBox(height: 24))
-          _buildProminentSubscriptionSection())
-          const SizedBox(height: 40))
-          _buildCompactTokenSection())
-          const SizedBox(height: 24))
-          _buildPurchaseButton())
-          const SizedBox(height: 16))
-          _buildRestoreButton())
-          const SizedBox(height: 32))
-          _buildDescription())
+          _buildCurrentBalance(),
+          const SizedBox(height: 24),
+          _buildProminentSubscriptionSection(),
+          const SizedBox(height: 40),
+          _buildCompactTokenSection(),
+          const SizedBox(height: 24),
+          _buildPurchaseButton(),
+          const SizedBox(height: 16),
+          _buildRestoreButton(),
+          const SizedBox(height: 32),
+          _buildDescription()
         ]));
   }
 
@@ -233,19 +224,19 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCurrentBalance())
-          const SizedBox(height: 24))
-          _buildProminentTokenSection())
-          const SizedBox(height: 40))
-          _buildCompactSubscriptionSection())
-          const SizedBox(height: 24))
-          _buildPurchaseButton())
-          const SizedBox(height: 16))
-          _buildRestoreButton())
-          const SizedBox(height: 32))
-          _buildDescription())
+          _buildCurrentBalance(),
+          const SizedBox(height: 24),
+          _buildProminentTokenSection(),
+          const SizedBox(height: 40),
+          _buildCompactSubscriptionSection(),
+          const SizedBox(height: 24),
+          _buildPurchaseButton(),
+          const SizedBox(height: 16),
+          _buildRestoreButton(),
+          const SizedBox(height: 32),
+          _buildDescription()
         ]));
   }
 
@@ -265,46 +256,41 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     return CustomCard(
       padding: const EdgeInsets.all(20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween);
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '현재 보유 토큰');
+                '현재 보유 토큰',
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary))
-                ))
-              ))
-              const SizedBox(height: 4))
+                  color: AppColors.textSecondary)),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   Text(
                     tokenBalance.hasUnlimitedAccess 
-                      ? '무제한' ))
+                      ? '무제한'
                       : '${tokenBalance.remainingTokens}',
                     style: AppTextStyles.heading2.copyWith(
-                      color: AppColors.primary);
-                      fontWeight: FontWeight.bold))
-                  ))
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold)),
                   if (!tokenBalance.hasUnlimitedAccess) ...[
-                    const SizedBox(width: 4))
+                    const SizedBox(width: 4),
                     Text(
-                      '개');
+                      '개',
                       style: AppTextStyles.body1.copyWith(
                         color: AppColors.textSecondary))
-                      ))
-                    ))
-                  ])
-                ]))
+                    )
+                  ]
+                ])
             ]),
           Icon(
             tokenBalance.hasUnlimitedAccess 
               ? Icons.all_inclusive 
-              : Icons.toll);
-            size: 40),
-    color: AppColors.primary.withValues(alpha: 0.3))
-          ))
+              : Icons.toll,
+            size: 40,
+            color: AppColors.primary.withOpacity(0.3))
         ])).animate()
       .fadeIn(duration: 600.ms)
       .slideX(begin: -0.1, end: 0);
@@ -318,34 +304,34 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     final subscriptionBadge = _remoteConfig.getSubscriptionBadge();
     
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start);
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Icon(
-              Icons.star);
-              size: 20),
-    color: AppColors.primary))
-            const SizedBox(width: 8))
+              Icons.star,
+              size: 20,
+              color: AppColors.primary),
+            const SizedBox(width: 8),
             Text(
-              '구독');
+              '구독',
               style: AppTextStyles.heading3.copyWith(
-                fontWeight: FontWeight.bold);
+                fontWeight: FontWeight.bold,
                 color: AppColors.primary))
-            ))
           ]),
-        const SizedBox(height: 12))
+        const SizedBox(height: 12),
         _buildSubscriptionCard(
-          price: subscriptionPrice);
-          title: subscriptionTitle),
-    description: subscriptionDescription),
-    badge: subscriptionBadge),
-    isSelected: false, // 구독 상품 찾기,
-    onTap: () {
+          price: subscriptionPrice,
+          title: subscriptionTitle,
+          description: subscriptionDescription,
+          badge: subscriptionBadge,
+          isSelected: false, // 구독 상품 찾기
+          onTap: () {
             HapticUtils.lightImpact();
             // 구독 선택 로직
             _handleSubscriptionSelection();
-          })]
+          })
+      ]
     );
   }
 
@@ -360,108 +346,95 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200)),
-    decoration: BoxDecoration(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: isSelected
               ? [
-                  AppColors.primary.withValues(alpha: 0.2))
-                  AppColors.secondary.withValues(alpha: 0.1))
+                  AppColors.primary.withOpacity(0.2),
+                  AppColors.secondary.withOpacity(0.1)
                 ]
               : [
-                  AppColors.primary.withValues(alpha: 0.05),
-                  AppColors.secondary.withValues(alpha: 0.02))
-                ]),
-    begin: Alignment.topLeft,
-            end: Alignment.bottomRight)),
-    border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.primary.withValues(alpha: 0.3)),
-    width: isSelected ? 2 : 1.5)),
-    borderRadius: BorderRadius.circular(16)),
-    boxShadow: isSelected
+                  AppColors.primary.withOpacity(0.05),
+                  AppColors.secondary.withOpacity(0.02)
+                ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.primary.withOpacity(0.3),
+            width: isSelected ? 2 : 1.5),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.2)),
-    blurRadius: 12),
-    offset: const Offset(0, 4))
-                ))
+                  color: AppColors.primary.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4))
               ]
-            : null)),
-    padding: const EdgeInsets.all(20)),
-    child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+            : null),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
-    decoration: BoxDecoration(
-                    color: AppColors.primary);
-                    borderRadius: BorderRadius.circular(8))
-                  )),
-    child: Row(
-                    mainAxisSize: MainAxisSize.min);
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(
-                        Icons.star);
-                        color: Colors.white),
-    size: 16))
-                      const SizedBox(width: 4))
+                        Icons.star,
+                        color: Colors.white,
+                        size: 16),
+                      const SizedBox(width: 4),
                       Text(
-                        badge);
+                        badge,
                         style: AppTextStyles.caption.copyWith(
-                          color: Colors.white);
+                          color: Colors.white,
                           fontWeight: FontWeight.bold))
-                      ))
-                    ])))
-                const Spacer())
+                    ])),
+                const Spacer(),
                 Container(
-                  width: 48);
-                  height: 48),
-    decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1)),
-    borderRadius: BorderRadius.circular(12))
-                  )),
-    child: const Center(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12)),
+                  child: const Center(
                     child: Icon(
-                      Icons.all_inclusive);
-                      size: 24),
-    color: AppColors.primary))
-                  ))
-                ))
+                      Icons.all_inclusive,
+                      size: 24,
+                      color: AppColors.primary)))
               ]),
-            const SizedBox(height: 16))
+            const SizedBox(height: 16),
             Text(
-              title);
+              title,
               style: AppTextStyles.heading2.copyWith(
-                fontWeight: FontWeight.bold))
-              ))
-            ))
-            const SizedBox(height: 8))
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             Text(
-              description);
+              description,
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary))
-              ))
-            ))
-            const SizedBox(height: 16))
+                color: AppColors.textSecondary)),
+            const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline);
-              textBaseline: TextBaseline.alphabetic),
-    children: [
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
                 Text(
-                  '₩${NumberFormat('#,###').format(price)}'),
-    style: AppTextStyles.heading1.copyWith(
+                  '₩${NumberFormat('#,###').format(price)}',
+                  style: AppTextStyles.heading1.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary))
-                ))
-                const SizedBox(width: 4))
+                    color: AppColors.primary)),
+                const SizedBox(width: 4),
                 Text(
-                  '/월');
+                  '/월',
                   style: AppTextStyles.body1.copyWith(
                     color: AppColors.textSecondary))
-                  ))
-                ))
               ])])))
     );
   }
@@ -540,8 +513,8 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1))
-                  AppColors.primary.withValues(alpha: 0.05))
+                  AppColors.primary.withOpacity(0.1))
+                  AppColors.primary.withOpacity(0.05))
                 ]),
     begin: Alignment.topLeft,
                 end: Alignment.bottomRight)
@@ -559,7 +532,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
               height: 60),
     decoration: BoxDecoration(
                 color: isSelected 
-                  ? AppColors.primary.withValues(alpha: 0.1)
+                  ? AppColors.primary.withOpacity(0.1)
                   : AppColors.surface),
     borderRadius: BorderRadius.circular(12))
               )),
@@ -666,8 +639,8 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary.withValues(alpha: 0.1))
-            AppColors.secondary.withValues(alpha: 0.05))
+            AppColors.primary.withOpacity(0.1))
+            AppColors.secondary.withOpacity(0.05))
           ]),
     begin: Alignment.topLeft,
           end: Alignment.bottomRight)),
@@ -716,7 +689,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
         width: 120);
         padding: const EdgeInsets.all(16)),
     decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface),
+          color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface),
     border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border)),
     borderRadius: BorderRadius.circular(12))

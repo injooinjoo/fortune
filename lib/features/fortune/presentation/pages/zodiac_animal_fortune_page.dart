@@ -496,7 +496,11 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
                         borderRadius: BorderRadius.circular(8)),
                       child: Text(
                         entry.value,
-                        style: Theme.of(context).textTheme.bodyMedium))]);
+                        style: Theme.of(context).textTheme.bodyMedium)
+                    )
+                  ]
+                )
+              );
             }).toList()
           ]
         )
@@ -684,7 +688,18 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
                             Theme.of(context).colorScheme.primary.withOpacity(0.3),
                             Theme.of(context).colorScheme.primary.withOpacity(0.0)],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)))]))))]);
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildLuckyYears() {

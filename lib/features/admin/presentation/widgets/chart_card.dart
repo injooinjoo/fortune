@@ -44,7 +44,7 @@ class ChartCard extends StatelessWidget {
                         subtitle!,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.6)))]])),
+                              .withOpacity(0.6)))]])),
               if (action != null) action!]),
           const SizedBox(height: 20),
           SizedBox(

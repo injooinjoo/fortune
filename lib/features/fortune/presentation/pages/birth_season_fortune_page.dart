@@ -59,16 +59,22 @@ class BirthSeasonFortunePage extends StatelessWidget {
               Icon(Icons.eco, color: Colors.green[700], size: 24),
               const SizedBox(width: 8),
               const Text(
-                '계절별 운세 안내',),
+                '계절별 운세 안내',
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           const Text(
-            '프로필에 등록된 생년월일을 기반으로 태어난 계절의 운세를 확인합니다.',),
+            '프로필에 등록된 생년월일을 기반으로 태어난 계절의 운세를 확인합니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey)),
+              color: Colors.grey,
+            ),
+          ),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,

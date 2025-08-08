@@ -19,30 +19,34 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
   String? selectedPolitician;
   
   final Map<String, List<Map<String, String>>> politicianData = {
-    'all': [}
-      {'\1': '\2', 'party', '더불어민주당': 'position', '당대표'},
-      {'name', '한동훈', 'party', '국민의힘', 'position', '당대표'},
-      {'name', '이준석', 'party', '개혁신당', 'position', '당대표'},
-      {'name', '조국', 'party', '조국혁신당', 'position', '당대표'},
-      {'name', '안철수', 'party', '무소속', 'position', '의원'},
-      {'name', '윤석열', 'party', '국민의힘', 'position', '대통령'},
-      {'name', '이낙연', 'party', '더불어민주당', 'position', '의원'},
-      {'name', '심상정', 'party', '정의당', 'position', '의원'}])
+    'all': [
+      {'name': '이재명', 'party': '더불어민주당', 'position': '당대표'},
+      {'name': '한동훈', 'party': '국민의힘', 'position': '당대표'},
+      {'name': '이준석', 'party': '개혁신당', 'position': '당대표'},
+      {'name': '조국', 'party': '조국혁신당', 'position': '당대표'},
+      {'name': '안철수', 'party': '무소속', 'position': '의원'},
+      {'name': '윤석열', 'party': '국민의힘', 'position': '대통령'},
+      {'name': '이낙연', 'party': '더불어민주당', 'position': '의원'},
+      {'name': '심상정', 'party': '정의당', 'position': '의원'},
+    ],
     'democratic': [
-      {'\1': '\2', 'party', '더불어민주당': 'position', '당대표'},
-      {'name', '이낙연', 'party', '더불어민주당', 'position', '의원'},
-      {'name', '박용진', 'party', '더불어민주당', 'position', '의원'},
-      {'name', '김두관', 'party', '더불어민주당', 'position', '의원'}])
+      {'name': '이재명', 'party': '더불어민주당', 'position': '당대표'},
+      {'name': '이낙연', 'party': '더불어민주당', 'position': '의원'},
+      {'name': '박용진', 'party': '더불어민주당', 'position': '의원'},
+      {'name': '김두관', 'party': '더불어민주당', 'position': '의원'},
+    ],
     'conservative': [
-      {'\1': '\2', 'party', '국민의힘': 'position', '당대표'},
-      {'name', '윤석열', 'party', '국민의힘', 'position', '대통령'},
-      {'name', '김기현', 'party', '국민의힘', 'position', '의원'},
-      {'name', '나경원', 'party', '국민의힘', 'position', '의원'}])
+      {'name': '한동훈', 'party': '국민의힘', 'position': '당대표'},
+      {'name': '윤석열', 'party': '국민의힘', 'position': '대통령'},
+      {'name': '김기현', 'party': '국민의힘', 'position': '의원'},
+      {'name': '나경원', 'party': '국민의힘', 'position': '의원'},
+    ],
     'progressive': [
-      {'\1': '\2', 'party', '개혁신당': 'position', '당대표'},
-      {'name', '조국', 'party', '조국혁신당', 'position', '당대표'},
-      {'name', '심상정', 'party', '정의당', 'position', '의원'},
-      {'name', '안철수', 'party', '무소속', 'position', '의원'}])
+      {'name': '이준석', 'party': '개혁신당', 'position': '당대표'},
+      {'name': '조국', 'party': '조국혁신당', 'position': '당대표'},
+      {'name': '심상정', 'party': '정의당', 'position': '의원'},
+      {'name': '안철수', 'party': '무소속', 'position': '의원'},
+    ],
   };
 
   @override
@@ -52,17 +56,19 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
 
     return BaseFortunePage(
       title: '정치인 운세',
-      fortuneType: 'politician');
+      fortuneType: 'politician',
       headerColor: const Color(0xFF1976D2),
-    onGenerateFortune: selectedPolitician != null 
+      onGenerateFortune: selectedPolitician != null 
           ? () => _generateFortune(context)
-          : null),
-    child: Column(
+          : null,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildPartySelector(),
           const SizedBox(height: 20),
-          _buildPoliticianGrid()])
+          _buildPoliticianGrid(),
+        ],
+      ),
     );
   }
 
@@ -70,20 +76,25 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.surface);
-        borderRadius: BorderRadius.circular(25))),
-    boxShadow: [
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-    blurRadius: 10),
-    offset: const Offset(0, 2))]),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          _buildPartyTab('all', '전체': Icons.groups),
-          _buildPartyTab('democratic', '민주': Icons.flag, const Color(0xFF004EA2))
-          _buildPartyTab('conservative', '보수': Icons.flag, const Color(0xFFE61E2B))
-          _buildPartyTab('progressive', '진보': Icons.flag, const Color(0xFF00A85D))
-        ])).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
+          _buildPartyTab('all', '전체', Icons.groups),
+          _buildPartyTab('democratic', '민주', Icons.flag, const Color(0xFF004EA2)),
+          _buildPartyTab('conservative', '보수', Icons.flag, const Color(0xFFE61E2B)),
+          _buildPartyTab('progressive', '진보', Icons.flag, const Color(0xFF00A85D)),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
   }
 
   Widget _buildPartyTab(String party, String label, IconData icon, [Color? color]) {
@@ -100,22 +111,30 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? tabColor : Colors.transparent);
-            borderRadius: BorderRadius.circular(25)),
-    child: Row(
-            mainAxisAlignment: MainAxisAlignment.center);
+            color: isSelected ? tabColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                icon);
-                size: 18),
-    color: isSelected ? Colors.white : AppColors.textSecondary),
+                icon,
+                size: 18,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+              ),
               const SizedBox(width: 4),
               Text(
-                label);
+                label,
                 style: TextStyle(
-                  fontSize: 13);
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
-    color: isSelected ? Colors.white : AppColors.textSecondary))])))
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -125,13 +144,13 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2);
-        childAspectRatio: 1.3),
-    crossAxisSpacing: 12),
-    mainAxisSpacing: 12),
-    itemCount: politicians.length),
-    itemBuilder: (context, index) {
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.3,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12),
+      itemCount: politicians.length,
+      itemBuilder: (context, index) {
         final politician = politicians[index];
         final isSelected = selectedPolitician == politician['name'];
         final partyColor = _getPartyColor(politician['party']!);
@@ -145,64 +164,79 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft);
-                end: Alignment.bottomRight),
-    colors: isSelected
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isSelected
                     ? [partyColor, partyColor.withOpacity(0.7)]
                     : [AppColors.surface, AppColors.surface]),
-    borderRadius: BorderRadius.circular(16))),
-    border: Border.all(
-                color: isSelected ? partyColor : AppColors.divider);
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected ? partyColor : AppColors.divider,
                 width: isSelected ? 2 : 1),
-    boxShadow: isSelected
+              boxShadow: isSelected
                   ? [
                       BoxShadow(
                         color: partyColor.withOpacity(0.3),
-    blurRadius: 20),
-    offset: const Offset(0, 4))]
+                        blurRadius: 20,
+                        offset: const Offset(0, 4))
+                    ]
                   : []),
-    child: Padding(
+            child: Padding(
               padding: const EdgeInsets.all(12),
-    child: Column(
-                mainAxisAlignment: MainAxisAlignment.center);
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    radius: 28);
+                    radius: 28,
                     backgroundColor: isSelected 
                         ? Colors.white.withOpacity(0.2)
                         : partyColor.withOpacity(0.1),
-    child: Text(
-                      politician['name'],
+                    child: Text(
+                      politician['name']!.substring(0, 1),
                       style: TextStyle(
-                        fontSize: 20);
-                        fontWeight: FontWeight.bold),
-    color: isSelected ? Colors.white : partyColor))),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.white : partyColor,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
-                    politician['name']!);
+                    politician['name']!,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold);
-                      color: isSelected ? Colors.white : AppColors.textPrimary)),
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
                   Text(
-                    politician['position']!);
+                    politician['position']!,
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.8)
-                          : AppColors.textSecondary)),
+                          : AppColors.textSecondary,
+                    ),
+                  ),
                   Text(
-                    politician['party']!);
+                    politician['party']!,
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.7)
-                          : partyColor),
-    fontWeight: FontWeight.w500))]))).animate()
+                          : partyColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
         );
-      });
+      },
+    );
   }
 
   Color _getPartyColor(String party) {
@@ -214,9 +248,9 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
         return const Color(0xFFFFCC00);
       case '조국혁신당':
         return const Color(0xFF00A85D);
-      case , '개혁신당': return const Color(0xFFFF6B6B);
+      case '개혁신당': return const Color(0xFFFF6B6B);
       default:
-        return const Color(0xFF757575);}
+        return const Color(0xFF757575);
     }
   }
 
@@ -226,13 +260,14 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     final userProfile = authProvider.userProfile;
 
     final requestData = {
-      'fortuneType', 'politician',
+      'fortuneType': 'politician',
       'userId': authProvider.userId,
       'name': userProfile?.name ?? '시민',
       'birthDate': userProfile?.birthDate ?? DateTime.now().toIso8601String(),
       'politician': selectedPolitician,
-      'party': politicianData[selectedParty]}
-          ?.firstWhere((p) => p['name'] == selectedPolitician)['party']};
+      'party': politicianData[selectedParty]
+          ?.firstWhere((p) => p['name'] == selectedPolitician)['party']
+    };
 
     try {
       final result = await fortuneProvider.generateFortune(
@@ -246,7 +281,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('발생했습니다: $e'));
+          SnackBar(content: Text('발생했습니다: $e')),
+        );
       }
     }
   }
@@ -254,57 +290,66 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
   void _showFortuneResult(BuildContext context, Map<String, dynamic> result) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true);
-      backgroundColor: Colors.transparent),
-    builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9);
-        minChildSize: 0.5),
-    maxChildSize: 0.95),
-    builder: (context, scrollController) => Container(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: AppColors.background);
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+            color: AppColors.background,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-    child: ListView(
-            controller: scrollController);
+          child: ListView(
+            controller: scrollController,
             padding: const EdgeInsets.all(20),
-    children: [
+            children: [
               Center(
                 child: Container(
                   width: 40,
-                  height: 4),
-    decoration: BoxDecoration(
-                    color: AppColors.divider);
-                    borderRadius: BorderRadius.circular(2)))),
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               Text(
-                '$selectedPolitician님의 정치 스타일과 나의 운세');
+                '$selectedPolitician님의 정치 스타일과 나의 운세',
                 style: const TextStyle(
-                  fontSize: 24);
-                  fontWeight: FontWeight.bold),
-    textAlign: TextAlign.center),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 20),
-              _buildResultSection('정치 성향 분석': result['politicalTendency']),
-              _buildResultSection('리더십 스타일': result['leadershipStyle'],
-              _buildResultSection('오늘의 정치 운세': result['todaysPoliticalFortune']),
-              _buildResultSection('사회 이슈 관심도': result['socialIssueInterest'],
-              _buildResultSection('대인 관계 운': result['networkingLuck']),
-              _buildResultSection('설득력 지수': result['persuasionIndex'],
-              if (\1)
+              _buildResultSection('정치 성향 분석', result['politicalTendency']),
+              _buildResultSection('리더십 스타일', result['leadershipStyle']),
+              _buildResultSection('오늘의 정치 운세', result['todaysPoliticalFortune']),
+              _buildResultSection('사회 이슈 관심도', result['socialIssueInterest']),
+              _buildResultSection('대인 관계 운', result['networkingLuck']),
+              _buildResultSection('설득력 지수', result['persuasionIndex']),
+              if (result['politicalAdvice'] != null)
                 _buildAdviceSection(result['politicalAdvice']),
-              if (\1)
-                _buildCareerSection(result['careerPath'])])))
+              if (result['careerPath'] != null)
+                _buildCareerSection(result['careerPath']),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildResultSection(String title, dynamic content) {
-    if (content == null) return const SizedBox.shrink()
+    if (content == null) return const SizedBox.shrink();
     
     return FortuneContentCard(
       title: title,
       content: content.toString(),
-    gradientColors: const [Color(0xFF1976D2), Color(0xFF42A5F5)]),
-    delay: 0
+      gradientColors: const [Color(0xFF1976D2), Color(0xFF42A5F5)],
+      delay: 0,
     );
   }
 
@@ -312,46 +357,60 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-        color: AppColors.surface);
-        borderRadius: BorderRadius.circular(16))),
-    border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.3))
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.3)),
       ),
-    child: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '정치적 조언 📋');
+            '정치적 조언 📋',
             style: TextStyle(
-              fontSize: 18);
-              fontWeight: FontWeight.bold),
-    color: Color(0xFF1976D2))),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1976D2),
+            ),
+          ),
           const SizedBox(height: 12),
           ...advice.entries.map((entry) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.check_circle_outline);
-                  size: 20),
-    color: const Color(0xFF1976D2).withOpacity(0.7)),
+                  Icons.check_circle_outline,
+                  size: 20,
+                  color: const Color(0xFF1976D2).withOpacity(0.7),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        entry.key);
+                        entry.key,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold);
-                          fontSize: 14)),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                       Text(
                         entry.value.toString(),
-    style: TextStyle(
-                          fontSize: 13);
-                          color: AppColors.textSecondary))]))])))
-        ])
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
     );
   }
 
@@ -359,36 +418,46 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft);
-          end: Alignment.bottomRight),
-    colors: [
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
             const Color(0xFF1976D2).withOpacity(0.1),
-            const Color(0xFF42A5F5).withOpacity(0.1)]),
-        borderRadius: BorderRadius.circular(16)),
-    child: Column(
+            const Color(0xFF42A5F5).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '정치 경력 전망 🏛️');
+            '정치 경력 전망 🏛️',
             style: TextStyle(
-              fontSize: 18);
-              fontWeight: FontWeight.bold),
-    color: Color(0xFF1976D2))),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1976D2),
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             career['path'] ?? '시민 참여부터 시작하여 점진적인 성장 가능',
-            style: const TextStyle(fontSize: 14)),
+            style: const TextStyle(fontSize: 14),
+          ),
           if (career['milestone'] != null) ...[
             const SizedBox(height: 8),
             Text(
               '이정표: ${career['milestone']}',
               style: TextStyle(
-                fontSize: 13);
-                color: AppColors.textSecondary),
-    fontStyle: FontStyle.italic))])
-        ])
+                fontSize: 13,
+                color: AppColors.textSecondary,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

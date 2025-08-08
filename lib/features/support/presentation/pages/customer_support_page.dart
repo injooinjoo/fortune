@@ -35,8 +35,8 @@ class CustomerSupportPage extends ConsumerWidget {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withValues(alpha: 0.3),
-          Colors.purple.withValues(alpha: 0.1)],
+          Colors.purple.withOpacity(0.3),
+          Colors.purple.withOpacity(0.1)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(20),
@@ -59,7 +59,7 @@ class CustomerSupportPage extends ConsumerWidget {
             '09:00 - 18:00  운영',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8))),
+              color: Colors.white.withOpacity(0.8))),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,10 +88,10 @@ class CustomerSupportPage extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.2),
+          color: color.withOpacity(0.2),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withValues(alpha: 0.3),
+            color: color.withOpacity(0.3),
             width: 1)),
         child: Row(
           children: [
@@ -154,8 +154,8 @@ class CustomerSupportPage extends ConsumerWidget {
         title: GlassContainer(
           gradient: LinearGradient(
             colors: [
-              Colors.white.withValues(alpha: 0.1),
-              Colors.white.withValues(alpha: 0.05)]),
+              Colors.white.withOpacity(0.1),
+              Colors.white.withOpacity(0.05)]),
           borderRadius: BorderRadius.circular(16),
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -177,7 +177,7 @@ class CustomerSupportPage extends ConsumerWidget {
             child: Text(
               answer,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Colors.white.withOpacity(0.8),
                 height: 1.5)))]));
   }
 
@@ -238,8 +238,8 @@ class CustomerSupportPage extends ConsumerWidget {
       child: GlassContainer(
         gradient: LinearGradient(
           colors: [
-            color.withValues(alpha: 0.2),
-            color.withValues(alpha: 0.1)],
+            color.withOpacity(0.2),
+            color.withOpacity(0.1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(16),
@@ -257,7 +257,7 @@ class CustomerSupportPage extends ConsumerWidget {
             Text(
               subtitle,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
+                color: Colors.white.withOpacity(0.7),
                 fontSize: 12),
               textAlign: TextAlign.center)])));
   }

@@ -69,7 +69,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
     '건강',
     '가족과 함께',
     '독립',
-    '기타'];
+    '기타',
+  ];
   
   final List<String> _movingTypes = [
     '아파트',
@@ -79,7 +80,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
     '원룸',
     '기숙사',
     '전원주택',
-    '기타'];
+    '기타',
+  ];
   
   final List<String> _urgencyLevels = [
     '여유있게 (3개월 이상)',
@@ -118,8 +120,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       // Calculate lucky scores for each day
       final lastDay = DateTime(targetMonth.year, targetMonth.month + 1, 0);
       for (var day = targetMonth; 
-           day.isBefore(lastDay.add(const Duration(days: 1)); 
-           day = day.add(const Duration(days: 1)) {
+           day.isBefore(lastDay.add(const Duration(days: 1))); 
+           day = day.add(const Duration(days: 1))) {
         _luckyScores[day] = AuspiciousDaysCalculator.getMovingLuckScore(
           day, 
           _birthDate?.toIso8601String());
@@ -137,10 +139,10 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '상세한 이사 운세 진단을 위해 정보를 입력해주세요.',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '상세한 이사 운세 진단을 위해 정보를 입력해주세요.',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Tab Bar
@@ -159,7 +161,10 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             tabs: const [
               Tab(text: '기본정보'),
               Tab(text: '위치선택'),
-              Tab(text: '날짜선택')])),
+              Tab(text: '날짜선택')
+            ]
+          )
+        ),
         const SizedBox(height: 24),
         
         // Tab Views
@@ -175,7 +180,10 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               _buildLocationTab(theme),
               
               // Date Tab
-              _buildDateTab(theme)])),
+              _buildDateTab(theme)
+            ]
+          )
+        ),
         
         const SizedBox(height: 32),
         
@@ -190,10 +198,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                 borderRadius: BorderRadius.circular(12)),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
-              '상세 이사운세 확인하기',),
-              style: theme.textTheme.titleMedium?.copyWith()
+              '상세 이사운세 확인하기',
+              style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold))
+          )
+        )
+      ]
     );
   }
 
@@ -204,8 +215,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         children: [
           // Name Input
           Text(
-            '이름',),
-            style: theme.textTheme.titleMedium?.copyWith()
+            '이름',
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
@@ -219,8 +230,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Birth Date Selection
           Text(
-            '생년월일',),
-            style: theme.textTheme.titleMedium?.copyWith()
+            '생년월일',
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
@@ -238,13 +249,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               }
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
+                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
@@ -255,8 +266,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Moving Reason
           Text(
-            '이사 이유',),
-            style: theme.textTheme.titleMedium?.copyWith()
+            '이사 이유',
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
@@ -277,8 +288,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Housing Type
           Text(
-            '희망 주거 형태',),
-            style: theme.textTheme.titleMedium?.copyWith()
+            '희망 주거 형태',
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
@@ -299,8 +310,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Urgency Level
           Text(
-            '이사 시급성',),
-            style: theme.textTheme.titleMedium?.copyWith()
+            '이사 시급성',
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Column(
@@ -322,17 +333,17 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '현재 거주지',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '현재 거주지',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Container(
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
+            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
             borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12))),
+            borderRadius: BorderRadius.circular(12),
             child: MapLocationPicker(
               onLocationSelected: (location, address) {
                 setState(() {
@@ -345,17 +356,17 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         const SizedBox(height: 20),
         
         Text(
-          '이사 희망 지역',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '이사 희망 지역',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Container(
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
+            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
             borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12))),
+            borderRadius: BorderRadius.circular(12),
             child: MapLocationPicker(
               onLocationSelected: (location, address) {
                 setState(() {
@@ -376,18 +387,18 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '이사 날짜 선택',),
-            style: theme.textTheme.titleMedium?.copyWith()
+            '이사 날짜 선택',
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
-            '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',),
-            style: theme.textTheme.bodyMedium?.copyWith()
+            '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 16),
           
           EnhancedDatePicker(
-            initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30),
+            initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30)),
             onDateSelected: (date) {
               setState(() {
                 _plannedDate = date;
@@ -430,12 +441,12 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       'name': _nameController.text,
       'birthDate': _birthDate!.toIso8601String(),
       'currentAddress': _currentAddress,
-      'currentLocation': _currentLocation != null }
+      'currentLocation': _currentLocation != null
           ? {'lat': _currentLocation!.latitude, 'lng': _currentLocation!.longitude}
           : null,
       'targetAddress': _targetAddress,
       'targetLocation': _targetLocation != null 
-          ? {, 'lat': _targetLocation!.latitude, 'lng': _targetLocation!.longitude}
+          ? {'lat': _targetLocation!.latitude, 'lng': _targetLocation!.longitude}
           : null,
       'plannedDate': _plannedDate!.toIso8601String(),
       'isAuspiciousDay': isAuspicious,
@@ -449,7 +460,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message));
+      SnackBar(content: Text(message)));
   }
 }
 
@@ -484,12 +495,12 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
       'avoidDirections': additionalInfo['avoidDirections'] ?? ['서쪽'],
       'primaryDirection': additionalInfo['bestDirection']?['direction'],
       'areaAnalysis': {
-        , 'scores': {}
+        'scores': {
           '교통': 85,
           '교육': 75,
           '편의시설': 80,
           '의료': 70,
-          '발전성': null},
+          '발전성': 90},
         'transportation': additionalInfo['areaAnalysis']?['transportation'] ?? 
             '대중교통이 편리하고 접근성이 좋습니다.',
         'education': additionalInfo['areaAnalysis']?['education'] ?? 
@@ -501,19 +512,19 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
         'development': additionalInfo['areaAnalysis']?['development'] ?? 
             '향후 발전 가능성이 높은 지역입니다.'},
       'dateAnalysis': {
-        , 'isAuspicious': additionalInfo['isAuspiciousDay'] ?? false,
-        'lunarDate': additionalInfo['lunarDate']?['lunarMonthInChinese'] != null}
+        'isAuspicious': additionalInfo['isAuspiciousDay'] ?? false,
+        'lunarDate': additionalInfo['lunarDate']?['lunarMonthInChinese'] != null
             ? '${additionalInfo['lunarDate']['lunarMonthInChinese']}월 ${additionalInfo['lunarDate']['lunarDayInChinese']}'
             : null,
         'solarTerm': additionalInfo['solarTerm'],
         'fiveElements': additionalInfo['lunarDate']?['dayGanZhi']},
       'detailedScores': result.scoreBreakdown ?? {
-        , '날짜 길흉': 85,
+        '날짜 길흉': 85,
         '방위 조화': 75,
         '지역 적합성': 90,
         '가족 운': 80,
-        '재물 운'},
+        '재물 운': 70},
       'recommendations': result.recommendations ?? [],
-      'cautions': additionalInfo['cautions']};
+      'cautions': additionalInfo['cautions']};;
   }
 }

@@ -256,7 +256,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Apple 로그인을 처리하고 있습니다...')));
+            content: Text('Apple 로그인을 처리하고 있습니다...'),
+          ),
+        );
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');

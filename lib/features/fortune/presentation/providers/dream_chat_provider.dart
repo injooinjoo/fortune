@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 
 // Chat message types
 enum MessageType {
-  
-  
   fortuneTeller, // 해몽가 메시지
-  user,         // 사용자 메시지
-  loading,      // 로딩 메시지
-  result,       // 해몽 결과}
+  user, // 사용자 메시지
+  loading, // 로딩 메시지
+  result, // 해몽 결과
+}
 
 // Chat message model
 class DreamChatMessage {
@@ -25,7 +24,8 @@ class DreamChatMessage {
     required this.type,
     required this.timestamp,
     this.isAnimating = false,
-    this.metadata});
+    this.metadata,
+  });
   
   DreamChatMessage copyWith({
     String? id,
@@ -33,15 +33,17 @@ class DreamChatMessage {
     MessageType? type,
     DateTime? timestamp,
     bool? isAnimating,
-    Map<String, dynamic>? metadata}) {
+    Map<String, dynamic>? metadata,
+  }) {
     return DreamChatMessage(
       id: id ?? this.id,
       content: content ?? this.content,
       type: type ?? this.type,
       timestamp: timestamp ?? this.timestamp,
       isAnimating: isAnimating ?? this.isAnimating,
-      metadata: metadata ?? this.metadata);
-}
+      metadata: metadata ?? this.metadata,
+    );
+  }
 }
 
 // Chat state model
@@ -61,7 +63,8 @@ class DreamChatState {
     this.dreamContent = '',
     this.collectedInfo = const {},
     this.isAnalyzing = false,
-    this.error});
+    this.error,
+  });
   
   DreamChatState copyWith({
     List<DreamChatMessage>? messages,
@@ -70,7 +73,8 @@ class DreamChatState {
     String? dreamContent,
     Map<String, String>? collectedInfo,
     bool? isAnalyzing,
-    String? error}) {
+    String? error,
+  }) {
     return DreamChatState(
       messages: messages ?? this.messages,
       isTyping: isTyping ?? this.isTyping,
@@ -78,8 +82,9 @@ class DreamChatState {
       dreamContent: dreamContent ?? this.dreamContent,
       collectedInfo: collectedInfo ?? this.collectedInfo,
       isAnalyzing: isAnalyzing ?? this.isAnalyzing,
-      error: error ?? this.error);
-}
+      error: error ?? this.error,
+    );
+  }
 }
 
 // Fortune teller responses
@@ -114,15 +119,15 @@ class FortuneTellerResponses {
 
 // Chat provider
 class DreamChatNotifier extends StateNotifier<DreamChatState> {
-  DreamChatNotifier() : super(const DreamChatState();
+  DreamChatNotifier() : super(const DreamChatState());
   
   // Initialize chat with greeting
-  void startChat() {
+  Future<void> startChat() async {
     final greeting = FortuneTellerResponses.greetings[
-      DateTime.now().millisecond % FortuneTellerResponses.greetings.length];
-    
-    _addFortuneTellerMessage(greeting);
-}
+      DateTime.now().millisecond % FortuneTellerResponses.greetings.length
+    ];
+    await _addFortuneTellerMessage(greeting);
+  }
   
   // Add user message
   void addUserMessage(String content) {
@@ -130,39 +135,40 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       content: content,
       type: MessageType.user,
-      timestamp: DateTime.now();
+      timestamp: DateTime.now(),
+    );
     
     state = state.copyWith(
       messages: [...state.messages, message],
       dreamContent: state.dreamContent.isEmpty 
           ? content 
-          : '${state.dreamContent} $content'
+          : '${state.dreamContent} $content',
     );
     
     // Process the message and generate response
     _processUserMessage(content);
-}
+  }
   
   // Add fortune teller message with typing animation
   Future<void> _addFortuneTellerMessage(String content, {bool animate = true}) async {
     if (animate) {
       state = state.copyWith(isTyping: true);
-      await Future.delayed(const Duration(milliseconds: 1500);
-}
+      await Future.delayed(const Duration(milliseconds: 1500));
+    }
     
     final message = DreamChatMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       content: content,
       type: MessageType.fortuneTeller,
       timestamp: DateTime.now(),
-      isAnimating: animate
+      isAnimating: animate,
     );
     
     state = state.copyWith(
       messages: [...state.messages, message],
-      isTyping: false
+      isTyping: false,
     );
-}
+  }
   
   // Process user message and generate appropriate response
   Future<void> _processUserMessage(String content) async {
@@ -172,71 +178,76 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
     if (messageCount == 1) {
       // First message - show empathy and ask follow-up
       await _showEmpathyAndAskFollowUp(content);
-} else if (messageCount == 2) {
+    } else if (messageCount == 2) {
       // Second message - start analysis
       await _startDreamAnalysis();
-}
+    }
   }
   
   // Show empathy and ask follow-up question
   Future<void> _showEmpathyAndAskFollowUp(String dreamContent) async {
     // Determine emotion from content
     String emotion = "신기하셨";
-    if (dreamContent.contains("무서") || dreamContent.contains("떨어") || dreamContent.contains("쫓"), {
+    if (dreamContent.contains("무서") || dreamContent.contains("떨어") || dreamContent.contains("쫓")) {
       emotion = "무서우셨";
-} else if (dreamContent.contains("슬") || dreamContent.contains("울"), {
+    } else if (dreamContent.contains("슬") || dreamContent.contains("울")) {
       emotion = "슬프셨";
-} else if (dreamContent.contains("행복") || dreamContent.contains("기쁨") || dreamContent.contains("날"), {
+    } else if (dreamContent.contains("행복") || dreamContent.contains("기쁨") || dreamContent.contains("날")) {
       emotion = "기쁘셨";
-}
+    }
     
     // Show empathy
     final empathyTemplate = FortuneTellerResponses.empathyResponses[
-      DateTime.now().millisecond % FortuneTellerResponses.empathyResponses.length];
-    final empathyMessage = empathyTemplate.replaceAll('{emotion}': emotion);
+      DateTime.now().millisecond % FortuneTellerResponses.empathyResponses.length
+    ];
+    final empathyMessage = empathyTemplate.replaceAll('{emotion}', emotion);
     await _addFortuneTellerMessage(empathyMessage);
     
     // Ask follow-up question
-    await Future.delayed(const Duration(milliseconds: 800);
+    await Future.delayed(const Duration(milliseconds: 800));
     final followUp = FortuneTellerResponses.followUpQuestions[
-      DateTime.now().millisecond % FortuneTellerResponses.followUpQuestions.length];
+      DateTime.now().millisecond % FortuneTellerResponses.followUpQuestions.length
+    ];
     await _addFortuneTellerMessage(followUp);
-}
+  }
   
   // Start dream analysis
   Future<void> _startDreamAnalysis() async {
     // Acknowledge the response
     await _addFortuneTellerMessage(
-      "네, 이해했습니다. 이제 이 꿈이 무엇을 의미하는지 함께 살펴볼까요?"
+      "네, 이해했습니다. 이제 이 꿈이 무엇을 의미하는지 함께 살펴볼까요?",
     );
     
     // Show analyzing message
     state = state.copyWith(isAnalyzing: true);
     
     final analyzingMsg = FortuneTellerResponses.analyzingMessages[
-      DateTime.now().millisecond % FortuneTellerResponses.analyzingMessages.length];
+      DateTime.now().millisecond % FortuneTellerResponses.analyzingMessages.length
+    ];
     
     final loadingMessage = DreamChatMessage(
       id: 'loading',
       content: analyzingMsg,
       type: MessageType.loading,
-      timestamp: DateTime.now();
+      timestamp: DateTime.now(),
+    );
     
     state = state.copyWith(
-      messages: [...state.messages, loadingMessage]);
+      messages: [...state.messages, loadingMessage],
+    );
     
     // Simulate analysis time
-    await Future.delayed(const Duration(seconds: 3);
+    await Future.delayed(const Duration(seconds: 3));
     
     // Remove loading message
     state = state.copyWith(
-      messages: state.messages.where((m) => m.id != 'loading': null,
-      isAnalyzing: false
+      messages: state.messages.where((m) => m.id != 'loading').toList(),
+      isAnalyzing: false,
     );
     
     // Add result message
     await _addDreamInterpretation();
-}
+  }
   
   // Add dream interpretation result
   Future<void> _addDreamInterpretation() async {
@@ -263,38 +274,40 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
       content: interpretation,
       type: MessageType.result,
       timestamp: DateTime.now(),
-      isAnimating: true
+      isAnimating: true,
     );
     
     state = state.copyWith(
-      messages: [...state.messages, resultMessage]
+      messages: [...state.messages, resultMessage],
     );
     
     // Add closing message
-    await Future.delayed(const Duration(seconds: 2);
+    await Future.delayed(const Duration(seconds: 2));
     final closing = FortuneTellerResponses.closingMessages[
-      DateTime.now().millisecond % FortuneTellerResponses.closingMessages.length];
+      DateTime.now().millisecond % FortuneTellerResponses.closingMessages.length
+    ];
     await _addFortuneTellerMessage(closing);
-}
+  }
   
   // Toggle voice listening
   void toggleListening(bool isListening) {
     state = state.copyWith(isListening: isListening);
-}
+  }
   
   // Reset chat
   void resetChat() {
     state = const DreamChatState();
     startChat();
-}
+  }
   
   // Set error
   void setError(String? error) {
     state = state.copyWith(error: error);
-}
+  }
 }
 
 // Provider
-final dreamChatProvider = StateNotifierProvider<DreamChatNotifier, DreamChatState>((ref) {
+final dreamChatProvider =
+    StateNotifierProvider<DreamChatNotifier, DreamChatState>((ref) {
   return DreamChatNotifier();
-};
+});

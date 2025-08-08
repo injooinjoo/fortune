@@ -234,7 +234,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             '원하시는 상담 분야의 전문가를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 24),
           ...mockExperts.map((expert) => _buildExpertCard(theme, fontSize, expert))]));
   }
@@ -289,7 +289,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.error.withValues(alpha: 0.2),
+                              color: theme.colorScheme.error.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8)),
                             child: Text(
                               '예약 불가',
@@ -302,7 +302,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                       expert.title,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: fontSize - 2,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+                        color: theme.colorScheme.onSurface.withOpacity(0.7))),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -366,7 +366,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             '예약 가능한 날짜를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 24),
           
           // Calendar
@@ -390,8 +390,8 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.1),
-                  theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.secondary.withOpacity(0.1)]),
               child: Row(
                 children: [
                   Icon(
@@ -430,7 +430,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             '예약 가능한 시간대를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 24),
           
           // Time Slots
@@ -457,8 +457,8 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                   gradient: isSelected
                       ? LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.2),
-                            theme.colorScheme.secondary.withValues(alpha: 0.2)])
+                            theme.colorScheme.primary.withOpacity(0.2),
+                            theme.colorScheme.secondary.withOpacity(0.2)])
                       : null,
                   child: Center(
                     child: Text(
@@ -508,7 +508,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             '예약 정보를 확인하고 확정해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 24),
           
           // Booking Summary
@@ -575,7 +575,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                     _messageController.text,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize - 1,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8)))]])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.8)))]])),
           
           const SizedBox(height: 24),
           
@@ -583,10 +583,10 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
+              color: theme.colorScheme.tertiaryContainer.withOpacity(0.3),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: theme.colorScheme.tertiary.withValues(alpha: 0.3))),
+                color: theme.colorScheme.tertiary.withOpacity(0.3))),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -623,7 +623,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: fontSize - 2,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6))),
               const SizedBox(height: 2),
               Text(
                 value,
@@ -641,7 +641,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
         color: theme.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -2))]),
       child: Row(

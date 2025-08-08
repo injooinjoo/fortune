@@ -1,13 +1,11 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/time_based_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/hourly_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/daily_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/today_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/tomorrow_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/weekly_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/monthly_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/yearly_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/new_year_page.dart' as fortune_pages;
+import '../../../features/fortune/presentation/pages/time_based_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/hourly_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/daily_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/today_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/tomorrow_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/weekly_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/monthly_fortune_page.dart';
 
 final timeBasedRoutes = [
   // Time-based Fortune
@@ -16,18 +14,18 @@ final timeBasedRoutes = [
     name: 'fortune-time',
     builder: (context, state) {
       final periodParam = state.uri.queryParameters['period'];
-      fortune_pages.TimePeriod? initialPeriod;
+      TimePeriod? initialPeriod;
       if (periodParam != null) {
-        initialPeriod = fortune_pages.TimePeriod.values.firstWhere(
+        initialPeriod = TimePeriod.values.firstWhere(
           (p) => p.value == periodParam,
-          orElse: () => fortune_pages.TimePeriod.today);
+          orElse: () => TimePeriod.today);
       }
       
       // Pass extra data to the page
       final extra = state.extra as Map<String, dynamic>?;
       
-      return fortune_pages.TimeBasedFortunePage(
-        initialPeriod: initialPeriod ?? fortune_pages.TimePeriod.today,
+      return TimeBasedFortunePage(
+        initialPeriod: initialPeriod ?? TimePeriod.today,
         initialParams: extra);
     }),
   
@@ -47,37 +45,37 @@ final timeBasedRoutes = [
   GoRoute(
     path: 'hourly',
     name: 'fortune-hourly',
-    builder: (context, state) => const fortune_pages.HourlyFortunePage()),
+    builder: (context, state) => const HourlyFortunePage()),
   
   // Daily
   GoRoute(
     path: 'daily',
     name: 'fortune-daily',
-    builder: (context, state) => const fortune_pages.DailyFortunePage()),
+    builder: (context, state) => const DailyFortunePage()),
   
   // Today
   GoRoute(
     path: 'today',
     name: 'fortune-today',
-    builder: (context, state) => const fortune_pages.TodayFortunePage()),
+    builder: (context, state) => const TodayFortunePage()),
   
   // Tomorrow
   GoRoute(
     path: 'tomorrow',
     name: 'fortune-tomorrow',
-    builder: (context, state) => const fortune_pages.TomorrowFortunePage()),
+    builder: (context, state) => const TomorrowFortunePage()),
   
   // Weekly
   GoRoute(
     path: 'weekly',
     name: 'fortune-weekly',
-    builder: (context, state) => const fortune_pages.WeeklyFortunePage()),
+    builder: (context, state) => const WeeklyFortunePage()),
   
   // Monthly
   GoRoute(
     path: 'monthly',
     name: 'fortune-monthly',
-    builder: (context, state) => const fortune_pages.MonthlyFortunePage()),
+    builder: (context, state) => const MonthlyFortunePage()),
   
   // Yearly
   GoRoute(
@@ -85,8 +83,8 @@ final timeBasedRoutes = [
     name: 'fortune-yearly',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
-      return fortune_pages.TimeBasedFortunePage(
-        initialPeriod: fortune_pages.TimePeriod.yearly,
+      return TimeBasedFortunePage(
+        initialPeriod: TimePeriod.yearly,
         initialParams: extra);
     }),
   
@@ -96,7 +94,7 @@ final timeBasedRoutes = [
     name: 'fortune-new-year',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
-      return fortune_pages.TimeBasedFortunePage(
-        initialPeriod: fortune_pages.TimePeriod.yearly,
+      return TimeBasedFortunePage(
+        initialPeriod: TimePeriod.yearly,
         initialParams: extra);
     })];

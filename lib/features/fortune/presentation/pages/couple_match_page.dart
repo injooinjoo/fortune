@@ -156,7 +156,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
           loveLanguages: _myLoveLanguages,
           onLoveLanguageToggle: (language) {
             setState(() {
-              if (_myLoveLanguages.contains(language), {
+              if (_myLoveLanguages.contains(language)) {
                 _myLoveLanguages.remove(language);
               } else {
                 _myLoveLanguages.add(language);
@@ -174,11 +174,11 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.pink.withOpacity(0.3),
-                  Colors.red.withOpacity(0.3)])),
+                  Colors.red.withOpacity(0.3)]),),
             child: const Icon(
               Icons.favorite,
               color: Colors.red,
-              size: 40))),
+              size: 40)),
         const SizedBox(height: 16),
         
         // Partner Info
@@ -197,7 +197,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
           loveLanguages: _partnerLoveLanguages,
           onLoveLanguageToggle: (language) {
             setState(() {
-              if (_partnerLoveLanguages.contains(language), {
+              if (_partnerLoveLanguages.contains(language)) {
                 _partnerLoveLanguages.remove(language);
               } else {
                 _partnerLoveLanguages.add(language);

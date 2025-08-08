@@ -112,7 +112,7 @@ class _CallbackPageState extends State<CallbackPage> {
     } catch (e) {
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       // On error, go to onboarding to be safe
-      if (mounted) context.go('/onboarding')
+      if (mounted) context.go('/onboarding');
     }
   }
 

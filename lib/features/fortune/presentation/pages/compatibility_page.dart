@@ -132,7 +132,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 _person1BirthDate = date;
               });
             },
-            gradientColors: [Colors.pink.shade300, Colors.pink.shade500]],
+            gradientColors: [Colors.pink.shade300, Colors.pink.shade500],
             icon: Icons.person),
           const SizedBox(height: 24),
           _buildHeartConnector(),
@@ -146,7 +146,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 _person2BirthDate = date;
               });
             },
-            gradientColors: [Colors.blue.shade300, Colors.blue.shade500]],
+            gradientColors: [Colors.blue.shade300, Colors.blue.shade500],
             icon: Icons.person)]));
   }
 
@@ -175,7 +175,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.headlineSmall)])),
+                style: theme.textTheme.headlineSmall)]),
           const SizedBox(height: 20),
           TextFormField(
             controller: nameController,
@@ -271,11 +271,11 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
 
     return LiquidGlassContainer(
       padding: const EdgeInsets.all(32),
-      borderRadius: BorderRadius.circular(32))),
+      borderRadius: BorderRadius.circular(32),
       liquidColors: [
         Colors.pink.shade200,
         Colors.red.shade200,
-        Colors.purple.shade200]],
+        Colors.purple.shade200],
       child: Column(
         children: [
           CircularPercentIndicator(
@@ -288,13 +288,13 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '$overallScore%',),
-                  style: theme.textTheme.displayMedium?.copyWith()
+                  '$overallScore%',
+                  style: theme.textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.red.shade600)),
                 Text(
-                  '전체 궁합',),
-                  style: theme.textTheme.bodyMedium?.copyWith()
+                  '전체 궁합',
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: Colors.red.shade400,
@@ -318,7 +318,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
           const SizedBox(height: 16),
           Text(
             _getCompatibilityMessage(overallScore),
-            style: theme.textTheme.bodyLarge),
+            style: theme.textTheme.bodyLarge,
             textAlign: TextAlign.center)])).animate().fadeIn().scale(
       begin: const Offset(0.8, 0.8),
       end: const Offset(1, 1));
@@ -326,10 +326,10 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
 
   Widget _buildPersonBadge(String name, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20))),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withOpacity(0.3))),
       child: Text(
         name,
@@ -348,8 +348,8 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '상세 궁합 점수',),
-            style: Theme.of(context).textTheme.headlineSmall)),
+            '상세 궁합 점수',
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 20),
           ...detailedScores.entries.map((entry) {
             final icon = _getScoreIcon(entry.key);
@@ -375,10 +375,10 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                           children: [
                             Text(
                               entry.key,
-                              style: Theme.of(context).textTheme.bodyLarge)),
+                              style: Theme.of(context).textTheme.bodyLarge),
                             Text(
-                              '${entry.value}%',),
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith()
+                              '${entry.value}%',
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: color))]),
                         const SizedBox(height: 8),

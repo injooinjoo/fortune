@@ -336,13 +336,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'My tarot',),
+                                  'My tarot',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineMedium
                                       ?.copyWith(
                                         color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
                                 IconButton(
                                   icon: const Icon(Icons.search,
                                       color: Colors.white70),
@@ -362,12 +364,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                'Everything has its unseen roots',),
+                                'Everything has its unseen roots',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.white60)))));
+                                      color: Colors.white60,
+                                    ),
+                              ),
+                            ),
+                          );
                       }),
 
                     // Large space for card placement and to push Tarot Reading section down
@@ -386,13 +392,18 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                'Tarot Reading',),
+                                'Tarot Reading',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
                                     ?.copyWith(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold)))));
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        );
                       }),
 
                     const SizedBox(height: 16),
@@ -520,7 +531,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       child: Icon(
                                         _previousCardData!['icon'],
                                         color: Colors.white.withOpacity(0.3),
-                                        size: 80 - (20 * swapProgress))),
+                                        size: 80 - (20 * swapProgress),
+                                      ),
+                                    ),
                                   // Title
                                   Positioned(
                                     bottom: 20 - (10 * swapProgress),

@@ -86,8 +86,9 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '현재 직업 상태',),
-                style: theme.textTheme.headlineSmall)),
+                '현재 직업 상태',
+                style: theme.textTheme.headlineSmall,
+              ),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -101,7 +102,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                         _currentJobStatus = status;
                       });
                     },
-                    borderRadius: BorderRadius.circular(20))),
+                    borderRadius: BorderRadius.circular(20),
                     child: Chip(
                       label: Text(status),
                       backgroundColor: isSelected
@@ -110,8 +111,15 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3))));
-                }).toList())])),
+                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         
         // Years of Experience
@@ -121,8 +129,8 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '경력 연수',),
-                style: theme.textTheme.headlineSmall)),
+                '경력 연수',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               Row(
                 children: [

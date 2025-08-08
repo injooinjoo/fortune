@@ -134,7 +134,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           animation: _fadeAnimation,
           builder: (context, child) {
             return Container(
-              color: Colors.black.withValues(alpha: _fadeAnimation.value * 0.7));
+              color: Colors.black.withOpacity(_fadeAnimation.value * 0.7));
           }),
         
         // Other cards fading out
@@ -170,7 +170,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).primaryColor.withValues(alpha: _glowAnimation.value),
+                            color: Theme.of(context).primaryColor.withOpacity(_glowAnimation.value),
                             blurRadius: 40,
                             spreadRadius: 20)])),
                   
@@ -183,7 +183,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
 
   List<Widget> _buildOtherCards() {
     return List.generate(widget.totalCards, (index) {
-      if (index == widget.selectedIndex) return const SizedBox.shrink()
+      if (index == widget.selectedIndex) return const SizedBox.shrink();
       
       final offset = (index - widget.selectedIndex) * 30.0;
       
@@ -203,10 +203,10 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor.withValues(alpha: 0.6),
-                      Theme.of(context).colorScheme.secondary.withValues(alpha: 0.6)]),
+                      Theme.of(context).primaryColor.withOpacity(0.6),
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.6)]),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: Colors.white.withOpacity(0.2),
                     width: 2)))));
         });
     });
@@ -222,7 +222,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 5))]),
       child: ClipRRect(
@@ -244,9 +244,9 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.white.withValues(alpha: 0),
-                        Colors.white.withValues(alpha: 0.3),
-                        Colors.white.withValues(alpha: 0)],
+                        Colors.white.withOpacity(0),
+                        Colors.white.withOpacity(0.3),
+                        Colors.white.withOpacity(0)],
                       transform: GradientRotation(_flipAnimation.value * math.pi)))))])));
   }
 
@@ -265,7 +265,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           Positioned.fill(
             child: CustomPaint(
               painter: AnimatedMandalaPainter(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withOpacity(0.2),
                 progress: _pickAnimation.value))),
           
           // Center icon
@@ -273,7 +273,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: Icon(
               Icons.auto_awesome,
               size: 60,
-              color: Colors.white.withValues(alpha: 0.8)))]));
+              color: Colors.white.withOpacity(0.8)))]));
   }
 
   Widget _buildCardFront() {
@@ -330,7 +330,7 @@ class AnimatedMandalaPainter extends CustomPainter {
     // Center star
     if (progress > 0.5) {
       final starPaint = Paint()
-        ..color = color.withValues(alpha: (progress - 0.5) * 2)
+        ..color = color.withOpacity((progress - 0.5) * 2)
         ..style = PaintingStyle.fill;
       
       final path = Path();

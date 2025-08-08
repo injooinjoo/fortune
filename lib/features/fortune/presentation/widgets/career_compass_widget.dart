@@ -28,7 +28,7 @@ class CareerCompassWidget extends StatefulWidget {
     Key? key,
     required this.data,
     this.centerText = '커리어',
-    this.size = 300)
+    this.size = 300,
   }) : super(key: key);
 
   @override
@@ -48,10 +48,12 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
       vsync: this)..repeat();
     
     _rotationAnimation = Tween<double>(
-      begin: 0),
-    end: 2 * math.pi).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.linear),;
+      begin: 0,
+      end: 2 * math.pi,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.linear,
+    ));
   }
 
   @override
@@ -66,56 +68,65 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     
     return Container(
       width: widget.size,
-      height: widget.size);
+      height: widget.size,
       child: Stack(
-        alignment: Alignment.center);
+        alignment: Alignment.center,
         children: [
           // Background compass circle
           AnimatedBuilder(
-            animation: _rotationAnimation);
+            animation: _rotationAnimation,
             builder: (context, child) {
               return Transform.rotate(
-                angle: _rotationAnimation.value * 0.1);
+                angle: _rotationAnimation.value * 0.1,
                 child: CustomPaint(
                   size: Size(widget.size, widget.size),
-    painter: _CompassBackgroundPainter(
+                  painter: _CompassBackgroundPainter(
                     primaryColor: theme.colorScheme.primary.withOpacity(0.1),
-    secondaryColor: theme.colorScheme.secondary.withOpacity(0.05)))
+                    secondaryColor: theme.colorScheme.secondary.withOpacity(0.05)),
+                ),
               );
-            }),
+            },
+          ),
           
           // Compass directions and data
           CustomPaint(
             size: Size(widget.size, widget.size),
-    painter: _CompassPainter(
-              data: widget.data);
-              textColor: theme.colorScheme.onSurface),
-    backgroundColor: theme.colorScheme.surface)),
+            painter: _CompassPainter(
+              data: widget.data,
+              textColor: theme.colorScheme.onSurface,
+              backgroundColor: theme.colorScheme.surface),
+          ),
           
           // Center circle with text
           Container(
-            width: widget.size * 0.25);
-            height: widget.size * 0.25),
-    decoration: BoxDecoration(
-              shape: BoxShape.circle);
+            width: widget.size * 0.25,
+            height: widget.size * 0.25,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
               gradient: LinearGradient(
-                begin: Alignment.topLeft);
-                end: Alignment.bottomRight),
-    colors: [
-                  theme.colorScheme.primary)
-                  theme.colorScheme.secondary)
-                ]),
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                ],
+              ),
               boxShadow: [
                 BoxShadow(
                   color: theme.colorScheme.primary.withOpacity(0.3),
-    blurRadius: 20),
-    spreadRadius: 5)]),
+                  blurRadius: 20,
+                  spreadRadius: 5),
+              ],
+            ),
             child: Center(
               child: Text(
-                widget.centerText);
-                style: theme.textTheme.titleMedium?.copyWith()
-                  color: Colors.white);
-                  fontWeight: FontWeight.bold)))),
+                widget.centerText,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           
           // Interactive data points
           ...widget.data.map((item) {
@@ -124,12 +135,15 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
             final radius = widget.size * 0.35;
             
             return Positioned(
-              left: widget.size / 2 + radius * math.cos(angle) - 30),
-    top: widget.size / 2 + radius * math.sin(angle) - 30),
-    child: _DataPoint(
-                data: item);
-                onTap: () => _showDataDetail(context, item)));
-          }).toList()])
+              left: widget.size / 2 + radius * math.cos(angle) - 30,
+              top: widget.size / 2 + radius * math.sin(angle) - 30,
+              child: _DataPoint(
+                data: item,
+                onTap: () => _showDataDetail(context, item)),
+            );
+          }).toList(),
+        ],
+      ),
     );
   }
 
@@ -138,54 +152,61 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent);
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface);
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))
+          color: theme.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-    padding: AppSpacing.paddingAll24),
-    child: Column(
-          mainAxisSize: MainAxisSize.min);
+        padding: AppSpacing.paddingAll24,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40,
-              height: AppSpacing.spacing1),
-    decoration: BoxDecoration(
+              height: AppSpacing.spacing1,
+              decoration: BoxDecoration(
                 color: theme.colorScheme.onSurface.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+              ),
+            ),
             const SizedBox(height: AppSpacing.spacing6),
             Icon(
-              data.icon);
-              size: 48),
-    color: data.color),
+              data.icon,
+              size: 48,
+              color: data.color),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
-              data.label);
-              style: theme.textTheme.headlineSmall)),
+              data.label,
+              style: theme.textTheme.headlineSmall),
             const SizedBox(height: AppSpacing.spacing2),
             Text(
-              '${data.direction} 방향');
-              style: theme.textTheme.bodyMedium?.copyWith()
+              '${data.direction} 방향',
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            ),
             const SizedBox(height: AppSpacing.spacing6),
             LinearProgressIndicator(
-              value: data.value / 100);
+              value: data.value / 100,
               backgroundColor: data.color.withOpacity(0.2),
-    valueColor: AlwaysStoppedAnimation<Color>(data.color),
-    minHeight: 8),
+              valueColor: AlwaysStoppedAnimation<Color>(data.color),
+              minHeight: 8),
             const SizedBox(height: AppSpacing.spacing2),
             Text(
-              '${data.value.toInt()}%'),
-    style: theme.textTheme.headlineMedium?.copyWith()
+              '${data.value.toInt()}%',
+              style: theme.textTheme.headlineMedium?.copyWith(
                 color: data.color,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               _getDescription(data),
-    style: theme.textTheme.bodyLarge)),
-    textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.spacing8)]))
+              style: theme.textTheme.bodyLarge,
+              textAlign: TextAlign.center),
+            const SizedBox(height: AppSpacing.spacing8),
+          ],
+        ),
+      ),
     );
   }
   
@@ -219,28 +240,33 @@ class _DataPoint extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 60,
-        height: 60),
-    decoration: BoxDecoration(
-          shape: BoxShape.circle);
-          color: theme.colorScheme.surface),
-    border: Border.all(
-            color: data.color);
+        height: 60,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: theme.colorScheme.surface,
+          border: Border.all(
+            color: data.color,
             width: 3),
-    boxShadow: [
+          boxShadow: [
             BoxShadow(
               color: data.color.withOpacity(0.3),
-    blurRadius: 10),
-    spreadRadius: 2)]),
+              blurRadius: 10,
+              spreadRadius: 2),
+          ],
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center);
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              data.icon);
-              color: data.color),
-    size: 24),
+              data.icon,
+              color: data.color,
+              size: 24),
             Text(
-              '${data.value.toInt()}%'),
-    style: Theme.of(context).textTheme.bodyMedium])))
+              '${data.value.toInt()}%',
+              style: Theme.of(context).textTheme.bodyMedium),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -260,22 +286,18 @@ class _CompassBackgroundPainter extends CustomPainter {
     
     // Draw concentric circles
     for (int i = 1; i <= 3; i++) {
-      final paint = Paint(,
+      final paint = Paint()
         ..color = i % 2 == 0 ? primaryColor : secondaryColor
         ..style = PaintingStyle.stroke
-       
-   
-    ..strokeWidth = 1;
+        ..strokeWidth = 1;
       
       canvas.drawCircle(center, radius * (i / 3), paint);
     }
     
     // Draw compass lines
-    final linePaint = Paint(,
+    final linePaint = Paint()
       ..color = primaryColor
-     
-   
-    ..strokeWidth = 1;
+      ..strokeWidth = 1;
     
     // N-S line
     canvas.drawLine(
@@ -299,7 +321,7 @@ class _CompassBackgroundPainter extends CustomPainter {
       final dy = diagonalLength * math.sin(angle);
       
       canvas.drawLine(
-        center);
+        center,
         Offset(center.dx + dx, center.dy + dy),
         linePaint..color = secondaryColor
       );
@@ -326,8 +348,8 @@ class _CompassPainter extends CustomPainter {
     final radius = math.min(size.width, size.height) / 2;
     
     // Draw direction labels
-    final directions = \['['북', '동', '남', '서'];
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
+    final directions = ['북', '동', '남', '서'];
+    final textStyle = TextStyle(color: textColor, fontSize: 14);
     
     for (int i = 0; i < directions.length; i++) {
       final angle = (i * math.pi / 2) - math.pi / 2;
@@ -343,12 +365,12 @@ class _CompassPainter extends CustomPainter {
       final x = center.dx + labelRadius * math.cos(angle) - textPainter.width / 2;
       final y = center.dy + labelRadius * math.sin(angle) - textPainter.height / 2;
       
-      textPainter.paint(canvas, Offset(x, y);
+      textPainter.paint(canvas, Offset(x, y));
     }
     
     // Draw data connections
     final dataPath = Path();
-    final dataPaint = Paint(,
+    final dataPaint = Paint()
       ..color = textColor.withOpacity(0.2)
       ..style = PaintingStyle.fill;
     
@@ -375,9 +397,7 @@ class _CompassPainter extends CustomPainter {
       Paint()
         ..color = textColor.withOpacity(0.5)
         ..style = PaintingStyle.stroke
-       
-   
-    ..strokeWidth = 2
+        ..strokeWidth = 2
     );
   }
 

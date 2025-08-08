@@ -84,7 +84,8 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: AppDimensions.borderRadiusMedium),
+        borderRadius: AppDimensions.borderRadiusMedium,
+      ),
       child: Stack(
         fit: StackFit.expand,
         children: [

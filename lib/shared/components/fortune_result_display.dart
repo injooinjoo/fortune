@@ -78,7 +78,7 @@ class FortuneResultDisplay extends StatelessWidget {
                     colors: _getScoreGradientColors(fortune.overallScore!)),
                   boxShadow: [
                     BoxShadow(
-                      color: _getScoreGradientColors(fortune.overallScore!).first.withValues(alpha: 0.5),
+                      color: _getScoreGradientColors(fortune.overallScore!).first.withOpacity(0.5),
                       blurRadius: 20,
                       spreadRadius: 5)]),
                 child: Center(
@@ -96,10 +96,10 @@ class FortuneResultDisplay extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+                  color: theme.colorScheme.primary.withOpacity(0.3))),
               child: Text(
                 _getCategoryDisplayName(fortune.category ?? fortune.type),
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -126,7 +126,7 @@ class FortuneResultDisplay extends StatelessWidget {
                 child: Text(
                   fortune.description!,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    color: theme.colorScheme.onSurface.withOpacity(0.8),
                     height: 1.5)))],
 
             SizedBox(height: AppSpacing.spacing4),
@@ -135,7 +135,7 @@ class FortuneResultDisplay extends StatelessWidget {
             Text(
               '생성일: ${_formatDate(fortune.createdAt)}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))).animate()
+                color: theme.colorScheme.onSurface.withOpacity(0.6)))]))).animate()
         .fadeIn(duration: 500.ms)
         .slideY(begin: 0.1, end: 0);
   }
@@ -157,7 +157,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8)]),
+                      colors: [AppColors.primary.withOpacity(0.6), AppColors.primary.withOpacity(0.8)]),
                     borderRadius: AppDimensions.borderRadiusMedium),
                   child: const Icon(
                     Icons.analytics_rounded,
@@ -189,7 +189,7 @@ class FortuneResultDisplay extends StatelessWidget {
                                 Container(
                                   height: AppSpacing.spacing5,
                                   decoration: BoxDecoration(
-                                    color: AppColors.textSecondary.withValues(alpha: 0.3),
+                                    color: AppColors.textSecondary.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))),
                                 AnimatedContainer(
                                   duration: AppAnimations.durationLong * 2,
@@ -230,7 +230,7 @@ class FortuneResultDisplay extends StatelessWidget {
                     padding: AppSpacing.paddingAll8,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber.withValues(alpha: 0.6), Colors.amber.withValues(alpha: 0.8)]),
+                        colors: [Colors.amber.withOpacity(0.6), Colors.amber.withOpacity(0.8)]),
                       borderRadius: AppDimensions.borderRadiusMedium),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
@@ -263,11 +263,11 @@ class FortuneResultDisplay extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withValues(alpha: 0.1),
-                          theme.colorScheme.primary.withValues(alpha: 0.05)]),
+                          theme.colorScheme.primary.withOpacity(0.1),
+                          theme.colorScheme.primary.withOpacity(0.05)]),
                       borderRadius: AppDimensions.borderRadiusMedium,
                       border: Border.all(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+                        color: theme.colorScheme.primary.withOpacity(0.3))),
                     child: Row(
                       children: [
                         Icon(
@@ -313,7 +313,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)]),
+                      colors: [AppColors.success.withOpacity(0.6), AppColors.success.withOpacity(0.8)]),
                     borderRadius: AppDimensions.borderRadiusMedium),
                   child: const Icon(
                     Icons.tips_and_updates_rounded,
@@ -337,7 +337,7 @@ class FortuneResultDisplay extends StatelessWidget {
                       width: 24,
                       height: AppSpacing.spacing6,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         shape: BoxShape.circle),
                       child: Center(
                         child: Text(
@@ -381,21 +381,21 @@ class FortuneResultDisplay extends StatelessWidget {
 
   List<Color> _getScoreGradientColors(int score) {
     if (score >= 80) {
-      return [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)];
+      return [AppColors.success.withOpacity(0.6), AppColors.success.withOpacity(0.8)];
     } else if (score >= 60) {
-      return [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8)];
+      return [AppColors.primary.withOpacity(0.6), AppColors.primary.withOpacity(0.8)];
     } else if (score >= 40) {
-      return [AppColors.warning.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.8)];
+      return [AppColors.warning.withOpacity(0.6), AppColors.warning.withOpacity(0.8)];
     } else {
-      return [AppColors.error.withValues(alpha: 0.6), AppColors.error.withValues(alpha: 0.8)];
+      return [AppColors.error.withOpacity(0.6), AppColors.error.withOpacity(0.8)];
     }
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.success.withValues(alpha: 0.8);
-    if (score >= 60) return AppColors.primary.withValues(alpha: 0.8);
-    if (score >= 40) return AppColors.warning.withValues(alpha: 0.8);
-    return AppColors.error.withValues(alpha: 0.8);
+    if (score >= 80) return AppColors.success.withOpacity(0.8);
+    if (score >= 60) return AppColors.primary.withOpacity(0.8);
+    if (score >= 40) return AppColors.warning.withOpacity(0.8);
+    return AppColors.error.withOpacity(0.8);
   }
 
   IconData _getLuckyItemIcon(String type) {

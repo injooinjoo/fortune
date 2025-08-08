@@ -79,8 +79,8 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           
           // Type Grid
           Text(
-            '운세 유형 선택',),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith()
+            '운세 유형 선택',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           _buildTypeGrid(),
@@ -108,10 +108,12 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           colors: [
             Color(0xFF10B981).withOpacity(0.1),
             Color(0xFFE91E63).withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFF10B981).withOpacity(0.3),
-          width: 1)),
+          width: 1,
+        ),
+      ),
       child: Column(
         children: [
           Icon(
@@ -120,7 +122,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
             color: Color(0xFF10B981)),
           const SizedBox(height: 12),
           Text(
-            '건강 & 운동',),
+            '건강 & 운동',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -260,7 +262,9 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
         borderRadius: BorderRadius.circular(16))),
         border: Border.all(
           color: _selectedType.gradientColors[0].withOpacity(0.3),
-          width: 1)),
+          width: 1,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

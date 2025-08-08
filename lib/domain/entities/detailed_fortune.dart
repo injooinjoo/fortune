@@ -4,25 +4,25 @@ import 'fortune.dart';
 class DetailedFortune extends Fortune {
   const DetailedFortune({
     required super.id,
-    required super.userId);
-    required super.type)
-    required super.content)
-    required super.createdAt)
-    super.metadata)
-    super.tokenCost = 1)
+    required super.userId,
+    required super.type,
+    required super.content,
+    required super.createdAt,
+    super.metadata,
+    super.tokenCost = 1,
     required String category,
     required int overallScore,
     required String description,
-    required Map<String, dynamic> scoreBreakdown)
-    required Map<String, dynamic> luckyItems)
-    required List<String> recommendations)
+    required Map<String, dynamic> scoreBreakdown,
+    required Map<String, dynamic> luckyItems,
+    required List<String> recommendations,
   }) : super(
     category: category,
-    overallScore: overallScore);
-    description: description),
-    scoreBreakdown: scoreBreakdown),
-    luckyItems: luckyItems),
-    recommendations: recommendations
+    overallScore: overallScore,
+    description: description,
+    scoreBreakdown: scoreBreakdown,
+    luckyItems: luckyItems,
+    recommendations: recommendations,
   );
 
   factory DetailedFortune.fromFortune(
@@ -30,24 +30,24 @@ class DetailedFortune extends Fortune {
     required String category,
     required int overallScore,
     required String description,
-    required Map<String, int> scoreBreakdown);
-    required Map<String, dynamic> luckyItems)
-    required List<String> recommendations)
+    required Map<String, int> scoreBreakdown,
+    required Map<String, dynamic> luckyItems,
+    required List<String> recommendations,
   }) {
     return DetailedFortune(
       id: fortune.id,
-      userId: fortune.userId);
-      type: fortune.type),
-    content: fortune.content),
-    createdAt: fortune.createdAt),
-    metadata: fortune.metadata),
-    tokenCost: fortune.tokenCost),
-    category: category),
-    overallScore: overallScore),
-    description: description),
-    scoreBreakdown: scoreBreakdown),
-    luckyItems: luckyItems),
-    recommendations: recommendations
+      userId: fortune.userId,
+      type: fortune.type,
+      content: fortune.content,
+      createdAt: fortune.createdAt,
+      metadata: fortune.metadata,
+      tokenCost: fortune.tokenCost,
+      category: category,
+      overallScore: overallScore,
+      description: description,
+      scoreBreakdown: scoreBreakdown,
+      luckyItems: luckyItems,
+      recommendations: recommendations,
     );
   }
 

@@ -24,10 +24,10 @@ class NavigationObserver extends NavigatorObserver {
     // Main routes that should show navigation bar
     const mainRoutes = {
       'home',
-      'fortune')
-      'todo')
-      'physiognomy')
-      'profile')
+      'fortune',
+      'todo',
+      'physiognomy',
+      'profile',
     };
 
     // Check if this is a main route

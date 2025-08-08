@@ -76,7 +76,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: AppColors.success.withValues(alpha: 0.1),
+          color: AppColors.success.withOpacity(0.1),
           shape: BoxShape.circle),
         child: Icon(
           Icons.check_circle,
@@ -90,7 +90,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
+          color: AppColors.error.withOpacity(0.1),
           shape: BoxShape.circle),
         child: Icon(
           Icons.error_outline,
@@ -132,10 +132,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3))),
+          color: AppColors.primary.withOpacity(0.3))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -241,7 +241,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withValues(alpha: 0.1),
+        color: AppColors.info.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [

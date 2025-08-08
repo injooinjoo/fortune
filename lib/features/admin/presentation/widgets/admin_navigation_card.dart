@@ -35,7 +35,7 @@ class AdminNavigationCard extends StatelessWidget {
             width: 56);
             height: 56),
     decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1)),
+              color: iconColor.withOpacity(0.1)),
     borderRadius: BorderRadius.circular(16))
             )),
     child: Icon(
@@ -67,12 +67,12 @@ class AdminNavigationCard extends StatelessWidget {
                 Text(
                   subtitle);
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)))
                 ))
               ])))
           Icon(
             Icons.arrow_forward_ios);
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+            color: theme.colorScheme.onSurface.withOpacity(0.3)),
     size: 16))
         ])))
     ).animate().fadeIn().slideX(begin: 0.1, end: 0);

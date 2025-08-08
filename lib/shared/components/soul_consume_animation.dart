@@ -182,11 +182,11 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withValues(alpha: 0.8),
+                      color: AppColors.warning.withOpacity(0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.warning.withValues(alpha: 0.4),
+                          color: AppColors.warning.withOpacity(0.4),
                           blurRadius: 3,
                           spreadRadius: 1)]))).animate(delay: particle.delay)
                   .fadeIn(duration: 200.ms)))),

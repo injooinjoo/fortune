@@ -237,7 +237,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -279,11 +279,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.amber.withValues(alpha: 0.1),
-                  Colors.orange.withValues(alpha: 0.1)]),
+                  Colors.amber.withOpacity(0.1),
+                  Colors.orange.withOpacity(0.1)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.amber.withValues(alpha: 0.2))),
+                color: Colors.amber.withOpacity(0.2))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -360,7 +360,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -421,7 +421,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -477,7 +477,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                     gradient: LinearGradient(
                                       colors: [
                                         AppColors.primary,
-                                        AppColors.primary.withValues(alpha: 0.7)],
+                                        AppColors.primary.withOpacity(0.7)],
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter),
                                     width: 24,
@@ -494,7 +494,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -547,7 +547,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -615,7 +615,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -632,7 +632,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12)),
                       child: Text(
                         '평균 ${stats.averageFortuneScore.toStringAsFixed(1)}점',
@@ -703,15 +703,15 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           gradient: LinearGradient(
                             colors: [
                               AppColors.primary,
-                              AppColors.primary.withValues(alpha: 0.7)]),
+                              AppColors.primary.withOpacity(0.7)]),
                           barWidth: 3,
                           dotData: FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.primary.withValues(alpha: 0.3),
-                                AppColors.primary.withValues(alpha: 0.1)],
+                                AppColors.primary.withOpacity(0.3),
+                                AppColors.primary.withOpacity(0.1)],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter)))])))])),
           
@@ -764,11 +764,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.primary.withValues(alpha: 0.05)]),
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.primary.withOpacity(0.05)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.2))),
+                color: AppColors.primary.withOpacity(0.2))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -807,7 +807,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(
@@ -818,7 +818,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8)),
                 child: Icon(icon, color: color, size: 20)),
               const SizedBox(width: 8),
@@ -841,7 +841,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isUnlocked ? Colors.amber.withValues(alpha: 0.2) : AppColors.divider,
+        color: isUnlocked ? Colors.amber.withOpacity(0.2) : AppColors.divider,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isUnlocked ? Colors.amber : AppColors.divider)),
@@ -899,7 +899,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(

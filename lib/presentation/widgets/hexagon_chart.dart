@@ -14,8 +14,7 @@ class HexagonChart extends StatelessWidget {
   final bool showValues;
   final bool animate;
 
-  const HexagonChart(
-    {
+  const HexagonChart({
     Key? key,
     required this.scores,
     this.size = 200,
@@ -23,7 +22,7 @@ class HexagonChart extends StatelessWidget {
     this.backgroundColor,
     this.labelStyle,
     this.showValues = true,
-    this.animate = true)}) : super(key: key);
+    this.animate = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +34,13 @@ class HexagonChart extends StatelessWidget {
     return SizedBox(
       width: size * 1.5,
       height: size * 1.5,
-      child: CustomPaint(,
-      painter: HexagonChartPainter(,
-      scores: scores,
+      child: CustomPaint(
+        painter: HexagonChartPainter(
+          scores: scores,
           primaryColor: effectivePrimaryColor,
           backgroundColor: effectiveBackgroundColor,
           labelStyle: effectiveLabelStyle,
-          showValues: showValues))))
+          showValues: showValues)));
   }
 }
 
@@ -52,13 +51,12 @@ class HexagonChartPainter extends CustomPainter {
   final TextStyle labelStyle;
   final bool showValues;
 
-  HexagonChartPainter(
-    {
+  HexagonChartPainter({
     required this.scores,
     required this.primaryColor,
     required this.backgroundColor,
     required this.labelStyle,
-    required this.showValues)});
+    required this.showValues});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -66,9 +64,7 @@ class HexagonChartPainter extends CustomPainter {
     final radius = size.width / 3;
     final paint = Paint()
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 2.0;
+      ..strokeWidth = 2.0;
 
     // Draw background hexagon grid
     _drawBackgroundGrid(canvas, center, radius, paint);
@@ -96,7 +92,8 @@ class HexagonChartPainter extends CustomPainter {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
       final endPoint = Offset(
         center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle);
+        center.dy + radius * math.sin(angle),
+      );
       canvas.drawLine(center, endPoint, paint);
     }
   }
@@ -109,7 +106,8 @@ class HexagonChartPainter extends CustomPainter {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
       final point = Offset(
         center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle);
+        center.dy + radius * math.sin(angle),
+      );
       
       if (i == 0) {
         path.moveTo(point.dx, point.dy);
@@ -125,16 +123,12 @@ class HexagonChartPainter extends CustomPainter {
     final path = Path();
     final paint = Paint()
       ..style = PaintingStyle.fill
-     
-   
-    ..color = primaryColor.withOpacity(0.3);
+      ..color = primaryColor.withOpacity(0.3);
     
     final strokePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
-     
-   
-    ..color = primaryColor;
+      ..color = primaryColor;
 
     final labels = scores.keys.toList();
     final points = <Offset>[];
@@ -146,7 +140,7 @@ class HexagonChartPainter extends CustomPainter {
       final distance = radius * (score / 100);
       final point = Offset(
         center.dx + distance * math.cos(angle),
-        center.dy + distance * math.sin(angle);
+        center.dy + distance * math.sin(angle));
       
       points.add(point);
       
@@ -166,9 +160,7 @@ class HexagonChartPainter extends CustomPainter {
     // Draw dots at vertices
     final dotPaint = Paint()
       ..style = PaintingStyle.fill
-     
-   
-    ..color = primaryColor;
+      ..color = primaryColor;
     
     for (final point in points.take(labels.length)) {
       canvas.drawCircle(point, 5, dotPaint);
@@ -185,34 +177,32 @@ class HexagonChartPainter extends CustomPainter {
       final labelRadius = radius + 30;
       final labelCenter = Offset(
         center.dx + labelRadius * math.cos(angle),
-        center.dy + labelRadius * math.sin(angle))
+        center.dy + labelRadius * math.sin(angle));
 
       // Draw label
       textPainter.text = TextSpan(
         text: labels[i],
-      style: labelStyle);
+        style: labelStyle);
       textPainter.layout();
       
       final offset = Offset(
-        labelCenter.dx - textPainter.width / 2);
-        labelCenter.dy - textPainter.height / 2
-      );
+        labelCenter.dx - textPainter.width / 2,
+        labelCenter.dy - textPainter.height / 2);
       textPainter.paint(canvas, offset);
 
       // Draw value if enabled
       if (showValues) {
         final score = scores[labels[i]] ?? 0;
         textPainter.text = TextSpan(
-          text: '$score'),
-        style: labelStyle.copyWith(,
-      fontWeight: FontWeight.bold),
-        color: primaryColor)))
+          text: '$score',
+          style: labelStyle.copyWith(
+            fontWeight: FontWeight.bold,
+            color: primaryColor));
         textPainter.layout();
         
         final valueOffset = Offset(
-          labelCenter.dx - textPainter.width / 2);
-          labelCenter.dy - textPainter.height / 2 + 15
-        );
+          labelCenter.dx - textPainter.width / 2,
+          labelCenter.dy - textPainter.height / 2 + 15);
         textPainter.paint(canvas, valueOffset);
       }
     }

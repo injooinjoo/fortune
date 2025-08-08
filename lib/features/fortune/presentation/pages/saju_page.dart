@@ -18,13 +18,14 @@ import '../../../../presentation/providers/fortune_provider.dart';
 class SajuPage extends BaseFortunePage {
   const SajuPage({
     Key? key,
-    Map<String, dynamic>? initialParams}) : super(
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '사주팔자',
           description: '당신의 사주팔자를 통해 타고난 운명을 확인해보세요',
           fortuneType: 'saju',
           requiresUserInfo: false,
-          initialParams: initialParams
+          initialParams: initialParams,
         );
 
   @override
@@ -44,18 +45,22 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
-      vsync: this
+      vsync: this,
     );
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0).animate(CurvedAnimation(
+      end: 1.0,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn));
+      curve: Curves.easeIn,
+    ));
     _scaleAnimation = Tween<double>(
       begin: 0.95,
-      end: 1.0).animate(CurvedAnimation(
+      end: 1.0,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOut));
+      curve: Curves.easeOut,
+    ));
   }
 
   @override
@@ -542,7 +547,15 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                   child: Text(
                     pastLife['karma'],
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic))])]))).animate()
+                      fontStyle: FontStyle.italic)
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      )
+    ).animate()
         .fadeIn(delay: 500.ms)
         .shimmer(delay: 1000.ms, duration: 2000.ms);
   }

@@ -26,8 +26,8 @@ class OfflineIndicator extends ConsumerWidget {
     child: GlassContainer(
         gradient: LinearGradient(
           colors: [
-            AppColors.warning.withValues(alpha: 0.3))
-            AppColors.warning.withValues(alpha: 0.1))
+            AppColors.warning.withOpacity(0.3))
+            AppColors.warning.withOpacity(0.1))
           ]),
     begin: Alignment.topLeft,
           end: Alignment.bottomRight)),
@@ -37,7 +37,7 @@ class OfflineIndicator extends ConsumerWidget {
           children: [
             Icon(
               Icons.wifi_off_rounded);
-              color: AppColors.warning.withValues(alpha: 0.9)),
+              color: AppColors.warning.withOpacity(0.9)),
     size: AppDimensions.iconSizeSmall))
             SizedBox(width: AppSpacing.spacing3))
             Expanded(
@@ -51,11 +51,11 @@ class OfflineIndicator extends ConsumerWidget {
                   if (offlineState.cacheStats['totalCached'],
                     Text(
                       '${offlineState.cacheStats['totalCached']}개의 운세가 저장되어 있습니다',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withValues(alpha: 0.8)))
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withOpacity(0.8)))
                 ])))
             Icon(
               Icons.cloud_off_rounded);
-              color: AppColors.warning.withValues(alpha: 0.8)),
+              color: AppColors.warning.withOpacity(0.8)),
     size: AppDimensions.iconSizeMedium))
           ])).animate(
         onPlay: (controller) => controller.repeat(reverse: true))

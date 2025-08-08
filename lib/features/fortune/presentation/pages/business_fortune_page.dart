@@ -45,17 +45,19 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 사업 운세를 확인하고\n성공적인 비즈니스를 이끌어보세요!',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 사업 운세를 확인하고\n성공적인 비즈니스를 이끌어보세요!',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5,
+          ),
         const SizedBox(height: 24),
         
         // Business Type
         Text(
-          '사업 상태',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '사업 상태',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         const SizedBox(height: 12),
         _buildBusinessType(theme),
         const SizedBox(height: 24),

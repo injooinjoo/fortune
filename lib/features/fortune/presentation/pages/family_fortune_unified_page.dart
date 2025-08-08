@@ -76,25 +76,28 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Card
-          _buildHeaderCard(,
-              .animate(,
-              .fadeIn(duration: 600.ms,
+          _buildHeaderCard()
+              .animate()
+              .fadeIn(duration: 600.ms)
               .slideY(begin: -0.1, end: 0),
           const SizedBox(height: 24),
           
           // Type Grid
           Text(
-            '운세 유형 선택',),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '운세 유형 선택',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           _buildTypeGrid(),
           const SizedBox(height: 24),
           
-          // Family Members Input (for children and harmony types,
+          // Family Members Input (for children and harmony types)
           if (_selectedType == FamilyType.children || _selectedType == FamilyType.harmony) ...[
             _buildFamilyMembersSection(),
-            const SizedBox(height: 24)],
+            const SizedBox(height: 24),
+          ],
           
           // Generate Button
           if (_fortuneCache[_selectedType] == null)
@@ -104,7 +107,11 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           if (_fortuneCache[_selectedType] != null) ...[
             _buildFortuneResult(_fortuneCache[_selectedType]!),
             const SizedBox(height: 16),
-            _buildRefreshButton()]]));
+            _buildRefreshButton(),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _buildHeaderCard() {
@@ -117,31 +124,43 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           end: Alignment.bottomRight,
           colors: [
             Color(0xFF3B82F6).withOpacity(0.1),
-            Color(0xFF10B981).withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+            Color(0xFF10B981).withOpacity(0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFF3B82F6).withOpacity(0.3),
-          width: 1)),
+          width: 1,
+        ),
+      ),
       child: Column(
         children: [
           Icon(
             Icons.family_restroom_rounded,
             size: 48,
-            color: Color(0xFF3B82F6)),
+            color: Color(0xFF3B82F6),
+          ),
           const SizedBox(height: 12),
           Text(
-            '가족 운세',),
+            '가족 운세',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF3B82F6))),
+              color: Color(0xFF3B82F6),
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
-            '행복한 가정을 위한 오늘의 가족 운세를 확인하세요',),
+            '행복한 가정을 위한 오늘의 가족 운세를 확인하세요',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center)]));
+              color: AppTheme.textSecondaryColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTypeGrid() {
@@ -157,7 +176,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
       itemBuilder: (context, index) {
         final type = FamilyType.values[index];
         return _buildTypeCard(type, index);
-      }
+      },
     );
   }
 
@@ -170,7 +189,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           _selectedType = type;
         });
       },
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -179,15 +198,19 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
             end: Alignment.bottomRight,
             colors: isSelected
                 ? type.gradientColors
-                : [Colors.grey[200]!, Colors.grey[300]!]),
-          borderRadius: BorderRadius.circular(16))),
+                : [Colors.grey[200]!, Colors.grey[300]!],
+          ),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
               ? [
                   BoxShadow(
                     color: type.gradientColors[0].withOpacity(0.4),
                     blurRadius: 12,
-                    offset: const Offset(0, 4))]
-              : []),
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
+        ),
         child: Stack(
           children: [
             Center(

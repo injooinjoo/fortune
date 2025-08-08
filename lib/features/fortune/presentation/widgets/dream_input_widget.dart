@@ -37,21 +37,21 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),;
+      duration: const Duration(seconds: 2));
     _animationController.repeat();
     
     _textController.addListener(() {
       setState(() {
         _hasText = _textController.text.trim().isNotEmpty;
-});
-});
+      });
+    });
     
     _initializeSpeechService();
 }
   
   Future<void> _initializeSpeechService() async {
     await _speechService.initialize();
-}
+  }
   
   @override
   void dispose() {
@@ -60,7 +60,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     _speechService.dispose();
     _animationController.dispose();
     super.dispose();
-}
+  }
   
   void _sendMessage() {
     final text = _textController.text.trim();
@@ -71,19 +71,19 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     _textController.clear();
     
     widget.onSendPressed?.call();
-}
+  }
   
   void _toggleVoiceMode() {
     HapticUtils.lightImpact();
     setState(() {
       _isVoiceMode = !_isVoiceMode;
-});
+    });
     
     if (_isVoiceMode) {
       _startListening();
-} else {
+    } else {
       _stopListening();
-}
+    }
   }
   
   Future<void> _startListening() async {
@@ -93,10 +93,10 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
       onResult: (text) {
         if (text.isNotEmpty) {
           _textController.text = text;
-}
-      }
+        }
+      },
     );
-}
+  }
   
   Future<void> _stopListening() async {
     await _speechService.stopListening();
@@ -105,7 +105,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     // Send the message if there's text
     if (_textController.text.trim().isNotEmpty) {
       _sendMessage();
-}
+    }
   }
   
   @override
@@ -133,7 +133,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
             if (chatState.isListening) _buildVoiceListeningIndicator(theme),
             GlassContainer(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              borderRadius: BorderRadius.circular(AppSpacing.spacing7))),
+              borderRadius: BorderRadius.circular(AppSpacing.spacing7),
               blur: 20,
               gradient: LinearGradient(
                 colors: [
@@ -151,28 +151,28 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       controller: _textController,
                       focusNode: _focusNode,
                       enabled: widget.enabled && !_isVoiceMode,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                      style: Theme.of(context).textTheme.bodyMedium,
                       decoration: InputDecoration(
                         hintText: _isVoiceMode 
                             ? '음성으로 말씀해주세요...' 
                             : '꿈 이야기를 입력하세요...',
                         hintStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withOpacity(0.5)),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.spacing0,
-                          vertical: AppSpacing.spacing3),
+                          vertical: AppSpacing.spacing3)),
                       maxLines: null,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _sendMessage()),
+                      onSubmitted: (_) => _sendMessage())),
                   
                   // Send button
-                  _buildSendButton(theme)]),
+                  _buildSendButton(theme)])),
             const SizedBox(height: AppSpacing.spacing2),
             
             // Quick response buttons
-            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme)])).animate().fadeIn().slideY(begin: 0.2, end: 0)
-}
+            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme)]))).animate().fadeIn().slideY(begin: 0.2, end: 0);
+  }
   
   Widget _buildVoiceButton(ThemeData theme) {
     return GestureDetector(
@@ -187,17 +187,16 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               ? LinearGradient(
                   colors: [
                     Colors.red.withOpacity(0.6),
-                    Colors.red.withOpacity(0.8)],
-                ,
+                    Colors.red.withOpacity(0.8)])
               : LinearGradient(
                   colors: [
                     Colors.deepPurple.withOpacity(0.3),
-                    Colors.deepPurple.withOpacity(0.3)]),
+                    Colors.deepPurple.withOpacity(0.3)]))
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
           color: Colors.white,
-          size: 24));
-}
+          size: 24)));
+  }
   
   Widget _buildSendButton(ThemeData theme) {
     final canSend = _hasText && widget.enabled && !_isVoiceMode;
@@ -214,17 +213,16 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               ? LinearGradient(
                   colors: [
                     Colors.deepPurple.withOpacity(0.6),
-                    Colors.deepPurple.withOpacity(0.8)],
-                ,
+                    Colors.deepPurple.withOpacity(0.8)])
               : LinearGradient(
                   colors: [
                     Colors.grey.withOpacity(0.9).withOpacity(0.3),
-                    Colors.grey.withOpacity(0.87).withOpacity(0.3)]),
+                    Colors.grey.withOpacity(0.87).withOpacity(0.3)]))
         child: Icon(
           Icons.send_rounded,
           color: canSend ? Colors.white : Colors.white30,
-          size: 20),;
-}
+          size: 20)));
+  }
   
   Widget _buildVoiceListeningIndicator(ThemeData theme) {
     return Container(
@@ -241,7 +239,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               size: 20),
             const SizedBox(width: AppSpacing.spacing2),
             Text(
-              '듣고 있습니다...',),
+              '듣고 있습니다...',
               style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(width: AppSpacing.spacing2),
             ValueListenableBuilder<String>(
@@ -251,10 +249,10 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                   return Flexible(
                     child: Text(
                       text,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                      style: Theme.of(context).textTheme.bodyMedium,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis);
-}
+                      overflow: TextOverflow.ellipsis));
+                }
                 return Row(
                   children: List.generate(3, (index) {
                     return Container(
@@ -263,21 +261,25 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       height: 4,
                       decoration: BoxDecoration(
                         color: Colors.white60,
-                        shape: BoxShape.circle),.animate(
-                      onPlay: (controller) => controller.repeat(),.scale(
-                      duration: 600.ms,
-                      delay: Duration(milliseconds: index * 200),
-                      begin: const Offset(0.5, 0.5),
-                      end: const Offset(1.5, 1.5),.then().scale(
-                      duration: 600.ms,
-                      begin: const Offset(1.5, 1.5),
-                      end: const Offset(0.5, 0.5),;
-});
-})])).animate()
-                  .fadeIn(,
-        .slideY(begin: -0.2, end: 0,
-        .scale(begin: const Offset(0.95, 0.95);
-}
+                        shape: BoxShape.circle))
+                      .animate(
+                        onPlay: (controller) => controller.repeat())
+                      .scale(
+                        duration: 600.ms,
+                        delay: Duration(milliseconds: index * 200),
+                        begin: const Offset(0.5, 0.5),
+                        end: const Offset(1.5, 1.5))
+                      .then()
+                      .scale(
+                        duration: 600.ms,
+                        begin: const Offset(1.5, 1.5),
+                        end: const Offset(0.5, 0.5));
+                  });
+                })])).animate()
+        .fadeIn()
+        .slideY(begin: -0.2, end: 0)
+        .scale(begin: const Offset(0.95, 0.95));
+  }
   
   Widget _buildQuickResponses(ThemeData theme) {
     // Show quick responses based on conversation state
@@ -300,7 +302,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         '혼란스러웠어요'];
 }
     
-    if (quickResponses.isEmpty) return const SizedBox.shrink()
+    if (quickResponses.isEmpty) return const SizedBox.shrink();
     
     return SizedBox(
       height: 36,
@@ -316,20 +318,20 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               HapticUtils.lightImpact();
               _textController.text = response;
               _sendMessage();
-},
+            },
             child: GlassContainer(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              borderRadius: BorderRadius.circular(AppSpacing.spacing4 * 1.125))),
+              borderRadius: BorderRadius.circular(AppSpacing.spacing4 * 1.125),
               gradient: LinearGradient(
                 colors: [
                   Colors.deepPurple.withOpacity(0.3),
                   Colors.deepPurple.withOpacity(0.3)]),
               child: Text(
                 response,
-                style: Theme.of(context).textTheme.bodyMedium)
-          );
-}),.animate()
-                  .fadeIn(delay: 300.ms,
+                style: Theme.of(context).textTheme.bodyMedium)));
+        }))
+      .animate()
+        .fadeIn(delay: 300.ms)
         .slideY(begin: 0.2, end: 0);
-}
+  }
 }

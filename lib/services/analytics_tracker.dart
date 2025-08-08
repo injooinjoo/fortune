@@ -29,7 +29,7 @@ class AnalyticsTracker {
     
     // 사용자 ID 설정
     if (userId != null) {
-      await _analytics.setUserId(id: userId);
+      await _analytics.setUserProperties(userId: userId);
       await _abTestManager.setUserId(userId);
     }
     
@@ -37,8 +37,8 @@ class AnalyticsTracker {
     await trackEvent(
       eventName: ABTestEvents.sessionStarted,
       parameters: {
-        'session_id': DateTime.now().millisecondsSinceEpoch.toString())
-      }
+        'session_id': DateTime.now().millisecondsSinceEpoch.toString(),
+      },
     );
   }
   
@@ -46,8 +46,8 @@ class AnalyticsTracker {
   Future<void> trackScreenView({
     required String screenName,
     String? screenClass,
-    String? previousScreen);
-    Map<String, dynamic>? parameters)
+    String? previousScreen,
+    Map<String, dynamic>? parameters,
   }) async {
     // 이전 화면 저장
     final String? fromScreen = _currentScreen;
@@ -56,7 +56,7 @@ class AnalyticsTracker {
     // 사용자 동선에 추가
     _userJourney.add(screenName);
     
-    // 화면 체류 시간 계산 (이전 화면이 있을 경우,
+    // 화면 체류 시간 계산 (이전 화면이 있을 경우)
     if (fromScreen != null && _sessionData['${fromScreen}_enter_time'] != null) {
       final enterTime = _sessionData['${fromScreen}_enter_time'] as DateTime;
       final duration = DateTime.now().difference(enterTime).inSeconds;
@@ -65,8 +65,9 @@ class AnalyticsTracker {
         eventName: ABTestEvents.screenLoadTime,
         parameters: {
           'screen_name': fromScreen,
-          'duration_seconds': duration)
-        });
+          'duration_seconds': duration,
+        },
+      );
     }
     
     // 현재 화면 진입 시간 기록
@@ -75,40 +76,41 @@ class AnalyticsTracker {
     // Analytics에 화면 조회 로깅
     await _analytics.logScreenView(
       screenName: screenName,
-      screenClass: screenClass);
+      screenClass: screenClass,
+    );
     
     // A/B Test Manager에도 로깅
     await _abTestManager.logScreenView(
-      screenName: screenName);
-      screenClass: screenClass),
-    additionalParams: {
+      screenName: screenName,
+      screenClass: screenClass,
+      additionalParams: {
         'from_screen': fromScreen,
-        'journey_depth': _userJourney.length)
-        ...?parameters)
-      }
+        'journey_depth': _userJourney.length,
+        ...?parameters,
+      },
     );
     
-    Logger.debug('Fortune cached');
+    Logger.debug('Screen view tracked: $screenName');
   }
   
-  /// 이벤트 추적 (통합,
+  /// 이벤트 추적 (통합)
   Future<void> trackEvent({
     required String eventName,
-    Map<String, dynamic>? parameters)
+    Map<String, dynamic>? parameters,
   }) async {
     final enrichedParams = {
       ...?parameters,
       'current_screen': _currentScreen,
-      'journey_depth': _userJourney.length)
+      'journey_depth': _userJourney.length,
       'session_duration': _sessionStartTime != null 
         ? DateTime.now().difference(_sessionStartTime!).inSeconds 
-        : 0)
+        : 0,
     };
     
     // 두 서비스에 모두 로깅
     await Future.wait([
       _analytics.logEvent(eventName, parameters: enrichedParams),
-      _abTestManager.logEvent(eventName: eventName, parameters: enrichedParams))
+      _abTestManager.logEvent(eventName: eventName, parameters: enrichedParams),
     ]);
   }
   
@@ -116,17 +118,17 @@ class AnalyticsTracker {
   Future<void> trackUserAction({
     required String action,
     String? target,
-    String? value);
-    Map<String, dynamic>? parameters)
+    String? value,
+    Map<String, dynamic>? parameters,
   }) async {
     await trackEvent(
       eventName: 'user_action',
       parameters: {
         'action': action,
-        'target': target)
-        'value': value)
-        ...?parameters)
-      }
+        'target': target,
+        'value': value,
+        ...?parameters,
+      },
     );
   }
   
@@ -135,20 +137,20 @@ class AnalyticsTracker {
     required String conversionType,
     required dynamic value,
     String? currency,
-    Map<String, dynamic>? parameters)
+    Map<String, dynamic>? parameters,
   }) async {
     // 전환까지의 사용자 동선
     final journey = _userJourney.join(' → ');
     
     await _abTestManager.logConversion(
       conversionType: conversionType,
-      value: value);
-      currency: currency),
-    additionalParams: {
-        ...?parameters)
+      value: value,
+      currency: currency,
+      additionalParams: {
+        ...?parameters,
         'user_journey': journey,
-        'journey_steps': _userJourney.length)
-      }
+        'journey_steps': _userJourney.length,
+      },
     );
   }
   
@@ -157,16 +159,16 @@ class AnalyticsTracker {
     required String funnelName,
     required int step,
     required String stepName,
-    Map<String, dynamic>? parameters)
+    Map<String, dynamic>? parameters,
   }) async {
     await _abTestManager.logFunnelStep(
       funnelName: funnelName,
-      step: step);
-      stepName: stepName),
-    additionalParams: {
-        ...?parameters)
-        'previous_steps': _userJourney.take(5).join(' → '))
-      }
+      step: step,
+      stepName: stepName,
+      additionalParams: {
+        ...?parameters,
+        'previous_steps': _userJourney.take(5).join(' → '),
+      },
     );
   }
   
@@ -175,23 +177,26 @@ class AnalyticsTracker {
     required String errorType,
     required String errorMessage,
     String? errorCode,
-    Map<String, dynamic>? parameters)
+    Map<String, dynamic>? parameters,
   }) async {
     await Future.wait([
       _analytics.logError(
         errorType: errorType,
-        errorMessage: errorMessage);
-        screen: _currentScreen),
-    additionalParams: parameters))
+        errorMessage: errorMessage,
+        screen: _currentScreen,
+        additionalParams: parameters,
+      ),
       _abTestManager.logError(
-        errorType: errorType);
-        errorMessage: errorMessage),
-    errorCode: errorCode),
-    additionalParams: {
-          ...?parameters)
+        errorType: errorType,
+        errorMessage: errorMessage,
+        errorCode: errorCode,
+        additionalParams: {
+          ...?parameters,
           'error_screen': _currentScreen,
-          'user_journey': _userJourney.take(5).join(' → '))
-        })]);
+          'user_journey': _userJourney.take(5).join(' → '),
+        },
+      ),
+    ]);
   }
   
   /// 성능 추적
@@ -199,48 +204,88 @@ class AnalyticsTracker {
     required String metricName,
     required double value,
     String? unit,
-    Map<String, dynamic>? parameters)
+    Map<String, dynamic>? parameters,
   }) async {
-    await _abTestManager.logPerformance(
-      metricName: metricName,
-      value: value);
-      unit: unit),
-    additionalParams: {
-        ...?parameters)
-        'screen': _currentScreen)
-      }
+    await trackEvent(
+      eventName: 'performance_metric',
+      parameters: {
+        'metric_name': metricName,
+        'value': value,
+        'unit': unit,
+        ...?parameters,
+      },
     );
   }
   
   /// 사용자 속성 설정
   Future<void> setUserProperties({
     String? userId,
-    bool? isPremium);
-    String? userType)
-    String? gender)
-    String? birthYear)
-    String? mbti)
-    Map<String, String>? customProperties)
+    bool? isPremium,
+    String? userType,
+    String? gender,
+    String? birthYear,
+    String? mbti,
   }) async {
-    // Analytics Service에 설정
     await _analytics.setUserProperties(
       userId: userId,
-      isPremium: isPremium);
-      userType: userType),
-    gender: gender),
-    birthYear: birthYear
+      isPremium: isPremium,
+      userType: userType,
+      gender: gender,
+      birthYear: birthYear,
     );
     
-    // A/B Test Manager에 추가 속성 설정
-    final properties = <String, String>{};
-    if (isPremium != null) properties['is_premium'] = isPremium.toString()
+    // A/B Test Manager에도 사용자 속성 설정
+    if (userId != null) {
+      await _abTestManager.setUserId(userId);
+    }
+    
+    final properties = <String, dynamic>{};
+    if (isPremium != null) properties['is_premium'] = isPremium;
     if (userType != null) properties['user_type'] = userType;
     if (gender != null) properties['gender'] = gender;
     if (birthYear != null) properties['birth_year'] = birthYear;
     if (mbti != null) properties['mbti'] = mbti;
-    if (customProperties != null) properties.addAll(customProperties)
     
-    await _abTestManager.setUserProperties(properties);
+    if (properties.isNotEmpty) {
+      await _abTestManager.setUserProperties(properties);
+    }
+  }
+  
+  /// 세션 종료
+  Future<void> endSession() async {
+    // 마지막 화면 체류 시간 계산
+    if (_currentScreen != null && _sessionData['${_currentScreen}_enter_time'] != null) {
+      final enterTime = _sessionData['${_currentScreen}_enter_time'] as DateTime;
+      final duration = DateTime.now().difference(enterTime).inSeconds;
+      
+      await trackEvent(
+        eventName: ABTestEvents.screenLoadTime,
+        parameters: {
+          'screen_name': _currentScreen!,
+          'duration_seconds': duration,
+        },
+      );
+    }
+    
+    // 세션 종료 이벤트
+    final sessionDuration = _sessionStartTime != null 
+        ? DateTime.now().difference(_sessionStartTime!).inSeconds 
+        : 0;
+    
+    await trackEvent(
+      eventName: ABTestEvents.sessionEnded,
+      parameters: {
+        'session_duration': sessionDuration,
+        'screens_viewed': _userJourney.length,
+        'user_journey': _userJourney.join(' → '),
+      },
+    );
+    
+    // 세션 데이터 초기화
+    _currentScreen = null;
+    _sessionData.clear();
+    _userJourney.clear();
+    _sessionStartTime = null;
   }
   
   /// 사용자 동선 가져오기
@@ -251,41 +296,9 @@ class AnalyticsTracker {
   
   /// 세션 데이터 가져오기
   Map<String, dynamic> getSessionData() => Map.unmodifiable(_sessionData);
-  
-  /// 세션 종료
-  Future<void> endSession() async {
-    if (_sessionStartTime != null) {
-      final sessionDuration = DateTime.now().difference(_sessionStartTime!).inSeconds;
-      
-      await trackEvent(
-        eventName: ABTestEvents.sessionEnded,
-        parameters: {
-          'session_duration_seconds': sessionDuration,
-          'screens_viewed': _userJourney.length)
-          'final_journey': _userJourney.join(' → '))
-        }
-      );
-    }
-    
-    // 초기화
-    _currentScreen = null;
-    _userJourney.clear();
-    _sessionData.clear();
-    _sessionStartTime = null;
-  }
 }
 
-/// Analytics Tracker Provider
+/// AnalyticsTracker Provider
 final analyticsTrackerProvider = Provider<AnalyticsTracker>((ref) {
   return AnalyticsTracker();
 });
-
-/// 사용자 동선 Provider
-final userJourneyProvider = StateProvider<List<String>>((ref) {
-  return [];
-});
-
-/// 현재 화면 Provider
-final currentScreenProvider = StateProvider<String?>((ref) {
-  return null;
-};

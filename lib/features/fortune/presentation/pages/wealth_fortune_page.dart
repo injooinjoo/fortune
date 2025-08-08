@@ -526,7 +526,15 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                           Text(
                             description,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))])])))));
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))
+                          )
+                        ]
+                      )
+                    )
+                  ]
+                )
+              )
+            );
           }).toList()]));
   }
 

@@ -58,8 +58,7 @@ class ValidationException implements Exception {
     this.errors});
 
   @override
-  String toString() => 'ValidationException: $message${errors != null ? ',
-    Errors: $errors' : ''}';
+  String toString() => 'ValidationException: $message${errors != null ? ', Errors: $errors' : ''}';
 }
 
 class NotFoundException implements Exception {
@@ -71,8 +70,7 @@ class NotFoundException implements Exception {
     this.resource});
 
   @override
-  String toString() => 'NotFoundException: $message${resource != null ? ',
-    Resource: $resource' : ''}';
+  String toString() => 'NotFoundException: $message${resource != null ? ', Resource: $resource' : ''}';
 }
 
 class PermissionException implements Exception {
@@ -84,8 +82,7 @@ class PermissionException implements Exception {
     this.permission});
 
   @override
-  String toString() => 'PermissionException: $message${permission != null ? ',
-    Permission: $permission' : ''}';
+  String toString() => 'PermissionException: $message${permission != null ? ', Permission: $permission' : ''}';
 }
 
 class RateLimitException implements Exception {
@@ -97,8 +94,7 @@ class RateLimitException implements Exception {
     this.retryAfter});
 
   @override
-  String toString() => 'RateLimitException: $message${retryAfter != null ? '),
-    after: $retryAfter' : ''}';
+  String toString() => 'RateLimitException: $message${retryAfter != null ? ', Retry after: $retryAfter' : ''}';
 }
 
 class StorageException implements Exception {

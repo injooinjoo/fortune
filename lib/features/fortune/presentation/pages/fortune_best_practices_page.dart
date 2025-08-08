@@ -131,7 +131,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop()),
         title: const Text(
-          '운세 활용법',),
+          '운세 활용법',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
@@ -165,7 +165,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         AppColors.primary.withOpacity(0.05)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight),
-                    borderRadius: BorderRadius.circular(16))),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: AppColors.primary.withOpacity(0.2))),
                   child: Column(
@@ -184,22 +184,22 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                               size: 24)),
                           const SizedBox(width: 12),
                           Text(
-                            '운세를 200% 활용하는 방법',),
+                            '운세를 200% 활용하는 방법',
                             style: TextStyle(
                               fontSize: 18 * fontScale,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary))]),
                       const SizedBox(height: 16),
                       Text(
-                        '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',),
+                        '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textSecondary,
-                          height: 1.5)])),
+                          height: 1.5))])),
                 const SizedBox(height: 24),
                 
                 // 카테고리별 가이드
-                ..._categories.map((category) => _buildCategorySection(category, fontScale)])),
+                ..._categories.map((category) => _buildCategorySection(category, fontScale)).toList()])),
           
           // 전문가 팁 탭
           SingleChildScrollView(
@@ -244,7 +244,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -284,7 +284,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             Container(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
-                children: category.items.map((item) => _buildPracticeItem(item, fontScale).toList()))])));
+                children: category.items.map((item) => _buildPracticeItem(item, fontScale)).toList()))])));
   }
 
   Widget _buildPracticeItem(_PracticeItem item, double fontScale) {
@@ -293,7 +293,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.background,
-        borderRadius: BorderRadius.circular(8))),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: AppColors.divider)),
       child: Column(
@@ -311,7 +311,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             style: TextStyle(
               fontSize: 14 * fontScale,
               color: AppColors.textSecondary,
-              height: 1.5)]));
+              height: 1.5))]));
   }
 
   Widget _buildExpertTipCard({
@@ -323,7 +323,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -380,7 +380,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textPrimary,
-                          height: 1.5))]))]));
+                          height: 1.5))])))).toList()]);
   }
 }
 

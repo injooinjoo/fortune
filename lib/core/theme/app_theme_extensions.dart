@@ -87,7 +87,8 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     required this.dialogStyles,
     required this.dataVisualization,
     required this.socialSharing,
-    this.ctaButtonStyle});
+    this.ctaButtonStyle,
+  });
 
   /// Light theme extension
   static final light = FortuneThemeExtension(
@@ -110,8 +111,8 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     cardSurface: Color(0xFFFFFFFF), // White surface,
     shadowColor: Color(0x1A000000), // Light shadow,
     primaryText: Color(0xFF262626), // Dark text,
-    secondaryText: Color(0xFF8E8E8E), // Gray text
-    // TOSS 디자인 시스템,
+    secondaryText: Color(0xFF8E8E8E), // Gray text,
+    // TOSS 디자인 시스템
     microInteractions: MicroInteractions.light(),
     animationDurations: AnimationDurations.standard(),
     animationCurves: AnimationCurves.toss(),
@@ -127,7 +128,10 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     ctaButtonStyle: ElevatedButton.styleFrom(
       padding: EdgeInsets.symmetric(vertical: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12))));
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  );
 
   /// Dark theme extension
   static final dark = FortuneThemeExtension(
@@ -150,8 +154,8 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     cardSurface: Color(0xFF1C1C1C), // Dark surface,
     shadowColor: Color(0x66000000), // Stronger shadow for dark mode,
     primaryText: Color(0xFFF5F5F5), // Off-white text,
-    secondaryText: Color(0xFFB0B0B0), // Light gray text
-    // TOSS 디자인 시스템,
+    secondaryText: Color(0xFFB0B0B0), // Light gray text,
+    // TOSS 디자인 시스템
     microInteractions: MicroInteractions.dark(),
     animationDurations: AnimationDurations.standard(),
     animationCurves: AnimationCurves.toss(),
@@ -167,7 +171,10 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     ctaButtonStyle: ElevatedButton.styleFrom(
       padding: EdgeInsets.symmetric(vertical: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12))));
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  );
 
   @override
   FortuneThemeExtension copyWith({

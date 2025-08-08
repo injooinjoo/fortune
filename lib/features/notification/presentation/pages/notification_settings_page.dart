@@ -135,7 +135,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12)),
             child: Icon(
               Icons.notifications,
@@ -154,7 +154,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   '모든 알림을 켜거나 끕니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
           Switch(
             value: _settings.enabled,
             onChanged: (value) {
@@ -339,7 +339,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         });
       } : null,
       backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      selectedColor: AppColors.primary.withValues(alpha: 0.2),
+      selectedColor: AppColors.primary.withOpacity(0.2),
       checkmarkColor: AppColors.primary);
   }
 
@@ -356,7 +356,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withValues(alpha: 0.1),
+                  color: AppColors.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12)),
                 child: Icon(
                   Icons.wb_sunny,
@@ -374,7 +374,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '매일 ${_morningTime.format(context)}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
               TextButton(
                 onPressed: _settings.enabled && _settings.dailyFortune
                     ? () => _selectTime(true)
@@ -389,7 +389,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withValues(alpha: 0.1),
+                  color: AppColors.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12)),
                 child: Icon(
                   Icons.nightlight_round,
@@ -407,7 +407,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '매일 ${_eveningTime.format(context)}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
               Row(
                 children: [
                   Switch(
@@ -467,7 +467,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.secondary.withValues(alpha: 0.1),
+              color: AppColors.secondary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10)),
             child: Icon(
               icon,
@@ -486,7 +486,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   subtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
           Switch(
             value: value && _settings.enabled,
             onChanged: _settings.enabled ? onChanged : null,

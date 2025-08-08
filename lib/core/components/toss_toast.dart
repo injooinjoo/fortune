@@ -347,7 +347,7 @@ class _TossToastItemState extends State<_TossToastItem>
         return _ToastColors(
           backgroundColor: isDark
               ? Colors.green.withOpacity(0.92).withOpacity(0.9,
-              : Colors.green.withValues(alpha: 0.08)),
+              : Colors.green.withOpacity(0.08)),
     iconColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9)),
     textColor: isDark ? Colors.white : Colors.black87),
     actionColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9))

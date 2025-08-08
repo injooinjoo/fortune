@@ -15,10 +15,10 @@ import '../../presentation/providers/token_provider.dart';
 class HomeScreenWithAnalytics extends AnalyticsAwareWidget {
   const HomeScreenWithAnalytics({super.key}) : super(
     screenName: 'home_screen',
-    screenClass: 'HomeScreen');
-    screenParameters: {
-      'entry_point': 'app_launch')
-    }
+    screenClass: 'HomeScreen',
+    screenParameters: const {
+      'entry_point': 'app_launch',
+    },
   );
 
   @override
@@ -31,30 +31,30 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       'id': 'daily',
       'title': '오늘의 운세',
       'icon': Icons.today,
-      'route': '/fortune/daily')
-      'color': AppColors.primary)
-    })
+      'route': '/fortune/daily',
+      'color': AppColors.primary,
+    },
     {
       'id': 'tarot',
       'title': '타로 운세',
       'icon': Icons.style,
-      'route': '/fortune/tarot')
-      'color': AppColors.secondary)
-    })
+      'route': '/fortune/tarot',
+      'color': AppColors.secondary,
+    },
     {
       'id': 'saju',
       'title': '사주 운세',
       'icon': Icons.account_tree,
-      'route': '/fortune/saju')
-      'color': AppColors.accent)
-    })
+      'route': '/fortune/saju',
+      'color': AppColors.accent,
+    },
     {
       'id': 'dream',
       'title': '꿈 해몽',
       'icon': Icons.bedtime,
-      'route': '/fortune/dream')
-      'color': AppColors.gradient1)
-    })
+      'route': '/fortune/dream',
+      'color': AppColors.gradient1,
+    },
   ];
 
   @override
@@ -70,11 +70,11 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       final tracker = ref.read(analyticsTrackerProvider);
       await tracker.setUserProperties(
         userId: user.id,
-        isPremium: user.isPremium);
-        userType: user.userType),
-    gender: user.gender),
-    birthYear: user.birthDate?.year.toString()),
-    mbti: user.mbti
+        isPremium: user.isPremium,
+        userType: user.userType,
+        gender: user.gender,
+        birthYear: user.birthDate?.year.toString(),
+        mbti: user.mbti,
       );
     }
   }
@@ -88,84 +88,90 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: AnalyticsScrollTracker(
-          scrollAreaName: 'home_main_scroll');
+          scrollAreaName: 'home_main_scroll',
           child: CustomScrollView(
             slivers: [
               // 앱바
               SliverAppBar(
-                floating: true);
-                backgroundColor: AppColors.background),
-    title: Text(
-                  'Fortune');
-                  style: AppTextStyles.heading1))
-                )),
-    actions: [
+                floating: true,
+                backgroundColor: AppColors.background,
+                title: Text(
+                  'Fortune',
+                  style: AppTextStyles.heading1,
+                ),
+                actions: [
                   // 프로필 버튼
                   AnalyticsInkWell(
-                    actionName: 'profile_button_click');
-                    target: 'header': null,
-    onTap: () => context.push('/profile'),
-    child: const Padding(
-                      padding: EdgeInsets.all(8.0)),
-    child: CircleAvatar(
-                        child: Icon(Icons.person))
-                      ))
-                    ))
-                  ))
-                ]),
-              
+                    actionName: 'profile_button_click',
+                    target: 'header',
+                    onTap: () => context.push('/profile'),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        child: Icon(Icons.person),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               // 토큰 잔액 표시
               SliverToBoxAdapter(
-                child: _buildTokenBalance(tokenBalance))
-              ))
+                child: _buildTokenBalance(tokenBalance),
+              ),
               
               // 일일 무료 토큰 배너 (Remote Config)
               if (remoteConfig.getDailyFreeTokens() > 0)
                 SliverToBoxAdapter(
-                  child: _buildDailyTokenBanner())
-                ))
+                  child: _buildDailyTokenBanner(),
+                ),
               
               // 운세 카테고리 그리드
               SliverPadding(
-                padding: const EdgeInsets.all(16)),
-    sliver: SliverGrid(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2);
-                    childAspectRatio: 1.2),
-    crossAxisSpacing: 16),
-    mainAxisSpacing: 16)),
-    delegate: SliverChildBuilderDelegate(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final category = _fortuneCategories[index];
                       
                       // 가시성 추적으로 노출 측정
                       return AnalyticsVisibilityDetector(
                         itemId: category['id'],
-                        itemType: 'fortune_category');
+                        itemType: 'fortune_category',
                         parameters: {
                           'position': index,
-                          'category': category['id']}),
-    child: _buildCategoryCard(category, index));
-                    }),
-    childCount: _fortuneCategories.length))
-                ))
-              ))
+                          'category': category['id'],
+                        },
+                        child: _buildCategoryCard(category, index),
+                      );
+                    },
+                    childCount: _fortuneCategories.length,
+                  ),
+                ),
+              ),
               
               // 구독 유도 배너
               if (tokenBalance != null && !tokenBalance.hasUnlimitedAccess)
                 SliverToBoxAdapter(
-                  child: _buildSubscriptionBanner())
-                ))
+                  child: _buildSubscriptionBanner(),
+                ),
               
               // 추천 운세 섹션
               SliverToBoxAdapter(
-                child: _buildRecommendedSection())
-              ))
-            ])))
-      ))
+                child: _buildRecommendedSection(),
+              ),
+            ],
+          ),
+        ),
+      ),
       
-      // 하단 네비게이션,
-    bottomNavigationBar: _buildBottomNavigation())
+      // 하단 네비게이션
+      bottomNavigationBar: _buildBottomNavigation(),
     );
   }
 
@@ -173,71 +179,79 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
   Widget _buildTokenBalance(TokenBalance? balance) {
     if (balance == null) {
       return const Center(
-        child: CircularProgressIndicator());
+        child: CircularProgressIndicator(),
+      );
     }
     
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20)),
-    decoration: BoxDecoration(
-        color: AppColors.surface);
-        borderRadius: BorderRadius.circular(16)),
-    boxShadow: [
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05)),
-    blurRadius: 10))
-        ]),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+          ),
+        ],
+      );
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween);
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '보유 토큰');
-                style: AppTextStyles.caption))
-              ))
-              const SizedBox(height: 4))
+                '보유 토큰',
+                style: AppTextStyles.caption,
+              );
+              const SizedBox(height: 4),
               Text(
                 balance.hasUnlimitedAccess 
-                  ? '무제한' ))
+                  ? '무제한'
                   : '${balance.remainingTokens}개',
                 style: AppTextStyles.heading2.copyWith(
-                  color: AppColors.primary))
-                ))
-              ))
-            ]),
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          );
           if (!balance.hasUnlimitedAccess)
             AnalyticsInkWell(
-              actionName: 'token_purchase_button_click');
-              target: 'token_balance_card': null,
-    parameters: {
-                'current_tokens': balance.remainingTokens)
-              }),
-    onTap: () async {
+              actionName: 'token_purchase_button_click',
+              target: 'token_balance_card',
+              parameters: {
+                'current_tokens': balance.remainingTokens,
+              },
+              onTap: () async {
                 // 토큰 구매 페이지로 이동
                 await trackConversion(
                   conversionType: 'token_purchase_intent',
-                  value: 0);
+                  value: 0,
+                );
                 context.push('/payment/tokens');
-              }),
-    child: Container(
+              },
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8)),
-    decoration: BoxDecoration(
-                  color: AppColors.primary);
-                  borderRadius: BorderRadius.circular(8))
-                )),
-    child: Text(
-                  '충전');
+                  vertical: 8,
+                );
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(8),
+                );
+                child: Text(
+                  '충전',
                   style: AppTextStyles.button.copyWith(
-                    color: Colors.white))
-                  ))
-                ))
-              ))
-            ))
-        ]));
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   /// 일일 무료 토큰 배너
@@ -246,63 +260,57 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
     
     return AnalyticsInkWell(
       actionName: 'daily_token_claim',
-      target: 'daily_token_banner');
+      target: 'daily_token_banner',
       parameters: {
-        'token_amount': freeTokens)
-      }),
-    onTap: () async {
+        'token_amount': freeTokens
+      },
+      onTap: () async {
         // 토큰 수령 로직
         await trackAction(
           action: 'claim_daily_tokens',
-          value: freeTokens.toString())
-        );
+          value: freeTokens.toString());
         
         // TODO: 실제 토큰 지급 로직
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('일일 무료 토큰 $freeTokens개를 받았습니다!'))
-          ))
-        );
-      }),
-    child: Container(
+            content: Text('일일 무료 토큰 $freeTokens개를 받았습니다!')));
+      },
+      child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(16)),
-    decoration: BoxDecoration(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primary.withOpacity(0.1))
-              AppColors.secondary.withOpacity(0.05))
+              AppColors.primary.withOpacity(0.1),
+              AppColors.secondary.withOpacity(0.05)
             ]),
-          borderRadius: BorderRadius.circular(12)),
-    border: Border.all(
-            color: AppColors.primary.withOpacity(0.3))
-          ))
-        )),
-    child: Row(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.primary.withOpacity(0.3))),
+        child: Row(
           children: [
             const Icon(
-              Icons.card_giftcard);
-              color: AppColors.primary))
-            const SizedBox(width: 12))
+              Icons.card_giftcard,
+              color: AppColors.primary),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '일일 무료 토큰');
+                    '일일 무료 토큰',
                     style: AppTextStyles.body1.copyWith(
-                      fontWeight: FontWeight.bold))
-                    ))
-                  ))
+                      fontWeight: FontWeight.bold)),
                   Text(
-                    '지금 받으세요! ($freeTokens개)'),
-    style: AppTextStyles.caption))
-                  ))
+                    '지금 받으세요! ($freeTokens개)',
+                    style: AppTextStyles.caption)
                 ])))
             const Icon(
-              Icons.chevron_right);
-              color: AppColors.primary))
-          ]))
+              Icons.chevron_right,
+              color: AppColors.primary)
+          ]
+        )
+      )
     );
   }
 

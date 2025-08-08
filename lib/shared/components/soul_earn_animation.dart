@@ -189,15 +189,15 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha: 0.8),
+                      color: Colors.amber.withOpacity(0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.amber.withValues(alpha: 0.4),
+                          color: Colors.amber.withOpacity(0.4),
                           blurRadius: 4,
                           spreadRadius: 1)
                       ]))).animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withValues(alpha: 0.3))
+                  .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withOpacity(0.3))
                   .fadeOut(delay: particle.delay, duration: 400.ms)))),
             
             // Main soul animation

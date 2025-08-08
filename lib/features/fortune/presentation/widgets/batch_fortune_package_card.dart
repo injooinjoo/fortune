@@ -46,27 +46,36 @@ class BatchFortunePackageCard extends ConsumerWidget {
                       children: [
                         Text(
                           packageType.description,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith()
-                            fontWeight: FontWeight.bold)),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
-                          '${_getFortuneCount(packageType)}개 운세 묶음',),
-                          style: Theme.of(context).textTheme.bodySmall)])),
+                          '${_getFortuneCount(packageType)}개 운세 묶음',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
                   if (isLoading)
                     const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2))
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   else if (isGenerated) Icon(
                       Icons.check_circle,
-                      color: Theme.of(context).primaryColor),
+                      color: Theme.of(context).primaryColor,
+                    ),
                 ],
               ),
               const SizedBox(height: AppSpacing.spacing4),
               _buildTokenInfo(context, ref),
               if (isGenerated) ...[
                 const SizedBox(height: AppSpacing.spacing3),
-                _buildGeneratedInfo(context, ref)],
+                _buildGeneratedInfo(context, ref),
+              ],
             ],
           ),
         ),

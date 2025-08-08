@@ -16,9 +16,11 @@ class AvoidPeopleFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFDC2626), Color(0xFFB91C1C)]),
+        colors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
+      ),
       inputBuilder: (context, onSubmit) => _AvoidPeopleInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _AvoidPeopleFortuneResult(result: result));
+      resultBuilder: (context, result, onShare) => _AvoidPeopleFortuneResult(result: result),
+    );
   }
 }
 
@@ -45,44 +47,54 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘 피해야 할 사람의 특징을 알아보고\n불필요한 스트레스를 예방하세요!',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘 피해야 할 사람의 특징을 알아보고\n불필요한 스트레스를 예방하세요!',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5,
+          ),
+        ),
         const SizedBox(height: 24),
         
         // Current Situation
         Text(
-          '현재 상황',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '현재 상황',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildSituation(theme),
         const SizedBox(height: 24),
 
         // Current Mood
         Text(
-          '오늘의 기분',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '오늘의 기분',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildCurrentMood(theme),
         const SizedBox(height: 24),
 
         // Social Preference
         Text(
-          '사교 성향',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '사교 성향',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildSocialPreference(theme),
         const SizedBox(height: 24),
 
         // Relationship Status
         Text(
-          '관계 상태',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '관계 상태',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildRelationshipStatus(theme),
         const SizedBox(height: 32),
@@ -97,19 +109,27 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 'situation': _situation,
                 'currentMood': _currentMood,
                 'socialPreference': _socialPreference,
-                'relationshipStatus': null});
+                'relationshipStatus': _relationshipStatus,
+              });
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFDC2626),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
-              elevation: 0),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 0,
+            ),
             child: const Text(
-              '피해야 할 사람 확인하기',),
+              '피해야 할 사람 확인하기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -144,28 +164,39 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFFDC2626), Color(0xFFB91C1C)])
+                      colors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
+                    )
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
-                width: 2),
-              borderRadius: BorderRadius.circular(12)),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   situation['icon'] as IconData,
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20),
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   situation['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
-      });
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildCurrentMood(ThemeData theme) {
@@ -187,7 +218,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: mood != moods.last ? 8 : 0),
+                right: mood != moods.last ? 8 : 0,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
                 gradient: isSelected
@@ -197,21 +229,31 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                      : theme.colorScheme.outline.withOpacity(0.3),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 children: [
                   Icon(
                     mood['icon'] as IconData,
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    size: 24),
+                    size: 24,
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     mood['name'] as String,
                     style: TextStyle(
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 12))]))));
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       }).toList()
     );
   }
@@ -234,7 +276,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: preference != preferences.last ? 8 : 0),
+                right: preference != preferences.last ? 8 : 0,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
@@ -244,14 +287,22 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                      : theme.colorScheme.outline.withOpacity(0.3),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Center(
                 child: Text(
                   preference['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
       }).toList()
     );
   }
@@ -275,7 +326,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: status != statuses.last ? 8 : 0),
+                right: status != statuses.last ? 8 : 0,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
@@ -285,14 +337,22 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                      : theme.colorScheme.outline.withOpacity(0.3),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Center(
                 child: Text(
                   status['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
       }).toList()
     );
   }
@@ -313,9 +373,9 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFFDC2626),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,30 +386,49 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFDC2626), Color(0xFFB91C1C)]),
-                        borderRadius: BorderRadius.circular(12)),
+                          colors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: const Icon(
                         Icons.warning_rounded,
                         color: Colors.white,
-                        size: 24)),
+                        size: 24,
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘 피해야 할 사람',),
-                            style: theme.textTheme.titleLarge?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '오늘 피해야 할 사람',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)]))),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 16),
 
         // People Types to Avoid
@@ -358,10 +437,13 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             context,
             title: '주의해야 할 유형',
             icon: Icons.person_off,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFEF4444), Color(0xFFDC2626)]),
-            content: result.details!['peopleTypes']),
-          const SizedBox(height: 16)],
+            gradient: LinearGradient(
+              colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+            ),
+            content: result.details!['peopleTypes'],
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Behavioral Signs
         if (result.details?['behavioralSigns'] != null) ...[
@@ -369,10 +451,13 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             context,
             title: '행동 특징',
             icon: Icons.psychology_alt,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
-            content: result.details!['behavioralSigns']),
-          const SizedBox(height: 16)],
+            gradient: LinearGradient(
+              colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+            ),
+            content: result.details!['behavioralSigns'],
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Situations to Avoid
         if (result.details?['situations'] != null) ...[
@@ -380,10 +465,13 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             context,
             title: '피해야 할 상황',
             icon: Icons.dangerous,
-            gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)]),
-            content: result.details!['situations']),
-          const SizedBox(height: 16)],
+            gradient: LinearGradient(
+              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
+            ),
+            content: result.details!['situations'],
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Protection Strategies
         if (result.details?['protection'] != null) ...[
@@ -391,10 +479,13 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             context,
             title: '대처 방법',
             icon: Icons.shield,
-            gradient: const LinearGradient(
-              colors: [Color(0xFF10B981), Color(0xFF059669)]),
-            content: result.details!['protection']),
-          const SizedBox(height: 16)],
+            gradient: LinearGradient(
+              colors: [Color(0xFF10B981), Color(0xFF059669)],
+            ),
+            content: result.details!['protection'],
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Positive Encounters
         if (result.details?['positiveEncounters'] != null) ...[
@@ -402,9 +493,13 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             context,
             title: '좋은 만남',
             icon: Icons.people_alt,
-            gradient: const LinearGradient(
-              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)]),
-            content: result.details!['positiveEncounters'])]]
+            gradient: LinearGradient(
+              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
+            ),
+            content: result.details!['positiveEncounters'],
+          ),
+        ],
+      ],
     );
   }
 
@@ -413,11 +508,12 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
     required String title,
     required IconData icon,
     required Gradient gradient,
-    required String content}) {
+    required String content,
+  }) {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,21 +524,32 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20)),
+                  size: 20,
+                ),
+              ),
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith()
-                  fontWeight: FontWeight.bold))]),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              height: 1.5)])
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -43,7 +43,7 @@ class FortuneCompassPainter extends CustomPainter {
       ..strokeWidth = 2
      
    
-    ..color = color.withValues(alpha: 0.4);
+    ..color = color.withOpacity(0.4);
     canvas.drawCircle(center, radius, paint);
 
     // Reset stroke width for other elements
@@ -117,7 +117,7 @@ class FortuneCompassPainter extends CustomPainter {
       ..style = PaintingStyle.fill
      
    
-    ..color = color.withValues(alpha: 0.8);
+    ..color = color.withOpacity(0.8);
 
     final starPath = Path();
     final starSize = size.width / 24 * 2.5; // Scaled star size

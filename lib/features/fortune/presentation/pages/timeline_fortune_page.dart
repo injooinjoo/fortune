@@ -101,7 +101,12 @@ class _TimelineFortuneResult extends StatelessWidget {
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))])),
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
 
           // Score Breakdown
@@ -121,7 +126,11 @@ class _TimelineFortuneResult extends StatelessWidget {
                       Text(
                         '상세 분석',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -130,19 +139,31 @@ class _TimelineFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: theme.textTheme.bodyLarge)),
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Text(
                             '${entry.value}점',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
-                              fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center))])))).toList()])),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
             const SizedBox(height: 16)],
 
           // Lucky Items
@@ -206,7 +227,7 @@ class _TimelineFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))])))).toList()])),
+                            style: theme.textTheme.bodyMedium))]))]).toList()])),
             const SizedBox(height: 16)]]);
   }
 

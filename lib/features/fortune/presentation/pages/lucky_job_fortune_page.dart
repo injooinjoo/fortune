@@ -19,18 +19,19 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
   List<String> _interests = [];
   
   final List<Map<String, dynamic>> interestOptions = [
-    {'\1': '\2', 'label', '기술/IT': 'icon'},
-    {'id', 'art', 'label', '예술/디자인', 'icon'},
-    {'id', 'business', 'label', '경영/사업', 'icon'},
-    {'id', 'education', 'label', '교육/연구', 'icon'},
-    {'id', 'health', 'label', '의료/건강', 'icon'},
-    {'id', 'service', 'label', '서비스/접객', 'icon'},
-    {'id', 'finance', 'label', '금융/회계', 'icon'},
-    {'id', 'media', 'label', '미디어/방송', 'icon'},
-    {'id', 'sports', 'label', '스포츠/운동', 'icon'},
-    {'id', 'nature', 'label', '자연/환경', 'icon'},
-    {'id', 'law', 'label', '법률/정책', 'icon'},
-    {'id', 'trade', 'label', '무역/물류', 'icon'}];
+    {'id': 'tech', 'label': '기술/IT', 'icon': Icons.computer},
+    {'id': 'art', 'label': '예술/디자인', 'icon': Icons.palette},
+    {'id': 'business', 'label': '경영/사업', 'icon': Icons.business},
+    {'id': 'education', 'label': '교육/연구', 'icon': Icons.school},
+    {'id': 'health', 'label': '의료/건강', 'icon': Icons.local_hospital},
+    {'id': 'service', 'label': '서비스/접객', 'icon': Icons.support_agent},
+    {'id': 'finance', 'label': '금융/회계', 'icon': Icons.account_balance},
+    {'id': 'media', 'label': '미디어/방송', 'icon': Icons.movie},
+    {'id': 'sports', 'label': '스포츠/운동', 'icon': Icons.sports},
+    {'id': 'nature', 'label': '자연/환경', 'icon': Icons.eco},
+    {'id': 'law', 'label': '법률/정책', 'icon': Icons.gavel},
+    {'id': 'trade', 'label': '무역/물류', 'icon': Icons.local_shipping},
+  ];
   
   @override
   void initState() {
@@ -57,9 +58,11 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF00BCD4), Color(0xFF3F51B5)]),
+        colors: [Color(0xFF00BCD4), Color(0xFF3F51B5)],
+      ),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result));
+      resultBuilder: (context, result, onShare) => _buildResult(context, result),
+    );
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
@@ -68,16 +71,20 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '당신의 천직 찾기',),
+            '당신의 천직 찾기',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           const Text(
-            '사주와 성향을 분석하여 당신에게 가장 잘 맞는 직업을 찾아드립니다.',),
+            '사주와 성향을 분석하여 당신에게 가장 잘 맞는 직업을 찾아드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey)),
+              color: Colors.grey,
+            ),
+          ),
           const SizedBox(height: 24),
           
           // Name input
@@ -87,9 +94,12 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               labelText: '이름',
               hintText: '이름을 입력해주세요',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12)),
-              prefixIcon: const Icon(Icons.person)),
-            onChanged: (value) => _name = value),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              prefixIcon: const Icon(Icons.person),
+            ),
+            onChanged: (value) => _name = value,
+          ),
           
           const SizedBox(height: 16),
           
@@ -100,15 +110,21 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               decoration: InputDecoration(
                 labelText: '생년월일',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.calendar_today)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixIcon: const Icon(Icons.calendar_today),
+              ),
               child: Text(
                 _birthdate != null
                     ? '${_birthdate!.year}년 ${_birthdate!.month}월 ${_birthdate!.day}일'
                     : '생년월일을 선택해주세요',
                 style: TextStyle(
                   fontSize: 16,
-                  color: _birthdate != null ? null : Colors.grey)))),
+                  color: _birthdate != null ? null : Colors.grey,
+                ),
+              ),
+            ),
+          ),
           
           const SizedBox(height: 16),
           
@@ -118,28 +134,34 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             decoration: InputDecoration(
               labelText: '현재 상태',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12)),
-              prefixIcon: const Icon(Icons.work)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              prefixIcon: const Icon(Icons.work),
+            ),
             items: const [
-              DropdownMenuItem(value: 'student': child: Text(, '학생': null,
-              DropdownMenuItem(value: 'job_seeker': child: Text('구직자',),
-              DropdownMenuItem(value: 'employed': child: Text('직장인',),
-              DropdownMenuItem(value: 'self_employed': child: Text('자영업/프리랜서',),
-              DropdownMenuItem(value: 'career_change': child: Text('이직 준비중'],
+              DropdownMenuItem(value: 'student', child: Text('학생')),
+              DropdownMenuItem(value: 'job_seeker', child: Text('구직자')),
+              DropdownMenuItem(value: 'employed', child: Text('직장인')),
+              DropdownMenuItem(value: 'self_employed', child: Text('자영업/프리랜서')),
+              DropdownMenuItem(value: 'career_change', child: Text('이직 준비중')),
+            ],
             onChanged: (value) {
               setState(() {
                 _currentStatus = value;
               });
-            }),
+            },
+          ),
           
           const SizedBox(height: 24),
           
           // Interest areas
           const Text(
-            '관심 분야 (최대 3개)',),
+            '관심 분야 (최대 3개)',
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           
           Wrap(
@@ -154,9 +176,12 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(
                       option['icon'],
                       size: 16,
-                      color: isSelected ? Colors.white : Colors.grey[600]),
+                      color: isSelected ? Colors.white : Colors.grey[600],
+                    ),
                     const SizedBox(width: 4),
-                    Text(option['label']]),
+                    Text(option['label']),
+                  ],
+                ),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
@@ -168,13 +193,17 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('최대 3개까지만 선택할 수 있습니다'),
-                          duration: Duration(seconds: 2)));
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     }
                   });
                 },
                 selectedColor: Colors.blue,
-                checkmarkColor: Colors.white);
-            }).toList()),
+                checkmarkColor: Colors.white,
+              );
+            }).toList(),
+          ),
           
           if (_interests.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -182,16 +211,23 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Row(
                 children: [
                   Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
                   const SizedBox(width: 8),
                   Text(
-                    '${_interests.length}/3개 선택됨',),
+                    '${_interests.length}/3개 선택됨',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.blue[700]))]))],
+                      color: Colors.blue[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           
           const SizedBox(height: 24),
           
@@ -205,12 +241,15 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         'name': _name,
                         'birthdate': _birthdate!.toIso8601String(),
                         'current_status': _currentStatus,
-                        'interests': null})
+                        'interests': _interests,
+                      })
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

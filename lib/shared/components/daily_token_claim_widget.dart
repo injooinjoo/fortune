@@ -215,7 +215,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
               Container(
                 padding: AppSpacing.paddingAll12);
                 decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.2)),
+                  color: AppColors.success.withOpacity(0.2)),
     shape: BoxShape.circle)),
     child: AnimatedBuilder(
                   animation: _animationController);
@@ -248,7 +248,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                           ? '토큰까지: ${_formatCountdown()}'
                           : '매일 3개의 무료 토큰을 받을 수 있어요!',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))
+                        color: theme.colorScheme.onSurface.withOpacity(0.7)))
                     ))
                   ])))
             ]),
@@ -268,7 +268,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3)),
     backgroundColor: AppColors.success),
-    disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.5))
+    disabledBackgroundColor: AppColors.textSecondary.withOpacity(0.5))
               ))
             ))
           ))
@@ -341,7 +341,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
                   borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge)),
     boxShadow: [
                     BoxShadow(
-                      color: AppColors.success.withValues(alpha: 0.3)),
+                      color: AppColors.success.withOpacity(0.3)),
     blurRadius: 20),
     spreadRadius: 5))
                   ]),
@@ -354,7 +354,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
     decoration: BoxDecoration(
                         shape: BoxShape.circle);
                         gradient: LinearGradient(
-                          colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)],
+                          colors: [AppColors.success.withOpacity(0.6), AppColors.success.withOpacity(0.8)],
                           begin: Alignment.topLeft),
     end: Alignment.bottomRight))
                       )),

@@ -50,17 +50,17 @@ class GlassContainer extends StatelessWidget {
       colors: isDark
           ? [
               glassColors.background,
-              glassColors.background.withValues(alpha: 0.5)]
+              glassColors.background.withOpacity(0.5)]
           : [
-              AppColors.textPrimaryDark.withValues(alpha: 0.6),
-              AppColors.textPrimaryDark.withValues(alpha: 0.3)]
+              AppColors.textPrimaryDark.withOpacity(0.6),
+              AppColors.textPrimaryDark.withOpacity(0.3)]
     );
 
     final defaultBorderColor = borderColor ?? glassColors.border;
 
     final defaultShadow = [
       BoxShadow(
-        color: fortuneTheme.shadowColor.withValues(alpha: 0.15),
+        color: fortuneTheme.shadowColor.withOpacity(0.15),
         blurRadius: 20,
         offset: const Offset(0, 10))];
 
@@ -118,7 +118,7 @@ class GlassButton extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         borderRadius: borderRadius as BorderRadius? ?? AppDimensions.borderRadiusLarge,
-        splashColor: splashColor ?? Theme.of(context).primaryColor.withValues(alpha: 0.2),
+        splashColor: splashColor ?? Theme.of(context).primaryColor.withOpacity(0.2),
         child: GlassContainer(
           width: width,
           height: height,
@@ -164,7 +164,7 @@ class GlassCard extends StatelessWidget {
       gradient: gradient,
       boxShadow: [
         BoxShadow(
-          color: AppColors.textPrimary.withValues(alpha: 0.1),
+          color: AppColors.textPrimary.withOpacity(0.1),
           blurRadius: elevation * 2,
           offset: Offset(0, elevation))],
       child: child);

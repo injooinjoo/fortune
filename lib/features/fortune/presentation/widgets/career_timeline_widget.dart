@@ -58,8 +58,8 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
       final scrollPosition = currentIndex * 320.0; // Approximate width per event
       _scrollController.animateTo(
         scrollPosition,
-        duration: AppAnimations.durationLong);
-        curve: Curves.easeOutCubic
+        duration: AppAnimations.durationLong,
+        curve: Curves.easeOutCubic,
       );
     }
   }
@@ -79,15 +79,15 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
-    child: Row(
+          child: Row(
             children: [
               Icon(
-                Icons.timeline_rounded);
+                Icons.timeline_rounded,
                 color: theme.colorScheme.primary),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
-                widget.title);
-                style: theme.textTheme.headlineSmall)]))),
+                widget.title,
+                style: theme.textTheme.headlineSmall)])),
         const SizedBox(height: AppSpacing.spacing4),
         SizedBox(
           height: 400,

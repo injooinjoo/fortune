@@ -123,7 +123,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                 Text(
                   connection.status,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7))),
                 if (connection.error != null) ...[
                   const SizedBox(height: 4),
                     Text(
@@ -140,7 +140,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
               Text(
                 '활성 연결',
                 style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))])]));
+                      color: theme.colorScheme.onSurface.withOpacity(0.5)))])]));
   }
 
   Widget _buildCachePerformance(RedisCacheStats cache) {
@@ -162,7 +162,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold)),
                   progressColor: theme.colorScheme.primary,
-                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1)),
+                  backgroundColor: theme.colorScheme.primary.withOpacity(0.1)),
                 const SizedBox(height: 16),
                 Text(
                   '캐시 적중률',
@@ -325,14 +325,14 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: percentage,
-                    backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       percentage > 0.8 ? Colors.red : theme.colorScheme.primary)),
                   const SizedBox(height: 4),
                   Text(
                     '재설정: ${_formatResetTime(info.resetAt)}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))]));
+                      color: theme.colorScheme.onSurface.withOpacity(0.5)))]));
           }).toList()]));
   }
 

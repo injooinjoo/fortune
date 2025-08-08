@@ -49,7 +49,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isVisible) return const SizedBox.shrink()
+    if (!widget.isVisible) return const SizedBox.shrink();
     
     return AnimatedBuilder(
       animation: _animationController,
@@ -76,10 +76,10 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.6),
+                    color: Colors.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: Colors.white.withOpacity(0.3),
                       width: 1)),
                   child: Text(
                     widget.text,
@@ -108,7 +108,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
                     blurRadius: 15,
                     spreadRadius: 2)])),
             
@@ -138,9 +138,7 @@ class ArrowPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round
-     
-   
-    ..strokeJoin = StrokeJoin.round;
+      ..strokeJoin = StrokeJoin.round;
 
     final path = Path();
     
@@ -195,7 +193,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isVisible) return const SizedBox.shrink()
+    if (!widget.isVisible) return const SizedBox.shrink();
     
     return AnimatedBuilder(
       animation: _slideAnimation,
@@ -211,11 +209,11 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                 width: 60,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                      color: Theme.of(context).primaryColor.withOpacity(0.3),
                       blurRadius: 8,
                       spreadRadius: 2)])))));
       });

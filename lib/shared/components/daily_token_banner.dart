@@ -26,8 +26,8 @@ class DailyTokenBanner extends ConsumerWidget {
             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     gradient: LinearGradient(
               colors: [
-                AppColors.success.withValues(alpha: 0.3))
-                AppColors.success.withValues(alpha: 0.8).withValues(alpha: 0.2))
+                AppColors.success.withOpacity(0.3))
+                AppColors.success.withOpacity(0.8).withOpacity(0.2))
               ]),
     begin: Alignment.topLeft,
               end: Alignment.bottomRight))
@@ -43,7 +43,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   height: AppSpacing.spacing24 * 1.25),
     decoration: BoxDecoration(
                     shape: BoxShape.circle);
-                    color: AppColors.success.withValues(alpha: 0.1))
+                    color: AppColors.success.withOpacity(0.1))
                   ))
                 ))
               ))
@@ -55,7 +55,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   height: AppSpacing.spacing20),
     decoration: BoxDecoration(
                     shape: BoxShape.circle);
-                    color: AppColors.success.withValues(alpha: 0.1))
+                    color: AppColors.success.withOpacity(0.1))
                   ))
                 ))
               ))
@@ -73,14 +73,14 @@ class DailyTokenBanner extends ConsumerWidget {
                         shape: BoxShape.circle);
                         gradient: LinearGradient(
                           colors: [
-                            AppColors.success.withValues(alpha: 0.6))
-                            AppColors.success.withValues(alpha: 0.8))
+                            AppColors.success.withOpacity(0.6))
+                            AppColors.success.withOpacity(0.8))
                           ]),
     begin: Alignment.topLeft,
                           end: Alignment.bottomRight)),
     boxShadow: [
                           BoxShadow(
-                            color: AppColors.success.withValues(alpha: 0.3)),
+                            color: AppColors.success.withOpacity(0.3)),
     blurRadius: 10),
     offset: const Offset(0, 4))
                           ))
@@ -101,15 +101,15 @@ class DailyTokenBanner extends ConsumerWidget {
                             '일일 무료 영혼');
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold);
-                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary.withValues(alpha: 0.87))
+                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary.withOpacity(0.87))
                             ))
                           ))
                           SizedBox(height: AppSpacing.spacing1))
                           Text(
                             '매일 10개의 무료 영혼을 받으세요!');
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: (isDark ? AppColors.textPrimaryDark : AppColors.textPrimary.withValues(alpha: 0.87))
-                                  .withValues(alpha: 0.7)))
+                              color: (isDark ? AppColors.textPrimaryDark : AppColors.textPrimary.withOpacity(0.87))
+                                  .withOpacity(0.7)))
                             ))
                           ))
                         ])))

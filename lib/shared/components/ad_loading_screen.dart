@@ -102,7 +102,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
     }
 
     return Scaffold(
-      backgroundColor: context.fortuneTheme.primaryText.withValues(alpha: 0.87),
+      backgroundColor: context.fortuneTheme.primaryText.withOpacity(0.87),
       body: SafeArea(
         child: Stack(
           children: [
@@ -114,7 +114,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     center: Alignment.center,
                     radius: 1.5,
                     colors: [
-                      theme.colorScheme.primary.withValues(alpha: 0.1),
+                      theme.colorScheme.primary.withOpacity(0.1),
                       Colors.transparent])),
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -127,7 +127,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.05),
+                            theme.colorScheme.primary.withOpacity(0.05),
                             Colors.transparent]))).animate(
                       onPlay: (controller) => controller.repeat()).shimmer(
                       duration: const Duration(milliseconds: 3000),
@@ -154,7 +154,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                             theme.colorScheme.secondary]),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                            color: theme.colorScheme.primary.withOpacity(0.3),
                             blurRadius: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.875,
                             spreadRadius: context.fortuneTheme.formStyles.inputPadding.horizontal * 0.625)]),
                       child: Icon(
@@ -191,7 +191,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     Text(
                       '잠시만 기다려주세요',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.7))),
+                        color: AppColors.textPrimaryDark.withOpacity(0.7))),
 
                     SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2.5),
 
@@ -208,7 +208,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                           // Background Progress Track
                           Container(
                             decoration: BoxDecoration(
-                              color: AppColors.textPrimaryDark.withValues(alpha: 0.1),
+                              color: AppColors.textPrimaryDark.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight * 0.5))),
                           // Animated Progress
                           AnimatedBuilder(
@@ -226,7 +226,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                                     borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight * 0.5),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                                        color: theme.colorScheme.primary.withOpacity(0.3),
                                         blurRadius: context.fortuneTheme.formStyles.inputPadding.horizontal * 0.625,
                                         spreadRadius: context.fortuneTheme.formStyles.inputBorderWidth * 2)])));
                             }),
@@ -243,10 +243,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     Container(
                       padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal),
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.1),
+                        color: AppColors.textPrimaryDark.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius * 2),
                         border: Border.all(
-                          color: AppColors.textPrimaryDark.withValues(alpha: 0.2))),
+                          color: AppColors.textPrimaryDark.withOpacity(0.2))),
                       child: Column(
                         children: [
                           Row(
@@ -254,13 +254,13 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                             children: [
                               Icon(
                                 Icons.info_outline_rounded,
-                                color: AppColors.textPrimaryDark.withValues(alpha: 0.7),
+                                color: AppColors.textPrimaryDark.withOpacity(0.7),
                                 size: context.fortuneTheme.formStyles.inputHeight * 0.4),
                               SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
                               Text(
                                 '광고를 시청하고 무료로 운세를 확인하세요',
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: AppColors.textPrimaryDark.withValues(alpha: 0.7)))]),
+                                  color: AppColors.textPrimaryDark.withOpacity(0.7)))]),
                           SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
                           Text(
                             '프리미엄 회원은 광고 없이 이용 가능합니다',
@@ -316,7 +316,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                 child: CommonAdPlacements().betweenContentAd(
                   padding: EdgeInsets.symmetric(
                     vertical: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
-                  backgroundColor: AppColors.textPrimary.withValues(alpha: 0.5)))])));
+                  backgroundColor: AppColors.textPrimary.withOpacity(0.5)))])));
   }
 
   IconData _getFortuneIcon(String type) {

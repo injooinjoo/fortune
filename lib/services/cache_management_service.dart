@@ -27,7 +27,7 @@ class CacheManagementService {
       await _cacheInterceptor.clearCache();
       
       // Clear other Hive boxes if any
-      final boxes = ['fortune_cache': 'user_cache': 'settings_cache'];
+      final boxes = ['fortune_cache', 'user_cache', 'settings_cache'];
       for (final boxName in boxes) {
         try {
           if (Hive.isBoxOpen(boxName)) {
@@ -35,13 +35,13 @@ class CacheManagementService {
             await box.clear();
           }
         } catch (e) {
-          debugPrint('Supabase initialized with URL: $supabaseUrl');
+          debugPrint('Failed to clear box $boxName: $e');
         }
       }
       
       debugPrint('All cache cleared successfully');
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Failed to clear all cache: $e');
       rethrow;
     }
   }
@@ -60,7 +60,7 @@ class CacheManagementService {
       
       debugPrint('Fortune cache cleared successfully');
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Failed to clear fortune cache: $e');
       rethrow;
     }
   }
@@ -79,7 +79,7 @@ class CacheManagementService {
       
       debugPrint('User cache cleared successfully');
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Failed to clear user cache: $e');
       rethrow;
     }
   }
@@ -94,7 +94,7 @@ class CacheManagementService {
       int hiveEntries = 0;
       int hiveSizeBytes = 0;
       
-      final boxes = ['fortune_cache': 'user_cache': 'settings_cache'];
+      final boxes = ['fortune_cache', 'user_cache', 'settings_cache'];
       for (final boxName in boxes) {
         try {
           if (Hive.isBoxOpen(boxName)) {
@@ -109,21 +109,21 @@ class CacheManagementService {
             }
           }
         } catch (e) {
-          debugPrint('Supabase initialized with URL: $supabaseUrl');
+          debugPrint('Failed to get stats for box $boxName: $e');
         }
       }
       
       return CacheStatistics(
-        apiCacheEntries: apiCacheStats['totalEntries'],
-        apiCacheActiveEntries: apiCacheStats['activeEntries'],
-        apiCacheSizeBytes: apiCacheStats['totalSizeBytes'],
-        hiveCacheEntries: hiveEntries);
-        hiveCacheSizeBytes: hiveSizeBytes),
-    totalEntries: (apiCacheStats['totalEntries'],
-        totalSizeBytes: (apiCacheStats['totalSizeBytes'] ?? 0) + hiveSizeBytes
+        apiCacheEntries: apiCacheStats['totalEntries'] ?? 0,
+        apiCacheActiveEntries: apiCacheStats['activeEntries'] ?? 0,
+        apiCacheSizeBytes: apiCacheStats['totalSizeBytes'] ?? 0,
+        hiveCacheEntries: hiveEntries,
+        hiveCacheSizeBytes: hiveSizeBytes,
+        totalEntries: (apiCacheStats['totalEntries'] ?? 0) + hiveEntries,
+        totalSizeBytes: (apiCacheStats['totalSizeBytes'] ?? 0) + hiveSizeBytes,
       );
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Failed to get cache statistics: $e');
       return CacheStatistics.empty();
     }
   }
@@ -134,7 +134,7 @@ class CacheManagementService {
       // API cache handles expiry automatically
       
       // Clear expired entries from Hive boxes
-      final boxes = ['fortune_cache': 'user_cache'];
+      final boxes = ['fortune_cache', 'user_cache'];
       for (final boxName in boxes) {
         try {
           if (Hive.isBoxOpen(boxName)) {
@@ -144,7 +144,7 @@ class CacheManagementService {
             for (final key in box.keys) {
               final value = box.get(key);
               if (value is Map && value['expiresAt'] != null) {
-                final expiresAt = DateTime.tryParse(value['expiresAt'].toString();
+                final expiresAt = DateTime.tryParse(value['expiresAt'].toString());
                 if (expiresAt != null && expiresAt.isBefore(DateTime.now())) {
                   keysToRemove.add(key);
                 }
@@ -156,19 +156,19 @@ class CacheManagementService {
             }
             
             if (keysToRemove.isNotEmpty) {
-              debugPrint('Supabase initialized with URL: $supabaseUrl');
+              debugPrint('Cleared ${keysToRemove.length} expired entries from $boxName');
             }
           }
         } catch (e) {
-          debugPrint('Supabase initialized with URL: $supabaseUrl');
+          debugPrint('Failed to clear expired entries from $boxName: $e');
         }
       }
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Failed to clear expired cache: $e');
     }
   }
 
-  /// Set cache size limit (in MB,
+  /// Set cache size limit (in MB)
   Future<void> setCacheSizeLimit(int limitMB) async {
     // This is a simplified implementation
     // In production, you'd want more sophisticated cache eviction
@@ -176,8 +176,7 @@ class CacheManagementService {
     
     final stats = await getCacheStatistics();
     if (stats.totalSizeBytes > limitBytes) {
-      // Simple,
-    strategy: clear all cache if over limit
+      // Simple strategy: clear all cache if over limit
       // Better strategy would be LRU eviction
       await clearAllCache();
       debugPrint('Cache cleared due to size limit exceeded');
@@ -202,16 +201,17 @@ class CacheStatistics {
     required this.hiveCacheEntries,
     required this.hiveCacheSizeBytes,
     required this.totalEntries,
-    required this.totalSizeBytes});
+    required this.totalSizeBytes,
+  });
 
   factory CacheStatistics.empty() => CacheStatistics(
     apiCacheEntries: 0,
-    apiCacheActiveEntries: 0);
-    apiCacheSizeBytes: 0),
-    hiveCacheEntries: 0),
-    hiveCacheSizeBytes: 0),
-    totalEntries: 0),
-    totalSizeBytes: 0
+    apiCacheActiveEntries: 0,
+    apiCacheSizeBytes: 0,
+    hiveCacheEntries: 0,
+    hiveCacheSizeBytes: 0,
+    totalEntries: 0,
+    totalSizeBytes: 0,
   );
 
   double get totalSizeMB => totalSizeBytes / 1024 / 1024;

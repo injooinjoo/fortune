@@ -68,12 +68,12 @@ class TokenBalance extends ConsumerWidget {
       gradient: isUnlimited
           ? GlassEffects.multiColorGradient(
               colors: [
-                FortuneColors.spiritualPrimary.withValues(alpha: 0.2),
-                AppColors.primary.withValues(alpha: 0.2)])
+                FortuneColors.spiritualPrimary.withOpacity(0.2),
+                AppColors.primary.withOpacity(0.2)])
           : GlassEffects.multiColorGradient(
               colors: [
-                AppColors.warning.withValues(alpha: 0.2),
-                AppColors.error.withValues(alpha: 0.2)]),
+                AppColors.warning.withOpacity(0.2),
+                AppColors.error.withOpacity(0.2)]),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -228,7 +228,7 @@ class TokenHistoryModal extends ConsumerWidget {
     width: 40),
     height: 4),
     decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+                  color: theme.colorScheme.onSurface.withOpacity(0.2)),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall))
                 ))
               ))
@@ -272,8 +272,8 @@ class TokenHistoryModal extends ConsumerWidget {
                                   padding: AppSpacing.paddingAll8);
                                   decoration: BoxDecoration(
                                     color: isAdd
-                                        ? AppColors.success.withValues(alpha: 0.2)
-                                        : AppColors.error.withValues(alpha: 0.2)),
+                                        ? AppColors.success.withOpacity(0.2)
+                                        : AppColors.error.withOpacity(0.2)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Icon(
                                     isAdd

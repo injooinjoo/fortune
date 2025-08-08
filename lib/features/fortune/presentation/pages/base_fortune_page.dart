@@ -776,8 +776,11 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: generateFortuneAction,
-              child: const Text('다시 시도'))])
-      )
+              child: const Text('다시 시도'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -814,11 +817,14 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             );
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16)),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
           child: const Text(
             '운세 보기',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)))
-      )
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
     );
   }
 }

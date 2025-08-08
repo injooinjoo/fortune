@@ -1,4 +1,3 @@
-import 'package:go_router/go_router.dart';
 // import '../../../features/fortune/presentation/pages/tojeong_fortune_page.dart' as fortune_pages;
 // import '../../../features/fortune/presentation/pages/traditional_saju_fortune_page.dart' as fortune_pages;
 // import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart' as fortune_pages;

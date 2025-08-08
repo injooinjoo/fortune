@@ -190,10 +190,12 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '생년월일 선택',),
+            '생년월일 선택',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 20),
           
           // Date display
@@ -204,29 +206,42 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                   Icon(
                     Icons.cake,
                     size: 48,
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(height: 16),
                   Text(
-                    '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',),
+                    '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',
                     style: const TextStyle(
                       fontSize: 24,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     weekdayMeanings[_selectedDate!.weekday]!['day'],
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[600]))] else ...[
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ] else ...[
                   const Icon(
                     Icons.calendar_today,
                     size: 48,
-                    color: Colors.grey),
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 16),
                   const Text(
-                    '생년월일을 선택해주세요',),
+                    '생년월일을 선택해주세요',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey))]])),
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
           
           const SizedBox(height: 20),
           
@@ -278,15 +293,21 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '생일 정보',),
+                    '생일 정보',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   _buildInfoRow('인생수', calculateLifePathNumber(_selectedDate!).toString()),
                   _buildInfoRow('요일', weekdayMeanings[_selectedDate!.weekday]!['day']),
                   _buildInfoRow('지배 행성', weekdayMeanings[_selectedDate!.weekday]!['planet']),
-                  _buildInfoRow('원소', weekdayMeanings[_selectedDate!.weekday]!['element'])])),],
+                  _buildInfoRow('원소', weekdayMeanings[_selectedDate!.weekday]!['element']),
+                ],
+              ),
+            ),
+          ],
           
           const SizedBox(height: 24),
           
@@ -298,22 +319,33 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
               onPressed: _selectedDate != null 
                 ? () => onSubmit({
                     'birthdate': _selectedDate!.toIso8601String(),
-                    'isLunar': null})
+                    'isLunar': null,
+                  })
                 : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFEC4899),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.cake, size: 20),
                   SizedBox(width: 8),
                   Text(
-                    '생일 운세 확인하기',),
+                    '생일 운세 확인하기',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold))])))])
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

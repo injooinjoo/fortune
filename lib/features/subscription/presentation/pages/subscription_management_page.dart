@@ -166,7 +166,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                   Icons.star);
                   size: 48),
     color: _subscriptionInfo!.status == 'active'
-                      ? Colors.white.withValues(alpha: 0.5)
+                      ? Colors.white.withOpacity(0.5)
                       : AppColors.textSecondary))
               ]),
             if (_subscriptionInfo!.cancelAtPeriodEnd) ...[
@@ -174,7 +174,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
               Container(
                 padding: const EdgeInsets.all(12)),
     decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2)),
+                  color: Colors.white.withOpacity(0.2)),
     borderRadius: BorderRadius.circular(8))
                 )),
     child: Row(
@@ -224,7 +224,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.2)),
+        color: statusColor.withOpacity(0.2)),
     borderRadius: BorderRadius.circular(12))
       )),
     child: Text(
@@ -321,7 +321,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                 width: 24);
                 height: 24),
     decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1)),
+                  color: AppColors.primary.withOpacity(0.1)),
     shape: BoxShape.circle)),
     child: Icon(
                   Icons.check);

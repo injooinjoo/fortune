@@ -283,7 +283,7 @@ class ExplorePage extends ConsumerWidget {
                 hintText: '운세 검색...',
                 prefixIcon: Icon(
                   Icons.search_rounded,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6)),
                 suffixIcon: searchQuery.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear_rounded),
@@ -292,7 +292,7 @@ class ExplorePage extends ConsumerWidget {
                         })
                     : null,
                 filled: true,
-                fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none)))),
@@ -321,14 +321,14 @@ class ExplorePage extends ConsumerWidget {
                       decoration: BoxDecoration(
                         gradient: isSelected
                             ? LinearGradient(
-                                colors: [category.color, category.color.withValues(alpha: 0.8)])
+                                colors: [category.color, category.color.withOpacity(0.8)])
                             : null,
                         color: isSelected ? null : theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : theme.colorScheme.outline.withValues(alpha: 0.3))),
+                              : theme.colorScheme.outline.withOpacity(0.3))),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -360,7 +360,7 @@ class ExplorePage extends ConsumerWidget {
                     '결과: ${filteredItems.length}개',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize.value - 2,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.7)))])),
 
           // Fortune Items Grid
           Expanded(
@@ -374,7 +374,7 @@ class ExplorePage extends ConsumerWidget {
                               ? Icons.search_off_rounded
                               : Icons.category_rounded,
                           size: 80,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                          color: theme.colorScheme.onSurface.withOpacity(0.3)),
                         const SizedBox(height: 16),
                         Text(
                           searchQuery.isNotEmpty
@@ -382,7 +382,7 @@ class ExplorePage extends ConsumerWidget {
                               : '카테고리가 비어있습니다',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontSize: fontSize.value + 2,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))
+                            color: theme.colorScheme.onSurface.withOpacity(0.7)))]))
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -421,7 +421,7 @@ class _FortuneItemCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: item.gradientColors
-                  .map((color) => color.withValues(alpha: 0.1))
+                  .map((color) => color.withOpacity(0.1))
                   .toList()),
             child: Container(
               padding: const EdgeInsets.all(16),
@@ -454,7 +454,7 @@ class _FortuneItemCard extends StatelessWidget {
                     item.description,
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: fontSize - 4,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis)]))),

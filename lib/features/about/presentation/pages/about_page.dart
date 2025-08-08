@@ -58,8 +58,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withValues(alpha: 0.3),
-          Colors.blue.withValues(alpha: 0.1)],
+          Colors.purple.withOpacity(0.3),
+          Colors.blue.withOpacity(0.1)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(20),
@@ -77,7 +77,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               borderRadius: BorderRadius.circular(25),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.purple.withValues(alpha: 0.5),
+                  color: Colors.purple.withOpacity(0.5),
                   blurRadius: 20,
                   offset: const Offset(0, 10))]),
             child: const Icon(
@@ -96,13 +96,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             'AI가 읽어주는 나만의 운세',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
+              color: Colors.white.withOpacity(0.9))).animate().fadeIn(delay: 400.ms),
           const SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: Colors.white.withOpacity(0.7),
               height: 1.5),
             textAlign: TextAlign.center).animate().fadeIn(delay: 600.ms)]));
   }
@@ -180,8 +180,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          color.withValues(alpha: 0.2),
-          color.withValues(alpha: 0.05)],
+          color.withOpacity(0.2),
+          color.withOpacity(0.05)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(16),
@@ -201,7 +201,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           Text(
             description,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: Colors.white.withOpacity(0.7),
               fontSize: 11,
               height: 1.3),
             textAlign: TextAlign.center)]));
@@ -211,8 +211,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.indigo.withValues(alpha: 0.2),
-          Colors.indigo.withValues(alpha: 0.05)]),
+          Colors.indigo.withOpacity(0.2),
+          Colors.indigo.withOpacity(0.05)]),
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -230,7 +230,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             '매일 아침 운세를 확인하며 하루를 시작하는 것이\n'
             '일상의 작은 행복이 되기를 바랍니다.',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
               height: 1.6),
             textAlign: TextAlign.center),
           const SizedBox(height: 24),
@@ -257,7 +257,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withValues(alpha: 0.7)))]);
+            color: Colors.white.withOpacity(0.7)))]);
   }
 
   Widget _buildVersionInfo() {
@@ -267,13 +267,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         Text(
           '버전 $_version',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.5),
+            color: Colors.white.withOpacity(0.5),
             fontSize: 12)),
         const SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.5),
+            color: Colors.white.withOpacity(0.5),
             fontSize: 12)),
         const SizedBox(height: 32)]);
   }

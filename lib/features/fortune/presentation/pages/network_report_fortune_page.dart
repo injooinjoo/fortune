@@ -116,7 +116,9 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
           Text(
             '이름',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController,
@@ -155,7 +157,12 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5))])))),"
+                          : theme.colorScheme.onSurface.withOpacity(0.5))
+                  )
+                ]
+              )
+            )
+          ),
           const SizedBox(height: 20),
           
           // Job Input
@@ -315,7 +322,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                 '인맥 리포트 확인하기',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold))))]);
+                  fontWeight: FontWeight.bold)))]);
   }
 }
 
@@ -393,12 +400,12 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                               Text(
                                 _getScoreMessage(networkScore),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7)))]))])),
+                                  color: theme.colorScheme.onSurface.withOpacity(0.7)))])])),
                 const SizedBox(height: 20),
                 // Network Score Gauge
                 SizedBox(
                   height: 180,
-                  child: _buildNetworkGauge(networkScore, theme))]))),
+                  child: _buildNetworkGauge(networkScore, theme)])),
         const SizedBox(height: 20),
         
         // Network Types Analysis
@@ -438,11 +445,13 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                           height: 12,
                           decoration: BoxDecoration(
                             color: color,
-                            shape: BoxShape.circle)),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           '${entry.key}: ${entry.value}%',
-                          style: theme.textTheme.bodySmall)];
+                          style: theme.textTheme.bodySmall)]);
                   }).toList())]))),
         const SizedBox(height: 20),
         
@@ -499,8 +508,22 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                                     person['description'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                      fontSize: 12 + fontSize))]))]))))).toList()])))),
-          const SizedBox(height: 20)],
+                                      fontSize: 12 + fontSize,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Monthly Networking Forecast
         if (monthlyForecast.isNotEmpty) ...[
@@ -524,8 +547,14 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 200,
-                    child: _buildMonthlyChart(monthlyForecast, theme)])),
-          const SizedBox(height: 20)],
+                    child: _buildMonthlyChart(monthlyForecast, theme),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Networking Tips
         if (networkingTips.isNotEmpty) ...[
@@ -565,8 +594,19 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                             tip,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               height: 1.5,
-                              fontSize: 14 + fontSize)))])).toList()])))),
-          const SizedBox(height: 20)],
+                              fontSize: 14 + fontSize,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Share Button
         Center(

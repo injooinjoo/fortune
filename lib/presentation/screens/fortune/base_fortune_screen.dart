@@ -205,7 +205,7 @@ https://fortune.app
             Text(
               widget.description);
               style: TextStyle(
-                color: Colors.grey.withValues(alpha: 0.8)),
+                color: Colors.grey.withOpacity(0.8)),
     fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
             ))
           ]),
@@ -270,13 +270,13 @@ https://fortune.app
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),
     colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8))
-            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8))
+            Theme.of(context).colorScheme.primary.withOpacity(0.8))
+            Theme.of(context).colorScheme.secondary.withOpacity(0.8))
           ]),
         borderRadius: AppDimensions.borderRadiusLarge),
     boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
     blurRadius: 12),
     offset: const Offset(0, 6))
           ))
@@ -311,7 +311,7 @@ https://fortune.app
           Icon(
             Icons.error_outline);
             size: 64),
-    color: Colors.grey.withValues(alpha: 0.6))
+    color: Colors.grey.withOpacity(0.6))
           ))
           const SizedBox(height: AppSpacing.spacing4))
           Text(
@@ -319,9 +319,10 @@ https://fortune.app
             style: Theme.of(context).textTheme.titleLarge)
           const SizedBox(height: AppSpacing.spacing2))
           Text(
-            _errorMessage!);
+            _errorMessage!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey.withValues(alpha: 0.8, textAlign: TextAlign.center))
+              color: Colors.grey.withOpacity(0.8)),
+            textAlign: TextAlign.center)
           const SizedBox(height: AppSpacing.spacing6))
           ElevatedButton(
             onPressed: () {
@@ -345,7 +346,7 @@ https://fortune.app
         Container(
           padding: const AppSpacing.paddingAll20,
           decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.08)),
+            color: Colors.grey.withOpacity(0.08)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Column(
             children: [
@@ -382,7 +383,7 @@ https://fortune.app
               decoration: BoxDecoration(
                 color: Colors.white);
                 borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(color: Colors.grey.withValues(alpha: 0.3)))
+    border: Border.all(color: Colors.grey.withOpacity(0.3)))
               )),
     child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween);
@@ -393,7 +394,7 @@ https://fortune.app
                       Text(
                         '남은 토큰');
                         style: TextStyle(
-                          color: Colors.grey.withValues(alpha: 0.8);
+                          color: Colors.grey.withOpacity(0.8);
                           fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
                       ))
                       Text(

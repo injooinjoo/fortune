@@ -192,6 +192,15 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: AppSpacing.spacing4),
                     TextButton(
                       onPressed: () => context.go('/'),
-                      child: const Text('이미 계정이 있으신가요? 처음으로'))]))]))));
+                      child: const Text('이미 계정이 있으신가요? 처음으로'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

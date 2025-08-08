@@ -38,14 +38,14 @@ class TodoModel extends Todo {
       userId: json['user_id'],
       title: title,
       description: description,
-      priority: _parsePriority(json['priority'] as String? ?? 'medium': null,
+      priority: _parsePriority(json['priority'] as String? ?? 'medium'),
       status: parseStatus(json['status'] as String? ?? 'pending'),
       dueDate: json['due_date'] != null
           ? DateTime.parse(json['due_date'] as String)
           : null,
-      tags: _parseTags(json['tags'],
-      createdAt: DateTime.parse(json['created_at'],
-      updatedAt: DateTime.parse(json['updated_at'],
+      tags: _parseTags(json['tags']),
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
       isDeleted: json['is_deleted'] as bool? ?? false
     );
   }
@@ -62,7 +62,7 @@ class TodoModel extends Todo {
       'tags': tags,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      'is_deleted': null};
+      'is_deleted': isDeleted};
   }
 
   factory TodoModel.fromEntity(Todo todo) {
@@ -122,11 +122,11 @@ class TodoModel extends Todo {
     // Remove potentially dangerous characters and limit length
     return input
         .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
-        .replaceAll('<': '')
-        .replaceAll('>': '')
-        .replaceAll('"': '')
+        .replaceAll('<', '')
+        .replaceAll('>', '')
+        .replaceAll('"', '')
         .replaceAll("'", '')
-        .replaceAll('&': '')
+        .replaceAll('&', '')
         .trim();
   }
 }

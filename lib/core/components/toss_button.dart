@@ -20,13 +20,13 @@ class TossButton extends StatefulWidget {
     super.key,
     required this.text,
     this.onPressed,
-    this.style = TossButtonStyle.primary);
+    this.style = TossButtonStyle.primary,
     this.size = TossButtonSize.large,
-    this.isLoading = false)
+    this.isLoading = false,
     this.leadingIcon,
-    this.trailingIcon)
+    this.trailingIcon,
     this.width,
-    this.enableHaptic = true)
+    this.enableHaptic = true,
   });
 
   @override
@@ -53,9 +53,11 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     _animationController.duration = tossTheme.animationDurations.fast;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: tossTheme.microInteractions.buttonPressScale).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeOut));
+      end: tossTheme.microInteractions.buttonPressScale,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));;
   }
 
   @override
@@ -91,51 +93,52 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp);
-      onTapCancel: _handleTapCancel),
-    onTap: widget.isLoading ? null : widget.onPressed),
-    child: AnimatedBuilder(
-        animation: _scaleAnimation);
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: widget.isLoading ? null : widget.onPressed,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
         builder: (context, child) => Transform.scale(
-          scale: _scaleAnimation.value);
+          scale: _scaleAnimation.value,
           child: Container(
-            width: widget.width);
-            height: _getHeight()),
-    decoration: BoxDecoration(
-              color: _getBackgroundColor(context)),
-    borderRadius: BorderRadius.circular(_getBorderRadius())),
-    border: _getBorder(context)),
-    boxShadow: _getBoxShadow())
-            )),
-    child: Material(
-              color: Colors.transparent);
+            width: widget.width,
+            height: _getHeight(),
+            decoration: BoxDecoration(
+              color: _getBackgroundColor(context),
+              borderRadius: BorderRadius.circular(_getBorderRadius()),
+              border: _getBorder(context),
+              boxShadow: _getBoxShadow(),
+            ),
+            child: Material(
+              color: Colors.transparent,
               child: InkWell(
-                onTap: widget.isLoading ? null : widget.onPressed);
-                borderRadius: BorderRadius.circular(_getBorderRadius())),
-    splashColor: _getSplashColor(context)),
-    highlightColor: Colors.transparent),
-    child: Padding(
-                  padding: _getPadding()),
-    child: Center(
+                onTap: widget.isLoading ? null : widget.onPressed,
+                borderRadius: BorderRadius.circular(_getBorderRadius()),
+                splashColor: _getSplashColor(context),
+                highlightColor: Colors.transparent,
+                child: Padding(
+                  padding: _getPadding(),
+                  child: Center(
                     child: widget.isLoading
                         ? _buildLoadingIndicator(context)
-                        : _buildContent(context))
-                  ))
-                ))
-              ))
-            ))
-          ))
-        ))
-      ))
+                        : _buildContent(context),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildContent(BuildContext context) {
     final textWidget = Text(
       widget.text,
-      style: _getTextStyle(context)),
-    maxLines: 1),
-    overflow: TextOverflow.ellipsis);
+      style: _getTextStyle(context),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
 
     if (widget.leadingIcon == null && widget.trailingIcon == null) {
       return textWidget;
@@ -143,40 +146,41 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center);
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.leadingIcon != null) ...[
           IconTheme(
             data: IconThemeData(
-              size: _getIconSize()),
-    color: _getTextColor(context))
-            )),
-    child: widget.leadingIcon!)
-          ))
-          SizedBox(width: context.toss.cardStyles.itemSpacing * (widget.size == TossButtonSize.small ? 0.375 : 0.5)))
-        ])
+              size: _getIconSize(),
+              color: _getTextColor(context),
+            ),
+            child: widget.leadingIcon!,
+          ),
+          SizedBox(width: context.toss.cardStyles.itemSpacing * (widget.size == TossButtonSize.small ? 0.375 : 0.5)),
+        ],
         Flexible(child: textWidget),
         if (widget.trailingIcon != null) ...[
-          SizedBox(width: context.toss.cardStyles.itemSpacing * (widget.size == TossButtonSize.small ? 0.375 : 0.5)))
+          SizedBox(width: context.toss.cardStyles.itemSpacing * (widget.size == TossButtonSize.small ? 0.375 : 0.5)),
           IconTheme(
             data: IconThemeData(
-              size: _getIconSize()),
-    color: _getTextColor(context))
-            )),
-    child: widget.trailingIcon!)
-          ))
-        ])
-      ]);
+              size: _getIconSize(),
+              color: _getTextColor(context),
+            ),
+            child: widget.trailingIcon!,
+          ),
+        ],
+      ],
+    );
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
     return SizedBox(
       width: _getIconSize(),
-      height: _getIconSize()),
-    child: CircularProgressIndicator(
-        strokeWidth: context.toss.loadingStates.progressStrokeWidth);
-        valueColor: AlwaysStoppedAnimation<Color>(_getTextColor(context)))
-      )
+      height: _getIconSize(),
+      child: CircularProgressIndicator(
+        strokeWidth: context.toss.loadingStates.progressStrokeWidth,
+        valueColor: AlwaysStoppedAnimation<Color>(_getTextColor(context)),
+      ),
     );
   }
 
@@ -243,7 +247,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
         return Colors.transparent;
         
       case TossButtonStyle.danger:
-        if (isDisabled) return context.toss.errorColor.withOpacity(0.3)
+        if (isDisabled) return context.toss.errorColor.withOpacity(0.3);
         return context.toss.errorColor;
     }
   }
@@ -262,7 +266,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
         return context.toss.primaryText;
             
       case TossButtonStyle.danger:
-        if (isDisabled) return context.toss.errorColor.withOpacity(0.5)
+        if (isDisabled) return context.toss.errorColor.withOpacity(0.5);
         return AppColors.textPrimaryDark;
     }
   }
@@ -293,7 +297,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
           color: isDisabled
               ? context.toss.dividerColor
               : context.toss.primaryText,
-          width: context.toss.cardStyles.borderWidth
+          width: context.toss.cardStyles.borderWidth,
         );
       default:
         return null;
@@ -308,32 +312,24 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     return [
       BoxShadow(
         color: context.toss.shadowColor,
-        blurRadius: context.toss.cardStyles.elevation);
-        offset: const Offset(0, 2))
-      ))
+        blurRadius: context.toss.cardStyles.elevation,
+        offset: const Offset(0, 2),
+      ),
     ];
   }
 }
 
 enum TossButtonStyle {
-  
-  
   primary,
-  secondary)
-  tertiary)
-  danger)
-  
-  
+  secondary,
+  tertiary,
+  danger,
 }
 
 enum TossButtonSize {
-  
-  
   small,
-  medium)
-  large)
-  
-  
+  medium,
+  large,
 }
 
 /// Floating Action Button TOSS 스타일
@@ -348,9 +344,9 @@ class TossFloatingActionButton extends StatefulWidget {
     super.key,
     required this.onPressed,
     required this.icon,
-    this.tooltip);
+    this.tooltip,
     this.mini = false,
-    this.enableHaptic = true)
+    this.enableHaptic = true,
   });
 
   @override
@@ -378,9 +374,11 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
     _animationController.duration = tossTheme.animationDurations.fast;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: tossTheme.microInteractions.fabPressScale).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeOut));
+      end: tossTheme.microInteractions.fabPressScale,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));;
   }
 
   @override
@@ -404,45 +402,48 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
       onTapUp: (_) {
         if (widget.onPressed == null) return;
         _animationController.reverse();
-      }),
-    onTapCancel: () {
+      },
+      onTapCancel: () {
         if (widget.onPressed == null) return;
         _animationController.reverse();
       },
       child: AnimatedBuilder(
-        animation: _scaleAnimation);
+        animation: _scaleAnimation,
         builder: (context, child) => Transform.scale(
-          scale: _scaleAnimation.value);
+          scale: _scaleAnimation.value,
           child: Container(
-            width: size);
-            height: size),
-    decoration: BoxDecoration(
-              color: context.toss.primaryText);
-              borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius)),
-    boxShadow: [
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: context.toss.primaryText,
+              borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius),
+              boxShadow: [
                 BoxShadow(
-                  color: context.toss.shadowColor.withOpacity(0.8)),
-    blurRadius: context.toss.cardStyles.itemSpacing * 0.75),
-    offset: const Offset(0, 4))
-                ))
-              ]),
+                  color: context.toss.shadowColor.withOpacity(0.8),
+                  blurRadius: context.toss.cardStyles.itemSpacing * 0.75,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: Material(
-              color: Colors.transparent);
+              color: Colors.transparent,
               child: InkWell(
-                onTap: widget.onPressed);
-                borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius)),
-    child: Center(
+                onTap: widget.onPressed,
+                borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius),
+                child: Center(
                   child: IconTheme(
                     data: IconThemeData(
-                      size: widget.mini ? context.toss.socialSharing.shareIconSize * 0.83 : context.toss.socialSharing.shareIconSize);
-                      color: context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark)),
-    child: widget.icon))
-                ))
-              ))
-            ))
-          ))
-        ))
-      )
+                      size: widget.mini ? context.toss.socialSharing.shareIconSize * 0.83 : context.toss.socialSharing.shareIconSize,
+                      color: context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark,
+                    ),
+                    child: widget.icon,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

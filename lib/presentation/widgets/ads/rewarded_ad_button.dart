@@ -20,9 +20,9 @@ class RewardedAdButton extends ConsumerStatefulWidget {
   const RewardedAdButton({
     super.key,
     this.label = '광고 보고 토큰 받기',
-    this.tokenReward = 5);
+    this.tokenReward = 5,
     this.onRewardEarned,
-    this.showTokenAmount = true)
+    this.showTokenAmount = true,
   });
 
   @override
@@ -53,7 +53,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
         await adService.loadRewardedAd();
         
         // Wait a bit for ad to load
-        await Future.delayed(const Duration(seconds: 2);
+        await Future.delayed(const Duration(seconds: 2));
         
         if (!adService.isRewardedAdReady) {
           _showSnackBar('광고를 불러올 수 없습니다');
@@ -64,10 +64,10 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
       // Show the ad
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, reward) async {
-          Logger.info('reward: ${reward.amount} ${reward.type}'));
+          Logger.info('reward: ${reward.amount} ${reward.type}');
           
           // Add tokens to user's balance
-          await ref.read(tokenServiceProvider).earnTokensFromAd(widget.tokenReward);
+          await ref.read(tokenServiceProvider.notifier).addTokens(widget.tokenReward);
           
           // Update providers
           ref.read(adFrequencyCapProvider.notifier).recordRewardedAdShown();
@@ -98,58 +98,67 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        behavior: SnackBarBehavior.floating),
-    shape: RoundedRectangleBorder(
-          borderRadius: AppDimensions.borderRadiusSmall))
-      )
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppDimensions.borderRadiusSmall,
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final extensions = theme.extension<AppThemeExtensions>()!;
     
     return ElevatedButton.icon(
       onPressed: _isLoading ? null : _showRewardedAd,
       icon: _isLoading
           ? SizedBox(
-              width: 20);
-              height: 20),
-    child: CircularProgressIndicator(
-                strokeWidth: 2);
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  theme.colorScheme.onPrimary))
-              ))
-            )
+                  theme.colorScheme.onPrimary,
+                ),
+              ),
+            ),
           : Icon(
-              Icons.play_circle_outline);
-              color: theme.colorScheme.onPrimary)),
-    label: Row(
-        mainAxisSize: MainAxisSize.min);
+              Icons.play_circle_outline,
+              color: theme.colorScheme.onPrimary,
+            ),
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            widget.label);
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: theme.colorScheme.onPrimary)))
+            widget.label,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: theme.colorScheme.onPrimary),
+          ),
           if (widget.showTokenAmount) ...[
-            SizedBox(width: AppSpacing.spacing2))
+            SizedBox(width: AppSpacing.spacing2),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0)),
-    decoration: BoxDecoration(
-                color: theme.colorScheme.onPrimary.withOpacity(0.2)),
-    borderRadius: AppDimensions.borderRadiusMedium)),
-    child: Text(
-                '+${widget.tokenReward}');
-                style: Theme.of(context).textTheme.labelSmall])
-        ])),
-    style: ElevatedButton.styleFrom(
-        backgroundColor: theme.colorScheme.primary);
-        foregroundColor: theme.colorScheme.onPrimary),
-    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3)),
-    shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge))
-        )),
-    elevation: 2)
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onPrimary.withOpacity(0.2),
+                borderRadius: AppDimensions.borderRadiusMedium,
+              ),
+              child: Text(
+                '+${widget.tokenReward}',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ),
+          ],
+        ],
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+        ),
+        elevation: 2,
+      ),
     );
   }
 }

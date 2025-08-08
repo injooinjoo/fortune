@@ -36,17 +36,20 @@ class _LuckyStockInputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 주식 투자 운세를 확인해보세요!\n매수/매도 타이밍과 유망 섹터를 알려드립니다.',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 주식 투자 운세를 확인해보세요!\n매수/매도 타이밍과 유망 섹터를 알려드립니다.',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5,
+          ),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
             Icons.trending_up,
             size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3))),
+            color: theme.colorScheme.primary.withOpacity(0.3),
+          ),
+        ),
         
         const SizedBox(height: 32),
         

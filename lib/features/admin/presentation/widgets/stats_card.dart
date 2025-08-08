@@ -38,7 +38,7 @@ class StatsCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: (iconColor ?? theme.colorScheme.primary)
-                        .withValues(alpha: 0.1),
+                        .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8)),
                   child: Icon(
                     icon,
@@ -50,7 +50,7 @@ class StatsCard extends StatelessWidget {
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
                       color:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.7)))),
+                          theme.colorScheme.onSurface.withOpacity(0.7)))),
               if (trailing != null) trailing!]),
           const SizedBox(height: 12),
           if (isLoading)
@@ -69,7 +69,7 @@ class StatsCard extends StatelessWidget {
             Text(
               subtitle!,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))]]));
+                  color: theme.colorScheme.onSurface.withOpacity(0.5)))]]));
 
     return onTap != null
         ? InkWell(

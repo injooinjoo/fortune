@@ -70,6 +70,10 @@ class _SplashScreenState extends State<SplashScreen> {
           height: theme.microInteractions.fabPressScale * 125,
           colorFilter: ColorFilter.mode(
             isDark ? theme.primaryText : AppColors.textPrimaryDark,
-            BlendMode.srcIn)).animate().fadeIn(duration: theme.animationDurations.veryLong)));
+            BlendMode.srcIn,
+          ),
+        ).animate().fadeIn(duration: theme.animationDurations.veryLong),
+      ),
+    );
   }
 }

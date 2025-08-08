@@ -118,7 +118,7 @@ class _TrendPageState extends State<TrendPage> {
             boxShadow: [
               BoxShadow(
                 color: (isTrend ? Color(0xFFF58529) : Color(0xFF8134AF))
-                    .withValues(alpha: 0.3),
+                    .withOpacity(0.3),
                 blurRadius: 12,
                 offset: Offset(0, 6))]),
           child: Stack(
@@ -133,7 +133,7 @@ class _TrendPageState extends State<TrendPage> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20)),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
@@ -164,7 +164,7 @@ class _TrendPageState extends State<TrendPage> {
                               Text(
                                 item['subtitle'],
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                  color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400))]))]),
                     Spacer(),
@@ -203,7 +203,7 @@ class _TrendPageState extends State<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.1)))),
+                    color: Colors.white.withOpacity(0.1)))),
               Positioned(
                 right: 20,
                 bottom: 20,
@@ -212,6 +212,6 @@ class _TrendPageState extends State<TrendPage> {
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.15))))]))));
+                    color: Colors.white.withOpacity(0.15))))]))));
   }
 }

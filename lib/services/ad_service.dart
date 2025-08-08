@@ -194,7 +194,9 @@ class AdService {
           _isInterstitialAdReady = false;
           Logger.error('Interstitial ad failed to load', error);
           onAdFailedToLoad?.call(error);
-        }));
+        },
+      ),
+    );
   }
 
   /// Show an interstitial ad
@@ -246,7 +248,9 @@ class AdService {
           _isRewardedAdReady = false;
           Logger.error('Rewarded ad failed to load', error);
           onAdFailedToLoad?.call(error);
-        }));
+        },
+      ),
+    );
   }
 
   /// Show a rewarded ad
@@ -283,15 +287,15 @@ class AdService {
               style: NativeTemplateFontStyle.bold,
               size: 16.0),
             primaryTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimary.withValues(alpha: 0.87),
+              textColor: AppColors.textPrimary.withOpacity(0.87),
               style: NativeTemplateFontStyle.normal,
               size: 16.0),
             secondaryTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimary.withValues(alpha: 0.54),
+              textColor: AppColors.textPrimary.withOpacity(0.54),
               style: NativeTemplateFontStyle.normal,
               size: 14.0),
             tertiaryTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimary.withValues(alpha: 0.54),
+              textColor: AppColors.textPrimary.withOpacity(0.54),
               style: NativeTemplateFontStyle.normal,
               size: 12.0)));
   }

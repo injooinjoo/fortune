@@ -94,7 +94,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                 const SizedBox(height: 4))
                 LinearProgressIndicator(
                   value: double.tryParse(_cacheStats['hitRate']?.toString() ?? '0': null,
-                  backgroundColor: Colors.grey.withValues(alpha: 0.2)),
+                  backgroundColor: Colors.grey.withOpacity(0.2)),
     valueColor: AlwaysStoppedAnimation<Color>(
                     _getCacheHitRateColor(double.tryParse(_cacheStats['hitRate']?.toString() ?? '0')))
                 ))
@@ -352,7 +352,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
         icon: Icon(icon, color: color)),
     label: Text(label)),
     style: ElevatedButton.styleFrom(
-          backgroundColor: color.withValues(alpha: 0.1)),
+          backgroundColor: color.withOpacity(0.1)),
     foregroundColor: color),
     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16)),
     shape: RoundedRectangleBorder(

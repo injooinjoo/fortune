@@ -66,7 +66,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFFE53E3E), Color(0xFFC53030)],
       category: SportCategory.ballGames,
       teams: ['LG', '두산', 'KT', '삼성', 'SSG', '롯데', 'NC', '한화', 'KIA', '키움'],
-    ,
+    ),
     SportItem(
       name: '야구 (해외)',
       id: 'baseball_intl',
@@ -74,7 +74,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFF2B6CB0), Color(0xFF1E4E8C)],
       category: SportCategory.ballGames,
       teams: ['양키스', '다저스', '레드삭스', '자이언츠', '컵스'],
-    ,
+    ),
     SportItem(
       name: '축구 (국내)',
       id: 'soccer_kr',
@@ -82,7 +82,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFF48BB78), Color(0xFF38A169)],
       category: SportCategory.ballGames,
       teams: ['울산', '전북', '포항', '인천', '서울', '수원', '대구', '강원', '제주', '광주'],
-    ,
+    ),
     SportItem(
       name: '축구 (해외)',
       id: 'soccer_intl',
@@ -90,7 +90,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFF805AD5), Color(0xFF6B46C1)],
       category: SportCategory.ballGames,
       teams: ['맨유', '맨시티', '첼시', '리버풀', '아스날', '토트넘', '바르샤', '레알'],
-    ,
+    ),
     SportItem(
       name: '농구 (국내)',
       id: 'basketball_kr',
@@ -98,7 +98,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFFED8936), Color(0xFFDD6B20)],
       category: SportCategory.ballGames,
       teams: ['서울SK', 'LG', '삼성', 'KT', '현대모비스', 'KCC', '한국가스공사', '원주DB', '안양정관장'],
-    ,
+    ),
     SportItem(
       name: '농구 (해외)',
       id: 'basketball_intl',
@@ -106,7 +106,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFF9F7AEA), Color(0xFF805AD5)],
       category: SportCategory.ballGames,
       teams: ['레이커스', '셀틱스', '워리어스', '불스', '히트', '넷츠'],
-    ,
+    ),
     SportItem(
       name: '배구',
       id: 'volleyball',
@@ -114,7 +114,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       gradientColors: [Color(0xFF4299E1), Color(0xFF3182CE)],
       category: SportCategory.ballGames,
       teams: ['현대건설', '흥국생명', 'GS칼텍스', 'IBK', '한국도로공사', 'KGC인삼공사', '페퍼저축은행'],
-    ,
+    ),
     SportItem(
       name: '테니스',
       id: 'tennis',
@@ -294,7 +294,10 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               end: Alignment.bottomRight,
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).primaryColor.withOpacity(0.7)])),
+                Theme.of(context).primaryColor.withOpacity(0.7),
+              ],
+            ),
+          ),
           child: Column(
             children: [
               // Category tabs
@@ -308,9 +311,13 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 tabs: SportCategory.values.map((category) {
                   return Tab(
                     icon: Icon(category.icon),
-                    text: category.label
+                    text: category.label,
                   );
-                }).toList())])),
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
         
         // Content
         Expanded(
@@ -332,13 +339,21 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 // Selected sport details
                 if (_selectedSport != null) ...[
                   const SizedBox(height: 24),
-                  _buildSelectedSportSection()],
+                  _buildSelectedSportSection(),
+                ],
                 
                 // Fortune result
                 if (_fortuneCache.isNotEmpty && 
                     _fortuneCache['${_selectedSport?.id}_${_selectedTeam ?? 'personal'}'] != null) ...[
                   const SizedBox(height: 24),
-                  _buildFortuneResult(_fortuneCache['${_selectedSport?.id}_${_selectedTeam ?? 'personal'}')]])))]);
+                  _buildFortuneResult(_fortuneCache['${_selectedSport?.id}_${_selectedTeam ?? 'personal'}']!),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildCategoryDescription() {

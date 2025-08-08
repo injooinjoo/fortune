@@ -73,13 +73,13 @@ class TodoStatsCard extends ConsumerWidget {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: color.withValues(alpha: 0.7)))]);
+            color: color.withOpacity(0.7)))]);
   }
 
   Widget _buildDivider(ColorScheme colorScheme) {
     return Container(
       height: 50,
       width: 1,
-      color: colorScheme.onPrimaryContainer.withValues(alpha: 0.2));
+      color: colorScheme.onPrimaryContainer.withOpacity(0.2));
   }
 }

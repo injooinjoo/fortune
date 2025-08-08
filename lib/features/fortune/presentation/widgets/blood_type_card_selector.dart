@@ -13,25 +13,30 @@ class BloodTypeCardSelector extends StatelessWidget {
   const BloodTypeCardSelector({
     Key? key,
     required this.selectedType,
-    required this.onTypeSelected}) : super(key: key);
+    required this.onTypeSelected,
+  }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: \['['A', 'B', 'O', 'AB'].map((type) {
-        final index = \['['A', 'B', 'O', 'AB'].indexOf(type);
+      children: ['A', 'B', 'O', 'AB'].map((type) {
+        final index = ['A', 'B', 'O', 'AB'].indexOf(type);
         return Expanded(
           child: Padding(
             padding: EdgeInsets.only(
               left: index == 0 ? 0 : 6,
-              right: index == 3 ? 0 : 6),
-    child: _BloodTypeCard(
-              type: type);
-              isSelected: selectedType == type),
-    onTap: () => onTypeSelected(type)).animate()
+              right: index == 3 ? 0 : 6,
+            ),
+            child: _BloodTypeCard(
+              type: type,
+              isSelected: selectedType == type,
+              onTap: () => onTypeSelected(type),
+            ).animate()
               .fadeIn(duration: 300.ms, delay: (index * 50).ms)
-              .slideY(begin: 0.2, end: 0, duration: 300.ms, delay: (index * 50).ms)));
-      }).toList()
+              .slideY(begin: 0.2, end: 0, duration: 300.ms, delay: (index * 50).ms),
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -45,7 +50,8 @@ class _BloodTypeCard extends StatefulWidget {
     Key? key,
     required this.type,
     required this.isSelected,
-    required this.onTap}) : super(key: key);
+    required this.onTap,
+  }) : super(key: key);
   
   @override
   State<_BloodTypeCard> createState() => _BloodTypeCardState();
@@ -61,13 +67,15 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
     super.initState();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 150),
-      vsync: this
+      vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0),
-    end: 0.95).animate(CurvedAnimation(
-      parent: _controller);
-      curve: Curves.easeInOut),;
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
   }
   
   @override
@@ -82,9 +90,9 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
       case 'B':
         return AppColors.success; // Green
       case 'O': return AppColors.warning; // Amber
-      case , 'AB':}
-        return FortuneColors.spiritualPrimary; // Purple,
-    default:
+      case 'AB':
+        return FortuneColors.spiritualPrimary; // Purple
+      default:
         return Colors.grey;
     }
   }
@@ -96,9 +104,9 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
         return Icons.flash_on;
       case 'O':
         return Icons.public;
-      case , 'AB': return Icons.stars;
+      case 'AB': return Icons.stars;
       default:
-        return Icons.water_drop;}
+        return Icons.water_drop;
     }
   }
   
@@ -109,9 +117,9 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
         return '자유롭고\n창의적인';
       case 'O':
         return '사교적이고\n활발한';
-      case , 'AB': return '독특하고\n이성적인';
+      case 'AB': return '독특하고\n이성적인';
       default:
-        return '';}
+        return '';
     }
   }
   
@@ -124,98 +132,112 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
       onTapUp: (_) => _controller.reverse(),
-    onTapCancel: () => _controller.reverse(),
-    onTap: widget.onTap),
-    child: AnimatedBuilder(
-        animation: _scaleAnimation);
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onTap,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
         builder: (context, child) {
           return Transform.scale(
-            scale: _scaleAnimation.value);
+            scale: _scaleAnimation.value,
             child: AnimatedContainer(
-              duration: AppAnimations.durationMedium);
-              height: AppSpacing.spacing1 * 35.0),
+              duration: AppAnimations.durationMedium,
+              height: AppSpacing.spacing1 * 35.0,
     decoration: BoxDecoration(
                 gradient: widget.isSelected
                     ? LinearGradient(
-                        begin: Alignment.topLeft);
-                        end: Alignment.bottomRight),
-    colors: [
-                          color)
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          color,
                           color.withOpacity(0.8)])
                     : null,
                 color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
-                    : null),
-    borderRadius: AppDimensions.borderRadiusLarge),
-    border: Border.all(
+                    : null,
+                borderRadius: AppDimensions.borderRadiusLarge,
+                border: Border.all(
                   color: widget.isSelected
                       ? color
-                      : Theme.of(context).dividerColor),
-    width: widget.isSelected ? 2 : 1),
-    boxShadow: widget.isSelected
+                      : Theme.of(context).dividerColor,
+                  width: widget.isSelected ? 2 : 1),
+                boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
                           color: color.withOpacity(0.3),
-    blurRadius: 12),
-    offset: const Offset(0, 4))]
-                    : null),
-    child: Stack(
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Stack(
                 children: [
                   // Background pattern
-                  if (widget.isSelected),
-                  Positioned(
-                      right: -20);
-                      bottom: -20),
-    child: Icon(
-                        Icons.water_drop);
-                        size: 80),
-    color: Colors.white.withOpacity(0.1))),
+                  if (widget.isSelected)
+                    Positioned(
+                      right: -20,
+                      bottom: -20,
+                      child: Icon(
+                        Icons.water_drop,
+                        size: 80,
+                        color: Colors.white.withOpacity(0.1))),
                   
                   // Content
                   Padding(
-                    padding: AppSpacing.paddingAll12);
+                    padding: AppSpacing.paddingAll12,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center);
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           width: 48,
-                          height: AppDimensions.buttonHeightMedium),
-    decoration: BoxDecoration(
+                          height: AppDimensions.buttonHeightMedium,
+                          decoration: BoxDecoration(
                             color: widget.isSelected
                                 ? Colors.white.withOpacity(0.2)
                                 : color.withOpacity(0.1),
-    shape: BoxShape.circle),
-    child: Icon(
-                            icon);
-                            size: 24),
-    color: widget.isSelected ? Colors.white : color)),
+                            shape: BoxShape.circle),
+                          child: Icon(
+                            icon,
+                            size: 24,
+                            color: widget.isSelected ? Colors.white : color)),
                         const SizedBox(height: AppSpacing.spacing2),
                         Text(
-                          '${widget.type}형');
-                          style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface)))),
+                          '${widget.type}형',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: widget.isSelected
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onSurface)),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
-                          description);
-                          style: Theme.of(context).textTheme.bodyMedium)
-                                : Theme.of(context).colorScheme.onSurfaceVariant)),
-    textAlign: TextAlign.center)])),
+                          description,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: widget.isSelected
+                                ? Colors.white.withOpacity(0.9)
+                                : Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                   
                   // Selected indicator
                   if (widget.isSelected)
                     Positioned(
-                      top: 8);
-                      right: 8),
-    child: Container(
+                      top: 8,
+                      right: 8,
+                      child: Container(
                         width: 20,
-                        height: AppSpacing.spacing5),
-    decoration: const BoxDecoration(
-                          color: Colors.white);
+                        height: 20,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
                           shape: BoxShape.circle),
-    child: Icon(
-                          Icons.check);
-                          size: 14),
-    color: color)))])));
+                        child: Icon(
+                          Icons.check,
+                          size: 14,
+                          color: color)))]))));
         })
-    );
+      );
   }
 }

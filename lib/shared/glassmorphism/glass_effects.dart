@@ -15,8 +15,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        AppColors.textPrimaryDark.withValues(alpha: opacity),
-        AppColors.textPrimaryDark.withValues(alpha: opacity * 0.5)]);
+        AppColors.textPrimaryDark.withOpacity(opacity),
+        AppColors.textPrimaryDark.withOpacity(opacity * 0.5)]);
   }
 
   static LinearGradient darkGradient({double opacity = 0.1}) {
@@ -24,8 +24,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        AppColors.textPrimaryDark.withValues(alpha: opacity),
-        AppColors.textPrimaryDark.withValues(alpha: opacity * 0.5)]);
+        AppColors.textPrimaryDark.withOpacity(opacity),
+        AppColors.textPrimaryDark.withOpacity(opacity * 0.5)]);
   }
 
   static LinearGradient coloredGradient({
@@ -35,8 +35,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        color.withValues(alpha: opacity),
-        color.withValues(alpha: opacity * 0.5)]);
+        color.withOpacity(opacity),
+        color.withOpacity(opacity * 0.5)]);
   }
 
   static LinearGradient multiColorGradient({
@@ -57,12 +57,12 @@ class GlassEffects {
     double spread = 0}) {
     return [
       BoxShadow(
-        color: (color ?? AppColors.textPrimary).withValues(alpha: 0.1),
+        color: (color ?? AppColors.textPrimary).withOpacity(0.1),
         blurRadius: elevation * 2,
         offset: Offset(0, elevation),
         spreadRadius: spread),
       BoxShadow(
-        color: (color ?? AppColors.textPrimary).withValues(alpha: 0.05),
+        color: (color ?? AppColors.textPrimary).withOpacity(0.05),
         blurRadius: elevation,
         offset: Offset(0, elevation * 0.5),
         spreadRadius: spread * 0.5)];
@@ -73,7 +73,7 @@ class GlassEffects {
     double width = 1.5,
     double opacity = 0.2}) {
     return Border.all(
-      color: (color ?? AppColors.textPrimaryDark).withValues(alpha: opacity),
+      color: (color ?? AppColors.textPrimaryDark).withOpacity(opacity),
       width: width);
   }
 
@@ -228,9 +228,9 @@ class _ShimmerGlassState extends State<ShimmerGlass>
                       end: Alignment(_animation.value, 0),
                       colors: [
                         Colors.transparent,
-                        widget.shimmerColor.withValues(alpha: 0.1),
-                        widget.shimmerColor.withValues(alpha: 0.2),
-                        widget.shimmerColor.withValues(alpha: 0.1),
+                        widget.shimmerColor.withOpacity(0.1),
+                        widget.shimmerColor.withOpacity(0.2),
+                        widget.shimmerColor.withOpacity(0.1),
                         Colors.transparent],
                       stops: const [0.0, 0.35, 0.5, 0.65, 1.0]))))]));
       });

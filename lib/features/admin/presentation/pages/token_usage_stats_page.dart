@@ -235,7 +235,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       Text(
                         type.fortuneCategory,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))])),
+                          color: theme.colorScheme.onSurface.withOpacity(0.5)))])),
                 Text(
                   '${NumberFormat('#,###').format(type.tokensUsed)} 토큰',
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -245,7 +245,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                   width: 60,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    color: theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Text(
@@ -361,7 +361,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                         Text(
                           user.email,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))])),
+                            color: theme.colorScheme.onSurface.withOpacity(0.5)))])),
                   DataCell(Text(NumberFormat('#,###').format(user.tokensUsed))),
                   DataCell(Text(NumberFormat('#,###').format(user.tokensPurchased))),
                   DataCell(Text(user.fortuneCount.toString())),
@@ -369,7 +369,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: user.isUnlimited ? Colors.purple.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
+                        color: user.isUnlimited ? Colors.purple.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12)),
                       child: Text(
                         user.isUnlimited ? '무제한' : '일반',
@@ -433,7 +433,7 @@ class _InfoCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.1))),
+          color: theme.colorScheme.primary.withOpacity(0.1))),
       child: Column(
         children: [
           Icon(icon, color: iconColor, size: 32),

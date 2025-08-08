@@ -7,18 +7,18 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum RelationshipType {
-  love('연애운', 'love': '현재 연애 상황과 앞으로의 전망을 알아보세요',
+  love('연애운', 'love', '현재 연애 상황과 앞으로의 전망을 알아보세요'),
   compatibility('궁합', 'compatibility', '상대방과의 궁합을 확인해보세요'),
-  soulmate('소울메이트', 'soulmate': '운명의 짝을 찾아보세요'),
-  marriage('결혼운', 'marriage': '결혼 시기와 결혼 생활을 알아보세요'),
-  exLover('전애인', 'ex_lover': '전 애인과의 재회 가능성을 확인해보세요'),
-  blindDate('소개팅', 'blind_date': '새로운 만남의 기회를 알아보세요'),
-  chemistry('케미스트리', 'chemistry': '상대방과의 케미를 확인해보세요'),
-  coupleMatch('커플매칭', 'couple_match': '이상적인 커플 유형을 알아보세요');
+  soulmate('소울메이트', 'soulmate', '운명의 짝을 찾아보세요'),
+  marriage('결혼운', 'marriage', '결혼 시기와 결혼 생활을 알아보세요'),
+  exLover('전애인', 'ex_lover', '전 애인과의 재회 가능성을 확인해보세요'),
+  blindDate('소개팅', 'blind_date', '새로운 만남의 기회를 알아보세요'),
+  chemistry('케미스트리', 'chemistry', '상대방과의 케미를 확인해보세요'),
+  coupleMatch('커플매칭', 'couple_match', '이상적인 커플 유형을 알아보세요');
 
   final String label;
   final String value;
-  final String description;}
+  final String description;
   const RelationshipType(this.label, this.value, this.description);
 }
 
@@ -27,12 +27,13 @@ class RelationshipFortunePage extends BaseFortunePage {
   
   const RelationshipFortunePage({
     Key? key,
-    this.initialType = RelationshipType.love}) : super(
+    this.initialType = RelationshipType.love,
+  }) : super(
           key: key,
-          title: '연애 & 관계 운세')
-          description: '사랑과 인연에 대한 운세를 확인해보세요')
-          fortuneType: 'relationship')
-          requiresUserInfo: true
+          title: '연애 & 관계 운세',
+          description: '사랑과 인연에 대한 운세를 확인해보세요',
+          fortuneType: 'relationship',
+          requiresUserInfo: true,
         );
 
   @override
@@ -67,7 +68,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
     params['relationshipStatus'] = _relationshipStatus;
     
     // Add partner info for compatibility types
-    if (_requiresPartnerInfo(), {
+    if (_requiresPartnerInfo()) {
       params['partnerName'] = _partnerNameController.text;
       params['partnerBirthDate'] = _partnerBirthDate?.toIso8601String();
       params['partnerGender'] = _partnerGender;
@@ -75,8 +76,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
     
     final fortune = await fortuneService.getRelationshipFortune(
       userId: params['userId'],
-      fortuneType: _selectedType.value)
-      params: params)
+      fortuneType: _selectedType.value,
+      params: params,
     );
     
     return fortune;
@@ -85,8 +86,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
   bool _requiresPartnerInfo() {
     return [
       RelationshipType.compatibility,
-      RelationshipType.chemistry)
-      RelationshipType.coupleMatch)
+      RelationshipType.chemistry,
+      RelationshipType.coupleMatch,
     ].contains(_selectedType);
   }
 
@@ -99,14 +100,15 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start)
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Type Selector
           Text(
-            '운세 유형')
-            style: Theme.of(context).textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)
-            )),
+            '운세 유형',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8)

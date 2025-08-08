@@ -213,8 +213,8 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.05),
-                  theme.colorScheme.secondary.withValues(alpha: 0.05)]))),
+                  theme.colorScheme.primary.withOpacity(0.05),
+                  theme.colorScheme.secondary.withOpacity(0.05)]))),
 
           // Floating stars background
           ...List.generate(10, (index) {
@@ -230,7 +230,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     child: Icon(
                       Icons.star_rounded,
                       size: 20 + random.nextDouble() * 20,
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1)));
+                      color: theme.colorScheme.primary.withOpacity(0.1)));
                 }));
           }),
 
@@ -243,20 +243,20 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   Icon(
                     Icons.note_add_rounded,
                     size: 80,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                    color: theme.colorScheme.onSurface.withOpacity(0.3)),
                   const SizedBox(height: 16),
                   Text(
                     '첫 번째 소원을 적어보세요',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: fontSize.value + 2,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))
+                      color: theme.colorScheme.onSurface.withOpacity(0.7)))]))
           else
             ...wishes.map((wish) => _buildWishNote(context, theme, fontSize.value, wish)),
 
           // Write form
           if (_showWriteForm)
             Container(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: Colors.black.withOpacity(0.5),
               child: Center(
                 child: _buildWriteForm(theme, fontSize.value)))]));
   }
@@ -285,7 +285,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
               borderRadius: BorderRadius.circular(4),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: Colors.black.withOpacity(0.2),
                   blurRadius: 4,
                   offset: const Offset(2, 2))]),
             child: Column(
@@ -415,7 +415,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2)))),
             
             // Content
@@ -448,13 +448,13 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 Icon(
                   Icons.access_time_rounded,
                   size: 16,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6)),
                 const SizedBox(width: 4),
                 Text(
                   _getTimeAgo(wish.createdAt),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: fontSize - 2,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))),
                 const Spacer(),
                 Row(
                   children: [
@@ -467,7 +467,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                       '${wish.likes}명이 응원해요',
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: fontSize - 2,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])]),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)))])]),
             const SizedBox(height: 20),
             
             // Actions

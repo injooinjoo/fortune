@@ -132,13 +132,13 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                         Text(
                           '만 $age세',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
                   duration: AppAnimations.durationShort,
                   child: Icon(
                     Icons.expand_more_rounded,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)))]))),
 
         AnimatedContainer(
           duration: AppAnimations.durationMedium,
@@ -199,7 +199,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                       Container(
                         padding: AppSpacing.paddingAll12,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                          color: theme.colorScheme.primary.withOpacity(0.1),
                           borderRadius: AppDimensions.borderRadiusMedium),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -233,7 +233,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+            color: theme.colorScheme.onSurface.withOpacity(0.6))),
         SizedBox(height: AppSpacing.spacing1),
         Container(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
@@ -241,7 +241,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             color: theme.colorScheme.surface,
             borderRadius: AppDimensions.borderRadiusSmall,
             border: Border.all(
-              color: theme.colorScheme.outline.withValues(alpha: 0.2))),
+              color: theme.colorScheme.outline.withOpacity(0.2))),
           child: DropdownButton<int>(
             value: value,
             isExpanded: true,
@@ -295,8 +295,8 @@ class BirthDatePreview extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.primary.withValues(alpha: 0.1),
-            theme.colorScheme.secondary.withValues(alpha: 0.05)]),
+            theme.colorScheme.primary.withOpacity(0.1),
+            theme.colorScheme.secondary.withOpacity(0.05)]),
         child: Column(
           children: [
             Icon(
@@ -312,7 +312,7 @@ class BirthDatePreview extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
               child: Text(
                 '만 $age세',
@@ -324,7 +324,7 @@ class BirthDatePreview extends StatelessWidget {
               Text(
                 '탭하여 변경',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))]]))).animate().fadeIn().scale(
+                  color: theme.colorScheme.onSurface.withOpacity(0.5)))]]))).animate().fadeIn().scale(
       begin: const Offset(0.9, 0.9),
       end: const Offset(1, 1));
   }

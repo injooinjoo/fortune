@@ -135,7 +135,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                 topRight: Radius.circular(24),
       boxShadow: [
                 BoxShadow(
-                  color: AppColors.textPrimary.withValues(alph,
+                  color: AppColors.textPrimary.withOpacity(alph,
       a: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, -5))
@@ -175,7 +175,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           Text(
             '확인하고 싶은 기간을 선택해주세요',
                           style: theme.textTheme.bodyMedium?.copyWith(,
-      color: theme.colorScheme.onSurface.withValues(alp,
+      color: theme.colorScheme.onSurface.withOpacity(alp,
       ha: 0.7)))).animate().fadeIn(duration: 300.ms, delay: 100.ms)]
       )
   }
@@ -244,7 +244,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                     Text(
                       period.description,
                           style: theme.textTheme.bodySmall?.copyWith(,
-      color: theme.colorScheme.onSurface.withValues(alp,
+      color: theme.colorScheme.onSurface.withOpacity(alp,
       ha: 0.7)))
                   ])))
               if (isSelected,
@@ -267,7 +267,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       color: theme.scaffoldBackgroundColor),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withValues(alph,
+            color: AppColors.textPrimary.withOpacity(alph,
       a: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5))
@@ -284,7 +284,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             shape: RoundedRectangleBorder(,
       borderRadius: AppDimensions.borderRadiusLarge),
       elevation: isEnabled ? 4 : 0,
-      shadowColor: AppTheme.primaryColor.withValues(alp,
+      shadowColor: AppTheme.primaryColor.withOpacity(alp,
       ha: 0.3),
       child: Row(,
       mainAxisAlignment: MainAxisAlignment.center),

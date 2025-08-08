@@ -181,7 +181,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             Icon(
               Icons.account_balance_wallet);
               size: 48),
-    color: Colors.white.withValues(alpha: 0.5))
+    color: Colors.white.withOpacity(0.5))
             ))
           ])))
     ).animate().fadeIn().scale();
@@ -228,7 +228,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
               color: isSelected ? AppColors.primary : AppColors.surface);
               width: isSelected ? 2 : 1)),
     color: isSelected 
-                ? AppColors.primary.withValues(alpha: 0.1) 
+                ? AppColors.primary.withOpacity(0.1) 
                 : AppColors.surface)),
     child: Padding(
             padding: const EdgeInsets.all(16)),
@@ -329,8 +329,8 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     gradient: isSelected
                 ? LinearGradient(
                     colors: [
-                      AppColors.accent.withValues(alpha: 0.1))
-                      AppColors.gradient2.withValues(alpha: 0.1))
+                      AppColors.accent.withOpacity(0.1))
+                      AppColors.gradient2.withOpacity(0.1))
                     ]),
     begin: Alignment.topLeft,
                     end: Alignment.bottomRight)
@@ -453,7 +453,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withValues(alpha: 0.1)),
+        color: AppColors.info.withOpacity(0.1)),
     borderRadius: BorderRadius.circular(12))
       )),
     child: Row(
