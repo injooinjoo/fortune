@@ -42,7 +42,7 @@ class TarotFortuneCard extends StatelessWidget {
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     boxShadow: [
             BoxShadow(
-              color: gradientColors.first.withValues(alpha: isDarkMode ? 0.3 : 0.15)),
+              color: gradientColors.first.withOpacity(isDarkMode ? 0.3 : 0.15)),
     blurRadius: 12),
     offset: Offset(0, 4))
             ))
@@ -66,8 +66,8 @@ class TarotFortuneCard extends StatelessWidget {
     borderRadius: AppDimensions.radiusLarge),
     gradient: LinearGradient(
                         colors: [
-                          AppColors.textPrimaryDark.withValues(alpha: 0.2))
-                          AppColors.textPrimaryDark.withValues(alpha: 0.1))
+                          AppColors.textPrimaryDark.withOpacity(0.2))
+                          AppColors.textPrimaryDark.withOpacity(0.1))
                         ]),
                       child: Center(
                         child: Icon(
@@ -92,7 +92,7 @@ class TarotFortuneCard extends StatelessWidget {
                     description);
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
-                          .withValues(alpha: 0.7))),
+                          .withOpacity(0.7))),
     fontWeight: FontWeight.w400)),
     textAlign: TextAlign.center),
     maxLines: 2),
@@ -104,7 +104,7 @@ class TarotFortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3);
                         vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.2)),
+                        color: AppColors.textPrimaryDark.withOpacity(0.2)),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
                       )),
     child: Text(

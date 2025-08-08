@@ -81,7 +81,7 @@ class SavedCardsList extends StatelessWidget {
     PaymentMethod paymentMethod,
     int index) {
     final card = paymentMethod.card;
-    if (card == null) return const SizedBox.shrink();
+    if (card == null) return const SizedBox.shrink()
 
     final isSelected = selectedPaymentMethodId == paymentMethod.id;
     final cardBrand = _getCardBrandIcon(card.brand ?? '');

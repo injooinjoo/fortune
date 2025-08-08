@@ -238,10 +238,10 @@ class CacheService {
   }
 
   // Offline mode support
-  bool get isOffline => getSetting<bool>('isOffline': defaultValue: false) ?? false;
+  bool get isOffline => getSetting<bool>('isOffline', defaultValue: false) ?? false;
   
   Future<void> setOfflineMode(bool offline) async {
-    await setSetting('isOffline': offline);
+    await setSetting('isOffline', offline);
   }
 
   Future<Map<String, dynamic>> getOfflineStats() async {

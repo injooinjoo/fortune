@@ -321,7 +321,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
-                              color: color.withValues(alpha: 0.5),
+                              color: color.withOpacity(0.5),
                               blurRadius: 8,
                               spreadRadius: 2)]),
                       child: isSelected
@@ -369,7 +369,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
-                              color: color.withValues(alpha: 0.5),
+                              color: color.withOpacity(0.5),
                               blurRadius: 8,
                               spreadRadius: 2)]),
                       child: isSelected
@@ -405,7 +405,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.primary.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2))]),
             child: Text(

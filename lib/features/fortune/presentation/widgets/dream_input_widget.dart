@@ -125,20 +125,20 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withValues(alpha: 0.3)]),
+            Colors.black.withOpacity(0.3)]),
       child: SafeArea(
         top: false,
         child: Column(
           children: [
-            if (chatState.isListening), _buildVoiceListeningIndicator(theme),
+            if (chatState.isListening) _buildVoiceListeningIndicator(theme),
             GlassContainer(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              borderRadius: BorderRadius.circular(AppSpacing.spacing7),
+              borderRadius: BorderRadius.circular(AppSpacing.spacing7))),
               blur: 20,
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withValues(alpha: 0.1),
-                  Colors.white.withValues(alpha: 0.05)]),
+                  Colors.white.withOpacity(0.1),
+                  Colors.white.withOpacity(0.05)]),
               child: Row(
                 children: [
                   // Voice button
@@ -151,13 +151,13 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       controller: _textController,
                       focusNode: _focusNode,
                       enabled: widget.enabled && !_isVoiceMode,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium),
                       decoration: InputDecoration(
                         hintText: _isVoiceMode 
                             ? '음성으로 말씀해주세요...' 
                             : '꿈 이야기를 입력하세요...',
                         hintStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: Colors.white.withOpacity(0.5),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.spacing0,
@@ -171,7 +171,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
             const SizedBox(height: AppSpacing.spacing2),
             
             // Quick response buttons
-            if (widget.enabled && !_isVoiceMode), _buildQuickResponses(theme)])).animate().fadeIn().slideY(begin: 0.2, end: 0);
+            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme)])).animate().fadeIn().slideY(begin: 0.2, end: 0)
 }
   
   Widget _buildVoiceButton(ThemeData theme) {
@@ -186,13 +186,13 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           gradient: _isVoiceMode
               ? LinearGradient(
                   colors: [
-                    Colors.red.withValues(alpha: 0.6),
-                    Colors.red.withValues(alpha: 0.8)],
+                    Colors.red.withOpacity(0.6),
+                    Colors.red.withOpacity(0.8)],
                 ,
               : LinearGradient(
                   colors: [
-                    Colors.deepPurple.withValues(alpha: 0.3),
-                    Colors.deepPurple.withValues(alpha: 0.3)]),
+                    Colors.deepPurple.withOpacity(0.3),
+                    Colors.deepPurple.withOpacity(0.3)]),
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
           color: Colors.white,
@@ -213,13 +213,13 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           gradient: canSend
               ? LinearGradient(
                   colors: [
-                    Colors.deepPurple.withValues(alpha: 0.6),
-                    Colors.deepPurple.withValues(alpha: 0.8)],
+                    Colors.deepPurple.withOpacity(0.6),
+                    Colors.deepPurple.withOpacity(0.8)],
                 ,
               : LinearGradient(
                   colors: [
-                    Colors.grey.withValues(alpha: 0.9).withValues(alpha: 0.3),
-                    Colors.grey.withValues(alpha: 0.87).withValues(alpha: 0.3)]),
+                    Colors.grey.withOpacity(0.9).withOpacity(0.3),
+                    Colors.grey.withOpacity(0.87).withOpacity(0.3)]),
         child: Icon(
           Icons.send_rounded,
           color: canSend ? Colors.white : Colors.white30,
@@ -237,12 +237,12 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           children: [
             Icon(
               Icons.mic,
-              color: Colors.red.withValues(alpha: 0.6),
+              color: Colors.red.withOpacity(0.6),
               size: 20),
             const SizedBox(width: AppSpacing.spacing2),
             Text(
-              '듣고 있습니다...',
-              style: Theme.of(context).textTheme.bodyMedium,
+              '듣고 있습니다...',),
+              style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(width: AppSpacing.spacing2),
             ValueListenableBuilder<String>(
               valueListenable: _speechService.recognizedTextNotifier,
@@ -251,7 +251,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                   return Flexible(
                     child: Text(
                       text,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis);
 }
@@ -300,7 +300,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         '혼란스러웠어요'];
 }
     
-    if (quickResponses.isEmpty) return const SizedBox.shrink();
+    if (quickResponses.isEmpty) return const SizedBox.shrink()
     
     return SizedBox(
       height: 36,
@@ -319,14 +319,14 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
 },
             child: GlassContainer(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              borderRadius: BorderRadius.circular(AppSpacing.spacing4 * 1.125),
+              borderRadius: BorderRadius.circular(AppSpacing.spacing4 * 1.125))),
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.3),
-                  Colors.deepPurple.withValues(alpha: 0.3)]),
+                  Colors.deepPurple.withOpacity(0.3),
+                  Colors.deepPurple.withOpacity(0.3)]),
               child: Text(
                 response,
-                style: Theme.of(context).textTheme.bodyMedium
+                style: Theme.of(context).textTheme.bodyMedium)
           );
 }),.animate()
                   .fadeIn(delay: 300.ms,

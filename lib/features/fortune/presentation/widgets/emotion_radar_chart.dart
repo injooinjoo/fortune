@@ -23,8 +23,8 @@ class EmotionRadarChart extends StatelessWidget {
       painter: _RadarChartPainter(
         emotions: emotions,
         primaryColor: primaryColor,
-        backgroundColor: backgroundColor);
-}
+        backgroundColor: backgroundColor));
+  }
 }
 
 class _RadarChartPainter extends CustomPainter {
@@ -45,7 +45,7 @@ class _RadarChartPainter extends CustomPainter {
 
     // Draw background circles
     final bgPaint = Paint()
-      ..color = backgroundColor.withValues(alpha: 0.3)
+      ..color = backgroundColor.withOpacity(0.3)
       ..style = PaintingStyle.stroke
      
    
@@ -53,15 +53,12 @@ class _RadarChartPainter extends CustomPainter {
 
     for (int i = 1; i <= 5; i++) {
       canvas.drawCircle(center, radius * (i / 5), bgPaint);
-}
+    }
 
     // Draw axes
     final axisPaint = Paint()
       ..color = backgroundColor
-     
-   
-    ..style =,
-      PaintingStyle.stroke
+      ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
     emotions.keys.toList().asMap().forEach((index, key) {
@@ -73,7 +70,7 @@ class _RadarChartPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: _getEmotionLabel(key),
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: const TextStyle(fontSize: 12, color: Colors.black87)),
         textDirection: TextDirection.ltr);
       textPainter.layout();
 
@@ -90,20 +87,17 @@ class _RadarChartPainter extends CustomPainter {
           (y > center.dy ? 10 : -10) + 
           (y == center.dy ? -textPainter.height / 2 : 0);
 
-      textPainter.paint(canvas, Offset(adjustedX, adjustedY);
-});
+      textPainter.paint(canvas, Offset(adjustedX, adjustedY));
+    });
 
     // Draw data polygon
     final dataPaint = Paint()
-      ..color = primaryColor.withValues(alpha: 0.3)
+      ..color = primaryColor.withOpacity(0.3)
       ..style = PaintingStyle.fill;
 
     final dataStrokePaint = Paint()
       ..color = primaryColor
-     
-   
-    ..style =,
-      PaintingStyle.stroke
+      ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
     final path = Path();
@@ -114,32 +108,32 @@ class _RadarChartPainter extends CustomPainter {
 
       if (index == 0) {
         path.moveTo(x, y);
-} else {
+      } else {
         path.lineTo(x, y);
-}
+      }
 
       // Draw points
       canvas.drawCircle(Offset(x, y), 4, dataStrokePaint);
-});
+    });
 
     path.close();
     canvas.drawPath(path, dataPaint);
     canvas.drawPath(path, dataStrokePaint);
-}
+  }
 
   String _getEmotionLabel(String key) {
     final labels = {
-      'healing', '치유',
-      'acceptance', '수용',
-      'growth', '성장',
-      'peace', '평화',
-      'hope', '희망',
-      'strength', '강인함'};
+      'healing': '치유',
+      'acceptance': '수용',
+      'growth': '성장',
+      'peace': '평화',
+      'hope': '희망',
+      'strength': '강인함'};
     return labels[key] ?? key;
-}
+  }
 
   @override
   bool shouldRepaint(_RadarChartPainter oldDelegate) {
     return oldDelegate.emotions != emotions;
-}
+  }
 }

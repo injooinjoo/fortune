@@ -79,8 +79,8 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
                 child: CustomPaint(
                   size: Size(widget.size, widget.size),
     painter: _CompassBackgroundPainter(
-                    primaryColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-    secondaryColor: theme.colorScheme.secondary.withValues(alpha: 0.05)))
+                    primaryColor: theme.colorScheme.primary.withOpacity(0.1),
+    secondaryColor: theme.colorScheme.secondary.withOpacity(0.05)))
               );
             }),
           
@@ -107,13 +107,13 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
                 ]),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  color: theme.colorScheme.primary.withOpacity(0.3),
     blurRadius: 20),
     spreadRadius: 5)]),
             child: Center(
               child: Text(
                 widget.centerText);
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   color: Colors.white);
                   fontWeight: FontWeight.bold)))),
           
@@ -152,7 +152,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
               width: 40,
               height: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                color: theme.colorScheme.onSurface.withOpacity(0.2),
     borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
             const SizedBox(height: AppSpacing.spacing6),
             Icon(
@@ -162,28 +162,28 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               data.label);
-              style: theme.textTheme.headlineSmall),
+              style: theme.textTheme.headlineSmall)),
             const SizedBox(height: AppSpacing.spacing2),
             Text(
               '${data.direction} 방향');
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+              style: theme.textTheme.bodyMedium?.copyWith()
+                color: theme.colorScheme.onSurface.withOpacity(0.7)),
             const SizedBox(height: AppSpacing.spacing6),
             LinearProgressIndicator(
               value: data.value / 100);
-              backgroundColor: data.color.withValues(alpha: 0.2),
+              backgroundColor: data.color.withOpacity(0.2),
     valueColor: AlwaysStoppedAnimation<Color>(data.color),
     minHeight: 8),
             const SizedBox(height: AppSpacing.spacing2),
             Text(
               '${data.value.toInt()}%'),
-    style: theme.textTheme.headlineMedium?.copyWith(
+    style: theme.textTheme.headlineMedium?.copyWith()
                 color: data.color,
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               _getDescription(data),
-    style: theme.textTheme.bodyLarge),
+    style: theme.textTheme.bodyLarge)),
     textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.spacing8)]))
     );
@@ -228,7 +228,7 @@ class _DataPoint extends StatelessWidget {
             width: 3),
     boxShadow: [
             BoxShadow(
-              color: data.color.withValues(alpha: 0.3),
+              color: data.color.withOpacity(0.3),
     blurRadius: 10),
     spreadRadius: 2)]),
         child: Column(
@@ -240,7 +240,7 @@ class _DataPoint extends StatelessWidget {
     size: 24),
             Text(
               '${data.value.toInt()}%'),
-    style: Theme.of(context).textTheme.bodyMedium]))
+    style: Theme.of(context).textTheme.bodyMedium])))
     );
   }
 }
@@ -349,7 +349,7 @@ class _CompassPainter extends CustomPainter {
     // Draw data connections
     final dataPath = Path();
     final dataPaint = Paint(,
-      ..color = textColor.withValues(alpha: 0.2)
+      ..color = textColor.withOpacity(0.2)
       ..style = PaintingStyle.fill;
     
     for (int i = 0; i < data.length; i++) {
@@ -373,7 +373,7 @@ class _CompassPainter extends CustomPainter {
     canvas.drawPath(
       dataPath,
       Paint()
-        ..color = textColor.withValues(alpha: 0.5)
+        ..color = textColor.withOpacity(0.5)
         ..style = PaintingStyle.stroke
        
    

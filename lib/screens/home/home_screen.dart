@@ -479,7 +479,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'emoji': '📱',
         'title': '스냅 스크롤 운세',
         'desc': '스와이프로 운세 보기',
-        'route': '/demo/snap-scroll',
+        'route': '/fortune/snap-scroll',
         'gradient': const LinearGradient(
           colors: [Color(0xFFF093FB), Color(0xFFF5576C)])}];
 
@@ -561,7 +561,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                 border: Border.all(color: context.fortuneTheme.dividerColor),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
+                    color: Theme.of(context).shadowColor.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2))]),
               child: Row(
@@ -570,7 +570,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(24)),
                     child: Icon(
                       iconMap[path] ?? Icons.auto_awesome,
@@ -597,7 +597,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                           horizontal: 8,
                           vertical: 4),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4)),
                         child: Text(
                           timeAgo,
@@ -688,7 +688,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20)),
                         child: Icon(
                           iconMap[fortune.id] ?? Icons.auto_awesome,
@@ -712,7 +712,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                                       horizontal: 6,
                                       vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4)),
                                     child: Text(
                                       badge,

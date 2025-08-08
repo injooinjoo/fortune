@@ -57,7 +57,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       'description', '결혼식, 공식 행사, 시상식'}];
   
   final List<Map<String, dynamic>> styleTypes = [
-    {'id', 'classic': 'label', '클래식': 'icon'},
+    {'\1': '\2', 'label', '클래식': 'icon'},
     {'id', 'modern', 'label', '모던', 'icon'},
     {'id', 'casual', 'label', '캐주얼', 'icon'},
     {'id', 'romantic', 'label', '로맨틱', 'icon'},
@@ -116,13 +116,13 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '오늘의 럭키 스타일링',
+            '오늘의 럭키 스타일링',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
-            '날짜와 상황에 맞는 행운의 의상을 추천해드립니다.',
+            '날짜와 상황에 맞는 행운의 의상을 추천해드립니다.',),
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey)),
@@ -135,7 +135,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(color: Colors.grey[300]!)),
               child: Row(
                 children: [
@@ -146,13 +146,13 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          '날짜 선택',
+                          '날짜 선택',),
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey)),
                         const SizedBox(height: 4),
                         Text(
-                          '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',
+                          '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500))])),
@@ -162,7 +162,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           
           // Occasion selection
           const Text(
-            '어떤 상황인가요?',
+            '어떤 상황인가요?',),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold)),
@@ -187,14 +187,14 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     _occasion = occasion['id'];
                   });
                 },
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (occasion['color'],
                         : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12))),
                     border: Border.all(
                       color: isSelected
                           ? occasion['color'],
@@ -250,7 +250,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           
           // Personal style
           const Text(
-            '평소 스타일',
+            '평소 스타일',),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold)),
@@ -307,7 +307,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   Icon(Icons.checkroom, size: 20),
                   SizedBox(width: 8),
                   Text(
-                    '행운의 스타일 확인하기',
+                    '행운의 스타일 확인하기',),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold))])))]));
@@ -356,7 +356,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         offset: const Offset(0, 10))])),
                 const SizedBox(height: 16),
                 const Text(
-                  '오늘의 행운의 색',
+                  '오늘의 행운의 색',),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey)),
@@ -382,7 +382,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,7 +392,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(Icons.checkroom, color: Colors.pink),
                     SizedBox(width: 8),
                     Text(
-                      '추천 스타일링',
+                      '추천 스타일링',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -401,7 +401,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Specific Items
@@ -410,7 +410,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,7 +420,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(Icons.shopping_bag, color: Colors.orange),
                     SizedBox(width: 8),
                     Text(
-                      '아이템별 추천',
+                      '아이템별 추천',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -450,7 +450,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold)),
-                            if (item['description'],
+                            if (\1)
                               Text(
                                 item['description'],
                                 style: const TextStyle(
@@ -476,7 +476,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(Icons.diamond, color: Colors.purple),
                     SizedBox(width: 8),
                     Text(
-                      '행운의 액세서리',
+                      '행운의 액세서리',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -485,7 +485,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   result.luckyItems!['accessories'],
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Styling Tips
@@ -503,7 +503,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(Icons.tips_and_updates, color: Colors.amber),
                     SizedBox(width: 8),
                     Text(
-                      '스타일링 팁',
+                      '스타일링 팁',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -539,7 +539,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(Icons.block, color: Colors.red),
                     SizedBox(width: 8),
                     Text(
-                      '피해야 할 스타일',
+                      '피해야 할 스타일',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -548,7 +548,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   data['avoid_items'],
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6))]))]]
+                    height: 1.6)]))]]
     );
   }
   

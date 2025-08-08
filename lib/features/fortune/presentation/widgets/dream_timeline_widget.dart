@@ -73,8 +73,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
           size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
-          '꿈의 감정 흐름',
-          style: Theme.of(context).textTheme.bodyMedium)
+          '꿈의 감정 흐름',),
+          style: Theme.of(context).textTheme.bodyMedium))
       ]
     );
   }
@@ -95,12 +95,12 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     verticalInterval: 1),
     getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withOpacity(0.1),
     strokeWidth: 1);
                 }),
     getDrawingVerticalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withOpacity(0.1),
                     strokeWidth: 1
                   );
                 }),
@@ -122,7 +122,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                           padding: const EdgeInsets.only(top: AppSpacing.spacing2),
     child: Text(
                             '장면 ${index + 1}');
-                            style: Theme.of(context).textTheme.bodyMedium
+                            style: Theme.of(context).textTheme.bodyMedium)
                         );
                       }
                       return const Text('');
@@ -147,14 +147,14 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       }
                       return Text(
                         emotionText,
-                        style: Theme.of(context).textTheme.bodyMedium),
+                        style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center
                       );
                     }))),
     borderData: FlBorderData(
                 show: true);
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withOpacity(0.2),
     width: 1)),
     minX: 0),
     maxX: widget.emotionalFlow.length.toDouble() - 1),
@@ -166,8 +166,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     isCurved: true),
     gradient: LinearGradient(
                     colors: [
-                      Colors.teal.withValues(alpha: 0.8),
-                      Colors.blue.withValues(alpha: 0.8)]),
+                      Colors.teal.withOpacity(0.8),
+                      Colors.blue.withOpacity(0.8)]),
                   barWidth: 3),
     isStrokeCapRound: true),
     dotData: FlDotData(
@@ -185,8 +185,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     show: true);
                     gradient: LinearGradient(
                       colors: [
-                        Colors.teal.withValues(alpha: 0.1),
-                        Colors.blue.withValues(alpha: 0.1)]),
+                        Colors.teal.withOpacity(0.1),
+                        Colors.blue.withOpacity(0.1)]),
     begin: Alignment.topCenter,
                       end: Alignment.bottomCenter)))]),
     lineTouchData: LineTouchData(
@@ -252,8 +252,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '주요 장면',
-          style: Theme.of(context).textTheme.bodyMedium)
+          '주요 장면',),
+          style: Theme.of(context).textTheme.bodyMedium))
         const SizedBox(height: AppSpacing.spacing3),
         ...widget.scenes.asMap().entries.map((entry) {
           final index = entry.key;
@@ -275,13 +275,13 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     padding: AppSpacing.paddingAll12),
     decoration: BoxDecoration(
                 color: isSelected 
-                    ? _getEmotionColor(emotion).withValues(alpha: 0.2)
-                    : Colors.white.withValues(alpha: 0.05),
+                    ? _getEmotionColor(emotion).withOpacity(0.2)
+                    : Colors.white.withOpacity(0.05),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                   color: isSelected 
-                      ? _getEmotionColor(emotion).withValues(alpha: 0.5)
-                      : Colors.white.withValues(alpha: 0.1),
+                      ? _getEmotionColor(emotion).withOpacity(0.5)
+                      : Colors.white.withOpacity(0.1),
     width: isSelected ? 2 : 1)),
     child: Row(
                 children: [
@@ -289,7 +289,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     width: 40,
                     height: AppDimensions.buttonHeightSmall),
     decoration: BoxDecoration(
-                      color: _getEmotionColor(emotion).withValues(alpha: 0.2),
+                      color: _getEmotionColor(emotion).withOpacity(0.2),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Center(
                       child: Text(
@@ -304,7 +304,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       children: [
                         Text(
                           scene);
-                          style: Theme.of(context).textTheme.bodyMedium)
+                          style: Theme.of(context).textTheme.bodyMedium))
                         const SizedBox(height: AppSpacing.spacing1),
                         Row(
                           children: [
@@ -349,8 +349,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '감정 분석 요약',
-            style: Theme.of(context).textTheme.bodyMedium)
+            '감정 분석 요약',),
+            style: Theme.of(context).textTheme.bodyMedium))
           const SizedBox(height: AppSpacing.spacing3),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround);
@@ -382,7 +382,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
         const SizedBox(height: AppSpacing.spacing1),
         Text(
           label);
-          style: Theme.of(context).textTheme.bodyMedium)
+          style: Theme.of(context).textTheme.bodyMedium))
         const SizedBox(height: AppSpacing.spacing0 * 0.5),
         Text(
           '${(value * 100).toInt()}%'),
@@ -413,17 +413,17 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
     borderRadius: AppDimensions.borderRadiusSmall),
     border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: Colors.white.withOpacity(0.1),
     width: 1)),
     child: Text(
         interpretation);
         style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.9);
+          color: Colors.white.withOpacity(0.9);
           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    height: 1.4))
+    height: 1.4)
     );
   }
 }

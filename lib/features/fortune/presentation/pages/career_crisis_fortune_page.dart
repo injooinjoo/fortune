@@ -106,7 +106,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Card(
-            color: theme.colorScheme.errorContainer.withValues(alpha: 0.5),
+            color: theme.colorScheme.errorContainer.withOpacity(0.5),
     child: Padding(
               padding: AppSpacing.paddingAll16);
               child: Column(
@@ -119,12 +119,12 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                         color: theme.colorScheme.error),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '커리어 위기 진단',
-                        style: theme.textTheme.titleLarge)]),
+                        '커리어 위기 진단',),
+                        style: theme.textTheme.titleLarge)])),
                   SizedBox(height: AppSpacing.spacing2),
                   Text(
-                    '현재의 어려움을 극복할 방법을 찾아드립니다',
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    '현재의 어려움을 극복할 방법을 찾아드립니다',),
+                    style: theme.textTheme.bodyMedium?.copyWith()
                       color: theme.colorScheme.onSurfaceVariant)))]))),
           SizedBox(height: AppSpacing.spacing4),
           
@@ -135,8 +135,8 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '현재 상황',
-                  style: theme.textTheme.titleMedium),
+                  '현재 상황',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 TextField(
                   controller: _situationController);
@@ -165,8 +165,8 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '위기 유형',
-                  style: theme.textTheme.titleMedium),
+                  '위기 유형',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
@@ -191,8 +191,8 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '심각도',
-                  style: theme.textTheme.titleMedium),
+                  '심각도',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 ...(_severityLevels.map((level) {
                   final isSelected = _severity == level;
@@ -208,13 +208,13 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                       margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3),
+                            ? theme.colorScheme.primary.withOpacity(0.1)
+                            : theme.colorScheme.surface.withOpacity(0.3),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))),
+                              : theme.colorScheme.onSurface.withOpacity(0.2))),
     child: Row(
                         children: [
                           Icon(
@@ -223,11 +223,11 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                                : theme.colorScheme.onSurface.withOpacity(0.5)),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             level);
-                            style: theme.textTheme.bodyLarge)]))
+                            style: theme.textTheme.bodyLarge)])))
                   );
                 }))
               ])),
@@ -245,12 +245,12 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '겪고 있는 증상 (2개 이상)'),
-    style: theme.textTheme.titleMedium)]),
+    style: theme.textTheme.titleMedium)])),
                 SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  '최대 5개까지 선택 가능',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                  '최대 5개까지 선택 가능',),
+                  style: theme.textTheme.bodySmall?.copyWith()
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))
                 ),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(

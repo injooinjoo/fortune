@@ -19,7 +19,7 @@ class BirthYearFortuneList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (fortunes.isEmpty) return const SizedBox.shrink();
+    if (fortunes.isEmpty) return const SizedBox.shrink()
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,8 +80,8 @@ class BirthYearFortuneCard extends StatelessWidget {
                     begin: Alignment.topLeft,
       end: Alignment.bottomRight),
         colors: [
-                      AppTheme.primaryColor.withValues(alpha: 0.1),
-                      AppTheme.primaryColor.withValues(alpha: 0.05)]
+                      AppTheme.primaryColor.withOpacity(0.1),
+                      AppTheme.primaryColor.withOpacity(0.05)]
                   ,
                 : null),
     child: Column(

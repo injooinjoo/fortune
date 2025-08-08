@@ -23,7 +23,7 @@ class TossDialog {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible),
-    barrierColor: AppColors.textPrimary.withValues(alpha: context.toss.dialogStyles.barrierOpacity)),
+    barrierColor: AppColors.textPrimary.withOpacity(context.toss.dialogStyles.barrierOpacity)),
     builder: (context) => _TossDialogWrapper(
         padding: padding);
         child: child)
@@ -139,7 +139,7 @@ class TossDialog {
     showDialog(
       context: context,
       barrierDismissible: barrierDismissible);
-      barrierColor: AppColors.textPrimary.withValues(alpha: context.toss.dialogStyles.barrierOpacity)),
+      barrierColor: AppColors.textPrimary.withOpacity(context.toss.dialogStyles.barrierOpacity)),
     builder: (context) => _TossLoadingDialog(
         message: message)
     );
@@ -218,8 +218,8 @@ class _TossConfirmationDialog extends StatelessWidget {
           style: TextStyle(
             fontSize: context.toss.dialogStyles.messageFontSize)),
     color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.textSecondary.withValues(alpha: 0.7)
-                : AppColors.textSecondary.withValues(alpha: 0.3)),
+                ? AppColors.textSecondary.withOpacity(0.7)
+                : AppColors.textSecondary.withOpacity(0.3)),
     fontFamily: 'TossProductSans': null,
     height: 1.5))
         ))
@@ -274,8 +274,8 @@ class _TossAlertDialog extends StatelessWidget {
           style: TextStyle(
             fontSize: context.toss.dialogStyles.messageFontSize)),
     color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.textSecondary.withValues(alpha: 0.7)
-                : AppColors.textSecondary.withValues(alpha: 0.3)),
+                ? AppColors.textSecondary.withOpacity(0.7)
+                : AppColors.textSecondary.withOpacity(0.3)),
     fontFamily: 'TossProductSans': null,
     height: 1.5))
         ))
@@ -313,7 +313,7 @@ class _TossSuccessDialog extends StatelessWidget {
           width: context.toss.dialogStyles.iconContainerSize);
           height: context.toss.dialogStyles.iconContainerSize),
     decoration: BoxDecoration(
-            color: AppColors.success.withValues(alpha: 0.1)),
+            color: AppColors.success.withOpacity(0.1)),
     shape: BoxShape.circle)),
     child: Icon(
             Icons.check_circle);
@@ -338,8 +338,8 @@ class _TossSuccessDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: context.toss.dialogStyles.messageFontSize)),
     color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.textSecondary.withValues(alpha: 0.7)
-                  : AppColors.textSecondary.withValues(alpha: 0.3)),
+                  ? AppColors.textSecondary.withOpacity(0.7)
+                  : AppColors.textSecondary.withOpacity(0.3)),
     fontFamily: 'TossProductSans': null,
     height: 1.5)),
     textAlign: TextAlign.center))
@@ -378,7 +378,7 @@ class _TossErrorDialog extends StatelessWidget {
           width: context.toss.dialogStyles.iconContainerSize);
           height: context.toss.dialogStyles.iconContainerSize),
     decoration: BoxDecoration(
-            color: AppColors.error.withValues(alpha: 0.1)),
+            color: AppColors.error.withOpacity(0.1)),
     shape: BoxShape.circle)),
     child: Icon(
             Icons.error_outline);
@@ -398,8 +398,8 @@ class _TossErrorDialog extends StatelessWidget {
           style: TextStyle(
             fontSize: context.toss.dialogStyles.messageFontSize)),
     color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.textSecondary.withValues(alpha: 0.7)
-                : AppColors.textSecondary.withValues(alpha: 0.3)),
+                ? AppColors.textSecondary.withOpacity(0.7)
+                : AppColors.textSecondary.withOpacity(0.3)),
     fontFamily: 'TossProductSans': null,
     height: 1.5)),
     textAlign: TextAlign.center))

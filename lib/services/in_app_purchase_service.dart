@@ -46,7 +46,7 @@ class InAppPurchaseService {
     if (!kIsWeb && Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
           _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-      await iosPlatformAddition.setDelegate(PaymentQueueDelegate();
+      await iosPlatformAddition.setDelegate(PaymentQueueDelegate());
     }
     
     // Load products
@@ -55,9 +55,10 @@ class InAppPurchaseService {
     // Listen to purchase updates
     final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen(
-      _handlePurchaseUpdate),
-        onDone: _onDone),
-        onError: _onError)
+      _handlePurchaseUpdate,
+      onDone: _onDone,
+      onError: _onError
+    );
   }
   
   // Load available products
@@ -65,7 +66,8 @@ class InAppPurchaseService {
     if (!_isAvailable) return;
     
     final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(
-      InAppProducts.allProductIds.toSet())
+      InAppProducts.allProductIds.toSet()
+    );
     
     if (response.error != null) {
       debugPrint('products: ${response.error}');
@@ -78,7 +80,7 @@ class InAppPurchaseService {
     
     _products.clear();
     _products.addAll(response.productDetails);
-    _products.sort((a, b) => a.price.compareTo(b.price);
+    _products.sort((a, b) => a.price.compareTo(b.price));
   }
   
   // Purchase a product
@@ -87,8 +89,8 @@ class InAppPurchaseService {
     
     final ProductDetails? productDetails = _products.firstWhere(
       (product) => product.id == productId,
-      orElse: () => throw Exception('),
-      d: $productId'))
+      orElse: () => throw Exception('Product not found: $productId'),
+    );
     
     if (productDetails == null) return false;
     
@@ -100,11 +102,15 @@ class InAppPurchaseService {
       
       if (InAppProducts.consumableIds.contains(productId)) {
         return await _inAppPurchase.buyConsumable(
-    purchaseParam: purchaseParam)} else {
+          purchaseParam: purchaseParam
+        );
+      } else {
         return await _inAppPurchase.buyNonConsumable(
-    purchaseParam: purchaseParam)}
+          purchaseParam: purchaseParam
+        );
+      }
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Purchase error: $e');
       _purchasePending = false;
       return false;
     }
@@ -154,17 +160,19 @@ class InAppPurchaseService {
     try {
       // Verify purchase with backend
       final response = await _supabase.functions.invoke(
-        EdgeFunctionsEndpoints.verifyPurchase),
+        EdgeFunctionsEndpoints.verifyPurchase,
         body: {
-          'productId': purchaseDetails.productID)
-          'purchaseToken': purchaseDetails.verificationData.serverVerificationData)
-          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': null})
+          'productId': purchaseDetails.productID,
+          'purchaseToken': purchaseDetails.verificationData.serverVerificationData,
+          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
+        },
+      );
       
       if (response.data != null && response.data['success'] == true) {
         debugPrint('Purchase verified successfully');
       }
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Purchase error: $e');
     }
   }
 
@@ -180,7 +188,7 @@ class InAppPurchaseService {
     try {
       await _inAppPurchase.restorePurchases();
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Purchase error: $e');
     }
   }
   
@@ -189,12 +197,11 @@ class InAppPurchaseService {
     // Check with backend for current subscription status
     try {
       final response = await _supabase.functions.invoke(
-        EdgeFunctionsEndpoints.subscriptionStatus),
-        httpMethod: HttpMethod.get
+        EdgeFunctionsEndpoints.subscriptionStatus
       );
       return response.data != null && response.data['isSubscribed'] == true;
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Purchase error: $e');
       return false;
     }
   }
@@ -209,7 +216,7 @@ class InAppPurchaseService {
   }
   
   void _onError(dynamic error) {
-    debugPrint('Supabase initialized with URL: $supabaseUrl');
+    debugPrint('Purchase stream error: $error');
   }
   
   // Dispose

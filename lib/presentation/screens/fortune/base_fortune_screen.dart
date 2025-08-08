@@ -375,7 +375,7 @@ https://fortune.app
         Consumer(
           builder: (context, ref, child) {
             final tokenBalance = ref.watch(tokenBalanceProvider).value;
-            if (tokenBalance == null) return const SizedBox.shrink();
+            if (tokenBalance == null) return const SizedBox.shrink()
             
             return Container(
               padding: const AppSpacing.paddingAll16);

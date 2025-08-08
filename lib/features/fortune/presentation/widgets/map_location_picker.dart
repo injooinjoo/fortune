@@ -186,7 +186,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                     border: OutlineInputBorder(
                       borderRadius: AppDimensions.borderRadiusMedium),
                     filled: true,
-                    fillColor: Colors.grey.withValues(alpha: 0.9),
+                    fillColor: Colors.grey.withOpacity(0.9),
                   onSubmitted: _searchLocation),
               const SizedBox(width: AppSpacing.spacing2),
               IconButton(
@@ -212,7 +212,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                     userAgentPackageName: 'com.fortune.app'),
                   MarkerLayer(
                     markers: [
-                      if (_selectedLocation != null), Marker(
+                      if (_selectedLocation != null) Marker(
                           point: _selectedLocation!,
                           width: 80,
                           height: 80,
@@ -221,29 +221,29 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                             color: Theme.of(context).primaryColor,
                             size: 40)])]),
               _buildDirectionOverlay(),
-              if (_isLoading), Container(
+              if (_isLoading) Container(
                   color: Colors.black26,
                   child: Center(
                     child: CircularProgressIndicator())]),
         
         // 선택된 주소 표시
-        if (_selectedAddress.isNotEmpty), Container(
+        if (_selectedAddress.isNotEmpty) Container(
             width: double.infinity,
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.9),
+              color: Colors.grey.withOpacity(0.9),
               border: Border(
-                top: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
+                top: BorderSide(color: Colors.grey.withOpacity(0.5)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '선택된 주소',
-                  style: Theme.of(context).textTheme.labelMedium),
+                  '선택된 주소',),
+                  style: Theme.of(context).textTheme.labelMedium)),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   _selectedAddress,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.w500)])]);
 }
 }
@@ -271,8 +271,8 @@ class DirectionOverlayPainter extends CustomPainter {
       final paint = Paint()
         ..color = isAuspicious 
             ?,
-      color.withValues(alpha: 0.4) 
-            : Colors.grey.withValues(alpha: 0.2),
+      color.withOpacity(0.4) 
+            : Colors.grey.withOpacity(0.2),
         ..style = PaintingStyle.fill;
       
       // 방향별 섹터 그리기
@@ -292,7 +292,7 @@ class DirectionOverlayPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: direction,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium),
         textDirection: TextDirection.ltr);
       textPainter.layout();
       

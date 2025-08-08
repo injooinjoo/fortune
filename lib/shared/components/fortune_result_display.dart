@@ -30,7 +30,7 @@ class FortuneResultDisplay extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Header Widget (optional custom header,
+          // Header Widget (optional custom header)
           if (headerWidget != null) headerWidget!,
 
           // Main Fortune Content
@@ -67,7 +67,7 @@ class FortuneResultDisplay extends StatelessWidget {
         padding: AppSpacing.paddingAll24,
         child: Column(
           children: [
-            // Overall Score (if available);
+            // Overall Score (if available)
             if (fortune.overallScore != null)
               Container(
                 width: 100,
@@ -169,8 +169,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   style: theme.textTheme.headlineSmall)]),
             SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) {
-              final score = entry.value is int ? entry.value as,
-    int : 0;
+              final score = entry.value is int ? entry.value as int : 0;
               return Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.small),
                 child: Row(
@@ -363,7 +362,7 @@ class FortuneResultDisplay extends StatelessWidget {
         onPressed: onShare ?? () {
           // Default share implementation
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('공유 기능이 곧 추가됩니다!'));
+            const SnackBar(content: Text('공유 기능이 곧 추가됩니다!')));
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing6, vertical: AppSpacing.spacing4),

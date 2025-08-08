@@ -37,10 +37,10 @@ class _LotteryInputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 로또 행운을 확인해보세요!\n당신의 행운 번호와 구매 전략을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘의 로또 행운을 확인해보세요!\n당신의 행운 번호와 구매 전략을 알려드립니다.',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 32),
         
         // Lottery balls animation
@@ -63,13 +63,13 @@ class _LotteryInputForm extends StatelessWidget {
                         colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.amber.withValues(alpha: 0.3),
+                          color: Colors.amber.withOpacity(0.3),
                           blurRadius: 10,
                           spreadRadius: 2)]),
                     child: Center(
                       child: Text(
-                        '?',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '?',),
+                        style: theme.textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: Colors.white)))));
               })))),
@@ -117,26 +117,26 @@ class _LotteryFortuneResult extends StatelessWidget {
           // Lucky Numbers Display
           GlassContainer(
             padding: const EdgeInsets.all(24),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20))),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.amber.withValues(alpha: 0.1),
-                Colors.orange.withValues(alpha: 0.1)]),
+                Colors.amber.withOpacity(0.1),
+                Colors.orange.withOpacity(0.1)]),
             child: Column(
               children: [
                 Text(
-                  '오늘의 행운 번호',
-                  style: theme.textTheme.headlineSmall?.copyWith(
+                  '오늘의 행운 번호',),
+                  style: theme.textTheme.headlineSmall?.copyWith()
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ...luckyNumbers.map((number) => _buildNumberBall(context, number, false),
+                    ...luckyNumbers.map((number) => _buildNumberBall(context, number, false)).toList(),
                     const SizedBox(width: 16),
-                    Icon(Icons.add, color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    Icon(Icons.add, color: theme.colorScheme.onSurface.withOpacity(0.5)),
                     const SizedBox(width: 16),
                     _buildNumberBall(context, bonusNumber, true)])])),
           const SizedBox(height: 16),
@@ -144,7 +144,7 @@ class _LotteryFortuneResult extends StatelessWidget {
           // Main Fortune Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -155,14 +155,14 @@ class _LotteryFortuneResult extends StatelessWidget {
                       color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '상세 분석',
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      '상세 분석',),
+                      style: theme.textTheme.titleLarge?.copyWith()
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))])),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)])),
           const SizedBox(height: 16),
 
           // Best Time & Place
@@ -171,7 +171,7 @@ class _LotteryFortuneResult extends StatelessWidget {
               Expanded(
                 child: GlassContainer(
                   padding: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16))),
                   child: Column(
                     children: [
                       Icon(
@@ -180,19 +180,19 @@ class _LotteryFortuneResult extends StatelessWidget {
                         size: 32),
                       const SizedBox(height: 8),
                       Text(
-                        '행운의 시간',
-                        style: theme.textTheme.titleSmall),
+                        '행운의 시간',),
+                        style: theme.textTheme.titleSmall)),
                       const SizedBox(height: 4),
                       Text(
                         bestTime,
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.primary))]))),
               const SizedBox(width: 16),
               Expanded(
                 child: GlassContainer(
                   padding: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16))),
                   child: Column(
                     children: [
                       Icon(
@@ -201,12 +201,12 @@ class _LotteryFortuneResult extends StatelessWidget {
                         size: 32),
                       const SizedBox(height: 8),
                       Text(
-                        '행운의 장소',
-                        style: theme.textTheme.titleSmall),
+                        '행운의 장소',),
+                        style: theme.textTheme.titleSmall)),
                       const SizedBox(height: 4),
                       Text(
                         bestPlace,
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.primary))])))]),
           const SizedBox(height: 16),
@@ -215,7 +215,7 @@ class _LotteryFortuneResult extends StatelessWidget {
           if (strategy.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -226,27 +226,27 @@ class _LotteryFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.secondary),
                       const SizedBox(width: 8),
                       Text(
-                        '구매 전략',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '구매 전략',),
+                        style: theme.textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Text(
                     strategy,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      height: 1.6))])),
+                    style: theme.textTheme.bodyLarge?.copyWith()
+                      height: 1.6)])),
             const SizedBox(height: 16)],
 
           // Avoid Numbers
           if (avoidNumbers.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(16),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.red.withValues(alpha: 0.05),
-                  Colors.orange.withValues(alpha: 0.05)]),
+                  Colors.red.withOpacity(0.05),
+                  Colors.orange.withOpacity(0.05)]),
               child: Column(
                 children: [
                   Row(
@@ -257,8 +257,8 @@ class _LotteryFortuneResult extends StatelessWidget {
                         color: Colors.orange),
                       const SizedBox(width: 8),
                       Text(
-                        '피해야 할 번호',
-                        style: theme.textTheme.titleMedium)]),
+                        '피해야 할 번호',),
+                        style: theme.textTheme.titleMedium)])),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
@@ -267,13 +267,13 @@ class _LotteryFortuneResult extends StatelessWidget {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20))),
                           border: Border.all(
-                            color: Colors.red.withValues(alpha: 0.3))),
+                            color: Colors.red.withOpacity(0.3))),
                         child: Text(
                           number.toString(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith()
                             color: Colors.red,
                             fontWeight: FontWeight.bold)));
                     }).toList())])),
@@ -283,7 +283,7 @@ class _LotteryFortuneResult extends StatelessWidget {
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -294,8 +294,8 @@ class _LotteryFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '행운 팁',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '행운 팁',),
+                        style: theme.textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
@@ -311,7 +311,8 @@ class _LotteryFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))])).toList()]))]]));
+                            style: theme.textTheme.bodyMedium))]))).toList()]))),
+            const SizedBox(height: 16)]]));
   }
 
   Widget _buildNumberBall(BuildContext context, int number, bool isBonus) {
@@ -328,16 +329,16 @@ class _LotteryFortuneResult extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: isBonus 
             ? [Colors.red, Colors.deepOrange]
-            : [color, color.withValues(alpha: 0.8)]),
+            : [color, color.withOpacity(0.8)]),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.4),
+            color: color.withOpacity(0.4),
             blurRadius: 10,
             spreadRadius: 2)]),
       child: Center(
         child: Text(
           number.toString(),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold,
             color: Colors.white))));
   }

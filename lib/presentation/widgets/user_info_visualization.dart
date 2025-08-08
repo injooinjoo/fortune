@@ -42,7 +42,7 @@ class UserInfoVisualization extends StatelessWidget {
             gradient: LinearGradient(
               colors: gradientColors ?? [
                 theme.colorScheme.primary,
-                theme.colorScheme.primary.withValues(alpha: 0.7)]),
+                theme.colorScheme.primary.withOpacity(0.7)]),
             borderRadius: AppDimensions.borderRadiusMedium),
           child: Icon(
             _getIconForFortuneType(),
@@ -56,6 +56,7 @@ class UserInfoVisualization extends StatelessWidget {
   }
   
   Widget _buildInfoGrid(BuildContext context) {
+    final theme = Theme.of(context);
     final List<Widget> infoItems = [];
     
     // Name
@@ -132,7 +133,7 @@ class UserInfoVisualization extends StatelessWidget {
     if (userInfo['gender'] != null) {
       infoItems.add(_buildInfoItem(
         context,
-        icon: userInfo['gender'] == 'male'),
+        icon: userInfo['gender'] == 'male' ? Icons.male : Icons.female,
         label: '성별',
         value: userInfo['gender'] == 'male' ? '남성' : '여성'));
     }
@@ -141,11 +142,11 @@ class UserInfoVisualization extends StatelessWidget {
     if (userInfo['person1'] != null && userInfo['person2'] != null) {
       return Column(
         children: [
-          _buildPersonSection(context, '첫 번째 사람': userInfo['person1'],
-          SizedBox(height: AppSpacing.spacing4,
+          _buildPersonSection(context, '첫 번째 사람', userInfo['person1'], theme.colorScheme.primary),
+          SizedBox(height: AppSpacing.spacing4),
           _buildConnectionIndicator(context),
           SizedBox(height: AppSpacing.spacing4),
-          _buildPersonSection(context, '두 번째 사람': userInfo['person2']]);
+          _buildPersonSection(context, '두 번째 사람', userInfo['person2'], theme.colorScheme.secondary)]);
     }
     
     return Wrap(
@@ -160,10 +161,10 @@ class UserInfoVisualization extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: accentColor.withValues(alpha: 0.05),
+        color: accentColor.withOpacity(0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: accentColor.withValues(alpha: 0.2),
+          color: accentColor.withOpacity(0.2),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +179,7 @@ class UserInfoVisualization extends StatelessWidget {
             spacing: 12,
             runSpacing: 12,
             children: [
-              if (person['name'] != null);
+              if (person['name'] != null)
                 _buildInfoItem(
                   context,
                   icon: Icons.person,
@@ -190,13 +191,13 @@ class UserInfoVisualization extends StatelessWidget {
                   context,
                   icon: Icons.cake,
                   label: '생일',
-                  value: _formatDate(DateTime.parse(person['birthDate'],
+                  value: _formatDate(DateTime.parse(person['birthDate'])),
                   color: accentColor),
                 _buildInfoItem(
                   context,
                   icon: Icons.pets,
                   label: '띠',
-                  value: _getZodiacAnimal(DateTime.parse(person['birthDate'],
+                  value: _getZodiacAnimal(DateTime.parse(person['birthDate']).year),
                   color: accentColor)]])]));
   }
   
@@ -207,7 +208,7 @@ class UserInfoVisualization extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: [Colors.pink.withValues(alpha: 0.5), AppColors.primary.withValues(alpha: 0.5)])),
+            colors: [Colors.pink.withOpacity(0.5), AppColors.primary.withOpacity(0.5)])),
         child: const Icon(
           Icons.favorite,
           color: AppColors.textPrimaryDark,
@@ -237,10 +238,10 @@ class UserInfoVisualization extends StatelessWidget {
         horizontal: AppSpacing.spacing3,
         vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
-        color: itemColor.withValues(alpha: 0.1),
+        color: itemColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
         border: Border.all(
-          color: itemColor.withValues(alpha: 0.3),
+          color: itemColor.withOpacity(0.3),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -250,7 +251,7 @@ class UserInfoVisualization extends StatelessWidget {
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+              color: theme.colorScheme.onSurface.withOpacity(0.6))),
           Text(
             value,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -301,7 +302,7 @@ class UserInfoVisualization extends StatelessWidget {
   }
   
   String _getZodiacAnimal(int year) {
-    const animals = ['원숭이': '닭': '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
+    const animals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
     return '${animals[year % 12]}띠';
   }
   

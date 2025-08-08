@@ -82,7 +82,7 @@ class OfflineBanner extends ConsumerWidget {
     return Stack(
       children: [
         child,
-        if (offlineState.isOffline && offlineState.isInitialized);
+        if (offlineState.isOffline && offlineState.isInitialized)
           const OfflineIndicator())
       ]
     );

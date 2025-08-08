@@ -39,20 +39,20 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
       parent: _animationController,
       curve: Curves.easeIn);
     _animationController.forward();
-}
+  }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   void _selectDeck(String deckId) {
     HapticFeedback.lightImpact();
     setState(() {
       _tempSelectedDeckId = deckId;
-});
-}
+    });
+  }
   
   void _confirmSelection() async {
     if (_tempSelectedDeckId == null) return;
@@ -70,9 +70,9 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
       context.pushReplacementNamed(
         'fortune-tarot',
         queryParameters: {
-          if (widget.spreadType != null) 'spreadType': null,
-          if (widget.initialQuestion != null) 'question': null});
-}
+          if (widget.spreadType != null) 'spreadType': widget.spreadType!,
+          if (widget.initialQuestion != null) 'question': widget.initialQuestion!});
+    }
   }
 
   @override
@@ -114,7 +114,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                               Icon(
                                 Icons.style,
                                 size: 60,
-                                color: Colors.white.withValues(alpha: 0.9)),
+                                color: Colors.white.withOpacity(0.9)),
                               const SizedBox(height: 16),
                               Text(
                                 '당신에게 맞는 타로 덱을 선택하세요',
@@ -171,7 +171,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                         fontWeight: FontWeight.bold,
                         color: Colors.white)),
                     icon: const Icon(Icons.check, color: Colors.white))))]))));
-}
+  }
 
   Widget _buildSectionTitle(String title, double fontScale) {
     return Row(
@@ -230,8 +230,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     ref.read(tarotExperienceLevelProvider.notifier).setExperienceLevel(level);
                   }
                 },
-                selectedColor: level.color.withValues(alpha: 0.3),
-                backgroundColor: Colors.white.withValues(alpha: 0.1));
+                selectedColor: level.color.withOpacity(0.3),
+                backgroundColor: Colors.white.withOpacity(0.1));
             }).toList())]));
 }
 
@@ -285,12 +285,12 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    deck.primaryColor.withValues(alpha: 0.2),
-                    deck.secondaryColor.withValues(alpha: 0.2)]),
+                    deck.primaryColor.withOpacity(0.2),
+                    deck.secondaryColor.withOpacity(0.2)]),
                 border: Border.all(
                   color: isSelected
                       ? const Color(0xFF9333EA)
-                      : Colors.white.withValues(alpha: 0.2),
+                      : Colors.white.withOpacity(0.2),
                   width: isSelected ? 2 : 1),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,14 +356,14 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                 child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.8),
+                      color: Colors.orange.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(12)),
                     child: Text(
                       '자주 사용',
                       style: TextStyle(
                         fontSize: 10 * fontScale,
                         color: Colors.white,
-                        fontWeight: FontWeight.bold))))])))));
+                        fontWeight: FontWeight.bold))))]))))));
   }
 
   Widget _buildDeckPreview(TarotDeck deck) {
@@ -397,7 +397,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 4,
             offset: const Offset(0, 2))]),
       child: ClipRRect(
@@ -407,23 +407,23 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: deck.primaryColor.withValues(alpha: 0.3),
+              color: deck.primaryColor.withOpacity(0.3),
               child: Center(
                 child: Icon(
                   Icons.style,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withOpacity(0.5),
                   size: 30)));
           })));
-}
+  }
 
   Widget _buildTag(String text, Color color, double fontScale) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.5),
+          color: color.withOpacity(0.5),
           width: 1)),
       child: Text(
         text,

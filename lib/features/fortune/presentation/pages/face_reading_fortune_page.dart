@@ -40,13 +40,13 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'AI 관상 분석',
+            'AI 관상 분석',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
-            'AI가 당신의 얼굴에서 숨겨진 운명과 성격을 분석해드립니다.',
+            'AI가 당신의 얼굴에서 숨겨진 운명과 성격을 분석해드립니다.',),
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey)),
@@ -60,14 +60,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               height: 300,
               decoration: BoxDecoration(
                 color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16))),
                 border: Border.all(
                   color: Colors.grey[300]!,
                   width: 2,
                   style: BorderStyle.solid)),
               child: _selectedImage != null
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(14))),
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -81,7 +81,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                               icon: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.5),
+                                  color: Colors.black.withOpacity(0.5),
                                   shape: BoxShape.circle),
                                 child: const Icon(
                                   Icons.close,
@@ -101,14 +101,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                           color: Colors.grey[400]),
                         const SizedBox(height: 16),
                         Text(
-                          '탭하여 사진 선택',
+                          '탭하여 사진 선택',),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500)),
                         const SizedBox(height: 8),
                         Text(
-                          '카메라 또는 갤러리에서 선택할 수 있습니다',
+                          '카메라 또는 갤러리에서 선택할 수 있습니다',),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[500]))]))),
@@ -120,7 +120,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.blue[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +130,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Icon(Icons.info_outline, color: Colors.blue[700]),
                     const SizedBox(width: 8),
                     Text(
-                      '좋은 사진을 위한 가이드',
+                      '좋은 사진을 위한 가이드',),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -155,7 +155,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '사진은 분석 후 즉시 삭제되며 저장되지 않습니다',
+                    '사진은 분석 후 즉시 삭제되며 저장되지 않습니다',),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600])))])),
@@ -216,7 +216,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                             valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
                         SizedBox(width: 12),
                         Text(
-                          'AI가 분석 중입니다...',
+                          'AI가 분석 중입니다...',),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold))])
@@ -226,7 +226,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                         Icon(Icons.psychology, size: 20),
                         SizedBox(width: 8),
                         Text(
-                          'AI 관상 분석 시작',
+                          'AI 관상 분석 시작',),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold))])))]));
@@ -239,7 +239,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '• ',
+            '• ',),
             style: TextStyle(
               color: Colors.blue[600],
               fontSize: 14)),
@@ -276,7 +276,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(2))),
                   const Text(
-                    '사진 선택',
+                    '사진 선택',),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold)),
@@ -312,13 +312,13 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12))),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12))),
+          border: Border.all(color: color.withOpacity(0.3)),
         child: Column(
           children: [
             Icon(icon, size: 48, color: color),
@@ -397,7 +397,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -407,7 +407,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Icon(Icons.auto_awesome, color: Colors.deepPurple),
                     SizedBox(width: 8),
                     Text(
-                      '종합 관상 분석',
+                      '종합 관상 분석',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -416,7 +416,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Face Parts Analysis
@@ -425,7 +425,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -435,7 +435,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Icon(Icons.face_retouching_natural, color: Colors.blue),
                     SizedBox(width: 8),
                     Text(
-                      '부위별 분석',
+                      '부위별 분석',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -452,7 +452,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,7 +462,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Icon(Icons.psychology, color: Colors.orange),
                     SizedBox(width: 8),
                     Text(
-                      '성격 분석',
+                      '성격 분석',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -475,7 +475,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.orange[50],
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20))),
                         border: Border.all(color: Colors.orange[200]!)),
                       child: Text(
                         trait.toString(),
@@ -502,7 +502,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Icon(Icons.tips_and_updates, color: Colors.green),
                     SizedBox(width: 8),
                     Text(
-                      '운세 개선 조언',
+                      '운세 개선 조언',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -553,7 +553,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   analysis,
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.4))]))]));
+                    height: 1.4)]))]));
   }
   
   String _translateFacePart(String part) {

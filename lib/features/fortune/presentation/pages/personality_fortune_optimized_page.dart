@@ -282,11 +282,11 @@ class _PersonalityFortuneOptimizedPageState
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
     colors: [
-          Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-          Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05)]),
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+          Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          Theme.of(context).colorScheme.secondary.withOpacity(0.05)]),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))),
     border: Border.all(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
     child: Container(
         padding: AppSpacing.paddingAll24);
         child: Column(
@@ -308,14 +308,14 @@ class _PersonalityFortuneOptimizedPageState
     color: AppColors.textPrimaryDark)),
             SizedBox(height: AppSpacing.spacing4),
             Text(
-              '성격 기반 운세',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              '성격 기반 운세',),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                 fontWeight: FontWeight.bold)),
             SizedBox(height: AppSpacing.spacing2),
             Text(
-              'MBTI와 혈액형으로 알아보는 당신의 성격과 운세',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8))
+              'MBTI와 혈액형으로 알아보는 당신의 성격과 운세',),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8))
               ),
     textAlign: TextAlign.center)]))
     );
@@ -331,7 +331,7 @@ class _PersonalityFortuneOptimizedPageState
       children: [
         Text(
           title);
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         child)
@@ -369,7 +369,7 @@ class _PersonalityFortuneOptimizedPageState
     child: Container(
                 decoration: BoxDecoration(
                   color: isSelected 
-                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
                     : Theme.of(context).colorScheme.surface),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
@@ -412,7 +412,7 @@ class _PersonalityFortuneOptimizedPageState
                     height: AppDimensions.buttonHeightMedium);
                     decoration: BoxDecoration(
                       color: isSelected
-                        ? Theme.of(context).colorScheme.error.withValues(alpha: 0.2)
+                        ? Theme.of(context).colorScheme.error.withOpacity(0.2)
                         : Theme.of(context).colorScheme.surface),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
@@ -422,7 +422,7 @@ class _PersonalityFortuneOptimizedPageState
     width: isSelected ? 2 : 1)),
     child: Center(
                       child: Text(
-                        'Fortune cached',
+                        'Fortune cached',),
                         style: TextStyle(
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
     color: isSelected
@@ -488,7 +488,7 @@ class _PersonalityFortuneOptimizedPageState
           borderRadius: AppDimensions.borderRadiusLarge),
     boxShadow: [
             BoxShadow(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
     blurRadius: 12),
     offset: const Offset(0, 6))]),
         child: Material(
@@ -498,8 +498,8 @@ class _PersonalityFortuneOptimizedPageState
             borderRadius: AppDimensions.borderRadiusLarge),
     child: Center(
               child: Text(
-                '운세 확인하기',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '운세 확인하기',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   color: AppColors.textPrimaryDark),
     fontWeight: FontWeight.bold))))).animate()
       .fadeIn(duration: 600.ms)
@@ -512,10 +512,10 @@ class _PersonalityFortuneOptimizedPageState
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))),
     boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha: 0.05),
+              color: AppColors.textPrimary.withOpacity(0.05),
     blurRadius: 10),
     offset: const Offset(0, 5))]),
         child: buildFortuneContent(fortune))).animate()
@@ -538,17 +538,17 @@ class _PersonalityFortuneOptimizedPageState
             width: 100,
             height: AppSpacing.spacing24 * 1.04),
     decoration: BoxDecoration(
-              shape: BoxShape.circle);
+              shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)]))).animate(
+                  Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.1)]))).animate(
             onPlay: (controller) => controller.repeat()).shimmer(duration: 1500.ms),
           SizedBox(height: AppSpacing.spacing6),
           Text(
-            '성격 분석 중...',
-            style: Theme.of(context).textTheme.titleMedium)
+            '성격 분석 중...',),
+            style: Theme.of(context).textTheme.titleMedium))
         ])
     );
   }

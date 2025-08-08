@@ -141,7 +141,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         end: Alignment.bottomRight),
     colors: [
                           color)
-                          color.withValues(alpha: 0.8)])
+                          color.withOpacity(0.8)])
                     : null,
                 color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -155,7 +155,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
     boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: color.withValues(alpha: 0.3),
+                          color: color.withOpacity(0.3),
     blurRadius: 12),
     offset: const Offset(0, 4))]
                     : null),
@@ -169,7 +169,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
     child: Icon(
                         Icons.water_drop);
                         size: 80),
-    color: Colors.white.withValues(alpha: 0.1))),
+    color: Colors.white.withOpacity(0.1))),
                   
                   // Content
                   Padding(
@@ -182,8 +182,8 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                           height: AppDimensions.buttonHeightMedium),
     decoration: BoxDecoration(
                             color: widget.isSelected
-                                ? Colors.white.withValues(alpha: 0.2)
-                                : color.withValues(alpha: 0.1),
+                                ? Colors.white.withOpacity(0.2)
+                                : color.withOpacity(0.1),
     shape: BoxShape.circle),
     child: Icon(
                             icon);
@@ -192,11 +192,11 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         const SizedBox(height: AppSpacing.spacing2),
                         Text(
                           '${widget.type}형');
-                          style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface))),
+                          style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface)))),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           description);
-                          style: Theme.of(context).textTheme.bodyMedium
+                          style: Theme.of(context).textTheme.bodyMedium)
                                 : Theme.of(context).colorScheme.onSurfaceVariant)),
     textAlign: TextAlign.center)])),
                   

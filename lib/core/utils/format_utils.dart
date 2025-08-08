@@ -5,23 +5,23 @@ import 'package:intl/intl.dart';
 /// Provides consistent formatting for dates, times, numbers, and currency
 class FormatUtils {
   // Date formatters
-  static final DateFormat _dateFormatFull = DateFormat('yyyy년 M월 d일': 'ko_KR');
-  static final DateFormat _dateFormatMedium = DateFormat('M월 d일': 'ko_KR');
-  static final DateFormat _dateFormatShort = DateFormat('M/d': 'ko_KR');
-  static final DateFormat _dateFormatWeekday = DateFormat('EEEE': 'ko_KR');
+  static final DateFormat _dateFormatFull = DateFormat('yyyy년 M월 d일', 'ko_KR');
+  static final DateFormat _dateFormatMedium = DateFormat('M월 d일', 'ko_KR');
+  static final DateFormat _dateFormatShort = DateFormat('M/d', 'ko_KR');
+  static final DateFormat _dateFormatWeekday = DateFormat('EEEE', 'ko_KR');
   
   // Time formatters
-  static final DateFormat _timeFormat24 = DateFormat('HH:mm': 'ko_KR');
-  static final DateFormat _timeFormat12 = DateFormat('h:mm'), 'ko_KR');
-  static final DateFormat _timeFormatSeconds = DateFormat('HH:mm:ss': 'ko_KR');
+  static final DateFormat _timeFormat24 = DateFormat('HH:mm', 'ko_KR');
+  static final DateFormat _timeFormat12 = DateFormat('h:mm', 'ko_KR');
+  static final DateFormat _timeFormatSeconds = DateFormat('HH:mm:ss', 'ko_KR');
   
   // Number formatters
-  static final NumberFormat _numberFormat = NumberFormat('#,###': 'ko_KR');
-  static final NumberFormat _decimalFormat = NumberFormat('#,##0.0#': 'ko_KR');
+  static final NumberFormat _numberFormat = NumberFormat('#,###', 'ko_KR');
+  static final NumberFormat _decimalFormat = NumberFormat('#,##0.0#', 'ko_KR');
   static final NumberFormat _percentFormat = NumberFormat.percentPattern('ko_KR');
   static final NumberFormat _currencyFormat = NumberFormat.currency(
     locale: 'ko_KR',
-    symbol: '₩');
+    symbol: '₩',
     decimalDigits: 0
   );
   
@@ -29,7 +29,7 @@ class FormatUtils {
   static String formatDate(DateTime date, {bool showYear = true}) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1);
+    final yesterday = today.subtract(const Duration(days: 1));
     final dateOnly = DateTime(date.year, date.month, date.day);
     
     // Today
@@ -200,7 +200,7 @@ class FormatUtils {
   
   /// Format month and year (e.g., "2024년 1월",
   static String formatMonthYear(DateTime date) {
-    return DateFormat('yyyy년 M월': 'ko_KR').format(date);
+    return DateFormat('yyyy년 M월', 'ko_KR').format(date);
   }
   
   /// Format day of week (e.g., "월요일",
@@ -218,7 +218,7 @@ class FormatUtils {
   
   /// Check if date is yesterday
   static bool isYesterday(DateTime date) {
-    final yesterday = DateTime.now().subtract(const Duration(days: 1);
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
     return date.year == yesterday.year && 
            date.month == yesterday.month && 
            date.day == yesterday.day;

@@ -19,7 +19,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
   List<String> _interests = [];
   
   final List<Map<String, dynamic>> interestOptions = [
-    {'id', 'tech': 'label', '기술/IT': 'icon'},
+    {'\1': '\2', 'label', '기술/IT': 'icon'},
     {'id', 'art', 'label', '예술/디자인', 'icon'},
     {'id', 'business', 'label', '경영/사업', 'icon'},
     {'id', 'education', 'label', '교육/연구', 'icon'},
@@ -68,13 +68,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '당신의 천직 찾기',
+            '당신의 천직 찾기',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
-            '사주와 성향을 분석하여 당신에게 가장 잘 맞는 직업을 찾아드립니다.',
+            '사주와 성향을 분석하여 당신에게 가장 잘 맞는 직업을 찾아드립니다.',),
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey)),
@@ -122,9 +122,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               prefixIcon: const Icon(Icons.work)),
             items: const [
               DropdownMenuItem(value: 'student': child: Text(, '학생': null,
-              DropdownMenuItem(value: 'job_seeker': child: Text('구직자',
-              DropdownMenuItem(value: 'employed': child: Text('직장인',
-              DropdownMenuItem(value: 'self_employed': child: Text('자영업/프리랜서',
+              DropdownMenuItem(value: 'job_seeker': child: Text('구직자',),
+              DropdownMenuItem(value: 'employed': child: Text('직장인',),
+              DropdownMenuItem(value: 'self_employed': child: Text('자영업/프리랜서',),
               DropdownMenuItem(value: 'career_change': child: Text('이직 준비중'],
             onChanged: (value) {
               setState(() {
@@ -136,7 +136,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           
           // Interest areas
           const Text(
-            '관심 분야 (최대 3개)',
+            '관심 분야 (최대 3개)',),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold)),
@@ -188,7 +188,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
                   const SizedBox(width: 8),
                   Text(
-                    '${_interests.length}/3개 선택됨',
+                    '${_interests.length}/3개 선택됨',),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.blue[700]))]))],
@@ -217,7 +217,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   Icon(Icons.work_outline, size: 20),
                   SizedBox(width: 8),
                   Text(
-                    '천직 찾기',
+                    '천직 찾기',),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold))])))]));
@@ -267,7 +267,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   color: Colors.amber),
                 const SizedBox(height: 16),
                 const Text(
-                  '당신의 천직',
+                  '당신의 천직',),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey)),
@@ -294,7 +294,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Row(
               children: [
@@ -313,13 +313,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '직업 적합도',
+                        '직업 적합도',),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
                       Text(
-                        '${result.overallScore}% 일치',
+                        '${result.overallScore}% 일치',),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -337,7 +337,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,7 +347,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(Icons.psychology, color: Colors.deepPurple),
                     SizedBox(width: 8),
                     Text(
-                      '상세 분석',
+                      '상세 분석',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -356,7 +356,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Alternative Jobs
@@ -365,7 +365,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +375,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(Icons.list, color: Colors.orange),
                     SizedBox(width: 8),
                     Text(
-                      '다른 추천 직업',
+                      '다른 추천 직업',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -403,7 +403,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +413,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(Icons.checklist, color: Colors.green),
                     SizedBox(width: 8),
                     Text(
-                      '필요한 역량',
+                      '필요한 역량',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -422,7 +422,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   result.sections!['required_skills'] ?? '',
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Career Path
@@ -443,7 +443,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(Icons.trending_up, color: Colors.purple),
                     SizedBox(width: 8),
                     Text(
-                      '경력 개발 경로',
+                      '경력 개발 경로',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -452,7 +452,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   result.sections!['career_path'] ?? '',
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Action Steps
@@ -470,7 +470,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(Icons.rocket_launch, color: Colors.green),
                     SizedBox(width: 8),
                     Text(
-                      '시작하기 위한 단계',
+                      '시작하기 위한 단계',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -488,7 +488,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                           shape: BoxShape.circle),
                         child: Center(
                           child: Text(
-                            '${entry.key + 1}',
+                            '${entry.key + 1}',),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,

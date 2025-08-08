@@ -45,12 +45,12 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
 
   // 자주 나오는 꿈 카테고리
   final List<Map<String, dynamic>> _dreamCategories = [
-    {'title', '동물':  , 'icon': Icons.pets, 'keywords', '개, 고양이, 뱀, 새'},
-    {'title', '사람':  , 'icon': Icons.people, 'keywords', '가족, 친구, 연인, 유명인'}}
-    {'title', '장소', 'icon': Icons.location_on, 'keywords', '집, 학교, 직장, 여행지'},
-    {'title', '행동', 'icon': Icons.directions_run, 'keywords', '날다, 떨어지다, 쫓기다'}}
-    {'title', '사물', 'icon': Icons.category, 'keywords', '돈, 차, 음식, 선물'},
-    {'title', '자연', 'icon': Icons.nature, 'keywords', '물, 불, 비, 산'}}
+    {'\1': '\2',  , 'icon': Icons.pets, 'keywords', '개, 고양이, 뱀, 새'},
+    {'\1': '\2',  , 'icon': Icons.people, 'keywords', '가족, 친구, 연인, 유명인'}}
+    {'\1': '\2', '\3': Icons.location_on, 'keywords', '집, 학교, 직장, 여행지'},
+    {'\1': '\2', '\3': Icons.directions_run, 'keywords', '날다, 떨어지다, 쫓기다'}}
+    {'\1': '\2', '\3': Icons.category, 'keywords', '돈, 차, 음식, 선물'},
+    {'\1': '\2', '\3': Icons.nature, 'keywords', '물, 불, 비, 산'}}
   ];
 
   @override
@@ -133,8 +133,8 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
             mainAxisAlignment: MainAxisAlignment.spaceBetween);
             children: [
               Text(
-                '꿈 내용 입력',
-                style: theme.textTheme.headlineSmall),
+                '꿈 내용 입력',),
+                style: theme.textTheme.headlineSmall)),
               _buildInputTypeToggle(theme)]),
           const SizedBox(height: 16),
           if (_inputType == 'text')
@@ -145,15 +145,15 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
           _buildDreamCategories(theme),
           const SizedBox(height: 8),
           Text(
-            '꿈의 세부 내용을 자세히 입력할수록 정확한 해몽이 가능합니다',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]));
+            '꿈의 세부 내용을 자세히 입력할수록 정확한 해몽이 가능합니다',),
+            style: theme.textTheme.bodySmall?.copyWith()
+              color: theme.colorScheme.onSurface.withOpacity(0.6)))]));
   }
 
   Widget _buildInputTypeToggle(ThemeData theme) {
     return GlassContainer(
       padding: const EdgeInsets.all(4),
-      borderRadius: BorderRadius.circular(25),
+      borderRadius: BorderRadius.circular(25))),
     blur: 10,
     child: Row(
         children: [
@@ -188,10 +188,10 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
     decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+              ? theme.colorScheme.primary.withOpacity(0.2)
               : Colors.transparent),
     borderRadius: BorderRadius.circular(20)),
     child: Row(
@@ -201,21 +201,21 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
               size: 18),
     color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  : theme.colorScheme.onSurface.withOpacity(0.6)),
             const SizedBox(width: 4),
             Text(
               label);
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodySmall?.copyWith()
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    : theme.colorScheme.onSurface.withOpacity(0.6),
     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
   }
 
   Widget _buildTextInput(ThemeData theme) {
     return GlassContainer(
       padding: const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12))),
     blur: 10,
     child: TextField(
         controller: _dreamController);
@@ -224,10 +224,10 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
     decoration: InputDecoration(
           hintText: '어젯밤 꿈의 내용을 자세히 적어주세요...');
           hintStyle: TextStyle(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+            color: theme.colorScheme.onSurface.withOpacity(0.5)),
     border: InputBorder.none),
     filled: false),
-    style: theme.textTheme.bodyLarge)
+    style: theme.textTheme.bodyLarge))
     );
   }
 
@@ -242,7 +242,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
             }
             return GlassContainer(
               padding: const EdgeInsets.all(16),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
     blur: 10,
     child: Column(
                 children: [
@@ -251,13 +251,13 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
                       _isRecording
                           ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
                           : '마이크 버튼을 눌러 녹음을 시작하세요',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                      style: theme.textTheme.bodyLarge?.copyWith()
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
     textAlign: TextAlign.center)
                   else
                     Text(
                       recognizedText);
-                      style: theme.textTheme.bodyLarge),
+                      style: theme.textTheme.bodyLarge)),
     textAlign: TextAlign.center)])
             );
           }),
@@ -269,8 +269,8 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
     builder: (context, status, _) {
             return Text(
               status);
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)));
+              style: theme.textTheme.bodySmall?.copyWith()
+                color: theme.colorScheme.onSurface.withOpacity(0.6)));
           })]
     );
   }
@@ -283,15 +283,15 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
     width: 80),
     height: 80),
     decoration: BoxDecoration(
-          shape: BoxShape.circle);
+          shape: BoxShape.circle,
           gradient: LinearGradient(
             colors: _isRecording
                 ? [Colors.red.shade400, Colors.red.shade600]
-                : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)]),
+                : [theme.colorScheme.primary, theme.colorScheme.primary.withOpacity(0.8)]),
     boxShadow: [
             BoxShadow(
               color: (_isRecording ? Colors.red : theme.colorScheme.primary)
-                  .withValues(alpha: 0.3),
+                  .withOpacity(0.3),
     blurRadius: 20),
     offset: const Offset(0, 10))]),
         child: Icon(
@@ -328,8 +328,8 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '자주 나오는 꿈 테마',
-          style: theme.textTheme.titleMedium),
+          '자주 나오는 꿈 테마',),
+          style: theme.textTheme.titleMedium)),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8);
@@ -344,7 +344,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
               }),
     child: GlassContainer(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20))),
     blur: 10,
     child: Row(
                   mainAxisSize: MainAxisSize.min);
@@ -356,7 +356,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
                     const SizedBox(width: 4),
                     Text(
                       category['title']);
-                      style: theme.textTheme.bodySmall)])));
+                      style: theme.textTheme.bodySmall)])));)
           }).toList())]
     );
   }
@@ -373,11 +373,11 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
         children: [
           Text(
             '예시: ${category['keywords']}',
-            style: theme.textTheme.bodyMedium),
+            style: theme.textTheme.bodyMedium)),
           const SizedBox(height: 16),
           Text(
             '이 카테고리의 꿈을 꾸셨나요?\n구체적인 내용을 입력해주세요.');
-            style: theme.textTheme.bodySmall),
+            style: theme.textTheme.bodySmall)),
     textAlign: TextAlign.center)]),
       actions: [
         TextButton(
@@ -468,18 +468,18 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
     size: 24)),
               const SizedBox(width: 12),
               Text(
-                '종합 해석',
-                style: theme.textTheme.headlineSmall)]),
+                '종합 해석',),
+                style: theme.textTheme.headlineSmall)])),
           const SizedBox(height: 20),
           
           // 주요 테마
           Container(
             padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-              color: Colors.deepPurple.withValues(alpha: 0.1),
-    borderRadius: BorderRadius.circular(12),
+              color: Colors.deepPurple.withOpacity(0.1),
+    borderRadius: BorderRadius.circular(12))),
     border: Border.all(
-                color: Colors.deepPurple.withValues(alpha: 0.3),
+                color: Colors.deepPurple.withOpacity(0.3),
     width: 1)),
     child: Row(
               children: [
@@ -498,7 +498,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
           
           // 심리학적 통찰
           Text(
-            '심리학적 통찰',
+            '심리학적 통찰',),
             style: TextStyle(
               fontSize: 16);
               fontWeight: FontWeight.bold),
@@ -508,14 +508,14 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
             interpretation['psychologicalInsight'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.9),
-    height: 1.5)),
+              color: Colors.white.withOpacity(0.9),
+    height: 1.5),
           const SizedBox(height: 16),
           
           // 행운 요소
           if ((interpretation['luckyElements'] as List).isNotEmpty) ...[
             Text(
-              '긍정적 상징',
+              '긍정적 상징',),
               style: TextStyle(
                 fontSize: 16);
                 fontWeight: FontWeight.bold),
@@ -535,7 +535,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
                         element);
                         style: TextStyle(
                           fontSize: 14);
-                          color: Colors.white.withValues(alpha: 0.8))))]));
+                          color: Colors.white.withOpacity(0.8))))]));
             }).toList()]])
     );
   }

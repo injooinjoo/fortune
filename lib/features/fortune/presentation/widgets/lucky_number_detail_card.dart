@@ -36,13 +36,13 @@ class LuckyNumberDetailCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '오늘의 행운 숫자',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            '오늘의 행운 숫자',),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
-            '일상 속에서 만나는 숫자들이 오늘 당신에게 행운을 가져다줄 거예요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            '일상 속에서 만나는 숫자들이 오늘 당신에게 행운을 가져다줄 거예요',),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   color: Colors.grey[600]))])
     );
   }
@@ -63,24 +63,24 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     begin: Alignment.topLeft);
                     end: Alignment.bottomRight),
     colors: [
-                      Theme.of(context).primaryColor.withValues(alpha: 0.8),
+                      Theme.of(context).primaryColor.withOpacity(0.8),
                       Theme.of(context).primaryColor)
                     ]),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                      color: Theme.of(context).primaryColor.withOpacity(0.3),
     blurRadius: 20),
     offset: const Offset(0, 10))]),
                 child: Center(
                   child: Text(
                     mainLuckyNumber.toString(),
-    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+    style: Theme.of(context).textTheme.displayMedium?.copyWith()
                           color: Colors.white),
     fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
-                '메인 행운 숫자',
-                style: Theme.of(context).textTheme.titleMedium)
+                '메인 행운 숫자',),
+                style: Theme.of(context).textTheme.titleMedium))
             ])))
     );
   }
@@ -128,7 +128,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                   Container(
                     padding: AppSpacing.paddingAll8);
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      color: Theme.of(context).primaryColor.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Icon(
                       category.icon);
@@ -138,7 +138,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       category.title);
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith()
                             fontWeight: FontWeight.bold)),
     maxLines: 1),
     overflow: TextOverflow.ellipsis))]),
@@ -146,19 +146,19 @@ class LuckyNumberDetailCard extends StatelessWidget {
               if (items.isNotEmpty) ...[
                 Text(
                   items.first.value);
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                         color: Theme.of(context).primaryColor),
     fontWeight: FontWeight.bold)),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   items.first.reason);
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                         color: Colors.grey[600])),
                   maxLines: 2),
     overflow: TextOverflow.ellipsis)] else
                 Text(
                   category.description,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                         color: Colors.grey[600])),
                   maxLines: 3),
     overflow: TextOverflow.ellipsis),
@@ -167,8 +167,8 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end);
                 children: [
                   Text(
-                    '자세히 보기',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    '자세히 보기',),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                           color: Theme.of(context).primaryColor))),
                   const SizedBox(width: AppSpacing.spacing1),
                   Icon(
@@ -202,7 +202,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 height: AppSpacing.spacing1),
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: Colors.grey.withOpacity(0.3),
     borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
               Expanded(
                 child: ListView(
@@ -216,7 +216,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .primaryColor
-                                .withValues(alpha: 0.1),
+                                .withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                             category.icon);
@@ -257,8 +257,8 @@ class LuckyNumberDetailCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '추천 활용법',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          '추천 활용법',),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: AppSpacing.spacing4),
         ...category.examples.map(
@@ -276,7 +276,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     example);
-                    style: Theme.of(context).textTheme.bodyMedium)
+                    style: Theme.of(context).textTheme.bodyMedium))
               ])))]
     );
   }
@@ -295,7 +295,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 children: [
                   Text(
                     item.value);
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith()
                           color: Theme.of(context).primaryColor),
     fontWeight: FontWeight.bold)),
                   if (item.priority != null)
@@ -309,13 +309,13 @@ class LuckyNumberDetailCard extends StatelessWidget {
     child: Text(
                         _getPriorityText(item.priority!),
     style:
-                            Theme.of(context).textTheme.bodySmall?.copyWith(
+                            Theme.of(context).textTheme.bodySmall?.copyWith()
                                   color: Colors.white),
     fontWeight: FontWeight.bold)]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
                 item.reason);
-                style: Theme.of(context).textTheme.bodyMedium)
+                style: Theme.of(context).textTheme.bodyMedium))
               if (item.timeRange != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Row(
@@ -327,7 +327,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     const SizedBox(width: AppSpacing.spacing1),
                     Text(
                       item.timeRange!);
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith()
                             color: Colors.grey[600]))])])
               if (item.situation != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
@@ -341,7 +341,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         item.situation!);
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith()
                               color: Colors.grey[600]))])])
             ])))
     );

@@ -63,25 +63,25 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
       begin: 1.0,
       end: 2.0).animate(CurvedAnimation(
       parent: _heroController,
-      curve: Curves.easeInOut)));
+      curve: Curves.easeInOut));
     
     _heroPositionAnimation = Tween<double>(
       begin: 0.0,
       end: -300.0).animate(CurvedAnimation(
       parent: _heroController,
-      curve: Curves.easeInOut)));
+      curve: Curves.easeInOut));
     
     _contentSlideAnimation = Tween<double>(
       begin: 0.0,
       end: 200.0).animate(CurvedAnimation(
       parent: _contentController,
-      curve: Curves.easeOut)));
+      curve: Curves.easeOut));
     
     _fadeAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0).animate(CurvedAnimation(
       parent: _contentController,
-      curve: Curves.easeOut)));
+      curve: Curves.easeOut));
     
     // Add status listener
     _heroController.addStatusListener((status) {
@@ -153,7 +153,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             TarotCardSelectionAnimation(
               selectedIndex: _selectedCardIndex!,
               totalCards: _majorArcana.length,
-              cardImagePath: _majorArcana[_selectedCardIndex!]['image'],
+              cardImagePath: _majorArcana[_selectedCardIndex!]['image'] ?? 'assets/images/tarot/back.png',
               onAnimationComplete: _onSelectionAnimationComplete),
           
           // Card reveal
@@ -257,7 +257,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 Colors.orange.shade600]),
             boxShadow: [
               BoxShadow(
-                color: Colors.orange.withValues(alpha: 0.3),
+                color: Colors.orange.withOpacity(0.3),
                 blurRadius: 20,
                 spreadRadius: 5)]),
           child: Stack(
@@ -289,7 +289,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20)),
                       child: Text(
                         'DRAW',
@@ -308,15 +308,15 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
           Text(
             'Tarot Reading',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: Colors.white.withOpacity(0.7),
               fontSize: 16)),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildReadingOption('Love'),
-              _buildReadingOption('Career'),
-              _buildReadingOption('Choice')])]));
+              _buildReadingOption('Love', Colors.pink, Icons.favorite),
+              _buildReadingOption('Career', Colors.green, Icons.work),
+              _buildReadingOption('Choice', Colors.blue, Icons.help_outline)])]));
   }
 
   Widget _buildReadingOption(String title, Color color, IconData icon) {
@@ -324,10 +324,10 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity(0.3),
           width: 2)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -337,7 +337,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
           Text(
             title,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
               fontSize: 12))]));
   }
 
@@ -358,13 +358,13 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
                     blurRadius: 30,
                     spreadRadius: 10)]),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.asset(
-                  cardData['image'],
+                  cardData['image'] ?? 'assets/images/tarot/back.png',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -379,7 +379,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                               color: Colors.white),
                             const SizedBox(height: 20),
                             Text(
-                              cardData['name'],
+                              cardData['name'] ?? 'Unknown',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -390,7 +390,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             
             // Card info
             Text(
-              cardData['name'],
+              cardData['name'] ?? 'Unknown Card',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 28,
@@ -403,7 +403,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               '"Go forward and do whatever\nyour heart tells you"',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Colors.white.withOpacity(0.8),
                 fontSize: 16,
                 fontStyle: FontStyle.italic)),
             
@@ -423,7 +423,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             ElevatedButton(
               onPressed: () {
                 // Navigate to detailed reading
-                context.push('/interactive/tarot/reading': extra: cardData);
+                context.push('/interactive/tarot/reading', extra: cardData);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
@@ -440,12 +440,12 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
   Widget _buildMetadata(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 20),
+        Icon(icon, color: Colors.white.withOpacity(0.6), size: 20),
         const SizedBox(width: 8),
         Text(
           text,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.white.withOpacity(0.6),
             fontSize: 14))]);
   }
 }

@@ -33,7 +33,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         userId: userId,
         fortuneType: 'daily',
         data: {
-          if (date != null) 'date': null});
+          if (date != null) 'date': null})
     }
     
     // Fall back to original implementation

@@ -41,7 +41,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 gradient: LinearGradient(
                   colors: [
                     Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withValues(alpha: 0.8)],
+                    Theme.of(context).primaryColor.withOpacity(0.8)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter)),
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
@@ -49,23 +49,23 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '여러 운세를 한 번에!',
+                    '여러 운세를 한 번에!',),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
                   const SizedBox(height: 8),
                   const Text(
-                    '패키지로 구매하면 최대 50% 토큰 절약',
+                    '패키지로 구매하면 최대 50% 토큰 절약',),
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70)),
                   const SizedBox(height: 16),
                   // 토큰 잔액 표시
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,7 +78,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                               size: 20),
                             const SizedBox(width: 8),
                             const Text(
-                              '보유 토큰',
+                              '보유 토큰',),
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14))]),
@@ -98,7 +98,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '운세 패키지 선택',
+                    '운세 패키지 선택',),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
@@ -125,7 +125,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          '생성된 운세',
+                          '생성된 운세',),
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold)),
@@ -218,7 +218,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8)),
               child: Row(
                 children: [
@@ -229,13 +229,13 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '${packageType.tokenCost} 토큰으로 ${savings.toStringAsFixed(0)}% 절약!',
+                      '${packageType.tokenCost} 토큰으로 ${savings.toStringAsFixed(0)}% 절약!',),
                       style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold)))])),
             const SizedBox(height: 16),
             const Text(
-              '운세:',
+              '운세:',),
               style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ...fortuneTypes.map((type) => Padding(

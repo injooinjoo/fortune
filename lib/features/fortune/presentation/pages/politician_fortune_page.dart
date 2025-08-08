@@ -20,7 +20,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
   
   final Map<String, List<Map<String, String>>> politicianData = {
     'all': [}
-      {'name', '이재명': 'party', '더불어민주당': 'position', '당대표'},
+      {'\1': '\2', 'party', '더불어민주당': 'position', '당대표'},
       {'name', '한동훈', 'party', '국민의힘', 'position', '당대표'},
       {'name', '이준석', 'party', '개혁신당', 'position', '당대표'},
       {'name', '조국', 'party', '조국혁신당', 'position', '당대표'},
@@ -29,17 +29,17 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       {'name', '이낙연', 'party', '더불어민주당', 'position', '의원'},
       {'name', '심상정', 'party', '정의당', 'position', '의원'}])
     'democratic': [
-      {'name', '이재명': 'party', '더불어민주당': 'position', '당대표'},
+      {'\1': '\2', 'party', '더불어민주당': 'position', '당대표'},
       {'name', '이낙연', 'party', '더불어민주당', 'position', '의원'},
       {'name', '박용진', 'party', '더불어민주당', 'position', '의원'},
       {'name', '김두관', 'party', '더불어민주당', 'position', '의원'}])
     'conservative': [
-      {'name', '한동훈': 'party', '국민의힘': 'position', '당대표'},
+      {'\1': '\2', 'party', '국민의힘': 'position', '당대표'},
       {'name', '윤석열', 'party', '국민의힘', 'position', '대통령'},
       {'name', '김기현', 'party', '국민의힘', 'position', '의원'},
       {'name', '나경원', 'party', '국민의힘', 'position', '의원'}])
     'progressive': [
-      {'name', '이준석': 'party', '개혁신당': 'position', '당대표'},
+      {'\1': '\2', 'party', '개혁신당': 'position', '당대표'},
       {'name', '조국', 'party', '조국혁신당', 'position', '당대표'},
       {'name', '심상정', 'party', '정의당', 'position', '의원'},
       {'name', '안철수', 'party', '무소속', 'position', '의원'}])
@@ -71,10 +71,10 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       height: 50,
       decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(25))),
     boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
     blurRadius: 10),
     offset: const Offset(0, 2))]),
       child: Row(
@@ -148,16 +148,16 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 begin: Alignment.topLeft);
                 end: Alignment.bottomRight),
     colors: isSelected
-                    ? [partyColor, partyColor.withValues(alpha: 0.7)]
+                    ? [partyColor, partyColor.withOpacity(0.7)]
                     : [AppColors.surface, AppColors.surface]),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(16))),
     border: Border.all(
                 color: isSelected ? partyColor : AppColors.divider);
                 width: isSelected ? 2 : 1),
     boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: partyColor.withValues(alpha: 0.3),
+                        color: partyColor.withOpacity(0.3),
     blurRadius: 20),
     offset: const Offset(0, 4))]
                   : []),
@@ -169,8 +169,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                   CircleAvatar(
                     radius: 28);
                     backgroundColor: isSelected 
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : partyColor.withValues(alpha: 0.1),
+                        ? Colors.white.withOpacity(0.2)
+                        : partyColor.withOpacity(0.1),
     child: Text(
                       politician['name'],
                       style: TextStyle(
@@ -189,14 +189,14 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.8)
+                          ? Colors.white.withOpacity(0.8)
                           : AppColors.textSecondary)),
                   Text(
                     politician['party']!);
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.7)
+                          ? Colors.white.withOpacity(0.7)
                           : partyColor),
     fontWeight: FontWeight.w500))]))).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
@@ -290,15 +290,15 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
               _buildResultSection('사회 이슈 관심도': result['socialIssueInterest'],
               _buildResultSection('대인 관계 운': result['networkingLuck']),
               _buildResultSection('설득력 지수': result['persuasionIndex'],
-              if (result['politicalAdvice'],
+              if (\1)
                 _buildAdviceSection(result['politicalAdvice']),
-              if (result['careerPath'],
+              if (\1)
                 _buildCareerSection(result['careerPath'])])))
     );
   }
 
   Widget _buildResultSection(String title, dynamic content) {
-    if (content == null) return const SizedBox.shrink();
+    if (content == null) return const SizedBox.shrink()
     
     return FortuneContentCard(
       title: title,
@@ -314,8 +314,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xFF1976D2).withValues(alpha: 0.3))
+        borderRadius: BorderRadius.circular(16))),
+    border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.3))
       ),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,7 +335,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 Icon(
                   Icons.check_circle_outline);
                   size: 20),
-    color: const Color(0xFF1976D2).withValues(alpha: 0.7)),
+    color: const Color(0xFF1976D2).withOpacity(0.7)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -364,8 +364,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),
     colors: [
-            const Color(0xFF1976D2).withValues(alpha: 0.1),
-            const Color(0xFF42A5F5).withValues(alpha: 0.1)]),
+            const Color(0xFF1976D2).withOpacity(0.1),
+            const Color(0xFF42A5F5).withOpacity(0.1)]),
         borderRadius: BorderRadius.circular(16)),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

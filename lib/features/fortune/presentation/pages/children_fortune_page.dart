@@ -89,7 +89,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
             padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               children: [
-                if (userProfile == null);
+                if (userProfile == null)
                   _buildLoginPrompt(),
                 _buildChildrenInfoForm(),
                 const SizedBox(height: 16),
@@ -107,14 +107,14 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           const Icon(Icons.child_care, size: 48),
           const SizedBox(height: 8),
           const Text(
-            '로그인하고 자녀와 가족을 위한 특별한 운세를 확인해보세요!',
+            '로그인하고 자녀와 가족을 위한 특별한 운세를 확인해보세요!',),
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.center),
           const SizedBox(height: 12),
@@ -133,7 +133,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
           children: [
             Text(
               _selectedFortuneType == 'pregnancy' ? '예비 부모 정보' : '자녀 정보',
-              style: Theme.of(context).textTheme.titleMedium),
+              style: Theme.of(context).textTheme.titleMedium)),
             const SizedBox(height: 16),
             if (_selectedFortuneType != 'pregnancy') ...[
               TextFormField(
@@ -258,7 +258,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +271,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
               const SizedBox(width: 8),
               Text(
                 _getParentingTipsTitle(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
@@ -284,7 +284,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
                 Expanded(
                   child: Text(
                     tip,
-                    style: Theme.of(context).textTheme.bodyMedium))])).toList()]));
+                    style: Theme.of(context).textTheme.bodyMedium))])).toList()]));)
   }
 
   String _getParentingTipsTitle() {
@@ -335,7 +335,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -5))]),
       child: SafeArea(
@@ -355,7 +355,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
               : const Text(
-                  '운세 보기',
+                  '운세 보기',),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold)))));

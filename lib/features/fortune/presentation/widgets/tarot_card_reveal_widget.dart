@@ -78,19 +78,19 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
       begin: 0,
       end: 1).animate(CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _glowAnimation = Tween<double>(
       begin: 0.5,
       end: 1.0).animate(CurvedAnimation(
       parent: _glowController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _floatAnimation = Tween<double>(
       begin: -5,
       end: 5).animate(CurvedAnimation(
       parent: _floatController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
@@ -103,13 +103,13 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         tween: Tween<double>(begin: 0.95, end: 1.0),
         weight: 50)]).animate(CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _auraAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _auraController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _flipAnimation.addListener(() {
       if (_flipAnimation.value >= 0.5 && !_showFront) {
@@ -118,9 +118,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
           if (widget.showParticles) {
             _generateParticles();
             _particleController.forward();
-}
+          }
         });
-}
+      }
     });
 }
   
@@ -141,9 +141,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
           Colors.white,
           FortuneColors.spiritualPrimary,
           FortuneColors.spiritualPrimary,
-          Colors.purple.withValues(alpha: 0.3)][random.nextInt(4)],
-        lifespan: random.nextDouble() * 0.5 + 0.5),;
-}
+          Colors.purple.withOpacity(0.3)][random.nextInt(4)],
+        lifespan: random.nextDouble() * 0.5 + 0.5));
+    }
   }
 
   @override
@@ -152,7 +152,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
     
     if (widget.isRevealed && !oldWidget.isRevealed) {
       _flip();
-}
+    }
   }
 
   @override
@@ -170,14 +170,14 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
     
     setState(() {
       _isFlipping = true;
-});
+    });
     
     HapticFeedback.mediumImpact();
     await _flipController.forward();
     
     setState(() {
       _isFlipping = false;
-});
+    });
 }
 
   @override
@@ -188,15 +188,18 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         alignment: Alignment.center,
         children: [
           // Aura effect behind card
-          if (widget.showGlow), AnimatedBuilder(
+          if (widget.showGlow)
+            AnimatedBuilder(
               animation: _auraAnimation,
               builder: (context, child) {
                 return CustomPaint(
                   painter: _AuraPainter(
                     animation: _auraAnimation.value,
                     color: FortuneColors.spiritualPrimary),
-                  size: Size(widget.width * 1.5, widget.height * 1.5);
-}),
+                  size: Size(widget.width * 1.5, widget.height * 1.5),
+                );
+              },
+            ),
           
           // Main card with animations
           AnimatedBuilder(
@@ -210,32 +213,40 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               
               return Transform(
                 alignment: Alignment.center,
-                transform: Matrix4.identity(,
+                transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.002) // Perspective
-                  ..rotateY(math.pi * _flipAnimation.value,
-                  ..translate(0.0, _floatAnimation.value,
+                  ..rotateY(math.pi * _flipAnimation.value)
+                  ..translate(0.0, _floatAnimation.value)
                   ..scale(_scaleAnimation.value, _scaleAnimation.value),
                 child: Container(
                   width: widget.width,
                   height: widget.height,
                   child: isShowingFront
-                      ? _buildFrontSide(,
+                      ? _buildFrontSide()
                       : Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()..rotateY(math.pi),
-                          child: _buildBackSide());
-}),
+                          child: _buildBackSide()),
+                ),
+              );
+            },
+          ),
           
           // Particle effects
-          if (widget.showParticles), AnimatedBuilder(
+          if (widget.showParticles) AnimatedBuilder(
               animation: _particleController,
               builder: (context, child) {
                 return CustomPaint(
                   painter: _ParticlePainter(
                     particles: _particles,
                     progress: _particleController.value),
-                  size: Size(widget.width * 2, widget.height * 2),;
-})]);
+                  size: Size(widget.width * 2, widget.height * 2),
+                );
+              },
+            ),
+        ],
+      ),
+    );
 }
 
   Widget _buildBackSide() {
@@ -254,8 +265,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 FortuneColors.tarotDarkest],
               stops: const [0.0, 0.6, 1.0]),
             boxShadow: [
-              if (widget.showGlow), BoxShadow(
-                  color: FortuneColors.spiritualPrimary.withValues(alpha: 0.5 * _glowAnimation.value),
+              if (widget.showGlow)
+                BoxShadow(
+                  color: FortuneColors.spiritualPrimary.withOpacity(0.5 * _glowAnimation.value),
                   blurRadius: 30 + 10 * _glowAnimation.value,
                   spreadRadius: 5)]),
           child: ClipRRect(
@@ -266,7 +278,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 Positioned.fill(
                   child: CustomPaint(
                     painter: _EnhancedCardBackPatternPainter(
-                      glowAnimation: _glowAnimation.value)),
+                      glowAnimation: _glowAnimation.value))),
                 
                 // Center mystical design
                 Center(
@@ -282,11 +294,14 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                             angle: value,
                             child: CustomPaint(
                               painter: _MandalaPainter(
-                                color: Colors.white.withValues(alpha: 0.1),
-                              size: const Size(140, 140),;
-},
+                                color: Colors.white.withOpacity(0.1)),
+                              size: const Size(140, 140),
+                            ),
+                          );
+                        },
                         onEnd: () {
-                          // Animation repeats automatically}),
+                          // Animation repeats automatically
+                        }),
                       
                       // Center emblem
                       Container(
@@ -296,24 +311,25 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.white.withValues(alpha: 0.2),
+                              Colors.white.withOpacity(0.2),
                               Colors.transparent]),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            width: 2),
+                            color: Colors.white.withOpacity(0.3),
+                            width: 2)),
                         child: Center(
                           child: Icon(
                             Icons.auto_awesome,
                             size: 40,
-                            color: Colors.white.withValues(alpha: 0.9))]),
+                            color: Colors.white.withOpacity(0.9))))])),
                 
                 // Mystical particles overlay
                 Positioned.fill(
                   child: _FloatingParticlesOverlay(
-                    particleCount: 30),
+                    particleCount: 30)),
                 
                 // Tap hint
-                if (widget.onTap != null && !widget.isRevealed), Positioned(
+                if (widget.onTap != null && !widget.isRevealed)
+                  Positioned(
                     bottom: 20,
                     left: 0,
                     right: 0,
@@ -323,42 +339,42 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.6),
+                            color: Colors.black.withOpacity(0.6),
                             borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                             border: Border.all(
-                              color: FortuneColors.spiritualPrimary.withValues(alpha: 0.3),
-                              width: 1),
+                              color: FortuneColors.spiritualPrimary.withOpacity(0.3),
+                              width: 1)),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.touch_app,
                                 size: 16,
-                                color: Colors.white.withValues(alpha: 0.8),
+                                color: Colors.white.withOpacity(0.8)),
                               const SizedBox(width: AppSpacing.spacing2),
                               Text(
                                 '카드를 터치하세요',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8),
+                                  color: Colors.white.withOpacity(0.8),
                                   fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-                                  fontWeight: FontWeight.w500)])))])),
-        
-        // Premium border with gradient
-        Positioned.fill(
-          child: Container(
+                                  fontWeight: FontWeight.w500))]))))),
+                
+                // Premium border with gradient
+                Positioned.fill(
+                  child: Container(
             decoration: BoxDecoration(
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
-                width: AppSpacing.spacing0 * 0.5),
+                width: AppSpacing.spacing0 * 0.5,
+                color: Colors.transparent),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.3),
-                  FortuneColors.spiritualPrimary.withValues(alpha: 0.2),
-                  Colors.white.withValues(alpha: 0.3)]))]
-    );
-}
+                  Colors.white.withOpacity(0.3),
+                  FortuneColors.spiritualPrimary.withOpacity(0.2),
+                  Colors.white.withOpacity(0.3)]))))])))]);
+  }
 
   Widget _buildFrontSide() {
     final imagePath = _getCardImagePath(widget.cardIndex);
@@ -375,9 +391,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               fit: BoxFit.cover),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: Colors.black.withOpacity(0.3),
                 blurRadius: 10,
-                offset: const Offset(0, 5)]),
+                offset: const Offset(0, 5))])),
         
         // Gradient overlay for better text visibility
         Positioned(
@@ -389,23 +405,24 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
+                bottomRight: Radius.circular(12)),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.7)])),
+                  Colors.black.withOpacity(0.7)])))),
         
         // Card name
-        if (cardInfo != null), Positioned(
+        if (cardInfo != null)
+          Positioned(
             bottom: 8,
             left: 8,
             right: 8,
             child: Text(
               cardInfo.name,
-              style: Theme.of(context).textTheme.bodyMedium]),
-              textAlign: TextAlign.center),
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center)),
         
         // Sparkle effect on reveal
         if (_flipAnimation.value > 0.8)
@@ -413,7 +430,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             child: _SparkleOverlay(
               // Clamp opacity to valid range [0.0, 1.0] as the calculation could exceed 1.0
               // when _flipAnimation.value approaches 1.0: (1.0 - 0.8) * 5 = 1.0,
-    opacity: ((_flipAnimation.value - 0.8) * 5).clamp(0.0, 1.0)),
+              opacity: ((_flipAnimation.value - 0.8) * 5).clamp(0.0, 1.0))),
         
         // Border
         Positioned.fill(
@@ -421,10 +438,11 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             decoration: BoxDecoration(
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-                width: 2))]
+                color: Colors.white.withOpacity(0.3),
+                width: 2)))),
+      ],
     );
-}
+  }
 
   String _getCardImagePath(int cardIndex) {
     // Default to rider_waite deck
@@ -433,57 +451,52 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
     if (cardIndex < 22) {
       // Major Arcana
       final cardNames = [
-        'fool', 'magician': 'high_priestess', 'empress', 'emperor',
+        'fool', 'magician', 'high_priestess', 'empress', 'emperor',
         'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
         'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
         'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'];
       return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
-} else if (cardIndex < 36) {
+    } else if (cardIndex < 36) {
       // Wands
       final wandsIndex = cardIndex - 21;
       final cardName = wandsIndex <= 10 ? 'of_wands' : _getCourtCardName(wandsIndex, 'wands');
       return '$deckPath/wands/${wandsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-} else if (cardIndex < 50) {
+    } else if (cardIndex < 50) {
       // Cups
       final cupsIndex = cardIndex - 35;
       final cardName = cupsIndex <= 10 ? 'of_cups' : _getCourtCardName(cupsIndex, 'cups');
       return '$deckPath/cups/${cupsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-} else if (cardIndex < 64) {
+    } else if (cardIndex < 64) {
       // Swords
       final swordsIndex = cardIndex - 49;
       final cardName = swordsIndex <= 10 ? 'of_swords' : _getCourtCardName(swordsIndex, 'swords');
       return '$deckPath/swords/${swordsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-} else {
+    } else {
       // Pentacles
       final pentaclesIndex = cardIndex - 63;
       final cardName = pentaclesIndex <= 10 ? 'of_pentacles' : _getCourtCardName(pentaclesIndex, 'pentacles');
       return '$deckPath/pentacles/${pentaclesIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-}
+    }
   }
 
   String _getCourtCardName(int index, String suit) {
     switch (index) {
-      case,
-    11: return 'page_of_$suit';
-      case,
-    12: return 'knight_of_$suit';
-      case,
-    13: return 'queen_of_$suit';
-      case,
-    14: return 'king_of_$suit';
+      case 11: return 'page_of_$suit';
+      case 12: return 'knight_of_$suit';
+      case 13: return 'queen_of_$suit';
+      case 14: return 'king_of_$suit';
       default: return 'of_$suit';
+    }
+  }
 }
-  }}
 
 class _CardBackPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = Colors.white.withOpacity(0.05)
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 1;
+      ..strokeWidth = 1;
 
     // Draw star pattern
     final centerX = size.width / 2;
@@ -498,8 +511,7 @@ class _CardBackPatternPainter extends CustomPainter {
       canvas.drawLine(
         Offset(centerX, centerY),
         Offset(x1, y1),
-        paint
-      );
+        paint);
 }
 
     // Draw circles
@@ -507,13 +519,12 @@ class _CardBackPatternPainter extends CustomPainter {
       canvas.drawCircle(
         Offset(centerX, centerY),
         radius * i / 3,
-        paint
-      );
+        paint);
 }
 
     // Draw corner decorations
     final cornerPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.1)
+      ..color = Colors.white.withOpacity(0.1)
       ..style = PaintingStyle.fill;
 
     final cornerSize = 20.0;
@@ -529,21 +540,21 @@ class _CardBackPatternPainter extends CustomPainter {
         path.moveTo(0, cornerSize);
         path.lineTo(0, 0);
         path.lineTo(cornerSize, 0);
-} else if (corner.dx > 0 && corner.dy == 0) {
+      } else if (corner.dx > 0 && corner.dy == 0) {
         path.moveTo(size.width - cornerSize, 0);
         path.lineTo(size.width, 0);
         path.lineTo(size.width, cornerSize);
-} else if (corner.dx == 0 && corner.dy > 0) {
+      } else if (corner.dx == 0 && corner.dy > 0) {
         path.moveTo(0, size.height - cornerSize);
         path.lineTo(0, size.height);
         path.lineTo(cornerSize, size.height);
-} else {
+      } else {
         path.moveTo(size.width - cornerSize, size.height);
         path.lineTo(size.width, size.height);
         path.lineTo(size.width, size.height - cornerSize);
-}
+      }
       canvas.drawPath(path, cornerPaint);
-}
+    }
   }
 
   @override
@@ -558,8 +569,8 @@ class _SparkleOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: _SparklePainter(opacity: opacity);
-}
+      painter: _SparklePainter(opacity: opacity));
+  }
 }
 
 class _SparklePainter extends CustomPainter {
@@ -570,8 +581,7 @@ class _SparklePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha:,
-      opacity * 0.3,
+      ..color = Colors.white.withOpacity(opacity * 0.3)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);
@@ -582,7 +592,7 @@ class _SparklePainter extends CustomPainter {
       final radius = random.nextDouble() * 3 + 1;
       
       canvas.drawCircle(Offset(x, y), radius * opacity, paint);
-}
+    }
   }
 
   @override
@@ -599,23 +609,21 @@ class _EnhancedCardBackPatternPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 1;
+      ..strokeWidth = 1;
 
     // Draw mystical sacred geometry
     final centerX = size.width / 2;
     final centerY = size.height / 2;
 
     // Outer hexagon
-    paint.color = Colors.white.withValues(alpha: 0.1 + glowAnimation * 0.05);
+    paint.color = Colors.white.withOpacity(0.1 + glowAnimation * 0.05);
     _drawHexagon(canvas, centerX, centerY, 60, paint);
     
     // Inner circles
     for (int i = 1; i <= 3; i++) {
-      paint.color = Colors.white.withValues(alpha: 0.05 + glowAnimation * 0.02);
+      paint.color = Colors.white.withOpacity(0.05 + glowAnimation * 0.02);
       canvas.drawCircle(Offset(centerX, centerY), i * 20.0, paint);
-}
+    }
 
     // Star patterns
     for (int i = 0; i < 12; i++) {
@@ -626,11 +634,11 @@ class _EnhancedCardBackPatternPainter extends CustomPainter {
       final y2 = centerY + 50 * math.sin(angle);
       
       canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
-}
+    }
 
     // Corner ornaments
     _drawCornerOrnaments(canvas, size, paint);
-}
+  }
 
   void _drawHexagon(Canvas canvas, double cx, double cy, double radius, Paint paint) {
     final path = Path();
@@ -640,16 +648,16 @@ class _EnhancedCardBackPatternPainter extends CustomPainter {
       final y = cy + radius * math.sin(angle);
       if (i == 0) {
         path.moveTo(x, y);
-} else {
+      } else {
         path.lineTo(x, y);
-}
+      }
     }
     path.close();
     canvas.drawPath(path, paint);
-}
+  }
 
   void _drawCornerOrnaments(Canvas canvas, Size size, Paint paint) {
-    paint.color = Colors.white.withValues(alpha: 0.15 + glowAnimation * 0.05);
+    paint.color = Colors.white.withOpacity(0.15 + glowAnimation * 0.05);
     final cornerSize = 15.0;
     
     // Top left
@@ -678,9 +686,8 @@ class _EnhancedCardBackPatternPainter extends CustomPainter {
       Rect.fromLTWH(size.width - cornerSize * 2, size.height - cornerSize * 2, 
                     cornerSize * 2, cornerSize * 2),
       0, math.pi / 2,
-      false, paint
-    );
-}
+      false, paint);
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
@@ -696,10 +703,7 @@ class _MandalaPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-     
-   
-    ..style =,
-      PaintingStyle.stroke
+      ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
     final center = Offset(size.width / 2, size.height / 2);
@@ -715,25 +719,23 @@ class _MandalaPainter extends CustomPainter {
       
       final controlPoint1 = Offset(
         center.dx + radius * 0.5 * math.cos(angle - 0.3),
-        center.dy + radius * 0.5 * math.sin(angle - 0.3),;
+        center.dy + radius * 0.5 * math.sin(angle - 0.3));
       final controlPoint2 = Offset(
         center.dx + radius * 0.5 * math.cos(angle + 0.3),
-        center.dy + radius * 0.5 * math.sin(angle + 0.3),;
+        center.dy + radius * 0.5 * math.sin(angle + 0.3));
       final endPoint = Offset(
         center.dx + radius * 0.8 * math.cos(angle),
-        center.dy + radius * 0.8 * math.sin(angle);
+        center.dy + radius * 0.8 * math.sin(angle));
       
       path.quadraticBezierTo(
         controlPoint1.dx, controlPoint1.dy,
-        endPoint.dx, endPoint.dy
-      );
+        endPoint.dx, endPoint.dy);
       path.quadraticBezierTo(
         controlPoint2.dx, controlPoint2.dy,
-        center.dx, center.dy
-      );
+        center.dx, center.dy);
       
       canvas.drawPath(path, paint);
-}
+    }
   }
 
   @override
@@ -759,15 +761,14 @@ class _AuraPainter extends CustomPainter {
       final paint = Paint()
         ..shader = RadialGradient(
           colors: [
-            color.withValues(alpha:,
-      opacity),
-            color.withValues(alpha: opacity * 0.5),
+            color.withOpacity(opacity),
+            color.withOpacity(opacity * 0.5),
             Colors.transparent],
-          stops: const [0.0, 0.6, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius),
+          stops: const [0.0, 0.6, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius))
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, 20 + i * 10.0);
       
       canvas.drawCircle(center, radius, paint);
-}
+    }
   }
 
   @override
@@ -787,7 +788,7 @@ class _ParticlePainter extends CustomPainter {
     
     for (final particle in particles) {
       final opacity = progress < particle.lifespan 
-          ? (progress < 0.2 ? progress * 5 : 1.0 - (progress - 0.2) / 0.8,
+          ? (progress < 0.2 ? progress * 5 : 1.0 - (progress - 0.2) / 0.8)
           : 0.0;
       
       if (opacity <= 0) continue;
@@ -795,19 +796,16 @@ class _ParticlePainter extends CustomPainter {
       final position = particle.position + particle.velocity * progress;
       
       final paint = Paint()
-        ..color = particle.color.withValues(alpha:,
-      opacity * 0.8,
-        ..maskFilter = const,
-      MaskFilter.blur(BlurStyle.normal, 2);
+        ..color = particle.color.withOpacity(opacity * 0.8)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
       
       canvas.drawCircle(center + position, particle.size, paint);
       
       // Inner bright spot
       final innerPaint = Paint()
-        ..color = Colors.white.withValues(alpha:,
-      opacity);
+        ..color = Colors.white.withOpacity(opacity);
       canvas.drawCircle(center + position, particle.size * 0.3, innerPaint);
-}
+    }
   }
 
   @override
@@ -838,7 +836,7 @@ class _FloatingParticlesOverlayState extends State<_FloatingParticlesOverlay>
       vsync: this)..repeat();
     
     _generateParticles();
-}
+  }
 
   void _generateParticles() {
     final random = math.Random();
@@ -848,15 +846,15 @@ class _FloatingParticlesOverlayState extends State<_FloatingParticlesOverlay>
         y: random.nextDouble(),
         size: random.nextDouble() * 2 + 1,
         speed: random.nextDouble() * 0.02 + 0.01,
-        opacity: random.nextDouble() * 0.3 + 0.1),;
-}
+        opacity: random.nextDouble() * 0.3 + 0.1));
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -867,10 +865,9 @@ class _FloatingParticlesOverlayState extends State<_FloatingParticlesOverlay>
           painter: _FloatingParticlesPainter(
             particles: _particles,
             animation: _controller.value),
-          child: Container(),;
-}
-    );
-}
+          child: Container());
+      });
+  }
 }
 
 class _FloatingParticlesPainter extends CustomPainter {
@@ -887,14 +884,13 @@ class _FloatingParticlesPainter extends CustomPainter {
       final y = (particle.y - animation * particle.speed) % 1.0;
       final opacity = math.sin(animation * 2 * math.pi + particle.x * 4) * 0.5 + 0.5;
       
-      paint.color = Colors.white.withValues(alpha: particle.opacity * opacity);
+      paint.color = Colors.white.withOpacity(particle.opacity * opacity);
       
       canvas.drawCircle(
         Offset(particle.x * size.width, y * size.height),
         particle.size,
-        paint
-      );
-}
+        paint);
+    }
   }
 
   @override

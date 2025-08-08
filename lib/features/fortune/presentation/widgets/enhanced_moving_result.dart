@@ -77,15 +77,15 @@ class EnhancedMovingResult extends StatelessWidget {
           borderRadius: AppDimensions.borderRadiusLarge,
           gradient: LinearGradient(
             colors: [
-              scoreColor.withValues(alpha: 0.1),
-              scoreColor.withValues(alpha: 0.05)],
+              scoreColor.withOpacity(0.1),
+              scoreColor.withOpacity(0.05)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight)),
         child: Column(
           children: [
             Text(
-              '이사 운세 종합 점수',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              '이사 운세 종합 점수',),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith()
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: AppSpacing.spacing5),
             SizedBox(
@@ -97,21 +97,21 @@ class EnhancedMovingResult extends StatelessWidget {
                   CircularProgressIndicator(
                     value: overallScore / 100,
                     strokeWidth: 15,
-                    backgroundColor: Colors.grey.withValues(alpha: 0.3),
+                    backgroundColor: Colors.grey.withOpacity(0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(scoreColor)),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '$overallScore',
-                        style: Theme.of(context).textTheme.bodyMedium),
+                        '$overallScore',),
+                        style: Theme.of(context).textTheme.bodyMedium)),
                       Text(
-                        '점',
-                        style: Theme.of(context).textTheme.titleMedium)])])),
+                        '점',),
+                        style: Theme.of(context).textTheme.titleMedium)])]))),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               _getScoreDescription(overallScore),
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                 color: scoreColor,
                 fontWeight: FontWeight.w500),
               textAlign: TextAlign.center)]))
@@ -130,8 +130,8 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icon(Icons.swap_horiz, color: Theme.of(context).primaryColor),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '이사 정보',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '이사 정보',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             if (fromAddress != null) ...[
@@ -141,8 +141,8 @@ class EnhancedMovingResult extends StatelessWidget {
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
-                      '출발: $fromAddress',
-                      style: Theme.of(context).textTheme.bodyMedium))]),
+                      '출발: $fromAddress',),
+                      style: Theme.of(context).textTheme.bodyMedium))])),
               const SizedBox(height: AppSpacing.spacing2)],
             if (toAddress != null) ...[
               Row(
@@ -151,8 +151,8 @@ class EnhancedMovingResult extends StatelessWidget {
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
-                      '도착: $toAddress',
-                      style: Theme.of(context).textTheme.bodyMedium))]),
+                      '도착: $toAddress',),
+                      style: Theme.of(context).textTheme.bodyMedium))])),
               const SizedBox(height: AppSpacing.spacing2)],
             if (selectedDate != null) ...[
               Row(
@@ -160,8 +160,8 @@ class EnhancedMovingResult extends StatelessWidget {
                   const Icon(Icons.calendar_today, size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Text(
-                    '예정일: $selectedDate',
-                    style: Theme.of(context).textTheme.bodyMedium)])]])));
+                    '예정일: $selectedDate',),
+                    style: Theme.of(context).textTheme.bodyMedium)])]])));)
   }
 
   Widget _buildDirectionSection(BuildContext context) {
@@ -183,8 +183,8 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icon(Icons.explore, color: Theme.of(context).primaryColor),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '방위 분석',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '방위 분석',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing5),
             Center(
@@ -196,7 +196,7 @@ class EnhancedMovingResult extends StatelessWidget {
 
   Widget _buildAreaAnalysisSection(BuildContext context) {
     final areaAnalysis = fortuneData['areaAnalysis'] as Map<String, dynamic>?;
-    if (areaAnalysis == null) return const SizedBox.shrink();
+    if (areaAnalysis == null) return const SizedBox.shrink()
     
     return Card(
       child: Padding(
@@ -209,8 +209,8 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icon(Icons.location_city, color: Theme.of(context).primaryColor),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '지역 상세 분석',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '지역 상세 분석',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing5),
             
@@ -283,7 +283,7 @@ class EnhancedMovingResult extends StatelessWidget {
           dataSets: [
             RadarDataSet(
               dataEntries: radarData,
-              fillColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+              fillColor: Theme.of(context).primaryColor.withOpacity(0.3),
               borderColor: Theme.of(context).primaryColor,
               borderWidth: 2,
               entryRadius: 4)],
@@ -314,7 +314,7 @@ class EnhancedMovingResult extends StatelessWidget {
           Container(
             padding: AppSpacing.paddingAll8,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: AppDimensions.borderRadiusSmall),
             child: Icon(icon, color: color, size: 24)),
           const SizedBox(width: AppSpacing.spacing3),
@@ -324,18 +324,18 @@ class EnhancedMovingResult extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith()
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   description,
-                  style: Theme.of(context).textTheme.bodyMedium)]))])
+                  style: Theme.of(context).textTheme.bodyMedium)]))]))
     );
   }
 
   Widget _buildDateAnalysisSection(BuildContext context) {
     final dateAnalysis = fortuneData['dateAnalysis'] as Map<String, dynamic>?;
-    if (dateAnalysis == null) return const SizedBox.shrink();
+    if (dateAnalysis == null) return const SizedBox.shrink()
     
     return Card(
       child: Padding(
@@ -348,8 +348,8 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icon(Icons.calendar_month, color: Theme.of(context).primaryColor),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '날짜 분석',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '날짜 분석',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             
@@ -358,7 +358,7 @@ class EnhancedMovingResult extends StatelessWidget {
               Container(
                 padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
-                  color: Colors.amber.withValues(alpha: 0.1),
+                  color: Colors.amber.withOpacity(0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
                   border: Border.all(color: Colors.amber)),
                 child: Row(
@@ -367,8 +367,8 @@ class EnhancedMovingResult extends StatelessWidget {
                     const SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
-                        '손없는날 - 모든 방향으로 이사하기 좋은 최고의 날입니다!',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        '손없는날 - 모든 방향으로 이사하기 좋은 최고의 날입니다!',),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                           fontWeight: FontWeight.bold)))])),
             const SizedBox(height: AppSpacing.spacing3),
             
@@ -404,11 +404,11 @@ class EnhancedMovingResult extends StatelessWidget {
             width: 60,
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                 color: Colors.grey))),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
               fontWeight: FontWeight.w500))])
     );
   }
@@ -432,8 +432,8 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icon(Icons.analytics, color: Theme.of(context).primaryColor),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '상세 운세 분석',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '상세 운세 분석',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) => _buildScoreBar(
@@ -456,10 +456,10 @@ class EnhancedMovingResult extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodyMedium)),
               Text(
-                '${score.toInt()}점',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                '${score.toInt()}점',),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   fontWeight: FontWeight.bold,
                   color: color))]),
           const SizedBox(height: AppSpacing.spacing1),
@@ -468,7 +468,7 @@ class EnhancedMovingResult extends StatelessWidget {
             child: LinearProgressIndicator(
               value: score / 100,
               minHeight: 8,
-              backgroundColor: Colors.grey.withValues(alpha: 0.3),
+              backgroundColor: Colors.grey.withOpacity(0.3),
               valueColor: AlwaysStoppedAnimation<Color>(color)))]));
   }
 
@@ -477,7 +477,7 @@ class EnhancedMovingResult extends StatelessWidget {
       fortuneData['recommendations'] ?? []
     );
     
-    if (recommendations.isEmpty) return const SizedBox.shrink();
+    if (recommendations.isEmpty) return const SizedBox.shrink()
     
     return Card(
       child: Padding(
@@ -487,11 +487,11 @@ class EnhancedMovingResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.lightbulb, color: Colors.amber.withValues(alpha: 0.9),
+                Icon(Icons.lightbulb, color: Colors.amber.withOpacity(0.9),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '추천사항',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '추천사항',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             ...recommendations.map((rec) => Padding(
@@ -506,7 +506,7 @@ class EnhancedMovingResult extends StatelessWidget {
                   Expanded(
                     child: Text(
                       rec,
-                      style: Theme.of(context).textTheme.bodyMedium))]))])));
+                      style: Theme.of(context).textTheme.bodyMedium))]))])));)
   }
 
   Widget _buildCautionsSection(BuildContext context) {
@@ -514,10 +514,10 @@ class EnhancedMovingResult extends StatelessWidget {
       fortuneData['cautions'] ?? []
     );
     
-    if (cautions.isEmpty) return const SizedBox.shrink();
+    if (cautions.isEmpty) return const SizedBox.shrink()
     
     return Card(
-      color: Colors.red.withValues(alpha: 0.08),
+      color: Colors.red.withOpacity(0.08),
       child: Padding(
         padding: AppSpacing.paddingAll16,
         child: Column(
@@ -525,13 +525,13 @@ class EnhancedMovingResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.warning, color: Colors.red.withValues(alpha: 0.9),
+                Icon(Icons.warning, color: Colors.red.withOpacity(0.9),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '주의사항',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '주의사항',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold,
-                    color: Colors.red.withValues(alpha: 0.9)))]),
+                    color: Colors.red.withOpacity(0.9)))]),
             const SizedBox(height: AppSpacing.spacing4),
             ...cautions.map((caution) => Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
@@ -539,14 +539,14 @@ class EnhancedMovingResult extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.error_outline, 
-                    color: Colors.red.withValues(alpha: 0.9), 
+                    color: Colors.red.withOpacity(0.9), 
                     size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       caution,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.red.withValues(alpha: 0.9))))]))])));
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                        color: Colors.red.withOpacity(0.9))))]))])));
   }
 
   Color _getScoreColor(int score) {

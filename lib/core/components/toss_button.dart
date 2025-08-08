@@ -243,7 +243,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
         return Colors.transparent;
         
       case TossButtonStyle.danger:
-        if (isDisabled) return context.toss.errorColor.withValues(alpha: 0.3);
+        if (isDisabled) return context.toss.errorColor.withOpacity(0.3)
         return context.toss.errorColor;
     }
   }
@@ -262,7 +262,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
         return context.toss.primaryText;
             
       case TossButtonStyle.danger:
-        if (isDisabled) return context.toss.errorColor.withValues(alpha: 0.5);
+        if (isDisabled) return context.toss.errorColor.withOpacity(0.5)
         return AppColors.textPrimaryDark;
     }
   }
@@ -275,12 +275,12 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
   Color _getSplashColor(BuildContext context) {
     switch (widget.style) {
       case TossButtonStyle.primary:
-        return AppColors.textPrimaryDark.withValues(alpha: 0.1);
+        return AppColors.textPrimaryDark.withOpacity(0.1);
       case TossButtonStyle.secondary:
       case TossButtonStyle.tertiary:
-        return context.toss.primaryText.withValues(alpha: 0.05);
+        return context.toss.primaryText.withOpacity(0.05);
       case TossButtonStyle.danger:
-        return AppColors.textPrimaryDark.withValues(alpha: 0.1);
+        return AppColors.textPrimaryDark.withOpacity(0.1);
     }
   }
 
@@ -421,7 +421,7 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
               borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius)),
     boxShadow: [
                 BoxShadow(
-                  color: context.toss.shadowColor.withValues(alpha: 0.8)),
+                  color: context.toss.shadowColor.withOpacity(0.8)),
     blurRadius: context.toss.cardStyles.itemSpacing * 0.75),
     offset: const Offset(0, 4))
                 ))

@@ -211,7 +211,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withValues(alpha: 0.3)
+              ? theme.colorScheme.primary.withOpacity(0.3)
               : Colors.transparent),
     borderRadius: BorderRadius.circular(20)),
     child: Row(
@@ -242,7 +242,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     decoration: InputDecoration(
           hintText: '예: "높은 곳에서 떨어졌지만 다치지 않았어요. 느낌은 무서웠어요."');
           hintStyle: TextStyle(
-            color: Colors.white.withValues(alpha: 0.4)),
+            color: Colors.white.withOpacity(0.4)),
     border: InputBorder.none),
     filled: false),
     onChanged: (value) {
@@ -310,7 +310,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     boxShadow: [
             BoxShadow(
               color: (_isRecording ? Colors.red : Colors.deepPurple)
-                  .withValues(alpha: 0.4),
+                  .withOpacity(0.4),
     blurRadius: 30),
     offset: const Offset(0, 10))]),
         child: Icon(
@@ -523,10 +523,10 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade300.withValues(alpha: 0.3),
+                    color: Colors.deepPurple.shade300.withOpacity(0.3),
     borderRadius: BorderRadius.circular(16),
     border: Border.all(
-                      color: Colors.deepPurple.shade300.withValues(alpha: 0.5))),
+                      color: Colors.deepPurple.shade300.withOpacity(0.5))),
     child: Text(
                     'Fortune cached',
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -647,7 +647,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
             Text(
               '이런 꿈을 꾸셨나요? 구체적인 내용을 입력해주세요.',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: Colors.white.withOpacity(0.6),
     fontSize: 12))]),
         actions: [
           TextButton(
@@ -711,16 +711,16 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     decoration: InputDecoration(
                       hintText: '여기에 답변을 적어주세요 (선택사항)'),
     hintStyle: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: Colors.white.withOpacity(0.3),
     fontSize: 14),
     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.2))),
+                          color: Colors.white.withOpacity(0.2))),
     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.2))),
+                          color: Colors.white.withOpacity(0.2))),
     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(

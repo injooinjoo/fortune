@@ -167,7 +167,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
           // Loading overlay
           if (chatState.isAnalyzing)
             Container(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: Colors.black.withOpacity(0.5),
               child: const Center(
                 child: CircularProgressIndicator(
                   color: Colors.deepPurple)))]));
@@ -180,7 +180,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.deepPurple.shade900.withValues(alpha: 0.8),
+            Colors.deepPurple.shade900.withOpacity(0.8),
             Colors.black])),
       child: Stack(
         children: [
@@ -196,7 +196,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                       math.cos(_backgroundAnimationController.value * 2 * math.pi) * 0.5),
                     radius: 1.5,
                     colors: [
-                      Colors.deepPurple.shade600.withValues(alpha: 0.2),
+                      Colors.deepPurple.shade600.withOpacity(0.2),
                       Colors.transparent])));
             }),
           
@@ -214,11 +214,11 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                 width: size,
                 height: size,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.3 + random),
+                  color: Colors.white.withOpacity(0.3 + random),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: Colors.white.withOpacity(0.5),
                       blurRadius: 3,
                       spreadRadius: 1)]))
                   .animate(
@@ -244,7 +244,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                 width: size,
                 height: size,
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple.shade300.withValues(alpha: 0.3),
+                  color: Colors.deepPurple.shade300.withOpacity(0.3),
                   shape: BoxShape.circle))
                   .animate(
                     onPlay: (controller) => controller.repeat())
@@ -272,10 +272,10 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey.shade900,
         title: const Text(
-          '꿈 해몽을 중단하시겠습니까?',
+          '꿈 해몽을 중단하시겠습니까?',),
           style: TextStyle(color: Colors.white)),
         content: const Text(
-          '대화 내용이 저장되지 않습니다.',
+          '대화 내용이 저장되지 않습니다.',),
           style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
@@ -289,7 +289,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
               ref.read(dreamChatProvider.notifier).resetChat();
             },
             child: Text(
-              '나가기',
+              '나가기',),
               style: TextStyle(color: Colors.red.shade400)))]));
   }
 }

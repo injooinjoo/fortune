@@ -184,7 +184,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
         borderRadius: BorderRadius.circular(16)),
     boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05)),
+            color: Colors.black.withOpacity(0.05)),
     blurRadius: 10))
         ]),
       child: Row(
@@ -270,12 +270,12 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
     decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primary.withValues(alpha: 0.1))
-              AppColors.secondary.withValues(alpha: 0.05))
+              AppColors.primary.withOpacity(0.1))
+              AppColors.secondary.withOpacity(0.05))
             ]),
           borderRadius: BorderRadius.circular(12)),
     border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.3))
+            color: AppColors.primary.withOpacity(0.3))
           ))
         )),
     child: Row(
@@ -398,7 +398,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
             Text(
               '월 ${subscriptionPrice}원으로 모든 운세를 무제한으로!',
               style: AppTextStyles.body2.copyWith(
-                color: Colors.white.withValues(alpha: 0.9)))
+                color: Colors.white.withOpacity(0.9)))
             ))
             const SizedBox(height: 16))
             AnalyticsInkWell(

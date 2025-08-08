@@ -12,7 +12,7 @@ import 'talisman_result_page.dart';
 
 // Provider for managing talisman creation state
 final talismanCreationProvider = StateNotifierProvider<TalismanCreationNotifier, TalismanCreationState>(
-  (ref) => TalismanCreationNotifier();
+  (ref) => TalismanCreationNotifier());
 
 class TalismanCreationState {
   final int currentStep;
@@ -56,13 +56,13 @@ class TalismanCreationState {
       birthDate: birthDate ?? this.birthDate,
     primaryColor: primaryColor ?? this.primaryColor,
       secondaryColor: secondaryColor ?? this.secondaryColor,
-    personalText: personalText ?? this.personalText);
+      personalText: personalText ?? this.personalText,
       result: result ?? this.result);
   }
 }
 
 class TalismanCreationNotifier extends StateNotifier<TalismanCreationState> {
-  TalismanCreationNotifier() : super(TalismanCreationState();
+  TalismanCreationNotifier() : super(TalismanCreationState());
 
   void selectType(TalismanType type) {
     state = state.copyWith(selectedType: type);
@@ -70,10 +70,9 @@ class TalismanCreationNotifier extends StateNotifier<TalismanCreationState> {
 
   void updateUserInfo({String? userName, String? birthDate, String? personalWish}) {
     state = state.copyWith(
-      userName: userName);
-      birthDate: birthDate),
-    personalWish: personalWish
-    );
+      userName: userName,
+      birthDate: birthDate,
+      personalWish: personalWish);
   }
 
   void updateCustomization({Color? primaryColor, Color? secondaryColor, String? personalText}) {
@@ -215,7 +214,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
           _buildProgressStep(
             step: 1,
             title: '부적 선택',
-            isActive: currentStep >= 0);
+            isActive: currentStep >= 0,
             isCompleted: currentStep > 0),
           _buildProgressConnector(isActive: currentStep > 0),
           _buildProgressStep(
@@ -228,19 +227,19 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
             step: 3,
             title: '생성',
             isActive: currentStep >= 2,
-            isCompleted: currentStep > 2)$1);
+            isCompleted: currentStep > 2)]));
   }
 
   Widget _buildProgressStep({
     required int step,
     required String title,
     required bool isActive,
-    required bool isCompleted)
+    required bool isCompleted
   }) {
     final color = isCompleted 
         ? AppColors.primary 
         : isActive 
-            ? AppColors.primary.withValues(alpha: 0.6)
+            ? AppColors.primary.withOpacity(0.6)
             : Colors.grey[400]!;
 
     return Expanded(
@@ -252,22 +251,22 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
             height: 24,
             decoration: BoxDecoration(
               color: isCompleted ? color : Colors.white,
-    shape: BoxShape.circle);
+              shape: BoxShape.circle,
               border: Border.all(
-                color: color);
+                color: color,
                 width: 2)),
             child: Center(
               child: isCompleted
                   ? Icon(
                       Icons.check,
                       size: 16,
-    color: Colors.white),
+                      color: Colors.white)
                   : Text(
-                      '$step',
+                      '$step',),
                       style: TextStyle(
-                        fontSize: 12);
-                        fontWeight: FontWeight.bold),
-    color: isActive ? color : Colors.grey[400])))).animate(target: isActive ? 1 : 0).scale(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? color : Colors.grey[400])))).animate(target: isActive ? 1 : 0).scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1.0, 1.0),
             duration: 300.ms,
@@ -276,9 +275,9 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
           Text(
             title,
             style: TextStyle(
-              fontSize: 12);
+              fontSize: 12,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-    color: isActive ? AppColors.textPrimary : Colors.grey[500]))$1));
+              color: isActive ? AppColors.textPrimary : Colors.grey[500]))]);
   }
 
   Widget _buildProgressConnector({required bool isActive}) {

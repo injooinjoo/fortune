@@ -28,8 +28,7 @@ class WealthFortunePage extends BaseFortunePage {
   ConsumerState<WealthFortunePage> createState() => _WealthFortunePageState();
 }
 
-class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
-    with TickerProviderStateMixin {
+class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
   Map<String, dynamic>? _wealthData;
   late AnimationController _coinController;
   late Animation<double> _coinAnimation;
@@ -218,7 +217,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
             Text(
               _getWealthIndexMessage(wealthIndex),
               style: theme.textTheme.bodyLarge,
-              textAlign: TextAlign.center)])).animate().fadeIn().scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1),.then().shimmer(delay: 500.ms, duration: 1500.ms));
+              textAlign: TextAlign.center)])));
   }
 
   Widget _buildMonthlyTrendChart() {
@@ -527,7 +526,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
                           Text(
                             description,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)))]))])));
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))])])))));
           }).toList()]));
   }
 
@@ -753,7 +752,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
                       Expanded(
                         child: Text(
                           item,
-                          style: Theme.of(context).textTheme.bodyMedium))])).animate().fadeIn(delay: Duration(milliseconds: 100 * index),.slideX(begin: 0.1, end: 0));
+                          style: Theme.of(context).textTheme.bodyMedium))])));
             }).toList()])));
   }
 
@@ -793,19 +792,21 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case '우수': return Colors.green.shade600;
+      case '우수': 
+        return Colors.green.shade600;
       case '양호':
         return Colors.blue.shade600;
       case '적정':
         return Colors.amber.shade600;
       default:
-        return Colors.red.shade600;}
+        return Colors.red.shade600;
     }
   }
 
   IconData _getBoosterIcon(String type) {
     switch (type) {
-      case '행운의 숫자': return Icons.looks_one_rounded;
+      case '행운의 숫자': 
+        return Icons.looks_one_rounded;
       case '행운의 방향':
         return Icons.explore_rounded;
       case '행운의 색상':
@@ -813,7 +814,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
       case '행운의 시간':
         return Icons.access_time_rounded;
       default:
-        return Icons.star_rounded;}
+        return Icons.star_rounded;
     }
   }
 }

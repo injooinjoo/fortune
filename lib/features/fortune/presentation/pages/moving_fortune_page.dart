@@ -107,16 +107,16 @@ class _MovingInputFormState extends State<_MovingInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Name Input
         Text(
-          '이름',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '이름',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         TextField(
@@ -125,44 +125,44 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             hintText: '이름을 입력하세요',
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(12))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))),
+              borderRadius: BorderRadius.circular(12))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)))),
         const SizedBox(height: 20),
         
         // Birth Date Selection
         Text(
-          '생년월일',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '생년월일',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         InkWell(
           onTap: () => _selectDate(false),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
                       ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                       : '생년월일을 선택하세요',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.5)))]))),
+                        : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
         const SizedBox(height: 20),
         
         // Current Address
         Text(
-          '현재 거주지 (시/구 단위)',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '현재 거주지 (시/구 단위)',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         TextField(
@@ -171,44 +171,44 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             hintText: '예: 서울시 강남구',
             prefixIcon: const Icon(Icons.home_outlined),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(12))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))),
+              borderRadius: BorderRadius.circular(12))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)))),
         const SizedBox(height: 20),
         
         // Planned Moving Date
         Text(
-          '예상 이사 시기',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '예상 이사 시기',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         InkWell(
           onTap: () => _selectDate(true),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
               children: [
-                Icon(Icons.event, color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7),
                 const SizedBox(width: 12),
                 Text(
                   _plannedDate != null
                       ? '${_plannedDate!.year}년 ${_plannedDate!.month}월 ${_plannedDate!.day}일'
                       : '예상 이사 날짜를 선택하세요',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     color: _plannedDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.5)))]))),
+                        : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
         const SizedBox(height: 20),
         
         // Moving Reason Selection
         Text(
-          '이사 이유',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '이사 이유',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(
@@ -224,7 +224,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   _selectedReason = selected ? reason : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList()),
@@ -232,8 +232,8 @@ class _MovingInputFormState extends State<_MovingInputForm> {
         
         // Housing Type Selection
         Text(
-          '희망 주거 형태',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '희망 주거 형태',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(
@@ -249,7 +249,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   _selectedType = selected ? type : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList()),
@@ -290,8 +290,8 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                 borderRadius: BorderRadius.circular(12)),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
-              '이사 운세 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
+              '이사 운세 확인하기',),
+              style: theme.textTheme.titleMedium?.copyWith()
                 color: Colors.white,
                 fontWeight: FontWeight.bold))))]
     );
@@ -344,7 +344,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12)),
                       child: Icon(
                         Icons.explore,
@@ -356,13 +356,13 @@ class _MovingFortuneResult extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '최적의 이사 방향',
-                            style: theme.textTheme.titleMedium?.copyWith(
+                            '최적의 이사 방향',),
+                            style: theme.textTheme.titleMedium?.copyWith()
                               fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Text(
                             bestDirection['direction'] ?? '동쪽',
-                            style: theme.textTheme.headlineSmall?.copyWith(
+                            style: theme.textTheme.headlineSmall?.copyWith()
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 20 + fontSize))]))]),
@@ -370,14 +370,14 @@ class _MovingFortuneResult extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     bestDirection['description'],
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       height: 1.6,
                       fontSize: 14 + fontSize))],
                 if (bestDirection['areas'] != null) ...[
                   const SizedBox(height: 12),
                   Text(
                     '지역: ${bestDirection['areas']}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith()
                       color: theme.colorScheme.secondary,
                       fontWeight: FontWeight.w600))]]))),
         const SizedBox(height: 20),
@@ -397,21 +397,21 @@ class _MovingFortuneResult extends ConsumerWidget {
                       size: 24),
                     const SizedBox(width: 12),
                     Text(
-                      '최적의 이사 시기',
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      '최적의 이사 시기',),
+                      style: theme.textTheme.titleMedium?.copyWith()
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   bestTiming['period'] ?? '다음 달',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.w600,
                     fontSize: 16 + fontSize)),
                 if (bestTiming['reason'] != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     bestTiming['reason'],
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: 14 + fontSize))]]))),
         const SizedBox(height: 20),
         
@@ -431,8 +431,8 @@ class _MovingFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '이사 운세 분석',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '이사 운세 분석',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...compatibility.entries.map((entry) => Padding(
@@ -442,7 +442,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                       children: [
                         Text(
                           entry.key,
-                          style: theme.textTheme.bodyLarge?.copyWith(
+                          style: theme.textTheme.bodyLarge?.copyWith()
                             fontSize: 14 + fontSize)),
                         Row(
                           children: [
@@ -450,13 +450,13 @@ class _MovingFortuneResult extends ConsumerWidget {
                               width: 100,
                               child: LinearProgressIndicator(
                                 value: entry.value / 100,
-                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(entry.value)))),
                             const SizedBox(width: 8),
                             Text(
-                              '${entry.value}점',
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                              '${entry.value}점',),
+                              style: theme.textTheme.bodyMedium?.copyWith()
                                 fontWeight: FontWeight.bold,
                                 color: _getScoreColor(entry.value)))])])).toList()]))),
           const SizedBox(height: 20)],
@@ -477,8 +477,8 @@ class _MovingFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '이사 준비 팁',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '이사 준비 팁',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...movingTips.map((tip) => Padding(
@@ -497,7 +497,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             tip,
-                            style: theme.textTheme.bodyLarge?.copyWith(
+                            style: theme.textTheme.bodyLarge?.copyWith()
                               height: 1.5,
                               fontSize: 14 + fontSize)))])).toList()]))),
           const SizedBox(height: 20)],
@@ -518,21 +518,21 @@ class _MovingFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '피해야 할 방향',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '피해야 할 방향',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Text(
                     avoidDirection['direction'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontWeight: FontWeight.w600,
                       fontSize: 14 + fontSize)),
                   if (avoidDirection['reason'] != null) ...[
                     const SizedBox(height: 8),
                     Text(
                       avoidDirection['reason'],
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      style: theme.textTheme.bodyMedium?.copyWith()
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: 12 + fontSize))]]))),
           const SizedBox(height: 20)],
         

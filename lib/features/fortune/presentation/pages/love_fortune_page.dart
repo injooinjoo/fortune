@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Icon;
+import 'package:flutter/material.dart' as material show Icon;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -26,10 +27,12 @@ class LoveFortunePage extends BaseFortunePage {
   ConsumerState<LoveFortunePage> createState() => _LoveFortunePageState();
 }
 
-class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
+class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerProviderStateMixin {
   late TabController _tabController;
   Map<String, dynamic>? _loveData;
   final List<bool> _missionChecks = List.filled(5, false);
+  bool isLoading = false;
+  Fortune? currentFortune;
 
   @override
   void initState() {
@@ -43,7 +46,6 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
     super.dispose();
   }
 
-  @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final user = ref.read(userProvider).value;
     if (user == null) {
@@ -57,26 +59,26 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
     // Extract love-specific data from the fortune response
     _loveData = {
       'loveIndex': fortune.overallScore ?? 88,
-      'monthlyTrend': fortune.additionalInfo?['monthlyTrend'] ?? {}
+      'monthlyTrend': fortune.additionalInfo?['monthlyTrend'] ?? {
         '이번 주': 75,
         '다음 주': 82,
         '3주 후': 90,
-        '4주 후')},
+        '4주 후': 95},
       'singleAdvice': fortune.additionalInfo?['singleAdvice'] ?? {
-        'summary', '새로운 만남의 기회가 찾아올 시기입니다',
+        'summary': '새로운 만남의 기회가 찾아올 시기입니다',
         'details': fortune.content,
-        'luckySpots': \['['카페', '서점', '운동 시설'],
-        'luckyDays': ['금요일', '일요일': null},
+        'luckySpots': ['카페', '서점', '운동 시설'],
+        'luckyDays': ['금요일', '일요일']},
       'coupleAdvice': fortune.additionalInfo?['coupleAdvice'] ?? {
-        'summary', '서로를 더 깊이 이해하게 되는 시기',
-        'details', '연인과의 관계가 한 단계 더 발전할 수 있는 시기입니다. 진솔한 대화를 통해 서로를 더 잘 알아가세요.',
+        'summary': '서로를 더 깊이 이해하게 되는 시기',
+        'details': '연인과의 관계가 한 단계 더 발전할 수 있는 시기입니다. 진솔한 대화를 통해 서로를 더 잘 알아가세요.',
         'activities': ['함께 요리하기', '여행 계획 세우기', '운동 함께하기'],
-        'caution', '사소한 일로 다투지 않도록 주의하세요'},
+        'caution': '사소한 일로 다투지 않도록 주의하세요'},
       'reunionAdvice': fortune.additionalInfo?['reunionAdvice'] ?? {
-        'summary', '과거를 정리하고 새 출발을 준비할 때',
-        'details', '지난 관계에서 배운 교훈을 바탕으로 더 나은 사랑을 만날 준비를 하세요.',
-        'healing', '자신을 먼저 사랑하는 시간을 가지세요',
-        'newStart', '3주 후부터 새로운 인연이 시작될 수 있습니다'},
+        'summary': '과거를 정리하고 새 출발을 준비할 때',
+        'details': '지난 관계에서 배운 교훈을 바탕으로 더 나은 사랑을 만날 준비를 하세요.',
+        'healing': '자신을 먼저 사랑하는 시간을 가지세요',
+        'newStart': '3주 후부터 새로운 인연이 시작될 수 있습니다'},
       'actionMissions': fortune.additionalInfo?['actionMissions'] ?? [
         '하루에 한 번 자신에게 칭찬하기',
         '좋아하는 사람에게 먼저 연락하기',
@@ -84,10 +86,10 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
         '감사 일기 쓰기',
         '운동으로 자신감 키우기'],
       'luckyBooster': fortune.luckyItems ?? {
-        '향수', '플로럴 계열',
-        '색상', '핑크, 레드',
-        '액세서리', '하트 모양 펜던트',
-        '꽃', '장미, 튤립'},
+        '향수': '플로럴 계열',
+        '색상': '핑크, 레드',
+        '액세서리': '하트 모양 펜던트',
+        '꽃': '장미, 튤립'},
       'psychologicalAdvice': fortune.additionalInfo?['psychologicalAdvice'] ?? 
         '사랑은 자신을 먼저 사랑하는 것에서 시작됩니다. 자존감을 높이고 긍정적인 에너지를 발산하세요.'};
 
@@ -95,6 +97,65 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
   }
 
   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('연애운'),
+        centerTitle: true,
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : currentFortune == null
+              ? _buildInitialView()
+              : _buildFortuneResultView(),
+    );
+  }
+
+  Widget _buildInitialView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const material.Icon(Icons.favorite, size: 80, color: Colors.pink),
+            const SizedBox(height: 20),
+            const Text(
+              '당신의 연애운을 확인해보세요',),
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                try {
+                  final fortune = await generateFortune({});
+                  setState(() {
+                    currentFortune = fortune;
+                    isLoading = false;
+                  });
+                } catch (e) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              },
+              child: const Text('연애운 확인하기'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFortuneResultView() {
+    return SingleChildScrollView(
+      child: buildFortuneResult(),
+    );
+  }
+
   Widget buildFortuneResult() {
     return Column(
       children: [
@@ -119,13 +180,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
 
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: LiquidGlassContainer(
-        padding: const EdgeInsets.all(32),
-        borderRadius: BorderRadius.circular(32),
-        liquidColors: [
-          Colors.pink.shade200,
-          Colors.red.shade200,
-          Colors.pink.shade300],
+      child: GlassContainer(
         child: Column(
           children: [
             Container(
@@ -139,37 +194,36 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                     Colors.pink.shade500]),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink.withValues(alpha: 0.3),
+                    color: Colors.pink.withOpacity(0.3),
                     blurRadius: 30,
                     spreadRadius: 10)]),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const material.Icon(
                       Icons.favorite_rounded,
                       color: Colors.white,
                       size: 40),
                     const SizedBox(height: 8),
                     Text(
-                      '$loveIndex점',
-                      style: theme.textTheme.headlineMedium?.copyWith(
+                      '$loveIndex점',),
+                      style: theme.textTheme.headlineMedium?.copyWith()
                         color: Colors.white,
                         fontWeight: FontWeight.bold))]))),
             const SizedBox(height: 24),
             Text(
-              '연애 지수',
-              style: theme.textTheme.headlineSmall),
+              '연애 지수',),
+              style: theme.textTheme.headlineSmall)),
             const SizedBox(height: 8),
             Text(
               _getLoveIndexMessage(loveIndex),
-              style: theme.textTheme.bodyLarge,
-              textAlign: TextAlign.center)])).animate()
+              style: theme.textTheme.bodyLarge),
+              textAlign: TextAlign.center)]))).animate()
             .fadeIn()
-            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1),
+            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
             .then()
             .shimmer(delay: 500.ms, duration: 1500.ms);
-    );
   }
 
   Widget _buildMonthlyTrend() {
@@ -190,14 +244,14 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                     gradient: LinearGradient(
                       colors: [Colors.purple.shade400, Colors.purple.shade600]),
                     borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(
+                  child: const material.Icon(
                     Icons.trending_up_rounded,
                     color: Colors.white,
                     size: 24)),
                 const SizedBox(width: 12),
                 Text(
-                  '월간 연애운 흐름',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '월간 연애운 흐름',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 20),
             ...trend.entries.map((entry) {
               final progress = (entry.value as int) / 100;
@@ -211,10 +265,10 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                       children: [
                         Text(
                           entry.key,
-                          style: Theme.of(context).textTheme.bodyMedium),
+                          style: Theme.of(context).textTheme.bodyMedium)),
                         Text(
-                          '${entry.value}점',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          '${entry.value}점',),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                             fontWeight: FontWeight.bold,
                             color: _getScoreColor(entry.value as int)))]),
                     const SizedBox(height: 8),
@@ -226,8 +280,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                       progressColor: _getScoreColor(entry.value as int),
                       barRadius: const Radius.circular(5),
                       animation: true,
-                      animationDuration: 1000)]));
-            }).toList()]));
+                      animationDuration: 1000)]));}).toList()])));
   }
 
   Widget _buildAdviceTabs() {
@@ -238,19 +291,19 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: TabBar(
               controller: _tabController,
               labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
+                borderRadius: BorderRadius.circular(12))),
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1)),
               indicatorPadding: const EdgeInsets.all(4),
               tabs: const [
                 Tab(text: '싱글'),
@@ -264,7 +317,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
               children: [
                 _buildSingleAdvice(),
                 _buildCoupleAdvice(),
-                _buildReunionAdvice()]))]);
+                _buildReunionAdvice()]))]));
   }
 
   Widget _buildSingleAdvice() {
@@ -279,17 +332,17 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.pink.withValues(alpha: 0.1),
+                color: Colors.pink.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12)),
               child: Text(
                 advice['summary'],
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold,
-                  color: Colors.pink[700]!))),
+                  color: Colors.pink[700]))),
             const SizedBox(height: 16),
             Text(
               advice['details'],
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium)),
             const SizedBox(height: 20),
             _buildAdviceSection(
               icon: Icons.place_rounded,
@@ -299,7 +352,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             _buildAdviceSection(
               icon: Icons.calendar_today_rounded,
               title: '행운의 날',
-              items: advice['luckyDays'])]));
+              items: advice['luckyDays'])])));
   }
 
   Widget _buildCoupleAdvice() {
@@ -314,17 +367,17 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: Colors.red.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12)),
               child: Text(
                 advice['summary'],
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold,
                   color: Colors.red.shade700))),
             const SizedBox(height: 16),
             Text(
               advice['details'],
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium)),
             const SizedBox(height: 20),
             _buildAdviceSection(
               icon: Icons.favorite_rounded,
@@ -334,13 +387,13 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(
-                  color: Colors.orange.withValues(alpha: 0.3))),
+                  color: Colors.orange.withOpacity(0.3))),
               child: Row(
                 children: [
-                  Icon(
+                  material.Icon(
                     Icons.warning_rounded,
                     color: Colors.orange.shade700,
                     size: 20),
@@ -348,8 +401,8 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                   Expanded(
                     child: Text(
                       advice['caution'],
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.orange.shade700)))]))]));
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                        color: Colors.orange.shade700)))]))])));
   }
 
   Widget _buildReunionAdvice() {
@@ -364,17 +417,17 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.purple.withValues(alpha: 0.1),
+                color: Colors.purple.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12)),
               child: Text(
                 advice['summary'],
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold,
                   color: Colors.purple.shade700))),
             const SizedBox(height: 16),
             Text(
               advice['details'],
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium)),
             const SizedBox(height: 20),
             _buildAdviceItem(
               icon: Icons.healing_rounded,
@@ -386,7 +439,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
               icon: Icons.stars_rounded,
               title: '새 시작',
               content: advice['newStart'],
-              color: Colors.blue)]));
+              color: Colors.blue)])));
   }
 
   Widget _buildAdviceSection({
@@ -398,11 +451,11 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+            material.Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 8),
             Text(
               title,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                 fontWeight: FontWeight.bold))]),
         const SizedBox(height: 8),
         Wrap(
@@ -410,8 +463,8 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
           runSpacing: 8,
           children: items.map((item) {
             return Chip(
-              label: Text(item.toString(),
-              backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              label: Text(item.toString()),
+              backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.primary));
           }).toList())]
@@ -426,12 +479,12 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 24),
+          material.Icon(icon, color: color, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -439,13 +492,13 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                     fontWeight: FontWeight.bold,
                     color: color)),
                 const SizedBox(height: 4),
                 Text(
                   content,
-                  style: Theme.of(context).textTheme.bodySmall)]))]);
+                  style: Theme.of(context).textTheme.bodySmall)]))]));)
   }
 
   Widget _buildActionMissions() {
@@ -466,14 +519,14 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                     gradient: LinearGradient(
                       colors: [Colors.green.shade400, Colors.green.shade600]),
                     borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(
+                  child: const material.Icon(
                     Icons.task_alt_rounded,
                     color: Colors.white,
                     size: 24)),
                 const SizedBox(width: 12),
                 Text(
-                  '행운을 부르는 액션 미션',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '행운을 부르는 액션 미션',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 20),
             ...missions.asMap().entries.map((entry) {
               final index = entry.key;
@@ -494,13 +547,13 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: _missionChecks[index]
-                          ? Colors.green.withValues(alpha: 0.1)
+                          ? Colors.green.withOpacity(0.1)
                           : Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12))),
                       border: Border.all(
                         color: _missionChecks[index]
-                            ? Colors.green.withValues(alpha: 0.3)
-                            : Theme.of(context).colorScheme.outline.withValues(alpha: 0.2))),
+                            ? Colors.green.withOpacity(0.3)
+                            : Theme.of(context).colorScheme.outline.withOpacity(0.2))),
                     child: Row(
                       children: [
                         AnimatedContainer(
@@ -518,7 +571,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                                   : Colors.grey.shade400,
                               width: 2)),
                           child: _missionChecks[index]
-                              ? const Icon(
+                              ? const material.Icon(
                                   Icons.check_rounded,
                                   color: Colors.white,
                                   size: 16)
@@ -527,17 +580,16 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                         Expanded(
                           child: Text(
                             mission,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                               decoration: _missionChecks[index]
                                   ? TextDecoration.lineThrough
                                   : null,
                               color: _missionChecks[index]
-                                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
+                                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
                                   : null)))])))).animate()
-                    .fadeIn(delay: Duration(milliseconds: 100 * index),
+                    .fadeIn(delay: Duration(milliseconds: 100 * index))
                     .slideX(begin: 0.1, end: 0);
-            }).toList()]));
-      );
+            }).toList()])));
   }
 
   Widget _buildLuckyBooster() {
@@ -547,7 +599,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ShimmerGlass(
         shimmerColor: Colors.amber,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24))),
         child: GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -561,14 +613,14 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                       gradient: LinearGradient(
                         colors: [Colors.amber.shade400, Colors.amber.shade600]),
                       borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(
+                    child: const material.Icon(
                       Icons.auto_awesome_rounded,
                       color: Colors.white,
                       size: 24)),
                   const SizedBox(width: 12),
                   Text(
-                    '행운 부스터',
-                    style: Theme.of(context).textTheme.headlineSmall)]),
+                    '행운 부스터',),
+                    style: Theme.of(context).textTheme.headlineSmall)])),
               const SizedBox(height: 20),
               GridView.count(
                 shrinkWrap: true,
@@ -585,12 +637,12 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                         colors: [
                           Colors.pink.shade50,
                           Colors.pink.shade100]),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12))),
                       border: Border.all(
                         color: Colors.pink.shade200)),
                     child: Row(
                       children: [
-                        Icon(
+                        material.Icon(
                           _getBoosterIcon(entry.key),
                           color: Colors.pink.shade600,
                           size: 20),
@@ -602,12 +654,12 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                             children: [
                               Text(
                                 entry.key,
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                   color: Colors.pink.shade800,
                                   fontSize: 10)),
                               Text(
                                 entry.value.toString(),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                                   fontWeight: FontWeight.bold,
                                   color: Colors.pink.shade900,
                                   fontSize: 12),
@@ -632,18 +684,18 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                 gradient: LinearGradient(
                   colors: [Colors.indigo.shade400, Colors.indigo.shade600]),
                 shape: BoxShape.circle),
-              child: const Icon(
+              child: const material.Icon(
                 Icons.psychology_rounded,
                 color: Colors.white,
                 size: 32)),
             const SizedBox(height: 16),
             Text(
-              '심리 조언',
-              style: Theme.of(context).textTheme.headlineSmall),
+              '심리 조언',),
+              style: Theme.of(context).textTheme.headlineSmall)),
             const SizedBox(height: 12),
             Text(
               advice,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                 fontStyle: FontStyle.italic,
                 height: 1.6),
               textAlign: TextAlign.center)])));
@@ -670,9 +722,9 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
         return Icons.palette_rounded;
       case '액세서리':
         return Icons.diamond_rounded;
-      case , '꽃': return Icons.local_florist_rounded;
+      case '꽃': return Icons.local_florist_rounded;
       default:
-        return Icons.star_rounded;}
+        return Icons.star_rounded;
     }
   }
 }

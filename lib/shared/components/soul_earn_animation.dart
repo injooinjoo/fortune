@@ -12,12 +12,11 @@ import 'package:fortune/core/theme/app_animations.dart';
 class SoulEarnAnimation {
   static OverlayEntry? _currentOverlay;
 
-  static void show(
-    {
+  static void show({
     required BuildContext context,
     required int soulAmount,
     Offset? startPosition,
-    Offset? endPosition)}) {
+    Offset? endPosition}) {
     // Remove any existing overlay
     _currentOverlay?.remove();
     _currentOverlay = null;
@@ -29,14 +28,14 @@ class SoulEarnAnimation {
 
     // Create new overlay
     _currentOverlay = OverlayEntry(
-      builder: (context) => _SoulEarnAnimationWidget(,
-      soulAmount: soulAmount,
+      builder: (context) => _SoulEarnAnimationWidget(
+        soulAmount: soulAmount,
         startPosition: startPosition ?? defaultStart,
-        endPosition: endPosition ?? defaultEnd),
+        endPosition: endPosition ?? defaultEnd,
         onComplete: () {
           _currentOverlay?.remove();
           _currentOverlay = null;
-        })))
+        }));
 
     // Insert overlay
     Overlay.of(context).insert(_currentOverlay!);
@@ -84,59 +83,48 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
     // Main animation controller
     _mainController = AnimationController(
       duration: AppAnimations.durationSkeleton,
-      vsync: this)
+      vsync: this);
     
     // Particle animation controller
     _particleController = AnimationController(
-      duration: AppAnimations.durationLong * 2),
-        vsync: this
-    );
+      duration: AppAnimations.durationLong * 2,
+      vsync: this);
     
     // Scale animation - starts big, then normal, then small
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 0.0, end: 1.2).chain(CurveTween(cur,
-      ve: Curves.easeOut),
-      weight: 20)
+        tween: Tween(begin: 0.0, end: 1.2).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 20),
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 1.2, end: 1.0).chain(CurveTween(cur,
-      ve: Curves.easeInOut),
-      weight: 20)
+        tween: Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 20),
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 1.0, end: 1.0),
-        weight: 40)
+        tween: Tween(begin: 1.0, end: 1.0),
+        weight: 40),
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 1.0, end: 0.3).chain(CurveTween(cur,
-      ve: Curves.easeIn),
-      weight: 20)
+        tween: Tween(begin: 1.0, end: 0.3).chain(CurveTween(curve: Curves.easeIn)),
+        weight: 20)
     ]).animate(_mainController);
     
     // Fade animation
     _fadeAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 0.0, end: 1.0),
-        weight: 20)
+        tween: Tween(begin: 0.0, end: 1.0),
+        weight: 20),
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 1.0, end: 1.0),
-        weight: 60)
+        tween: Tween(begin: 1.0, end: 1.0),
+        weight: 60),
       TweenSequenceItem(
-        tween: Tween(begi,
-      n: 1.0, end: 0.0),
+        tween: Tween(begin: 1.0, end: 0.0),
         weight: 20)
     ]).animate(_mainController);
     
     // Position animation with curve
     _positionAnimation = Tween<Offset>(
       begin: widget.startPosition,
-      end: widget.endPosition)).animate(CurvedAnimation(,
-      parent: _mainController),
-        curve: const Interval(0.4, 1.0, curve: Curves.easeInOut)))
+      end: widget.endPosition).animate(CurvedAnimation(
+      parent: _mainController,
+      curve: const Interval(0.4, 1.0, curve: Curves.easeInOut)));
     
     // Generate particles
     _generateParticles();
@@ -159,9 +147,8 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
       _particles.add(_Particle(
         angle: (i * math.pi / 4) + (random.nextDouble() * math.pi / 8),
         distance: 50.0 + random.nextDouble() * 30,
-        delay: Duration(millisecon,
-      ds: random.nextInt(200),
-      size: 4.0 + random.nextDouble() * 4))
+        delay: Duration(milliseconds: random.nextInt(200)),
+        size: 4.0 + random.nextDouble() * 4));
     }
   }
   
@@ -177,62 +164,58 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
     final theme = Theme.of(context);
     
     return AnimatedBuilder(
-      animation: _mainController),
-        builder: (context, child) {
+      animation: _mainController,
+      builder: (context, child) {
         return Stack(
           children: [
             // Particles
             ..._particles.map((particle) => Positioned(
               left: widget.startPosition.dx - 20,
               top: widget.startPosition.dy - 20,
-              child: FadeTransition(,
-      opacity: Tween<double>(,
-      begin: 0.0,
+              child: FadeTransition(
+                opacity: Tween<double>(
+                  begin: 0.0,
                   end: 1.0).animate(CurvedAnimation(
                   parent: _particleController,
                   curve: Interval(
-                    0.0)
-                    0.6),
-        curve: Curves.easeOut))),
-    child: Transform.translate(,
-      offset: Offset(
+                    0.0,
+                    0.6,
+                    curve: Curves.easeOut))),
+                child: Transform.translate(
+                  offset: Offset(
                     math.cos(particle.angle) * particle.distance * _particleController.value,
                     math.sin(particle.angle) * particle.distance * _particleController.value),
-    child: Container(,
-      width: particle.size,
-                    height: particle.size),
-              decoration: BoxDecoration(,
-      color: Colors.amber.withValues(alp,
-      ha: 0.8),
+                  child: Container(
+                    width: particle.size,
+                    height: particle.size,
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withValues(alpha: 0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.amber.withValues(alph,
-      a: 0.4),
+                          color: Colors.amber.withValues(alpha: 0.4),
                           blurRadius: 4,
                           spreadRadius: 1)
-                      ])))))).animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withValues(alph,
-      a: 0.3))
-                  .fadeOut(delay: particle.delay, duration: 400.ms)))))
+                      ]))).animate(onPlay: (controller) => controller.repeat())
+                  .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withValues(alpha: 0.3))
+                  .fadeOut(delay: particle.delay, duration: 400.ms)))),
             
             // Main soul animation
             Positioned(
               left: _positionAnimation.value.dx - 60,
               top: _positionAnimation.value.dy - 30,
-              child: FadeTransition(,
-      opacity: _fadeAnimation,
-                child: ScaleTransition(,
-      scale: _scaleAnimation,
-                  child: GlassContainer(,
-      width: 120,
-                    height: AppSpacing.spacing15),
-        padding: EdgeInsets.symmetric(horizonta,
-      l: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: GlassContainer(
+                    width: 120,
+                    height: AppSpacing.spacing15,
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
                     borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
                     blur: 20,
-                    child: Row(,
-      mainAxisSize: MainAxisSize.min,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -243,22 +226,21 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                           .shimmer(duration: 1500.ms, color: AppColors.textPrimaryDark),
                         SizedBox(width: AppSpacing.spacing2),
                         Text(
-                          '+${widget.soulAmount}'),
-        style: theme.textTheme.titleMedium?.copyWith(,
-      color: Colors.amber),
-        fontWeight: FontWeight.bold))).animate()
+                          '+${widget.soulAmount}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: Colors.amber,
+                            fontWeight: FontWeight.bold)).animate()
                           .fadeIn(delay: 200.ms, duration: 300.ms)
-                          .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms)])))).animate()
+                          .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms)])).animate()
                     .custom(
-                      duration: 1000.ms),
-        builder: (context, value, child) {
+                      duration: 1000.ms,
+                      builder: (context, value, child) {
                         return Transform.translate(
                           offset: Offset(0, math.sin(value * math.pi * 2) * 5),
-                          child: child)
-                      })))))))
-          ])
-      }
-    );
+                          child: child);
+                      }))))]
+        );
+      });
   }
 }
 

@@ -38,7 +38,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
       begin: 0,
       end: 1).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -106,7 +106,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               fontWeight: FontWeight.bold,
                               color: _hoveredCol == col
                                   ? Colors.amber
-                                  : Colors.white.withValues(alpha: 0.8))))));
+                                  : Colors.white.withOpacity(0.8))))));
                   })]),
               const SizedBox(height: 10),
               // 매트릭스 본체
@@ -124,7 +124,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           fontWeight: FontWeight.bold,
                           color: _hoveredRow == row
                               ? Colors.amber
-                              : Colors.white.withValues(alpha: 0.8)))),
+                              : Colors.white.withOpacity(0.8)))),
                     // 궁합 셀들
                     ...List.generate(12, (col) {
                       final zodiac2 = ZodiacCompatibilityService.zodiacAnimals[col];
@@ -153,7 +153,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               margin: const EdgeInsets.all(1),
                               decoration: BoxDecoration(
                                 color: _getCompatibilityColor(compatibility)
-                                    .withValues(alpha: _fadeAnimation.value * 0.8),
+                                    .withOpacity(_fadeAnimation.value * 0.8),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: isSelected
@@ -163,7 +163,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                 boxShadow: (isSelected || isHovered) ? [
                                   BoxShadow(
                                     color: _getCompatibilityColor(compatibility)
-                                        .withValues(alpha: 0.5),
+                                        .withOpacity(0.5),
                                     blurRadius: 8,
                                     spreadRadius: 2)] : []),
                               child: Center(
@@ -187,7 +187,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
         child: Text(
           '매트릭스에서 두 띠를 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.white.withOpacity(0.6),
             fontSize: 14),
           textAlign: TextAlign.center));
     }
@@ -227,10 +227,10 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _getCompatibilityColor(compatibility).withValues(alpha: 0.1),
+              color: _getCompatibilityColor(compatibility).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.3),
+                color: _getCompatibilityColor(compatibility).withOpacity(0.3),
                 width: 1)),
             child: Text(
               description,
@@ -262,7 +262,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           '${info['hanja']} · ${info['element']}',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withValues(alpha: 0.8)))]);
+            color: Colors.white.withOpacity(0.8)))]);
   }
 
   Widget _buildDetailedAnalysis() {
@@ -297,13 +297,13 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
   Widget _buildAnalysisItem(String title, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 24),
+        Icon(icon, color: Colors.white.withOpacity(0.6), size: 24),
         const SizedBox(height: 4),
         Text(
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withValues(alpha: 0.6))),
+            color: Colors.white.withOpacity(0.6))),
         const SizedBox(height: 2),
         Text(
           value,
@@ -315,7 +315,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
 
   String _analyzeTraitCompatibility(List<String> traits1, List<String> traits2) {
     // 간단한 성격 궁합 분석
-    final commonTraits = traits1.toSet().intersection(traits2.toSet(),;
+    final commonTraits = traits1.toSet().intersection(traits2.toSet());
     if (commonTraits.length >= 2) return '매우 좋음';
     if (commonTraits.length == 1) return '좋음';
     return '보통';
@@ -326,11 +326,11 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     
     // 상생 관계 확인
     final generating = {
-      '목(木)', '화(火)',
-      '화(火)', '토(土)',
-      '토(土)', '금(金)',
-      '금(金)', '수(水)',
-      '수(水)', '목(木)'};
+      '목(木)': '화(火)',
+      '화(火)': '토(土)',
+      '토(土)': '금(金)',
+      '금(金)': '수(水)',
+      '수(水)': '목(木)'};
     
     if (generating[element1] == element2) return '상생 관계';
     if (generating[element2] == element1) return '상생 관계';
@@ -353,18 +353,18 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
 
   String _getZodiacEmoji(String zodiac) {
     const emojiMap = {
-      '쥐', '🐭',
-      '소', '🐮',
-      '호랑이', '🐯',
-      '토끼', '🐰',
-      '용', '🐲',
-      '뱀', '🐍',
-      '말', '🐴',
-      '양', '🐑',
-      '원숭이', '🐵',
-      '닭', '🐓',
-      '개', '🐕',
-      '돼지', '🐷'};
+      '쥐': '🐭',
+      '소': '🐮',
+      '호랑이': '🐯',
+      '토끼': '🐰',
+      '용': '🐲',
+      '뱀': '🐍',
+      '말': '🐴',
+      '양': '🐑',
+      '원숭이': '🐵',
+      '닭': '🐓',
+      '개': '🐕',
+      '돼지': '🐷'};
     return emojiMap[zodiac] ?? '🌟';
   }
 }

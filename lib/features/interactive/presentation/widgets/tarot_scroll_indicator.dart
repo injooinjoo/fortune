@@ -32,13 +32,13 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
       begin: 0,
       end: 10).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _fadeAnimation = Tween<double>(
       begin: 0.3,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
   }
 
   @override
@@ -49,7 +49,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isVisible) return const SizedBox.shrink();
+    if (!widget.isVisible) return const SizedBox.shrink()
     
     return AnimatedBuilder(
       animation: _animationController,
@@ -184,7 +184,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
       begin: -20,
       end: 20).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
   }
 
   @override
@@ -195,7 +195,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isVisible) return const SizedBox.shrink();
+    if (!widget.isVisible) return const SizedBox.shrink()
     
     return AnimatedBuilder(
       animation: _slideAnimation,

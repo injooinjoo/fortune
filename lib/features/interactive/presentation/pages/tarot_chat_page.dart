@@ -265,7 +265,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: const Icon(
@@ -330,7 +330,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
             width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withOpacity(0.02),
               blurRadius: 4,
               offset: const Offset(0, 2))]),
         child: Text(
@@ -389,13 +389,13 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                   width: 1) : null,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
+                    color: Colors.black.withOpacity(0.02),
                     blurRadius: 4,
                     offset: const Offset(0, 2))]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (message.isLoading);
+                  if (message.isLoading)
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -430,7 +430,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                           return _buildMiniCard(card, fontScale);
                         }).toList()))]]))),
           
-          if (isUser) const SizedBox(width: 8)]));
+          if (isUser) const SizedBox(width: 8)]))
   }
 
   Widget _buildMiniCard(TarotCardInfo card, double fontScale) {

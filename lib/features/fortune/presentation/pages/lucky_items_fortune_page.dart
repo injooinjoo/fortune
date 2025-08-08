@@ -88,14 +88,14 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '관심 카테고리 (선택사항)',
-          style: theme.textTheme.titleMedium),
+          '관심 카테고리 (선택사항)',),
+          style: theme.textTheme.titleMedium)),
         const SizedBox(height: 16),
         _buildCategorySelector(),
         const SizedBox(height: 24),
         Text(
-          '향상시키고 싶은 운 (선택사항)',
-          style: theme.textTheme.titleMedium),
+          '향상시키고 싶은 운 (선택사항)',),
+          style: theme.textTheme.titleMedium)),
         const SizedBox(height: 16),
         _buildPurposeSelector()]);
   }
@@ -144,27 +144,27 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
         
         return GlassContainer(
           padding: const EdgeInsets.all(12),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
           blur: 20,
           borderColor: isSelected 
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
               : Colors.transparent,
           borderWidth: isSelected ? 2 : 0,
           gradient: LinearGradient(
             colors: isSelected
                 ? [
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)]
+                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.1)]
                 : [
-                    Colors.white.withValues(alpha: 0.1),
-                    Colors.white.withValues(alpha: 0.05)]),
+                    Colors.white.withOpacity(0.1),
+                    Colors.white.withOpacity(0.05)]),
           child: InkWell(
             onTap: () {
               setState(() {
                 _selectedPurpose = purpose;
               });
             },
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16))),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -177,7 +177,7 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
                 const SizedBox(height: 8),
                 Text(
                   purpose,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                   textAlign: TextAlign.center)])));
       }).toList());
@@ -326,21 +326,21 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
 
   Widget _buildMainItemCard() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final mainItem = fortune.metadata?['mainItem'] as String?;
     final primaryCategory = fortune.metadata?['primaryCategory'] as String?;
     final primaryCategoryInfo = fortune.metadata?['primaryCategoryInfo'] as Map<String, dynamic>?;
     
-    if (mainItem == null || primaryCategoryInfo == null) return const SizedBox.shrink();
+    if (mainItem == null || primaryCategoryInfo == null) return const SizedBox.shrink()
 
     return GlassCard(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
           Text(
-            '오늘의 메인 행운 아이템',
-            style: Theme.of(context).textTheme.headlineSmall),
+            '오늘의 메인 행운 아이템',),
+            style: Theme.of(context).textTheme.headlineSmall)),
           const SizedBox(height: 24),
           Container(
             width: 120,
@@ -364,24 +364,24 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
           const SizedBox(height: 16),
           Text(
             mainItem,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
             decoration: BoxDecoration(
               color: (primaryCategoryInfo['color'],
               borderRadius: BorderRadius.circular(20)),
             child: Text(
               '$primaryCategory • ${primaryCategoryInfo['energy']}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                 color: primaryCategoryInfo['color'],
                 fontWeight: FontWeight.w600)))]));
   }
 
   Widget _buildItemCategoryGrid() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final primaryCategory = fortune.metadata?['primaryCategory'] as String?;
     final secondaryCategory = fortune.metadata?['secondaryCategory'] as String?;
@@ -400,8 +400,8 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '아이템 카테고리별 운세',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '아이템 카테고리별 운세',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -418,12 +418,12 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                 
                 return GlassContainer(
                   padding: const EdgeInsets.all(12),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16))),
                   blur: 10,
                   borderColor: isPrimary 
-                      ? (info['color'] as Color).withValues(alpha: 0.5)
+                      ? (info['color'] as Color).withOpacity(0.5)
                       : isSecondary
-                          ? (info['color'] as Color).withValues(alpha: 0.3)
+                          ? (info['color'] as Color).withOpacity(0.3)
                           : Colors.transparent,
                   borderWidth: isPrimary ? 2 : isSecondary ? 1 : 0,
                   gradient: LinearGradient(
@@ -432,8 +432,8 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                             (info['color'],
                             (info['color']]
                         : [
-                            Colors.white.withValues(alpha: 0.05),
-                            Colors.white.withValues(alpha: 0.02)]),
+                            Colors.white.withOpacity(0.05),
+                            Colors.white.withOpacity(0.02)]),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -444,7 +444,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                       const SizedBox(height: 8),
                       Text(
                         category,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith()
                           fontWeight: isPrimary || isSecondary ? FontWeight.bold : FontWeight.normal),
                         textAlign: TextAlign.center),
                       if (isPrimary)
@@ -455,8 +455,8 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                             color: (info['color'],
                             borderRadius: BorderRadius.circular(10)),
                           child: Text(
-                            '메인',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            '메인',),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith()
                               fontSize: 10,
                               color: info['color'],
                               fontWeight: FontWeight.bold)))]));
@@ -465,20 +465,20 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
 
   Widget _buildPowerTimeCard() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final powerHour = fortune.metadata?['powerHour'] as int?;
     final luckyMinute = fortune.metadata?['luckyMinute'] as int?;
     
-    if (powerHour == null || luckyMinute == null) return const SizedBox.shrink();
+    if (powerHour == null || luckyMinute == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Colors.amber.withValues(alpha: 0.1),
-            Colors.amber.withValues(alpha: 0.05)]),
+            Colors.amber.withOpacity(0.1),
+            Colors.amber.withOpacity(0.05)]),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -490,16 +490,16 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   color: Colors.amber),
                 const SizedBox(width: 8),
                 Text(
-                  '아이템 파워 타임',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '아이템 파워 타임',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.amber.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(
-                  color: Colors.amber.withValues(alpha: 0.3))),
+                  color: Colors.amber.withOpacity(0.3))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -512,11 +512,11 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '최고 효력 시간',
-                        style: Theme.of(context).textTheme.titleMedium),
+                        '최고 효력 시간',),
+                        style: Theme.of(context).textTheme.titleMedium)),
                       Text(
                         '${powerHour.toString().padLeft(2, '0')}:${luckyMinute.toString().padLeft(2, '0')}',
-                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        style: Theme.of(context).textTheme.headlineLarge?.copyWith()
                           color: Colors.amber,
                           fontWeight: FontWeight.bold))])])),
             const SizedBox(height: 16),
@@ -541,28 +541,28 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
-          color: color.withValues(alpha: 0.3))),
+          color: color.withOpacity(0.3))),
       child: Column(
         children: [
           Icon(icon, color: color),
           const SizedBox(height: 8),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall),
+            style: Theme.of(context).textTheme.bodySmall)),
           const SizedBox(height: 4),
           Text(
             time,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               color: color,
               fontWeight: FontWeight.bold))]));
   }
 
   Widget _buildItemEnergyFlow() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final selectedPurpose = fortune.metadata?['selectedPurpose'] as String?;
     final purposeInfo = fortune.metadata?['purposeInfo'] as Map<String, dynamic>?;
@@ -585,13 +585,13 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '$selectedPurpose 강화 아이템',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '$selectedPurpose 강화 아이템',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Text(
               purposeInfo['description'],
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8))),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -599,9 +599,9 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               children: (purposeInfo['boostItems'] as List<String>).map((item) {
                 return Chip(
                   label: Text(item),
-                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)));
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5)));
               }).toList())])));
   }
 
@@ -618,8 +618,8 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '아이템 관리 팁',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                '아이템 관리 팁',),
+                style: Theme.of(context).textTheme.headlineSmall)])),
           const SizedBox(height: 16),
           ...[
             '아이템은 항상 깨끗하게 유지하여 에너지를 보존하세요',
@@ -641,7 +641,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
+                      style: Theme.of(context).textTheme.bodyMedium))]));)
           }).toList()]));
   }
 }

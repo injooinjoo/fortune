@@ -168,9 +168,9 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           Container(
             padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.vertical)),
     decoration: BoxDecoration(
-              color: context.fortuneTheme.errorColor.withValues(alpha: 0.1)),
+              color: context.fortuneTheme.errorColor.withOpacity(0.1)),
     borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius * 0.67)),
-    border: Border.all(color: context.fortuneTheme.errorColor.withValues(alpha: 0.5)))
+    border: Border.all(color: context.fortuneTheme.errorColor.withOpacity(0.5)))
             )),
     child: Row(
               children: [

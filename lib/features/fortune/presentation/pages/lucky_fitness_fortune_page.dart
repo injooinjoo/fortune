@@ -37,17 +37,17 @@ class _LuckyFitnessInputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 운동 운세를 확인해보세요!\n효과적인 운동법과 루틴을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘의 운동 운세를 확인해보세요!\n효과적인 운동법과 루틴을 알려드립니다.',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
             Icons.fitness_center,
             size: 120,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+            color: theme.colorScheme.primary.withOpacity(0.3))),
         
         const SizedBox(height: 32),
         
@@ -85,7 +85,7 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
           // Main Fortune Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -96,21 +96,21 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
                       color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '피트니스 운세',
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      '피트니스 운세',),
+                      style: theme.textTheme.titleLarge?.copyWith()
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))])),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)])),
           const SizedBox(height: 16),
 
           // Score Breakdown
           if (fortune.scoreBreakdown != null) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -121,8 +121,8 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '상세 분석',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '상세 분석',),
+                        style: theme.textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
@@ -132,16 +132,16 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: theme.textTheme.bodyLarge)),
+                            style: theme.textTheme.bodyLarge))),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getScoreColor(entry.value).withValues(alpha: 0.2),
+                            color: _getScoreColor(entry.value).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12)),
                           child: Text(
-                            '${entry.value}점',
-                            style: theme.textTheme.bodyLarge?.copyWith(
+                            '${entry.value}점',),
+                            style: theme.textTheme.bodyLarge?.copyWith()
                               color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center))])).toList()])),
@@ -151,7 +151,7 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -162,8 +162,8 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '행운 아이템',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '행운 아이템',),
+                        style: theme.textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
@@ -180,7 +180,7 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -191,8 +191,8 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '조언',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '조언',),
+                        style: theme.textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
@@ -208,7 +208,7 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))])).toList()]))]],
+                            style: theme.textTheme.bodyMedium))])).toList()]))]]),
       );
   }
 

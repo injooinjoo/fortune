@@ -73,7 +73,7 @@ class NotificationService {
     required String title,
     required String body,
     String? payload}) async {
-    if (!_isInitialized) await initialize();
+    if (!_isInitialized) await initialize()
     
     try {
       const androidDetails = AndroidNotificationDetails(
@@ -114,7 +114,7 @@ class NotificationService {
     required DateTime scheduledTime,
     String? payload,
     bool repeatDaily = false}) async {
-    if (!_isInitialized) await initialize();
+    if (!_isInitialized) await initialize()
     
     try {
       const androidDetails = AndroidNotificationDetails(

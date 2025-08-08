@@ -59,8 +59,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '날짜 선택',
-                style: theme.textTheme.headlineSmall),
+                '날짜 선택',),
+                style: theme.textTheme.headlineSmall)),
               const SizedBox(height: 16),
               InkWell(
                 onTap: () async {
@@ -78,7 +78,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                 },
                 child: GlassContainer(
                   padding: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
                   blur: 10,
                   child: Row(
                     children: [
@@ -88,16 +88,16 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                       const SizedBox(width: 12),
                       Text(
                         _formatDate(_selectedDate),
-                        style: theme.textTheme.bodyLarge),
+                        style: theme.textTheme.bodyLarge)),
                       const Spacer(),
                       Icon(
                         Icons.arrow_drop_down_rounded,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6))]))),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6))]))),
               const SizedBox(height: 8),
               Text(
-                '최대 7일 후까지의 시간대별 운세를 확인할 수 있습니다',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                '최대 7일 후까지의 시간대별 운세를 확인할 수 있습니다',),
+                style: theme.textTheme.bodySmall?.copyWith()
+                  color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
         const SizedBox(height: 16),
         
         // Notification Settings
@@ -113,14 +113,14 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '시간별 알림 설정',
-                          style: theme.textTheme.bodyLarge?.copyWith(
+                          '시간별 알림 설정',),
+                          style: theme.textTheme.bodyLarge?.copyWith()
                             fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
-                          '중요한 시간대에 알림을 받으세요',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                          '중요한 시간대에 알림을 받으세요',),
+                          style: theme.textTheme.bodySmall?.copyWith()
+                            color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
                   Switch(
                     value: _enableNotifications,
                     onChanged: (value) {
@@ -173,8 +173,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '24시간 운세 타임라인',
-                  style: theme.textTheme.headlineSmall)]),
+                  '24시간 운세 타임라인',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
@@ -213,8 +213,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                         getTitlesWidget: (value, meta) {
                           if (value.toInt() % 3 == 0) {
                             return Text(
-                              '${value.toInt()}',
-                              style: theme.textTheme.bodySmall
+                              '${value.toInt()}',),
+                              style: theme.textTheme.bodySmall)
                             );
                           }
                           return const Text('');
@@ -226,14 +226,14 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                         interval: 20,
                         getTitlesWidget: (value, meta) {
                           return Text(
-                            '${value.toInt()}',
-                            style: theme.textTheme.bodySmall);
+                            '${value.toInt()}',),
+                            style: theme.textTheme.bodySmall);)
                         },
                         reservedSize: 30))),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2))),
+                      color: theme.colorScheme.onSurface.withOpacity(0.2))),
                   barGroups: hourlyData.map((data) {
                     final hour = data['hour'] as int;
                     final score = data['score'] as int;
@@ -251,28 +251,28 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                             colors: isSelected
                                 ? [
                                     theme.colorScheme.secondary,
-                                    theme.colorScheme.secondary.withValues(alpha: 0.7)]
+                                    theme.colorScheme.secondary.withOpacity(0.7)]
                                 : isCurrent
                                     ? [
                                         theme.colorScheme.primary,
-                                        theme.colorScheme.primary.withValues(alpha: 0.7)]
+                                        theme.colorScheme.primary.withOpacity(0.7)]
                                     : [
-                                        theme.colorScheme.primary.withValues(alpha: 0.5),
-                                        theme.colorScheme.primary.withValues(alpha: 0.3)]),
+                                        theme.colorScheme.primary.withOpacity(0.5),
+                                        theme.colorScheme.primary.withOpacity(0.3)]),
                           width: 12,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4)))]);
                   }).toList()))),
             const SizedBox(height: 16),
             Text(
-              '탭하여 각 시간대의 상세 운세를 확인하세요',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              '탭하여 각 시간대의 상세 운세를 확인하세요',),
+              style: theme.textTheme.bodySmall?.copyWith()
+                color: theme.colorScheme.onSurface.withOpacity(0.6)),
               textAlign: TextAlign.center)])));
   }
 
   Widget _buildHourlyDetail() {
-    if (_selectedHour == null) return const SizedBox.shrink();
+    if (_selectedHour == null) return const SizedBox.shrink()
     
     final theme = Theme.of(context);
     
@@ -304,13 +304,13 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                     borderRadius: BorderRadius.circular(16)),
                   child: Text(
                     '${_selectedHour!.toString().padLeft(2, '0')}:00',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       color: theme.colorScheme.onPrimary,
                       fontWeight: FontWeight.bold))),
                 const SizedBox(width: 12),
                 Text(
-                  '시간대 상세 운세',
-                  style: theme.textTheme.headlineSmall)]),
+                  '시간대 상세 운세',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 20),
             // Energy meters
             _buildEnergyMeter('에너지': hourlyDetails['energy'],
@@ -323,8 +323,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
             const SizedBox(height: 20,
             Text(
               hourlyDetails['description'],
-              style: theme.textTheme.bodyMedium?.copyWith(
-                height: 1.5)),
+              style: theme.textTheme.bodyMedium?.copyWith()
+                height: 1.5),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -354,16 +354,16 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
           children: [
             Text(
               label,
-              style: theme.textTheme.bodyMedium),
+              style: theme.textTheme.bodyMedium)),
             Text(
-              '$value%',
-              style: theme.textTheme.bodyMedium?.copyWith(
+              '$value%',),
+              style: theme.textTheme.bodyMedium?.copyWith()
                 color: color,
                 fontWeight: FontWeight.bold))]),
         const SizedBox(height: 4),
         LinearProgressIndicator(
           value: value / 100,
-          backgroundColor: color.withValues(alpha: 0.2),
+          backgroundColor: color.withOpacity(0.2),
           valueColor: AlwaysStoppedAnimation<Color>(color),
           minHeight: 6)]);
   }
@@ -373,7 +373,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     
     return GlassContainer(
       padding: const EdgeInsets.all(12),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12))),
       blur: 10,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,13 +384,13 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
               const SizedBox(width: 4),
               Text(
                 title,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodySmall?.copyWith()
                   color: color,
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 4),
           Text(
             content,
-            style: theme.textTheme.bodySmall,
+            style: theme.textTheme.bodySmall),
             maxLines: 2,
             overflow: TextOverflow.ellipsis)]));
   }
@@ -399,15 +399,15 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     final theme = Theme.of(context);
     
     final luckyHours = [
-      {'time', '07:00-09:00': 'activity', '중요한 결정': 'score'},
-      {'time', '13:00-14:00': 'activity', '창의적 작업': 'score'},
+      {'\1': '\2', 'activity', '중요한 결정': 'score'},
+      {'\1': '\2', 'activity', '창의적 작업': 'score'},
       {'time', '19:00-20:00', 'activity', '사교 활동', 'score'},
       {'time', '22:00-23:00', 'activity', '명상/휴식', 'score'}];
     
     return Padding(
-      padding: const EdgeInsets.all(16,
+      padding: const EdgeInsets.all(16)
       child: GlassCard(
-        padding: const EdgeInsets.all(20,
+        padding: const EdgeInsets.all(20)
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -418,8 +418,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 행운 시간대',
-                  style: theme.textTheme.headlineSmall)]),
+                  '오늘의 행운 시간대',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...luckyHours.map((hour) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -428,11 +428,11 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      theme.colorScheme.primary.withValues(alpha: 0.1),
-                      theme.colorScheme.secondary.withValues(alpha: 0.1)]),
-                  borderRadius: BorderRadius.circular(12),
+                      theme.colorScheme.primary.withOpacity(0.1),
+                      theme.colorScheme.secondary.withOpacity(0.1)]),
+                  borderRadius: BorderRadius.circular(12))),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+                    color: theme.colorScheme.primary.withOpacity(0.3))),
                 child: Row(
                   children: [
                     Container(
@@ -444,14 +444,14 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                         borderRadius: BorderRadius.circular(8)),
                       child: Text(
                         hour['time'],
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodySmall?.copyWith()
                           color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold))),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         hour['activity'],
-                        style: theme.textTheme.bodyMedium)),
+                        style: theme.textTheme.bodyMedium))),
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -459,7 +459,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                         shape: BoxShape.circle),
                       child: Text(
                         '${hour['score']}',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodySmall?.copyWith()
                           color: _getScoreColor(hour['score'],
                           fontWeight: FontWeight.bold)))]))).toList()])));
   }
@@ -510,8 +510,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '시간대별 추천 활동',
-                  style: theme.textTheme.headlineSmall)]),
+                  '시간대별 추천 활동',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...timeSlots.map((slot) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -534,7 +534,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                       children: [
                         Text(
                           slot['period'],
-                          style: theme.textTheme.bodyLarge?.copyWith(
+                          style: theme.textTheme.bodyLarge?.copyWith()
                             fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Wrap(
@@ -543,8 +543,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                             return Chip(
                               label: Text(
                                 activity,
-                                style: theme.textTheme.bodySmall),
-                              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                                style: theme.textTheme.bodySmall)),
+                              backgroundColor: theme.colorScheme.surface.withOpacity(0.5),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               padding: const EdgeInsets.symmetric(horizontal: 8));
                           }).toList())]))])).toList()])));

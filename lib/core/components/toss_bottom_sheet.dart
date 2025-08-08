@@ -33,7 +33,7 @@ class TossBottomSheet {
       enableDrag: enableDrag,
       isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
-      barrierColor: AppColors.textPrimary.withValues(alpha: bottomSheetStyles.barrierOpacity),
+      barrierColor: AppColors.textPrimary.withOpacity(bottomSheetStyles.barrierOpacity),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(bottomSheetStyles.borderRadius))),
@@ -140,13 +140,13 @@ class _TossBottomSheetWrapper extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showHandle);
+          if (showHandle)
             Container(
               margin: EdgeInsets.only(top: AppSpacing.spacing2),
               width: bottomSheetStyles.handleWidth,
               height: bottomSheetStyles.handleHeight,
               decoration: BoxDecoration(
-                color: context.toss.dividerColor.withValues(alpha: bottomSheetStyles.handleOpacity),
+                color: context.toss.dividerColor.withOpacity(bottomSheetStyles.handleOpacity),
                 borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2))),
           Flexible(child: child)]))
         .animate()
@@ -259,8 +259,8 @@ class _OptionTile<T> extends StatelessWidget {
                         style: TextStyle(
                           fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
                           color: theme.brightness == Brightness.light
-                              ? AppColors.textSecondary.withValues(alpha: 0.6)
-                              : AppColors.textSecondary.withValues(alpha: 0.4),
+                              ? AppColors.textSecondary.withOpacity(0.6)
+                              : AppColors.textSecondary.withOpacity(0.4),
                           fontFamily: 'TossProductSans'))]])),
               if (option.trailing != null)
                 option.trailing!]))));
@@ -395,7 +395,7 @@ class _TossBottomSheetButton extends StatelessWidget {
         textColor = context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark;
         break;
       case TossBottomSheetButtonStyle.secondary:
-        backgroundColor = context.toss.glassBackground.withValues(alpha: 0.5);
+        backgroundColor = context.toss.glassBackground.withOpacity(0.5);
         textColor = context.toss.primaryText;
         break;
       case TossBottomSheetButtonStyle.danger:

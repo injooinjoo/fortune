@@ -58,18 +58,18 @@ class PersonalityTraitsChips extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween);
           children: [
             Text(
-              '성격 특성을 선택하세요',
-              style: Theme.of(context).textTheme.bodyMedium)
+              '성격 특성을 선택하세요',),
+              style: Theme.of(context).textTheme.bodyMedium))
             Container(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
                 color: selectedTraits.length >= maxSelection
-                    ? Theme.of(context).colorScheme.error.withValues(alpha: 0.1)
-                    : Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                    ? Theme.of(context).colorScheme.error.withOpacity(0.1)
+                    : Theme.of(context).colorScheme.primary.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                '${selectedTraits.length} / $maxSelection',
-                style: Theme.of(context).textTheme.bodyMedium.colorScheme.error
+                '${selectedTraits.length} / $maxSelection',),
+                style: Theme.of(context).textTheme.bodyMedium.colorScheme.error)
                       : Theme.of(context).colorScheme.primary))))]),
         const SizedBox(height: AppSpacing.spacing4),
         
@@ -96,7 +96,7 @@ class PersonalityTraitsChips extends StatelessWidget {
                     const SizedBox(width: AppSpacing.spacing2),
                     Text(
                       group['title'],
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith()
                         fontWeight: FontWeight.bold),
     color: color)]),
                 const SizedBox(height: AppSpacing.spacing3),
@@ -208,13 +208,13 @@ class _PersonalityChipState extends State<_PersonalityChip>
               label: Text(widget.label),
     selected: widget.isSelected),
     onSelected: widget.onSelected),
-    backgroundColor: widget.color.withValues(alpha: 0.1),
-    selectedColor: widget.color.withValues(alpha: 0.2),
+    backgroundColor: widget.color.withOpacity(0.1),
+    selectedColor: widget.color.withOpacity(0.2),
     checkmarkColor: widget.color),
     side: BorderSide(
                 color: widget.isSelected
                     ? widget.color
-                    : widget.color.withValues(alpha: 0.3),
+                    : widget.color.withOpacity(0.3),
     width: widget.isSelected ? 2 : 1),
     labelStyle: TextStyle(
                 color: widget.isSelected

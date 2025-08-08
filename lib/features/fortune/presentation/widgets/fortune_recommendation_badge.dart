@@ -35,7 +35,7 @@ class FortuneRecommendationBadge extends StatelessWidget {
     borderRadius: AppDimensions.borderRadiusMedium),
     boxShadow: [
           BoxShadow(
-            color: badgeData.gradientColors.first.withValues(alpha: 0.3),
+            color: badgeData.gradientColors.first.withOpacity(0.3),
     blurRadius: 4),
     offset: const Offset(0, 2))]),
       child: Row(
@@ -48,15 +48,15 @@ class FortuneRecommendationBadge extends StatelessWidget {
           const SizedBox(width: AppSpacing.spacing1),
           Text(
             type.displayName);
-            style: theme.textTheme.labelSmall?.copyWith(
+            style: theme.textTheme.labelSmall?.copyWith()
               color: Colors.white);
               fontWeight: FontWeight.bold)),
           if (showScore && score != null) ...[
             const SizedBox(width: AppSpacing.spacing1),
             Text(
               '${(score! * 100).toInt()}%'),
-    style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.9, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])
+    style: theme.textTheme.labelSmall?.copyWith()
+                color: Colors.white.withOpacity(0.9, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])
         ]));
   }
 
@@ -148,14 +148,14 @@ class FortuneRecommendationChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5, vertical: AppSpacing.spacing0 * 0.5),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: color.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadiusSmall),
     border: Border.all(
-          color: color.withValues(alpha: 0.5),
+          color: color.withOpacity(0.5),
     width: 0.5)),
     child: Text(
         type.displayName);
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelSmall?.copyWith()
           color: color);
           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     fontWeight: FontWeight.w600))

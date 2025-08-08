@@ -244,7 +244,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                height: 1.4))
+                height: 1.4)
                 .animate()
                 .fadeIn(duration: 600.ms, delay: 200.ms)
                 .slideY(begin: 0.1, end: 0),
@@ -310,7 +310,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 colors: [
                   AppTheme.primaryColor.withOpacity(0.1),
                   AppTheme.primaryColor.withOpacity(0.05)]),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               border: Border.all(
                 color: AppTheme.primaryColor.withOpacity(0.3),
                 width: 1)),
@@ -325,7 +325,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '선택된 기간',
+                      '선택된 기간',),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.textSecondaryColor)),
@@ -400,7 +400,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 12),
         decoration: BoxDecoration(
           border: Border.all(color: AppTheme.dividerColor),
           borderRadius: BorderRadius.circular(8)),
@@ -408,7 +408,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '선택된 날짜',
+              '선택된 날짜',),
               style: TextStyle(
                 color: AppTheme.textSecondaryColor,
                 fontSize: 14)),
@@ -448,7 +448,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${_selectedPeriod.label} 종합 운세',
+                  '${_selectedPeriod.label} 종합 운세',),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold)),
@@ -459,7 +459,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                       color: _getScoreColor(fortune.score!),
                       borderRadius: BorderRadius.circular(20)),
                     child: Text(
-                      '${fortune.score}점',
+                      '${fortune.score}점',),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold)))]),
@@ -542,7 +542,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${_selectedPeriod.label} 운세 종합',
+              '${_selectedPeriod.label} 운세 종합',),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -563,7 +563,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12))),
           gradient: LinearGradient(
             colors: [
               Colors.amber.withOpacity(0.1),
@@ -581,7 +581,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '특별 조언',
+                    '특별 조언',),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -592,7 +592,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                     style: TextStyle(
                       fontSize: 14,
                       color: AppTheme.textColor,
-                      height: 1.4))]))])));
+                      height: 1.4)]))])));
   }
 
 
@@ -632,7 +632,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   borderRadius: BorderRadius.circular(4))))),
           const SizedBox(width: 8),
           Text(
-            '$score%',
+            '$score%',),
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
@@ -696,7 +696,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '주간 운세 추이',
+              '주간 운세 추이',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -752,7 +752,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '주간 하이라이트',
+              '주간 하이라이트',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -772,7 +772,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '월간 운세 캘린더',
+              '월간 운세 캘린더',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -795,7 +795,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '월간 종합 분석',
+              '월간 종합 분석',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -813,7 +813,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '연간 운세 전망',
+              '연간 운세 전망',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -939,7 +939,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               color: _getScoreColor(score).withOpacity(0.2),
               borderRadius: BorderRadius.circular(12)),
             child: Text(
-              '$score점',
+              '$score점',),
               style: TextStyle(
                 color: _getScoreColor(score),
                 fontWeight: FontWeight.bold,
@@ -970,7 +970,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   color: _getScoreColor(score),
                   borderRadius: BorderRadius.circular(12)),
                 child: Text(
-                  '$score점',
+                  '$score점',),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -1034,7 +1034,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  '추가 운세 정보',
+                  '추가 운세 정보',),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
@@ -1074,7 +1074,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           colors: [
             Colors.pink.withOpacity(0.1),
             Colors.purple.withOpacity(0.1)]),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
           color: Colors.pink.withOpacity(0.3))),
       child: Column(
@@ -1085,18 +1085,18 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               Icon(Icons.cake_rounded, color: Colors.pink, size: 24),
               SizedBox(width: 8),
               Text(
-                '🎉 생일 특별 운세',
+                '🎉 생일 특별 운세',),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.pink))]),
           const SizedBox(height: 12),
           Text(
-            '생일을 맞이한 당신에게 특별한 행운이 찾아옵니다! 오늘은 평소보다 더 많은 긍정적인 에너지가 당신을 둘러싸고 있습니다.',
+            '생일을 맞이한 당신에게 특별한 행운이 찾아옵니다! 오늘은 평소보다 더 많은 긍정적인 에너지가 당신을 둘러싸고 있습니다.',),
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textColor,
-              height: 1.5))]).animate().fadeIn(duration: 600.ms).shimmer(duration: 1500.ms, color: Colors.pink.withOpacity(0.3),;
+              height: 1.5)]).animate().fadeIn(duration: 600.ms).shimmer(duration: 1500.ms, color: Colors.pink.withOpacity(0.3),;
   }
 
   Widget _buildZodiacFortune() {
@@ -1105,7 +1105,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.primaryColor.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
           color: AppTheme.primaryColor.withOpacity(0.2))),
       child: Column(
@@ -1119,7 +1119,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 size: 24),
               const SizedBox(width: 8),
               Text(
-                '별자리 운세 - $zodiacSign',
+                '별자리 운세 - $zodiacSign',),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1130,7 +1130,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textColor,
-              height: 1.5))]));
+              height: 1.5)]));
   }
 
   Widget _buildChineseZodiacFortune() {
@@ -1139,7 +1139,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.orange.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
           color: Colors.orange.withOpacity(0.2))),
       child: Column(
@@ -1150,7 +1150,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               Icon(Icons.pets_rounded, color: Colors.orange, size: 24),
               SizedBox(width: 8)]),
           Text(
-            '띠 운세 - ${chineseZodiac}띠',
+            '띠 운세 - ${chineseZodiac}띠',),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -1161,7 +1161,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textColor,
-              height: 1.5))]));
+              height: 1.5)]));
   }
 
   String _getZodiacSign() {

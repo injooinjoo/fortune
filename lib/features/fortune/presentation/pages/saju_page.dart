@@ -31,7 +31,7 @@ class SajuPage extends BaseFortunePage {
   ConsumerState<SajuPage> createState() => _SajuPageState();
 }
 
-class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderStateMixin {
+class _SajuPageState extends BaseFortunePageState<SajuPage> {
   Map<String, dynamic>? _sajuData;
   Map<String, dynamic>? _calculatedSaju;
   Fortune? _fortune;
@@ -50,12 +50,12 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn);
+      curve: Curves.easeIn));
     _scaleAnimation = Tween<double>(
       begin: 0.95,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOut);
+      curve: Curves.easeOut));
   }
 
   @override
@@ -89,20 +89,20 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
     
     // Extract saju data from the fortune response
     _sajuData = {
-      'elements': fortune.additionalInfo?['elements'] ?? {}
+      'elements': fortune.additionalInfo?['elements'] ?? {
         '목(木)': 85,
         '화(火)': 70,
         '토(土)': 60,
         '금(金)': 75,
-        '수(水)')},
+        '수(水)': 65},
       'talents': fortune.additionalInfo?['talents'] ?? [
-        {'title', '리더십': 'description', '타고난 지도자의 기질을 가지고 있습니다': 'score'},
-        {'title', '창의성', 'description', '독창적인 아이디어가 풍부합니다', 'score'},
-        {'title', '인간관계', 'description', '사람들과 쉽게 친해집니다', 'score'}],
+        {'title': '리더십', 'description': '타고난 지도자의 기질을 가지고 있습니다', 'score': 85},
+        {'title': '창의성', 'description': '독창적인 아이디어가 풍부합니다', 'score': 90},
+        {'title': '인간관계', 'description': '사람들과 쉽게 친해집니다', 'score': 80}],
       'pastLife': fortune.additionalInfo?['pastLife'] ?? {
-        'role', '조선시대 선비',
-        'description', '학문을 사랑하고 정의를 추구했던 선비였습니다',
-        'karma', '현생에서도 지식을 추구하고 올바른 길을 걷게 됩니다'}};
+        'role': '조선시대 선비',
+        'description': '학문을 사랑하고 정의를 추구했던 선비였습니다',
+        'karma': '현생에서도 지식을 추구하고 올바른 길을 걷게 됩니다'}};
 
     _fortune = fortune;
     _animationController.forward();
@@ -125,12 +125,11 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildPillarCard('년주', _calculatedSaju!['year'],
-              _buildPillarCard('월주', _calculatedSaju!['month'],
-              _buildPillarCard('일주', _calculatedSaju!['day'],
-              _buildPillarCard('시주', _calculatedSaju!['hour']],
-          ],
-      );
+              _buildPillarCard('년주', _calculatedSaju!['year']),
+              _buildPillarCard('월주', _calculatedSaju!['month']),
+              _buildPillarCard('일주', _calculatedSaju!['day']),
+              _buildPillarCard('시주', _calculatedSaju!['hour'])
+            ])]));
   }
   
   Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
@@ -151,10 +150,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: color.withValues(alpha: 0.3),
+              color: color.withOpacity(0.3),
               width: 1)),
           child: Column(
             children: [
@@ -191,10 +190,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.grey.withValues(alpha: 0.3),
+              color: Colors.grey.withOpacity(0.3),
               width: 1)),
           child: Column(
             children: [
@@ -246,18 +245,27 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
                     children: gods.map((god) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getTenGodColor(god).withValues(alpha: 0.2),
+                        color: _getTenGodColor(god).withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _getTenGodColor(god).withValues(alpha: 0.3),
+                          color: _getTenGodColor(god).withOpacity(0.3),
                           width: 1)),
                       child: Text(
                         god,
                         style: TextStyle(
                           color: _getTenGodColor(god),
                           fontSize: 12,
-                          fontWeight: FontWeight.bold))).toList())]));
-          }).toList()]));
+                          fontWeight: FontWeight.bold)
+                      )
+                    )).toList()
+                  )
+                ]
+              )
+            );
+          }).toList()
+        ]
+      )
+    );
   }
   
   Widget _buildFortuneContent() {
@@ -285,9 +293,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
       case '편관':
         return Colors.red;
       case '정인':
-      case , '편인': return Colors.purple;
+      case '편인': return Colors.purple;
       default:
-        return Colors.grey;}
+        return Colors.grey;
     }
   }
 
@@ -342,19 +350,19 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
                 ticksTextStyle: const TextStyle(
                   color: Colors.transparent),
                 radarBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)),
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
                 gridBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
                   width: 0.5),
                 titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold),
                 dataSets: [
                   RadarDataSet(
-                    fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                    fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     borderColor: Theme.of(context).colorScheme.primary,
                     borderWidth: 2,
                     dataEntries: elements.values
-                        .map((value) => RadarEntry(value: value.toDouble())
+                        .map((value) => RadarEntry(value: value.toDouble()))
                         .toList())],
                 getTitle: (index, angle) {
                   final titles = elements.keys.toList();
@@ -457,17 +465,16 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
                     Text(
                       talent['description'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8))),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: talent['score'],
-                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         Theme.of(context).colorScheme.primary),
-                      minHeight: 6)])).animate()
-                  .fadeIn(delay: Duration(milliseconds: 300 + (index * 100))
+                      minHeight: 6)]))).animate()
+                  .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
                   .slideX(begin: 0.1, end: 0);
-            );
           }).toList()]));
   }
 
@@ -503,10 +510,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.indigo.withValues(alpha: 0.1),
+              color: Colors.indigo.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.indigo.withValues(alpha: 0.3))),
+                color: Colors.indigo.withOpacity(0.3))),
             child: Text(
               pastLife['role'],
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -521,7 +528,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+              color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
               borderRadius: BorderRadius.circular(16)),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -535,7 +542,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
                   child: Text(
                     pastLife['karma'],
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic)))]))])).animate()
+                      fontStyle: FontStyle.italic))])]))).animate()
         .fadeIn(delay: 500.ms)
         .shimmer(delay: 1000.ms, duration: 2000.ms);
   }
@@ -549,9 +556,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
         return Colors.brown;
       case '금(金)':
         return Colors.amber;
-      case , '수(水)': return Colors.blue;
+      case '수(水)': return Colors.blue;
       default:
-        return Colors.grey;}
+        return Colors.grey;
     }
   }
 }

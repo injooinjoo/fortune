@@ -211,8 +211,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             }),
           Expanded(
             child: Text(
-              '투자 운세',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              '투자 운세',),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith()
                 fontWeight: FontWeight.bold),
               textAlign: TextAlign.center)),
           const SizedBox(width: 48), // Balance the back button
@@ -257,7 +257,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         child: isCompleted
                             ? const Icon(Icons.check, size: 16, color: Colors.white)
                             : Text(
-                                '${index + 1}',
+                                '${index + 1}',),
                                 style: TextStyle(
                                   color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.bold)))),
@@ -271,7 +271,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 const SizedBox(height: 8),
                 Text(
                   steps[index],
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                     color: isActive
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -289,7 +289,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -5))]),
       child: Row(
@@ -364,13 +364,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '투자 성향을 알려주세요',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                '투자 성향을 알려주세요',),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(
-                '맞춤형 투자 운세를 위해 필요합니다',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                '맞춤형 투자 운세를 위해 필요합니다',),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 32),
               
@@ -401,13 +401,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+      style: Theme.of(context).textTheme.titleMedium?.copyWith()
         fontWeight: FontWeight.bold));
   }
   
   Widget _buildRiskToleranceSelector(InvestmentFortuneData data) {
     final options = [
-      {'value', 'conservative': 'label', '안정형': 'description', '원금 보존 중시'},
+      {'\1': '\2', 'label', '안정형': 'description', '원금 보존 중시'},
       {'value', 'moderate', 'label', '중립형', 'description', '균형잡힌 수익과 안정'},
       {'value', 'aggressive', 'label', '공격형', 'description', '높은 수익 추구'}];
     
@@ -424,7 +424,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 return state;
               });
             },
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12))),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -433,9 +433,9 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).dividerColor,
                   width: isSelected ? 2 : 1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
                     : null),
               child: Row(
                 children: [
@@ -455,18 +455,18 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       children: [
                         Text(
                           option['label'],
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith()
                             fontWeight: FontWeight.bold)),
                         Text(
                           option['description'],
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith()
                             color: Theme.of(context).colorScheme.onSurfaceVariant))]))]))));
       }).toList();
   }
   
   Widget _buildExperienceSelector(InvestmentFortuneData data) {
     final options = [
-      {'value', 'beginner': 'label', '초보자': 'description', '1년 미만'},
+      {'\1': '\2', 'label', '초보자': 'description', '1년 미만'},
       {'value', 'intermediate', 'label', '중급자', 'description', '1-5년'},
       {'value', 'expert', 'label', '전문가', 'description', '5년 이상'}];
     
@@ -482,7 +482,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               Text(option['label'],
               Text(
                 option['description'],
-                style: Theme.of(context).textTheme.bodySmall)]),
+                style: Theme.of(context).textTheme.bodySmall)])),
           selected: isSelected,
           onSelected: (selected) {
             if (selected) {
@@ -497,8 +497,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   
   Widget _buildGoalSelector(InvestmentFortuneData data) {
     final options = [
-      {'value', 'wealth': 'label', '자산 증식': 'icon'},
-      {'value', 'stability': 'label', '안정적 수익', 'icon'},
+      {'\1': '\2', 'label', '자산 증식': 'icon'},
+      {'\1': '\2', 'label', '안정적 수익', 'icon'},
       {'value', 'speculation', 'label', '단기 수익', 'icon'},
       {'value', 'retirement', 'label', '노후 준비', 'icon'}];
     
@@ -519,14 +519,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               return state;
             });
           },
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12))),
           child: Container(
             decoration: BoxDecoration(
               gradient: isSelected
                   ? LinearGradient(
                       colors: [
                         Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)]),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.8)]),
                   : null,
               border: Border.all(
                 color: isSelected
@@ -591,13 +591,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '관심 있는 투자 섹터를 선택하세요',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            '관심 있는 투자 섹터를 선택하세요',),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
-            '최대 5개까지 선택 가능합니다',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            '최대 5개까지 선택 가능합니다',),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
               color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: 24),
           
@@ -619,8 +619,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           if (data.selectedSectors.isNotEmpty) ...[
             const SizedBox(height: 32),
             Text(
-              '우선순위 설정',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              '우선순위 설정',),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             ...data.selectedSectors.map((sector) {
@@ -644,7 +644,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               });
             }
           : null,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -657,7 +657,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           color: !isSelected
               ? Theme.of(context).colorScheme.surfaceContainerHighest
               : null,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
@@ -666,7 +666,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: sector.gradientColors[0].withValues(alpha: 0.4),
+                    color: sector.gradientColors[0].withOpacity(0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4))]
               : []),
@@ -684,7 +684,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         ? Colors.white
                         : canSelect
                             ? Theme.of(context).colorScheme.onSurfaceVariant
-                            : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                            : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)),
                   const SizedBox(height: 12),
                   Text(
                     sector.label,
@@ -695,7 +695,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                           ? Colors.white
                           : canSelect
                               ? Theme.of(context).colorScheme.onSurface
-                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                     textAlign: TextAlign.center),
                   const SizedBox(height: 4),
                   Text(
@@ -703,10 +703,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected
-                          ? Colors.white.withValues(alpha: 0.9)
+                          ? Colors.white.withOpacity(0.9)
                           : canSelect
                               ? Theme.of(context).colorScheme.onSurfaceVariant
-                              : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                              : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis)])),
@@ -742,20 +742,20 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               const SizedBox(width: 8),
               Text(
                 sector.label,
-                style: Theme.of(context).textTheme.titleSmall),
+                style: Theme.of(context).textTheme.titleSmall)),
               const Spacer(),
               Text(
-                '${priority.round()}%',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                '${priority.round()}%',),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   fontWeight: FontWeight.bold,
                   color: sector.gradientColors[0]))]),
           const SizedBox(height: 8),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: sector.gradientColors[0],
-              inactiveTrackColor: sector.gradientColors[0].withValues(alpha: 0.3),
+              inactiveTrackColor: sector.gradientColors[0].withOpacity(0.3),
               thumbColor: sector.gradientColors[0],
-              overlayColor: sector.gradientColors[0].withValues(alpha: 0.3)),
+              overlayColor: sector.gradientColors[0].withOpacity(0.3)),
             child: Slider(
               value: priority,
               min: 0,
@@ -780,13 +780,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '추가 분석 옵션',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            '추가 분석 옵션',),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
-            '더 정확한 운세를 위해 선택하세요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            '더 정확한 운세를 위해 선택하세요',),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
               color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: 32),
           
@@ -845,8 +845,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           
           // Specific question
           Text(
-            '궁금한 점이 있으신가요?',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            '궁금한 점이 있으신가요?',),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           TextField(
@@ -872,7 +872,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
     ValueChanged<bool> onChanged) {
     return InkWell(
       onTap: () => onChanged(!value),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12))),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -881,9 +881,9 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).dividerColor,
             width: value ? 2 : 1),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12))),
           color: value
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1,
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.1,
               : null),
         child: Row(
           children: [
@@ -900,11 +900,11 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith()
                       fontWeight: FontWeight.bold)),
                   Text(
                     description,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                       color: Theme.of(context).colorScheme.onSurfaceVariant))])),
             Switch(
               value: value,
@@ -922,13 +922,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '투자 운세 준비 완료!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            '투자 운세 준비 완료!',),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
-            '입력하신 정보를 확인해주세요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            '입력하신 정보를 확인해주세요',),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
               color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: 32),
           
@@ -975,7 +975,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 Icons.auto_graph_rounded,
                 size: 80,
                 color: Colors.white))).animate(onPlay: (controller) => controller.repeat(),
-            .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.5),
+            .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.5),
             .rotate(duration: 20000.ms)]));
   }
   
@@ -990,7 +990,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...items.map((item) => Padding(
@@ -1002,7 +1002,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     Expanded(
                       child: Text(
                         item,
-                        style: Theme.of(context).textTheme.bodySmall))])).toList()]));
+                        style: Theme.of(context).textTheme.bodySmall))])).toList()]));)
   }
   
   // Helper methods
@@ -1078,9 +1078,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               const CircularProgressIndicator(),
               const SizedBox(height: 16),
               Text(
-                '투자 운세를 분석하고 있습니다...',
-                style: Theme.of(context).textTheme.bodyMedium)]))));
-    
+                '투자 운세를 분석하고 있습니다...',),
+                style: Theme.of(context).textTheme.bodyMedium)]))));)
     try {
       // Prepare parameters
       final params = {

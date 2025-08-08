@@ -160,8 +160,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '기본 정보',
-            style: theme.textTheme.headlineSmall),
+            '기본 정보',),
+            style: theme.textTheme.headlineSmall)),
           const SizedBox(height: 16),
           
           // Name Input
@@ -200,7 +200,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
+                      : theme.colorScheme.onSurface.withOpacity(0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -208,8 +208,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '성별',
-                style: theme.textTheme.bodyLarge),
+                '성별',),
+                style: theme.textTheme.bodyLarge)),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -250,8 +250,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   Icon(Icons.sports_tennis, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '테니스 정보',
-                    style: theme.textTheme.headlineSmall)]),
+                    '테니스 정보',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Skill Level
@@ -329,8 +329,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   Icon(Icons.settings, color: theme.colorScheme.secondary),
                   const SizedBox(width: 8),
                   Text(
-                    '장비 및 코트',
-                    style: theme.textTheme.headlineSmall)]),
+                    '장비 및 코트',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Court Type
@@ -370,8 +370,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '개선이 필요한 부분 (복수 선택 가능)',
-                    style: theme.textTheme.bodyLarge),
+                    '개선이 필요한 부분 (복수 선택 가능)',),
+                    style: theme.textTheme.bodyLarge)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -391,12 +391,12 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                         child: Chip(
                           label: Text(weakness),
                           backgroundColor: isSelected
-                              ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                              : theme.colorScheme.surface.withValues(alpha: 0.5),
+                              ? theme.colorScheme.primary.withOpacity(0.2)
+                              : theme.colorScheme.surface.withOpacity(0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                                : theme.colorScheme.onSurface.withOpacity(0.3))));
                     }).toList())]),
               const SizedBox(height: 16),
               
@@ -419,7 +419,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge)),
+            style: theme.textTheme.bodyLarge))),
         Switch(
           value: value,
           onChanged: onChanged)]);
@@ -456,8 +456,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 승률 예측',
-                  style: theme.textTheme.headlineSmall)]),
+                  '오늘의 승률 예측',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 24),
             
             Container(
@@ -467,8 +467,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    _getWinColor(winProbability).withValues(alpha: 0.3),
-                    _getWinColor(winProbability).withValues(alpha: 0.1)]),
+                    _getWinColor(winProbability).withOpacity(0.3),
+                    _getWinColor(winProbability).withOpacity(0.1)]),
                 border: Border.all(
                   color: _getWinColor(winProbability),
                   width: 3)),
@@ -477,21 +477,21 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${winProbability}%',
-                      style: theme.textTheme.displayLarge?.copyWith(
+                      '${winProbability}%',),
+                      style: theme.textTheme.displayLarge?.copyWith()
                         fontWeight: FontWeight.bold,
                         color: _getWinColor(winProbability))),
                     Text(
                       _getWinMessage(winProbability),
-                      style: theme.textTheme.bodyMedium)]))).animate(,
+                      style: theme.textTheme.bodyMedium)]))).animate(),
                 .scale(duration: 600.ms,
                 .then(,
                 .shimmer(duration: 1000.ms),
             
             const SizedBox(height: 16),
             Text(
-              '오늘은 ${_getPerformanceMessage(winProbability)}',
-              style: theme.textTheme.bodyLarge,
+              '오늘은 ${_getPerformanceMessage(winProbability)}',),
+              style: theme.textTheme.bodyLarge),
               textAlign: TextAlign.center)])));
   }
 
@@ -511,8 +511,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Icon(Icons.star, color: Colors.yellow),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 필살기',
-                  style: theme.textTheme.headlineSmall)]),
+                  '오늘의 필살기',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...luckyShots.asMap().entries.map((entry) => 
               _buildShotItem(entry.value, index: entry.key).toList()])));
@@ -526,10 +526,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
+          color: theme.colorScheme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12))),
           border: Border.all(
-            color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+            color: theme.colorScheme.primary.withOpacity(0.3))),
         child: Row(
           children: [
             Container(
@@ -549,12 +549,12 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 children: [
                   Text(
                     shot['name'],
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontWeight: FontWeight.bold)),
                   Text(
                     shot['description'],
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))])).animate(,
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7)))]))])).animate(,
           .fadeIn(delay: (index * 100).ms,
           .slideX(begin: -0.1, end: 0);
   }
@@ -574,8 +574,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Icon(Icons.inventory_2, color: theme.colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 장비 팁',
-                  style: theme.textTheme.headlineSmall)]),
+                  '오늘의 장비 팁',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             _buildEquipmentItem('스트링 텐션', '평소보다 1-2파운드 낮게',
             _buildEquipmentItem('그립 사이즈', '오버그립 추가 권장',
@@ -592,7 +592,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+              color: theme.colorScheme.secondary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8)),
             child: Icon(icon, size: 24, color: theme.colorScheme.secondary)),
           const SizedBox(width: 12),
@@ -602,12 +602,12 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               children: [
                 Text(
                   item,
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.bold)),
                 Text(
                   recommendation,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))]));
+                  style: theme.textTheme.bodyMedium?.copyWith()
+                    color: theme.colorScheme.onSurface.withOpacity(0.7)))]))]));
   }
 
   Widget _buildStrategyTips() {
@@ -625,8 +625,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Icon(Icons.psychology, color: Colors.purple),
                 const SizedBox(width: 8),
                 Text(
-                  '전략 포인트',
-                  style: theme.textTheme.headlineSmall)]),
+                  '전략 포인트',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             _buildStrategyItem('서브 게임', '첫 서브 확률을 높이세요',
             _buildStrategyItem('랠리', '인내심을 가지고 기회를 기다리세요',
@@ -650,7 +650,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodyMedium),
                 children: [
                   TextSpan(
                     text: '$aspect: ',
@@ -673,8 +673,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Icon(Icons.fitness_center, color: Colors.orange),
                 const SizedBox(width: 8),
                 Text(
-                  '신체 컨디션',
-                  style: theme.textTheme.headlineSmall)]),
+                  '신체 컨디션',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -697,17 +697,17 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               height: 80,
               child: CircularProgressIndicator(
                 value: value / 100,
-                backgroundColor: color.withValues(alpha: 0.2),
+                backgroundColor: color.withOpacity(0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 strokeWidth: 8)),
             Icon(icon, color: color, size: 30)]),
         const SizedBox(height: 8),
         Text(
           label,
-          style: theme.textTheme.bodySmall),
+          style: theme.textTheme.bodySmall)),
         Text(
-          '$value%',
-          style: theme.textTheme.bodyMedium?.copyWith(
+          '$value%',),
+          style: theme.textTheme.bodyMedium?.copyWith()
             fontWeight: FontWeight.bold,
             color: color))]).animate(,
         .scale(delay: 200.ms, duration: 400.ms);
@@ -728,29 +728,29 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Icon(Icons.self_improvement, color: Colors.deepPurple),
                 const SizedBox(width: 8),
                 Text(
-                  '멘탈 코칭',
-                  style: theme.textTheme.headlineSmall)]),
+                  '멘탈 코칭',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.deepPurple.withValues(alpha: 0.1),
-                    Colors.blue.withValues(alpha: 0.1)]),
+                    Colors.deepPurple.withOpacity(0.1),
+                    Colors.blue.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12)),
               child: Column(
                 children: [
                   Text(
-                    '"한 포인트씩 집중하라"',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    '"한 포인트씩 집중하라"',),
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center),
                   const SizedBox(height: 8),
                   Text(
-                    '과거의 실수나 미래의 결과에 연연하지 말고,\n지금 이 순간의 플레이에만 집중하세요.',
-                    style: theme.textTheme.bodyMedium,
+                    '과거의 실수나 미래의 결과에 연연하지 말고,\n지금 이 순간의 플레이에만 집중하세요.',),
+                    style: theme.textTheme.bodyMedium),
                     textAlign: TextAlign.center)]))])));
   }
 
@@ -772,8 +772,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
 
   List<Map<String, String>> _getLuckyShots() {
     final shots = [
-      {'name', '포핸드 다운더라인': 'description', '결정적인 순간에 위력을 발휘합니다'},
-      {'name', '백핸드 크로스': 'description', '안정적이고 정확한 샷이 가능합니다'},
+      {'\1': '\2', 'description', '결정적인 순간에 위력을 발휘합니다'},
+      {'\1': '\2', 'description', '안정적이고 정확한 샷이 가능합니다'},
       {'name', '서브 에이스', 'description', '첫 서브 성공률이 높습니다'},
       {'name', '드롭샷', 'description', '상대를 교란시키는데 효과적입니다'}];
     

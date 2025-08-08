@@ -33,7 +33,7 @@ class TarotCardState {
     required this.orientation,
     required this.selectedAt});
 
-  // 랜덤하게 카드 방향 결정 (70% 정방향, 30% 역방향,
+  // 랜덤하게 카드 방향 결정 (70% 정방향, 30% 역방향)
   static CardOrientation getRandomOrientation() {
     final random = math.Random();
     return random.nextDouble() < 0.7 
@@ -45,7 +45,7 @@ class TarotCardState {
   factory TarotCardState.fromSelection(int cardIndex) {
     return TarotCardState(
       cardIndex: cardIndex,
-      orientation: getRandomOrientation()
+      orientation: getRandomOrientation(),
       selectedAt: DateTime.now()
     );
   }
@@ -62,9 +62,10 @@ class TarotCardState {
     return TarotCardState(
       cardIndex: json['cardIndex'],
       orientation: CardOrientation.values.firstWhere(
-        (e) => e.name == json['orientation'])
-        orElse: () => CardOrientation.upright)
-      selectedAt: DateTime.parse(json['selectedAt']);
+        (e) => e.name == json['orientation'],
+        orElse: () => CardOrientation.upright),
+      selectedAt: DateTime.parse(json['selectedAt'])
+    );
   }
 }
 
@@ -85,7 +86,7 @@ extension TarotCardInterpretation on TarotCardState {
   // 역방향일 때 의미 변환 규칙
   String getModifiedKeywords(List<String> baseKeywords) {
     if (orientation == CardOrientation.upright) {
-      return baseKeywords.join(': ');
+      return baseKeywords.join(', ');
     }
 
     // 역방향 키워드 변환
@@ -95,18 +96,18 @@ extension TarotCardInterpretation on TarotCardState {
         '사랑': '이별',
         '성공': '좌절',
         '행운': '불운',
-        '성장': '정체')
+        '성장': '정체',
         '조화': '불화',
-        '평화': '갈등')
+        '평화': '갈등',
         '희망': '절망',
-        '자유': '속박')
+        '자유': '속박',
         '창의성': '막힘',
-        '안정': '불안정')
+        '안정': '불안정',
         '풍요': '결핍',
-        '지혜': '혼란')
+        '지혜': '혼란',
         '용기': '두려움',
-        '신뢰': '의심')
-        '치유': '상처')
+        '신뢰': '의심',
+        '치유': '상처'
       };
 
       // 부정적 키워드를 더 강화
@@ -114,13 +115,13 @@ extension TarotCardInterpretation on TarotCardState {
         '도전': '심각한 위기',
         '변화': '급격한 변화',
         '종료': '완전한 끝',
-        '갈등': '심한 갈등')
-        '어려움': '극심한 어려움')
+        '갈등': '심한 갈등',
+        '어려움': '극심한 어려움'
       };
 
-      if (reversalMap.containsKey(keyword), {
+      if (reversalMap.containsKey(keyword)) {
         return reversalMap[keyword]!;
-      } else if (intensificationMap.containsKey(keyword), {
+      } else if (intensificationMap.containsKey(keyword)) {
         return intensificationMap[keyword]!;
       } else {
         // 기본적으로 '~의 부족' 또는 '~의 문제'로 변환
@@ -128,6 +129,6 @@ extension TarotCardInterpretation on TarotCardState {
       }
     }).toList();
 
-    return reversedKeywords.join(': ');
+    return reversedKeywords.join(', ');
   }
 }

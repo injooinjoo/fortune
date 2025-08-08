@@ -190,8 +190,8 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _getInvestmentColor(_selectedType).withValues(alpha: 0.1),
-              _getInvestmentColor(_selectedType).withValues(alpha: 0.05)]),
+              _getInvestmentColor(_selectedType).withOpacity(0.1),
+              _getInvestmentColor(_selectedType).withOpacity(0.05)]),
           borderRadius: BorderRadius.circular(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +207,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                       size: 28),
                     const SizedBox(width: 8),
                     Text(
-                      '${_selectedType.label} 운세',
+                      '${_selectedType.label} 운세',),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold))]),
@@ -217,7 +217,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                     color: _getScoreColor(fortune.score),
                     borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                    '${fortune.score}점',
+                    '${fortune.score}점',),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold)))]),
@@ -242,7 +242,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         Icon(Icons.warning_amber, size: 20, color: riskColor),
         const SizedBox(width: 8),
         Text(
-          '위험도: ',
+          '위험도: ',),
           style: TextStyle(
             fontSize: 14,
             color: AppTheme.textSecondaryColor)),
@@ -293,7 +293,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '섹터별 투자 운세',
+              '섹터별 투자 운세',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -361,7 +361,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '코인별 투자 운세',
+              '코인별 투자 운세',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -384,7 +384,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.1),
+              color: Colors.orange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(25)),
             child: Center(
               child: Text(
@@ -409,7 +409,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score))])),
           const SizedBox(width: 12),
           Text(
-            '$score점',
+            '$score점',),
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
@@ -420,9 +420,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12))),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
       child: Row(
         children: [
           Icon(Icons.warning, color: Colors.orange, size: 24),
@@ -432,13 +432,13 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '높은 변동성 주의',
+                  '높은 변동성 주의',),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16)),
                 const SizedBox(height: 4),
                 Text(
-                  '암호화폐 시장은 변동성이 매우 높습니다. 투자금 전액 손실 가능성을 항상 염두에 두세요.',
+                  '암호화폐 시장은 변동성이 매우 높습니다. 투자금 전액 손실 가능성을 항상 염두에 두세요.',),
                   style: TextStyle(
                     fontSize: 14,
                     color: AppTheme.textSecondaryColor))]))]));
@@ -466,7 +466,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '지역별 투자 매력도',
+              '지역별 투자 매력도',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -512,7 +512,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                       borderRadius: BorderRadius.circular(12))))])),
           const SizedBox(width: 12),
           Text(
-            '$score점',
+            '$score점',),
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
@@ -531,7 +531,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 Icon(Icons.trending_up, color: Colors.green, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '시장 동향',
+                  '시장 동향',),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold))]),
@@ -543,7 +543,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             Text(
-              '전반적으로 부동산 시장은 안정적인 흐름을 보이고 있으나, 지역별 편차가 존재합니다.',
+              '전반적으로 부동산 시장은 안정적인 흐름을 보이고 있으나, 지역별 편차가 존재합니다.',),
               style: TextStyle(
                 fontSize: 14,
                 color: AppTheme.textSecondaryColor))])));
@@ -572,13 +572,13 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.purple.withValues(alpha: 0.1),
-              Colors.blue.withValues(alpha: 0.1)]),
+              Colors.purple.withOpacity(0.1),
+              Colors.blue.withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(12)),
         child: Column(
           children: [
             const Text(
-              '오늘의 행운 번호',
+              '오늘의 행운 번호',),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold)),
@@ -596,12 +596,12 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withValues(alpha: 0.3),
+                        color: Colors.purple.withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4))]),
                   child: Center(
                     child: Text(
-                      '$number',
+                      '$number',),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -621,7 +621,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '최적 구매 시간',
+                  '최적 구매 시간',),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
@@ -638,16 +638,16 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+        color: Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12))),
+        border: Border.all(color: Colors.red.withOpacity(0.3)),
       child: Row(
         children: [
           Icon(Icons.info_outline, color: Colors.red, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '복권은 확률이 매우 낮은 게임입니다. 오락 목적으로만 소액을 사용하세요.',
+              '복권은 확률이 매우 낮은 게임입니다. 오락 목적으로만 소액을 사용하세요.',),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.red[700])))]));
@@ -675,7 +675,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '추천 부업 기회',
+              '추천 부업 기회',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -737,7 +737,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                       }),
                       const SizedBox(width: 8),
                       Text(
-                        '추천도 $score%',
+                        '추천도 $score%',),
                         style: TextStyle(
                           fontSize: 12,
                           color: AppTheme.textSecondaryColor))])]))])));
@@ -751,7 +751,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '예상 수익 전망',
+              '예상 수익 전망',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -799,7 +799,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '추천 포트폴리오',
+              '추천 포트폴리오',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -857,7 +857,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '오늘의 투자 팁',
+              '오늘의 투자 팁',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -893,7 +893,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '시장 전망',
+              '시장 전망',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -921,7 +921,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             fontWeight: FontWeight.bold,
             fontSize: 14)),
         Text(
-          '$score점',
+          '$score점',),
           style: TextStyle(
             color: color,
             fontSize: 12))]);
@@ -939,7 +939,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 Icon(Icons.tips_and_updates, color: Colors.amber, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '주식 투자 팁',
+                  '주식 투자 팁',),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold))]),
@@ -985,7 +985,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               recommendation,
               style: const TextStyle(
                 fontSize: 14,
-                height: 1.4)))]));
+                height: 1.4))]));
   }
 
   Color _getInvestmentColor(InvestmentType type) {

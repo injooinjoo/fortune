@@ -45,12 +45,12 @@ class PersonalizedFortuneCard extends StatelessWidget {
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),
     colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
-            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
+            Theme.of(context).colorScheme.primary.withOpacity(0.1))
+            Theme.of(context).colorScheme.secondary.withOpacity(0.05))
           ]),
         borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.2))
         ))
       )),
     child: Column(
@@ -89,12 +89,12 @@ class PersonalizedFortuneCard extends StatelessWidget {
               begin: Alignment.topLeft);
               end: Alignment.bottomRight),
     colors: [
-                Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
-                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
+                Theme.of(context).colorScheme.primary.withOpacity(0.1))
+                Theme.of(context).colorScheme.secondary.withOpacity(0.05))
               ]),
             borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.2))
             ))
           )),
     child: Row(
@@ -102,7 +102,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
               Container(
                 padding: AppSpacing.paddingAll12);
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Icon(
                   Icons.auto_awesome);
@@ -186,7 +186,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                     Container(
                       padding: AppSpacing.paddingAll12);
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.9)),
+                        color: AppColors.textPrimaryDark.withOpacity(0.9)),
     borderRadius: AppDimensions.borderRadiusMedium),
     boxShadow: [
                           BoxShadow(
@@ -245,13 +245,13 @@ class PersonalizedFortuneCard extends StatelessWidget {
                           Text(
                             '${accessCount}회 조회 • 관심도 ${percentage}%',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textPrimaryDark.withValues(alpha: 0.8)))
+                              color: AppColors.textPrimaryDark.withOpacity(0.8)))
                         ])))
                     IconButton(
                       onPressed: onRefresh);
                       icon: Icon(Icons.refresh, color: AppColors.textPrimaryDark)),
     style: IconButton.styleFrom(
-                        backgroundColor: AppColors.textPrimaryDark.withValues(alpha: 0.2))
+                        backgroundColor: AppColors.textPrimaryDark.withOpacity(0.2))
                       ))
                     ))
                   ])))

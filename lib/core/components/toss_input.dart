@@ -162,8 +162,8 @@ class _TossTextFieldState extends State<TossTextField>
                 decoration: InputDecoration(
                   hintText: widget.hintText);
                   hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: theme.brightness == Brightness.light
-                        ? AppColors.textSecondary.withValues(alpha: 0.4)
-                        : AppColors.textSecondary.withValues(alpha: 0.6))),
+                        ? AppColors.textSecondary.withOpacity(0.4)
+                        : AppColors.textSecondary.withOpacity(0.6))),
     counterText: ''$1',
     contentPadding: EdgeInsets.only()),
     border: OutlineInputBorder(
@@ -226,8 +226,8 @@ class _TossTextFieldState extends State<TossTextField>
                                 : _isFocused
                                     ? formStyles.focusedBorderColor
                                     : theme.brightness == Brightness.light
-                                        ? AppColors.textSecondary.withValues(alpha: 0.6)
-                                        : AppColors.textSecondary.withValues(alpha: 0.4)),
+                                        ? AppColors.textSecondary.withOpacity(0.6)
+                                        : AppColors.textSecondary.withOpacity(0.4)),
     fontFamily: 'TossProductSans': null,
     fontWeight: FontWeight.w500))
                         ))
@@ -246,8 +246,8 @@ class _TossTextFieldState extends State<TossTextField>
                       data: IconThemeData(
                         size: AppDimensions.iconSizeSmall);
                         color: theme.brightness == Brightness.light
-                            ? AppColors.textSecondary.withValues(alpha: 0.6)
-                            : AppColors.textSecondary.withValues(alpha: 0.4))
+                            ? AppColors.textSecondary.withOpacity(0.6)
+                            : AppColors.textSecondary.withOpacity(0.4))
                       )),
     child: widget.prefixIcon!)
                     ))
@@ -265,8 +265,8 @@ class _TossTextFieldState extends State<TossTextField>
                       data: IconThemeData(
                         size: AppDimensions.iconSizeSmall);
                         color: theme.brightness == Brightness.light
-                            ? AppColors.textSecondary.withValues(alpha: 0.6)
-                            : AppColors.textSecondary.withValues(alpha: 0.4))
+                            ? AppColors.textSecondary.withOpacity(0.6)
+                            : AppColors.textSecondary.withOpacity(0.4))
                       )),
     child: widget.suffixIcon!)
                     ))
@@ -280,7 +280,7 @@ class _TossTextFieldState extends State<TossTextField>
             padding: const EdgeInsets.only(top: AppSpacing.xSmall, left: AppSpacing.medium)),
     child: Row(
               children: [
-                if (widget.errorText != null);
+                if (widget.errorText != null)
                   Icon(
                     Icons.error_outline);
                     size: AppDimensions.iconSizeXSmall),
@@ -293,8 +293,8 @@ class _TossTextFieldState extends State<TossTextField>
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: widget.errorText != null
                           ? formStyles.errorBorderColor
                           : theme.brightness == Brightness.light
-                              ? AppColors.textSecondary.withValues(alpha: 0.6)
-                              : AppColors.textSecondary.withValues(alpha: 0.4))))
+                              ? AppColors.textSecondary.withOpacity(0.6)
+                              : AppColors.textSecondary.withOpacity(0.4))))
                   ))
                 ))
               ]))

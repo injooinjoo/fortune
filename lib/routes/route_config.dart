@@ -20,43 +20,23 @@ import '../screens/onboarding/toss_style_onboarding_page.dart';
 import '../shared/layouts/main_shell.dart';
 import '../screens/premium/premium_screen.dart';
 
-// import '../features/profile/presentation/pages/statistics_detail_page.dart';
-// import '../features/profile/presentation/pages/profile_verification_page.dart';
-// import '../features/misc/presentation/pages/consult_page.dart';
-// import '../features/misc/presentation/pages/explore_page.dart';
-// import '../features/misc/presentation/pages/special_page.dart';
-// import '../features/misc/presentation/pages/wish_wall_page.dart';
-// import '../features/trend/presentation/pages/trend_page.dart';
-// import '../features/notification/presentation/pages/notification_settings_page.dart';
-// import '../features/admin/presentation/pages/admin_dashboard_page.dart';
-// import '../features/admin/presentation/pages/redis_monitor_page.dart';
-// import '../features/admin/presentation/pages/token_usage_stats_page.dart';
-// import '../features/support/presentation/pages/customer_support_page.dart';
-// import '../features/support/presentation/pages/help_page.dart';
-// import '../features/about/presentation/pages/about_page.dart';
-// import '../features/policy/presentation/pages/policy_page.dart';
-// import '../features/policy/presentation/pages/privacy_policy_page.dart';
-// import '../features/policy/presentation/pages/terms_of_service_page.dart';
-// import '../features/history/presentation/pages/fortune_history_page.dart';
-// import '../features/feedback/presentation/pages/feedback_page.dart';
-// import '../presentation/pages/todo/todo_list_page.dart';
-// import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
-// import '../screens/payment/token_history_page.dart';
-// import '../screens/subscription/subscription_page.dart';
+// Import feature pages
+import '../features/trend/presentation/pages/trend_page.dart';
+import '../features/notification/presentation/pages/notification_settings_page.dart';
+import '../features/support/presentation/pages/help_page.dart';
+import '../features/policy/presentation/pages/privacy_policy_page.dart';
+import '../features/policy/presentation/pages/terms_of_service_page.dart';
+import '../features/history/presentation/pages/fortune_history_page.dart';
+import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
+import '../screens/subscription/subscription_page.dart';
 
-// // Import route groups
-// import 'routes/auth_routes.dart';
-// import 'routes/fortune_routes.dart';
-// import 'routes/interactive_routes.dart';
+// Import route groups
+import 'routes/auth_routes.dart';
+import 'routes/fortune_routes.dart';
+import 'routes/interactive_routes.dart';
 
 import '../core/utils/profile_validation.dart';
 import '../services/storage_service.dart';
-
-
-// Temporary empty route lists
-const authRoutes = <RouteBase>[];
-const fortuneRoutes = <RouteBase>[];
-const interactiveRoutes = <RouteBase>[];
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -68,36 +48,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ),
     routes: [
-      // Splash route
+      // Special onboarding route (not in auth routes)
       GoRoute(
-        path: '/splash',
-        name: 'splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
-      
-      // Landing route
-      GoRoute(
-        path: '/',
-        name: 'landing',
-        builder: (context, state) => const LandingPage(),
-      ),
-      
-      // Auth routes
-      GoRoute(
-        path: '/signup',
-        name: 'signup',
-        builder: (context, state) => const SignupScreen(),
-      ),
-      
-      GoRoute(
-        path: '/auth/callback',
-        name: 'callback',
-        builder: (context, state) => const CallbackPage(),
-      ),
-      
-      GoRoute(
-        path: '/onboarding',
-        name: 'onboarding',
+        path: '/onboarding/toss-style',
+        name: 'onboarding-toss-style',
         builder: (context, state) => const TossStyleOnboardingPage(),
       ),
       
@@ -109,6 +63,37 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       
       // Interactive routes
       ...interactiveRoutes,
+      
+      // Additional routes
+      GoRoute(
+        path: '/payment/tokens',
+        name: 'token-purchase',
+        builder: (context, state) => const TokenPurchasePageV2(),
+      ),
+      
+      GoRoute(
+        path: '/subscription',
+        name: 'subscription',
+        builder: (context, state) => const SubscriptionPage(),
+      ),
+      
+      GoRoute(
+        path: '/help',
+        name: 'help',
+        builder: (context, state) => const HelpPage(),
+      ),
+      
+      GoRoute(
+        path: '/policy/privacy',
+        name: 'privacy-policy',
+        builder: (context, state) => const PrivacyPolicyPage(),
+      ),
+      
+      GoRoute(
+        path: '/policy/terms',
+        name: 'terms-of-service',
+        builder: (context, state) => const TermsOfServicePage(),
+      ),
       
       // Home route with main shell
       ShellRoute(
@@ -151,6 +136,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/premium',
             name: 'premium',
             builder: (context, state) => const PremiumScreen(),
+          ),
+          GoRoute(
+            path: '/trend',
+            name: 'trend',
+            builder: (context, state) => const TrendPage(),
+          ),
+          GoRoute(
+            path: '/settings/notifications',
+            name: 'notification-settings',
+            builder: (context, state) => const NotificationSettingsPage(),
+          ),
+          GoRoute(
+            path: '/fortune/history',
+            name: 'fortune-history',
+            builder: (context, state) => const FortuneHistoryPage(),
           ),
         ],
       ),

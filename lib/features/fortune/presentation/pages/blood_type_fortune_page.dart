@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Icon;
+import 'package:flutter/material.dart' as material show Icon;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -24,37 +25,38 @@ class BloodTypeFortunePage extends BaseFortunePage {
   ConsumerState<BloodTypeFortunePage> createState() => _BloodTypeFortunePageState();
 }
 
-class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePage> {
+class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
   String? _selectedBloodType;
   String? _selectedRhType = '+';
   String? _selectedType1;
   String? _selectedRh1;
   String? _selectedType2;
   String? _selectedRh2;
+  bool isLoading = false;
+  Fortune? currentFortune;
 
   final Map<String, Map<String, dynamic>> _bloodTypeInfo = {
-    'A': {}
-      'title', 'A형',
-      'personality', '신중하고 꼼꼼한 성격',
+    'A': {
+      'title': 'A형',
+      'personality': '신중하고 꼼꼼한 성격',
       'icon': Icons.water_drop,
       'color': null},
     'B': {
-      'title', 'B형',
-      'personality', '자유롭고 창의적인 성격',
+      'title': 'B형',
+      'personality': '자유롭고 창의적인 성격',
       'icon': Icons.explore,
       'color': null},
     'O': {
-      'title', 'O형',
-      'personality', '열정적이고 리더십이 강한 성격',
+      'title': 'O형',
+      'personality': '열정적이고 리더십이 강한 성격',
       'icon': Icons.local_fire_department,
       'color': null},
     'AB': {
-      'title', 'AB형',
-      'personality', '이성적이고 독특한 성격',
+      'title': 'AB형',
+      'personality': '이성적이고 독특한 성격',
       'icon': Icons.psychology,
       'color': null}};
 
-  @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final fortuneService = ref.read(fortuneServiceProvider);
     
@@ -65,7 +67,6 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
     );
   }
 
-  @override
   Future<Map<String, dynamic>?> getFortuneParams() async {
     if (_selectedBloodType == null) {
       return null;
@@ -77,6 +78,34 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
   }
 
   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('혈액형 운세'),
+        centerTitle: true,
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : currentFortune == null
+              ? _buildInputView()
+              : _buildResultView(),
+    );
+  }
+
+  Widget _buildInputView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: buildInputForm(),
+    );
+  }
+
+  Widget _buildResultView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: buildFortuneResult(),
+    );
+  }
+
   Widget buildInputForm() {
     final theme = Theme.of(context);
 
@@ -114,37 +143,35 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
                       borderRadius: BorderRadius.circular(16),
                       blur: 10,
                       borderColor: isSelected
-                          ? (info['color'] as Color).withValues(alpha: 0.5)
+                          ? (info['color'] as Color).withOpacity(0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          material.Icon(
                             info['icon'],
                             size: 32,
                             color: isSelected
-                                ? info['color'],
-    Color
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                                ? info['color'] as Color
+                                : theme.colorScheme.onSurface.withOpacity(0.6)),
                           const SizedBox(height: 8),
                           Text(
                             info['title'],
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               color: isSelected
-                                  ? info['color'],
-    Color
+                                  ? info['color'] as Color
                                   : null)),
                           const SizedBox(height: 4),
                           Text(
                             info['personality'],
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                              color: theme.colorScheme.onSurface.withOpacity(0.6)),
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis)])));
-                }).toList())])),
+                }).toList())),
         const SizedBox(height: 16),
         GlassCard(
           padding: const EdgeInsets.all(20),
@@ -158,10 +185,37 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
               Row(
                 children: [
                   Expanded(
-                    child: _buildRhOption('+', 'RH+'),
+                    child: _buildRhOption('+', 'RH+')),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildRhOption('-', 'RH-')])]))]
+                    child: _buildRhOption('-', 'RH-'))])])),
+        const SizedBox(height: 20),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _selectedBloodType != null
+                ? () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    try {
+                      final params = await getFortuneParams();
+                      if (params != null) {
+                        final fortune = await generateFortune(params);
+                        setState(() {
+                          currentFortune = fortune;
+                          isLoading = false;
+                        });
+                      }
+                    } catch (e) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
+                  }
+                : null,
+            child: const Text('혈액형 운세 확인하기'),
+          ))],
     );
   }
 
@@ -181,14 +235,14 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
         borderRadius: BorderRadius.circular(12),
         blur: 10,
         borderColor: isSelected
-            ? theme.colorScheme.primary.withValues(alpha: 0.5)
+            ? theme.colorScheme.primary.withOpacity(0.5)
             : Colors.transparent,
         borderWidth: isSelected ? 2 : 0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (isSelected),
-                  Icon(
+            if (isSelected)
+                  material.Icon(
                 Icons.check_circle_rounded,
                 size: 20,
                 color: theme.colorScheme.primary),
@@ -200,13 +254,11 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
                 color: isSelected ? theme.colorScheme.primary : null))])));
   }
 
-  @override
   Widget buildFortuneResult() {
     // Add blood type specific sections to the base result
     return Column(
       children: [
         _buildBloodTypeHeader(),
-        super.buildFortuneResult(),
         _buildEnhancedPersonalityAnalysis(),
         _buildEnhancedCompatibilitySection(),
         _buildBloodTypeTips()]
@@ -214,7 +266,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
   }
 
   Widget _buildBloodTypeHeader() {
-    if (_selectedBloodType == null) return const SizedBox.shrink();
+    if (_selectedBloodType == null) return const SizedBox.shrink();;
     
     final info = _bloodTypeInfo[_selectedBloodType!]!;
     final theme = Theme.of(context);
@@ -230,11 +282,11 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (info['color'],
+                color: info['color'],
                 border: Border.all(
-                  color: (info['color'],
+                  color: info['color'],
                   width: 3)),
-              child: Icon(
+              child: material.Icon(
                 info['icon'],
                 size: 40,
                 color: info['color'])),
@@ -296,7 +348,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
         '리더십을 발휘할 수 있는 기회가 찾아옵니다',
         '목표를 향해 적극적으로 나아가세요',
         '팀워크를 중시하면 더 큰 성과를 얻을 수 있습니다'],
-      'AB': [}
+      'AB': [
         '직관을 믿고 결정을 내리세요',
         '예술적 활동으로 스트레스를 해소하면 좋습니다',
         '균형잡힌 시각으로 문제를 해결할 수 있습니다']};
@@ -315,7 +367,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
           children: [
             Row(
               children: [
-                Icon(
+                material.Icon(
                   Icons.tips_and_updates_rounded,
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
@@ -335,6 +387,6 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
                   Expanded(
                     child: Text(
                       tip,
-                      style: theme.textTheme.bodyMedium))])).toList()])));
+                      style: theme.textTheme.bodyMedium))]))).toList()])));
   }
 }

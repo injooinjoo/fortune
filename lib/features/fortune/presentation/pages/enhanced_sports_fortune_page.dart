@@ -294,7 +294,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               end: Alignment.bottomRight,
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).primaryColor.withValues(alpha: 0.7)])),
+                Theme.of(context).primaryColor.withOpacity(0.7)])),
           child: Column(
             children: [
               // Category tabs
@@ -361,10 +361,10 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
-          color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+          color: Theme.of(context).primaryColor.withOpacity(0.3),
           width: 1)),
       child: Row(
         children: [
@@ -418,7 +418,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           _selectedTeam = null; // Reset team selection
         });
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -428,11 +428,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             colors: isSelected
                 ? sport.gradientColors
                 : [Colors.grey[200]!, Colors.grey[300]!]),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: sport.gradientColors[0].withValues(alpha: 0.4),
+                    color: sport.gradientColors[0].withOpacity(0.4),
                     blurRadius: 16,
                     offset: const Offset(0, 8))]
               : [],
@@ -451,7 +451,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 child: Icon(
                   sport.icon,
                   size: 80,
-                  color: Colors.white.withValues(alpha: 0.2))),
+                  color: Colors.white.withOpacity(0.2))),
             
             // Content
             Padding(
@@ -474,11 +474,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   if (sport.teams != null) ...[
                     const SizedBox(height: 4),
                     Text(
-                      '${sport.teams!.length}개 팀',
+                      '${sport.teams!.length}개 팀',),
                       style: TextStyle(
                         fontSize: 12,
                         color: isSelected
-                            ? Colors.white.withValues(alpha: 0.8)
+                            ? Colors.white.withOpacity(0.8)
                             : Colors.grey[500]))]]))]))).animate(delay: (50 * index).ms)
       .fadeIn(duration: 300.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
@@ -492,11 +492,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedSport!.gradientColors[0].withValues(alpha: 0.1),
-            _selectedSport!.gradientColors[1].withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            _selectedSport!.gradientColors[0].withOpacity(0.1),
+            _selectedSport!.gradientColors[1].withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: _selectedSport!.gradientColors[0].withValues(alpha: 0.3),
+          color: _selectedSport!.gradientColors[0].withOpacity(0.3),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,7 +519,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           if (_selectedSport!.teams != null) ...[
             const SizedBox(height: 20),
             Text(
-              '팀 선택',
+              '팀 선택',),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -579,15 +579,15 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           _selectedTeam = isPersonal ? null : team;
         });
       },
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20))),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? _selectedSport!.gradientColors[0]
               : Colors.grey[200],
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           border: Border.all(
             color: isSelected
                 ? _selectedSport!.gradientColors[0]
@@ -611,11 +611,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedSport!.gradientColors[0].withValues(alpha: 0.1),
-            _selectedSport!.gradientColors[1].withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            _selectedSport!.gradientColors[0].withOpacity(0.1),
+            _selectedSport!.gradientColors[1].withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: _selectedSport!.gradientColors[0].withValues(alpha: 0.3),
+          color: _selectedSport!.gradientColors[0].withOpacity(0.3),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -643,7 +643,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                     color: _getScoreColor(fortune.score!),
                     borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                    '${fortune.score}점',
+                    '${fortune.score}점',),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold)))]),
@@ -698,7 +698,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Win probability
-        if (details['winProbability'] != null);
+        if (details['winProbability'] != null)
           _buildDetailItem(
             '승리 확률',
             '${details['winProbability']}%',
@@ -736,7 +736,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Best time
-        if (details['bestTime'] != null);
+        if (details['bestTime'] != null)
           _buildDetailItem(
             '최적 시간',
             details['bestTime'],
@@ -763,7 +763,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         if (details['tips'] != null) ...[
           const SizedBox(height: 16),
           Text(
-            '운동 팁',
+            '운동 팁',),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -794,7 +794,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8)),
             child: Icon(
               icon,

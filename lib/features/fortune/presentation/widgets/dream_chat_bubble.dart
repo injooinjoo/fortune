@@ -54,10 +54,10 @@ class _FortuneTellerBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (showAvatar), Text(
-                    '해몽가',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.deepPurple.withValues(alpha: 0.5, fontWeight: FontWeight.bold),
+                if (showAvatar) Text(
+                    '해몽가',),
+                    style: theme.textTheme.bodySmall?.copyWith()
+                      color: Colors.deepPurple.withOpacity(0.5, fontWeight: FontWeight.bold),
                 const SizedBox(height: AppSpacing.spacing1),
                 GlassContainer(
                   padding: AppSpacing.paddingAll16,
@@ -68,13 +68,13 @@ class _FortuneTellerBubble extends StatelessWidget {
                     bottomRight: Radius.circular(20),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.3),
-                      Colors.deepPurple.withValues(alpha: 0.87).withValues(alpha: 0.2)]),
+                      Colors.deepPurple.withOpacity(0.92).withOpacity(0.3),
+                      Colors.deepPurple.withOpacity(0.87).withOpacity(0.2)]),
                   child: Text(
                     message.content,
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       color: Colors.white,
-                      height: 1.4))]),
+                      height: 1.4)]),
           const SizedBox(width: AppSpacing.spacing15)]),.animate()
                   .fadeIn(duration: 300.ms,
         .slideX(begin: -0.1, end: 0, duration: 300.ms);
@@ -88,11 +88,11 @@ class _FortuneTellerBubble extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: LinearGradient(
           colors: [
-            Colors.deepPurple.withValues(alpha: 0.6),
-            Colors.deepPurple.withValues(alpha: 0.8)]),
+            Colors.deepPurple.withOpacity(0.6),
+            Colors.deepPurple.withOpacity(0.8)]),
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurple.withValues(alpha: 0.3),
+            color: Colors.deepPurple.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 2)]),
       child: const Icon(
@@ -125,19 +125,19 @@ class _UserBubble extends StatelessWidget {
                 Container(
                   padding: AppSpacing.paddingAll16,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    color: theme.colorScheme.primary.withOpacity(0.2),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(4),
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
                     border: Border.all(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.3)),
+                      color: theme.colorScheme.primary.withOpacity(0.3)),
                   child: Text(
                     message.content,
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       color: Colors.white,
-                      height: 1.4))])]),.animate()
+                      height: 1.4)])]),.animate()
                   .fadeIn(duration: 300.ms,
         .slideX(begin: 0.1, end: 0, duration: 300.ms);
 }
@@ -164,8 +164,8 @@ class _LoadingBubble extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.6),
-                  Colors.deepPurple.withValues(alpha: 0.8)]),
+                  Colors.deepPurple.withOpacity(0.6),
+                  Colors.deepPurple.withOpacity(0.8)]),
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,
@@ -177,9 +177,9 @@ class _LoadingBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '해몽가',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.deepPurple.withValues(alpha: 0.5, fontWeight: FontWeight.bold),
+                  '해몽가',),
+                  style: theme.textTheme.bodySmall?.copyWith()
+                    color: Colors.deepPurple.withOpacity(0.5, fontWeight: FontWeight.bold),
                 const SizedBox(height: AppSpacing.spacing1),
                 GlassContainer(
                   padding: AppSpacing.paddingAll16,
@@ -190,13 +190,13 @@ class _LoadingBubble extends StatelessWidget {
                     bottomRight: Radius.circular(20),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.3),
-                      Colors.deepPurple.withValues(alpha: 0.87).withValues(alpha: 0.2)]),
+                      Colors.deepPurple.withOpacity(0.92).withOpacity(0.3),
+                      Colors.deepPurple.withOpacity(0.87).withOpacity(0.2)]),
                   child: Row(
                     children: [
                       Text(
                         message.content,
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith()
                           color: Colors.white,
                           height: 1.4),
                       const SizedBox(width: AppSpacing.spacing2),
@@ -206,7 +206,7 @@ class _LoadingBubble extends StatelessWidget {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.deepPurple.withValues(alpha: 0.5))])]),
+                            Colors.deepPurple.withOpacity(0.5))])]),
           const SizedBox(width: AppSpacing.spacing15)]),.animate()
                   .fadeIn(duration: 300.ms,
         .slideX(begin: -0.1, end: 0, duration: 300.ms);
@@ -235,11 +235,11 @@ class _ResultBubble extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.6),
-                  Colors.deepPurple.withValues(alpha: 0.8)]),
+                  Colors.deepPurple.withOpacity(0.6),
+                  Colors.deepPurple.withOpacity(0.8)]),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.deepPurple.withValues(alpha: 0.3),
+                  color: Colors.deepPurple.withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2)]),
             child: const Icon(
@@ -252,9 +252,9 @@ class _ResultBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '해몽가',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.deepPurple.withValues(alpha: 0.5, fontWeight: FontWeight.bold),
+                  '해몽가',),
+                  style: theme.textTheme.bodySmall?.copyWith()
+                    color: Colors.deepPurple.withOpacity(0.5, fontWeight: FontWeight.bold),
                 const SizedBox(height: AppSpacing.spacing1),
                 GlassContainer(
                   padding: AppSpacing.paddingAll20,
@@ -265,10 +265,10 @@ class _ResultBubble extends StatelessWidget {
                     bottomRight: Radius.circular(20),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.4),
-                      Colors.deepPurple.withValues(alpha: 0.87).withValues(alpha: 0.3)]),
+                      Colors.deepPurple.withOpacity(0.92).withOpacity(0.4),
+                      Colors.deepPurple.withOpacity(0.87).withOpacity(0.3)]),
                   border: Border.all(
-                    color: Colors.deepPurple.withValues(alpha: 0.3),
+                    color: Colors.deepPurple.withOpacity(0.3),
                   child: MarkdownBody(
                     data: message.content,
                     styleSheet: MarkdownStyleSheet(
@@ -279,10 +279,10 @@ class _ResultBubble extends StatelessWidget {
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                       h2: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.deepPurple.withValues(alpha: 0.5),
+                        color: Colors.deepPurple.withOpacity(0.5),
                         fontWeight: FontWeight.bold),
                       h3: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.deepPurple.withValues(alpha: 0.5),
+                        color: Colors.deepPurple.withOpacity(0.5),
                         fontWeight: FontWeight.bold),
                       strong: const TextStyle(
                         color: Colors.white,
@@ -314,8 +314,8 @@ class TypingIndicator extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.6),
-                  Colors.deepPurple.withValues(alpha: 0.8)]),
+                  Colors.deepPurple.withOpacity(0.6),
+                  Colors.deepPurple.withOpacity(0.8)]),
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,

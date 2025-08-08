@@ -40,26 +40,26 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   bool _isFirstBlindDate = false;
   
   final Map<String, String> _meetingTimes = {
-    'morning', '아침 (7-11시)',
-    'lunch', '점심 (11-14시)',
-    'afternoon', '오후 (14-18시)',
-    'evening', '저녁 (18-22시)',
-    'night', '밤 (22시 이후)'};
+    'morning': '아침 (7-11시)',
+    'lunch': '점심 (11-14시)',
+    'afternoon': '오후 (14-18시)',
+    'evening': '저녁 (18-22시)',
+    'night': '밤 (22시 이후)'};
   
   final Map<String, String> _meetingTypes = {
-    'coffee', '카페에서 차 한잔',
-    'meal', '식사',
-    'activity', '액티비티 (볼링, 영화 등)',
-    'walk', '산책',
-    'online', '온라인 만남'};
+    'coffee': '카페에서 차 한잔',
+    'meal': '식사',
+    'activity': '액티비티 (볼링, 영화 등)',
+    'walk': '산책',
+    'online': '온라인 만남'};
   
   final Map<String, String> _introducers = {
-    'friend', '친구',
-    'family', '가족',
-    'colleague', '직장 동료',
-    'app', '데이팅 앱',
-    'matchmaker', '결혼정보회사',
-    'other', '기타'};
+    'friend': '친구',
+    'family': '가족',
+    'colleague': '직장 동료',
+    'app': '데이팅 앱',
+    'matchmaker': '결혼정보회사',
+    'other': '기타'};
   
   final List<String> _qualities = [
     '외모',
@@ -74,24 +74,24 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     '종교'];
   
   final Map<String, String> _agePreferences = {
-    'younger', '연하 선호',
-    'same', '동갑 선호',
-    'older', '연상 선호',
-    'flexible', '나이 상관없음'};
+    'younger': '연하 선호',
+    'same': '동갑 선호',
+    'older': '연상 선호',
+    'flexible': '나이 상관없음'};
   
   final Map<String, String> _idealDates = {
-    'casual', '편안한 대화 (카페, 산책)',
-    'fun', '재미있는 활동 (놀이공원, 게임)',
-    'cultural', '문화생활 (전시회, 공연)',
-    'nature', '자연 속 데이트',
-    'food', '맛집 탐방'};
+    'casual': '편안한 대화 (카페, 산책)',
+    'fun': '재미있는 활동 (놀이공원, 게임)',
+    'cultural': '문화생활 (전시회, 공연)',
+    'nature': '자연 속 데이트',
+    'food': '맛집 탐방'};
   
   final Map<String, String> _confidenceLevels = {
-    'very_low', '매우 낮음',
-    'low', '낮음',
-    'medium', '보통',
-    'high', '높음',
-    'very_high', '매우 높음'};
+    'very_low': '매우 낮음',
+    'low': '낮음',
+    'medium': '보통',
+    'high': '높음',
+    'very_high': '매우 높음'};
   
   final List<String> _concernOptions = [
     '첫인상',
@@ -165,8 +165,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '기본 정보',
-            style: theme.textTheme.headlineSmall),
+            '기본 정보',),
+            style: theme.textTheme.headlineSmall)),
           const SizedBox(height: 16),
           
           // Name Input
@@ -205,7 +205,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
+                      : theme.colorScheme.onSurface.withOpacity(0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -213,8 +213,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '성별',
-                style: theme.textTheme.bodyLarge),
+                '성별',),
+                style: theme.textTheme.bodyLarge)),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -243,12 +243,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12))),
             items: [
-              'INTJ', 'INTP': 'ENTJ', 'ENTP',
+              'INTJ', 'INTP', 'ENTJ', 'ENTP',
               'INFJ', 'INFP', 'ENFJ', 'ENFP',
               'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
               'ISTP', 'ISFP', 'ESTP', 'ESFP'].map((mbti) => DropdownMenuItem(
               value: mbti,
-              child: Text(mbti)).toList(),
+              child: Text(mbti))).toList(),
             onChanged: (value) => setState(() => _mbti = value))]));
   }
 
@@ -303,8 +303,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '만남 정보',
-                    style: theme.textTheme.headlineSmall)]),
+                    '만남 정보',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Meeting Date
@@ -327,7 +327,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
                     suffixIcon: const Icon(Icons.calendar_today)),
                   child: Text(
                     _meetingDate != null
@@ -337,8 +337,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               
               // Meeting Time
               Text(
-                '만남 시간대',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '만남 시간대',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -353,23 +353,23 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         _meetingTime = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20))),
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                          : theme.colorScheme.surface.withValues(alpha: 0.5),
+                          ? theme.colorScheme.primary.withOpacity(0.2)
+                          : theme.colorScheme.surface.withOpacity(0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                            : theme.colorScheme.onSurface.withOpacity(0.3))));
                 }).toList()),
               const SizedBox(height: 16),
               
               // Meeting Type
               Text(
-                '만남 방식',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '만남 방식',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -379,7 +379,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
+                  fillColor: theme.colorScheme.surface.withOpacity(0.5)),
                 items: _meetingTypes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -394,8 +394,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               
               // Introducer
               Text(
-                '소개 경로',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '소개 경로',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -410,16 +410,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         _introducer = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20))),
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                          : theme.colorScheme.surface.withValues(alpha: 0.5),
+                          ? theme.colorScheme.primary.withOpacity(0.2)
+                          : theme.colorScheme.surface.withOpacity(0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                            : theme.colorScheme.onSurface.withOpacity(0.3))));
                 }).toList())])),
         const SizedBox(height: 16),
         
@@ -436,14 +436,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '선호 사항',
-                    style: theme.textTheme.headlineSmall)]),
+                    '선호 사항',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Important Qualities
               Text(
-                '중요하게 생각하는 것 (3개 이상)',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '중요하게 생각하는 것 (3개 이상)',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -462,16 +462,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         }
                       });
                     },
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20))),
                     child: Chip(
                       label: Text(quality),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                          : theme.colorScheme.surface.withValues(alpha: 0.5),
+                          ? theme.colorScheme.primary.withOpacity(0.2)
+                          : theme.colorScheme.surface.withOpacity(0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                            : theme.colorScheme.onSurface.withOpacity(0.3)),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
                           : null,
@@ -481,8 +481,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               
               // Age Preference
               Text(
-                '나이 선호도',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '나이 선호도',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...(_agePreferences.entries.map((entry) {
@@ -496,15 +496,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         _agePreference = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12))),
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
                         horizontal: 16),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12))),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                          ? theme.colorScheme.primary.withOpacity(0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -519,14 +519,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                             }),
                           Text(
                             entry.value,
-                            style: theme.textTheme.bodyLarge)]))));
+                            style: theme.textTheme.bodyLarge)]))));)
               }).toList(),
               const SizedBox(height: 16),
               
               // Ideal First Date
               Text(
-                '이상적인 첫 데이트',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '이상적인 첫 데이트',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -536,7 +536,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
+                  fillColor: theme.colorScheme.surface.withOpacity(0.5)),
                 items: _idealDates.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -562,14 +562,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '자기 평가',
-                    style: theme.textTheme.headlineSmall)]),
+                    '자기 평가',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Confidence Level
               Text(
-                '소개팅 자신감',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '소개팅 자신감',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...(_confidenceLevels.entries.map((entry) {
@@ -584,13 +584,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         _confidence = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12))),
                     child: GlassContainer(
                       padding: const EdgeInsets.all(16),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12))),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                          ? theme.colorScheme.primary.withOpacity(0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -600,27 +600,27 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                             height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: _getConfidenceColor(index).withValues(alpha: 0.2),
+                              color: _getConfidenceColor(index).withOpacity(0.2),
                               border: Border.all(
                                 color: _getConfidenceColor(index),
                                 width: 2)),
                             child: Center(
                               child: Text(
-                                '${(index + 1) * 20}%',
-                                style: theme.textTheme.bodySmall?.copyWith(
+                                '${(index + 1) * 20}%',),
+                                style: theme.textTheme.bodySmall?.copyWith()
                                   fontWeight: FontWeight.bold,
                                   color: _getConfidenceColor(index))))),
                           const SizedBox(width: 16),
                           Text(
                             entry.value,
-                            style: theme.textTheme.bodyLarge)]))));
+                            style: theme.textTheme.bodyLarge)]))));)
               }).toList(),
               const SizedBox(height: 16),
               
               // Concerns
               Text(
-                '걱정되는 부분 (선택)',
-                style: theme.textTheme.bodyLarge?.copyWith(
+                '걱정되는 부분 (선택)',),
+                style: theme.textTheme.bodyLarge?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -639,16 +639,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         }
                       });
                     },
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20))),
                     child: Chip(
                       label: Text(concern),
                       backgroundColor: isSelected
-                          ? Colors.orange.withValues(alpha: 0.2)
-                          : theme.colorScheme.surface.withValues(alpha: 0.5),
+                          ? Colors.orange.withOpacity(0.2)
+                          : theme.colorScheme.surface.withOpacity(0.5),
                       side: BorderSide(
                         color: isSelected
                             ? Colors.orange
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                            : theme.colorScheme.onSurface.withOpacity(0.3))));
                 }).toList()),
               const SizedBox(height: 16),
               
@@ -681,7 +681,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge)),
+            style: theme.textTheme.bodyLarge))),
         Switch(
           value: value,
           onChanged: onChanged)]);
@@ -718,8 +718,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '소개팅 성공 예측',
-                  style: theme.textTheme.headlineSmall)]),
+                  '소개팅 성공 예측',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 24),
             Stack(
               alignment: Alignment.center,
@@ -730,31 +730,31 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   child: CircularProgressIndicator(
                     value: successRate / 100,
                     strokeWidth: 20,
-                    backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                    backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getSuccessColor(successRate)))),
                 Column(
                   children: [
                     Text(
-                      '$successRate%',
-                      style: theme.textTheme.displayLarge?.copyWith(
+                      '$successRate%',),
+                      style: theme.textTheme.displayLarge?.copyWith()
                         fontWeight: FontWeight.bold,
                         color: _getSuccessColor(successRate))),
                     Text(
                       _getSuccessMessage(successRate),
-                      style: theme.textTheme.bodyLarge)])]),
+                      style: theme.textTheme.bodyLarge)])])),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withValues(alpha: 0.1),
-                    theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+                    theme.colorScheme.primary.withOpacity(0.1),
+                    theme.colorScheme.secondary.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12)),
               child: Text(
                 _getSuccessAdvice(successRate),
-                style: theme.textTheme.bodyLarge,
+                style: theme.textTheme.bodyLarge),
                 textAlign: TextAlign.center))])));
   }
 
@@ -843,8 +843,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '첫인상 가이드',
-                  style: theme.textTheme.headlineSmall)]),
+                  '첫인상 가이드',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...impressionTips.map((tip) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -854,7 +854,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8)),
                     child: Icon(
                       tip['icon'],
@@ -867,29 +867,29 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       children: [
                         Text(
                           tip['tip'],
-                          style: theme.textTheme.bodyLarge?.copyWith(
+                          style: theme.textTheme.bodyLarge?.copyWith()
                             fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
                           tip['detail'],
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))])).toList()])));
+                          style: theme.textTheme.bodyMedium?.copyWith()
+                            color: theme.colorScheme.onSurface.withOpacity(0.7)))]))])).toList()])));
   }
 
   Widget _buildConversationTopics() {
     final theme = Theme.of(context);
     
     final topics = [
-      {'category', '안전한 주제':  , 'items': \['['취미', '여행', '음식', '영화/드라마'},
-      {'category', '관심사 파악', 'items': ['주말 보내는 법', '좋아하는 활동', '버킷리스트'},
-      {'category', '가치관 확인', 'items': ['일과 삶의 균형', '미래 계획', '관계에서 중요한 것'}];
+      {'\1': '\2',  , 'items': \['['취미', '여행', '음식', '영화/드라마'},
+      {'\1': '\2', '\3': ['주말 보내는 법', '좋아하는 활동', '버킷리스트'},
+      {'\1': '\2', '\3': ['일과 삶의 균형', '미래 계획', '관계에서 중요한 것'}];
     
     final avoidTopics = ['전 애인', '정치/종교', '연봉', '결혼 압박', '부정적인 이야기'];
     
     return Padding(
-      padding: const EdgeInsets.all(16,
+      padding: const EdgeInsets.all(16)
       child: GlassCard(
-        padding: const EdgeInsets.all(20,
+        padding: const EdgeInsets.all(20)
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -900,8 +900,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '대화 주제 추천',
-                  style: theme.textTheme.headlineSmall)]),
+                  '대화 주제 추천',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...topics.map((topic) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -911,11 +911,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16)),
                     child: Text(
                       topic['category'],
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith()
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary))),
                   const SizedBox(height: 8),
@@ -925,18 +925,18 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     children: (topic['items'] as List).map((item) => Chip(
                       label: Text(
                         item as String,
-                        style: theme.textTheme.bodySmall),
-                      backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
+                        style: theme.textTheme.bodySmall)),
+                      backgroundColor: theme.colorScheme.surface.withOpacity(0.8),
                       side: BorderSide(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2))).toList())])).toList(),
+                        color: theme.colorScheme.onSurface.withOpacity(0.2))).toList())])).toList(),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8))),
                 border: Border.all(
-                  color: Colors.red.withValues(alpha: 0.3))),
+                  color: Colors.red.withOpacity(0.3))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -948,8 +948,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         color: Colors.red),
                       const SizedBox(width: 8),
                       Text(
-                        '피해야 할 주제',
-                        style: theme.textTheme.bodyMedium?.copyWith(
+                        '피해야 할 주제',),
+                        style: theme.textTheme.bodyMedium?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: Colors.red))]),
                   const SizedBox(height: 8),
@@ -957,8 +957,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     spacing: 8,
                     runSpacing: 8,
                     children: avoidTopics.map((topic) => Text(
-                      '• $topic',
-                      style: theme.textTheme.bodySmall).toList())]))])));
+                      '• $topic',),
+                      style: theme.textTheme.bodySmall).toList())]))])));)
   }
 
   Widget _buildOutfitRecommendation() {
@@ -981,28 +981,28 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '스타일링 추천',
-                  style: theme.textTheme.headlineSmall)]),
+                  '스타일링 추천',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withValues(alpha: 0.05),
-                    theme.colorScheme.secondary.withValues(alpha: 0.05)]),
+                    theme.colorScheme.primary.withOpacity(0.05),
+                    theme.colorScheme.secondary.withOpacity(0.05)]),
                 borderRadius: BorderRadius.circular(12)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '추천 스타일',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    '추천 스타일',),
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
                     outfitStyle,
-                    style: theme.textTheme.bodyMedium)])),
+                    style: theme.textTheme.bodyMedium)]))),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -1012,8 +1012,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '행운의 색상',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  '행운의 색상',),
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 8),
             Row(
@@ -1024,13 +1024,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   height: 50,
                   decoration: BoxDecoration(
                     color: color['color'],
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8))),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2))),
+                      color: theme.colorScheme.onSurface.withOpacity(0.2))),
                   child: Center(
                     child: Text(
                       color['name'],
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodySmall?.copyWith()
                         color: (color['color'] as Color).computeLuminance() > 0.5
                             ? Colors.black
                             : Colors.white,
@@ -1052,8 +1052,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   List<Map<String, dynamic>> _getLuckyColors() {
     return [
-      {'name', '네이비': 'color'},
-      {'name', '화이트': 'color'},
+      {'\1': '\2', 'color'},
+      {'\1': '\2', 'color'},
       {'name', '핑크', 'color'}];
   }
 
@@ -1076,8 +1076,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '장소 & 분위기',
-                  style: theme.textTheme.headlineSmall)]),
+                  '장소 & 분위기',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...locationAdvice.map((advice) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -1095,12 +1095,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Expanded(
                     child: Text(
                       advice,
-                      style: theme.textTheme.bodyMedium))])).toList(),
+                      style: theme.textTheme.bodyMedium))])).toList()),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8)),
               child: Row(
                 children: [
@@ -1111,8 +1111,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '조용하고 대화하기 좋은 장소를 선택하세요. 너무 시끄럽거나 붐비는 곳은 피하는 것이 좋습니다.',
-                      style: theme.textTheme.bodyMedium))]))])));
+                      '조용하고 대화하기 좋은 장소를 선택하세요. 너무 시끄럽거나 붐비는 곳은 피하는 것이 좋습니다.',),
+                      style: theme.textTheme.bodyMedium))]))])));)
   }
 
   List<String> _getLocationAdvice() {
@@ -1171,15 +1171,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 const SizedBox(width: 8),
                 Text(
                   'DO\'s & DON\'Ts',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.green.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(
-                  color: Colors.green.withValues(alpha: 0.3))),
+                  color: Colors.green.withOpacity(0.3))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1192,7 +1192,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       const SizedBox(width: 8),
                       Text(
                         'DO\'s - 꼭 하세요',
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: Colors.green))]),
                   const SizedBox(height: 8),
@@ -1205,15 +1205,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Expanded(
                           child: Text(
                             item,
-                            style: theme.textTheme.bodyMedium))])).toList()])),
+                            style: theme.textTheme.bodyMedium))])).toList()]))),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.red.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(
-                  color: Colors.red.withValues(alpha: 0.3))),
+                  color: Colors.red.withOpacity(0.3))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1226,7 +1226,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       const SizedBox(width: 8),
                       Text(
                         'DON\'Ts - 피하세요',
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: Colors.red))]),
                   const SizedBox(height: 8),
@@ -1239,15 +1239,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Expanded(
                           child: Text(
                             item,
-                            style: theme.textTheme.bodyMedium))])).toList()])),
+                            style: theme.textTheme.bodyMedium))])).toList()]))),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.withValues(alpha: 0.1),
-                    Colors.orange.withValues(alpha: 0.1)]),
+                    Colors.amber.withOpacity(0.1),
+                    Colors.orange.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: [
@@ -1257,8 +1257,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      '가장 중요한 것은 진실된 자신의 모습을 보여주는 것입니다. 행운을 빕니다!',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      '가장 중요한 것은 진실된 자신의 모습을 보여주는 것입니다. 행운을 빕니다!',),
+                      style: theme.textTheme.bodyLarge?.copyWith()
                         fontWeight: FontWeight.w500)))]))])));
   }
 }

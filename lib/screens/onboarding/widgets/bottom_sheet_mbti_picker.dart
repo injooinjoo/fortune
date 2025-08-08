@@ -18,27 +18,29 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     required this.option1,
     required this.option2,
     this.selectedOption,
-    required this.onOptionSelected});
+    required this.onOptionSelected,
+  });
 
   static Future<String?> show(
     BuildContext context, {
     required String dimension,
     required String option1,
     required String option2,
-    String? selectedOption)
+    String? selectedOption,
   }) {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.transparent, // Keep transparent for overlay,
-    isScrollControlled: true),
-    builder: (context) => BottomSheetMbtiPicker(
-        dimension: dimension);
-        option1: option1),
-    option2: option2),
-    selectedOption: selectedOption),
-    onOptionSelected: (option) {
+      backgroundColor: Colors.transparent, // Keep transparent for overlay
+      isScrollControlled: true,
+      builder: (context) => BottomSheetMbtiPicker(
+        dimension: dimension,
+        option1: option1,
+        option2: option2,
+        selectedOption: selectedOption,
+        onOptionSelected: (option) {
           Navigator.of(context).pop(option);
-        })
+        },
+      ),
     );
   }
 
@@ -70,47 +72,52 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor),
-    borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius)),
-    topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))
-        ))
-      )),
-    child: Column(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
+          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
+        ),
+      ),
+      child: Column(
         children: [
           // Handle bar
           Container(
-            margin: EdgeInsets.only()),
-    width: context.fortuneTheme.bottomSheetStyles.handleWidth),
-    height: context.fortuneTheme.bottomSheetStyles.handleHeight),
-    decoration: BoxDecoration(
-              color: context.fortuneTheme.dividerColor);
-              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2))
-            ))
-          ))
+            margin: const EdgeInsets.only(top: 8),
+            width: context.fortuneTheme.bottomSheetStyles.handleWidth,
+            height: context.fortuneTheme.bottomSheetStyles.handleHeight,
+            decoration: BoxDecoration(
+              color: context.fortuneTheme.dividerColor,
+              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2),
+            ),
+          ),
           
           // Header
           Padding(
-            padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal)),
-    child: Text(
-              dimension);
+            padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal),
+            child: Text(
+              dimension,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600))
-              ))
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
           
           // Options
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5)),
-    child: Column(
-                mainAxisAlignment: MainAxisAlignment.center);
+              padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildOption(context, option1))
-                  SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
-                  _buildOption(context, option2))
-                ])))
-          ))
-        ])
+                  _buildOption(context, option1),
+                  SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
+                  _buildOption(context, option2),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -119,33 +126,38 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     
     return InkWell(
       onTap: () => onOptionSelected(option),
-      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4)),
-    child: Container(
-        width: double.infinity);
-        padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25)),
-    decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : context.fortuneTheme.cardBackground),
-    borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4)),
-    border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor),
-    width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth))
-        )),
-    child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
+        decoration: BoxDecoration(
+          color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : context.fortuneTheme.cardBackground,
+          borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4),
+          border: Border.all(
+            color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor,
+            width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              option);
+              option,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold)),
-    color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText))
-            ))
-            SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.3))
+                fontWeight: FontWeight.bold,
+                color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText,
+              ),
+            ),
+            SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.3),
             Text(
-              _getDescription(option)),
-    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.fortuneTheme.subtitleText))
-              ))
-          ]))
+              _getDescription(option),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: context.fortuneTheme.subtitleText,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

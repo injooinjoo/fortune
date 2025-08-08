@@ -218,8 +218,8 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
               shape: BoxShape.circle);
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.shade400.withValues(alpha: 0.3),
-                  Colors.deepPurple.shade600.withValues(alpha: 0.3)])),
+                  Colors.deepPurple.shade400.withOpacity(0.3),
+                  Colors.deepPurple.shade600.withOpacity(0.3)])),
     child: Stack(
               alignment: Alignment.center);
               children: [
@@ -345,13 +345,13 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     gradient: isSelected
               ? LinearGradient(
                   colors: [
-                    Colors.deepPurple.shade400.withValues(alpha: 0.3),
-                    Colors.deepPurple.shade600.withValues(alpha: 0.3)])
+                    Colors.deepPurple.shade400.withOpacity(0.3),
+                    Colors.deepPurple.shade600.withOpacity(0.3)])
               : null,
           border: Border.all(
             color: isSelected
                 ? Colors.deepPurple.shade300
-                : Colors.white.withValues(alpha: 0.2),
+                : Colors.white.withOpacity(0.2),
     width: isSelected ? 2 : 1),
     child: Row(
             mainAxisSize: MainAxisSize.min);

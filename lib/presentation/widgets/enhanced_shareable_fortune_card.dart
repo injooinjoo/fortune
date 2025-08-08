@@ -51,7 +51,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
           Positioned.fill(
             child: CustomPaint(
               painter: _PatternPainter(
-                color: Colors.white.withValues(alpha: 0.1)))),
+                color: Colors.white.withOpacity(0.1)))),
           // Content
           Padding(
             padding: AppSpacing.paddingAll24,
@@ -130,7 +130,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
         borderRadius: AppDimensions.borderRadiusLarge,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
             offset: const Offset(0, 10))]),
       child: Column(
@@ -141,7 +141,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             width: 60,
             height: AppSpacing.spacing15,
             decoration: BoxDecoration(
-              color: _getColorForFortuneType(fortuneType).withValues(alpha: 0.1),
+              color: _getColorForFortuneType(fortuneType).withOpacity(0.1),
               shape: BoxShape.circle),
             child: Icon(
               _getIconForFortuneType(fortuneType),
@@ -210,7 +210,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.3),
+                      Colors.white.withOpacity(0.3),
                       Colors.transparent])))),
             // Content
             SafeArea(
@@ -223,11 +223,11 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                     Container(
                       padding: AppSpacing.paddingAll24,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.95),
+                        color: Colors.white.withOpacity(0.95),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 30,
                             offset: const Offset(0, 15))]),
                       child: Column(
@@ -268,7 +268,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing5,
                         vertical: AppSpacing.spacing3),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07)),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -290,7 +290,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
           width: 50,
           height: AppSpacing.spacing12 * 1.04,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withOpacity(0.2),
             borderRadius: AppDimensions.borderRadiusMedium),
           child: Icon(
             _getIconForFortuneType(fortuneType),
@@ -304,7 +304,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               Text(
                 FortuneTypeNames.getName(fortuneType),
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: Colors.white.withOpacity(0.9),
                   fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                   fontWeight: FontWeight.w500)),
               SizedBox(height: AppSpacing.spacing1),
@@ -317,11 +317,11 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Colors.white.withOpacity(0.95),
         borderRadius: AppDimensions.borderRadiusLarge,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 5))]),
       child: Column(
@@ -344,7 +344,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: _getColorForFortuneType(fortuneType).withValues(alpha: 0.1),
+        color: _getColorForFortuneType(fortuneType).withOpacity(0.1),
         borderRadius: AppDimensions.borderRadiusMedium),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -371,7 +371,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               width: 50,
               height: AppSpacing.spacing12 * 1.04,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(AppSpacing.spacing2 * 1.25)),
               child: const Icon(
                 Icons.qr_code_2,
@@ -387,7 +387,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                 Text(
                   'AI가 알려주는 나만의 운세',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: Colors.white.withOpacity(0.8),
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]),
         if (date != null)
           Text(
@@ -395,7 +395,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
     2, '0')}.${date!.day.toString().padLeft(
     2, '0')}',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))]);
   }
 
@@ -431,9 +431,9 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        baseColor.withValues(alpha: 0.9),
+        baseColor.withOpacity(0.9),
         baseColor,
-        baseColor.withValues(alpha: 0.8)]);
+        baseColor.withOpacity(0.8)]);
   }
 
   LinearGradient _getInstagramGradient() {

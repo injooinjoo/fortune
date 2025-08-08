@@ -75,11 +75,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
       child: Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.8),
+          color: theme.colorScheme.surface.withOpacity(0.8),
           borderRadius: AppDimensions.borderRadiusLarge,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4)]),
         child: Column(
@@ -89,15 +89,15 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '치유 진행도',
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  '치유 진행도',),
+                  style: theme.textTheme.titleLarge?.copyWith()
                     fontWeight: FontWeight.bold)),
                 AnimatedBuilder(
                   animation: _progressAnimation,
                   builder: (context, child) {
                     return Text(
-                      '${(_progressAnimation.value * 100).toInt()}%',
-                      style: theme.textTheme.headlineSmall?.copyWith(
+                      '${(_progressAnimation.value * 100).toInt()}%',),
+                      style: theme.textTheme.headlineSmall?.copyWith()
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold);
 })]),
@@ -110,7 +110,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 Container(
                   height: AppSpacing.spacing2,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                    color: theme.colorScheme.onSurface.withOpacity(0.1),
                     borderRadius: AppDimensions.borderRadiusSmall),
                 
                 // Animated progress
@@ -152,7 +152,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                         border: Border.all(
                           color: isCompleted || isCurrent
                               ? (stage['color'],
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                              : theme.colorScheme.onSurface.withOpacity(0.3),
                           width: 3),
                         boxShadow: isCurrent
                             ? [
@@ -167,7 +167,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           size: 20,
                           color: isCompleted || isCurrent
                               ? Colors.white
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.5)),;
+                              : theme.colorScheme.onSurface.withOpacity(0.5)),;
 }).toList()]),
             
             const SizedBox(height: AppSpacing.spacing8),
@@ -185,10 +185,10 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                   child: Text(
                     stage['name'],
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodySmall?.copyWith()
                       color: isCompleted || isCurrent
                           ? (stage['color'],
-                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          : theme.colorScheme.onSurface.withOpacity(0.5),
                       fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal));
 }).toList(),
             
@@ -201,7 +201,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 key: ValueKey(widget.currentStage),
                 padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: AppDimensions.borderRadiusSmall),
                 child: Row(
                   children: [
@@ -213,7 +213,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                     Expanded(
                       child: Text(
                         _getStageDescription(widget.currentStage),
-                        style: theme.textTheme.bodySmall)]))]),;
+                        style: theme.textTheme.bodySmall)]))])),;
 }
 
   String _getStageDescription(int stage) {

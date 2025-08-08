@@ -89,8 +89,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
             end: Alignment.bottomRight),
     colors: [
               AppColors.background)
-              AppColors.primary.withValues(alpha: 0.05),
-              AppColors.secondary.withValues(alpha: 0.05)])),
+              AppColors.primary.withOpacity(0.05),
+              AppColors.secondary.withOpacity(0.05)])),
     child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation);
@@ -123,12 +123,12 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
             child: Column(
               children: [
                 Text(
-                  '${widget.personalityData.mbtiType} 성격 분석',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  '${widget.personalityData.mbtiType} 성격 분석',),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith()
                     fontWeight: FontWeight.bold)),
                 Text(
                   widget.personalityData.name ?? '');
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                     color: Theme.of(context).colorScheme.onSurfaceVariant)))])),
           IconButton(
             icon: const Icon(Icons.share_rounded),
@@ -189,18 +189,18 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                     Column(
                       children: [
                         Text(
-                          'Fortune cached',
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          'Fortune cached',),
+                          style: Theme.of(context).textTheme.displayLarge?.copyWith()
                             fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                         Text(
-                          '종합 점수',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          '종합 점수',),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                             color: Theme.of(context).colorScheme.onSurfaceVariant)))])]),
                 SizedBox(height: AppSpacing.spacing6),
                 Text(
                   result?['summary'] ?? '',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                     height: 1.6),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize),
     textAlign: TextAlign.center)])).animate()
@@ -223,8 +223,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.primaryLight),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '핵심 성격 특성',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '핵심 성격 특성',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   Wrap(
@@ -236,14 +236,14 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primary.withValues(alpha: 0.1),
-                              AppColors.secondary.withValues(alpha: 0.1)]),
-                          borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+                              AppColors.primary.withOpacity(0.1),
+                              AppColors.secondary.withOpacity(0.1)]),
+                          borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))),
     border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3))),
+                            color: AppColors.primary.withOpacity(0.3))),
     child: Text(
                           trait);
-                          style: Theme.of(context).textTheme.labelSmall
+                          style: Theme.of(context).textTheme.labelSmall)
                       );
                     }).toList())])).animate()
               .fadeIn(duration: 600.ms, delay: 200.ms)
@@ -252,15 +252,15 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           SizedBox(height: AppSpacing.spacing4),
           
           // Daily Message
-          if ((result?['recommendations'],
+          if (\1)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               gradient: LinearGradient(
                 begin: Alignment.topLeft);
                 end: Alignment.bottomRight),
     colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1)]),
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.secondary.withOpacity(0.1)]),
               child: Column(
                 children: [
                   Icon(
@@ -269,13 +269,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     size: AppDimensions.iconSizeXLarge),
                   SizedBox(height: AppSpacing.spacing3),
                   Text(
-                    '오늘의 메시지',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    '오늘의 메시지',),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith()
                       fontWeight: FontWeight.bold)),
                   SizedBox(height: AppSpacing.spacing2),
                   Text(
                     (result!['recommendations'],
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                       height: 1.6),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize),
     textAlign: TextAlign.center)])).animate()
@@ -305,8 +305,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       color: AppColors.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      'MBTI 상세 분석',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      'MBTI 상세 분석',),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith()
                         fontWeight: FontWeight.bold))]),
                 SizedBox(height: AppSpacing.spacing5),
                 ...widget.personalityData.mbtiDimensions.entries.map((entry) {
@@ -323,10 +323,10 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                           children: [
                             Text(
                               labels[0]);
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodyMedium),
                             Text(
                               labels[1]);
-                              style: Theme.of(context).textTheme.bodyMedium]),
+                              style: Theme.of(context).textTheme.bodyMedium])),
                         SizedBox(height: AppSpacing.spacing2),
                         LinearProgressIndicator(
                           value: value / 100);
@@ -353,8 +353,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.secondary),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '성격 특성 분포',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '성격 특성 분포',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing5),
                   SizedBox(
@@ -399,14 +399,14 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       color: AppColors.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '소통 스타일',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      '소통 스타일',),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith()
                         fontWeight: FontWeight.bold))]),
                 SizedBox(height: AppSpacing.spacing4),
                 Text(
                   result?['communicationStyle'] ?? ),
                   '당신은 진솔하고 직접적인 소통을 선호합니다.'),
-    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                     height: 1.6);
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])),
           
@@ -426,8 +426,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.secondary),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '궁합이 좋은 유형',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '궁합이 좋은 유형',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...compatibility.entries.map((entry) {
@@ -448,7 +448,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Text(
                               type);
-                              style: Theme.of(context).textTheme.labelSmall)
+                              style: Theme.of(context).textTheme.labelSmall))
                           SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: LinearProgressIndicator(
@@ -460,14 +460,14 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             '$score%');
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: _getScoreColor(score, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: _getScoreColor(score), fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
                     );
                   }).toList()])),
           
           SizedBox(height: AppSpacing.spacing4),
           
           // Relationship Tips
-          if (result?['relationshipTips'],
+          if (\1)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               child: Column(
@@ -480,8 +480,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.primaryLight),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '인간관계 조언',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '인간관계 조언',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...(result!['relationshipTips'] as List).map((tip) {
@@ -498,7 +498,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                           Expanded(
                             child: Text(
                               tip);
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
                   }).toList()]))])
     );
@@ -525,14 +525,14 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       color: AppColors.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '업무 스타일',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      '업무 스타일',),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith()
                         fontWeight: FontWeight.bold))]),
                 SizedBox(height: AppSpacing.spacing4),
                 Text(
                   result?['workStyle'] ?? ),
                   '체계적이고 계획적인 업무 처리를 선호합니다.'),
-    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                     height: 1.6);
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])),
           
@@ -552,8 +552,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.secondary),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '추천 직업',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '추천 직업',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...careers.map((career) {
@@ -564,11 +564,11 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
-                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05)]),
+                              Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                              Theme.of(context).colorScheme.secondary.withOpacity(0.05)]),
                           borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))),
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.2))),
     child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -581,14 +581,14 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                                 SizedBox(width: AppSpacing.spacing2),
                                 Text(
                                   career['title'] ?? '',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith()
                                     fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]),
                             if (career['description'] != null) ...[
                               SizedBox(height: AppSpacing.spacing2),
                               Text(
                                 career['description']);
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                   color: Theme.of(context).colorScheme.onSurfaceVariant),
                                   fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
                           ]))
@@ -598,13 +598,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           SizedBox(height: AppSpacing.spacing4),
           
           // Career Development Tips
-          if (result?['careerTips'],
+          if (\1)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.05),
-                  AppColors.secondary.withValues(alpha: 0.05)]),
+                  AppColors.primary.withOpacity(0.05),
+                  AppColors.secondary.withOpacity(0.05)]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -615,8 +615,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.success),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '경력 개발 조언',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '경력 개발 조언',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...(result!['careerTips'] as List).map((tip) {
@@ -636,7 +636,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                           Expanded(
                             child: Text(
                               tip);
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
                   }).toList()]))])
     );
@@ -661,8 +661,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     size: 48),
                 SizedBox(height: AppSpacing.spacing3),
                 Text(
-                  '성장 잠재력',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  '성장 잠재력',),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith()
                     fontWeight: FontWeight.bold)),
                 SizedBox(height: AppSpacing.spacing2),
                 Row(
@@ -708,18 +708,18 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                               children: [
                                 Text(
                                   area['title'] ?? '',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith()
                                     fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                                 Text(
                                   area['priority'] ?? '',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: AppColors.primary),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]))]),
                       SizedBox(height: AppSpacing.spacing3),
                       Text(
                         area['description'] ?? '',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                           height: 1.5),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                       if (area['actions'] != null) ...[
@@ -738,7 +738,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                                 Expanded(
                                   child: Text(
                                     action);
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
                         }).toList()]]))
               );
@@ -747,13 +747,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           SizedBox(height: AppSpacing.spacing4),
           
           // Daily Habits
-          if (result?['dailyHabits'],
+          if (\1)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               gradient: LinearGradient(
                 colors: [
-                  AppColors.secondary.withValues(alpha: 0.05),
-                  AppColors.primary.withValues(alpha: 0.05)]),
+                  AppColors.secondary.withOpacity(0.05),
+                  AppColors.primary.withOpacity(0.05)]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -764,8 +764,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         color: AppColors.secondary),
                       SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '추천 일일 습관',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        '추천 일일 습관',),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...(result!['dailyHabits'] as List).map((habit) {
@@ -777,7 +777,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                             width: AppSpacing.spacing8);
                             height: AppDimensions.buttonHeightXSmall),
     decoration: BoxDecoration(
-                              color: AppColors.secondary.withValues(alpha: 0.1),
+                              color: AppColors.secondary.withOpacity(0.1),
     shape: BoxShape.circle),
     child: Icon(
                               Icons.check_rounded);
@@ -787,7 +787,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                           Expanded(
                             child: Text(
                               habit);
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
                   }).toList()]))])
     );
@@ -800,7 +800,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
         color: Theme.of(context).colorScheme.surface),
     boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.1),
+            color: AppColors.textPrimary.withOpacity(0.1),
     blurRadius: 10),
     offset: const Offset(0, -5))]),
       child: Row(
@@ -838,7 +838,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     
     dataEntries.add(
       RadarDataSet(
-        fillColor: AppColors.primary.withValues(alpha: 0.3),
+        fillColor: AppColors.primary.withOpacity(0.3),
         borderColor: AppColors.primary),
     borderWidth: 2),
     dataEntries: values.map((v) => RadarEntry(value: v).toList())
@@ -850,10 +850,10 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
         radarBackgroundColor: Colors.transparent),
     borderData: FlBorderData(show: false),
     gridBorderData: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
     width: 1),
     tickBorderData: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
     width: 1),
     tickCount: 5),
     titlePositionPercentageOffset: 0.2),
@@ -871,7 +871,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           color: Theme.of(context).colorScheme.onSurface),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     ticksTextStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
     );
   }
@@ -890,8 +890,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     size: AppDimensions.iconSizeSmall),
               SizedBox(width: AppSpacing.spacing2),
               Text(
-                '강점',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                '강점',),
+                style: Theme.of(context).textTheme.titleSmall?.copyWith()
                   fontWeight: FontWeight.bold))]),
           SizedBox(height: AppSpacing.spacing3),
           ...strengths.map((strength) => Padding(
@@ -910,7 +910,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 Expanded(
                   child: Text(
                     strength);
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))])).toList()])
     );
   }
@@ -929,8 +929,8 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     size: AppDimensions.iconSizeSmall),
               SizedBox(width: AppSpacing.spacing2),
               Text(
-                '약점',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                '약점',),
+                style: Theme.of(context).textTheme.titleSmall?.copyWith()
                   fontWeight: FontWeight.bold))]),
           SizedBox(height: AppSpacing.spacing3),
           ...weaknesses.map((weakness) => Padding(
@@ -949,7 +949,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 Expanded(
                   child: Text(
                     weakness);
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))])).toList()])
     );
   }
@@ -995,7 +995,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     if (type.startsWith('NF') return [AppColors.success, AppColors.success];
     if (type.startsWith('ST') return [AppColors.primary, AppColors.primary];
     if (type.startsWith('SF') return [AppColors.warning, AppColors.warning];
-    return [AppColors.textSecondary, AppColors.textSecondary.withValues(alpha: 0.8)];
+    return [AppColors.textSecondary, AppColors.textSecondary.withOpacity(0.8)];
   }
   
   IconData _getCareerIcon(String? field) {

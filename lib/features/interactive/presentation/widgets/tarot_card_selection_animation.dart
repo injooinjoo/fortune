@@ -79,7 +79,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
       begin: 1.0,
       end: 1.3).animate(CurvedAnimation(
       parent: _pickController,
-      curve: Curves.easeOut);
+      curve: Curves.easeOut));
     
     _glowAnimation = Tween<double>(
       begin: 0.3,
@@ -162,7 +162,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                 alignment: Alignment.center,
                 children: [
                   // Glow effect
-                  if (_flipAnimation.value > 0.5);
+                  if (_flipAnimation.value > 0.5)
                     Container(
                       width: widget.cardWidth * 1.3,
                       height: widget.cardHeight * 1.3,
@@ -176,14 +176,14 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                   
                   // Card
                   GestureDetector(
-                    onTap: () {}, // Prevent interaction during animation,
-    child: _buildCard())]));
+                    onTap: () {}, // Prevent interaction during animation
+                    child: _buildCard())]));
           })]);
   }
 
   List<Widget> _buildOtherCards() {
     return List.generate(widget.totalCards, (index) {
-      if (index == widget.selectedIndex) return const SizedBox.shrink();
+      if (index == widget.selectedIndex) return const SizedBox.shrink()
       
       final offset = (index - widget.selectedIndex) * 30.0;
       
@@ -230,8 +230,8 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
         child: Stack(
           children: [
             // Card content
-            if (!_showFront); 
-              _buildCardBack();
+            if (!_showFront)
+              _buildCardBack()
             else
               _buildCardFront(),
             
@@ -303,9 +303,7 @@ class AnimatedMandalaPainter extends CustomPainter {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 2.0;
+      ..strokeWidth = 2.0;
 
     final center = Offset(size.width / 2, size.height / 2);
     final maxRadius = size.width * 0.4;

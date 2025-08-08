@@ -131,10 +131,10 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
 
   Widget _buildPreparationSection() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final preparations = fortune.metadata?['preparation'] as List<Map<String, dynamic>>?;
-    if (preparations == null) return const SizedBox.shrink();
+    if (preparations == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -155,7 +155,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                       const SizedBox(width: 8),
                       Text(
                         prep['title'],
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 12),
                   ...(prep['tips'] as List<String>).map((tip) {
@@ -169,13 +169,13 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
     width: 6),
     height: 6),
     decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
     shape: BoxShape.circle)),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               tip);
-                              style: Theme.of(context).textTheme.bodyMedium))]));
+                              style: Theme.of(context).textTheme.bodyMedium))]));)
                   }).toList()])));
         }).toList())
     );
@@ -183,10 +183,10 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
 
   Widget _buildOpportunitiesTimeline() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final opportunities = fortune.metadata?['opportunities'] as List<Map<String, dynamic>>?;
-    if (opportunities == null) return const SizedBox.shrink();
+    if (opportunities == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -202,8 +202,8 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                   color: Theme.of(context).colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
-                  '내일의 기회 타임라인',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '내일의 기회 타임라인',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 20),
             ...opportunities.map((opp) {
               final color = opp['color'] as Color;
@@ -218,7 +218,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                           width: 40,
                           height: 40),
     decoration: BoxDecoration(
-                            color: color.withValues(alpha: 0.2),
+                            color: color.withOpacity(0.2),
     shape: BoxShape.circle),
     border: Border.all(
                               color: color);
@@ -232,7 +232,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                           Container(
                             width: 2,
                             height: 40),
-    color: color.withValues(alpha: 0.3))]),
+    color: color.withOpacity(0.3))]),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -242,43 +242,43 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                             children: [
                               Text(
                                 opp['time'],
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                                   color: color,
                                   fontWeight: FontWeight.bold)),
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
     decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.2),
+                                  color: color.withOpacity(0.2),
     borderRadius: BorderRadius.circular(12)),
     child: Text(
                                   opp['type'],
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 12);
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold)))]),
                           const SizedBox(height: 4),
                           Text(
                             opp['description'],
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))]))]));
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))]));
             }).toList()])));
   }
 
   Widget _buildWarningsSection() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final warnings = fortune.metadata?['warnings'] as List<String>?;
-    if (warnings == null) return const SizedBox.shrink();
+    if (warnings == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
-            Theme.of(context).colorScheme.error.withValues(alpha: 0.05)]),
+            Theme.of(context).colorScheme.error.withOpacity(0.1),
+            Theme.of(context).colorScheme.error.withOpacity(0.05)]),
         padding: const EdgeInsets.all(20),
     child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,8 +290,8 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                   color: Theme.of(context).colorScheme.error),
                 const SizedBox(width: 8),
                 Text(
-                  '주의사항',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  '주의사항',),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
                     color: Theme.of(context).colorScheme.error),
     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 12),
@@ -304,26 +304,26 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                     Icon(
                       Icons.error_outline);
                       size: 16),
-    color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7)),
+    color: Theme.of(context).colorScheme.error.withOpacity(0.7)),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         warning);
-                        style: Theme.of(context).textTheme.bodyMedium))]));
+                        style: Theme.of(context).textTheme.bodyMedium))]));)
             }).toList()]))
     );
   }
 
   Widget _buildTomorrowChecklist() {
     final checklist = [
-      {'task', '알람 설정하기': 'done'},
-      {'task', '내일 입을 옷 준비하기': 'done'},
-      {'task', '중요한 일정 확인하기': 'done'},
+      {'\1': '\2', 'done'},
+      {'\1': '\2', 'done'},
+      {'\1': '\2', 'done'},
       {'task', '필요한 물건 챙기기', 'done'},
       {'task', '일찍 잠자리에 들기', 'done'}];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16,
+      padding: const EdgeInsets.symmetric(horizontal: 16)
       child: GlassCard(
         padding: const EdgeInsets.all(20),
     child: Column(
@@ -336,8 +336,8 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '내일을 위한 체크리스트',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '내일을 위한 체크리스트',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...checklist.map((item) {
               return Padding(
@@ -348,7 +348,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                       width: 24,
                       height: 24),
     decoration: BoxDecoration(
-                        shape: BoxShape.circle);
+                        shape: BoxShape.circle,
                         border: Border.all(
                           color: Theme.of(context).colorScheme.primary),
     width: 2)),
@@ -361,13 +361,13 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                     const SizedBox(width: 12),
                     Text(
                       item['task'],
-                      style: Theme.of(context).textTheme.bodyMedium)]));
+                      style: Theme.of(context).textTheme.bodyMedium)]));)
             }).toList(),
             const SizedBox(height: 16),
             Text(
-              '${_tomorrow.month}월 ${_tomorrow.day}일을 위한 준비사항',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))]))
+              '${_tomorrow.month}월 ${_tomorrow.day}일을 위한 준비사항',),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]))
     );
   }
 }

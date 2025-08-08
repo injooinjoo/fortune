@@ -31,7 +31,7 @@ class MbtiFortunePage extends BaseFortunePage {
   ConsumerState<MbtiFortunePage> createState() => _MbtiFortunePageState();
 }
 
-class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with TickerProviderStateMixin {
+class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   String? _selectedMbti;
   final List<String> _selectedCategories = [];
   Map<String, double>? _cognitiveFunctions;
@@ -41,7 +41,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
 
   // MBTI Types
   static const List<String> _mbtiTypes = [
-    'INTJ', 'INTP': 'ENTJ', 'ENTP',
+    'INTJ', 'INTP', 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
     'ISTP', 'ISFP', 'ESTP', 'ESFP'];
@@ -57,7 +57,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
 
   // MBTI Colors
   static const Map<String, List<Color>> _mbtiColors = {
-    'INTJ': [Color(0xFF7C3AED, Color(0xFF5B21B6)],
+    'INTJ': [Color(0xFF7C3AED), Color(0xFF5B21B6)],
     'INTP': [Color(0xFF3B82F6), Color(0xFF1E40AF)],
     'ENTJ': [Color(0xFFDC2626), Color(0xFF991B1B)],
     'ENTP': [Color(0xFFF59E0B), Color(0xFFD97706)],
@@ -72,7 +72,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
     'ISTP': [Color(0xFF84CC16), Color(0xFF65A30D)],
     'ISFP': [Color(0xFFA78BFA), Color(0xFF7C3AED)],
     'ESTP': [Color(0xFFF97316), Color(0xFFEA580C)],
-    'ESFP': null};
+    'ESFP': [Color(0xFFFFC107), Color(0xFFFF9800)]};
 
   @override
   void initState() {
@@ -226,19 +226,19 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   gradient: isSelected
-                      ? LinearGradient(colors: colors,
+                      ? LinearGradient(colors: colors)
                       : null,
                   color: isSelected ? null : theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? colors.first
-                        : theme.colorScheme.outline.withValues(alpha: 0.3),
+                        : theme.colorScheme.outline.withOpacity(0.3),
                     width: isSelected ? 2 : 1),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: colors.first.withValues(alpha: 0.3),
+                            color: colors.first.withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2))]
                       : null),
@@ -279,7 +279,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
         Text(
           '여러 개 선택 가능',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+            color: theme.colorScheme.onSurface.withOpacity(0.6))),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8,
@@ -300,12 +300,12 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                 });
                 HapticUtils.selectionClick();
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               checkmarkColor: theme.colorScheme.primary,
               side: BorderSide(
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.outline.withValues(alpha: 0.3)));
+                    : theme.colorScheme.outline.withOpacity(0.3)));
           }).toList())]);
   }
 
@@ -322,7 +322,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
               ? LinearGradient(
                   colors: [
                     theme.colorScheme.primary,
-                    theme.colorScheme.primary.withValues(alpha: 0.8)]),
+                    theme.colorScheme.primary.withOpacity(0.8)])
               : null,
           borderRadius: BorderRadius.circular(16)),
         child: Center(
@@ -331,7 +331,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
             style: theme.textTheme.bodyLarge?.copyWith(
               color: canGenerate
                   ? Colors.white
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  : theme.colorScheme.onSurface.withOpacity(0.5),
               fontWeight: FontWeight.bold)))));
   }
 
@@ -374,7 +374,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                         horizontal: 12,
                         vertical: 6),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8)),
                       child: Text(
                         category,
@@ -385,7 +385,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                     Text(
                       _getMbtiCategoryInsight(_selectedMbti!, category),
                       style: theme.textTheme.bodyMedium)]));
-            }).toList()])));
+            }).toList())])));
   }
 
   Widget _buildMbtiStrengthsWeaknesses() {
@@ -406,7 +406,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: 0.2),
+                          color: Colors.green.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8)),
                         child: Icon(
                           Icons.thumb_up_rounded,
@@ -445,7 +445,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.2),
+                          color: Colors.orange.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8)),
                         child: Icon(
                           Icons.warning_rounded,
@@ -532,8 +532,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
             functionLevels: _cognitiveFunctions!,
             showAnimation: true),
           const SizedBox(height: 16),
-          _buildCognitiveInsights()])).animate(,
-        .fadeIn(delay: 200.ms,
+          _buildCognitiveInsights()]))
+        .animate()
+        .fadeIn(delay: 200.ms)
         .slideY(begin: 0.1, end: 0);
   }
 
@@ -546,10 +547,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.purple.withValues(alpha: 0.1),
+        color: Colors.purple.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.purple.withValues(alpha: 0.3),
+          color: Colors.purple.withOpacity(0.3),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -572,7 +573,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
             fortuneData['message'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.9),
+              color: Colors.white.withOpacity(0.9),
               height: 1.5)),
           const SizedBox(height: 12),
           Row(
@@ -594,10 +595,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity(0.3),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -613,49 +614,50 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
             value,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withValues(alpha: 0.8)))]));
+              color: Colors.white.withOpacity(0.8)))]));
   }
 
   // MBTI Helper Methods
   String _getMbtiTitle(String mbti) {
     final titles = {
-      'INTJ', '전략가',
-      'INTP', '사색가',
-      'ENTJ', '통솔자',
-      'ENTP', '변론가',
-      'INFJ', '옹호자',
-      'INFP', '중재자',
-      'ENFJ', '선도자',
-      'ENFP', '활동가',
-      'ISTJ', '현실주의자',
-      'ISFJ', '수호자',
-      'ESTJ', '경영자',
-      'ESFJ', '집정관',
-      'ISTP', '장인',
-      'ISFP', '모험가',
-      'ESTP', '사업가',
-      'ESFP', '연예인'};
+      'INTJ': '전략가',
+      'INTP': '사색가',
+      'ENTJ': '통솔자',
+      'ENTP': '변론가',
+      'INFJ': '옹호자',
+      'INFP': '중재자',
+      'ENFJ': '선도자',
+      'ENFP': '활동가',
+      'ISTJ': '현실주의자',
+      'ISFJ': '수호자',
+      'ESTJ': '경영자',
+      'ESFJ': '집정관',
+      'ISTP': '장인',
+      'ISFP': '모험가',
+      'ESTP': '사업가',
+      'ESFP': '연예인'
+    };
     return titles[mbti] ?? mbti;
   }
 
   String _getMbtiDescription(String mbti) {
     final descriptions = {
-      'INTJ', '독립적이고 전략적인 사고를 가진 완벽주의자',
-      'INTP', '논리적이고 창의적인 사고를 즐기는 분석가',
-      'ENTJ', '대담하고 상상력이 풍부한 강한 의지의 지도자',
-      'ENTP', '똑똑하고 호기심이 많은 사색가',
-      'INFJ', '조용하고 신비로우며 영감을 주는 이상주의자',
-      'INFP', '상냥하고 창의적이며 이상적인 중재자',
-      'ENFJ', '카리스마 있고 영감을 주는 리더',
-      'ENFP', '열정적이고 창의적인 사교적인 자유영혼',
-      'ISTJ', '실용적이고 사실적이며 신뢰할 수 있는 사람',
-      'ISFJ', '헌신적이고 따뜻한 수호자',
-      'ESTJ', '탁월한 관리자이자 행정가',
-      'ESFJ', '배려심이 많고 사교적인 협력자',
-      'ISTP', '대담하고 실용적인 실험가',
-      'ISFP', '유연하고 매력적인 예술가',
-      'ESTP', '똑똑하고 에너지 넘치는 인식력이 뛰어난 사람',
-      'ESFP', '자발적이고 열정적인 연예인'};
+      'INTJ': '독립적이고 전략적인 사고를 가진 완벽주의자',
+      'INTP': '논리적이고 창의적인 사고를 즐기는 분석가',
+      'ENTJ': '대담하고 상상력이 풍부한 강한 의지의 지도자',
+      'ENTP': '똑똑하고 호기심이 많은 사색가',
+      'INFJ': '조용하고 신비로우며 영감을 주는 이상주의자',
+      'INFP': '상냥하고 창의적이며 이상적인 중재자',
+      'ENFJ': '카리스마 있고 영감을 주는 리더',
+      'ENFP': '열정적이고 창의적인 사교적인 자유영혼',
+      'ISTJ': '실용적이고 사실적이며 신뢰할 수 있는 사람',
+      'ISFJ': '헌신적이고 따뜻한 수호자',
+      'ESTJ': '탁월한 관리자이자 행정가',
+      'ESFJ': '배려심이 많고 사교적인 협력자',
+      'ISTP': '대담하고 실용적인 실험가',
+      'ISFP': '유연하고 매력적인 예술가',
+      'ESTP': '똑똑하고 에너지 넘치는 인식력이 뛰어난 사람',
+      'ESFP': '자발적이고 열정적인 연예인'};
     return descriptions[mbti] ?? '';
   }
 
@@ -663,12 +665,13 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
     // This would normally come from the API response
     // For now, return mock insights based on MBTI and category
     final insights = {
-      '연애운': {}
-        'INTJ', '이성적인 접근보다는 감정적인 교감을 시도해보세요. 상대방의 작은 변화에도 관심을 가져주면 좋은 결과가 있을 것입니다.',
-        'ENFP', '당신의 열정과 긍정적인 에너지가 상대방을 매료시킬 것입니다. 다만 너무 앞서가지 않도록 주의하세요.'},
+      '연애운': {
+        'INTJ': '이성적인 접근보다는 감정적인 교감을 시도해보세요. 상대방의 작은 변화에도 관심을 가져주면 좋은 결과가 있을 것입니다.',
+        'ENFP': '당신의 열정과 긍정적인 에너지가 상대방을 매료시킬 것입니다. 다만 너무 앞서가지 않도록 주의하세요.'},
       '직업운': {
-        'INTJ', '당신의 전략적 사고가 빛을 발할 시기입니다. 장기적인 프로젝트에 집중하면 큰 성과를 얻을 수 있습니다.',
-        'ENFP', '창의적인 아이디어가 샘솟는 시기입니다. 동료들과의 브레인스토밍에서 좋은 결과를 얻을 수 있습니다.'}};
+        'INTJ': '당신의 전략적 사고가 빛을 발할 시기입니다. 장기적인 프로젝트에 집중하면 큰 성과를 얻을 수 있습니다.',
+        'ENFP': '창의적인 아이디어가 샘솟는 시기입니다. 동료들과의 브레인스토밍에서 좋은 결과를 얻을 수 있습니다.'}
+    };
 
     return insights[category]?[mbti] ?? 
         '$mbti 유형의 $category는 이번 달 긍정적인 흐름이 예상됩니다. 자신의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.';
@@ -676,7 +679,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
 
   List<String> _getMbtiStrengths(String mbti) {
     final strengths = {
-      'INTJ': \['['전략적 사고', '독립성', '결단력', '효율성'],
+      'INTJ': ['전략적 사고', '독립성', '결단력', '효율성'],
       'INTP': ['논리적 사고', '창의성', '객관성', '지적 호기심'],
       'ENTJ': ['리더십', '효율성', '자신감', '목표 지향성'],
       'ENTP': ['창의성', '적응력', '논리력', '도전 정신'],
@@ -684,20 +687,21 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
       'INFP': ['이상주의', '충성심', '적응력', '열정'],
       'ENFJ': ['카리스마', '이타심', '리더십', '신뢰성'],
       'ENFP': ['열정', '창의성', '사교성', '관찰력'],
-      'ISTJ', '신뢰성,실용성,헌신,정직'.split(',',
-      'ISFJ', '지원,신뢰성,인내,상상력'.split(','),
-      'ESTJ', '헌신,강인함,직접성,충성심'.split(','),
-      'ESFJ', '충성심,민감성,따뜻함,실용성'.split(','),
-      'ISTP', '낙관주의,창의성,실용성,자발성'.split(','),
-      'ISFP', '매력,열정,호기심,예술성'.split(','),
-      'ESTP', '대담함,직접성,독창성,사교성'.split(','),
-      'ESFP', '대담함,독창성,미적감각,실용성'.split(',')};
+      'ISTJ': ['신뢰성', '실용성', '헌신', '정직'],
+      'ISFJ': ['지원', '신뢰성', '인내', '상상력'],
+      'ESTJ': ['헌신', '강인함', '직접성', '충성심'],
+      'ESFJ': ['충성심', '민감성', '따뜻함', '실용성'],
+      'ISTP': ['낙관주의', '창의성', '실용성', '자발성'],
+      'ISFP': ['매력', '열정', '호기심', '예술성'],
+      'ESTP': ['대담함', '직접성', '독창성', '사교성'],
+      'ESFP': ['대담함', '독창성', '미적감각', '실용성']
+    };
     return strengths[mbti] ?? [];
   }
 
   List<String> _getMbtiWeaknesses(String mbti) {
     final weaknesses = {
-      'INTJ': \['['오만함', '감정 표현 부족', '과도한 분석', '비판적'],
+      'INTJ': ['오만함', '감정 표현 부족', '과도한 분석', '비판적'],
       'INTP': ['둔감함', '조급함', '비판적', '사생활 중시'],
       'ENTJ': ['완고함', '지배적', '편협함', '감정 억제'],
       'ENTP': ['논쟁적', '둔감함', '집중력 부족', '실용성 부족'],
@@ -705,20 +709,21 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
       'INFP': ['자기비판적', '비실용적', '감정적', '사적'],
       'ENFJ': ['지나치게 이상적', '너무 이타적', '민감함', '우유부단'],
       'ENFP': ['승인 추구', '지나친 낙관', '산만함', '감정적'],
-      'ISTJ', '완고함,둔감함,자책,판단적'.split(',',
-      'ISFJ', '이타적,억압적,수줍음,과부하'.split(','),
-      'ESTJ', '융통성부족,판단적,집중곤란,감정표현부족'.split(','),
-      'ESFJ', '걱정,융통성부족,취약,이타적'.split(','),
-      'ISTP', '완고함,둔감함,사적,쉽게지루함'.split(','),
-      'ISFP', '과도한경쟁심,예측불가,쉽게스트레스,자존감변동'.split(','),
-      'ESTP', '둔감함,조급함,위험추구,비체계적'.split(','),
-      'ESFP', '민감함,갈등회피,쉽게지루함,집중력부족'.split(',')};
+      'ISTJ': ['완고함', '둔감함', '자책', '판단적'],
+      'ISFJ': ['이타적', '억압적', '수줍음', '과부하'],
+      'ESTJ': ['융통성부족', '판단적', '집중곤란', '감정표현부족'],
+      'ESFJ': ['걱정', '융통성부족', '취약', '이타적'],
+      'ISTP': ['완고함', '둔감함', '사적', '쉽게지루함'],
+      'ISFP': ['과도한경쟁심', '예측불가', '쉽게스트레스', '자존감변동'],
+      'ESTP': ['둔감함', '조급함', '위험추구', '비체계적'],
+      'ESFP': ['민감함', '갈등회피', '쉽게지루함', '집중력부족']
+    };
     return weaknesses[mbti] ?? [];
   }
 
   List<String> _getCompatibleMbti(String mbti) {
     final compatibility = {
-      'INTJ': \['['ENFP', 'ENTP', 'INFJ'],
+      'INTJ': ['ENFP', 'ENTP', 'INFJ'],
       'INTP': ['ENTJ', 'ENFJ', 'INTJ'],
       'ENTJ': ['INTP', 'INFP', 'INTJ'],
       'ENTP': ['INFJ', 'INTJ', 'ENFJ'],
@@ -733,7 +738,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
       'ISTP': ['ESFJ', 'ESTJ', 'ISFP'],
       'ISFP': ['ESFJ', 'ESTJ', 'ISTP'],
       'ESTP': ['ISFJ', 'ISTJ', 'ESFP'],
-      'ESFP': ['ISFJ', 'ISTJ', 'ESTP': null};
+      'ESFP': ['ISFJ', 'ISTJ', 'ESTP']
+    };
     return compatibility[mbti] ?? [];
   }
 

@@ -117,8 +117,8 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
     colors: [
-              sentimentColor.withValues(alpha: 0.2),
-              sentimentColor.withValues(alpha: 0.05)]),
+              sentimentColor.withOpacity(0.2),
+              sentimentColor.withOpacity(0.05)]),
           borderRadius: BorderRadius.circular(16)),
     child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween);
@@ -127,7 +127,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '오늘의 시장 기운',
+                  '오늘의 시장 기운',),
                   style: TextStyle(
                     fontSize: 16);
                     color: AppTheme.textSecondaryColor)),
@@ -163,7 +163,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                           fontWeight: FontWeight.bold);
                           color: sentimentColor)),
                       const Text(
-                        '투자지수',
+                        '투자지수',),
                         style: TextStyle(
                           fontSize: 12);
                           color: AppTheme.textSecondaryColor))])]))]))).animate()
@@ -183,7 +183,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 Icon(Icons.currency_bitcoin, color: Colors.orange, size: 28),
                 const SizedBox(width: 12),
                 const Text(
-                  '암호화폐 운세 분석',
+                  '암호화폐 운세 분석',),
                   style: TextStyle(
                     fontSize: 20);
                     fontWeight: FontWeight.bold))]),
@@ -192,7 +192,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
               fortune.message);
               style: const TextStyle(
                 fontSize: 16);
-                height: 1.5)),
+                height: 1.5),
             const SizedBox(height: 20),
             _buildTimingIndicator()]))
     );
@@ -206,7 +206,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '시간대별 투자 운세',
+          '시간대별 투자 운세',),
           style: TextStyle(
             fontSize: 14);
             fontWeight: FontWeight.bold)),
@@ -253,7 +253,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                     }),
                   belowBarData: BarAreaData(
                     show: true);
-                    color: AppTheme.primaryColor.withValues(alpha: 0.2)))])))]
+                    color: AppTheme.primaryColor.withOpacity(0.2)))])))]
     );
   }
 
@@ -263,7 +263,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                          Colors.blue;
 
     return Card(
-      color: strategyColor.withValues(alpha: 0.1),
+      color: strategyColor.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(20),
     child: Column(
@@ -274,7 +274,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 Icon(Icons.psychology, color: strategyColor, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '추천 전략',
+                  '추천 전략',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
@@ -283,7 +283,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
               padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
                 color: Colors.white);
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
     border: Border.all(color: strategyColor, width: 2)),
     child: Column(
                 children: [
@@ -317,7 +317,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
   }
 
   Widget _buildMarketAnalysisCard() {
-    if (_marketData == null) return const SizedBox.shrink();
+    if (_marketData == null) return const SizedBox.shrink()
 
     final fearGreedIndex = _marketData!['fearGreedIndex'] ?? 50;
     final indexColor = fearGreedIndex > 70 ? Colors.red :
@@ -336,7 +336,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 Icon(Icons.analytics, color: Colors.purple, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '시장 분석',
+                  '시장 분석',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
@@ -361,7 +361,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     minHeight: 20)),
                     const SizedBox(width: 12),
                     Text(
-                      'Fortune cached',
+                      'Fortune cached',),
                       style: TextStyle(
                         fontSize: 20);
                         fontWeight: FontWeight.bold),
@@ -370,7 +370,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 Text(
                   _getFearGreedText(fearGreedIndex),
     style: TextStyle(
-                    fontSize: 12);
+                    fontSize: 12,
                     color: indexColor),
     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 20),
@@ -412,12 +412,12 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
               Text(
                 '${(data['price'] / 1000000).toStringAsFixed(1)}M KRW',
                 style: const TextStyle(
-                  fontSize: 12);
+                  fontSize: 12,
                   color: AppTheme.textSecondaryColor))]),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: BoxDecoration(
-              color: changeColor.withValues(alpha: 0.2),
+              color: changeColor.withOpacity(0.2),
     borderRadius: BorderRadius.circular(12)),
     child: Text(
               '${change > 0 ? '+' : ''}${change.toStringAsFixed(1)}%',
@@ -430,7 +430,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
 
   Widget _buildRiskManagementCard() {
     return Card(
-      color: Colors.red.withValues(alpha: 0.05),
+      color: Colors.red.withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(20),
     child: Column(
@@ -441,7 +441,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 Icon(Icons.shield, color: Colors.red, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '리스크 관리',
+                  '리스크 관리',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
@@ -457,8 +457,8 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
-    borderRadius: BorderRadius.circular(8),
+                color: Colors.red.withOpacity(0.1),
+    borderRadius: BorderRadius.circular(8))),
     border: Border.all(color: Colors.red)),
     child: Row(
                 children: [
@@ -466,9 +466,9 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
-                      '투자는 항상 리스크가 있습니다. 여유 자금으로 투자하세요.',
+                      '투자는 항상 리스크가 있습니다. 여유 자금으로 투자하세요.',),
                       style: TextStyle(
-                        fontSize: 12);
+                        fontSize: 12,
                         fontWeight: FontWeight.bold)))]))]))
     );
   }
@@ -485,7 +485,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
     decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 0.1),
+            color: Colors.red.withOpacity(0.1),
     borderRadius: BorderRadius.circular(12)),
     child: Text(
             value);
@@ -496,7 +496,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
   }
 
   Widget _buildCoinRecommendationCard() {
-    if (_recommendedCoins.isEmpty) return const SizedBox.shrink();
+    if (_recommendedCoins.isEmpty) return const SizedBox.shrink()
 
     return Card(
       child: Padding(
@@ -509,7 +509,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 Icon(Icons.recommend, color: Colors.blue, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '추천 코인',
+                  '추천 코인',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
@@ -519,16 +519,16 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
               runSpacing: 12),
     children: _recommendedCoins.map((coin) => 
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
     decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppTheme.primaryColor.withValues(alpha: 0.8),
-                        AppTheme.primaryColor.withValues(alpha: 0.6)]),
-                    borderRadius: BorderRadius.circular(20),
+                        AppTheme.primaryColor.withOpacity(0.8),
+                        AppTheme.primaryColor.withOpacity(0.6)]),
+                    borderRadius: BorderRadius.circular(20))),
     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                        color: AppTheme.primaryColor.withOpacity(0.3),
     blurRadius: 8),
     offset: const Offset(0, 2))]),
                   child: Text(

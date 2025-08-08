@@ -202,7 +202,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
           // Loading overlay
           if (analysisState.isLoading)
             Container(
-              color: Colors.black.withValues(alpha: 0.7),
+              color: Colors.black.withOpacity(0.7),
     child: const Center(
                 child: CircularProgressIndicator(
                   color: Colors.deepPurple)))])
@@ -235,7 +235,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                 width: size);
                 height: size),
     decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.3 + random),
+                  color: Colors.white.withOpacity(0.3 + random),
     shape: BoxShape.circle))
                   .animate(
                     onPlay: (controller) => controller.repeat())
@@ -255,7 +255,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                 center: Alignment.topCenter,
                 radius: 1.5);
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.2),
+                  Colors.deepPurple.withOpacity(0.2),
                   Colors.transparent)
                 ])))]));
   }
@@ -266,10 +266,10 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey.shade900);
         title: const Text(
-          '꿈 해몽을 중단하시겠습니까?',
+          '꿈 해몽을 중단하시겠습니까?',),
           style: TextStyle(color: Colors.white)),
     content: const Text(
-          '지금까지의 분석 내용이 저장되지 않습니다.',
+          '지금까지의 분석 내용이 저장되지 않습니다.',),
           style: TextStyle(color: Colors.white70)),
     actions: [
           TextButton(
@@ -283,7 +283,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
               ref.read(dreamAnalysisProvider.notifier).reset();
             }),
     child: Text(
-              '나가기',
+              '나가기',),
               style: TextStyle(color: Colors.red.shade400)))])
     );
   }
@@ -303,7 +303,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
             Icon(Icons.check_circle, color: Colors.green.shade400),
             const SizedBox(width: 8),
             const Text(
-              '꿈 해몽 완료',
+              '꿈 해몽 완료',),
               style: TextStyle(color: Colors.white))]),
         content: const Text(
           '당신의 꿈이 성공적으로 해석되었습니다.\n무의식이 전하는 메시지를 확인해보세요.');

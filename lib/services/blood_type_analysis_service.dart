@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 class BloodTypeAnalysisService {
   // 혈액형 정보
-  static const List<String> bloodTypes = ['A': 'B': 'O', 'AB'];
+  static const List<String> bloodTypes = ['A', 'B', 'O', 'AB'];
   static const List<String> rhTypes = ['+', '-'];
   
   // 혈액형별 기본 특성
@@ -143,7 +143,7 @@ class BloodTypeAnalysisService {
     final rhData = rhCharacteristics[rh]!;
     
     // 기본 에너지 레벨
-    final baseEnergy = rhData['energy_level'] as double;
+    final baseEnergy = (rhData['energy_level'] ?? 0.8) as double;
     
     // 각 요소별 주기와 위상
     final physical = 0.5 + 0.5 * math.sin(2 * math.pi * dayOfYear / 23);
@@ -158,7 +158,7 @@ class BloodTypeAnalysisService {
       '감정': emotional * baseEnergy * weights['emotional']!,
       '지성': intellectual * baseEnergy * weights['intellectual']!,
       '직관': (physical + emotional + intellectual) / 3 * baseEnergy * weights['intuition']!,
-      '사회성': (emotional * 0.6 + intellectual * 0.4) * baseEnergy * weights['social']};
+      '사회성': (emotional * 0.6 + intellectual * 0.4) * baseEnergy * weights['social']!};
   }
   
   static Map<String, double> _getBloodTypeWeights(String bloodType) {
@@ -169,35 +169,35 @@ class BloodTypeAnalysisService {
           'emotional': 1.0,
           'intellectual': 0.9,
           'intuition': 0.7,
-          'social': null};
+          'social': 0.85};
       case 'B':
         return {
           'physical': 0.9,
           'emotional': 0.8,
           'intellectual': 0.7,
           'intuition': 1.0,
-          'social': null};
+          'social': 0.75};
       case 'O':
         return {
           'physical': 1.0,
           'emotional': 0.7,
           'intellectual': 0.8,
           'intuition': 0.8,
-          'social': null};
+          'social': 0.9};
       case 'AB':
         return {
           'physical': 0.7,
           'emotional': 0.9,
           'intellectual': 1.0,
           'intuition': 0.9,
-          'social': null};
+          'social': 0.8};
       default:
         return {
           'physical': 0.8,
           'emotional': 0.8,
           'intellectual': 0.8,
           'intuition': 0.8,
-          'social': null};
+          'social': 0.8};
     }
   }
   
@@ -215,7 +215,7 @@ class BloodTypeAnalysisService {
       '공감능력': 0.5,
       '실행력': 0.5,
       '인내심': 0.5,
-      '적응력': null};
+      '적응력': 0.5};
     
     // 혈액형별 강도 조정
     switch (bloodType) {
@@ -275,15 +275,15 @@ class BloodTypeAnalysisService {
       'communication': communication,
       'conflict_resolution': conflict,
       'growth_potential': growth,
-      'advice': null};
+      'advice': _getRelationshipAdvice(type1, rh1, type2, rh2)};
   }
   
   static Map<String, dynamic> _analyzeCommunication(String type1, String type2) {
     final communicationStyles = {
-      'A': {'style': '신중하고 배려깊은': 'speed': 0.6, 'depth': 0.9},
-      'B': {'style': '자유롭고 창의적인': 'speed': 0.8, 'depth': 0.6},
+      'A': {'style': '신중하고 배려깊은', 'speed': 0.6, 'depth': 0.9},
+      'B': {'style': '자유롭고 창의적인', 'speed': 0.8, 'depth': 0.6},
       'O': {'style': '직설적이고 명확한', 'speed': 0.9, 'depth': 0.7},
-      'AB': {'style': '논리적이고 분석적인', 'speed': 0.7, 'depth': null};
+      'AB': {'style': '논리적이고 분석적인', 'speed': 0.7, 'depth': 0.85}};
     
     final style1 = communicationStyles[type1]!;
     final style2 = communicationStyles[type2]!;
@@ -302,15 +302,15 @@ class BloodTypeAnalysisService {
   
   static Map<String, dynamic> _analyzeConflictStyle(String type1, String type2) {
     final conflictStyles = {
-      'A': {'approach': '회피형': 'resolution': '타협'},
-      'B': {'approach': '직면형': 'resolution': '창의적 해결'},
-      'O': {'approach': '주도형': 'resolution': '빠른 해결'},
-      'AB': {'approach': '분석형', 'resolution': '논리적 해결'};
+      'A': {'approach': '회피형', 'resolution': '타협'},
+      'B': {'approach': '직면형', 'resolution': '창의적 해결'},
+      'O': {'approach': '주도형', 'resolution': '빠른 해결'},
+      'AB': {'approach': '분석형', 'resolution': '논리적 해결'}};
     
     return {
       'type1_style': conflictStyles[type1],
       'type2_style': conflictStyles[type2],
-      'compatibility': null};
+      'compatibility': 0.7};
   }
   
   static Map<String, dynamic> _analyzeGrowthPotential(String type1, String type2) {
@@ -319,17 +319,17 @@ class BloodTypeAnalysisService {
     
     return {
       'score': diversity,
-      'areas': null};
+      'areas': _getGrowthAreas(type1, type2)};
   }
   
   static List<String> _getGrowthAreas(String type1, String type2) {
     final areas = <String>[];
     
     if ((type1 == 'A' && type2 == 'B') || (type1 == 'B' && type2 == 'A')) {
-      areas.addAll(['유연성 향상': '창의성과 안정성의 균형']);
+      areas.addAll(['유연성 향상', '창의성과 안정성의 균형']);
     }
     if ((type1 == 'O' && type2 == 'AB') || (type1 == 'AB' && type2 == 'O')) {
-      areas.addAll(['실행력과 전략의 조화': '리더십 개발']);
+      areas.addAll(['실행력과 전략의 조화', '리더십 개발']);
     }
     
     return areas.isEmpty ? ['상호 이해와 존중'] : areas;

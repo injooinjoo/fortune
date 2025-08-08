@@ -69,13 +69,13 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             '정면 사진을 업로드하면 AI가 관상을 분석해드립니다.\n'
             '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
             textAlign: TextAlign.center),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -130,12 +130,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 Icon(
                   Icons.add_photo_alternate,
                   size: 64,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
                 const SizedBox(height: 16),
                 Text(
                   '탭하여 사진 선택',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))]))).animate()
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]))).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -256,7 +256,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   _pickImage(ImageSource.gallery);
                 }),
               ListTile(
-                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                 title: const Text('취소'),
                 onTap: () => Navigator.pop(context))]))));
   }
@@ -295,7 +295,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       Logger.error('이미지 선택 실패', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미지를 선택할 수 없습니다'));
+          const SnackBar(content: Text('이미지를 선택할 수 없습니다')));
       }
     }
   }
@@ -363,7 +363,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('분석에 실패했습니다. 다시 시도해주세요.'));
+          const SnackBar(content: Text('분석에 실패했습니다. 다시 시도해주세요.')));
       }
     }
   }
@@ -380,7 +380,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     HapticUtils.lightImpact();
     // TODO: 공유 기능 구현
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다'));
+      const SnackBar(content: Text('공유 기능은 준비 중입니다')));
   }
 
   void _showPermissionDeniedDialog(String permission) {

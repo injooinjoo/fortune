@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/personality_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/personality_fortune_unified_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/birth_season_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/birthdate_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/lifestyle_fortune_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/personality_fortune_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/personality_fortune_unified_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/birth_season_fortune_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/birthdate_fortune_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart' as fortune_pages;
+// import '../../../features/fortune/presentation/pages/lifestyle_fortune_page.dart' as fortune_pages;
 
 final personalityRoutes = [
   // Personality Fortune Unified

@@ -43,7 +43,7 @@ class PerformanceCacheService {
     String key, {
     T Function(Map<String, dynamic>)? fromJson)
   }) async {
-    if (!_initialized) await initialize();
+    if (!_initialized) await initialize()
     
     // Check memory cache first
     final memoryEntry = _memoryCache[key];
@@ -87,7 +87,7 @@ class PerformanceCacheService {
     Duration? ttl,
     Map<String, dynamic> Function(T)? toJson)
   }) async {
-    if (!_initialized) await initialize();
+    if (!_initialized) await initialize()
     
     final entry = CacheEntry(
       data: toJson != null ? toJson(data) : data,
@@ -117,7 +117,7 @@ class PerformanceCacheService {
 
   /// Clear all cache
   Future<void> clearAll() async {
-    if (!_initialized) await initialize();
+    if (!_initialized) await initialize()
     
     _memoryCache.clear();
     final keys = _prefs.getKeys().where((key) => key.startsWith('cache_');

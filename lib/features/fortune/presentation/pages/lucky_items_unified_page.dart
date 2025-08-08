@@ -81,11 +81,11 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF7C3AED).withValues(alpha: 0.1),
-            Color(0xFF3B82F6).withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            Color(0xFF7C3AED).withOpacity(0.1),
+            Color(0xFF3B82F6).withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: Color(0xFF7C3AED).withValues(alpha: 0.3),
+          color: Color(0xFF7C3AED).withOpacity(0.3),
           width: 1)),
       child: Column(
         children: [
@@ -95,14 +95,14 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
             color: Color(0xFF7C3AED)),
           const SizedBox(height: 12),
           Text(
-            '오늘의 행운 아이템',
+            '오늘의 행운 아이템',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF7C3AED))),
           const SizedBox(height: 8),
           Text(
-            '당신에게 행운을 가져다줄 특별한 아이템들을 확인해보세요',
+            '당신에게 행운을 가져다줄 특별한 아이템들을 확인해보세요',),
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textSecondaryColor),
@@ -125,7 +125,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
             const Icon(Icons.auto_awesome, color: Colors.white),
             const SizedBox(width: 8),
             const Text(
-              '행운 아이템 확인하기',
+              '행운 아이템 확인하기',),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: displayColor.withValues(alpha: 0.4),
+                    color: displayColor.withOpacity(0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2))])),
             const SizedBox(width: 8),
@@ -233,10 +233,10 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: gradientColors),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))),
         boxShadow: [
           BoxShadow(
-            color: gradientColors[0].withValues(alpha: 0.3),
+            color: gradientColors[0].withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4))]),
       child: Column(
@@ -245,13 +245,13 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
           Icon(
             icon,
             size: 32,
-            color: Colors.white.withValues(alpha: 0.9)),
+            color: Colors.white.withOpacity(0.9)),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.8))),
+              color: Colors.white.withOpacity(0.8))),
           const SizedBox(height: 8),
           Flexible(child: valueWidget)])).animate(delay: delay.ms)
       .fadeIn(duration: 500.ms)
@@ -263,7 +263,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
           color: AppTheme.dividerColor)),
       child: Column(
@@ -277,7 +277,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
                 size: 24),
               const SizedBox(width: 8),
               Text(
-                '종합 운세',
+                '종합 운세',),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -294,7 +294,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFF7C3AED).withValues(alpha: 0.05),
+                color: Color(0xFF7C3AED).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

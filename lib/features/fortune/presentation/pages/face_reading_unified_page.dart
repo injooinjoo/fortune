@@ -71,15 +71,15 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   color: AppColors.surface),
                 const SizedBox(height: 12),
                 Text(
-                  'AI가 당신의 관상을 분석합니다',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  'AI가 당신의 관상을 분석합니다',),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                     color: AppColors.surface,
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(
-                  '사진을 업로드하거나 간단한 정보를 입력해주세요',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.surface.withValues(alpha: 0.9)),
+                  '사진을 업로드하거나 간단한 정보를 입력해주세요',),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                    color: AppColors.surface.withOpacity(0.9)),
                   textAlign: TextAlign.center)])),
           
           const SizedBox(height: 24),
@@ -92,14 +92,14 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           // OR divider
           Row(
             children: [
-              Expanded(child: Divider(color: AppColors.onSurface.withValues(alpha: 0.3)),
+              Expanded(child: Divider(color: AppColors.onSurface.withOpacity(0.3)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '또는',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.onSurface.withValues(alpha: 0.6)))),
-              Expanded(child: Divider(color: AppColors.onSurface.withValues(alpha: 0.3))]),
+                  '또는',),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                    color: AppColors.onSurface.withOpacity(0.6)))),
+              Expanded(child: Divider(color: AppColors.onSurface.withOpacity(0.3))]),
           
           const SizedBox(height: 24),
           
@@ -119,8 +119,8 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12))),
             child: Text(
-              '관상 분석하기',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              '관상 분석하기',),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 color: AppColors.surface,
                 fontWeight: FontWeight.bold)))]));
   }
@@ -130,15 +130,15 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
+          color: AppColors.primary.withOpacity(0.3),
           width: 2)),
       child: Column(
         children: [
           if (_selectedImage != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8))),
               child: Image.file(
                 _selectedImage!,
                 height: 200,
@@ -190,8 +190,8 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '간단 입력 (선택사항)',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            '간단 입력 (선택사항)',),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           
@@ -243,12 +243,12 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.onSurface.withValues(alpha: 0.7))),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+            color: AppColors.onSurface.withOpacity(0.7))),
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.onSurface.withValues(alpha: 0.3),
+            border: Border.all(color: AppColors.onSurface.withOpacity(0.3),
             borderRadius: BorderRadius.circular(8)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(

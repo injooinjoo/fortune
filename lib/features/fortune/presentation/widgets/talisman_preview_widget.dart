@@ -54,7 +54,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         boxShadow: [
           BoxShadow(
-            color: widget.primaryColor.withValues(alpha: 0.3),
+            color: widget.primaryColor.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10)]),
       child: Stack(
@@ -75,12 +75,12 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           Container(
             decoration: BoxDecoration(
               borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
-              color: Colors.black.withValues(alpha: 0.1)),
+              color: Colors.black.withOpacity(0.1)),
             child: CustomPaint(
               size: Size(widget.size, widget.size),
               painter: _TalismanPatternPainter(
                 style: widget.symbol,
-                color: Colors.white.withValues(alpha: 0.2)))),
+                color: Colors.white.withOpacity(0.2)))),
           
           // Central symbol
           AnimatedBuilder(
@@ -93,10 +93,10 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                   height: widget.size * 0.6,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: Colors.white.withOpacity(0.9),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
+                        color: Colors.black.withOpacity(0.2),
                         blurRadius: 10,
                         spreadRadius: 2)]),
                   child: Center(
@@ -112,16 +112,16 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Colors.white.withOpacity(0.9),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2)]),
               child: Text(
                 widget.userName,
-                style: Theme.of(context).textTheme.bodyMedium))),
+                style: Theme.of(context).textTheme.bodyMedium)))),
           
           // Decorative corners
           ..._buildCornerDecorations()]).animate()
@@ -148,7 +148,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
             width: 30,
             height: AppSpacing.spacing7 * 1.07,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.3),
+              color: Colors.white.withOpacity(0.3),
               borderRadius: BorderRadius.only(
                 topLeft: pos.top != null && pos.left != null 
                     ? const Radius.circular(0) 

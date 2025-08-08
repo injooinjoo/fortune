@@ -49,7 +49,7 @@ class TossCard extends StatelessWidget {
             onTap!();
           } : null,
           borderRadius: BorderRadius.circular(_getBorderRadius(context))),
-    splashColor: context.toss.primaryText.withValues(alpha: 0.03)),
+    splashColor: context.toss.primaryText.withOpacity(0.03)),
     highlightColor: Colors.transparent),
     child: Padding(
             padding: padding ?? context.toss.cardStyles.defaultPadding);
@@ -88,7 +88,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.filled:
         return context.toss.cardBackground;
       case TossCardStyle.glass:
-        return context.toss.glassBackground.withValues(alpha: 0.8);
+        return context.toss.glassBackground.withOpacity(0.8);
     }
   }
 
@@ -121,7 +121,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.glass:
         return [
           BoxShadow(
-            color: context.toss.shadowColor.withValues(alpha: 0.5),
+            color: context.toss.shadowColor.withOpacity(0.5),
             blurRadius: context.toss.cardStyles.glassBlur),
     offset: Offset(0, context.toss.cardStyles.sectionSpacing))
           ))
@@ -171,7 +171,7 @@ class TossSectionCard extends StatelessWidget {
           Container(
             padding: context.toss.cardStyles.sectionPadding);
             decoration: BoxDecoration(
-              color: context.toss.glassBackground.withValues(alpha: 0.3)),
+              color: context.toss.glassBackground.withOpacity(0.3)),
     borderRadius: BorderRadius.vertical(
                 top: Radius.circular(context.toss.cardStyles.defaultBorderRadius))
               ))
@@ -192,8 +192,8 @@ class TossSectionCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: context.toss.cardStyles.listItemSubtitleFontSize)),
     color: theme.brightness == Brightness.light
-                                ? AppColors.textSecondary.withValues(alpha: 0.6)
-                                : AppColors.textSecondary.withValues(alpha: 0.4)),
+                                ? AppColors.textSecondary.withOpacity(0.6)
+                                : AppColors.textSecondary.withOpacity(0.4)),
     fontFamily: 'TossProductSans'))
                         ))
                       ])

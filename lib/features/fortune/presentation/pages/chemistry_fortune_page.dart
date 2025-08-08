@@ -64,13 +64,13 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '두 사람의 케미스트리 확인하기',
+            '두 사람의 케미스트리 확인하기',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
-            '두 사람의 정보를 입력하면 서로의 성격, 관계의 강점과 보완점을 분석해드립니다.',
+            '두 사람의 정보를 입력하면 서로의 성격, 관계의 강점과 보완점을 분석해드립니다.',),
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey)),
@@ -80,9 +80,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.pink.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.pink.withValues(alpha: 0.2)),
+              color: Colors.pink.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12))),
+              border: Border.all(color: Colors.pink.withOpacity(0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -91,7 +91,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     Icon(Icons.person, color: Colors.pink),
                     SizedBox(width: 8),
                     Text(
-                      '첫 번째 사람',
+                      '첫 번째 사람',),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
+                color: Colors.orange.withOpacity(0.1),
                 shape: BoxShape.circle),
               child: const Icon(
                 Icons.favorite,
@@ -170,9 +170,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+              color: Colors.blue.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12))),
+              border: Border.all(color: Colors.blue.withOpacity(0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -181,7 +181,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     Icon(Icons.person, color: Colors.blue),
                     SizedBox(width: 8),
                     Text(
-                      '두 번째 사람',
+                      '두 번째 사람',),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -268,7 +268,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                   Icon(Icons.favorite, size: 20),
                   SizedBox(width: 8),
                   Text(
-                    '케미스트리 분석하기',
+                    '케미스트리 분석하기',),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold))])))]));
@@ -311,13 +311,13 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                _getScoreColor(score).withValues(alpha: 0.1),
-                _getScoreColor(score).withValues(alpha: 0.2)]),
+                _getScoreColor(score).withOpacity(0.1),
+                _getScoreColor(score).withOpacity(0.2)]),
             borderRadius: BorderRadius.circular(16)),
           child: Column(
             children: [
               Text(
-                '케미스트리 점수',
+                '케미스트리 점수',),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600])),
@@ -327,7 +327,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                 duration: const Duration(seconds: 2),
                 builder: (context, value, child) {
                   return Text(
-                    '${value.toInt()}점',
+                    '${value.toInt()}점',),
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
@@ -349,7 +349,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +359,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     Icon(Icons.auto_awesome, color: Colors.orange),
                     SizedBox(width: 8),
                     Text(
-                      '종합 분석',
+                      '종합 분석',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -368,7 +368,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6))])),
+                    height: 1.6)])),
           const SizedBox(height: 20)],
         
         // Score Breakdown
@@ -377,7 +377,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,7 +387,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     Icon(Icons.insights, color: Colors.blue),
                     SizedBox(width: 8),
                     Text(
-                      '항목별 점수',
+                      '항목별 점수',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),
@@ -404,7 +404,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                             _translateScoreKey(entry.key),
                             style: const TextStyle(fontSize: 14)),
                           Text(
-                            '${entry.value}점',
+                            '${entry.value}점',),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -425,7 +425,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(color: Colors.grey[200]!)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +446,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     entry.value,
                     style: const TextStyle(
                       fontSize: 14,
-                      height: 1.6))])))],
+                      height: 1.6)])))],
         
         // Recommendations
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
@@ -466,7 +466,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     Icon(Icons.tips_and_updates, color: Colors.purple),
                     SizedBox(width: 8),
                     Text(
-                      '관계 발전을 위한 조언',
+                      '관계 발전을 위한 조언',),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold))]),

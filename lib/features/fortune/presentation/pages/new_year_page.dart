@@ -58,16 +58,16 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '올 한 해 당신의 운세를 확인하세요',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-    height: 1.5)),
+          '올 한 해 당신의 운세를 확인하세요',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+    height: 1.5),
         const SizedBox(height: 24),
         
         // Goal Selection
         Text(
-          '올해 목표',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '올해 목표',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
@@ -90,8 +90,8 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
         
         // Important Thing Selection
         Text(
-          '가장 중요한 것',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '가장 중요한 것',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
@@ -114,8 +114,8 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
         
         // Wish Input
         Text(
-          '새해 소망',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '새해 소망',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         TextField(
@@ -156,8 +156,8 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                 borderRadius: BorderRadius.circular(12)),
     backgroundColor: theme.colorScheme.primary),
     child: Text(
-              '새해 운세 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
+              '새해 운세 확인하기',),
+              style: theme.textTheme.titleMedium?.copyWith()
                 color: Colors.white);
                 fontWeight: FontWeight.bold))))]
     );
@@ -244,8 +244,8 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     child: Column(
           children: [
             Text(
-              '${DateTime.now().year}년 종합 운세',
-              style: theme.textTheme.titleLarge?.copyWith(
+              '${DateTime.now().year}년 종합 운세',),
+              style: theme.textTheme.titleLarge?.copyWith()
                 color: Colors.white);
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
@@ -258,22 +258,22 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     child: CircularProgressIndicator(
                     value: score / 100);
                     strokeWidth: 15),
-    backgroundColor: Colors.white.withValues(alpha: 0.3),
+    backgroundColor: Colors.white.withOpacity(0.3),
     valueColor: AlwaysStoppedAnimation<Color>(
                       score >= 80 ? Colors.green : 
                       score >= 60 ? Colors.blue : 
                       score >= 40 ? Colors.orange : 
                       Colors.red))),
                 Text(
-                  'Fortune cached',
-                  style: theme.textTheme.displayMedium?.copyWith(
+                  'Fortune cached',),
+                  style: theme.textTheme.displayMedium?.copyWith()
                     color: Colors.white);
                     fontWeight: FontWeight.bold),
     fontSize: 36 + _getFontSizeOffset(fontSize)))]),
             const SizedBox(height: 16),
             Text(
               _getScoreMessage(score),
-    style: theme.textTheme.bodyLarge?.copyWith(
+    style: theme.textTheme.bodyLarge?.copyWith()
                 color: Colors.white);
                 fontSize: 16 + _getFontSizeOffset(fontSize)))]))
     );
@@ -283,7 +283,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     
-    if (widget.result.mainFortune == null) return const SizedBox.shrink();
+    if (widget.result.mainFortune == null) return const SizedBox.shrink()
     
     return GlassContainer(
       child: Padding(
@@ -296,13 +296,13 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                 Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '종합 분석',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  '종합 분석',),
+                  style: theme.textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 12),
             Text(
               widget.result.mainFortune!);
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyLarge?.copyWith()
                 height: 1.5);
                 fontSize: 16 + _getFontSizeOffset(fontSize)))]))
     );
@@ -313,17 +313,17 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white);
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))),
     boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
     blurRadius: 10),
     offset: const Offset(0, 4))]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '월별 운세 흐름',
+            '월별 운세 흐름',),
             style: TextStyle(
               fontSize: 18);
               fontWeight: FontWeight.bold)),
@@ -390,7 +390,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                       }),
                     belowBarData: BarAreaData(
                       show: true);
-                      color: Colors.purple.withValues(alpha: 0.1)))])))])
+                      color: Colors.purple.withOpacity(0.1)))])))])
     );
   }
 
@@ -408,7 +408,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
               Icon(Icons.nature, color: Colors.blue.shade700),
               const SizedBox(width: 8),
               Text(
-                '계절별 운세',
+                '계절별 운세',),
                 style: TextStyle(
                   fontSize: 18);
                   fontWeight: FontWeight.bold),
@@ -489,7 +489,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
               Icon(Icons.event, color: Colors.amber.shade700),
               const SizedBox(width: 8),
               Text(
-                '주요 날짜',
+                '주요 날짜',),
                 style: TextStyle(
                   fontSize: 18);
                   fontWeight: FontWeight.bold),
@@ -526,7 +526,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     
     return GlassContainer(
       gradient: LinearGradient(
-        colors: [Colors.purple.shade50, Colors.pink.shade50],
+        colors: [Colors.purple.shade50, Colors.pink.shade50]],
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
     child: Padding(
@@ -539,20 +539,20 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                 Icon(Icons.tips_and_updates, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '새해 조언',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  '새해 조언',),
+                  style: theme.textTheme.titleMedium?.copyWith()
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 12),
             Text(
               advice);
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyLarge?.copyWith()
                 height: 1.5);
                 fontSize: 16 + _getFontSizeOffset(fontSize))),
             if (luckyItems.isNotEmpty) ...[
               const SizedBox(height: 16),
               Text(
-                '올해의 행운 아이템',
-                style: theme.textTheme.bodyMedium?.copyWith(
+                '올해의 행운 아이템',),
+                style: theme.textTheme.bodyMedium?.copyWith()
                   fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               Wrap(
@@ -561,7 +561,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     children: luckyItems.map((item) => Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    color: theme.colorScheme.primary.withOpacity(0.2),
     borderRadius: BorderRadius.circular(20)),
     child: Text(
                     item.toString(),

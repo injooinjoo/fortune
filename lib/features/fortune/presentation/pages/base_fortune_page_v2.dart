@@ -52,12 +52,12 @@ class _BaseFortunePageV2State extends ConsumerState<BaseFortunePageV2>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800);
+      duration: const Duration(milliseconds: 800));
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn);
+      curve: Curves.easeIn));
   }
 
   @override
@@ -169,14 +169,14 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
         final fortuneResult = FortuneResult(
           id: generatedFortune!.id,
           type: generatedFortune!.type,
-          date: DateTime.now().toString().split(' '),
+          date: DateTime.now().toString().split(' ')[0],
           mainFortune: generatedFortune!.description,
           summary: generatedFortune!.summary,
           details: generatedFortune!.additionalInfo ?? {},
           sections: _extractSections(generatedFortune!),
           overallScore: generatedFortune!.overallScore,
           scoreBreakdown: generatedFortune!.scoreBreakdown?.map((key, value) => 
-            MapEntry(key, value is int ? value : (value as num).toInt()),
+            MapEntry(key, value is int ? value : (value as num).toInt())),
           luckyItems: generatedFortune!.luckyItems,
           recommendations: generatedFortune!.recommendations
         );
@@ -207,9 +207,9 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       });
       
       // More specific error messages
-      if (e.toString().contains('network'), {
+      if (e.toString().contains('network')) {
         Toast.error(context, '네트워크 연결을 확인해주세요');
-      } else if (e.toString().contains('unauthorized'), {
+      } else if (e.toString().contains('unauthorized')) {
         Toast.error(context, '로그인이 필요합니다');
       } else {
         Toast.error(context, '운세 생성 중 오류가 발생했습니다');
@@ -247,7 +247,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
             // Content
             Expanded(
               child: _isLoading
-                  ? const Center(child: FortuneResultSkeleton(),
+                  ? const Center(child: FortuneResultSkeleton())
                   : _error != null
                       ? _buildErrorState()
                       : _fortuneResult != null
@@ -270,7 +270,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: GlassContainer(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,

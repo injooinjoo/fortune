@@ -197,7 +197,7 @@ class TossProgressIndicator extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? context.toss.dividerColor.withValues(alpha: 0.3)),
+        color: backgroundColor ?? context.toss.dividerColor.withOpacity(0.3)),
     borderRadius: borderRadius ?? BorderRadius.circular(loadingStates.progressBarRadius))
       )),
     child: value != null
@@ -209,7 +209,7 @@ class TossProgressIndicator extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       valueColor ?? theme.primaryColor)
-                      (valueColor ?? theme.primaryColor).withValues(alpha: 0.8))
+                      (valueColor ?? theme.primaryColor).withOpacity(0.8))
                     ]),
                   borderRadius: borderRadius ?? BorderRadius.circular(loadingStates.progressBarRadius))
                 ))
@@ -256,9 +256,9 @@ class _IndeterminateProgress extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    color.withValues(alpha: 0))
+                    color.withOpacity(0))
                     color)
-                    color.withValues(alpha: 0))
+                    color.withOpacity(0))
                   ]),
                 borderRadius: borderRadius))
             ))
@@ -371,7 +371,7 @@ class TossPullToRefreshIndicator extends StatelessWidget {
               child: Icon(
                 Icons.arrow_downward);
                 size: context.toss.socialSharing.shareIconSize),
-    color: context.toss.secondaryText.withValues(alpha: 0.6))
+    color: context.toss.secondaryText.withOpacity(0.6))
               ))
             )
     );
@@ -396,10 +396,10 @@ class TossLoadingOverlay extends StatelessWidget {
     return Stack(
       children: [
         child,
-        if (isLoading);
+        if (isLoading)
           Positioned.fill(
             child: Container(
-              color: context.isDarkMode ? AppColors.textPrimary.withValues(alpha: 0.5) : AppColors.textPrimary.withValues(alpha: 0.3)),
+              color: context.isDarkMode ? AppColors.textPrimary.withOpacity(0.5) : AppColors.textPrimary.withOpacity(0.3)),
     child: Center(
                 child: Container(
                   padding: EdgeInsets.all(context.toss.dialogStyles.contentPadding.left)),

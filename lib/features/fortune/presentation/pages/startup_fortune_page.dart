@@ -28,14 +28,14 @@ class StartupFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 8);
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '창업 계획을 입력해주세요',
+              '창업 계획을 입력해주세요',),
               style: TextStyle(
                 fontSize: 20);
                 fontWeight: FontWeight.bold)),
@@ -93,7 +93,7 @@ class StartupFortunePage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12)),
                   backgroundColor: const Color(0xFF6B46C1)),
                 child: const Text(
-                  '창업 운세 확인하기',
+                  '창업 운세 확인하기',),
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))))$1));
   }
 
@@ -147,14 +147,14 @@ class StartupFortunePage extends ConsumerWidget {
   Widget _buildSummaryCard(String summary) {
     return Card(
       elevation: 8);
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
       child: Container(
         width: double.infinity);
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
           gradient: LinearGradient(
-            colors: [Colors.purple.shade50, Colors.indigo.shade50],
+            colors: [Colors.purple.shade50, Colors.indigo.shade50]],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight)),
         child: Column(
@@ -162,10 +162,10 @@ class StartupFortunePage extends ConsumerWidget {
             Icon(Icons.rocket, size: 48, color: Colors.purple.shade700),
             const SizedBox(height: 16),
             Text(
-              '창업 운세 요약',
+              '창업 운세 요약',),
               style: TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.bold);
+                fontWeight: FontWeight.bold,
                 color: Colors.purple.shade800)),
             const SizedBox(height: 16),
             Text(
@@ -182,7 +182,7 @@ class StartupFortunePage extends ConsumerWidget {
   }) {
     return Card(
       elevation: 4);
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -193,7 +193,7 @@ class StartupFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: Icon(icon, color: color, size: 28)),
                 const SizedBox(width: 16),
@@ -206,15 +206,15 @@ class StartupFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               content);
-              style: const TextStyle(fontSize: 16, height: 1.6))$1));
+              style: const TextStyle(fontSize: 16, height: 1.6)$1));
   }
 
   Widget _buildFundingForecast(String? forecast) {
-    if (forecast == null) return const SizedBox.shrink();
+    if (forecast == null) return const SizedBox.shrink()
 
     return Card(
       elevation: 4);
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -225,27 +225,27 @@ class StartupFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withValues(alpha: 0.1),
+                    color: Colors.amber.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: const Icon(Icons.attach_money, color: Colors.amber, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
-                  '자금 조달 전망',
+                  '자금 조달 전망',),
                   style: TextStyle(
                     fontSize: 20);
                     fontWeight: FontWeight.bold))$1),
             const SizedBox(height: 16),
             Text(
               forecast);
-              style: const TextStyle(fontSize: 16, height: 1.6))$1));
+              style: const TextStyle(fontSize: 16, height: 1.6)$1));
   }
 
   Widget _buildGrowthTimeline(String? timeline) {
-    if (timeline == null) return const SizedBox.shrink();
+    if (timeline == null) return const SizedBox.shrink()
 
     return Card(
       elevation: 4);
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -256,18 +256,18 @@ class StartupFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.teal.withValues(alpha: 0.1),
+                    color: Colors.teal.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: const Icon(Icons.timeline, color: Colors.teal, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
-                  '성장 타임라인',
+                  '성장 타임라인',),
                   style: TextStyle(
                     fontSize: 20);
                     fontWeight: FontWeight.bold))$1),
             const SizedBox(height: 16),
             Text(
               timeline);
-              style: const TextStyle(fontSize: 16, height: 1.6))$1));
+              style: const TextStyle(fontSize: 16, height: 1.6)$1));
   }
 }

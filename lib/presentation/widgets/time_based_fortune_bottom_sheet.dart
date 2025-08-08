@@ -207,12 +207,12 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           padding: AppSpacing.paddingAll20),
         decoration: BoxDecoration(,
       color: isSelected
-                ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                ? AppTheme.primaryColor.withOpacity(0.1)
                 : theme.colorScheme.surface,
             border: Border.all(,
       color: isSelected
                   ? AppTheme.primaryColor
-                  : theme.colorScheme.outline.withValues(alpha: 0.2),
+                  : theme.colorScheme.outline.withOpacity(0.2),
               width: isSelected ? 2 : 1),
       borderRadius: AppDimensions.borderRadiusLarge),
       child: Row(,
@@ -222,7 +222,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                 height: AppDimensions.buttonHeightMedium),
         decoration: BoxDecoration(,
       color: isSelected
-                      ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                      ? AppTheme.primaryColor.withOpacity(0.2)
                       : theme.colorScheme.surfaceVariant,
                   borderRadius: AppDimensions.borderRadiusMedium),
       child: Icon(

@@ -6,7 +6,7 @@ class TarotMinorArcana {
     'wands_ace': TarotCardInfo(
       id: 23,
       name: '완드의 에이스 (Ace of Wands)',
-      keywords: ['새로운 시작': '영감': '성장': '잠재력': null,
+      keywords: ['새로운 시작', '영감', '성장', '잠재력'],
       uprightMeaning: '창의적인 시작, 새로운 기회, 열정의 불꽃, 영감',
       reversedMeaning: '지연된 프로젝트, 창의성 부족, 무기력, 좌절',
       element: '불',
@@ -16,12 +16,11 @@ class TarotMinorArcana {
       advice: '새로운 창의적 프로젝트를 시작할 완벽한 시기입니다',
       questions: [
         '어떤 새로운 열정이 당신을 기다리고 있나요?',
-        '당신의 창의적 에너지를 어디에 집중할 것인가요?'],
-    ,
+        '당신의 창의적 에너지를 어디에 집중할 것인가요?']),
     'wands_2': TarotCardInfo(
       id: 24,
       name: '완드의 2 (Two of Wands)',
-      keywords: ['계획': '진전': '결정': '잠재력': null,
+      keywords: ['계획', '진전', '결정', '잠재력'],
       uprightMeaning: '미래 계획, 장기적 목표, 개인적 힘, 영향력',
       reversedMeaning: '계획 부족, 두려움, 나쁜 계획, 예상치 못한 일',
       element: '불',
@@ -31,12 +30,11 @@ class TarotMinorArcana {
       advice: '큰 그림을 보고 장기적인 계획을 세우세요',
       questions: [
         '당신의 장기적인 목표는 무엇인가요?',
-        '어떤 선택이 더 나은 미래로 이끌까요?'],
-    ,
+        '어떤 선택이 더 나은 미래로 이끌까요?']),
     'wands_3': TarotCardInfo(
       id: 25,
       name: '완드의 3 (Three of Wands)',
-      keywords: ['확장': '예견': '장기 계획': '진보': null,
+      keywords: ['확장', '예견', '장기 계획', '진보'],
       uprightMeaning: '확장, 해외 기회, 장기적 성공, 비전의 실현',
       reversedMeaning: '좌절, 지연, 제한된 시야, 실망',
       element: '불',
@@ -46,12 +44,11 @@ class TarotMinorArcana {
       advice: '당신의 노력이 결실을 맺기 시작합니다',
       questions: [
         '어떤 기회가 지평선 너머에 있나요?',
-        '당신의 비전을 어떻게 확장할 수 있나요?'],
-    ,
+        '당신의 비전을 어떻게 확장할 수 있나요?']),
     'wands_4': TarotCardInfo(
       id: 26,
       name: '완드의 4 (Four of Wands)',
-      keywords: ['축하': '조화': '결혼': '행복한 가정',
+      keywords: ['축하', '조화', '결혼', '행복한 가정'],
       uprightMeaning: '축하, 행복한 재회, 안정감, 성취의 기쁨',
       reversedMeaning: '불안정, 전환기, 가정 불화, 축하의 부재',
       element: '불',
@@ -61,12 +58,11 @@ class TarotMinorArcana {
       advice: '성취를 축하하고 사랑하는 사람들과 시간을 보내세요',
       questions: [
         '무엇을 축하해야 하나요?',
-        '어떻게 더 안정적인 기반을 만들 수 있나요?'],
-    ,
+        '어떻게 더 안정적인 기반을 만들 수 있나요?']),
     'wands_5': TarotCardInfo(
       id: 27,
       name: '완드의 5 (Five of Wands)',
-      keywords: ['갈등': '경쟁': '긴장': '의견 충돌',
+      keywords: ['갈등', '경쟁', '긴장', '의견 충돌'],
       uprightMeaning: '갈등, 경쟁, 의견 차이, 도전적인 상황',
       reversedMeaning: '갈등 해결, 내적 갈등, 긴장 완화, 타협',
       element: '불',
@@ -76,12 +72,11 @@ class TarotMinorArcana {
       advice: '건설적인 방법으로 갈등을 해결하세요',
       questions: [
         '어떤 갈등이 성장의 기회가 될 수 있나요?',
-        '경쟁이 당신을 어떻게 발전시키고 있나요?'],
-    ,
+        '경쟁이 당신을 어떻게 발전시키고 있나요?']),
     'wands_6': TarotCardInfo(
       id: 28,
       name: '완드의 6 (Six of Wands)',
-      keywords: ['승리': '공적 인정': '진전': '자신감': null,
+      keywords: ['승리', '공적 인정', '진전', '자신감'],
       uprightMeaning: '승리, 공적 인정, 자부심, 성공',
       reversedMeaning: '개인적 성취, 인정 부족, 자만, 목표 달성 실패',
       element: '불',
@@ -91,12 +86,11 @@ class TarotMinorArcana {
       advice: '자신의 성취를 자랑스러워하되 겸손을 잃지 마세요',
       questions: [
         '어떤 성공을 축하해야 하나요?',
-        '인정받기 위해 무엇을 해야 하나요?'],
-    ,
+        '인정받기 위해 무엇을 해야 하나요?']),
     'wands_7': TarotCardInfo(
       id: 29,
       name: '완드의 7 (Seven of Wands)',
-      keywords: ['방어': '인내': '도전': '경쟁': null,
+      keywords: ['방어', '인내', '도전', '경쟁'],
       uprightMeaning: '자신의 입장 고수, 도전에 맞서기, 인내, 용기',
       reversedMeaning: '압도됨, 포기, 자신감 상실, 타협',
       element: '불',
@@ -106,12 +100,11 @@ class TarotMinorArcana {
       advice: '자신의 신념을 지키되 유연성도 가지세요',
       questions: [
         '무엇을 지켜야 하나요?',
-        '어떤 도전이 당신을 더 강하게 만들고 있나요?'],
-    ,
+        '어떤 도전이 당신을 더 강하게 만들고 있나요?']),
     'wands_8': TarotCardInfo(
       id: 30,
       name: '완드의 8 (Eight of Wands)',
-      keywords: ['신속한 행동': '움직임': '빠른 결정': '뉴스': null,
+      keywords: ['신속한 행동', '움직임', '빠른 결정', '뉴스'],
       uprightMeaning: '빠른 진전, 좋은 소식, 여행, 급속한 변화',
       reversedMeaning: '지연, 좌절, 인내 필요, 나쁜 타이밍',
       element: '불',
@@ -121,12 +114,11 @@ class TarotMinorArcana {
       advice: '기회가 왔을 때 빠르게 행동하세요',
       questions: [
         '어떤 일이 빠르게 진행되고 있나요?',
-        '기다리던 소식이 무엇인가요?'],
-    ,
+        '기다리던 소식이 무엇인가요?']),
     'wands_9': TarotCardInfo(
       id: 31,
       name: '완드의 9 (Nine of Wands)',
-      keywords: ['인내': '용기': '경계': '시험': null,
+      keywords: ['인내', '용기', '경계', '시험'],
       uprightMeaning: '마지막 도전, 인내, 경계심, 회복력',
       reversedMeaning: '편집증, 방어적, 포기 직전, 고집',
       element: '불',
@@ -136,12 +128,11 @@ class TarotMinorArcana {
       advice: '조금만 더 버티면 목표에 도달할 수 있습니다',
       questions: [
         '무엇이 당신을 계속 나아가게 하나요?',
-        '어떤 교훈을 배웠나요?'],
-    ,
+        '어떤 교훈을 배웠나요?']),
     'wands_10': TarotCardInfo(
       id: 32,
       name: '완드의 10 (Ten of Wands)',
-      keywords: ['부담': '책임': '노력': '스트레스': null,
+      keywords: ['부담', '책임', '노력', '스트레스'],
       uprightMeaning: '과도한 부담, 책임감, 열심히 일함, 스트레스',
       reversedMeaning: '부담 해소, 위임, 포기, 책임 회피',
       element: '불',
@@ -151,12 +142,11 @@ class TarotMinorArcana {
       advice: '도움을 요청하고 부담을 나누세요',
       questions: [
         '어떤 부담을 내려놓아야 하나요?',
-        '책임을 어떻게 분담할 수 있나요?'],
-    ,
+        '책임을 어떻게 분담할 수 있나요?']),
     'wands_page': TarotCardInfo(
       id: 33,
       name: '완드의 페이지 (Page of Wands)',
-      keywords: ['열정': '모험': '자유로운 영혼': '발견': null,
+      keywords: ['열정', '모험', '자유로운 영혼', '발견'],
       uprightMeaning: '새로운 아이디어, 열정적인 시작, 창의적 메시지, 모험',
       reversedMeaning: '나쁜 소식, 미성숙, 계획 부족, 무모함',
       element: '불',
@@ -166,12 +156,11 @@ class TarotMinorArcana {
       advice: '열정을 가지고 새로운 모험을 시작하세요',
       questions: [
         '어떤 새로운 열정이 당신을 부르고 있나요?',
-        '창의적인 에너지를 어디에 쏟을 것인가요?'],
-    ,
+        '창의적인 에너지를 어디에 쏟을 것인가요?']),
     'wands_knight': TarotCardInfo(
       id: 34,
       name: '완드의 기사 (Knight of Wands)',
-      keywords: ['에너지': '열정': '모험': '충동': null,
+      keywords: ['에너지', '열정', '모험', '충동'],
       uprightMeaning: '모험, 에너지, 열정, 충동적 행동, 여행',
       reversedMeaning: '무모함, 조급함, 좌절, 지연, 분노',
       element: '불',
@@ -181,12 +170,11 @@ class TarotMinorArcana {
       advice: '열정은 좋지만 신중함도 필요합니다',
       questions: [
         '어디로 모험을 떠나고 싶나요?',
-        '충동을 어떻게 건설적으로 활용할 수 있나요?'],
-    ,
+        '충동을 어떻게 건설적으로 활용할 수 있나요?']),
     'wands_queen': TarotCardInfo(
       id: 35,
       name: '완드의 여왕 (Queen of Wands)',
-      keywords: ['자신감': '용기': '결단력': '독립': null,
+      keywords: ['자신감', '용기', '결단력', '독립'],
       uprightMeaning: '자신감, 용기, 결단력, 독립적, 카리스마',
       reversedMeaning: '이기심, 질투, 불안정, 악의적, 까다로움',
       element: '불',
@@ -196,12 +184,11 @@ class TarotMinorArcana {
       advice: '자신감을 가지고 리더십을 발휘하세요',
       questions: [
         '어떻게 더 자신감 있게 행동할 수 있나요?',
-        '당신의 열정을 어떻게 다른 사람들에게 전달할 수 있나요?'],
-    ,
+        '당신의 열정을 어떻게 다른 사람들에게 전달할 수 있나요?']),
     'wands_king': TarotCardInfo(
       id: 36,
       name: '완드의 왕 (King of Wands)',
-      keywords: ['리더십': '비전': '기업가 정신': '카리스마': null,
+      keywords: ['리더십', '비전', '기업가 정신', '카리스마'],
       uprightMeaning: '자연스러운 리더, 비전, 기업가 정신, 명예',
       reversedMeaning: '충동적, 무자비함, 높은 기대, 독재적',
       element: '불',
@@ -211,15 +198,15 @@ class TarotMinorArcana {
       advice: '비전을 가지고 다른 사람들을 이끄세요',
       questions: [
         '당신의 비전은 무엇인가요?',
-        '어떻게 더 나은 리더가 될 수 있나요?'],
-    };
+        '어떻게 더 나은 리더가 될 수 있나요?']),
+  };
 
   // Cups (물의 원소 - 감정, 직관, 관계)
   static const Map<String, TarotCardInfo> cups = {
     'cups_ace': TarotCardInfo(
       id: 37,
       name: '컵의 에이스 (Ace of Cups)',
-      keywords: ['새로운 사랑': '감정적 시작': '직관': '창의성': null,
+      keywords: ['새로운 사랑', '감정적 시작', '직관', '창의성'],
       uprightMeaning: '새로운 관계, 사랑, 정서적 각성, 창의성, 직관',
       reversedMeaning: '감정 억압, 공허함, 실연, 창의성 차단',
       element: '물',
@@ -229,12 +216,11 @@ class TarotMinorArcana {
       advice: '마음을 열고 새로운 감정적 경험을 받아들이세요',
       questions: [
         '어떤 새로운 감정이 당신을 기다리고 있나요?',
-        '마음을 어디에 열어야 하나요?'],
-    ,
+        '마음을 어디에 열어야 하나요?']),
     'cups_2': TarotCardInfo(
       id: 38,
       name: '컵의 2 (Two of Cups)',
-      keywords: ['파트너십': '연합': '사랑': '조화': null,
+      keywords: ['파트너십', '연합', '사랑', '조화'],
       uprightMeaning: '통합, 파트너십, 상호 매력, 균형잡힌 관계',
       reversedMeaning: '불균형, 이별, 신뢰 부족, 의사소통 문제',
       element: '물',
@@ -244,12 +230,11 @@ class TarotMinorArcana {
       advice: '진정한 파트너십은 상호 존중에서 시작됩니다',
       questions: [
         '어떤 관계가 당신에게 중요한가요?',
-        '어떻게 더 깊은 연결을 만들 수 있나요?'],
-    ,
+        '어떻게 더 깊은 연결을 만들 수 있나요?']),
     'cups_3': TarotCardInfo(
       id: 39,
       name: '컵의 3 (Three of Cups)',
-      keywords: ['축하': '우정': '창의성': '공동체': null,
+      keywords: ['축하', '우정', '창의성', '공동체'],
       uprightMeaning: '축하, 우정, 창의성, 공동체, 행복한 재회',
       reversedMeaning: '과잉, 험담, 고립, 과도한 파티',
       element: '물',
@@ -259,12 +244,11 @@ class TarotMinorArcana {
       advice: '친구들과 성공을 축하하고 기쁨을 나누세요',
       questions: [
         '누구와 기쁨을 나누고 싶나요?',
-        '어떤 성취를 축하해야 하나요?'],
-    ,
+        '어떤 성취를 축하해야 하나요?']),
     'cups_4': TarotCardInfo(
       id: 40,
       name: '컵의 4 (Four of Cups)',
-      keywords: ['명상': '숙고': '무관심': '재평가': null,
+      keywords: ['명상', '숙고', '무관심', '재평가'],
       uprightMeaning: '명상, 숙고, 무관심, 놓친 기회',
       reversedMeaning: '새로운 가능성, 동기 부여, 각성, 수용',
       element: '물',
@@ -274,12 +258,11 @@ class TarotMinorArcana {
       advice: '내면을 들여다보되 새로운 기회도 놓치지 마세요',
       questions: [
         '어떤 기회를 놓치고 있나요?',
-        '무엇이 당신을 만족시킬 수 있나요?'],
-    ,
+        '무엇이 당신을 만족시킬 수 있나요?']),
     'cups_5': TarotCardInfo(
       id: 41,
       name: '컵의 5 (Five of Cups)',
-      keywords: ['상실': '슬픔': '실망': '후회': null,
+      keywords: ['상실', '슬픔', '실망', '후회'],
       uprightMeaning: '상실, 슬픔, 실망, 후회, 비탄',
       reversedMeaning: '수용, 용서, 회복, 앞으로 나아감',
       element: '물',
@@ -289,12 +272,11 @@ class TarotMinorArcana {
       advice: '상실을 애도하되 남은 것에도 감사하세요',
       questions: [
         '무엇을 놓아주어야 하나요?',
-        '어떻게 상실을 성장의 기회로 만들 수 있나요?'],
-    ,
+        '어떻게 상실을 성장의 기회로 만들 수 있나요?']),
     'cups_6': TarotCardInfo(
       id: 42,
       name: '컵의 6 (Six of Cups)',
-      keywords: ['향수': '어린 시절': '순수함': '기쁨': null,
+      keywords: ['향수', '어린 시절', '순수함', '기쁨'],
       uprightMeaning: '향수, 어린 시절의 기억, 순수함, 기쁨, 과거',
       reversedMeaning: '과거에 갇힘, 미래로 나아감, 성장, 독립',
       element: '물',
@@ -304,12 +286,11 @@ class TarotMinorArcana {
       advice: '과거의 아름다운 기억을 소중히 하되 현재를 살아가세요',
       questions: [
         '어떤 어린 시절의 기쁨을 되찾을 수 있나요?',
-        '과거가 현재에 어떤 영향을 미치고 있나요?'],
-    ,
+        '과거가 현재에 어떤 영향을 미치고 있나요?']),
     'cups_7': TarotCardInfo(
       id: 43,
       name: '컵의 7 (Seven of Cups)',
-      keywords: ['환상': '선택': '일루전': '소망': null,
+      keywords: ['환상', '선택', '일루전', '소망'],
       uprightMeaning: '선택, 환상, 일루전, 소망, 상상력',
       reversedMeaning: '명확성, 선택, 현실 직시, 결단력',
       element: '물',
@@ -319,12 +300,11 @@ class TarotMinorArcana {
       advice: '모든 선택지를 신중히 검토하고 현실적으로 판단하세요',
       questions: [
         '어떤 환상이 당신을 현혹하고 있나요?',
-        '진정으로 원하는 것은 무엇인가요?'],
-    ,
+        '진정으로 원하는 것은 무엇인가요?']),
     'cups_8': TarotCardInfo(
       id: 44,
       name: '컵의 8 (Eight of Cups)',
-      keywords: ['포기': '탐색': '떠남': '환멸': null,
+      keywords: ['포기', '탐색', '떠남', '환멸'],
       uprightMeaning: '포기, 실망, 떠남, 더 깊은 의미 탐색',
       reversedMeaning: '방황, 목적 없음, 회피, 포기하기 두려움',
       element: '물',
@@ -334,12 +314,11 @@ class TarotMinorArcana {
       advice: '때로는 떠나는 것이 성장을 위한 최선의 선택입니다',
       questions: [
         '무엇을 뒤로하고 떠나야 하나요?',
-        '더 깊은 의미를 어디서 찾을 수 있나요?'],
-    ,
+        '더 깊은 의미를 어디서 찾을 수 있나요?']),
     'cups_9': TarotCardInfo(
       id: 45,
       name: '컵의 9 (Nine of Cups)',
-      keywords: ['만족': '정서적 충족': '소원 성취': '행복': null,
+      keywords: ['만족', '정서적 충족', '소원 성취', '행복'],
       uprightMeaning: '만족, 정서적 충족, 소원 성취, 행복, 만족감',
       reversedMeaning: '내적 행복, 물질주의, 불만족, 탐욕',
       element: '물',
@@ -349,12 +328,11 @@ class TarotMinorArcana {
       advice: '당신의 소원이 이루어질 때입니다. 감사하세요',
       questions: [
         '무엇이 당신을 진정으로 행복하게 하나요?',
-        '어떤 소원이 이루어졌나요?'],
-    ,
+        '어떤 소원이 이루어졌나요?']),
     'cups_10': TarotCardInfo(
       id: 46,
       name: '컵의 10 (Ten of Cups)',
-      keywords: ['행복': '가족': '조화': '정서적 충족',
+      keywords: ['행복', '가족', '조화', '정서적 충족'],
       uprightMeaning: '행복한 가정, 조화, 정서적 충족, 사랑의 완성',
       reversedMeaning: '가정 불화, 가치관 충돌, 비현실적 기대',
       element: '물',
@@ -364,12 +342,11 @@ class TarotMinorArcana {
       advice: '사랑하는 사람들과의 관계를 소중히 여기세요',
       questions: [
         '진정한 행복은 어디에서 오나요?',
-        '어떻게 더 조화로운 관계를 만들 수 있나요?'],
-    ,
+        '어떻게 더 조화로운 관계를 만들 수 있나요?']),
     'cups_page': TarotCardInfo(
       id: 47,
       name: '컵의 페이지 (Page of Cups)',
-      keywords: ['창의적 시작': '직관': '감수성': '새로운 감정',
+      keywords: ['창의적 시작', '직관', '감수성', '새로운 감정'],
       uprightMeaning: '창의적 기회, 직관적 메시지, 새로운 감정, 예술적 영감',
       reversedMeaning: '감정적 미성숙, 현실 도피, 창의성 차단',
       element: '물',
@@ -379,12 +356,11 @@ class TarotMinorArcana {
       advice: '직관을 신뢰하고 창의적인 영감을 따르세요',
       questions: [
         '어떤 창의적 메시지가 당신에게 오고 있나요?',
-        '직관이 무엇을 말하고 있나요?'],
-    ,
+        '직관이 무엇을 말하고 있나요?']),
     'cups_knight': TarotCardInfo(
       id: 48,
       name: '컵의 기사 (Knight of Cups)',
-      keywords: ['로맨스': '매력': '상상력': '예술': null,
+      keywords: ['로맨스', '매력', '상상력', '예술'],
       uprightMeaning: '로맨틱한 제안, 창의성, 매력, 예술적 추구',
       reversedMeaning: '감정적 조작, 비현실적, 질투, 변덕스러움',
       element: '물',
@@ -394,12 +370,11 @@ class TarotMinorArcana {
       advice: '마음의 소리를 따르되 현실도 잊지 마세요',
       questions: [
         '어떤 로맨틱한 기회가 다가오고 있나요?',
-        '감정과 행동의 균형을 어떻게 맞출 수 있나요?'],
-    ,
+        '감정과 행동의 균형을 어떻게 맞출 수 있나요?']),
     'cups_queen': TarotCardInfo(
       id: 49,
       name: '컵의 여왕 (Queen of Cups)',
-      keywords: ['동정심': '침착함': '직관': '감정적 성숙',
+      keywords: ['동정심', '침착함', '직관', '감정적 성숙'],
       uprightMeaning: '동정심, 배려, 감정적 안정, 직관력, 성숙함',
       reversedMeaning: '감정적 불안정, 의존성, 자기 돌봄 부족',
       element: '물',
@@ -409,12 +384,11 @@ class TarotMinorArcana {
       advice: '직관을 신뢰하고 타인에게 동정심을 보이세요',
       questions: [
         '어떻게 더 감정적으로 성숙해질 수 있나요?',
-        '누가 당신의 동정심을 필요로 하나요?'],
-    ,
+        '누가 당신의 동정심을 필요로 하나요?']),
     'cups_king': TarotCardInfo(
       id: 50,
       name: '컵의 왕 (King of Cups)',
-      keywords: ['감정적 균형': '외교': '관대함': '가족': null,
+      keywords: ['감정적 균형', '외교', '관대함', '가족'],
       uprightMeaning: '감정적 균형, 관대함, 외교술, 가족 중심',
       reversedMeaning: '감정적 조작, 변덕스러움, 냉담함, 억압된 감정',
       element: '물',
@@ -424,15 +398,15 @@ class TarotMinorArcana {
       advice: '감정을 현명하게 다스리고 균형을 유지하세요',
       questions: [
         '어떻게 감정과 이성의 균형을 맞출 수 있나요?',
-        '당신의 감정적 지혜를 어떻게 활용할 수 있나요?'],
-    };
+        '당신의 감정적 지혜를 어떻게 활용할 수 있나요?']),
+  };
 
   // Swords (공기의 원소 - 생각, 소통, 갈등)
   static const Map<String, TarotCardInfo> swords = {
     'swords_ace': TarotCardInfo(
       id: 51,
       name: '소드의 에이스 (Ace of Swords)',
-      keywords: ['새로운 아이디어': '정신적 명료함': '돌파구': '진실': null,
+      keywords: ['새로운 아이디어', '정신적 명료함', '돌파구', '진실'],
       uprightMeaning: '정신적 명료함, 돌파구, 새로운 아이디어, 진실, 정의',
       reversedMeaning: '혼란, 잘못된 정보, 정신적 차단, 불공정',
       element: '공기',
@@ -442,12 +416,11 @@ class TarotMinorArcana {
       advice: '명료한 사고로 진실을 추구하세요',
       questions: [
         '어떤 진실이 드러나고 있나요?',
-        '어디에 정신적 명료함이 필요한가요?'],
-    ,
+        '어디에 정신적 명료함이 필요한가요?']),
     'swords_2': TarotCardInfo(
       id: 52,
       name: '소드의 2 (Two of Swords)',
-      keywords: ['어려운 결정': '교착 상태': '회피': '균형': null,
+      keywords: ['어려운 결정', '교착 상태', '회피', '균형'],
       uprightMeaning: '어려운 결정, 교착 상태, 균형 유지, 중립',
       reversedMeaning: '우유부단, 정보 과다, 결정 지연, 혼란',
       element: '공기',
@@ -457,12 +430,11 @@ class TarotMinorArcana {
       advice: '직관과 논리를 모두 사용하여 결정하세요',
       questions: [
         '어떤 결정을 피하고 있나요?',
-        '양쪽 의견을 어떻게 조화시킬 수 있나요?'],
-    ,
+        '양쪽 의견을 어떻게 조화시킬 수 있나요?']),
     'swords_3': TarotCardInfo(
       id: 53,
       name: '소드의 3 (Three of Swords)',
-      keywords: ['가슴 아픔': '슬픔': '상실': '배신': null,
+      keywords: ['가슴 아픔', '슬픔', '상실', '배신'],
       uprightMeaning: '가슴 아픔, 슬픔, 상실, 배신, 고통스러운 진실',
       reversedMeaning: '회복, 용서, 상처 치유, 낙관주의',
       element: '공기',
@@ -472,12 +444,11 @@ class TarotMinorArcana {
       advice: '고통을 인정하고 치유의 과정을 시작하세요',
       questions: [
         '어떤 상처가 치유되어야 하나요?',
-        '고통에서 무엇을 배울 수 있나요?'],
-    ,
+        '고통에서 무엇을 배울 수 있나요?']),
     'swords_4': TarotCardInfo(
       id: 54,
       name: '소드의 4 (Four of Swords)',
-      keywords: ['휴식': '회복': '명상': '준비': null,
+      keywords: ['휴식', '회복', '명상', '준비'],
       uprightMeaning: '휴식, 회복, 명상, 정신적 준비, 평화',
       reversedMeaning: '불안, 번아웃, 정체, 회복 부족',
       element: '공기',
@@ -487,12 +458,11 @@ class TarotMinorArcana {
       advice: '행동하기 전에 충분한 휴식과 성찰의 시간을 가지세요',
       questions: [
         '어디에서 휴식을 찾을 수 있나요?',
-        '다음 단계를 위해 어떻게 준비할 수 있나요?'],
-    ,
+        '다음 단계를 위해 어떻게 준비할 수 있나요?']),
     'swords_5': TarotCardInfo(
       id: 55,
       name: '소드의 5 (Five of Swords)',
-      keywords: ['갈등': '패배': '굴욕': '이기심': null,
+      keywords: ['갈등', '패배', '굴욕', '이기심'],
       uprightMeaning: '갈등, 불명예스러운 승리, 패배, 굴욕',
       reversedMeaning: '화해, 과거 청산, 용서, 패배 수용',
       element: '공기',
@@ -502,12 +472,11 @@ class TarotMinorArcana {
       advice: '모든 전투가 싸울 가치가 있는 것은 아닙니다',
       questions: [
         '이기는 것이 정말 중요한가요?',
-        '어떤 갈등을 놓아주어야 하나요?'],
-    ,
+        '어떤 갈등을 놓아주어야 하나요?']),
     'swords_6': TarotCardInfo(
       id: 56,
       name: '소드의 6 (Six of Swords)',
-      keywords: ['전환': '이동': '회복': '여행': null,
+      keywords: ['전환', '이동', '회복', '여행'],
       uprightMeaning: '전환, 이동, 회복의 여정, 평화로운 변화',
       reversedMeaning: '저항, 전환 지연, 미해결 문제, 정체',
       element: '공기',
@@ -517,12 +486,11 @@ class TarotMinorArcana {
       advice: '어려운 시기를 뒤로하고 앞으로 나아가세요',
       questions: [
         '어떤 전환이 필요한가요?',
-        '더 나은 곳으로 어떻게 이동할 수 있나요?'],
-    ,
+        '더 나은 곳으로 어떻게 이동할 수 있나요?']),
     'swords_7': TarotCardInfo(
       id: 57,
       name: '소드의 7 (Seven of Swords)',
-      keywords: ['기만': '전략': '은밀함': '고립': null,
+      keywords: ['기만', '전략', '은밀함', '고립'],
       uprightMeaning: '기만, 배신, 은밀한 행동, 전략적 사고',
       reversedMeaning: '고백, 진실 드러남, 책임 수용, 반성',
       element: '공기',
@@ -532,12 +500,11 @@ class TarotMinorArcana {
       advice: '정직이 최선의 정책임을 기억하세요',
       questions: [
         '무엇을 숨기고 있나요?',
-        '어떤 전략이 필요한가요?'],
-    ,
+        '어떤 전략이 필요한가요?']),
     'swords_8': TarotCardInfo(
       id: 58,
       name: '소드의 8 (Eight of Swords)',
-      keywords: ['제한': '포로': '무력감': '자기 제한',
+      keywords: ['제한', '포로', '무력감', '자기 제한'],
       uprightMeaning: '제한, 포로 상태, 무력감, 피해자 의식',
       reversedMeaning: '자유, 새로운 관점, 제한 극복, 권한 부여',
       element: '공기',
@@ -547,12 +514,11 @@ class TarotMinorArcana {
       advice: '제한은 종종 우리 마음속에만 존재합니다',
       questions: [
         '어떤 제한이 실제이고 어떤 것이 상상인가요?',
-        '어떻게 자유를 찾을 수 있나요?'],
-    ,
+        '어떻게 자유를 찾을 수 있나요?']),
     'swords_9': TarotCardInfo(
       id: 59,
       name: '소드의 9 (Nine of Swords)',
-      keywords: ['불안': '악몽': '두려움': '절망': null,
+      keywords: ['불안', '악몽', '두려움', '절망'],
       uprightMeaning: '불안, 악몽, 두려움, 정신적 고통, 죄책감',
       reversedMeaning: '희망, 극복, 도움 요청, 회복의 시작',
       element: '공기',
@@ -562,12 +528,11 @@ class TarotMinorArcana {
       advice: '두려움은 종종 현실보다 더 나쁩니다',
       questions: [
         '무엇이 당신을 밤에 깨우나요?',
-        '두려움을 어떻게 극복할 수 있나요?'],
-    ,
+        '두려움을 어떻게 극복할 수 있나요?']),
     'swords_10': TarotCardInfo(
       id: 60,
       name: '소드의 10 (Ten of Swords)',
-      keywords: ['배신': '끝': '고통스러운 종료': '바닥': null,
+      keywords: ['배신', '끝', '고통스러운 종료', '바닥'],
       uprightMeaning: '고통스러운 끝, 배신, 바닥, 피할 수 없는 종료',
       reversedMeaning: '회복, 재생, 최악은 지났음, 새로운 시작',
       element: '공기',
@@ -577,12 +542,11 @@ class TarotMinorArcana {
       advice: '끝은 새로운 시작의 전조입니다',
       questions: [
         '무엇이 끝나야 하나요?',
-        '어떻게 다시 일어설 수 있나요?'],
-    ,
+        '어떻게 다시 일어설 수 있나요?']),
     'swords_page': TarotCardInfo(
       id: 61,
       name: '소드의 페이지 (Page of Swords)',
-      keywords: ['호기심': '새로운 아이디어': '경계': '진실 추구',
+      keywords: ['호기심', '새로운 아이디어', '경계', '진실 추구'],
       uprightMeaning: '호기심, 새로운 아이디어, 경계심, 정신적 에너지',
       reversedMeaning: '험담, 모든 말 믿기, 정신 산란, 과도한 경계',
       element: '공기',
@@ -592,12 +556,11 @@ class TarotMinorArcana {
       advice: '호기심을 가지되 신중하게 행동하세요',
       questions: [
         '무엇을 더 알고 싶나요?',
-        '어떤 새로운 아이디어가 떠오르나요?'],
-    ,
+        '어떤 새로운 아이디어가 떠오르나요?']),
     'swords_knight': TarotCardInfo(
       id: 62,
       name: '소드의 기사 (Knight of Swords)',
-      keywords: ['빠른 행동': '야심': '용기': '충돌': null,
+      keywords: ['빠른 행동', '야심', '용기', '충돌'],
       uprightMeaning: '빠른 행동, 야심, 용기, 정직, 권위에 도전',
       reversedMeaning: '무모함, 조급함, 공격적, 무신경함',
       element: '공기',
@@ -607,12 +570,11 @@ class TarotMinorArcana {
       advice: '용기는 좋지만 무모함과는 다릅니다',
       questions: [
         '어디로 돌진하고 있나요?',
-        '속도와 신중함의 균형을 어떻게 맞출 수 있나요?'],
-    ,
+        '속도와 신중함의 균형을 어떻게 맞출 수 있나요?']),
     'swords_queen': TarotCardInfo(
       id: 63,
       name: '소드의 여왕 (Queen of Swords)',
-      keywords: ['명확한 소통': '독립성': '지각력': '직설적': null,
+      keywords: ['명확한 소통', '독립성', '지각력', '직설적'],
       uprightMeaning: '명확한 소통, 독립성, 공정함, 지각력, 경계 설정',
       reversedMeaning: '차가움, 잔인함, 비관적, 소통 부족',
       element: '공기',
@@ -622,12 +584,11 @@ class TarotMinorArcana {
       advice: '진실을 말하되 친절함도 잊지 마세요',
       questions: [
         '어디에 명확한 경계가 필요한가요?',
-        '진실을 어떻게 친절하게 전달할 수 있나요?'],
-    ,
+        '진실을 어떻게 친절하게 전달할 수 있나요?']),
     'swords_king': TarotCardInfo(
       id: 64,
       name: '소드의 왕 (King of Swords)',
-      keywords: ['지적 권력': '진실': '권위': '판단력': null,
+      keywords: ['지적 권력', '진실', '권위', '판단력'],
       uprightMeaning: '지적 권력, 명확한 사고, 진실, 권위, 공정함',
       reversedMeaning: '권력 남용, 조작, 냉담함, 비윤리적',
       element: '공기',
@@ -637,15 +598,15 @@ class TarotMinorArcana {
       advice: '지혜와 공정함으로 판단하세요',
       questions: [
         '어디에 명확한 판단이 필요한가요?',
-        '권위를 어떻게 현명하게 사용할 수 있나요?'],
-    };
+        '권위를 어떻게 현명하게 사용할 수 있나요?']),
+  };
 
   // Pentacles (땅의 원소 - 물질, 건강, 일)
   static const Map<String, TarotCardInfo> pentacles = {
     'pentacles_ace': TarotCardInfo(
       id: 65,
       name: '펜타클의 에이스 (Ace of Pentacles)',
-      keywords: ['새로운 기회': '번영': '물질적 시작': '잠재력': null,
+      keywords: ['새로운 기회', '번영', '물질적 시작', '잠재력'],
       uprightMeaning: '새로운 재정적 기회, 번영, 안정성, 건강',
       reversedMeaning: '기회 상실, 계획 부족, 탐욕, 물질주의',
       element: '땅',
@@ -655,12 +616,11 @@ class TarotMinorArcana {
       advice: '새로운 물질적 기회를 현명하게 활용하세요',
       questions: [
         '어떤 새로운 기회가 당신을 기다리고 있나요?',
-        '안정성을 어떻게 구축할 수 있나요?'],
-    ,
+        '안정성을 어떻게 구축할 수 있나요?']),
     'pentacles_2': TarotCardInfo(
       id: 66,
       name: '펜타클의 2 (Two of Pentacles)',
-      keywords: ['균형': '적응력': '시간 관리': '우선순위': null,
+      keywords: ['균형', '적응력', '시간 관리', '우선순위'],
       uprightMeaning: '균형, 적응력, 시간 관리, 다중 작업',
       reversedMeaning: '압도됨, 조직 부재, 재정 스트레스',
       element: '땅',
@@ -670,12 +630,11 @@ class TarotMinorArcana {
       advice: '삶의 다양한 요구사항들 사이에서 균형을 찾으세요',
       questions: [
         '어떻게 더 나은 균형을 찾을 수 있나요?',
-        '우선순위를 어떻게 정해야 하나요?'],
-    ,
+        '우선순위를 어떻게 정해야 하나요?']),
     'pentacles_3': TarotCardInfo(
       id: 67,
       name: '펜타클의 3 (Three of Pentacles)',
-      keywords: ['팀워크': '협력': '기술': '계획': null,
+      keywords: ['팀워크', '협력', '기술', '계획'],
       uprightMeaning: '팀워크, 협력, 기술 학습, 품질',
       reversedMeaning: '팀워크 부족, 무관심, 품질 저하',
       element: '땅',
@@ -685,12 +644,11 @@ class TarotMinorArcana {
       advice: '다른 사람들과 협력하여 더 큰 것을 만드세요',
       questions: [
         '누구와 협력해야 하나요?',
-        '어떤 기술을 개발해야 하나요?'],
-    ,
+        '어떤 기술을 개발해야 하나요?']),
     'pentacles_4': TarotCardInfo(
       id: 68,
       name: '펜타클의 4 (Four of Pentacles)',
-      keywords: ['안정성': '보수성': '소유욕': '통제': null,
+      keywords: ['안정성', '보수성', '소유욕', '통제'],
       uprightMeaning: '재정 안정, 보수성, 저축, 통제',
       reversedMeaning: '탐욕, 물질주의, 자기 보호, 인색함',
       element: '땅',
@@ -700,12 +658,11 @@ class TarotMinorArcana {
       advice: '안정성은 좋지만 너무 경직되지 마세요',
       questions: [
         '무엇을 놓아주기 두려워하나요?',
-        '안정성과 유연성의 균형을 어떻게 맞출 수 있나요?'],
-    ,
+        '안정성과 유연성의 균형을 어떻게 맞출 수 있나요?']),
     'pentacles_5': TarotCardInfo(
       id: 69,
       name: '펜타클의 5 (Five of Pentacles)',
-      keywords: ['재정적 손실': '빈곤': '고립': '불안감': null,
+      keywords: ['재정적 손실', '빈곤', '고립', '불안감'],
       uprightMeaning: '재정적 손실, 빈곤, 고립, 건강 문제',
       reversedMeaning: '회복, 영적 부, 극복, 도움 수락',
       element: '땅',
@@ -715,12 +672,11 @@ class TarotMinorArcana {
       advice: '도움이 필요할 때는 요청하는 것을 두려워하지 마세요',
       questions: [
         '어떤 도움을 받을 수 있나요?',
-        '물질적 손실에서 무엇을 배울 수 있나요?'],
-    ,
+        '물질적 손실에서 무엇을 배울 수 있나요?']),
     'pentacles_6': TarotCardInfo(
       id: 70,
       name: '펜타클의 6 (Six of Pentacles)',
-      keywords: ['관대함': '자선': '공유': '공정함': null,
+      keywords: ['관대함', '자선', '공유', '공정함'],
       uprightMeaning: '관대함, 자선, 공유, 재정적 균형',
       reversedMeaning: '이기심, 빚, 불공정, 권력 남용',
       element: '땅',
@@ -730,12 +686,11 @@ class TarotMinorArcana {
       advice: '나눔은 받는 것만큼 중요합니다',
       questions: [
         '어떻게 더 관대해질 수 있나요?',
-        '주고받음의 균형이 맞나요?'],
-    ,
+        '주고받음의 균형이 맞나요?']),
     'pentacles_7': TarotCardInfo(
       id: 71,
       name: '펜타클의 7 (Seven of Pentacles)',
-      keywords: ['인내': '투자': '장기적 보상': '평가': null,
+      keywords: ['인내', '투자', '장기적 보상', '평가'],
       uprightMeaning: '인내, 투자, 장기적 보상, 지속 가능한 결과',
       reversedMeaning: '조급함, 투자 부족, 보상 없음, 좌절',
       element: '땅',
@@ -745,12 +700,11 @@ class TarotMinorArcana {
       advice: '인내심을 갖고 노력의 결실을 기다리세요',
       questions: [
         '어떤 투자가 결실을 맺고 있나요?',
-        '장기적 목표를 위해 무엇을 해야 하나요?'],
-    ,
+        '장기적 목표를 위해 무엇을 해야 하나요?']),
     'pentacles_8': TarotCardInfo(
       id: 72,
       name: '펜타클의 8 (Eight of Pentacles)',
-      keywords: ['기술 연마': '헌신': '세부사항': '장인정신': null,
+      keywords: ['기술 연마', '헌신', '세부사항', '장인정신'],
       uprightMeaning: '기술 연마, 헌신, 품질에 대한 집중, 교육',
       reversedMeaning: '완벽주의, 기술 부족, 의미 없는 일',
       element: '땅',
@@ -760,12 +714,11 @@ class TarotMinorArcana {
       advice: '꾸준한 연습과 헌신이 전문성을 만듭니다',
       questions: [
         '어떤 기술을 완벽하게 만들고 싶나요?',
-        '세부사항에 충분히 주의를 기울이고 있나요?'],
-    ,
+        '세부사항에 충분히 주의를 기울이고 있나요?']),
     'pentacles_9': TarotCardInfo(
       id: 73,
       name: '펜타클의 9 (Nine of Pentacles)',
-      keywords: ['풍요': '독립': '자급자족': '성취': null,
+      keywords: ['풍요', '독립', '자급자족', '성취'],
       uprightMeaning: '재정적 독립, 풍요, 자급자족, 품격',
       reversedMeaning: '과시, 과로, 재정적 후퇴, 외로움',
       element: '땅',
@@ -775,12 +728,11 @@ class TarotMinorArcana {
       advice: '당신의 성취와 독립성을 즐기세요',
       questions: [
         '어떤 성취를 축하해야 하나요?',
-        '독립성을 어떻게 유지할 수 있나요?'],
-    ,
+        '독립성을 어떻게 유지할 수 있나요?']),
     'pentacles_10': TarotCardInfo(
       id: 74,
       name: '펜타클의 10 (Ten of Pentacles)',
-      keywords: ['유산': '가족 재산': '전통': '장기적 성공',
+      keywords: ['유산', '가족 재산', '전통', '장기적 성공'],
       uprightMeaning: '재정적 안정, 가족 유산, 장기적 성공, 전통',
       reversedMeaning: '재정적 실패, 가족 분쟁, 전통 거부',
       element: '땅',
@@ -790,12 +742,11 @@ class TarotMinorArcana {
       advice: '미래 세대를 위한 유산을 만드세요',
       questions: [
         '어떤 유산을 남기고 싶나요?',
-        '장기적인 안정을 어떻게 구축할 수 있나요?'],
-    ,
+        '장기적인 안정을 어떻게 구축할 수 있나요?']),
     'pentacles_page': TarotCardInfo(
       id: 75,
       name: '펜타클의 페이지 (Page of Pentacles)',
-      keywords: ['새로운 벤처': '기술 학습': '야망': '실용적 기회',
+      keywords: ['새로운 벤처', '기술 학습', '야망', '실용적 기회'],
       uprightMeaning: '새로운 재정적 기회, 기술 학습, 야망, 목표 설정',
       reversedMeaning: '진전 부족, 미루기, 기회 부족, 재능 낭비',
       element: '땅',
@@ -805,12 +756,11 @@ class TarotMinorArcana {
       advice: '실용적인 목표를 설정하고 꾸준히 노력하세요',
       questions: [
         '어떤 새로운 기술을 배우고 싶나요?',
-        '실용적인 목표는 무엇인가요?'],
-    ,
+        '실용적인 목표는 무엇인가요?']),
     'pentacles_knight': TarotCardInfo(
       id: 76,
       name: '펜타클의 기사 (Knight of Pentacles)',
-      keywords: ['인내': '루틴': '보수성': '노력': null,
+      keywords: ['인내', '루틴', '보수성', '노력'],
       uprightMeaning: '노력, 루틴, 보수적 접근, 책임감',
       reversedMeaning: '정체, 완벽주의, 지루함, 리스크 회피',
       element: '땅',
@@ -820,12 +770,11 @@ class TarotMinorArcana {
       advice: '느리고 꾸준한 것이 경주에서 이깁니다',
       questions: [
         '어디에 더 많은 인내가 필요한가요?',
-        '일상을 어떻게 개선할 수 있나요?'],
-    ,
+        '일상을 어떻게 개선할 수 있나요?']),
     'pentacles_queen': TarotCardInfo(
       id: 77,
       name: '펜타클의 여왕 (Queen of Pentacles)',
-      keywords: ['양육': '실용적': '풍요로운 어머니': '자연': null,
+      keywords: ['양육', '실용적', '풍요로운 어머니', '자연'],
       uprightMeaning: '양육, 실용적 지혜, 재정 안정, 관대함',
       reversedMeaning: '자기 관리 부족, 의존성, 일과 삶의 불균형',
       element: '땅',
@@ -835,12 +784,11 @@ class TarotMinorArcana {
       advice: '실용적인 지혜로 자신과 타인을 돌보세요',
       questions: [
         '어떻게 더 나은 양육자가 될 수 있나요?',
-        '물질적 풍요를 어떻게 나눌 수 있나요?'],
-    ,
+        '물질적 풍요를 어떻게 나눌 수 있나요?']),
     'pentacles_king': TarotCardInfo(
       id: 78,
       name: '펜타클의 왕 (King of Pentacles)',
-      keywords: ['재정적 성공': '사업': '리더십': '안정성': null,
+      keywords: ['재정적 성공', '사업', '리더십', '안정성'],
       uprightMeaning: '재정적 성공, 사업 감각, 안정성, 관대한 리더',
       reversedMeaning: '탐욕, 물질주의, 경직성, 지위 집착',
       element: '땅',
@@ -850,8 +798,8 @@ class TarotMinorArcana {
       advice: '물질적 성공을 현명하고 관대하게 사용하세요',
       questions: [
         '어떻게 더 나은 리더가 될 수 있나요?',
-        '성공을 어떻게 다른 사람들과 나눌 수 있나요?'],
-    };
+        '성공을 어떻게 다른 사람들과 나눌 수 있나요?']),
+  };
 
   // 전체 Minor Arcana 카드 목록 생성
   static Map<String, TarotCardInfo> getAllMinorArcana() {

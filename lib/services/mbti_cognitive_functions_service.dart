@@ -3,20 +3,20 @@ import 'dart:math' as math;
 class MbtiCognitiveFunctionsService {
   // 8가지 인지기능
   static const List<String> cognitiveFunctions = [
-    'Te': // Extraverted Thinking (외향 사고,
-    'Ti': // Introverted Thinking (내향 사고,
-    'Fe', // Extraverted Feeling (외향 감정,
-    'Fi', // Introverted Feeling (내향 감정,
-    'Ne', // Extraverted Intuition (외향 직관,
-    'Ni', // Introverted Intuition (내향 직관,
-    'Se', // Extraverted Sensing (외향 감각,
+    'Te', // Extraverted Thinking (외향 사고)
+    'Ti', // Introverted Thinking (내향 사고)
+    'Fe', // Extraverted Feeling (외향 감정)
+    'Fi', // Introverted Feeling (내향 감정)
+    'Ne', // Extraverted Intuition (외향 직관)
+    'Ni', // Introverted Intuition (내향 직관)
+    'Se', // Extraverted Sensing (외향 감각)
     'Si', // Introverted Sensing (내향 감각)
   ];
 
   // MBTI 타입별 인지기능 스택
   static const Map<String, List<String>> mbtiStacks = {
     // Analysts
-    'INTJ': ['Ni': 'Te': 'Fi', 'Se', 'Ne', 'Ti', 'Fe', 'Si'],
+    'INTJ': ['Ni', 'Te', 'Fi', 'Se', 'Ne', 'Ti', 'Fe', 'Si'],
     'INTP': ['Ti', 'Ne', 'Si', 'Fe', 'Te', 'Ni', 'Se', 'Fi'],
     'ENTJ': ['Te', 'Ni', 'Se', 'Fi', 'Ti', 'Ne', 'Si', 'Fe'],
     'ENTP': ['Ne', 'Ti', 'Fe', 'Si', 'Ni', 'Te', 'Fi', 'Se'],
@@ -37,7 +37,7 @@ class MbtiCognitiveFunctionsService {
     'ISTP': ['Ti', 'Se', 'Ni', 'Fe', 'Te', 'Si', 'Ne', 'Fi'],
     'ISFP': ['Fi', 'Se', 'Ni', 'Te', 'Fe', 'Si', 'Ne', 'Ti'],
     'ESTP': ['Se', 'Ti', 'Fe', 'Ni', 'Si', 'Te', 'Fi', 'Ne'],
-    'ESFP': ['Se', 'Fi', 'Te', 'Ni', 'Si', 'Fe', 'Ti', 'Ne': null};
+    'ESFP': ['Se', 'Fi', 'Te', 'Ni', 'Si', 'Fe', 'Ti', 'Ne']};
 
   // 인지기능 설명
   static const Map<String, Map<String, dynamic>> functionDescriptions = {
@@ -283,8 +283,8 @@ class MbtiCognitiveFunctionsService {
     
     // 이상적인 매칭
     final idealMatches = {
-      'INTJ': ['ENFP': 'ENTP'],
-      'INTP': ['ENTJ': 'ESTJ'],
+      'INTJ': ['ENFP', 'ENTP'],
+      'INTP': ['ENTJ', 'ESTJ'],
       'ENTJ': ['INTP', 'ISTP'],
       'ENTP': ['INFJ', 'INTJ'],
       'INFJ': ['ENTP', 'ENFP'],
@@ -298,7 +298,7 @@ class MbtiCognitiveFunctionsService {
       'ISTP': ['ESTJ', 'ENTJ'],
       'ISFP': ['ENFJ', 'ESFJ'],
       'ESTP': ['ISFJ', 'ISTJ'],
-      'ESFP': ['ISFJ', 'ISTJ': null};
+      'ESFP': ['ISFJ', 'ISTJ']};
     
     // 이상적인 매칭
     if (idealMatches[type1]?.contains(type2) ?? false) {
@@ -328,8 +328,8 @@ class MbtiCognitiveFunctionsService {
   static bool _areComplementary(String func1, String func2) {
     // 같은 기능의 내향/외향 쌍
     final pairs = {
-      'Te': 'Ti': 'Ti': 'Te',
-      'Fe': 'Fi': 'Fi': 'Fe',
+      'Te': 'Ti', 'Ti': 'Te',
+      'Fe': 'Fi', 'Fi': 'Fe',
       'Ne': 'Ni', 'Ni': 'Ne',
       'Se': 'Si', 'Si': 'Se'};
     

@@ -113,29 +113,29 @@ class FortuneCardImages {
   /// Category-based gradient overlays for better text visibility
   static Map<String, List<Color>> categoryGradients = {
     'love': [
-      Color(0x99EC4899).withValues(alpha: 0.7),
-      Color(0x99F472B6).withValues(alpha: 0.4)],
+      Color(0x99EC4899).withOpacity(0.7),
+      Color(0x99F472B6).withOpacity(0.4)],
     'career': [
-      Color(0x996366F1).withValues(alpha: 0.7),
-      Color(0x998B5CF6).withValues(alpha: 0.4)],
+      Color(0x996366F1).withOpacity(0.7),
+      Color(0x998B5CF6).withOpacity(0.4)],
     'money': [
-      Color(0x9910B981).withValues(alpha: 0.7),
-      Color(0x9984CC16).withValues(alpha: 0.4)],
+      Color(0x9910B981).withOpacity(0.7),
+      Color(0x9984CC16).withOpacity(0.4)],
     'health': [
-      Color(0x99F59E0B).withValues(alpha: 0.7),
-      Color(0x99FBBF24).withValues(alpha: 0.4)],
+      Color(0x99F59E0B).withOpacity(0.7),
+      Color(0x99FBBF24).withOpacity(0.4)],
     'traditional': [
-      Color(0x99DC2626).withValues(alpha: 0.7),
-      Color(0x99EF4444).withValues(alpha: 0.4)],
+      Color(0x99DC2626).withOpacity(0.7),
+      Color(0x99EF4444).withOpacity(0.4)],
     'lifestyle': [
-      Color(0x993B82F6).withValues(alpha: 0.7),
-      Color(0x9960A5FA).withValues(alpha: 0.4)],
+      Color(0x993B82F6).withOpacity(0.7),
+      Color(0x9960A5FA).withOpacity(0.4)],
     'interactive': [
-      Color(0x998B5CF6).withValues(alpha: 0.7),
-      Color(0x99A78BFA).withValues(alpha: 0.4)],
+      Color(0x998B5CF6).withOpacity(0.7),
+      Color(0x99A78BFA).withOpacity(0.4)],
     'default': [
-      Color(0x99475569).withValues(alpha: 0.7),
-      Color(0x9964748B).withValues(alpha: 0.4)]};
+      Color(0x99475569).withOpacity(0.7),
+      Color(0x9964748B).withOpacity(0.4)]};
 
   /// Instagram-style text overlays
   static const Map<String, String> instagramCaptions = {

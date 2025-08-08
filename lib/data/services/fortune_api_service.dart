@@ -427,7 +427,7 @@ class FortuneApiService {
         ApiEndpoints.mbtiFortune,
         data: {
           'mbtiType': mbtiType,
-          if (categories != null) 'categories': categories});
+          if (categories != null) 'categories': categories})
       Logger.endTimer('API Call - mbti', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {

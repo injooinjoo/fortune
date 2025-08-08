@@ -48,7 +48,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             begin: Alignment.topCenter),
                   end: Alignment.bottomCenter),
                   colors: [
-              Color(0xFFEF4444).withValues(alpha: 0.05),
+              Color(0xFFEF4444).withOpacity(0.05),
               AppColors.background),
         child: CustomScrollView(
           slivers: [
@@ -98,7 +98,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                               .fade(),
                             const SizedBox(height: 16),
                             Text(
-                              '전통운세 종합',
+                              '전통운세 종합',),
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold),
@@ -107,7 +107,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                                   Shadow(
                                     offset: Offset(0, 2),
                                     blurRadius: 4,
-                                    color: Colors.black.withValues(alpha: 0.3)),.animate()
+                                    color: Colors.black.withOpacity(0.3)),.animate()
                   .fadeIn(delay: 500.ms, duration: 600.ms)
                               .slideY(begin: 0.2, end: 0),
                             const SizedBox(height: 8),
@@ -115,7 +115,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                               '사주 · 토정비결 · 주역'),
                   style: TextStyle(
                                 fontSize: 18),
-                  color: Colors.white.withValues(alpha: 0.9)).animate()
+                  color: Colors.white.withOpacity(0.9)).animate()
                   .fadeIn(delay: 700.ms, duration: 600.ms))),
                 title: const Text('전통운세 종합'),
                 centerTitle: true),
@@ -154,7 +154,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   .fadeIn(delay: 700.ms, duration: 500.ms)
                       .slideY(begin: 0.1, end: 0),
                   
-                  const SizedBox(height: 32)));
+                  const SizedBox(height: 32));
 }
 
   Widget _buildIntroductionCard() {
@@ -163,8 +163,8 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
                   colors: [
-          Color(0xFFEF4444).withValues(alpha: 0.05),
-          Color(0xFFEC4899).withValues(alpha: 0.02),
+          Color(0xFFEF4444).withOpacity(0.05),
+          Color(0xFFEC4899).withOpacity(0.02),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -172,7 +172,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Color(0xFFEF4444).withValues(alpha: 0.1),
+                color: Color(0xFFEF4444).withOpacity(0.1),
                 shape: BoxShape.circle),
               child: Icon(
                 Icons.menu_book_rounded),
@@ -180,14 +180,14 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   color: Color(0xFFEF4444)),
             const SizedBox(height: 16),
             Text(
-              '5000년 동양철학의 지혜',
+              '5000년 동양철학의 지혜',),
               style: TextStyle(
                 fontSize: 24),
                   fontWeight: FontWeight.bold),
                   color: Color(0xFFEF4444)),
             const SizedBox(height: 12),
             Text(
-              '사주명리학, 토정비결, 주역을 통합하여\n당신의 운명과 미래를 깊이 있게 분석합니다',
+              '사주명리학, 토정비결, 주역을 통합하여\n당신의 운명과 미래를 깊이 있게 분석합니다',),
               style: TextStyle(
                 fontSize: 16,
                 height: 1.6),
@@ -239,7 +239,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: (feature['color'],
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16))),
                   child: Icon(
                     feature['icon'],
                     size: 32),
@@ -280,7 +280,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
 }
         );
 },
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20))),
       child: Container(
         height: 180,
         decoration: BoxDecoration(
@@ -290,10 +290,10 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   colors: [
               Color(0xFFEF4444),
               Color(0xFFEC4899),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFEF4444).withValues(alpha: 0.4),
+              color: Color(0xFFEF4444).withOpacity(0.4),
               blurRadius: 20,
               offset: const Offset(0, 10)),
         child: Stack(
@@ -301,7 +301,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             // Pattern overlay
             Positioned.fill(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20))),
                 child: CustomPaint(
                   painter: UnifiedPatternPainter()),
             // Content
@@ -319,7 +319,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   color: Colors.white),
                       const SizedBox(width: 12),
                       Text(
-                        '운세 보기',
+                        '운세 보기',),
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold),
@@ -328,10 +328,10 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20))),
                     child: Text(
-                      '오늘의 종합 운세를 확인하세요',
+                      '오늘의 종합 운세를 확인하세요',),
                       style: TextStyle(
                         fontSize: 16),
                   color: Colors.white))));
@@ -352,7 +352,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   color: Color(0xFF795548),
                 const SizedBox(width: 8),
                 Text(
-                  '동양철학의 핵심',
+                  '동양철학의 핵심',),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
@@ -379,7 +379,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
         border: Border.all(
           color: AppColors.divider),
       child: Row(
@@ -387,8 +387,8 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF795548).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: Color(0xFF795548).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8))),
             child: Icon(
               icon),
                   size: 20),
@@ -422,7 +422,7 @@ class TraditionalBackgroundPainter extends CustomPainter {
      
    
     ..color =,
-      Colors.white.withValues(alpha: 0.1);
+      Colors.white.withOpacity(0.1);
 
     // Draw traditional patterns
     final spacing = 60.0;
@@ -482,7 +482,7 @@ class YinYangPainter extends CustomPainter {
     );
     
     final whitePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.3)
+      ..color = Colors.white.withOpacity(0.3)
       ..style = PaintingStyle.fill;
     canvas.drawPath(whitePath, whitePaint);
     
@@ -507,7 +507,7 @@ class YinYangPainter extends CustomPainter {
     );
     
     final blackPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.2)
+      ..color = Colors.black.withOpacity(0.2)
       ..style = PaintingStyle.fill;
     canvas.drawPath(blackPath, blackPaint);
     
@@ -515,15 +515,15 @@ class YinYangPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(center.dx, center.dy - radius / 2),
       radius / 8,
-      Paint()..color = Colors.black.withValues(alpha: 0.2);
+      Paint()..color = Colors.black.withOpacity(0.2);
     canvas.drawCircle(
       Offset(center.dx, center.dy + radius / 2),
       radius / 8,
-      Paint()..color = Colors.white.withValues(alpha: 0.3);
+      Paint()..color = Colors.white.withOpacity(0.3);
     
     // Outer circle
     final outlinePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.3)
+      ..color = Colors.white.withOpacity(0.3)
       ..style = PaintingStyle.stroke
      
    
@@ -545,7 +545,7 @@ class UnifiedPatternPainter extends CustomPainter {
      
    
     ..color =,
-      Colors.white.withValues(alpha: 0.15);
+      Colors.white.withOpacity(0.15);
 
     // Draw multiple elements representing different fortune types
     _drawSajuElements(canvas, size, paint);
@@ -574,13 +574,13 @@ class UnifiedPatternPainter extends CustomPainter {
       canvas.drawLine(
         Offset(x, 0),
         Offset(x, size.height),
-        paint..color = Colors.white.withValues(alpha: 0.05);
+        paint..color = Colors.white.withOpacity(0.05);
 }
     for (double y = 0; y < size.height; y += spacing) {
       canvas.drawLine(
         Offset(0, y),
         Offset(size.width, y),
-        paint..color = Colors.white.withValues(alpha: 0.05);
+        paint..color = Colors.white.withOpacity(0.05);
 }
   }
 
@@ -591,7 +591,7 @@ class UnifiedPatternPainter extends CustomPainter {
     final lineWidth = 40.0;
     final lineSpacing = 10.0;
     
-    paint.color = Colors.white.withValues(alpha: 0.2);
+    paint.color = Colors.white.withOpacity(0.2);
     paint.strokeWidth = 3.0;
     
     // Top trigram

@@ -47,12 +47,12 @@ class DailyFortuneSummaryCard extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               AppColors.textPrimaryDark,
-              AppColors.textPrimaryDark.withValues(alpha: 0.98)]),
+              AppColors.textPrimaryDark.withOpacity(0.98)]),
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-          border: Border.all(color: context.fortuneTheme.dividerColor.withValues(alpha: 0.5)),
+          border: Border.all(color: context.fortuneTheme.dividerColor.withOpacity(0.5)),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withValues(alpha: 0.06),
+              color: Theme.of(context).shadowColor.withOpacity(0.06),
               blurRadius: 20,
               offset: const Offset(0, 4))]),
         child: Column(
@@ -86,7 +86,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                       Container(
                         height: AppSpacing.spacing9,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                         child: Material(
                           color: Colors.transparent,
@@ -121,7 +121,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3, 
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                         borderRadius: AppDimensions.borderRadiusMedium),
                       child: Text(
                         '${now.day}일 (${_getWeekdayKorean(now.weekday)})',
@@ -174,9 +174,9 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                 horizontal: AppSpacing.spacing3,
                 vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-                color: scoreColor.withValues(alpha: 0.1),
+                color: scoreColor.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusLarge,
-                border: Border.all(color: scoreColor.withValues(alpha: 0.3))),
+                border: Border.all(color: scoreColor.withOpacity(0.3))),
               child: Row(
                 children: [
                   Icon(
@@ -195,7 +195,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                 horizontal: AppSpacing.spacing3,
                 vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
                 borderRadius: AppDimensions.borderRadiusLarge),
               child: Text(
                 fortune!.mood ?? '평온함',
@@ -223,7 +223,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
               horizontal: AppSpacing.spacing2,
               vertical: 4),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               borderRadius: AppDimensions.borderRadiusMedium),
             child: Text(
               '#$keyword',
@@ -236,7 +236,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: context.fortuneTheme.dividerColor.withValues(alpha: 0.3),
+        color: context.fortuneTheme.dividerColor.withOpacity(0.3),
         borderRadius: AppDimensions.borderRadiusMedium),
       child: Row(
         children: [

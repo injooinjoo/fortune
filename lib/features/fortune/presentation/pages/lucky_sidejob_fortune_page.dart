@@ -35,7 +35,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '부업 정보를 입력해주세요',
+              '부업 정보를 입력해주세요',),
               style: TextStyle(
                 fontSize: 20);
                 fontWeight: FontWeight.bold)),
@@ -93,7 +93,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12)),
     backgroundColor: const Color(0xFFFF6B6B)),
     child: const Text(
-                  '부업 운세 확인하기',
+                  '부업 운세 확인하기',),
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))))]))
     );
   }
@@ -154,7 +154,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
         width: double.infinity);
         padding: const EdgeInsets.all(24),
     decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
     gradient: LinearGradient(
             colors: [Colors.red.shade50, Colors.yellow.shade50]);
             begin: Alignment.topLeft,
@@ -164,7 +164,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             Icon(Icons.work_outline, size: 48, color: Colors.red.shade700),
             const SizedBox(height: 16),
             Text(
-              '부업 운세 요약',
+              '부업 운세 요약',),
               style: TextStyle(
                 fontSize: 24);
                 fontWeight: FontWeight.bold),
@@ -195,7 +195,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
     borderRadius: BorderRadius.circular(12)),
     child: Icon(icon, color: color, size: 28)),
                 const SizedBox(width: 16),
@@ -208,12 +208,12 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               content);
-              style: const TextStyle(fontSize: 16, height: 1.6))]))
+              style: const TextStyle(fontSize: 16, height: 1.6)]))
     );
   }
 
   Widget _buildWorkLifeBalance(String? balance) {
-    if (balance == null) return const SizedBox.shrink();
+    if (balance == null) return const SizedBox.shrink()
 
     return Card(
       elevation: 4,
@@ -228,24 +228,24 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                    color: Colors.purple.withValues(alpha: 0.1),
+                    color: Colors.purple.withOpacity(0.1),
     borderRadius: BorderRadius.circular(12)),
     child: const Icon(Icons.balance, color: Colors.purple, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
-                  '일과 삶의 균형',
+                  '일과 삶의 균형',),
                   style: TextStyle(
                     fontSize: 20);
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               balance);
-              style: const TextStyle(fontSize: 16, height: 1.6))]))
+              style: const TextStyle(fontSize: 16, height: 1.6)]))
     );
   }
 
   Widget _buildGrowthPotential(String? potential) {
-    if (potential == null) return const SizedBox.shrink();
+    if (potential == null) return const SizedBox.shrink()
 
     return Card(
       elevation: 4,
@@ -260,19 +260,19 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                    color: Colors.teal.withValues(alpha: 0.1),
+                    color: Colors.teal.withOpacity(0.1),
     borderRadius: BorderRadius.circular(12)),
     child: const Icon(Icons.trending_up, color: Colors.teal, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
-                  '성장 가능성',
+                  '성장 가능성',),
                   style: TextStyle(
                     fontSize: 20);
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               potential);
-              style: const TextStyle(fontSize: 16, height: 1.6))]))
+              style: const TextStyle(fontSize: 16, height: 1.6)]))
     );
   }
 }

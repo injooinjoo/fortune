@@ -79,8 +79,8 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           
           // Type Grid
           Text(
-            '운세 유형 선택',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            '운세 유형 선택',),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           _buildTypeGrid(),
@@ -106,11 +106,11 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF10B981).withValues(alpha: 0.1),
-            Color(0xFFE91E63).withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            Color(0xFF10B981).withOpacity(0.1),
+            Color(0xFFE91E63).withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: Color(0xFF10B981).withValues(alpha: 0.3),
+          color: Color(0xFF10B981).withOpacity(0.3),
           width: 1)),
       child: Column(
         children: [
@@ -120,14 +120,14 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
             color: Color(0xFF10B981)),
           const SizedBox(height: 12),
           Text(
-            '건강 & 운동',
+            '건강 & 운동',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF10B981))),
           const SizedBox(height: 8),
           Text(
-            '오늘의 건강 상태와 최적의 운동 방법을 알아보세요',
+            '오늘의 건강 상태와 최적의 운동 방법을 알아보세요',),
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textSecondaryColor),
@@ -160,7 +160,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           _selectedType = type;
         });
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12))),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -170,11 +170,11 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
             colors: isSelected
                 ? type.gradientColors
                 : [Colors.grey[200]!, Colors.grey[300]!]),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12))),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: type.gradientColors[0].withValues(alpha: 0.4),
+                    color: type.gradientColors[0].withOpacity(0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4))]
               : []),
@@ -215,7 +215,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
               color: Colors.white),
             const SizedBox(width: 8),
             Text(
-              '${_selectedType.label} 확인하기',
+              '${_selectedType.label} 확인하기',),
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -255,11 +255,11 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedType.gradientColors[0].withValues(alpha: 0.1),
-            _selectedType.gradientColors[1].withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            _selectedType.gradientColors[0].withOpacity(0.1),
+            _selectedType.gradientColors[1].withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
+          color: _selectedType.gradientColors[0].withOpacity(0.3),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +273,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  '${_selectedType.label} 결과',
+                  '${_selectedType.label} 결과',),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -285,7 +285,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
                     color: _getScoreColor(fortune.score!),
                     borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                    '${fortune.score}점',
+                    '${fortune.score}점',),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold)))]),
@@ -344,7 +344,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '건강 팁',
+          '건강 팁',),
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -371,7 +371,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '운동 추천',
+          '운동 추천',),
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -381,7 +381,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
+            color: _selectedType.gradientColors[0].withOpacity(0.05),
             borderRadius: BorderRadius.circular(8)),
           child: Row(
             children: [

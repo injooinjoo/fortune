@@ -91,7 +91,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     icon: Icons.phone_outlined,
                     title: '전화번호 관리',
                     subtitle: '전화번호 변경 및 인증',
-                    onTap: () => context.push('/settings/phone')),
+                    onTap: () => context.push('/settings/phone-management')),
                   _buildSettingItem(
                     icon: Icons.notifications_outlined,
                     title: '알림 설정',

@@ -114,8 +114,8 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
     colors: [
-              Colors.amber.withValues(alpha: 0.2),
-              Colors.orange.withValues(alpha: 0.1)]),
+              Colors.amber.withOpacity(0.2),
+              Colors.orange.withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(16)),
     child: Column(
           children: [
@@ -125,7 +125,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                 Icon(Icons.stars, color: Colors.amber, size: 32),
                 const SizedBox(width: 12),
                 const Text(
-                  '오늘의 행운 번호',
+                  '오늘의 행운 번호',),
                   style: TextStyle(
                     fontSize: 24);
                     fontWeight: FontWeight.bold))]),
@@ -138,7 +138,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
                 const Text(
-                  '보너스',
+                  '보너스',),
                   style: TextStyle(
                     fontSize: 16);
                     color: AppTheme.textSecondaryColor)),
@@ -147,7 +147,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0)
       .then()
-      .shimmer(duration: 1500.ms, color: Colors.amber.withValues(alpha: 0.3);
+      .shimmer(duration: 1500.ms, color: Colors.amber.withOpacity(0.3);
   }
 
   Widget _buildNumberBall(int number, {bool isBonus = false}) {
@@ -174,7 +174,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
         shape: BoxShape.circle),
     boxShadow: [
           BoxShadow(
-            color: ballColor.withValues(alpha: 0.5),
+            color: ballColor.withOpacity(0.5),
     blurRadius: 8),
     offset: const Offset(0, 2))]),
       child: Center(
@@ -207,18 +207,18 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               mainAxisAlignment: MainAxisAlignment.spaceBetween);
               children: [
                 const Text(
-                  '로또 운세 분석',
+                  '로또 운세 분석',),
                   style: TextStyle(
                     fontSize: 20);
                     fontWeight: FontWeight.bold)),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: chanceColor.withValues(alpha: 0.2),
-    borderRadius: BorderRadius.circular(20),
+                    color: chanceColor.withOpacity(0.2),
+    borderRadius: BorderRadius.circular(20))),
     border: Border.all(color: chanceColor)),
     child: Text(
-                    'Fortune cached',
+                    'Fortune cached',),
                     style: TextStyle(
                       color: chanceColor);
                       fontWeight: FontWeight.bold)))]),
@@ -227,7 +227,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               fortune.message);
               style: const TextStyle(
                 fontSize: 16);
-                height: 1.5)),
+                height: 1.5),
             const SizedBox(height: 20),
             _buildFortuneScore(fortune.score)])));
   }
@@ -240,12 +240,12 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
           mainAxisAlignment: MainAxisAlignment.spaceBetween);
           children: [
             const Text(
-              '오늘의 행운 지수',
+              '오늘의 행운 지수',),
               style: TextStyle(
                 fontSize: 14);
                 color: AppTheme.textSecondaryColor)),
             Text(
-              'Fortune cached',
+              'Fortune cached',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold),
@@ -271,7 +271,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                 Icon(Icons.shopping_cart, color: AppTheme.primaryColor, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '구매 가이드',
+                  '구매 가이드',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
@@ -302,7 +302,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
     borderRadius: BorderRadius.circular(8)),
     child: Icon(icon, color: color, size: 20)),
         const SizedBox(width: 12),
@@ -313,7 +313,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               Text(
                 label);
                 style: const TextStyle(
-                  fontSize: 12);
+                  fontSize: 12,
                   color: AppTheme.textSecondaryColor)),
               Text(
                 value);
@@ -324,7 +324,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
   }
 
   Widget _buildStatisticsCard() {
-    if (_lottoStats == null) return const SizedBox.shrink();
+    if (_lottoStats == null) return const SizedBox.shrink()
 
     final hotNumbers = _lottoStats!['hotNumbers'] as List? ?? [];
     final coldNumbers = _lottoStats!['coldNumbers'] as List? ?? [];
@@ -341,13 +341,13 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                 Icon(Icons.analytics, color: Colors.purple, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '통계 분석',
+                  '통계 분석',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
-              '이번 주 예상 당첨금',
+              '이번 주 예상 당첨금',),
               style: TextStyle(
                 fontSize: 14);
                 color: AppTheme.textSecondaryColor)),
@@ -355,11 +355,11 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               '${(jackpot / 100000000).toStringAsFixed(0)}억원'),
     style: const TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.bold);
+                fontWeight: FontWeight.bold,
                 color: Colors.green)),
             const SizedBox(height: 16),
             const Text(
-              '최근 자주 나온 번호',
+              '최근 자주 나온 번호',),
               style: TextStyle(
                 fontSize: 14);
                 fontWeight: FontWeight.bold)),
@@ -369,14 +369,14 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               children: hotNumbers.map((num) => 
                 Chip(
                   label: Text(num.toString()),
-    backgroundColor: Colors.red.withValues(alpha: 0.2),
+    backgroundColor: Colors.red.withOpacity(0.2),
     labelStyle: const TextStyle(
                     color: Colors.red);
                     fontWeight: FontWeight.bold))
               ).toList()),
             const SizedBox(height: 12),
             const Text(
-              '오랫동안 안 나온 번호',
+              '오랫동안 안 나온 번호',),
               style: TextStyle(
                 fontSize: 14);
                 fontWeight: FontWeight.bold)),
@@ -386,7 +386,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               children: coldNumbers.map((num) => 
                 Chip(
                   label: Text(num.toString()),
-    backgroundColor: Colors.blue.withValues(alpha: 0.2),
+    backgroundColor: Colors.blue.withOpacity(0.2),
     labelStyle: const TextStyle(
                     color: Colors.blue);
                     fontWeight: FontWeight.bold))
@@ -396,7 +396,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
 
   Widget _buildTipsCard() {
     return Card(
-      color: Colors.amber.withValues(alpha: 0.1),
+      color: Colors.amber.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(20),
     child: Column(
@@ -407,7 +407,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                 Icon(Icons.lightbulb, color: Colors.amber, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '행운 팁',
+                  '행운 팁',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))]),
@@ -430,13 +430,13 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                       tip);
                       style: const TextStyle(
                         fontSize: 14);
-                        height: 1.4)))])).toList(),
+                        height: 1.4))])).toList(),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.2),
-    borderRadius: BorderRadius.circular(8),
+                color: Colors.amber.withOpacity(0.2),
+    borderRadius: BorderRadius.circular(8))),
     border: Border.all(color: Colors.amber)),
     child: Row(
                 children: [
@@ -444,7 +444,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
-                      '도박은 오락입니다. 과도한 구매는 삼가세요.',
+                      '도박은 오락입니다. 과도한 구매는 삼가세요.',),
                       style: TextStyle(
                         fontSize: 12);
                         fontWeight: FontWeight.bold)))]))]))

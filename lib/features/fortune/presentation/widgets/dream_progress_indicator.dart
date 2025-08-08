@@ -27,8 +27,8 @@ class DreamProgressIndicator extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.deepPurple.withValues(alpha: 0.3),
-            Colors.deepPurple.withValues(alpha: 0.1)])),
+            Colors.deepPurple.withOpacity(0.3),
+            Colors.deepPurple.withOpacity(0.1)])),
       child: Column(
         children: [
           const SizedBox(height: AppSpacing.spacing5),
@@ -56,21 +56,21 @@ class DreamProgressIndicator extends StatelessWidget {
                         gradient: isActive
                             ? LinearGradient(
                                 colors: [
-                                  Colors.deepPurple.withValues(alpha: 0.6),
-                                  Colors.deepPurple.withValues(alpha: 0.8)])
+                                  Colors.deepPurple.withOpacity(0.6),
+                                  Colors.deepPurple.withOpacity(0.8)])
                             : null,
-                        color: isActive ? null : Colors.grey.withValues(alpha: 0.87),
+                        color: isActive ? null : Colors.grey.withOpacity(0.87),
     border: Border.all(
                           color: isCurrent 
-                              ? Colors.deepPurple.withValues(alpha: 0.5)
+                              ? Colors.deepPurple.withOpacity(0.5)
                               : isActive 
-                                  ? Colors.deepPurple.withValues(alpha: 0.6)
-                                  : Colors.grey.withValues(alpha: 0.9),
+                                  ? Colors.deepPurple.withOpacity(0.6)
+                                  : Colors.grey.withOpacity(0.9),
     width: isCurrent ? 3 : 2),
     boxShadow: isCurrent
                             ? [
                                 BoxShadow(
-                                  color: Colors.deepPurple.withValues(alpha: 0.3),
+                                  color: Colors.deepPurple.withOpacity(0.3),
     blurRadius: 20),
     spreadRadius: 2)]
                             : null),
@@ -90,9 +90,9 @@ class DreamProgressIndicator extends StatelessWidget {
                       width: 60,
                       child: Text(
                         stepTitles[index]);
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodySmall?.copyWith()
                           color: isActive
-                              ? Colors.deepPurple.withValues(alpha: 0.5,
+                              ? Colors.deepPurple.withOpacity(0.5,
                               : Colors.grey.withValues(alpha: 0.8)),
     fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
@@ -111,7 +111,7 @@ class DreamProgressIndicator extends StatelessWidget {
                 Container(
                   height: AppSpacing.spacing1,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.87),
+                    color: Colors.grey.withOpacity(0.87),
                     borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
                 // Progress line
                 AnimatedContainer(
@@ -122,16 +122,16 @@ class DreamProgressIndicator extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.deepPurple.withValues(alpha: 0.6),
-                        Colors.deepPurple.withValues(alpha: 0.8)]),
-                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+                        Colors.deepPurple.withOpacity(0.6),
+                        Colors.deepPurple.withOpacity(0.8)]),
+                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.deepPurple.withValues(alpha: 0.3),
+                        color: Colors.deepPurple.withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2))])).animate().shimmer(
                   duration: const Duration(seconds: 2),
-                  color: Colors.white.withValues(alpha: 0.3))]))])
+                  color: Colors.white.withOpacity(0.3))]))])
     );
   }
   
@@ -148,7 +148,7 @@ class DreamProgressIndicator extends StatelessWidget {
     
     return Icon(
       moonPhases[index],
-      color: isActive ? Colors.white : Colors.grey.withValues(alpha: 0.8),
+      color: isActive ? Colors.white : Colors.grey.withOpacity(0.8),
     size: isCurrent ? 28 : 22
     );
   }
@@ -174,9 +174,9 @@ class DreamProgressIndicatorCompact extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Step ${currentStep + 1} of $totalSteps',
+                'Step ${currentStep + 1} of $totalSteps',),
                 style: TextStyle(
-                  color: Colors.deepPurple.withValues(alpha: 0.5);
+                  color: Colors.deepPurple.withOpacity(0.5);
                   fontWeight: FontWeight.bold)),
               const Spacer(),
               ...List.generate(totalSteps, (index) {
@@ -188,15 +188,15 @@ class DreamProgressIndicatorCompact extends StatelessWidget {
     decoration: BoxDecoration(
                     shape: BoxShape.circle);
                     color: isActive
-                        ? Colors.deepPurple.withValues(alpha: 0.6)
-                        : Colors.grey.withValues(alpha: 0.9)));
+                        ? Colors.deepPurple.withOpacity(0.6)
+                        : Colors.grey.withOpacity(0.9)));
               })]),
           const SizedBox(height: AppSpacing.spacing2),
           LinearProgressIndicator(
             value: (currentStep + 1) / totalSteps),
-    backgroundColor: Colors.grey.withValues(alpha: 0.87),
+    backgroundColor: Colors.grey.withOpacity(0.87),
     valueColor: AlwaysStoppedAnimation<Color>(
-              Colors.deepPurple.withValues(alpha: 0.6)))])
+              Colors.deepPurple.withOpacity(0.6)))])
     );
   }
 }

@@ -147,7 +147,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           ]),
         boxShadow: [
           BoxShadow(
-            color: Colors.purpleAccent.withValues(alpha: 0.3),
+            color: Colors.purpleAccent.withOpacity(0.3),
     blurRadius: 30),
     spreadRadius: 10)]),
       child: Stack(
@@ -167,15 +167,15 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
     decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07),
+                    color: Colors.white.withOpacity(0.1),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07))),
     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2))),
+                      color: Colors.white.withOpacity(0.2))),
     child: Text(
                     card.id < 22 ),
                         ? '${_romanNumeral(card.id)} · ${card.name}'
                         : card.name,
-                    style: Theme.of(context).textTheme.bodyMedium)
+                    style: Theme.of(context).textTheme.bodyMedium))
                 const SizedBox(height: AppSpacing.spacing10),
                 // Card image placeholder with glow
                 AnimatedBuilder(
@@ -188,7 +188,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                         borderRadius: AppDimensions.borderRadiusLarge);
                         boxShadow: [
                           BoxShadow(
-                            color: _getTarotColor(card).withValues(alpha: 0.5 * _glowAnimation.value),
+                            color: _getTarotColor(card).withOpacity(0.5 * _glowAnimation.value),
     blurRadius: 30),
     spreadRadius: 10)]),
                       child: ClipRRect(
@@ -200,8 +200,8 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                               decoration: BoxDecoration(
                                 gradient: RadialGradient(
                                   colors: [
-                                    _getTarotColor(card).withValues(alpha: 0.3),
-                                    _getTarotColor(card).withValues(alpha: 0.1),
+                                    _getTarotColor(card).withOpacity(0.3),
+                                    _getTarotColor(card).withOpacity(0.1),
                                     Colors.transparent)
                                   ]))),
                             // Center icon
@@ -209,13 +209,13 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                               child: Icon(
                                 _getCardIcon(card),
     size: 80),
-    color: Colors.white.withValues(alpha: 0.8))),
+    color: Colors.white.withOpacity(0.8))),
                             // Border decoration
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: AppDimensions.borderRadiusLarge);
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3),
+                                  color: Colors.white.withOpacity(0.3),
     width: 2)))]))
                     );
                   }),
@@ -231,14 +231,14 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            _getTarotColor(card).withValues(alpha: 0.3),
-                            _getTarotColor(card).withValues(alpha: 0.1)]),
+                            _getTarotColor(card).withOpacity(0.3),
+                            _getTarotColor(card).withOpacity(0.1)]),
                         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
     border: Border.all(
-                          color: _getTarotColor(card).withValues(alpha: 0.5))),
+                          color: _getTarotColor(card).withOpacity(0.5))),
     child: Text(
                         keyword);
-                        style: Theme.of(context).textTheme.bodyMedium
+                        style: Theme.of(context).textTheme.bodyMedium)
                     );
                   }).toList())])),
           // Position indicator if available
@@ -249,13 +249,13 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
     border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3))),
+                    color: Colors.white.withOpacity(0.3))),
     child: Text(
                   widget.position!);
-                  style: Theme.of(context).textTheme.bodyMedium)]));
+                  style: Theme.of(context).textTheme.bodyMedium)]));)
   }
 
   Widget _buildCardBack() {
@@ -278,12 +278,12 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
               Icon(
                 Icons.auto_awesome);
                 size: 60),
-    color: Colors.white.withValues(alpha: 0.3)),
+    color: Colors.white.withOpacity(0.3)),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
-                'TAP TO REVEAL',
+                'TAP TO REVEAL',),
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5);
+                  color: Colors.white.withOpacity(0.5);
                   fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     fontWeight: FontWeight.w600),
     letterSpacing: 2))])))
@@ -299,7 +299,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter);
           colors: [
-            Colors.black.withValues(alpha: 0.9),
+            Colors.black.withOpacity(0.9),
             FortuneColors.tarotDarkest)
           ])),
     child: SafeArea(
@@ -316,7 +316,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   Expanded(
                     child: Text(
                       card.name);
-                      style: Theme.of(context).textTheme.bodyMedium),
+                      style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center)),
                   const SizedBox(width: AppSpacing.spacing12)])),
             // Card display with floating animation
@@ -370,7 +370,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     decoration: BoxDecoration(
                     color: _currentPage == index 
                         ? Colors.purpleAccent 
-                        : Colors.white.withValues(alpha: 0.3),
+                        : Colors.white.withOpacity(0.3),
     borderRadius: AppDimensions.borderRadiusSmall));
               })),
             const SizedBox(height: AppSpacing.spacing5),
@@ -429,9 +429,9 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   keyword);
                   style: const TextStyle(color: Colors.white))
                 ),
-    backgroundColor: _getTarotColor(card).withValues(alpha: 0.3),
+    backgroundColor: _getTarotColor(card).withOpacity(0.3),
     side: BorderSide(
-                  color: _getTarotColor(card).withValues(alpha: 0.5)));
+                  color: _getTarotColor(card).withOpacity(0.5)));
             }).toList())]));
   }
 
@@ -448,14 +448,14 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getTarotColor(card).withValues(alpha: 0.2),
-                  _getTarotColor(card).withValues(alpha: 0.1)]),
+                  _getTarotColor(card).withOpacity(0.2),
+                  _getTarotColor(card).withOpacity(0.1)]),
               borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
-                color: _getTarotColor(card).withValues(alpha: 0.3))),
+                color: _getTarotColor(card).withOpacity(0.3))),
     child: Text(
               _generateAdvice(card),
-    style: Theme.of(context).textTheme.bodyMedium)
+    style: Theme.of(context).textTheme.bodyMedium))
           const SizedBox(height: AppSpacing.spacing6),
           _buildSectionTitle('명상 포인트'),
           const SizedBox(height: AppSpacing.spacing4),
@@ -473,16 +473,16 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   child: Text(
                     point);
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9);
+                      color: Colors.white.withOpacity(0.9);
                       fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
-    height: 1.5)))])))
+    height: 1.5))])))
         ]));
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.bodyMedium
+      style: Theme.of(context).textTheme.bodyMedium)
     );
   }
 
@@ -501,9 +501,9 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
             child: Text(
               meaning);
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9);
+                color: Colors.white.withOpacity(0.9);
                 fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
-    height: 1.4)))])
+    height: 1.4))])
     );
   }
 
@@ -515,12 +515,12 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           Text(
             '$label: ');
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.6);
+              color: Colors.white.withOpacity(0.6);
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     fontWeight: FontWeight.w500)),
           Text(
             value);
-            style: Theme.of(context).textTheme.bodyMedium)
+            style: Theme.of(context).textTheme.bodyMedium))
         ])
     );
   }
@@ -592,7 +592,7 @@ class MysticalBackgroundPainter extends CustomPainter {
       final y = random.nextDouble() * size.height;
       final radius = 0.5 + random.nextDouble() * 1.5;
       
-      paint.color = Colors.white.withValues(alpha: 0.3 + glowIntensity * 0.4);
+      paint.color = Colors.white.withOpacity(0.3 + glowIntensity * 0.4);
       canvas.drawCircle(Offset(x, y), radius, paint);
     }
 
@@ -602,7 +602,7 @@ class MysticalBackgroundPainter extends CustomPainter {
       ..strokeWidth = 0.5
      
    
-    ..color = Colors.white.withValues(alpha: 0.1 + glowIntensity * 0.1);
+    ..color = Colors.white.withOpacity(0.1 + glowIntensity * 0.1);
 
     for (int i = 0; i < 5; i++) {
       final x1 = random.nextDouble() * size.width;
@@ -628,7 +628,7 @@ class TarotCardBackPainter extends CustomPainter {
       ..strokeWidth = 1.5
      
    
-    ..color = Colors.white.withValues(alpha: 0.2);
+    ..color = Colors.white.withOpacity(0.2);
 
     final centerX = size.width / 2;
     final centerY = size.height / 2;
@@ -664,7 +664,7 @@ class TarotCardBackPainter extends CustomPainter {
 
   void _drawCornerDecoration(Canvas canvas, Size size, Paint paint) {
     const cornerSize = 20.0;
-    paint.color = Colors.white.withValues(alpha: 0.3);
+    paint.color = Colors.white.withOpacity(0.3);
     
     // Top left
     canvas.drawLine(const Offset(10, 30), const Offset(10, 10), paint);

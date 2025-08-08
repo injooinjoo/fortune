@@ -150,7 +150,7 @@ class AppAnimations {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha: 0.3),
+          color: Colors.grey.withOpacity(0.3),
           borderRadius: borderRadius ?? BorderRadius.circular(4)));
   }
 

@@ -48,16 +48,16 @@ class _RunningInputFormState extends State<_RunningInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 런닝 운세를 확인하고\n최고의 컨디션으로 달려보세요!',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘의 런닝 운세를 확인하고\n최고의 컨디션으로 달려보세요!',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Running Time
         Text(
-          '러닝 시간대',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '러닝 시간대',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTimeSelection(theme),
@@ -65,8 +65,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
         // Distance
         Text(
-          '목표 거리',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '목표 거리',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDistanceSelection(theme),
@@ -74,8 +74,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
         // Terrain
         Text(
-          '러닝 코스',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '러닝 코스',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTerrainSelection(theme),
@@ -83,8 +83,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
         // Goal
         Text(
-          '러닝 목표',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '러닝 목표',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildGoalSelection(theme),
@@ -109,7 +109,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                 borderRadius: BorderRadius.circular(16)),
               elevation: 0),
             child: const Text(
-              '런닝 운세 보기',
+              '런닝 운세 보기',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold))))]
@@ -118,8 +118,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
   Widget _buildTimeSelection(ThemeData theme) {
     final times = [
-      {'id', 'morning': 'name', '아침': 'icon'},
-      {'id', 'afternoon': 'name', '오후': 'icon'},
+      {'\1': '\2', 'name', '아침': 'icon'},
+      {'\1': '\2', 'name', '오후': 'icon'},
       {'id', 'evening', 'name', '저녁', 'icon'},
       {'id', 'night', 'name', '밤', 'icon'}];
 
@@ -153,7 +153,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -175,8 +175,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
   Widget _buildDistanceSelection(ThemeData theme) {
     final distances = [
-      {'id', '5k': 'name', '5km'},
-      {'id', '10k': 'name', '10km'},
+      {'\1': '\2', 'name', '5km'},
+      {'\1': '\2', 'name', '10km'},
       {'id', '21k', 'name', '하프'},
       {'id', '42k', 'name', '풀코스'}];
 
@@ -202,7 +202,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
@@ -215,8 +215,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
   Widget _buildTerrainSelection(ThemeData theme) {
     final terrains = [
-      {'id', 'road': 'name', '도로': 'icon'},
-      {'id', 'track': 'name', '트랙': 'icon'},
+      {'\1': '\2', 'name', '도로': 'icon'},
+      {'\1': '\2', 'name', '트랙': 'icon'},
       {'id', 'trail', 'name', '트레일', 'icon'},
       {'id', 'treadmill', 'name', '트레드밀', 'icon'}];
 
@@ -250,7 +250,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -272,8 +272,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
   Widget _buildGoalSelection(ThemeData theme) {
     final goals = [
-      {'id', 'health': 'name', '건강': 'icon'},
-      {'id', 'weight': 'name', '다이어트': 'icon'},
+      {'\1': '\2', 'name', '건강': 'icon'},
+      {'\1': '\2', 'name', '다이어트': 'icon'},
       {'id', 'speed', 'name', '속도향상', 'icon'},
       {'id', 'marathon', 'name', '대회준비', 'icon'}];
 
@@ -307,7 +307,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -343,9 +343,9 @@ class _RunningFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF3B82F6),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20))),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,18 +368,18 @@ class _RunningFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 런닝 운세',
-                            style: theme.textTheme.titleLarge?.copyWith(
+                            '오늘의 런닝 운세',),
+                            style: theme.textTheme.titleLarge?.copyWith()
                               fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith()
+                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))]))),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)]))),
         const SizedBox(height: 16),
 
         // Best Running Time
@@ -436,7 +436,7 @@ class _RunningFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,12 +455,12 @@ class _RunningFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5))]));
+            style: theme.textTheme.bodyMedium?.copyWith()
+              height: 1.5)]));
   }
 }

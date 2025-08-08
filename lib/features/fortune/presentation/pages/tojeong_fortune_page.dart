@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Icon;
+import 'package:flutter/material.dart' as material show Icon;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'base_fortune_page.dart';
@@ -142,7 +143,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
         '전체운': overallScore,
         '상반기': 75 + (upperTrigram.hashCode % 20),
         '하반기': 70 + (lowerTrigram.hashCode % 25),
-        '변화운': null},
+        '변화운': 80 + (changingLine * 5)},
       description: description,
       luckyItems: {
         '주괘': hexagram['name'],
@@ -227,8 +228,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       final month = f['month'];
       final score = f['score'];
       final filledStars = score ~/ 20;
-      final emptyStars = 5 - filledStars;
-      final stars = '★' * filledStars + '☆' * emptyStars;
+      final emptyStars = 5 - filledStars.toInt();
+      final stars = '★' * filledStars.toInt() + '☆' * emptyStars.toInt();
       return '$month월: $stars (${f['element']})';
     }).join('\n');
   }
@@ -281,7 +282,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   Widget _buildHexagramDisplay() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final hexagram = fortune.metadata?['hexagram'] as Map<String, dynamic>?;
     final upperTrigram = fortune.metadata?['upperTrigram'] as String?;
@@ -303,8 +304,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               child: Column(
                 children: [
                   Text(
-                    '괘상',
-                    style: Theme.of(context).textTheme.headlineSmall),
+                    '괘상',),
+                    style: Theme.of(context).textTheme.headlineSmall)),
                   const SizedBox(height: 24),
                   Container(
                     width: 150,
@@ -330,17 +331,17 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   const SizedBox(height: 16),
                   Text(
                     hexagram['name'],
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith()
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
                     decoration: BoxDecoration(
                       color: (hexagram['color'] as Color).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       '${hexagram['meaning']} • ${hexagram['element']}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                             color: hexagram['color'] as Color,
                             fontWeight: FontWeight.w600)))]))));
       });
@@ -351,7 +352,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall),
+          style: Theme.of(context).textTheme.bodySmall)),
         const SizedBox(height: 4),
         Column(
           children: trigram.split('').map((bit) {
@@ -374,11 +375,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   Widget _buildMonthlyChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final monthlyFortunes =
         fortune.metadata?['monthlyFortunes'] as List<Map<String, dynamic>>?;
-    if (monthlyFortunes == null) return const SizedBox.shrink();
+    if (monthlyFortunes == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -389,13 +390,13 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
           children: [
             Row(
               children: [
-                Icon(
+                material.Icon(
                   Icons.calendar_month,
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '월별 운세',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '월별 운세',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -423,11 +424,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                                     _getScoreColor(score),
                                     _getScoreColor(score).withOpacity(0.5)]),
                                 borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(4)))),
+                                  top: Radius.circular(4))))),
                           const SizedBox(height: 8),
                           Text(
-                            '$month월',
-                            style: Theme.of(context).textTheme.bodySmall)])));
+                            '$month월',),
+                            style: Theme.of(context).textTheme.bodySmall)])));)
                 }).toList()))])));
   }
 
@@ -440,11 +441,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   Widget _buildElementBalance() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final monthlyFortunes =
         fortune.metadata?['monthlyFortunes'] as List<Map<String, dynamic>>?;
-    if (monthlyFortunes == null) return const SizedBox.shrink();
+    if (monthlyFortunes == null) return const SizedBox.shrink()
 
     final elementCounts = <String, int>{};
     for (final f in monthlyFortunes) {
@@ -461,13 +462,13 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
           children: [
             Row(
               children: [
-                Icon(
+                material.Icon(
                   Icons.balance,
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '오행 균형',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '오행 균형',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...elementCounts.entries.map((entry) {
               final element = entry.key;
@@ -488,8 +489,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                               .bodyMedium
                               ?.copyWith(fontWeight: FontWeight.bold)),
                         Text(
-                          '$count개월',
-                          style: Theme.of(context).textTheme.bodyMedium)]),
+                          '$count개월',),
+                          style: Theme.of(context).textTheme.bodyMedium)])),
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: percentage,
@@ -513,10 +514,10 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   Widget _buildChangingLineInfo() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final changingLine = fortune.metadata?['changingLine'] as int?;
-    if (changingLine == null) return const SizedBox.shrink();
+    if (changingLine == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -531,37 +532,37 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
           children: [
             Row(
               children: [
-                Icon(
+                material.Icon(
                   Icons.change_circle,
                   color: Colors.purple),
                 const SizedBox(width: 8),
                 Text(
-                  '변효 해석',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '변효 해석',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.purple.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
                 border: Border.all(
                   color: Colors.purple.withOpacity(0.3))),
               child: Column(
                 children: [
                   Text(
-                    '제${changingLine}효',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    '제${changingLine}효',),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith()
                           color: Colors.purple,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
                     _getChangingLineAdvice(changingLine),
-                    style: Theme.of(context).textTheme.bodyMedium),
+                    style: Theme.of(context).textTheme.bodyMedium)),
                   const SizedBox(height: 12),
                   Text(
                     _getChangingLineDetail(changingLine),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
@@ -587,13 +588,13 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
         children: [
           Row(
             children: [
-              Icon(
+              material.Icon(
                 Icons.tips_and_updates,
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '토정비결 활용법',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                '토정비결 활용법',),
+                style: Theme.of(context).textTheme.headlineSmall)])),
           const SizedBox(height: 16),
           ...[
             '매월 초에 해당 월의 운세를 다시 확인하고 계획을 세우세요',
@@ -606,7 +607,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  material.Icon(
                     Icons.check_circle,
                     size: 20,
                     color: Theme.of(context).colorScheme.primary),
@@ -614,7 +615,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
+                      style: Theme.of(context).textTheme.bodyMedium))]));)
           }).toList()]));
   }
 }

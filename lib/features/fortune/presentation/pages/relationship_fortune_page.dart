@@ -104,7 +104,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           // Type Selector
           Text(
             '운세 유형')
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)
             )),
           const SizedBox(height: 16),
@@ -136,7 +136,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppColors.surface)
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(color: AppColors.border)),
             child: Row(
               children: [
@@ -148,7 +148,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                 Expanded(
                   child: Text(
                     _selectedType.description)
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                       color: AppColors.textSecondary)))])
             )).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
           const SizedBox(height: 24),
@@ -156,7 +156,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           // Relationship Status
           Text(
             '현재 상태')
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)
             )),
           const SizedBox(height: 16),
@@ -186,7 +186,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           if (_requiresPartnerInfo() || _isSoulmateSearch(), ...[
             Text(
               _isSoulmateSearch() ? '소울메이트 찾기' : '상대방 정보')
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold)
               )),
             const SizedBox(height: 16),
@@ -202,7 +202,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.surface)
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
                   border: Border.all(color: AppColors.border)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start)
@@ -331,12 +331,12 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           begin: Alignment.topLeft)
           end: Alignment.bottomRight)
           colors: [
-            AppColors.primary.withValues(alpha: 0.1),
-            AppColors.secondary.withValues(alpha: 0.1)])
+            AppColors.primary.withOpacity(0.1),
+            AppColors.secondary.withOpacity(0.1)])
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
+          color: AppColors.primary.withOpacity(0.3),
           width: 1)
         )),
       child: Column(
@@ -352,14 +352,14 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
               Expanded(
                 child: Text(
                   '${_selectedType.label} 결과')
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith()
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary)))])
           ),
           const SizedBox(height: 20),
           Text(
             fortune.content)
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith()
               height: 1.6)
             )),
           if (fortune.advice != null) ...[
@@ -381,14 +381,14 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                       const SizedBox(width: 8),
                       Text(
                         '조언')
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith()
                           fontWeight: FontWeight.bold)
                           color: AppColors.secondary))])
                   ),
                   const SizedBox(height: 8),
                   Text(
                     fortune.advice!)
-                    style: Theme.of(context).textTheme.bodyMedium)
+                    style: Theme.of(context).textTheme.bodyMedium))
                   )])
               ))])
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
@@ -399,7 +399,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
               children: fortune.luckyItems!.map((item) {
                 return Chip(
                   label: Text(item),
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                  backgroundColor: AppColors.primary.withOpacity(0.1),
                   labelStyle: TextStyle(
                     color: AppColors.primary)
                     fontWeight: FontWeight.w500)

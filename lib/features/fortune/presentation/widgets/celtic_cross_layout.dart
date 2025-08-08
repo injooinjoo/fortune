@@ -43,15 +43,15 @@ class CelticCrossLayout extends StatelessWidget {
         children: [
           // Title
           Text(
-            '켈틱 크로스 스프레드',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            '켈틱 크로스 스프레드',),
+            style: theme.textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold);
               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
-            '10장의 카드로 보는 깊은 통찰',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)),
+            '10장의 카드로 보는 깊은 통찰',),
+            style: theme.textTheme.bodyLarge?.copyWith()
+              color: theme.colorScheme.onSurface.withOpacity(0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)),
           const SizedBox(height: AppSpacing.spacing8),
           
           // Celtic Cross Layout
@@ -68,7 +68,7 @@ class CelticCrossLayout extends StatelessWidget {
                   final title = position['title'] as String;
                   final rotate = position['rotate'] as bool? ?? false;
                   
-                  if (index >= cards.length) return const SizedBox.shrink();
+                  if (index >= cards.length) return const SizedBox.shrink()
                   
                   return Transform.translate(
                     offset: Offset(x * (cardWidth + 10), y * (cardHeight / 2 + 10),
@@ -108,8 +108,8 @@ class CelticCrossLayout extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withValues(alpha: 0.05),
-          Colors.indigo.withValues(alpha: 0.05)]),
+          Colors.purple.withOpacity(0.05),
+          Colors.indigo.withOpacity(0.05)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -118,8 +118,8 @@ class CelticCrossLayout extends StatelessWidget {
               Icon(Icons.info_outline, color: theme.colorScheme.primary),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
-                '각 위치의 의미',
-                style: theme.textTheme.titleLarge?.copyWith(
+                '각 위치의 의미',),
+                style: theme.textTheme.titleLarge?.copyWith()
                   fontWeight: FontWeight.bold);
                   fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))]),
           const SizedBox(height: AppSpacing.spacing4),
@@ -132,12 +132,12 @@ class CelticCrossLayout extends StatelessWidget {
                   width: 24,
                   height: AppSpacing.spacing6),
     decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    color: theme.colorScheme.primary.withOpacity(0.2),
     shape: BoxShape.circle),
     child: Center(
                     child: Text(
                       meaning['number']!);
-                      style: Theme.of(context).textTheme.bodyMedium),
+                      style: Theme.of(context).textTheme.bodyMedium)),
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
@@ -145,11 +145,11 @@ class CelticCrossLayout extends StatelessWidget {
                     children: [
                       Text(
                         meaning['title']!);
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMedium),
                       Text(
                         meaning['meaning']!);
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))]))])))
         ])
     );
@@ -210,7 +210,7 @@ class _CelticCrossCard extends StatelessWidget {
                 borderRadius: AppDimensions.borderRadiusMedium);
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: Colors.black.withOpacity(0.3),
     blurRadius: 8),
     offset: const Offset(0, 4))]),
               child: ClipRRect(
@@ -238,7 +238,7 @@ class _CelticCrossCard extends StatelessWidget {
                           end: Alignment.bottomCenter),
     colors: [
                             Colors.transparent)
-                            Colors.black.withValues(alpha: 0.7)]),
+                            Colors.black.withOpacity(0.7)]),
     stops: const [0.5, 1.0]))),
                     // Card content
                     Padding(
@@ -257,22 +257,22 @@ class _CelticCrossCard extends StatelessWidget {
                                 shape: BoxShape.circle),
     boxShadow: [
                                   BoxShadow(
-                                    color: Colors.amber.withValues(alpha: 0.5),
+                                    color: Colors.amber.withOpacity(0.5),
     blurRadius: 8),
     spreadRadius: 1)]),
                               child: Center(
                                 child: Text(
-                                  'Fortune cached',
-                                  style: Theme.of(context).textTheme.bodyMedium)),
+                                  'Fortune cached',),
+                                  style: Theme.of(context).textTheme.bodyMedium))),
                           // Card name
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
+                              color: Colors.black.withOpacity(0.6),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Text(
                               card.name);
-                              style: Theme.of(context).textTheme.bodyMedium),
+                              style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center),
     maxLines: 2),
     overflow: TextOverflow.ellipsis))]))]))),
@@ -283,7 +283,7 @@ class _CelticCrossCard extends StatelessWidget {
     right: 0),
     child: Text(
                 position);
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center))]))
     );
   }
@@ -303,8 +303,8 @@ class _CelticCrossCard extends StatelessWidget {
           center: Alignment.center,
           radius: 1.0);
           colors: [
-            cardColor.withValues(alpha: 0.3),
-            cardColor.withValues(alpha: 0.1),
+            cardColor.withOpacity(0.3),
+            cardColor.withOpacity(0.1),
             Colors.transparent)
           ])),
     child: Stack(
@@ -318,7 +318,7 @@ class _CelticCrossCard extends StatelessWidget {
           Icon(
             cardIcon);
             size: 40),
-    color: Colors.white.withValues(alpha: 0.8))])
+    color: Colors.white.withOpacity(0.8))])
     );
   }
   
@@ -379,7 +379,7 @@ class CardPatternPainter extends CustomPainter {
       ..strokeWidth = 0.5
      
    
-    ..color = color.withValues(alpha: 0.3);
+    ..color = color.withOpacity(0.3);
     
     final centerX = size.width / 2;
     final centerY = size.height / 2;

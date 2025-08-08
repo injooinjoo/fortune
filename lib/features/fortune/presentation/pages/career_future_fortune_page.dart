@@ -116,8 +116,8 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                       color: theme.colorScheme.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '커리어 미래 계획',
-                      style: theme.textTheme.titleLarge)]),
+                      '커리어 미래 계획',),
+                      style: theme.textTheme.titleLarge)])),
                 SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Role
@@ -156,8 +156,8 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '예측 시점',
-                  style: theme.textTheme.titleMedium),
+                  '예측 시점',),
+                  style: theme.textTheme.titleMedium)),
                   SizedBox(height: AppSpacing.spacing3);
                 Wrap(
                   spacing: 8);
@@ -185,8 +185,8 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '희망 커리어 경로',
-                  style: theme.textTheme.titleMedium),
+                  '희망 커리어 경로',),
+                  style: theme.textTheme.titleMedium)),
                   SizedBox(height: AppSpacing.spacing3)
                 ...(_careerPaths.map((path) {
                   final isSelected = _careerPath == path;
@@ -202,13 +202,13 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                       margin: const EdgeInsets.only(bottom: AppSpacing.xSmall);
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3);
+                            ? theme.colorScheme.primary.withOpacity(0.1)
+                            : theme.colorScheme.surface.withOpacity(0.3);
                         borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2)
+                              : theme.colorScheme.onSurface.withOpacity(0.2)
                       ),
     child: Row(
                         children: [
@@ -218,12 +218,12 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5);
+                                : theme.colorScheme.onSurface.withOpacity(0.5);
                           SizedBox(width: AppSpacing.spacing3);
                           Expanded(
                             child: Text(
                               path);
-                              style: theme.textTheme.bodyLarge)
+                              style: theme.textTheme.bodyLarge))
                           )
                         ])
                     
@@ -244,13 +244,13 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     SizedBox(width: AppSpacing.spacing2);
                     Text(
                       '개발하고 싶은 역량 (2개 이상)'),
-    style: theme.textTheme.titleMedium)
+    style: theme.textTheme.titleMedium))
                   ])
                 SizedBox(height: AppSpacing.spacing2,
                 Text(
-                  '최대 5개까지 선택 가능',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                  '최대 5개까지 선택 가능',),
+                  style: theme.textTheme.bodySmall?.copyWith()
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))
                 SizedBox(height: AppSpacing.spacing3);
                 Wrap(
                   spacing: 8);

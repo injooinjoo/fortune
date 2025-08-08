@@ -110,7 +110,7 @@ class _TarotCardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Draw mystical symbols
     final symbolPaint = Paint()
-      ..color = AppColors.textPrimaryDark.withValues(alpha: 0.1)
+      ..color = AppColors.textPrimaryDark.withOpacity(0.1)
       ..style = PaintingStyle.stroke
      
    
@@ -169,7 +169,7 @@ class _TarotCardPainter extends CustomPainter {
       final opacity = math.sin(progress * math.pi).abs() * 0.8; // Use abs() to ensure positive value
       
       if (opacity > 0) {
-        sparklePaint.color = AppColors.textPrimaryDark.withValues(alpha: opacity);
+        sparklePaint.color = AppColors.textPrimaryDark.withOpacity(opacity);
         
         final x = size.width * sparkle.x;
         final y = size.height * sparkle.y + floatOffset * 0.5;

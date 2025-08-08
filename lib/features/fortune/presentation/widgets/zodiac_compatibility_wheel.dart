@@ -36,13 +36,13 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
       begin: 0,
       end: 2 * math.pi).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _scaleAnimation = Tween<double>(
       begin: 0,
       end: 1).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.elasticOut);
+      curve: Curves.elasticOut));
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -139,7 +139,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           height: isSelected ? 70 : 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _getCompatibilityColor(compatibility).withValues(alpha: 0.2),
+            color: _getCompatibilityColor(compatibility).withOpacity(0.2),
             border: Border.all(
               color: isSelected 
                   ? Colors.amber 
@@ -147,7 +147,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
               width: isSelected ? 3 : 2),
             boxShadow: (isSelected || isHovered) ? [
               BoxShadow(
-                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.5),
+                color: _getCompatibilityColor(compatibility).withOpacity(0.5),
                 blurRadius: 20,
                 spreadRadius: 5)] : []),
           child: Column(
@@ -175,10 +175,10 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            Colors.amber.withValues(alpha: 0.3),
-            Colors.amber.withValues(alpha: 0.1)]),
+            Colors.amber.withOpacity(0.3),
+            Colors.amber.withOpacity(0.1)]),
         border: Border.all(
-          color: Colors.amber.withValues(alpha: 0.5),
+          color: Colors.amber.withOpacity(0.5),
           width: 2)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -196,7 +196,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             info['hanja'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8))),
+              color: Colors.white.withOpacity(0.8))),
           Text(
             info['element'],
             style: TextStyle(
@@ -208,22 +208,22 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: Colors.white.withOpacity(0.1),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildLegendItem('육합': Colors.green, '최고 궁합',
+          _buildLegendItem('육합', Colors.green, '최고 궁합'),
           const SizedBox(width: 20),
-          _buildLegendItem('삼합': Colors.blue, '좋은 궁합',
+          _buildLegendItem('삼합', Colors.blue, '좋은 궁합'),
           const SizedBox(width: 20),
-          _buildLegendItem('육해': Colors.red, '주의 필요',
+          _buildLegendItem('육해', Colors.red, '주의 필요'),
           const SizedBox(width: 20),
-          _buildLegendItem('보통': Colors.grey, '노력 필요']));
+          _buildLegendItem('보통', Colors.grey, '노력 필요')]));
   }
 
   Widget _buildLegendItem(String label, Color color, String description) {
@@ -248,7 +248,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             Text(
               description,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: Colors.white.withOpacity(0.6),
                 fontSize: 10))])]);
   }
 
@@ -262,18 +262,18 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
 
   String _getZodiacEmoji(String zodiac) {
     const emojiMap = {
-      '쥐', '🐭',
-      '소', '🐮',
-      '호랑이', '🐯',
-      '토끼', '🐰',
-      '용', '🐲',
-      '뱀', '🐍',
-      '말', '🐴',
-      '양', '🐑',
-      '원숭이', '🐵',
-      '닭', '🐓',
-      '개', '🐕',
-      '돼지', '🐷'};
+      '쥐': '🐭',
+      '소': '🐮',
+      '호랑이': '🐯',
+      '토끼': '🐰',
+      '용': '🐲',
+      '뱀': '🐍',
+      '말': '🐴',
+      '양': '🐑',
+      '원숭이': '🐵',
+      '닭': '🐓',
+      '개': '🐕',
+      '돼지': '🐷'};
     return emojiMap[zodiac] ?? '🌟';
   }
 }
@@ -309,11 +309,9 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final bestMatchIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(bestMatch);
     
     final paint = Paint()
-      ..color = Colors.green.withValues(alpha: 0.6 * animationValue)
+      ..color = Colors.green.withOpacity(0.6 * animationValue)
       ..strokeWidth = 3
-     
-   
-    ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke;
     
     final angle1 = (selectedIndex * 30 - 90) * math.pi / 180;
     final angle2 = (bestMatchIndex * 30 - 90) * math.pi / 180;
@@ -332,13 +330,11 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final selectedIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(selectedZodiac);
     
     for (final group in ZodiacCompatibilityService.harmonyGroups) {
-      if (group.contains(selectedZodiac), {
+      if (group.contains(selectedZodiac)) {
         final paint = Paint()
-          ..color = Colors.blue.withValues(alpha: 0.4 * animationValue)
+          ..color = Colors.blue.withOpacity(0.4 * animationValue)
           ..strokeWidth = 2
-         
-   
-    ..style = PaintingStyle.stroke;
+          ..style = PaintingStyle.stroke;
         
         final path = Path();
         bool first = true;
@@ -373,12 +369,10 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final conflictIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(conflict);
     
     final paint = Paint()
-      ..color = Colors.red.withValues(alpha: 0.5 * animationValue)
+      ..color = Colors.red.withOpacity(0.5 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeCap = StrokeCap.round;
+      ..strokeCap = StrokeCap.round;
     
     // 점선 효과
     final angle1 = (selectedIndex * 30 - 90) * math.pi / 180;
@@ -398,7 +392,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final distance = (p2 - p1).distance;
     final dashLength = 5.0;
     final dashSpace = 5.0;
-    final dashCount = (distance / (dashLength + dashSpace),.floor();
+    final dashCount = (distance / (dashLength + dashSpace)).floor();
     
     for (int i = 0; i < dashCount; i++) {
       final start = p1 + (p2 - p1) * (i * (dashLength + dashSpace) / distance);

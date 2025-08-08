@@ -112,7 +112,7 @@ class _CallbackPageState extends State<CallbackPage> {
     } catch (e) {
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       // On error, go to onboarding to be safe
-      if (mounted) context.go('/onboarding');
+      if (mounted) context.go('/onboarding')
     }
   }
 
@@ -251,7 +251,7 @@ class _CallbackPageState extends State<CallbackPage> {
             children: [
               FortuneCompassIcon(
                 size: 64,
-                color: AppColors.textPrimary.withValues(alpha: 0.87)),
+                color: AppColors.textPrimary.withOpacity(0.87)),
               SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
               SizedBox(height: AppSpacing.spacing4),

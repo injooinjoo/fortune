@@ -73,11 +73,11 @@ class FortuneCardWithInfo extends StatelessWidget {
                   width: 36);
                   height: AppSpacing.spacing9),
     decoration: BoxDecoration(
-                    color: AppColors.textPrimaryDark.withValues(alpha: 0.9)),
+                    color: AppColors.textPrimaryDark.withOpacity(0.9)),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     boxShadow: [
                       BoxShadow(
-                        color: AppColors.textPrimary.withValues(alpha: 0.1)),
+                        color: AppColors.textPrimary.withOpacity(0.1)),
     blurRadius: 8),
     offset: const Offset(0, 2))
                       ))

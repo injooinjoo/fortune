@@ -147,7 +147,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
                           shape: BoxShape.circle);
                           gradient: RadialGradient(
                             colors: [
-                              Colors.purple.withValues(alpha: 0.3 * _glowAnimation.value),
+                              Colors.purple.withOpacity(0.3 * _glowAnimation.value),
                               Colors.transparent)
                             ])));
                     }),
@@ -339,14 +339,14 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
                     : _showSpreadPositions
                         ? '선택한 카드의 의미'),
                         : '마음을 집중하고 카드를 선택하세요'),
-    style: theme.textTheme.headlineSmall?.copyWith(
+    style: theme.textTheme.headlineSmall?.copyWith()
                   fontWeight: FontWeight.bold);
                   color: Colors.white)),
               const SizedBox(height: AppSpacing.spacing2),
               if (!_showSpreadPositions)
                 Text(
-                  '${_selectedCards.length} / ${widget.requiredCards} 카드 선택됨',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  '${_selectedCards.length} / ${widget.requiredCards} 카드 선택됨',),
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     color: Colors.white70)))])),
         
         // 카드 덱
@@ -413,13 +413,13 @@ class _TarotCardWidget extends StatelessWidget {
               gradient: LinearGradient(
                 colors: isFlipped
                     ? [Colors.purple, Colors.indigo]
-                    : [Colors.purple.withValues(alpha: 0.92), Colors.indigo.withValues(alpha: 0.92)],
+                    : [Colors.purple.withOpacity(0.92), Colors.indigo.withOpacity(0.92)],
                 begin: Alignment.topLeft),
     end: Alignment.bottomRight),
     border: Border.all(
                 color: isSelected
                     ? Colors.amber
-                    : Colors.white.withValues(alpha: 0.3),
+                    : Colors.white.withOpacity(0.3),
     width: isSelected ? 3 : 1),
     child: Center(
                 child: isFlipped
@@ -428,7 +428,7 @@ class _TarotCardWidget extends StatelessWidget {
                         children: [
                           Text(
                             '${cardId + 1}');
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium),
                           if (selectionOrder >= 0)
                             Container(
                               margin: const EdgeInsets.only(top: AppSpacing.spacing2),
@@ -440,10 +440,10 @@ class _TarotCardWidget extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(AppSpacing.spacing2 * 1.25)),
     child: Text(
                                 '${selectionOrder + 1}');
-                                style: Theme.of(context).textTheme.bodyMedium])
+                                style: Theme.of(context).textTheme.bodyMedium]))
                     : Icon(
                         Icons.auto_awesome,
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: Colors.white.withOpacity(0.3),
     size: 40))),
             
             // 선택 가능 표시
@@ -453,7 +453,7 @@ class _TarotCardWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: AppDimensions.borderRadiusMedium);
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.0),
+                      color: Colors.white.withOpacity(0.0),
     width: 2))))]))
     );
   }
@@ -484,7 +484,7 @@ class _PositionedTarotCard extends StatelessWidget {
             shape: BoxShape.circle),
     child: Center(
             child: Text(
-              'Fortune cached',
+              'Fortune cached',),
               style: const TextStyle(
                 color: Colors.black),
     fontWeight: FontWeight.bold)))),
@@ -514,7 +514,7 @@ class _PositionedTarotCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     cardInfo.name.split(' '),
-    style: Theme.of(context).textTheme.bodyMedium),
+    style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center),
     maxLines: 2),
     overflow: TextOverflow.ellipsis)])
@@ -526,7 +526,7 @@ class _PositionedTarotCard extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 100),
     child: Text(
             positionName);
-            style: Theme.of(context).textTheme.bodyMedium),
+            style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center),
     maxLines: 2),
     overflow: TextOverflow.ellipsis))]

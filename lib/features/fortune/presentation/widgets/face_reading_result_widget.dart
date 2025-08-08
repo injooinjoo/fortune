@@ -27,7 +27,7 @@ class FaceReadingResultWidget extends StatelessWidget {
         borderRadius: AppDimensions.borderRadiusLarge,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4)]),
       child: Column(
@@ -52,8 +52,8 @@ class FaceReadingResultWidget extends StatelessWidget {
                   color: AppColors.surface),
                 const SizedBox(height: AppSpacing.spacing3),
                 Text(
-                  '당신의 관상 분석 결과',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  '당신의 관상 분석 결과',),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                     color: AppColors.surface),
                     fontWeight: FontWeight.bold)]),
           
@@ -64,12 +64,12 @@ class FaceReadingResultWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Overall score or rating
-                if (sections.containsKey('score'), ...[
+                if (sections.containsKey('score') ...[
                   _buildScoreSection(context, sections['score'],
                   const SizedBox(height: AppSpacing.spacing6)],
                 
                 // Main fortune
-                if (sections.containsKey('fortune'), ...[
+                if (sections.containsKey('fortune') ...[
                   _buildSection(
                     context: context,
                     title: '종합 운세',
@@ -78,7 +78,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                   const SizedBox(height: AppSpacing.spacing5)],
                 
                 // Personality traits
-                if (sections.containsKey('personality'), ...[
+                if (sections.containsKey('personality') ...[
                   _buildSection(
                     context: context,
                     title: '성격 특성',
@@ -87,7 +87,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                   const SizedBox(height: AppSpacing.spacing5)],
                 
                 // Career & wealth
-                if (sections.containsKey('career'), ...[
+                if (sections.containsKey('career') ...[
                   _buildSection(
                     context: context,
                     title: '재물운 & 직업운',
@@ -96,7 +96,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                   const SizedBox(height: AppSpacing.spacing5)],
                 
                 // Love & relationships
-                if (sections.containsKey('love'), ...[
+                if (sections.containsKey('love') ...[
                   _buildSection(
                     context: context,
                     title: '애정운',
@@ -105,7 +105,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                   const SizedBox(height: AppSpacing.spacing5)],
                 
                 // Advice
-                if (sections.containsKey('advice'), ...[
+                if (sections.containsKey('advice') ...[
                   _buildSection(
                     context: context,
                     title: '조언',
@@ -113,7 +113,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                     icon: Icons.lightbulb)]]),
           
           // Share button
-          if (onShare != null), Padding(
+          if (onShare != null) Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: ElevatedButton.icon(
                 onPressed: onShare,
@@ -143,25 +143,25 @@ class FaceReadingResultWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: score / 100,
                   strokeWidth: 8,
-                  backgroundColor: AppColors.onSurface.withValues(alpha: 0.1),
+                  backgroundColor: AppColors.onSurface.withOpacity(0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getScoreColor(score)),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$score',
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    '$score',),
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith()
                       fontWeight: FontWeight.bold),
                       color: _getScoreColor(score),
                   Text(
-                    '점',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.onSurface.withValues(alpha: 0.6)])]),
+                    '점',),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                      color: AppColors.onSurface.withOpacity(0.6)])]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             _getScoreDescription(score),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold),
               color: _getScoreColor(score)]);
 }
@@ -183,19 +183,19 @@ class FaceReadingResultWidget extends StatelessWidget {
             const SizedBox(width: AppSpacing.spacing2),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold),
                 color: AppColors.primary)]),
         const SizedBox(height: AppSpacing.spacing3),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: AppColors.primary.withOpacity(0.1),
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Text(
             content,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              height: 1.5))]
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+              height: 1.5)]
     );
 }
   
@@ -203,7 +203,7 @@ class FaceReadingResultWidget extends StatelessWidget {
     final sections = <String, String>{};
     
     // Simple parsing logic - can be enhanced based on actual API response format
-    if (content.contains('점수:') || content.contains('평점:'), {
+    if (content.contains('점수:') || content.contains('평점:') {
       final scoreMatch = RegExp(r'(점수|평점):\s*(\d+)').firstMatch(content);
       if (scoreMatch != null) {
         sections['score'] = scoreMatch.group(2)!;
@@ -216,25 +216,25 @@ class FaceReadingResultWidget extends StatelessWidget {
     final sectionContent = StringBuffer();
     
     for (final line in lines) {
-      if (line.contains('성격') || line.contains('특성'), {
+      if (line.contains('성격') || line.contains('특성') {
         if (sectionContent.isNotEmpty) {
           sections[currentSection] = sectionContent.toString().trim();
           sectionContent.clear();
 }
         currentSection = 'personality';
-} else if (line.contains('재물') || line.contains('직업') || line.contains('사업'), {
+} else if (line.contains('재물') || line.contains('직업') || line.contains('사업') {
         if (sectionContent.isNotEmpty) {
           sections[currentSection] = sectionContent.toString().trim();
           sectionContent.clear();
 }
         currentSection = 'career';
-} else if (line.contains('애정') || line.contains('연애') || line.contains('결혼'), {
+} else if (line.contains('애정') || line.contains('연애') || line.contains('결혼') {
         if (sectionContent.isNotEmpty) {
           sections[currentSection] = sectionContent.toString().trim();
           sectionContent.clear();
 }
         currentSection = 'love';
-} else if (line.contains('조언') || line.contains('충고'), {
+} else if (line.contains('조언') || line.contains('충고') {
         if (sectionContent.isNotEmpty) {
           sections[currentSection] = sectionContent.toString().trim();
           sectionContent.clear();

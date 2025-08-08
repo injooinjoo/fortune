@@ -279,7 +279,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     final categoryData = _groupHistoryByCategory(history);
     final total = categoryData.values.fold(0, (sum, count) => sum + count);
     
-    if (total == 0) return const SizedBox.shrink();
+    if (total == 0) return const SizedBox.shrink()
     
     final colors = [
       Colors.purple,
@@ -1293,7 +1293,7 @@ https://fortune.app''';
                                                     if (luckyItems != null && luckyItems.isNotEmpty)
                                                       Row(
                                                         children: [
-                                                          if (luckyItems['color'] != null);
+                                                          if (luckyItems['color'] != null)
                                                             _buildLuckyItem(
                                                               icon: Icons.palette,
                                                               label: '색상',

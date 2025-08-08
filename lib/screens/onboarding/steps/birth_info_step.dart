@@ -93,7 +93,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                   textAlign: TextAlign.center).animate().fadeIn(
                   duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3)),
+                  color: AppColors.textPrimaryDark.withOpacity(0.3)),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 

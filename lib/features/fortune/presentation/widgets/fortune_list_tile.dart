@@ -62,20 +62,20 @@ class FortuneListTile extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           category.title,
-                          style: theme.textTheme.bodyLarge?.copyWith(
+                          style: theme.textTheme.bodyLarge?.copyWith()
                             fontWeight: FontWeight.w600),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis),
-                      if (category.isNew), Container(
+                      if (category.isNew) Container(
                           margin: const EdgeInsets.only(left: AppSpacing.spacing2),
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0 * 0.5),
                           decoration: BoxDecoration(
                             color: AppColors.error,
                             borderRadius: AppDimensions.borderRadiusSmall),
                           child: const Text(
-                            'NEW',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                      if (category.isPremium), Container(
+                            'NEW',),
+                            style: Theme.of(context).textTheme.bodyMedium),
+                      if (category.isPremium) Container(
                           margin: const EdgeInsets.only(left: AppSpacing.spacing2),
                           padding: AppSpacing.paddingAll4,
                           decoration: BoxDecoration(
@@ -88,14 +88,14 @@ class FortuneListTile extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     category.description,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis)]),
             const SizedBox(width: AppSpacing.spacing2),
             Icon(
               Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              color: theme.colorScheme.onSurface.withOpacity(0.3),
               size: 24)]),;
 }
 }

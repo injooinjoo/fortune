@@ -50,7 +50,7 @@ class FiveElementsWidget extends ConsumerWidget {
         color: AppColors.textPrimaryDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+          color: theme.colorScheme.outline.withOpacity(0.1),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,13 +68,13 @@ class FiveElementsWidget extends ConsumerWidget {
                   Text(
                     '五行分析',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: AppSpacing.spacing2,
                   vertical: AppSpacing.spacing1),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: AppDimensions.borderRadiusMedium),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -92,7 +92,7 @@ class FiveElementsWidget extends ConsumerWidget {
           Text(
             '오행의 균형으로 보는 나의 기운',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           SizedBox(height: AppSpacing.spacing5),
           
           // Five Elements Grid
@@ -115,7 +115,7 @@ class FiveElementsWidget extends ConsumerWidget {
         color: AppColors.textPrimaryDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+          color: theme.colorScheme.outline.withOpacity(0.1),
           width: 1)),
       child: Column(
         children: [
@@ -131,7 +131,7 @@ class FiveElementsWidget extends ConsumerWidget {
           Text(
             '사주 정보를 입력하면 오행 분석을 확인할 수 있습니다.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+              color: theme.colorScheme.onSurface.withOpacity(0.7)),
             textAlign: TextAlign.center)]));
   }
   
@@ -226,7 +226,7 @@ class FiveElementsWidget extends ConsumerWidget {
               width: size,
               height: size,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.2),
+                color: color.withOpacity(0.2),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isDominant ? theme.colorScheme.primary : 
@@ -235,7 +235,7 @@ class FiveElementsWidget extends ConsumerWidget {
                   width: isDominant || isLacking ? 3 : 2),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.3),
+                    color: color.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2))]),
               child: Center(
@@ -267,8 +267,8 @@ class FiveElementsWidget extends ConsumerWidget {
                     vertical: AppSpacing.spacing0),
                   decoration: BoxDecoration(
                     color: isDominant ? 
-                           theme.colorScheme.primary.withValues(alpha: 0.2) :
-                           theme.colorScheme.error.withValues(alpha: 0.2),
+                           theme.colorScheme.primary.withOpacity(0.2) :
+                           theme.colorScheme.error.withOpacity(0.2),
                     borderRadius: AppDimensions.borderRadiusSmall),
                   child: Text(
                     isDominant ? '강함' : '부족',
@@ -308,12 +308,12 @@ class FiveElementsWidget extends ConsumerWidget {
               bottom: AppSpacing.small),
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.05),
+              color: color.withOpacity(0.05),
               borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-                color: isDominant ? theme.colorScheme.primary.withValues(alpha: 0.3) :
-                       isLacking ? theme.colorScheme.error.withValues(alpha: 0.3) :
-                       color.withValues(alpha: 0.2))),
+                color: isDominant ? theme.colorScheme.primary.withOpacity(0.3) :
+                       isLacking ? theme.colorScheme.error.withOpacity(0.3) :
+                       color.withOpacity(0.2))),
             child: Column(
               children: [
                 Row(
@@ -322,7 +322,7 @@ class FiveElementsWidget extends ConsumerWidget {
                       width: AppDimensions.buttonHeightSmall,
                       height: AppDimensions.buttonHeightSmall,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2),
+                        color: color.withOpacity(0.2),
                         shape: BoxShape.circle),
                       child: Center(
                         child: Text(
@@ -346,7 +346,7 @@ class FiveElementsWidget extends ConsumerWidget {
                                     horizontal: AppSpacing.spacing1,
                                     vertical: AppSpacing.spacing0),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                                    color: theme.colorScheme.primary.withOpacity(0.2),
                                     borderRadius: AppDimensions.borderRadiusMedium),
                                   child: Text(
                                     '강함',
@@ -360,7 +360,7 @@ class FiveElementsWidget extends ConsumerWidget {
                                     horizontal: AppSpacing.spacing1,
                                     vertical: AppSpacing.spacing0),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.error.withValues(alpha: 0.2),
+                                    color: theme.colorScheme.error.withOpacity(0.2),
                                     borderRadius: AppDimensions.borderRadiusMedium),
                                   child: Text(
                                     '부족',
@@ -373,7 +373,7 @@ class FiveElementsWidget extends ConsumerWidget {
                               Expanded(
                                 child: LinearProgressIndicator(
                                   value: percentage / 100,
-                                  backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+                                  backgroundColor: theme.colorScheme.outline.withOpacity(0.1),
                                   valueColor: AlwaysStoppedAnimation(color),
                                   minHeight: 8)),
                               SizedBox(width: AppSpacing.spacing3),
@@ -385,7 +385,7 @@ class FiveElementsWidget extends ConsumerWidget {
                     Icon(
                       Icons.arrow_forward_ios,
                       size: AppDimensions.iconSizeXSmall,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3))])])));
+                      color: theme.colorScheme.onSurface.withOpacity(0.3))])])));
       }).toList());
   }
   
@@ -395,10 +395,10 @@ class FiveElementsWidget extends ConsumerWidget {
         top: AppSpacing.medium),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: theme.colorScheme.outline.withValues(alpha: 0.05),
+        color: theme.colorScheme.outline.withOpacity(0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1))),
+          color: theme.colorScheme.outline.withOpacity(0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -455,7 +455,7 @@ class FiveElementsWidget extends ConsumerWidget {
           Text(
             '자세한 조언을 보려면 각 오행을 탭하세요.',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
               fontStyle: FontStyle.italic))]));
   }
   

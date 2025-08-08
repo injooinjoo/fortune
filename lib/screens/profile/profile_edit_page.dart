@@ -297,7 +297,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       Text(
                         '카메라 또는 갤러리에서 사진을 선택하세요',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
                 const SizedBox(height: 16),
                 
                 GlassContainer(
@@ -445,7 +445,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       Text(
                         'MBTI를 모르시나요? 온라인 테스트를 통해 확인해보세요.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6))),
                       const SizedBox(height: 16),
                       GridView.builder(
                         shrinkWrap: true,

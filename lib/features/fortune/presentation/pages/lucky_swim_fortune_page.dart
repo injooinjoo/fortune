@@ -48,16 +48,16 @@ class _SwimInputFormState extends State<_SwimInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 수영 운세를 확인하고\n물 속에서 행운을 만나보세요!',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘의 수영 운세를 확인하고\n물 속에서 행운을 만나보세요!',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Pool Type
         Text(
-          '수영장 환경',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '수영장 환경',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildPoolType(theme),
@@ -65,8 +65,8 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
         // Stroke Type
         Text(
-          '주 영법',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '주 영법',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildStrokeType(theme),
@@ -74,8 +74,8 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
         // Swim Level
         Text(
-          '수영 실력',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '수영 실력',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSwimLevel(theme),
@@ -83,8 +83,8 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
         // Swim Goal
         Text(
-          '수영 목표',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '수영 목표',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSwimGoal(theme),
@@ -109,7 +109,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
                 borderRadius: BorderRadius.circular(16)),
               elevation: 0),
             child: const Text(
-              '수영 운세 보기',
+              '수영 운세 보기',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold))))]
@@ -118,8 +118,8 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
   Widget _buildPoolType(ThemeData theme) {
     final types = [
-      {'id', 'indoor': 'name', '실내': 'icon'},
-      {'id', 'outdoor': 'name', '야외': 'icon'},
+      {'\1': '\2', 'name', '실내': 'icon'},
+      {'\1': '\2', 'name', '야외': 'icon'},
       {'id', 'ocean', 'name', '바다', 'icon'},
       {'id', 'lake', 'name', '호수', 'icon'}];
 
@@ -153,7 +153,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -175,10 +175,10 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
   Widget _buildStrokeType(ThemeData theme) {
     final strokes = [
-      {'id', 'freestyle': 'name', '자유형'},
-      {'id', 'backstroke': 'name', '배영'},
-      {'id', 'breaststroke': 'name', '평영'},
-      {'id', 'butterfly': 'name', '접영'}];
+      {'\1': '\2', 'name', '자유형'},
+      {'\1': '\2', 'name', '배영'},
+      {'\1': '\2', 'name', '평영'},
+      {'\1': '\2', 'name', '접영'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -210,7 +210,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Center(
@@ -225,8 +225,8 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
   Widget _buildSwimLevel(ThemeData theme) {
     final levels = [
-      {'id', 'beginner': 'name', '초급'},
-      {'id', 'intermediate': 'name', '중급'},
+      {'\1': '\2', 'name', '초급'},
+      {'\1': '\2', 'name', '중급'},
       {'id', 'advanced', 'name', '상급'},
       {'id', 'master', 'name', '마스터'}];
 
@@ -252,7 +252,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
@@ -265,8 +265,8 @@ class _SwimInputFormState extends State<_SwimInputForm> {
 
   Widget _buildSwimGoal(ThemeData theme) {
     final goals = [
-      {'id', 'fitness': 'name', '체력향상': 'icon'},
-      {'id', 'technique': 'name', '기술향상': 'icon'},
+      {'\1': '\2', 'name', '체력향상': 'icon'},
+      {'\1': '\2', 'name', '기술향상': 'icon'},
       {'id', 'competition', 'name', '대회준비', 'icon'},
       {'id', 'recreation', 'name', '취미활동', 'icon'}];
 
@@ -300,7 +300,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -336,9 +336,9 @@ class _SwimFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF06B6D4),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20))),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,18 +361,18 @@ class _SwimFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 수영 운세',
-                            style: theme.textTheme.titleLarge?.copyWith(
+                            '오늘의 수영 운세',),
+                            style: theme.textTheme.titleLarge?.copyWith()
                               fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith()
+                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))]))),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)]))),
         const SizedBox(height: 16),
 
         // Best Swimming Time
@@ -429,7 +429,7 @@ class _SwimFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,12 +448,12 @@ class _SwimFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5))]));
+            style: theme.textTheme.bodyMedium?.copyWith()
+              height: 1.5)]));
   }
 }

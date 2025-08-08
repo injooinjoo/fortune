@@ -39,8 +39,8 @@ class TimeSpecificFortuneCard extends StatelessWidget {
       begin: Alignment.topLeft,
               end: Alignment.bottomRight),
         colors: [
-                _getScoreColor(fortune.score).withValues(alpha: 0.1),
-                _getScoreColor(fortune.score).withValues(alpha: 0.05)]))),
+                _getScoreColor(fortune.score).withOpacity(0.1),
+                _getScoreColor(fortune.score).withOpacity(0.05)]))),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
             children: [

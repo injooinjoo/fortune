@@ -28,7 +28,7 @@ class OnboardingProgressBar extends StatelessWidget {
       height: context.fortuneTheme.bottomSheetStyles.handleHeight,
       child: LinearProgressIndicator(
         value: adjustedCurrentStep / adjustedTotalSteps,
-        backgroundColor: context.fortuneTheme.dividerColor.withValues(alpha: 0.5),
+        backgroundColor: context.fortuneTheme.dividerColor.withOpacity(0.5),
         valueColor: AlwaysStoppedAnimation<Color>(
           Theme.of(context).primaryColor)));
   }

@@ -16,9 +16,9 @@ class ThemeUtils {
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         colors: [
-          AppColors.primaryDarkMode.withValues(alpha: 0.8),
-          AppColors.primaryLightDarkMode.withValues(alpha: 0.6),
-          AppColors.primaryDarkDarkMode.withValues(alpha: 0.4)]
+          AppColors.primaryDarkMode.withOpacity(0.8),
+          AppColors.primaryLightDarkMode.withOpacity(0.6),
+          AppColors.primaryDarkDarkMode.withOpacity(0.4)]
       );
     }
     return AppColors.primaryGradient;
@@ -29,13 +29,13 @@ class ThemeUtils {
     if (isDarkMode(context)) {
       return [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.3),
+          color: Colors.black.withOpacity(0.3),
           blurRadius: 8,
           offset: const Offset(0, 2))];
     }
     return [
       BoxShadow(
-        color: Colors.black.withValues(alpha: 0.04),
+        color: Colors.black.withOpacity(0.04),
         blurRadius: 10,
         offset: const Offset(0, 2))];
   }
@@ -44,8 +44,8 @@ class ThemeUtils {
   static Border getCardBorder(BuildContext context) {
     return Border.all(
       color: isDarkMode(context) 
-        ? AppColors.dividerDark.withValues(alpha: 0.3)
-        : AppColors.divider.withValues(alpha: 0.5),
+        ? AppColors.dividerDark.withOpacity(0.3)
+        : AppColors.divider.withOpacity(0.5),
       width: 1);
   }
 
@@ -69,7 +69,7 @@ class ThemeUtils {
     final baseColor = isDarkMode(context) 
       ? AppColors.mysticalPurpleDarkMode 
       : AppColors.mysticalPurple;
-    return opacity < 1.0 ? baseColor.withValues(alpha: opacity) : baseColor;
+    return opacity < 1.0 ? baseColor.withOpacity(opacity) : baseColor;
   }
 
   /// Get status color based on theme
@@ -91,15 +91,15 @@ class ThemeUtils {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return ShimmerColors(
       baseColor: fortuneTheme?.shimmerBase ?? AppColors.divider,
-      highlightColor: fortuneTheme?.shimmerHighlight ?? AppColors.divider.withValues(alpha: 0.3));
+      highlightColor: fortuneTheme?.shimmerHighlight ?? AppColors.divider.withOpacity(0.3));
   }
 
   /// Get glass morphism colors
   static GlassColors getGlassColors(BuildContext context) {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return GlassColors(
-      background: fortuneTheme?.glassBackground ?? Colors.white.withValues(alpha: 0.05),
-      border: fortuneTheme?.glassBorder ?? Colors.white.withValues(alpha: 0.1));
+      background: fortuneTheme?.glassBackground ?? Colors.white.withOpacity(0.05),
+      border: fortuneTheme?.glassBorder ?? Colors.white.withOpacity(0.1));
   }
 }
 

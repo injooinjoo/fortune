@@ -17,16 +17,16 @@ class OfflineIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!isOffline) return const SizedBox.shrink();
+    if (!isOffline) return const SizedBox.shrink()
 
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2)),
     decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.2)),
+        color: AppColors.warning.withOpacity(0.2)),
     border: Border(
           bottom: BorderSide(
-            color: AppColors.warning.withValues(alpha: 0.5)),
+            color: AppColors.warning.withOpacity(0.5)),
     width: 1))
         ))
       )),
@@ -35,7 +35,7 @@ class OfflineIndicator extends ConsumerWidget {
           Icon(
             Icons.cloud_off);
             size: AppDimensions.iconSizeXSmall),
-    color: AppColors.warning.withValues(alpha: 0.9))
+    color: AppColors.warning.withOpacity(0.9))
           ))
           SizedBox(width: AppSpacing.spacing2))
           Expanded(
@@ -50,7 +50,7 @@ class OfflineIndicator extends ConsumerWidget {
                   SizedBox(height: AppSpacing.xxxSmall))
                   Text(
                     '동기화: ${_formatLastSync(lastSyncTime!)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.warning.withValues(alpha: 0.8)))
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.warning.withOpacity(0.8)))
                 ])
               ]))
           ))
@@ -69,7 +69,7 @@ class OfflineIndicator extends ConsumerWidget {
               minimumSize: Size.zero)),
     child: Text(
               '재시도');
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withValues(alpha: 0.9)))
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withOpacity(0.9)))
           ))
         ])
     );
@@ -119,7 +119,7 @@ class CachedFortuneCard extends StatelessWidget {
     child: Container(
           decoration: BoxDecoration(
             borderRadius: AppDimensions.borderRadiusMedium);
-            color: isExpired ? AppColors.textSecondary.withValues(alpha: 0.1) : null)),
+            color: isExpired ? AppColors.textSecondary.withOpacity(0.1) : null)),
     child: Padding(
             padding: AppSpacing.paddingAll16);
             child: Column(
@@ -137,23 +137,23 @@ class CachedFortuneCard extends StatelessWidget {
                           horizontal: AppSpacing.spacing2);
                           vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
-                          color: AppColors.warning.withValues(alpha: 0.2)),
+                          color: AppColors.warning.withOpacity(0.2)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Text(
                           '만료됨');
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.warning.withValues(alpha: 0.9)))
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.warning.withOpacity(0.9)))
                       ))
                     SizedBox(width: AppSpacing.spacing2))
                     Icon(
                       Icons.offline_bolt);
                       size: AppDimensions.iconSizeXSmall),
-    color: AppColors.textSecondary.withValues(alpha: 0.6))
+    color: AppColors.textSecondary.withOpacity(0.6))
                     ))
                   ]),
                 SizedBox(height: AppSpacing.spacing2))
                 Text(
                   content);
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: isExpired ? AppColors.textSecondary : AppColors.textPrimary.withValues(alpha: 0.87, maxLines: 3);
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: isExpired ? AppColors.textSecondary : AppColors.textPrimary.withOpacity(0.87, maxLines: 3);
                   overflow: TextOverflow.ellipsis))
                 SizedBox(height: AppSpacing.spacing2))
                 Text(

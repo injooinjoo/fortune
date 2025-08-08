@@ -97,16 +97,16 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘 당신에게 행운을 가져다줄\n시리즈를 찾아보세요!',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘 당신에게 행운을 가져다줄\n시리즈를 찾아보세요!',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Name Input
         Text(
-          '이름',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '이름',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         TextField(
@@ -115,44 +115,44 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
             hintText: '이름을 입력하세요',
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(12))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))),
+              borderRadius: BorderRadius.circular(12))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))))),
         const SizedBox(height: 20),
         
         // Birth Date Selection
         Text(
-          '생년월일',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '생년월일',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         InkWell(
           onTap: _selectDate,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
                       ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                       : '생년월일을 선택하세요',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.5)))]))),
+                        : theme.colorScheme.onSurface.withOpacity(0.5))])),
         const SizedBox(height: 20),
         
         // Genre Selection
         Text(
-          '좋아하는 장르',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '좋아하는 장르',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(
@@ -168,7 +168,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                   _selectedGenre = selected ? genre : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList()),
@@ -176,8 +176,8 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
         
         // Platform Selection
         Text(
-          '자주 사용하는 플랫폼',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '자주 사용하는 플랫폼',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(
@@ -193,7 +193,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                   _selectedPlatform = selected ? platform : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList()),
@@ -206,12 +206,12 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
             onPressed: () {
               if (_nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('이름을 입력해주세요'));
+                  const SnackBar(content: Text('이름을 입력해주세요')));
                 return;
               }
               if (_birthDate == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('생년월일을 선택해주세요'));
+                  const SnackBar(content: Text('생년월일을 선택해주세요')));
                 return;
               }
               
@@ -227,11 +227,10 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                 borderRadius: BorderRadius.circular(12)),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
-              '행운의 시리즈 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
+              '행운의 시리즈 확인하기',),
+              style: theme.textTheme.titleMedium?.copyWith()
                 color: Colors.white,
-                fontWeight: FontWeight.bold))))]
-    );
+                fontWeight: FontWeight.bold)))))]);
   }
 }
 
@@ -280,7 +279,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12)),
                       child: Icon(
                         Icons.tv,
@@ -292,13 +291,13 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 행운 시리즈',
-                            style: theme.textTheme.titleMedium?.copyWith(
+                            '오늘의 행운 시리즈',),
+                            style: theme.textTheme.titleMedium?.copyWith()
                               fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Text(
                             mainSeries['title'] ?? '특별한 시리즈',
-                            style: theme.textTheme.headlineSmall?.copyWith(
+                            style: theme.textTheme.headlineSmall?.copyWith()
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 20 + fontSize))]))]),
@@ -307,18 +306,18 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                      color: theme.colorScheme.secondary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       mainSeries['platform'],
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith()
                         color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.w600)))],
                 if (mainSeries['description'] != null) ...[
                   const SizedBox(height: 16),
                   Text(
                     mainSeries['description'],
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       height: 1.6,
                       fontSize: 14 + fontSize))]]))),
         const SizedBox(height: 20),
@@ -339,21 +338,21 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '보조 추천 시리즈',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '보조 추천 시리즈',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Text(
                     subSeries['title'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontWeight: FontWeight.w600,
                       fontSize: 16 + fontSize)),
                   if (subSeries['platform'] != null) ...[
                     const SizedBox(height: 8),
                     Text(
                       subSeries['platform'],
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]]))),
+                      style: theme.textTheme.bodyMedium?.copyWith()
+                        color: theme.colorScheme.onSurface.withOpacity(0.7)))]]))),
           const SizedBox(height: 20)],
         
         // Why This Series
@@ -372,8 +371,8 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '왜 이 시리즈인가요?',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '왜 이 시리즈인가요?',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...reasons.map((reason) => Padding(
@@ -392,9 +391,9 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             reason,
-                            style: theme.textTheme.bodyLarge?.copyWith(
+                            style: theme.textTheme.bodyLarge?.copyWith()
                               height: 1.5,
-                              fontSize: 14 + fontSize)))])).toList()]))),
+                              fontSize: 14 + fontSize))]))))).toList()])),
           const SizedBox(height: 20)],
         
         // Series to Avoid
@@ -413,20 +412,20 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '오늘은 피하세요',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '오늘은 피하세요',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Text(
                     avoidSeries['title'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontSize: 14 + fontSize)),
                   if (avoidSeries['reason'] != null) ...[
                     const SizedBox(height: 8),
                     Text(
                       avoidSeries['reason'],
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      style: theme.textTheme.bodyMedium?.copyWith()
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: 12 + fontSize))]]))),
           const SizedBox(height: 20)],
         

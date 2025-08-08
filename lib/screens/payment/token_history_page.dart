@@ -76,7 +76,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                     const Color(0xFF1E293B),
                     const Color(0xFF0F172A)]
                 : [
-                    Colors.amber.withValues(alpha: 0.08),
+                    Colors.amber.withOpacity(0.08),
                     AppColors.textPrimaryDark])),
         child: SafeArea(
           child: Column(
@@ -131,8 +131,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                 });
               },
               backgroundColor: Colors.transparent,
-              selectedColor: theme.colorScheme.primary.withValues(
-                alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               checkmarkColor: theme.colorScheme.primary,
               labelStyle: TextStyle(
                 color: isSelected 
@@ -142,7 +141,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               side: BorderSide(
                 color: isSelected 
                     ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                    : theme.colorScheme.onSurface.withOpacity(0.3))));
         }).toList()));
   }
 
@@ -168,8 +167,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               child: Text(
                 dateLabel,
                 style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(
-                    alpha: 0.6),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
                   fontWeight: FontWeight.bold))),
             
             // Transactions for this date
@@ -199,8 +197,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               width: AppDimensions.buttonHeightMedium,
               height: AppDimensions.buttonHeightMedium,
               decoration: BoxDecoration(
-                color: color.withValues(
-                  alpha: 0.2),
+                color: color.withOpacity(0.2),
                 shape: BoxShape.circle),
               child: Icon(
                 icon,
@@ -220,8 +217,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   Text(
                     DateFormat('HH:mm').format(transaction.createdAt),
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.6)))])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
             
             // Amount and Balance
             Column(
@@ -237,8 +233,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   Text(
                     '잔액: ${transaction.balanceAfter}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.6)))]])])));
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)))]])])));
   }
 
   Widget _buildEmptyState(ThemeData theme) {
@@ -251,21 +246,19 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
             Icon(
               Icons.receipt_long_outlined,
               size: 80,
-              color: theme.colorScheme.onSurface.withValues(
-                alpha: 0.3)),
+              color: theme.colorScheme.onSurface.withOpacity(0.3)),
             SizedBox(height: AppSpacing.spacing4),
             Text(
               _selectedFilter == 'all' 
                   ? '아직 토큰 사용 내역이 없습니다'
                   : '해당하는 내역이 없습니다',
               style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                color: theme.colorScheme.onSurface.withOpacity(0.6))),
             SizedBox(height: AppSpacing.spacing2),
             Text(
               '운세를 보거나 토큰을 구매하면\n여기에 내역이 표시됩니다',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(
-                  alpha: 0.5)),
+                color: theme.colorScheme.onSurface.withOpacity(0.5)),
               textAlign: TextAlign.center)])));
   }
 
@@ -320,7 +313,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
       final aOrder = orderMap[a['label']] ?? 4;
       final bOrder = orderMap[b['label']] ?? 4;
       
-      if (aOrder != bOrder) return aOrder.compareTo(bOrder);
+      if (aOrder != bOrder) return aOrder.compareTo(bOrder)
       
       // For custom date labels, sort by date
       return (b['label'] as String).compareTo(a['label'] as String);

@@ -45,16 +45,16 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘 피해야 할 사람의 특징을 알아보고\n불필요한 스트레스를 예방하세요!',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘 피해야 할 사람의 특징을 알아보고\n불필요한 스트레스를 예방하세요!',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Current Situation
         Text(
-          '현재 상황',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '현재 상황',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSituation(theme),
@@ -62,8 +62,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
         // Current Mood
         Text(
-          '오늘의 기분',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '오늘의 기분',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildCurrentMood(theme),
@@ -71,8 +71,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
         // Social Preference
         Text(
-          '사교 성향',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '사교 성향',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSocialPreference(theme),
@@ -80,8 +80,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
         // Relationship Status
         Text(
-          '관계 상태',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '관계 상태',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildRelationshipStatus(theme),
@@ -106,7 +106,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 borderRadius: BorderRadius.circular(16)),
               elevation: 0),
             child: const Text(
-              '피해야 할 사람 확인하기',
+              '피해야 할 사람 확인하기',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold))))]
@@ -115,20 +115,19 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildSituation(ThemeData theme) {
     final situations = [
-      {'id', 'work': 'name', '직장/학교': 'icon'},
-      {'id', 'social': 'name', '사교모임': 'icon'},
-      {'id', 'family', 'name', '가족모임', 'icon'},
-      {'id', 'date', 'name', '데이트', 'icon'}];
+      {'id': 'work', 'name': '직장/학교', 'icon': Icons.work},
+      {'id': 'social', 'name': '사교모임', 'icon': Icons.groups},
+      {'id': 'family', 'name': '가족모임', 'icon': Icons.family_restroom},
+      {'id': 'date', 'name': '데이트', 'icon': Icons.favorite}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
         mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-      ,
+        crossAxisSpacing: 12),
       itemCount: situations.length,
       itemBuilder: (context, index) {
         final situation = situations[index];
@@ -150,32 +149,31 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  situation['icon'],
+                  situation['icon'] as IconData,
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                   size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  situation['name'],
+                  situation['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
-      }
-    );
+      });
   }
 
   Widget _buildCurrentMood(ThemeData theme) {
     final moods = [
-      {'id', 'great': 'name', '좋음': 'icon'},
-      {'id', 'normal', 'name', '보통', 'icon'},
-      {'id', 'tired', 'name', '피곤', 'icon'},
-      {'id', 'stressed', 'name', '스트레스', 'icon'}];
+      {'id': 'great', 'name': '좋음', 'icon': Icons.sentiment_very_satisfied},
+      {'id': 'normal', 'name': '보통', 'icon': Icons.sentiment_neutral},
+      {'id': 'tired', 'name': '피곤', 'icon': Icons.sentiment_dissatisfied},
+      {'id': 'stressed', 'name': '스트레스', 'icon': Icons.sentiment_very_dissatisfied}];
 
     return Row(
       children: moods.map((mood) {
@@ -199,17 +197,17 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Column(
                 children: [
                   Icon(
-                    mood['icon'],
+                    mood['icon'] as IconData,
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     size: 24),
                   const SizedBox(height: 4),
                   Text(
-                    mood['name'],
+                    mood['name'] as String,
                     style: TextStyle(
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -220,9 +218,9 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildSocialPreference(ThemeData theme) {
     final preferences = [
-      {'id', 'introvert': 'name', '혼자가 좋아'},
-      {'id', 'moderate': 'name', '적당히'},
-      {'id', 'extrovert', 'name', '사람이 좋아'}];
+      {'id': 'introvert', 'name': '혼자가 좋아'},
+      {'id': 'moderate', 'name': '적당히'},
+      {'id': 'extrovert', 'name': '사람이 좋아'}];
 
     return Row(
       children: preferences.map((preference) {
@@ -246,11 +244,11 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
-                  preference['name'],
+                  preference['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
@@ -260,10 +258,10 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildRelationshipStatus(ThemeData theme) {
     final statuses = [
-      {'id', 'single': 'name', '싱글'},
-      {'id', 'dating': 'name', '연애중'},
-      {'id', 'married', 'name', '기혼'},
-      {'id', 'complicated', 'name', '복잡'}];
+      {'id': 'single', 'name': '싱글'},
+      {'id': 'dating', 'name': '연애중'},
+      {'id': 'married', 'name': '기혼'},
+      {'id': 'complicated', 'name': '복잡'}];
 
     return Row(
       children: statuses.map((status) {
@@ -287,11 +285,11 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
-                  status['name'],
+                  status['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
@@ -315,9 +313,9 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFFDC2626),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20))),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,18 +338,18 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘 피해야 할 사람',
-                            style: theme.textTheme.titleLarge?.copyWith(
+                            '오늘 피해야 할 사람',),
+                            style: theme.textTheme.titleLarge?.copyWith()
                               fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith()
+                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))]))),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)]))),
         const SizedBox(height: 16),
 
         // People Types to Avoid
@@ -419,7 +417,7 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,13 +436,13 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5))])
+            style: theme.textTheme.bodyMedium?.copyWith()
+              height: 1.5)])
     );
   }
 }

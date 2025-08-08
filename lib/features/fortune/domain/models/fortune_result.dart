@@ -51,9 +51,9 @@ class FortuneResult {
       createdAt: map['createdAt'],
       mainFortune: map['mainFortune'],
       summary: map['summary'],
-      details: map['details'] != null ? Map<String, dynamic>.from(map['details'],
-      result: map['result'] != null ? Map<String, dynamic>.from(map['result'],
-      sections: map['sections'] != null ? Map<String, String>.from(map['sections'],
+      details: map['details'] != null ? Map<String, dynamic>.from(map['details']) : null,
+      result: map['result'] != null ? Map<String, dynamic>.from(map['result']) : null,
+      sections: map['sections'] != null ? Map<String, String>.from(map['sections']) : null,
       overallScore: map['overallScore'],
       scoreBreakdown: map['scoreBreakdown'] != null 
           ? Map<String, int>.from(map['scoreBreakdown']) 

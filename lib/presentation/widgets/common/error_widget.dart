@@ -30,7 +30,7 @@ class CustomErrorWidget extends StatelessWidget {
             Container(
               padding: AppSpacing.paddingAll24,
               decoration: BoxDecoration(
-                color: colorScheme.errorContainer.withValues(alpha: 0.3),
+                color: colorScheme.errorContainer.withOpacity(0.3),
                 shape: BoxShape.circle),
               child: Icon(
                 icon,

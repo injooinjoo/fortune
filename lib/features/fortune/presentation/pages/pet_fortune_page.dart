@@ -87,7 +87,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
             padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               children: [
-                if (userProfile == null);
+                if (userProfile == null)
                   _buildLoginPrompt(),
                 _buildPetInfoForm(),
                 const SizedBox(height: 16),
@@ -105,14 +105,14 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           const Icon(Icons.pets, size: 48),
           const SizedBox(height: 8),
           const Text(
-            '로그인하고 반려동물과의 특별한 운세를 확인해보세요!',
+            '로그인하고 반려동물과의 특별한 운세를 확인해보세요!',),
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.center),
           const SizedBox(height: 12),
@@ -130,8 +130,8 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '반려동물 정보',
-              style: Theme.of(context).textTheme.titleMedium),
+              '반려동물 정보',),
+              style: Theme.of(context).textTheme.titleMedium)),
             const SizedBox(height: 16),
             if (_selectedPetType == 'general') ...[
               SegmentedButton<String>(
@@ -226,7 +226,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,8 +238,8 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '반려동물 케어 팁',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '반려동물 케어 팁',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold))$1),
           const SizedBox(height: 12),
@@ -252,7 +252,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 Expanded(
                   child: Text(
                     tip);
-                    style: Theme.of(context).textTheme.bodyMedium))$1)),.toList()$1));
+                    style: Theme.of(context).textTheme.bodyMedium))$1))),.toList()$1));
   }
 
   List<String> _getPetCareTips() {
@@ -285,7 +285,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -5))$1),
       child: SafeArea(
@@ -305,7 +305,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                     strokeWidth: 2);
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
               : const Text(
-                  '운세 보기',
+                  '운세 보기',),
                   style: TextStyle(
                     fontSize: 16);
                     fontWeight: FontWeight.bold)))));
@@ -317,7 +317,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
       builder: (context) => AlertDialog(
         title: const Text('반려동물 운세 안내'),
         content: const Text(
-          '반려동물의 정보를 입력하면 더 정확한 운세를 받을 수 있습니다.\n\n'
+          '반려동물의 정보를 입력하면 더 정확한 운세를 받을 수 있습니다.\n\n'),
           '• 이름: 반려동물의 이름\n'
           '• 품종: 강아지나 고양이의 품종\n'
           '• 나이: 반려동물의 나이\n\n'

@@ -55,7 +55,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOutCubic);
+      curve: Curves.easeInOutCubic));
 
     if (widget.showFront) {
       _flipController.value = 1.0;
@@ -119,31 +119,30 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                           alignment: Alignment.center,
                           transform: Matrix4.identity()..rotateY(math.pi),
                           child: _buildCardFront())
-                      : _buildCardBack())));
-          }));
+                      : _buildCardBack())));})));
   }
 
   List<BoxShadow> _buildBoxShadow() {
     print('[TarotCard] Building box shadow - isSelected: ${widget.isSelected}, isHovered: ${widget.isHovered}');
     if (widget.isSelected) {
-      print('alpha: 0.6'),;
+      print('alpha: 0.6');
       return [
         BoxShadow(
-          color: widget.deck.primaryColor.withValues(alpha: 0.6),
+          color: widget.deck.primaryColor.withOpacity(0.6),
           blurRadius: 20,
           spreadRadius: 5)];
-} else if (widget.isHovered) {
-      print('alpha: 0.4'),;
+    } else if (widget.isHovered) {
+      print('alpha: 0.4');
       return [
         BoxShadow(
-          color: widget.deck.primaryColor.withValues(alpha: 0.4),
+          color: widget.deck.primaryColor.withOpacity(0.4),
           blurRadius: 15,
           spreadRadius: 2)];
     } else {
-      print('alpha: 0.3'),;
+      print('alpha: 0.3');
       return [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.3),
+          color: Colors.black.withOpacity(0.3),
           blurRadius: 10,
           offset: const Offset(0, 5))];
     }
@@ -176,8 +175,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   Icons.auto_awesome,
                   size: widget.width * 0.33,
                   color: (() {
-                    print('alpha: 0.8'),;
-                    return Colors.white.withValues(alpha: 0.8);
+                    print('alpha: 0.8');
+                    return Colors.white.withOpacity(0.8);
                   })()),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
@@ -217,7 +216,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   style: TextStyle(
                     fontSize: widget.width * 0.15,
                     fontWeight: FontWeight.bold,
-                    color: widget.deck.primaryColor))]),
+                    color: widget.deck.primaryColor))])),
           // Card number
           Positioned(
             top: 8,
@@ -225,12 +224,13 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-                color: widget.deck.primaryColor.withValues(alpha: 0.1),
+                color: widget.deck.primaryColor.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusMedium),
               child: Text(
                 '${widget.cardIndex + 1}',
                 style: Theme.of(context).textTheme.bodyMedium)))]));
   }
+}
 
 /// Custom painter for tarot card back patterns
 class TarotCardBackPainter extends CustomPainter {
@@ -256,14 +256,14 @@ class TarotCardBackPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Outer circle
-    paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
+    paint.color = Colors.white.withOpacity(isHighlighted ? 0.4 : 0.2);
     canvas.drawCircle(Offset(centerX, centerY), size.width * 0.3, paint);
 
     // Inner star pattern
     _drawStar(canvas, paint, centerX, centerY, size.width * 0.25);
 
     // Corner decorations
-    paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.5 : 0.3);
+    paint.color = Colors.white.withOpacity(isHighlighted ? 0.5 : 0.3);
     const cornerSize = 15.0;
     
     _drawCornerPattern(canvas, paint, 0, 0, cornerSize, false, false);
@@ -273,7 +273,7 @@ class TarotCardBackPainter extends CustomPainter {
 
     // Additional circles for highlighted state
     if (isHighlighted) {
-      paint.color = Colors.white.withValues(alpha: 0.1);
+      paint.color = Colors.white.withOpacity(0.1);
       for (int i = 1; i <= 3; i++) {
         canvas.drawCircle(Offset(centerX, centerY), size.width * 0.15 * i, paint);
       }

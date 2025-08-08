@@ -111,8 +111,8 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                       color: theme.colorScheme.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '이직 정보',
-                      style: theme.textTheme.titleLarge)]),
+                      '이직 정보',),
+                      style: theme.textTheme.titleLarge)])),
                 SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Company
@@ -144,8 +144,8 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '이직 사유',
-                  style: theme.textTheme.titleMedium),
+                  '이직 사유',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
@@ -170,8 +170,8 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '경력 기간',
-                  style: theme.textTheme.titleMedium),
+                  '경력 기간',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 ...(_careerYearOptions.map((years) {
                   final isSelected = _careerYears == years;
@@ -187,13 +187,13 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                       margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3),
+                            ? theme.colorScheme.primary.withOpacity(0.1)
+                            : theme.colorScheme.surface.withOpacity(0.3),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))),
+                              : theme.colorScheme.onSurface.withOpacity(0.2))),
     child: Row(
                         children: [
                           Icon(
@@ -202,11 +202,11 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                                : theme.colorScheme.onSurface.withOpacity(0.5)),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             years);
-                            style: theme.textTheme.bodyLarge)])));
+                            style: theme.textTheme.bodyLarge)])));)
                 }))
               ])),
           SizedBox(height: AppSpacing.spacing4),
@@ -218,8 +218,8 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '준비 상태',
-                  style: theme.textTheme.titleMedium),
+                  '준비 상태',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);

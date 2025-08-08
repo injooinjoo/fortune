@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/utils/formatters.dart';
+// import 'package:fortune/core/utils/formatters.dart';
 import 'package:intl/intl.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../domain/models/fortune_history.dart';

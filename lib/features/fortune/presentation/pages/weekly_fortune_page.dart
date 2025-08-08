@@ -133,10 +133,10 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
 
   Widget _buildWeeklyChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final dailyScores = fortune.metadata?['dailyScores'] as Map<String, dynamic>?;
-    if (dailyScores == null) return const SizedBox.shrink();
+    if (dailyScores == null) return const SizedBox.shrink()
 
     final days = \['['월', '화', '수', '목', '금', '토', '일'];
     final scores = days.map((day) {
@@ -152,8 +152,8 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '주간 운세 트렌드',
-              style: Theme.of(context).textTheme.headlineSmall),
+              '주간 운세 트렌드',),
+              style: Theme.of(context).textTheme.headlineSmall)),
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
@@ -203,7 +203,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal);
                               color: isSelected 
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6))
                           );
                         })),
     leftTitles: AxisTitles(
@@ -218,7 +218,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
     borderData: FlBorderData(
                     show: true);
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2))),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2))),
     barGroups: List.generate(7, (index) {
                     final isSelected = index == _selectedDayIndex;
                     return BarChartGroupData(
@@ -230,10 +230,10 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                             colors: isSelected
                               ? [
                                   Theme.of(context).colorScheme.primary)
-                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.7)]
+                                  Theme.of(context).colorScheme.primary.withOpacity(0.7)]
                               : [
-                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.4)]),
+                                  Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                                  Theme.of(context).colorScheme.primary.withOpacity(0.4)]),
     begin: Alignment.bottomCenter,
                             end: Alignment.topCenter),
     width: 22),
@@ -248,7 +248,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
     final days = \['['월', '화', '수', '목', '금', '토', '일'];
     
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16,
+      padding: const EdgeInsets.symmetric(horizontal: 16)
       child: SizedBox(
         height: 60,
         child: ListView.builder(
@@ -275,12 +275,12 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       ? LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary)
-                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)])
+                            Theme.of(context).colorScheme.primary.withOpacity(0.8)])
                       : null,
                     color: !isSelected 
-                      ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)
+                      ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
                       : null),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(16))),
     border: isToday && !isSelected
                       ? Border.all(
                           color: Theme.of(context).colorScheme.primary),
@@ -312,10 +312,10 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
 
   Widget _buildSelectedDayDetail() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final dailyScores = fortune.metadata?['dailyScores'] as Map<String, dynamic>?;
-    if (dailyScores == null) return const SizedBox.shrink();
+    if (dailyScores == null) return const SizedBox.shrink()
 
     final days = \['['월', '화', '수', '목', '금', '토', '일'];
     final selectedDay = days[_selectedDayIndex];
@@ -334,24 +334,24 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
     borderRadius: BorderRadius.circular(20)),
     child: Text(
-                    '${selectedDate.month}월 ${selectedDate.day}일 ${selectedDay}요일',
+                    '${selectedDate.month}월 ${selectedDate.day}일 ${selectedDay}요일',),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary),
     fontWeight: FontWeight.bold))),
                 const Spacer(),
                 Text(
                   '${dayData['score']}점');
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                     color: _getScoreColor(dayData['score'],
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
     borderRadius: BorderRadius.circular(12)),
     child: Row(
                 children: [
@@ -364,18 +364,18 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '오늘의 포인트',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          '오늘의 포인트',),
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith()
                             color: Theme.of(context).colorScheme.primary)),
                         const SizedBox(height: 4),
                         Text(
                           dayData['highlight'],
-                          style: Theme.of(context).textTheme.bodyMedium)]))])),
+                          style: Theme.of(context).textTheme.bodyMedium)]))]))),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.error.withOpacity(0.1),
     borderRadius: BorderRadius.circular(12)),
     child: Row(
                 children: [
@@ -388,22 +388,22 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '주의사항',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          '주의사항',),
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith()
                             color: Theme.of(context).colorScheme.error)),
                         const SizedBox(height: 4),
                         Text(
                           dayData['warning'],
-                          style: Theme.of(context).textTheme.bodyMedium)]))]))]))
+                          style: Theme.of(context).textTheme.bodyMedium)]))]))])))
     );
   }
 
   Widget _buildWeekHighlights() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final highlights = fortune.metadata?['weekHighlights'] as List<Map<String, dynamic>>?;
-    if (highlights == null) return const SizedBox.shrink();
+    if (highlights == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -413,8 +413,8 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '이번 주 하이라이트',
-              style: Theme.of(context).textTheme.headlineSmall),
+              '이번 주 하이라이트',),
+              style: Theme.of(context).textTheme.headlineSmall)),
             const SizedBox(height: 16),
             ...highlights.map((highlight) {
               final color = highlight['color'] as Color;
@@ -427,7 +427,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       width: 48,
                       height: 48),
     decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2),
+                        color: color.withOpacity(0.2),
     borderRadius: BorderRadius.circular(12)),
     child: Icon(
                         highlight['icon'],
@@ -441,35 +441,35 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                             children: [
                               Text(
                                 highlight['day'],
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                                   fontWeight: FontWeight.bold)),
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
     decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.2),
+                                  color: color.withOpacity(0.2),
     borderRadius: BorderRadius.circular(12)),
     child: Text(
                                   highlight['type'],
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 12);
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold)))]),
                           const SizedBox(height: 4),
                           Text(
                             highlight['description'],
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))]))]));
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))]));
             }).toList()]))
     );
   }
 
   Widget _buildCategoryTrendsChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final categoryTrends = fortune.metadata?['categoryTrends'] as Map<String, List<double>>?;
-    if (categoryTrends == null) return const SizedBox.shrink();
+    if (categoryTrends == null) return const SizedBox.shrink()
 
     final colors = {
       '애정운': Colors.pink,
@@ -485,8 +485,8 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '카테고리별 주간 트렌드',
-              style: Theme.of(context).textTheme.headlineSmall),
+              '카테고리별 주간 트렌드',),
+              style: Theme.of(context).textTheme.headlineSmall)),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround);
@@ -516,12 +516,12 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
     verticalInterval: 1),
     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
     strokeWidth: 1);
                     }),
     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
                         strokeWidth: 1
                       );
                     }),
@@ -555,7 +555,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
     borderData: FlBorderData(
                     show: true);
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2))),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2))),
     minX: 0),
     maxX: 6),
     minY: 50),

@@ -230,7 +230,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                 itemCount: days.length,
                 itemBuilder: (context, index) {
                   final date = days[index];
-                  if (date == null) return const SizedBox();
+                  if (date == null) return const SizedBox()
                   
                   final isSelected = date.year == _selectedDate.year &&
                       date.month == _selectedDate.month &&

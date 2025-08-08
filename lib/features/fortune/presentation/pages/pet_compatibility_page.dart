@@ -82,7 +82,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               children: [
-                if (userProfile == null);
+                if (userProfile == null)
                   _buildLoginPrompt(),
                 _buildOwnerInfoForm(),
                 _buildPetInfoForm(),
@@ -102,14 +102,14 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           const Icon(Icons.pets, size: 48),
           const SizedBox(height: 8),
           const Text(
-            '로그인하고 반려동물과의 궁합을 확인해보세요!',
+            '로그인하고 반려동물과의 궁합을 확인해보세요!',),
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.center),
           const SizedBox(height: 12),
@@ -133,8 +133,8 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '주인 정보',
-                  style: Theme.of(context).textTheme.titleMedium)]),
+                  '주인 정보',),
+                  style: Theme.of(context).textTheme.titleMedium)])),
             const SizedBox(height: 16),
             TextFormField(
               decoration: const InputDecoration(
@@ -152,10 +152,9 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.now().subtract(const Duration(days: 365 * 25),
+                  initialDate: DateTime.now().subtract(const Duration(days: 365 * 25)),
                   firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                  locale: const Locale('ko', 'KR');
+                  lastDate: DateTime.now());
                 if (date != null) {
                   setState(() {
                     _ownerBirthDate = date;
@@ -200,8 +199,8 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
                   color: Theme.of(context).colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
-                  '반려동물 정보',
-                  style: Theme.of(context).textTheme.titleMedium)]),
+                  '반려동물 정보',),
+                  style: Theme.of(context).textTheme.titleMedium)])),
             const SizedBox(height: 16),
             SegmentedButton<String>(
               segments: const [
@@ -278,11 +277,11 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
                       border: OutlineInputBorder()),
                     value: _petPersonality,
                     items: const [
-                      DropdownMenuItem(value: 'active': child: Text(, '활발함': null,
-                      DropdownMenuItem(value: 'calm': child: Text(, '차분함': null,
-                      DropdownMenuItem(value: 'timid': child: Text(, '소심함': null,
-                      DropdownMenuItem(value: 'friendly': child: Text('친화적',
-                      DropdownMenuItem(value: 'independent', child: Text('독립적'],
+                      DropdownMenuItem(value: 'active', child: Text('활발함')),
+                      DropdownMenuItem(value: 'calm', child: Text('차분함')),
+                      DropdownMenuItem(value: 'timid', child: Text('소심함')),
+                      DropdownMenuItem(value: 'friendly', child: Text('친화적')),
+                      DropdownMenuItem(value: 'independent', child: Text('독립적'))],
                     onChanged: (value) {
                       setState(() {
                         _petPersonality = value;
@@ -297,8 +296,8 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
-            Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.5)],
+            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(12)),
@@ -312,8 +311,8 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '반려동물과의 유대감 높이기',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '반려동물과의 유대감 높이기',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 16),
@@ -344,7 +343,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8)),
             child: Icon(
               icon,
@@ -361,13 +360,13 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
                     fontWeight: FontWeight.bold)),
                 Text(
                   description,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)))]))]));
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)))]))]));
   }
 
   String _calculateZodiacAnimal(int year) {
     const zodiacAnimals = [
-      '원숭이띠', '닭띠': '개띠', '돼지띠',
+      '원숭이띠', '닭띠', '개띠', '돼지띠',
       '쥐띠', '소띠', '호랑이띠', '토끼띠',
       '용띠', '뱀띠', '말띠', '양띠'
     ];
@@ -400,7 +399,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
       builder: (context) => AlertDialog(
         title: const Text('반려동물 궁합 안내'),
         content: const Text(
-          '주인과 반려동물의 궁합을 분석합니다.\n\n'
+          '주인과 반려동물의 궁합을 분석합니다.\n\n'),
           '정보: 이름, 생년월일 (띠)\n'
           '정보: 종류, 이름, 품종, 나이, 성격\n\n'
           '입력한 정보를 바탕으로 궁합 점수와 관계 발전을 위한 조언을 제공합니다.'),

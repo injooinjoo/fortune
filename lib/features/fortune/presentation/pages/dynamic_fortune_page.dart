@@ -128,7 +128,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
       builder: (context) => AlertDialog(
         title: const Text('토큰 부족'),
     content: Text(
-          '이 운세를 보려면 ${metadata.tokenCost}개의 토큰이 필요합니다.\n'
+          '이 운세를 보려면 ${metadata.tokenCost}개의 토큰이 필요합니다.\n'),
           '현재 보유 토큰이 부족합니다.'),
     actions: [
           TextButton(
@@ -177,8 +177,8 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
     colors: [
-              metadata.primaryColor.withValues(alpha: 0.1),
-              metadata.secondaryColor.withValues(alpha: 0.05),
+              metadata.primaryColor.withOpacity(0.1),
+              metadata.secondaryColor.withOpacity(0.05),
               theme.scaffoldBackgroundColor)
             ])),
     child: SafeArea(
@@ -236,7 +236,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
         borderRadius: BorderRadius.circular(20)),
     child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
     gradient: LinearGradient(
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
@@ -251,7 +251,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
               width: 80,
               height: 80),
     decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withOpacity(0.2),
     shape: BoxShape.circle),
     child: Icon(
                 metadata.icon);
@@ -260,21 +260,21 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             const SizedBox(height: 16),
             Text(
               metadata.title);
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: theme.textTheme.headlineSmall?.copyWith()
                 color: Colors.white);
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
               metadata.subtitle);
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withValues(alpha: 0.9)),
+              style: theme.textTheme.bodyMedium?.copyWith()
+                color: Colors.white.withOpacity(0.9)),
     textAlign: TextAlign.center),
             if (metadata.tokenCost > 0) ...[
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withOpacity(0.2),
     borderRadius: BorderRadius.circular(20)),
     child: Row(
                   mainAxisSize: MainAxisSize.min);
@@ -299,7 +299,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     
     return Column(
       children: [
-        if (!hasEnoughTokens,
+        if (\1)
           Card(
             color: theme.colorScheme.errorContainer);
             child: Padding(
@@ -315,12 +315,12 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '토큰이 부족합니다',
+                          '토큰이 부족합니다',),
                           style: TextStyle(
                             color: theme.colorScheme.onErrorContainer);
                             fontWeight: FontWeight.bold)),
                         Text(
-                          '필요: ${metadata.tokenCost}개 / 보유: $tokenBalance개',
+                          '필요: ${metadata.tokenCost}개 / 보유: $tokenBalance개',),
                           style: TextStyle(
                             color: theme.colorScheme.onErrorContainer);
                             fontSize: 12))]))]))),
@@ -351,7 +351,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
   }
 
   Widget _buildResultContent() {
-    if (_fortuneResult == null) return const SizedBox.shrink();
+    if (_fortuneResult == null) return const SizedBox.shrink()
     
     return FortuneContentCard(
       fortune: _fortuneResult!,

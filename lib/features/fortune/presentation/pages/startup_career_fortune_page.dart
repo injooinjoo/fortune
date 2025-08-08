@@ -117,8 +117,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                       color: theme.colorScheme.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '스타트업 전직 분석',
-                      style: theme.textTheme.titleLarge)]),
+                      '스타트업 전직 분석',),
+                      style: theme.textTheme.titleLarge)])),
                 SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Position
@@ -150,8 +150,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '스타트업 전직 동기',
-                  style: theme.textTheme.titleMedium),
+                  '스타트업 전직 동기',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
@@ -176,8 +176,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '준비 상태',
-                  style: theme.textTheme.titleMedium),
+                  '준비 상태',),
+                  style: theme.textTheme.titleMedium)),
                 SizedBox(height: AppSpacing.spacing3),
                 ...(_readinessLevels.map((level) {
                   final isSelected = _readiness == level;
@@ -193,13 +193,13 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                       margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3),
+                            ? theme.colorScheme.primary.withOpacity(0.1)
+                            : theme.colorScheme.surface.withOpacity(0.3),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))),
+                              : theme.colorScheme.onSurface.withOpacity(0.2))),
     child: Row(
                         children: [
                           Icon(
@@ -208,11 +208,11 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                                : theme.colorScheme.onSurface.withOpacity(0.5)),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             level);
-                            style: theme.textTheme.bodyLarge)]))
+                            style: theme.textTheme.bodyLarge)])))
                   );
                 }))
               ])),
@@ -230,12 +230,12 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '주요 고민/우려사항 (2개 이상)'),
-    style: theme.textTheme.titleMedium)]),
+    style: theme.textTheme.titleMedium)])),
                 SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  '최대 4개까지 선택 가능',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                  '최대 4개까지 선택 가능',),
+                  style: theme.textTheme.bodySmall?.copyWith()
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))
                 ),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(

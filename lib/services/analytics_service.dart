@@ -225,7 +225,7 @@ class AnalyticsService {
     await logEvent('token_consumed', parameters: {
       'fortune_type': fortuneType,
       'token_amount': tokenAmount,
-      if (remainingTokens != null) 'remaining_tokens': remainingTokens});
+      if (remainingTokens != null) 'remaining_tokens': remainingTokens})
   }
 
   /// Log ad events
@@ -236,7 +236,7 @@ class AnalyticsService {
     await logEvent('ad_impression', parameters: {
       'ad_type': adType,
       if (adUnitId != null) 'ad_unit_id': adUnitId,
-      if (placement != null) 'placement': placement});
+      if (placement != null) 'placement': placement})
   }
 
   Future<void> logAdClick({
@@ -246,7 +246,7 @@ class AnalyticsService {
     await logEvent('ad_click', parameters: {
       'ad_type': adType,
       if (adUnitId != null) 'ad_unit_id': adUnitId,
-      if (placement != null) 'placement': placement});
+      if (placement != null) 'placement': placement})
   }
 
   Future<void> logAdReward({
@@ -291,7 +291,7 @@ class AnalyticsService {
     await logEvent('share', parameters: {
       'content_type': contentType,
       'method': method,
-      if (itemId != null) 'item_id': itemId});
+      if (itemId != null) 'item_id': itemId})
   }
 
   /// Log tutorial/onboarding events

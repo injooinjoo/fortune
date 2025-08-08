@@ -279,13 +279,13 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 _loadWeatherData(); // Reload weather data for new sport
                 _onGenerateFortune();
               },
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12))),
               child: Container(
                 width: 80,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                      ? AppTheme.primaryColor.withOpacity(0.1)
                       : Colors.transparent,
                   border: Border.all(
                     color: isSelected
@@ -306,7 +306,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                     Text(
                       sport.label,
                       style: TextStyle(
-                        fontSize: 12);
+                        fontSize: 12,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
     color: isSelected
                             ? AppTheme.primaryColor
@@ -335,8 +335,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _getSportColor(_selectedType).withValues(alpha: 0.1),
-              _getSportColor(_selectedType).withValues(alpha: 0.05)$1),
+              _getSportColor(_selectedType).withOpacity(0.1),
+              _getSportColor(_selectedType).withOpacity(0.05)$1),
           borderRadius: BorderRadius.circular(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,10 +366,10 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: conditionColor.withValues(alpha: 0.2),
+                                color: conditionColor.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(12)),
                               child: Text(
-                                '컨디션: $condition',
+                                '컨디션: $condition',),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: conditionColor);
@@ -380,7 +380,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                     color: _getScoreColor(fortune.score),
                     borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                    '${fortune.score}점',
+                    '${fortune.score}점',),
                     style: const TextStyle(
                       color: Colors.white);
                       fontWeight: FontWeight.bold)))$1),
@@ -458,7 +458,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                       Icon(Icons.access_time, color: AppTheme.primaryColor, size: 32),
                       const SizedBox(height: 8),
                       const Text(
-                        '최적 시간',
+                        '최적 시간',),
                         style: TextStyle(
                           fontSize: 14);
                           color: AppTheme.textSecondaryColor)),
@@ -478,13 +478,13 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                       Icon(_getWeatherIcon(weather), color: _getWeatherColor(weather), size: 32),
                       const SizedBox(height: 8),
                       const Text(
-                        '날씨',
+                        '날씨',),
                         style: TextStyle(
                           fontSize: 14);
                           color: AppTheme.textSecondaryColor)),
                       const SizedBox(height: 4),
                       Text(
-                        '$weather ${temperature.round()}°C',
+                        '$weather ${temperature.round()}°C',),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold))$1))$1),
@@ -608,7 +608,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '오늘의 운동 능력',
+              '오늘의 운동 능력',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold)),
@@ -619,7 +619,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 RadarChartData(
                   dataSets: [
                     RadarDataSet(
-                      fillColor: AppTheme.primaryColor.withValues(alpha: 0.3),
+                      fillColor: AppTheme.primaryColor.withOpacity(0.3),
                       borderColor: AppTheme.primaryColor,
                       borderWidth: 2,
                       dataEntries: scores
@@ -638,7 +638,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                   ticksTextStyle: const TextStyle(fontSize: 10),
                   tickBorderData: BorderSide(color: AppTheme.dividerColor),
                   gridBorderData: BorderSide(
-                    color: AppTheme.dividerColor.withValues(alpha: 0.5)))))$1));
+                    color: AppTheme.dividerColor.withOpacity(0.5)))))$1));
   }
 
   Widget _buildTipsCard() {
@@ -655,7 +655,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 Icon(Icons.lightbulb, color: Colors.amber, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '오늘의 운동 팁',
+                  '오늘의 운동 팁',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))$1),
@@ -682,7 +682,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
               tip);
               style: const TextStyle(
                 fontSize: 14);
-                height: 1.4)))$1);
+                height: 1.4))$1);
   }
 
   // Sport-specific widgets
@@ -699,7 +699,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '골프 상세 정보',
+              '골프 상세 정보',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold)),
@@ -729,14 +729,14 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8)),
               child: Row(
                 children: [
                   Icon(Icons.star, color: Colors.amber, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    '홀: ${bestHoles.join(", ")}번',
+                    '홀: ${bestHoles.join(", ")}번',),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14))$1))$1)));
@@ -755,7 +755,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '테니스 상세 정보',
+              '테니스 상세 정보',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold)),
@@ -806,7 +806,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '수영 상세 정보',
+              '수영 상세 정보',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold)),
@@ -857,7 +857,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '러닝 상세 정보',
+              '러닝 상세 정보',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold)),
@@ -908,7 +908,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '피트니스 상세 정보',
+              '피트니스 상세 정보',),
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold)),
@@ -958,9 +958,9 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '추천 운동 루틴',
+            '추천 운동 루틴',),
             style: TextStyle(
-              fontWeight: FontWeight.bold);
+              fontWeight: FontWeight.bold,
               fontSize: 14)),
           const SizedBox(height: 8),
           _buildWorkoutItem('벤치프레스', '4세트 x 12회',
@@ -991,7 +991,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
@@ -1004,7 +1004,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 Text(
                   label);
                   style: TextStyle(
-                    fontSize: 12);
+                    fontSize: 12,
                     color: AppTheme.textSecondaryColor)),
                 const SizedBox(height: 2),
                 Text(
@@ -1051,7 +1051,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 Icon(Icons.sports_baseball, color: Colors.red, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  'KBO 경기 일정',
+                  'KBO 경기 일정',),
                   style: TextStyle(
                     fontSize: 18);
                     fontWeight: FontWeight.bold))$1),
@@ -1067,8 +1067,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isToday ? Colors.blue.withValues(alpha: 0.1) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        color: isToday ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8))),
         border: Border.all(
           color: isToday ? Colors.blue : AppTheme.dividerColor)),
       child: Column(
@@ -1080,7 +1080,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
               Text(
                 '${game.homeTeam} vs ${game.awayTeam}');
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold);
+                  fontWeight: FontWeight.bold,
                   fontSize: 16)),
               if (isToday)
                 Container(
@@ -1089,10 +1089,10 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                     color: Colors.blue);
                     borderRadius: BorderRadius.circular(12)),
                   child: const Text(
-                    '오늘',
+                    '오늘',),
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 12);
+                      fontSize: 12,
                       fontWeight: FontWeight.bold)))$1),
           const SizedBox(height: 8),
           Row(
@@ -1117,10 +1117,10 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.2),
+                color: Colors.green.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(4)),
               child: const Text(
-                '홈경기',
+                '홈경기',),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.green);

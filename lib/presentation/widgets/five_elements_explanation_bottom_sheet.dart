@@ -120,7 +120,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               topRight: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.textPrimary.withValues(alpha: 0.1),
+                color: AppColors.textPrimary.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, -5))]),
           child: Column(
@@ -171,8 +171,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
       decoration: BoxDecoration(
       gradient: LinearGradient(
           colors: [
-            elementColor.withValues(alpha: 0.1),
-            elementColor.withValues(alpha: 0.05)],
+            elementColor.withOpacity(0.1),
+            elementColor.withOpacity(0.05)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter)),
       child: Column(
@@ -190,7 +190,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       borderRadius: AppDimensions.borderRadiusLarge,
                       boxShadow: [
                         BoxShadow(
-                          color: elementColor.withValues(alpha: 0.3),
+                          color: elementColor.withOpacity(0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4))
                       ]),
@@ -216,7 +216,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         Text(
                           '오행 (五行)',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6))),
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
                         explanation['basicMeaning'],
@@ -240,10 +240,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     return Container(
       padding: AppSpacing.paddingAll16,
         decoration: BoxDecoration(
-      color: elementColor.withValues(alpha: 0.05),
+      color: elementColor.withOpacity(0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-      color: elementColor.withValues(alpha: 0.2))),
+      color: elementColor.withOpacity(0.2))),
       child: Column(
         children: [
           Row(
@@ -274,7 +274,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         Text(
                           label,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6))),
           Text(
             value,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -292,7 +292,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: elementColor.withValues(alpha: 0.1),
+                color: elementColor.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
               child: Icon(
                 Icons.star,
@@ -330,7 +330,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: elementColor.withValues(alpha: 0.1),
+                color: elementColor.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
               child: Icon(
                 Icons.psychology,
@@ -349,7 +349,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           borderRadius: AppDimensions.borderRadiusMedium,
           boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha: 0.05),
+              color: AppColors.textPrimary.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 2))]),
                     child: Text(
@@ -389,7 +389,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-      color: AppColors.warning.withValues(alpha: 0.1),
+      color: AppColors.warning.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
       child: Icon(
                 Icons.balance,
@@ -404,7 +404,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-      color: statusColor.withValues(alpha: 0.2),
+      color: statusColor.withOpacity(0.2),
                 borderRadius: AppDimensions.borderRadiusMedium),
       child: Text(
                 status,
@@ -416,13 +416,13 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         decoration: BoxDecoration(
       gradient: LinearGradient(
               colors: [
-                statusColor.withValues(alpha: 0.1),
-                statusColor.withValues(alpha: 0.05)],
+                statusColor.withOpacity(0.1),
+                statusColor.withOpacity(0.05)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-      color: statusColor.withValues(alpha: 0.3))),
+      color: statusColor.withOpacity(0.3))),
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -456,7 +456,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-      color: elementColor.withValues(alpha: 0.1),
+      color: elementColor.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
       child: Icon(
                 Icons.sync,
@@ -480,20 +480,20 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             decoration: BoxDecoration(
       gradient: LinearGradient(
                 colors: [
-                  otherColor.withValues(alpha: 0.05),
-                  otherColor.withValues(alpha: 0.02)],
+                  otherColor.withOpacity(0.05),
+                  otherColor.withOpacity(0.02)],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight),
       borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-      color: otherColor.withValues(alpha: 0.2))),
+      color: otherColor.withOpacity(0.2))),
       child: Row(
               children: [
                 Container(
                   width: AppDimensions.buttonHeightSmall,
                   height: AppDimensions.buttonHeightSmall,
                   decoration: BoxDecoration(
-      color: otherColor.withValues(alpha: 0.2),
+      color: otherColor.withOpacity(0.2),
                     shape: BoxShape.circle),
       child: Center(
                     child: Icon(
@@ -517,7 +517,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                                color: AppColors.success.withValues(alpha: 0.2),
+                                color: AppColors.success.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
                               child: Text(
                                 '상생',
@@ -526,7 +526,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                                color: AppColors.warning.withValues(alpha: 0.2),
+                                color: AppColors.warning.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
                               child: Text(
                                 '상극',
@@ -535,7 +535,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       Text(
                         relation,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8)))]))]));
+                          color: theme.colorScheme.onSurface.withOpacity(0.8)))]))]));
         })]);
   }
 
@@ -550,7 +550,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-      color: AppColors.error.withValues(alpha: 0.1),
+      color: AppColors.error.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
       child: const Icon(
                 Icons.favorite,
@@ -565,10 +565,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: AppColors.error.withValues(alpha: 0.05),
+            color: AppColors.error.withOpacity(0.05),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: AppColors.error.withValues(alpha: 0.2))),
+              color: AppColors.error.withOpacity(0.2))),
           child: Column(
             children: healthTips.map((tip) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
@@ -598,7 +598,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-      color: AppColors.primary.withValues(alpha: 0.1),
+      color: AppColors.primary.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
               child: const Icon(
                 Icons.work,
@@ -613,10 +613,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.05),
+            color: AppColors.primary.withOpacity(0.05),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.2))),
+              color: AppColors.primary.withOpacity(0.2))),
           child: Column(
             children: careers.map((career) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
@@ -646,7 +646,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.2),
+                color: Colors.amber.withOpacity(0.2),
                 borderRadius: AppDimensions.borderRadiusSmall),
               child: const Icon(
                 Icons.auto_awesome,
@@ -663,13 +663,13 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         decoration: BoxDecoration(
       gradient: LinearGradient(
               colors: [
-                Colors.amber.withValues(alpha: 0.1),
-                Colors.amber.withValues(alpha: 0.05)],
+                Colors.amber.withOpacity(0.1),
+                Colors.amber.withOpacity(0.05)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: Colors.amber.withValues(alpha: 0.3))),
+              color: Colors.amber.withOpacity(0.3))),
           child: Column(
             children: luckyItems.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),

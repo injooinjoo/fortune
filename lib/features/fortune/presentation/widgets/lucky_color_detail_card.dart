@@ -40,13 +40,13 @@ class LuckyColorDetailCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '오늘의 행운 색상',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            '오늘의 행운 색상',),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
-            '색상의 에너지가 당신의 하루를 더욱 특별하게 만들어줄 거예요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            '색상의 에너지가 당신의 하루를 더욱 특별하게 만들어줄 거예요',),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   color: Colors.grey[600]))])
     );
   }
@@ -66,7 +66,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                   color: mainLuckyColor),
     boxShadow: [
                     BoxShadow(
-                      color: mainLuckyColor.withValues(alpha: 0.4),
+                      color: mainLuckyColor.withOpacity(0.4),
     blurRadius: 20),
     offset: const Offset(0, 10))]),
                 child: Center(
@@ -76,12 +76,12 @@ class LuckyColorDetailCard extends StatelessWidget {
     decoration: BoxDecoration(
                       shape: BoxShape.circle);
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: Colors.white.withOpacity(0.3),
     width: 3))))),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
                 mainLuckyColorName);
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith()
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing2),
               _buildColorPalette(context)]))));
@@ -109,8 +109,8 @@ class LuckyColorDetailCard extends StatelessWidget {
 
   List<Color> _generateColorPalette(Color baseColor) {
     return [
-      baseColor.withValues(alpha: 0.3),
-      baseColor.withValues(alpha: 0.5),
+      baseColor.withOpacity(0.3),
+      baseColor.withOpacity(0.5),
       baseColor)
       Color.lerp(baseColor, Colors.black, 0.2)!)
       Color.lerp(baseColor, Colors.black, 0.4)!)
@@ -160,7 +160,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                   Container(
                     padding: AppSpacing.paddingAll8);
                     decoration: BoxDecoration(
-                      color: mainLuckyColor.withValues(alpha: 0.1),
+                      color: mainLuckyColor.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Icon(
                       category.icon);
@@ -170,7 +170,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       category.title);
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith()
                             fontWeight: FontWeight.bold)),
     maxLines: 1),
     overflow: TextOverflow.ellipsis))]),
@@ -185,24 +185,24 @@ class LuckyColorDetailCard extends StatelessWidget {
                         color: _getColorFromName(items.first.value),
     shape: BoxShape.circle),
     border: Border.all(
-                          color: Colors.grey.withValues(alpha: 0.3)!),
+                          color: Colors.grey.withOpacity(0.3)!),
     width: 1))),
                     const SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
                         items.first.value);
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                               fontWeight: FontWeight.bold))]),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   items.first.reason);
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                         color: Colors.grey[600])),
                   maxLines: 2),
     overflow: TextOverflow.ellipsis)] else
                 Text(
                   category.description,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                         color: Colors.grey[600])),
                   maxLines: 3),
     overflow: TextOverflow.ellipsis),
@@ -211,8 +211,8 @@ class LuckyColorDetailCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end);
                 children: [
                   Text(
-                    '자세히 보기',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    '자세히 보기',),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                           color: mainLuckyColor)),
                   const SizedBox(width: AppSpacing.spacing1),
                   Icon(
@@ -246,7 +246,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                 height: AppSpacing.spacing1),
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: Colors.grey.withOpacity(0.3),
     borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
               Expanded(
                 child: ListView(
@@ -258,7 +258,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                         Container(
                           padding: AppSpacing.paddingAll12);
                           decoration: BoxDecoration(
-                            color: mainLuckyColor.withValues(alpha: 0.1),
+                            color: mainLuckyColor.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                             category.icon);
@@ -299,8 +299,8 @@ class LuckyColorDetailCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '추천 활용법',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          '추천 활용법',),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: AppSpacing.spacing4),
         ...category.examples.map(
@@ -318,7 +318,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     example);
-                    style: Theme.of(context).textTheme.bodyMedium)
+                    style: Theme.of(context).textTheme.bodyMedium))
               ])))]
     );
   }
@@ -347,7 +347,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                         width: AppSpacing.spacing0 * 0.5),
     boxShadow: [
                         BoxShadow(
-                          color: itemColor.withValues(alpha: 0.3),
+                          color: itemColor.withOpacity(0.3),
     blurRadius: 8),
     offset: const Offset(0, 4))])),
                   const SizedBox(width: AppSpacing.spacing4),
@@ -357,7 +357,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                       children: [
                         Text(
                           item.value);
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith()
                                 fontWeight: FontWeight.bold)),
                         if (item.priority != null)
                           Container(
@@ -370,13 +370,13 @@ class LuckyColorDetailCard extends StatelessWidget {
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
                               _getPriorityText(item.priority!),
-    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: Colors.white),
     fontSize: Theme.of(context).textTheme.bodySmall!.fontSize)))]))]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
                 item.reason);
-                style: Theme.of(context).textTheme.bodyMedium)
+                style: Theme.of(context).textTheme.bodyMedium))
               if (item.timeRange != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Row(
@@ -388,7 +388,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                     const SizedBox(width: AppSpacing.spacing1),
                     Text(
                       item.timeRange!);
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith()
                             color: Colors.grey[600]))])])
               if (item.situation != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
@@ -407,7 +407,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           item.situation!);
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                 color: Colors.grey[700]))]))])
             ])))
     );

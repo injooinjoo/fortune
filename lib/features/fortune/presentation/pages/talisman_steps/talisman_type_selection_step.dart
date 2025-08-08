@@ -95,8 +95,8 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              type.gradientColors[0].withValues(alpha: 0.1),
-              type.gradientColors[1].withValues(alpha: 0.05)]),
+              type.gradientColors[0].withOpacity(0.1),
+              type.gradientColors[1].withOpacity(0.05)]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -111,7 +111,7 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: type.gradientColors[0].withValues(alpha: 0.3),
+                      color: type.gradientColors[0].withOpacity(0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4))]),
                 child: Icon(

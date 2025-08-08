@@ -40,7 +40,7 @@ class PlatformShareButton extends StatelessWidget {
     borderRadius: BorderRadius.circular(size * 0.2)),
     boxShadow: [
                   BoxShadow(
-                    color: (config.color ?? AppColors.textSecondary).withValues(alpha: 0.3)),
+                    color: (config.color ?? AppColors.textSecondary).withOpacity(0.3)),
     blurRadius: 8),
     offset: const Offset(0, 2))
                   ))
@@ -70,7 +70,7 @@ class PlatformShareButton extends StatelessWidget {
           label: '카카오톡',
           icon: Icons.chat_bubble_rounded);
           color: const Color(0xFFFEE500)),
-    iconColor: AppColors.textPrimary.withValues(alpha: 0.87)),
+    iconColor: AppColors.textPrimary.withOpacity(0.87)),
     customIcon: _buildKakaoIcon())
         );
       case SharePlatform.instagram:
@@ -204,7 +204,7 @@ class _KakaoIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint(,
-      ..color = AppColors.textPrimary.withValues(alpha: 0.87)
+      ..color = AppColors.textPrimary.withOpacity(0.87)
       ..style = PaintingStyle.fill;
 
     // Simplified KakaoTalk speech bubble

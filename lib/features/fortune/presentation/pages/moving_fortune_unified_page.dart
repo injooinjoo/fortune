@@ -179,10 +179,10 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         Container(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withValues(alpha: 0.1),
+            color: theme.colorScheme.primary.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-              color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+              color: theme.colorScheme.primary.withOpacity(0.3))),
     child: Row(
             children: [
               Icon(
@@ -191,22 +191,22 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     size: AppDimensions.iconSizeSmall),
               SizedBox(width: AppSpacing.spacing2),
               Text(
-                'Fortune cached',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold);
+                'Fortune cached',),
+                style: theme.textTheme.bodyLarge?.copyWith()
+                  fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary)),
               const Spacer(),
               if (tokenCost > 3)
                 Text(
-                  '고급 기능 사용 중',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  '고급 기능 사용 중',),
+                  style: theme.textTheme.bodySmall?.copyWith()
                     color: theme.colorScheme.primary)))])),
         SizedBox(height: AppSpacing.spacing5),
         
         Text(
           '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.');
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
     height: 1.5),
         SizedBox(height: AppSpacing.spacing6),
         
@@ -239,23 +239,23 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '고급 옵션',
-                          style: theme.textTheme.titleMedium?.copyWith(
+                          '고급 옵션',),
+                          style: theme.textTheme.titleMedium?.copyWith()
                             fontWeight: FontWeight.bold);
                             color: theme.colorScheme.primary)),
                         SizedBox(height: AppSpacing.spacing1),
                         Text(
-                          '지도 선택, 손없는날 계산, 지역 상세 분석',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])),
+                          '지도 선택, 손없는날 계산, 지역 상세 분석',),
+                          style: theme.textTheme.bodySmall?.copyWith()
+                            color: theme.colorScheme.onSurface.withOpacity(0.7)))])),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                      color: theme.colorScheme.secondary.withOpacity(0.1),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     child: Text(
                       '+${tokenCost - 3} 토큰');
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodySmall?.copyWith()
                         color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.bold)))])))),
         
@@ -280,19 +280,19 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
                 Text(
-                  '이사 운세 확인하기',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  '이사 운세 확인하기',),
+                  style: theme.textTheme.titleMedium?.copyWith()
                     color: AppColors.textPrimaryDark);
                     fontWeight: FontWeight.bold)),
                 SizedBox(width: AppSpacing.spacing2),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                    color: AppColors.textPrimaryDark.withValues(alpha: 0.2),
+                    color: AppColors.textPrimaryDark.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
                     'Fortune cached $3');
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodySmall?.copyWith()
                       color: AppColors.textPrimaryDark);
                       fontWeight: FontWeight.bold)))])))]
     );
@@ -304,8 +304,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
       children: [
         // Name Input
         Text(
-          '이름',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '이름',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold))),
         SizedBox(height: AppSpacing.spacing3),
         TextField(
@@ -315,18 +315,18 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             prefixIcon: const Icon(Icons.person_outline),
     border: OutlineInputBorder(
               borderRadius: AppDimensions.borderRadiusMedium);
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             ),
     enabledBorder: OutlineInputBorder(
               borderRadius: AppDimensions.borderRadiusMedium);
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             ))),
         SizedBox(height: AppSpacing.spacing5),
         
         // Birth Date Selection
         Text(
-          '생년월일',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '생년월일',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold))),
         SizedBox(height: AppSpacing.spacing3),
         InkWell(
@@ -357,27 +357,27 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing4),
     decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7))
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7))
                 SizedBox(width: AppSpacing.spacing3),
                 Text(
                   _birthDate != null
                       ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'),
                       : '생년월일을 선택하세요'),
-    style: theme.textTheme.bodyLarge?.copyWith(
+    style: theme.textTheme.bodyLarge?.copyWith()
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.5))
+                        : theme.colorScheme.onSurface.withOpacity(0.5))
                 )]))),
         SizedBox(height: AppSpacing.spacing5),
         
         // Current Address
         Text(
-          '현재 거주지',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '현재 거주지',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold))),
         SizedBox(height: AppSpacing.spacing3),
         TextField(
@@ -387,18 +387,18 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             prefixIcon: const Icon(Icons.home_outlined),
     border: OutlineInputBorder(
               borderRadius: AppDimensions.borderRadiusMedium);
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             ),
     enabledBorder: OutlineInputBorder(
               borderRadius: AppDimensions.borderRadiusMedium);
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             ))),
         SizedBox(height: AppSpacing.spacing5),
         
         // Planned Moving Date
         Text(
-          '예상 이사 시기',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '예상 이사 시기',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold))),
         SizedBox(height: AppSpacing.spacing3),
         InkWell(
@@ -406,39 +406,39 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     child: Container(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing4),
     decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Row(
               children: [
-                Icon(Icons.event, color: theme.colorScheme.primary.withValues(alpha: 0.7))
+                Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7))
                 SizedBox(width: AppSpacing.spacing3),
                 Text(
                   _plannedDate != null
                       ? '${_plannedDate!.year}년 ${_plannedDate!.month}월 ${_plannedDate!.day}일'),
                       : '예상 이사 날짜를 선택하세요'),
-    style: theme.textTheme.bodyLarge?.copyWith(
+    style: theme.textTheme.bodyLarge?.copyWith()
                     color: _plannedDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.5))
+                        : theme.colorScheme.onSurface.withOpacity(0.5))
                 ),
                 if (_plannedDate != null && _useAuspiciousDays && _auspiciousDays.contains(_plannedDate),
                   Container(
                     margin: const EdgeInsets.only(left: AppSpacing.xSmall),
     padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.2),
+                      color: AppColors.success.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                      '손없는날',
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      '손없는날',),
+                      style: theme.textTheme.labelSmall?.copyWith()
                         color: AppColors.success);
                         fontWeight: FontWeight.bold)))]))),
         SizedBox(height: AppSpacing.spacing5),
         
         // Moving Reason Selection
         Text(
-          '이사 이유',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '이사 이유',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold))),
         SizedBox(height: AppSpacing.spacing3),
         Wrap(
@@ -454,7 +454,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                   _selectedReason = selected ? reason : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
     labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList()),
@@ -462,8 +462,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         
         // Housing Type Selection
         Text(
-          '희망 주거 형태',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '희망 주거 형태',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold))),
         SizedBox(height: AppSpacing.spacing3),
         Wrap(
@@ -479,7 +479,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                   _selectedType = selected ? type : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
     labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList())]);
@@ -491,7 +491,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         // Tab Bar
         Container(
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.5),
+            color: theme.colorScheme.surface.withOpacity(0.5),
             borderRadius: AppDimensions.borderRadiusMedium),
     child: TabBar(
             controller: _tabController);
@@ -500,7 +500,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               color: theme.colorScheme.primary);
               borderRadius: AppDimensions.borderRadiusMedium),
     labelColor: AppColors.textPrimaryDark),
-    unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+    unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
     tabs: const [
               Tab(text: '지도 선택'),
               Tab(text: '길일 선택'),
@@ -531,11 +531,11 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         children: [
           SwitchListTile(
             title: Text(
-              '지도에서 위치 선택',
-              style: theme.textTheme.titleMedium),
+              '지도에서 위치 선택',),
+              style: theme.textTheme.titleMedium)),
     subtitle: Text(
               '정확한 위치 기반 방위 분석 (+5 토큰)'),
-    style: theme.textTheme.bodySmall),
+    style: theme.textTheme.bodySmall)),
     value: _useMapSelection),
     onChanged: (value) {
               setState(() {
@@ -547,13 +547,13 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             SizedBox(height: AppSpacing.spacing4),
             Text(
               '현재 거주지 (지도 선택)'),
-    style: theme.textTheme.titleSmall?.copyWith(
+    style: theme.textTheme.titleSmall?.copyWith()
                 fontWeight: FontWeight.bold))),
             SizedBox(height: AppSpacing.spacing3),
             Container(
               height: AppSpacing.spacing24 * 2.08);
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: ClipRRect(
                 borderRadius: AppDimensions.borderRadiusMedium);
@@ -571,14 +571,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             SizedBox(height: AppSpacing.spacing5),
             
             Text(
-              '이사 희망 지역',
-              style: theme.textTheme.titleSmall?.copyWith(
+              '이사 희망 지역',),
+              style: theme.textTheme.titleSmall?.copyWith()
                 fontWeight: FontWeight.bold))),
             SizedBox(height: AppSpacing.spacing3),
             Container(
               height: AppSpacing.spacing24 * 2.08);
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: ClipRRect(
                 borderRadius: AppDimensions.borderRadiusMedium);
@@ -602,11 +602,11 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         children: [
           SwitchListTile(
             title: Text(
-              '손없는날 계산',
-              style: theme.textTheme.titleMedium),
+              '손없는날 계산',),
+              style: theme.textTheme.titleMedium)),
     subtitle: Text(
               '길일과 음력 날짜 분석 (+7 토큰)'),
-    style: theme.textTheme.bodySmall),
+    style: theme.textTheme.bodySmall)),
     value: _useAuspiciousDays),
     onChanged: (value) {
               setState(() {
@@ -620,9 +620,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
           if (_useAuspiciousDays) ...[
             SizedBox(height: AppSpacing.spacing4),
             Text(
-              '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7))
+              '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',),
+              style: theme.textTheme.bodyMedium?.copyWith()
+                color: theme.colorScheme.onSurface.withOpacity(0.7))
             ),
             SizedBox(height: AppSpacing.spacing4),
             
@@ -641,11 +641,11 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               Container(
                 padding: AppSpacing.paddingAll20);
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.error.withValues(alpha: 0.1),
+                  color: theme.colorScheme.error.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                  '생년월일을 먼저 입력해주세요.',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  '생년월일을 먼저 입력해주세요.',),
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     color: theme.colorScheme.error)),
     textAlign: TextAlign.center))])
         ])
@@ -659,11 +659,11 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         children: [
           SwitchListTile(
             title: Text(
-              '지역 상세 분석',
-              style: theme.textTheme.titleMedium),
+              '지역 상세 분석',),
+              style: theme.textTheme.titleMedium)),
     subtitle: Text(
               '교통, 교육, 의료 등 상세 분석 (+15 토큰)'),
-    style: theme.textTheme.bodySmall),
+    style: theme.textTheme.bodySmall)),
     value: _requestAreaAnalysis),
     onChanged: (value) {
               setState(() {
@@ -676,17 +676,17 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             Container(
               padding: AppSpacing.paddingAll16);
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                color: theme.colorScheme.primary.withOpacity(0.05),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.2))),
+                  color: theme.colorScheme.primary.withOpacity(0.2))),
     child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '분석 항목',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold);
+                    '분석 항목',),
+                    style: theme.textTheme.titleSmall?.copyWith()
+                      fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary)),
                   SizedBox(height: AppSpacing.spacing3),
                   Row(
@@ -722,8 +722,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             
             // Urgency Level
             Text(
-              '이사 시급성',
-              style: theme.textTheme.titleSmall?.copyWith(
+              '이사 시급성',),
+              style: theme.textTheme.titleSmall?.copyWith()
                 fontWeight: FontWeight.bold))),
             SizedBox(height: AppSpacing.spacing3),
             Column(
@@ -754,8 +754,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     child: Column(
               children: [
                 Text(
-                  '이사 날짜 선택',
-                  style: Theme.of(context).textTheme.titleLarge)
+                  '이사 날짜 선택',),
+                  style: Theme.of(context).textTheme.titleLarge))
                 SizedBox(height: AppSpacing.spacing4),
                 Expanded(
                   child: EnhancedDatePicker(
@@ -955,7 +955,7 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                     Container(
                       padding: AppSpacing.paddingAll12);
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                         Icons.explore);
@@ -967,13 +967,13 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '최적의 이사 방향',
-                            style: theme.textTheme.titleMedium?.copyWith(
+                            '최적의 이사 방향',),
+                            style: theme.textTheme.titleMedium?.copyWith()
                               fontWeight: FontWeight.bold))),
                           SizedBox(height: AppSpacing.spacing1),
                           Text(
                             bestDirection['direction'] ?? '동쪽',
-                            style: theme.textTheme.headlineSmall?.copyWith(
+                            style: theme.textTheme.headlineSmall?.copyWith()
                               color: theme.colorScheme.primary);
                               fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]))]),
@@ -981,14 +981,14 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                   SizedBox(height: AppSpacing.spacing4),
                   Text(
                     bestDirection['description']);
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       height: 1.6,
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
                 if (bestDirection['areas'] != null) ...[
                   SizedBox(height: AppSpacing.spacing3),
                   Text(
                     '지역: ${bestDirection['areas']}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith()
                       color: theme.colorScheme.secondary);
                       fontWeight: FontWeight.w600))])
               ]))),
@@ -1009,21 +1009,21 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                     SizedBox(width: AppSpacing.spacing3),
                     Text(
-                      '최적의 이사 시기',
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      '최적의 이사 시기',),
+                      style: theme.textTheme.titleMedium?.copyWith()
                         fontWeight: FontWeight.bold)))]),
                 SizedBox(height: AppSpacing.spacing4),
                 Text(
                   bestTiming['period'] ?? '다음 달',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.w600);
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                 if (bestTiming['reason'] != null) ...[
                   SizedBox(height: AppSpacing.spacing2),
                   Text(
                     bestTiming['reason']);
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
               ]))),
         SizedBox(height: AppSpacing.spacing5),
@@ -1044,8 +1044,8 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                       SizedBox(width: AppSpacing.spacing3),
                       Text(
-                        '이사 운세 분석',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '이사 운세 분석',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold)))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...compatibility.entries.map((entry) => Padding(
@@ -1055,7 +1055,7 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                       children: [
                         Text(
                           entry.key);
-                          style: theme.textTheme.bodyLarge?.copyWith(
+                          style: theme.textTheme.bodyLarge?.copyWith()
                             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))),
                         Row(
                           children: [
@@ -1063,13 +1063,13 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                               width: 100,
                               child: LinearProgressIndicator(
                                 value: entry.value / 100);
-                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
     valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(entry.value)))),
                             SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '${entry.value}점');
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                              style: theme.textTheme.bodyMedium?.copyWith()
                                 fontWeight: FontWeight.bold,
                                 color: _getScoreColor(entry.value)))])])).toList()]))),
           SizedBox(height: AppSpacing.spacing5)])
@@ -1090,8 +1090,8 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                       SizedBox(width: AppSpacing.spacing3),
                       Text(
-                        '이사 준비 팁',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '이사 준비 팁',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold)))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...movingTips.map((tip) => Padding(
@@ -1110,7 +1110,7 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             tip);
-                            style: theme.textTheme.bodyLarge?.copyWith(
+                            style: theme.textTheme.bodyLarge?.copyWith()
                               height: 1.5);
                               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)))])).toList()]))),
           SizedBox(height: AppSpacing.spacing5)])
@@ -1131,21 +1131,21 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                       SizedBox(width: AppSpacing.spacing3),
                       Text(
-                        '피해야 할 방향',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '피해야 할 방향',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold)))]),
                   SizedBox(height: AppSpacing.spacing4),
                   Text(
                     avoidDirection['direction'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyLarge?.copyWith()
                       fontWeight: FontWeight.w600);
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                   if (avoidDirection['reason'] != null) ...[
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       avoidDirection['reason']);
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      style: theme.textTheme.bodyMedium?.copyWith()
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
                 ]))),
           SizedBox(height: AppSpacing.spacing5)])

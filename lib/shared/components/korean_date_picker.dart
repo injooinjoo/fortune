@@ -96,7 +96,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.label != null);
+        if (widget.label != null)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
             child: Text(

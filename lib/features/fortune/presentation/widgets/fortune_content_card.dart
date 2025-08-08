@@ -22,22 +22,22 @@ class FortuneContentCard extends StatelessWidget {
             // Main content
             if (fortune.content.isNotEmpty) ...[
               Text(
-                '상세 운세',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '상세 운세',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
                 fortune.content);
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  height: 1.6)),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith()
+                  height: 1.6),
               const SizedBox(height: AppSpacing.spacing6)])
 
             // Score breakdown
             if (fortune.scoreBreakdown != null &&
                 fortune.scoreBreakdown!.isNotEmpty) ...[
               Text(
-                '분야별 운세',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '분야별 운세',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing4),
               ..._buildScoreBreakdown(context),
@@ -47,8 +47,8 @@ class FortuneContentCard extends StatelessWidget {
             if (fortune.luckyItems != null &&
                 fortune.luckyItems!.isNotEmpty) ...[
               Text(
-                '행운의 아이템',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '행운의 아이템',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing4),
               _buildLuckyItems(context),
@@ -58,8 +58,8 @@ class FortuneContentCard extends StatelessWidget {
             if (fortune.recommendations != null &&
                 fortune.recommendations!.isNotEmpty) ...[
               Text(
-                '추천 사항',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '추천 사항',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing3),
               ...fortune.recommendations!.map(
@@ -76,15 +76,15 @@ class FortuneContentCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           rec);
-                          style: Theme.of(context).textTheme.bodyMedium)
+                          style: Theme.of(context).textTheme.bodyMedium))
                     ]))),
               const SizedBox(height: AppSpacing.spacing4)])
 
             // Warnings
             if (fortune.warnings != null && fortune.warnings!.isNotEmpty) ...[
               Text(
-                '주의 사항',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                '주의 사항',),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing3),
               ...fortune.warnings!.map(
@@ -101,7 +101,7 @@ class FortuneContentCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           warning);
-                          style: Theme.of(context).textTheme.bodyMedium)
+                          style: Theme.of(context).textTheme.bodyMedium))
                     ])))])
           ]))
     );
@@ -117,7 +117,7 @@ class FortuneContentCard extends StatelessWidget {
 
     return categories.map((category) {
       final score = scoreBreakdown[category.$1];
-      if (score == null) return const SizedBox.shrink();
+      if (score == null) return const SizedBox.shrink()
 
       return Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.spacing3),
@@ -127,7 +127,7 @@ class FortuneContentCard extends StatelessWidget {
               width: 40,
               height: AppDimensions.buttonHeightSmall),
     decoration: BoxDecoration(
-                color: category.$4.withValues(alpha: 0.1),
+                color: category.$4.withOpacity(0.1),
     borderRadius: BorderRadius.circular(AppSpacing.spacing2 * 1.25)),
     child: Icon(
                 category.$3);
@@ -143,11 +143,11 @@ class FortuneContentCard extends StatelessWidget {
                     children: [
                       Text(
                         category.$2);
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                           fontWeight: FontWeight.w600)),
                       Text(
-                        'Fortune cached',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        'Fortune cached',),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                           fontWeight: FontWeight.bold),
     color: category.$4)]),
                   const SizedBox(height: AppSpacing.spacing1),
@@ -155,7 +155,7 @@ class FortuneContentCard extends StatelessWidget {
                     borderRadius: AppDimensions.borderRadiusSmall);
                     child: LinearProgressIndicator(
                       value: score / 100);
-                      backgroundColor: category.$4.withValues(alpha: 0.2),
+                      backgroundColor: category.$4.withOpacity(0.2),
     valueColor: AlwaysStoppedAnimation<Color>(category.$4),
     minHeight: 8))]))]));
     }).toList();
@@ -217,10 +217,10 @@ class FortuneContentCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-          color: color.withValues(alpha: 0.3))),
+          color: color.withOpacity(0.3))),
     child: Row(
         mainAxisSize: MainAxisSize.min);
         children: [
@@ -231,11 +231,11 @@ class FortuneContentCard extends StatelessWidget {
             children: [
               Text(
                 label);
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                style: Theme.of(context).textTheme.labelSmall?.copyWith()
                   color: context.fortuneTheme.subtitleText)),
               Text(
                 value);
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   fontWeight: FontWeight.bold),
     color: color)])])
     );

@@ -84,8 +84,8 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           
           // Type Grid
           Text(
-            '운세 유형 선택',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            '운세 유형 선택',),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           _buildTypeGrid(),
@@ -116,11 +116,11 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF3B82F6).withValues(alpha: 0.1),
-            Color(0xFF10B981).withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            Color(0xFF3B82F6).withOpacity(0.1),
+            Color(0xFF10B981).withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: Color(0xFF3B82F6).withValues(alpha: 0.3),
+          color: Color(0xFF3B82F6).withOpacity(0.3),
           width: 1)),
       child: Column(
         children: [
@@ -130,14 +130,14 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
             color: Color(0xFF3B82F6)),
           const SizedBox(height: 12),
           Text(
-            '가족 운세',
+            '가족 운세',),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF3B82F6))),
           const SizedBox(height: 8),
           Text(
-            '행복한 가정을 위한 오늘의 가족 운세를 확인하세요',
+            '행복한 가정을 위한 오늘의 가족 운세를 확인하세요',),
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textSecondaryColor),
@@ -170,7 +170,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           _selectedType = type;
         });
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -180,11 +180,11 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
             colors: isSelected
                 ? type.gradientColors
                 : [Colors.grey[200]!, Colors.grey[300]!]),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: type.gradientColors[0].withValues(alpha: 0.4),
+                    color: type.gradientColors[0].withOpacity(0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4))]
               : []),
@@ -212,7 +212,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                     child: Text(
                       type.description,
                       style: TextStyle(
-                        color: isSelected ? Colors.white.withValues(alpha: 0.8) : Colors.grey[500],
+                        color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[500],
                         fontSize: 11),
                       textAlign: TextAlign.center,
                       maxLines: 2,
@@ -227,7 +227,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                     color: Colors.amber,
                     borderRadius: BorderRadius.circular(12)),
                   child: const Text(
-                    'Premium',
+                    'Premium',),
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -241,7 +241,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
           color: AppTheme.dividerColor)),
       child: Column(
@@ -251,7 +251,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '가족 구성원 (선택사항)',
+                '가족 구성원 (선택사항)',),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -264,7 +264,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  '가족 구성원을 추가하면 더 정확한 운세를 볼 수 있어요',
+                  '가족 구성원을 추가하면 더 정확한 운세를 볼 수 있어요',),
                   style: TextStyle(
                     color: AppTheme.textSecondaryColor,
                     fontSize: 14)))),
@@ -277,7 +277,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
+        color: _selectedType.gradientColors[0].withOpacity(0.05),
         borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
@@ -371,7 +371,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
               color: Colors.white),
             const SizedBox(width: 8),
             Text(
-              '${_selectedType.label} 확인하기',
+              '${_selectedType.label} 확인하기',),
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -411,11 +411,11 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedType.gradientColors[0].withValues(alpha: 0.1),
-            _selectedType.gradientColors[1].withValues(alpha: 0.05)]),
-        borderRadius: BorderRadius.circular(16),
+            _selectedType.gradientColors[0].withOpacity(0.1),
+            _selectedType.gradientColors[1].withOpacity(0.05)]),
+        borderRadius: BorderRadius.circular(16))),
         border: Border.all(
-          color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
+          color: _selectedType.gradientColors[0].withOpacity(0.3),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,7 +429,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  '${_selectedType.label} 결과',
+                  '${_selectedType.label} 결과',),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -441,7 +441,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                     color: _getScoreColor(fortune.score!),
                     borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                    '${fortune.score}점',
+                    '${fortune.score}점',),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold)))]),
@@ -524,7 +524,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
+            color: _selectedType.gradientColors[0].withOpacity(0.05),
             borderRadius: BorderRadius.circular(8)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

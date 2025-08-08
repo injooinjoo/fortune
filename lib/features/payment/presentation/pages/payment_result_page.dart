@@ -261,7 +261,8 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     // TODO: 클립보드에 복사
     HapticUtils.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('거래번호가 복사되었습니다.'));
+      const SnackBar(content: Text('거래번호가 복사되었습니다.')),
+    );
   }
 
   void _navigateToHome() {

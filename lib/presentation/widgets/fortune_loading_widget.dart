@@ -83,9 +83,9 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
       shape: BoxShape.circle),
         gradient: SweepGradient(,
       colors: [
-                            primaryColor.withValues(alpha: 0.3),
+                            primaryColor.withOpacity(0.3),
                             primaryColor,
-                            primaryColor.withValues(alpha: 0.3)]
+                            primaryColor.withOpacity(0.3)]
                           stops: const [0.0, 0.5, 1.0])))
                     )
                 })

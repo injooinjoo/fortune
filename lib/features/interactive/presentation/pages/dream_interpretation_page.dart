@@ -275,7 +275,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
           Text(
             '꿈 내용을 자세히 입력해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
               fontSize: 16 * widget.fontScale),
             textAlign: TextAlign.center),
           const SizedBox(height: 32),
@@ -298,7 +298,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   decoration: InputDecoration(
                     hintText: '이름을 입력하세요',
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none),
@@ -340,7 +340,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surface.withValues(alpha: 0.5),
+                        color: theme.colorScheme.surface.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(25)),
                       child: Row(
                         children: [
@@ -355,7 +355,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                     decoration: InputDecoration(
                       hintText: '예: 넓은 바다에서 헤엄치다가 황금 용을 만나는 꿈을 꾸었습니다.',
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none),
@@ -399,7 +399,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+              ? theme.colorScheme.primary.withOpacity(0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20)),
         child: Row(
@@ -409,14 +409,14 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               size: 18,
               color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  : theme.colorScheme.onSurface.withOpacity(0.6)),
             const SizedBox(width: 4),
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    : theme.colorScheme.onSurface.withOpacity(0.6),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
   }
 
@@ -434,7 +434,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withValues(alpha: 0.5),
+                color: theme.colorScheme.surface.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: _isRecording 
@@ -451,7 +451,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   style: TextStyle(
                     fontSize: 16 * widget.fontScale,
                     color: recognizedText.isEmpty
-                        ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                        ? theme.colorScheme.onSurface.withOpacity(0.6)
                         : theme.colorScheme.onSurface),
                   textAlign: TextAlign.center)));
           }),
@@ -467,11 +467,11 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               gradient: LinearGradient(
                 colors: _isRecording
                     ? [Colors.red.shade400, Colors.red.shade600]
-                    : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)]),
+                    : [theme.colorScheme.primary, theme.colorScheme.primary.withOpacity(0.8)]),
               boxShadow: [
                 BoxShadow(
                   color: (_isRecording ? Colors.red : theme.colorScheme.primary)
-                      .withValues(alpha: 0.3),
+                      .withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10))]),
             child: Icon(
@@ -485,7 +485,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
             return Text(
               status,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)));
+                color: theme.colorScheme.onSurface.withOpacity(0.6)));
           })]);
   }
 }
@@ -529,7 +529,7 @@ class _DreamResultView extends ConsumerWidget {
             Text(
               '꿈을 분석하고 있습니다...',
               style: TextStyle(fontSize: 18))])),
-      error: (error, stack) => '',
+      error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -549,7 +549,7 @@ class _DreamResultView extends ConsumerWidget {
                 onPressed: onReset,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text('다시 시도')))]))),
+                  child: Text('다시 시도')))])),
       data: (result) => result == null
           ? const SizedBox.shrink()
           : SingleChildScrollView(
@@ -561,8 +561,8 @@ class _DreamResultView extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     gradient: LinearGradient(
                       colors: [
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.1),
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.05)]),
+                        _getLuckColor(result.overallLuck).withOpacity(0.1),
+                        _getLuckColor(result.overallLuck).withOpacity(0.05)]),
                     child: Column(
                       children: [
                         Text(
@@ -580,7 +580,7 @@ class _DreamResultView extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: _getLuckColor(result.overallLuck).withValues(alpha: 0.2),
+                            color: _getLuckColor(result.overallLuck).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20)),
                           child: Text(
                             _getLuckText(result.overallLuck),
@@ -612,7 +612,7 @@ class _DreamResultView extends ConsumerWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                            color: theme.colorScheme.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -643,7 +643,7 @@ class _DreamResultView extends ConsumerWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                            color: theme.colorScheme.secondary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,8 +695,8 @@ class _DreamResultView extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withValues(alpha: 0.2),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.2)]),
+                                      theme.colorScheme.primary.withOpacity(0.2),
+                                      theme.colorScheme.secondary.withOpacity(0.2)]),
                                   borderRadius: BorderRadius.circular(20)),
                                 child: Text(
                                   element,

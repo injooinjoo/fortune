@@ -203,7 +203,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             width: AppDimensions.buttonHeightSmall,
             height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
-              color: providerInfo.color.withValues(alpha: 0.1),
+              color: providerInfo.color.withOpacity(0.1),
               borderRadius: AppDimensions.borderRadiusSmall),
             child: Center(
               child: _buildProviderIcon(providerInfo))),
@@ -300,7 +300,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         Text(
           '여러 소셜 계정을 연결하여 편리하게 로그인하세요.',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+            color: theme.colorScheme.onSurface.withOpacity(0.6))),
         SizedBox(height: AppSpacing.spacing4),
         ...(_providers.keys.map((provider) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),

@@ -265,7 +265,7 @@ class _MbtiStepState extends State<MbtiStep> {
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
     fontWeight: FontWeight.bold),
-    color: letter != null ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText.withValues(alpha: 0.7))
+    color: letter != null ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText.withOpacity(0.7))
           ))
         ))
       )

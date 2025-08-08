@@ -52,7 +52,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       begin: 1.0,
       end: 1.1).animate(CurvedAnimation(
       parent: _pulseController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
   }
 
   @override
@@ -112,7 +112,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.1),
+              color: AppTheme.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -147,7 +147,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             maxLength: 200,
             decoration: InputDecoration(
               hintText: '마음속 걱정을 적어주세요...',
-              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withValues(alpha: 0.5)),
+              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withOpacity(0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: AppTheme.borderColor)),
@@ -186,8 +186,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppTheme.primaryColor.withValues(alpha: 0.3),
-                      AppTheme.primaryColor.withValues(alpha: 0.1)])),
+                      AppTheme.primaryColor.withOpacity(0.3),
+                      AppTheme.primaryColor.withOpacity(0.1)])),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -206,7 +206,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                             color: AppTheme.primaryColor,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primaryColor.withValues(alpha: 0.5),
+                                color: AppTheme.primaryColor.withOpacity(0.5),
                                 blurRadius: 4)])));
                     }),
                     // 중앙 장식
@@ -220,10 +220,10 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                           end: Alignment.bottomRight,
                           colors: [
                             AppTheme.primaryColor,
-                            AppTheme.primaryColor.withValues(alpha: 0.7)]),
+                            AppTheme.primaryColor.withOpacity(0.7)]),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.5),
+                            color: AppTheme.primaryColor.withOpacity(0.5),
                             blurRadius: 20,
                             spreadRadius: 5)]),
                       child: const Icon(
@@ -238,7 +238,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
   Widget _buildActionButton() {
     return Column(
       children: [
-        if (_isSpinning);
+        if (_isSpinning)
           Text(
             '염주를 ${_spinCount}번 돌렸습니다...',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -402,7 +402,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('조언을 받는데 실패했습니다. 다시 시도해주세요.'));
+          const SnackBar(content: Text('조언을 받는데 실패했습니다. 다시 시도해주세요.')));
       }
     }
   }
@@ -421,7 +421,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     HapticUtils.lightImpact();
     // TODO: 공유 기능 구현
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다'));
+      const SnackBar(content: Text('공유 기능은 준비 중입니다')));
   }
 
   void _showInsufficientTokensModal() {

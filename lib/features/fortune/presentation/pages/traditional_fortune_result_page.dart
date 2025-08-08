@@ -38,7 +38,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             begin: Alignment.topCenter,
     end: Alignment.bottomCenter),
                   colors: [
-              Color(0xFFEF4444).withValues(alpha: 0.1),
+              Color(0xFFEF4444).withOpacity(0.1),
               AppColors.background),
         child: CustomScrollView(
           slivers: [
@@ -73,7 +73,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                               .fade(),
                             const SizedBox(height: 16),
                             Text(
-                              '전통운세 종합',
+                              '전통운세 종합',),
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold),
@@ -88,7 +88,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   // Greeting
-                  if (fortune['greeting'] != null), _buildGreetingCard(fortune['greeting'])
+                  if (fortune['greeting'] != null) _buildGreetingCard(fortune['greeting'])
                         .animate()
                   .fadeIn(delay: 100.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -96,7 +96,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Today's Theme
-                  if (fortune['todayTheme'] != null), _buildTodayThemeCard(fortune['todayTheme'])
+                  if (fortune['todayTheme'] != null) _buildTodayThemeCard(fortune['todayTheme'])
                         .animate()
                   .fadeIn(delay: 200.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -104,7 +104,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Core Reading
-                  if (fortune['coreReading'] != null), _buildCoreReadingCard(fortune['coreReading'])
+                  if (fortune['coreReading'] != null) _buildCoreReadingCard(fortune['coreReading'])
                         .animate()
                   .fadeIn(delay: 300.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -112,7 +112,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Life Aspects
-                  if (fortune['lifeAspects'] != null), _buildLifeAspectsCard(fortune['lifeAspects'])
+                  if (fortune['lifeAspects'] != null) _buildLifeAspectsCard(fortune['lifeAspects'])
                         .animate()
                   .fadeIn(delay: 400.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -120,7 +120,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Wisdom of Ancients
-                  if (fortune['wisdomOfAncients'] != null), _buildWisdomCard(fortune['wisdomOfAncients'])
+                  if (fortune['wisdomOfAncients'] != null) _buildWisdomCard(fortune['wisdomOfAncients'])
                         .animate()
                   .fadeIn(delay: 500.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -128,7 +128,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Traditional Remedies
-                  if (fortune['traditionalRemedies'] != null), _buildRemediesCard(fortune['traditionalRemedies'])
+                  if (fortune['traditionalRemedies'] != null) _buildRemediesCard(fortune['traditionalRemedies'])
                         .animate()
                   .fadeIn(delay: 600.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -136,7 +136,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Weekly Outlook
-                  if (fortune['weeklyOutlook'] != null), _buildWeeklyOutlookCard(fortune['weeklyOutlook'])
+                  if (fortune['weeklyOutlook'] != null) _buildWeeklyOutlookCard(fortune['weeklyOutlook'])
                         .animate()
                   .fadeIn(delay: 700.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
@@ -144,12 +144,12 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   const SizedBox(height: 16),
                   
                   // Closing Message
-                  if (fortune['closingMessage'] != null), _buildClosingMessageCard(fortune['closingMessage'])
+                  if (fortune['closingMessage'] != null) _buildClosingMessageCard(fortune['closingMessage'])
                         .animate()
                   .fadeIn(delay: 800.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
                   
-                  const SizedBox(height: 32))),;
+                  const SizedBox(height: 32)),;
 }
 
   Widget _buildGreetingCard(String greeting) {
@@ -187,7 +187,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: _getElementColor(theme['element'] ?? '화'),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
               child: Icon(
                 Icons.today_rounded),
                   color: _getElementColor(theme['element'] ?? '화'),
@@ -233,7 +233,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
                       border: Border.all(
                         color: AppColors.divider),
                     child: Row(
@@ -270,15 +270,15 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Color(0xFFEF4444).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+                color: Color(0xFFEF4444).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12))),
               child: Icon(
                 Icons.insights_rounded),
                   color: Color(0xFFEF4444),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '핵심 운세 분석',
+              '핵심 운세 분석',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -314,9 +314,9 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight),
                   colors: [
-                          Color(0xFFEF4444).withValues(alpha: 0.1),
-                          Color(0xFFEC4899).withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
+                          Color(0xFFEF4444).withOpacity(0.1),
+                          Color(0xFFEC4899).withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -328,7 +328,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFFEF4444),
                             const SizedBox(width: 8),
                             Text(
-                              '종합 해석',
+                              '종합 해석',),
                               style: TextStyle(
                                 fontSize: 16),
                   fontWeight: FontWeight.bold),
@@ -354,7 +354,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFFEF4444),
             const SizedBox(width: 8),
             Text(
-              '사주 분석',
+              '사주 분석',),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
@@ -379,13 +379,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
 }
 
   Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
-    if (pillar == null) return const SizedBox();
+    if (pillar == null) return const SizedBox()
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
         border: Border.all(
           color: AppColors.divider),
       child: Column(
@@ -418,7 +418,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
       crossAxisAlignment: CrossAxisAlignment.start,
     children: [
         Text(
-          '오행 균형도',
+          '오행 균형도',),
           style: TextStyle(
             fontSize: 14),
                   fontWeight: FontWeight.bold),
@@ -442,15 +442,15 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 const SizedBox(width: 8),
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4))),
                     child: LinearProgressIndicator(
                       value: value / 100,
                       minHeight: 8),
-                  backgroundColor: elementColors[index].withValues(alpha: 0.2),
+                  backgroundColor: elementColors[index].withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(elementColors[index])),
                 const SizedBox(width: 8),
                 Text(
-                  '${value.toInt()}%',
+                  '${value.toInt()}%',),
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary)),;
@@ -469,7 +469,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFF8B5CF6),
             const SizedBox(width: 8),
             Text(
-              '토정비결',
+              '토정비결',),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
@@ -478,8 +478,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Color(0xFF8B5CF6).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: Color(0xFF8B5CF6).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -500,7 +500,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               if (tojeong['monthlyMessage'] != null) ...[
                 const SizedBox(height: 12),
                 Text(
-                  '이번 달 메시지',
+                  '이번 달 메시지',),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold),
@@ -522,15 +522,15 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Color(0xFF3B82F6).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+                color: Color(0xFF3B82F6).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12))),
               child: Icon(
                 Icons.category_rounded),
                   color: Color(0xFF3B82F6),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '분야별 운세',
+              '분야별 운세',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -559,11 +559,11 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
                   colors: [
-            color.withValues(alpha: 0.1),
-            color.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
+            color.withOpacity(0.1),
+            color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12))),
         border: Border.all(
-          color: color.withValues(alpha: 0.3)),
+          color: color.withOpacity(0.3)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -583,7 +583,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getEnergyColor(aspect['currentEnergy'],
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12))),
                   child: Text(
                     aspect['currentEnergy'],
                     style: TextStyle(
@@ -603,7 +603,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8))),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -627,10 +627,10 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16))),
                     border: Border.all(
-                      color: color.withValues(alpha: 0.3)),
+                      color: color.withOpacity(0.3)),
                   child: Text(
                     factor.toString(),
                     style: TextStyle(
@@ -645,8 +645,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
                   colors: [
-          Color(0xFF795548).withValues(alpha: 0.1),
-          Color(0xFF795548).withValues(alpha: 0.05),
+          Color(0xFF795548).withOpacity(0.1),
+          Color(0xFF795548).withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -660,7 +660,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFF795548),
                 const SizedBox(width: 8),
                 Text(
-                  '고전의 지혜',
+                  '고전의 지혜',),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
@@ -669,8 +669,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF795548).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Color(0xFF795548).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12))),
                   child: Text(
                     wisdom['source'] ?? ''$1',
                   style: TextStyle(
@@ -682,7 +682,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
                   border: Border.all(
                     color: AppColors.divider),
                 child: Column(
@@ -712,8 +712,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Color(0xFF795548).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: Color(0xFF795548).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8))),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -738,15 +738,15 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Color(0xFF10B981).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+                color: Color(0xFF10B981).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12))),
               child: Icon(
                 Icons.spa_rounded),
                   color: Color(0xFF10B981),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '전통 처방',
+              '전통 처방',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -820,13 +820,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: isAvoid 
-                        ? Colors.red.withValues(alpha: 0.1)
-                        : Color(0xFF10B981).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
+                        ? Colors.red.withOpacity(0.1)
+                        : Color(0xFF10B981).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16))),
                       border: Border.all(
                         color: isAvoid 
-                          ? Colors.red.withValues(alpha: 0.3)
-                          : Color(0xFF10B981).withValues(alpha: 0.3)),
+                          ? Colors.red.withOpacity(0.3)
+                          : Color(0xFF10B981).withOpacity(0.3)),
                     child: Text(
                       value.toString(),
                       style: TextStyle(
@@ -850,15 +850,15 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             Container(
               padding: const EdgeInsets.all(8,
               decoration: BoxDecoration(
-                color: Color(0xFF06B6D4).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+                color: Color(0xFF06B6D4).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12))),
               child: Icon(
                 Icons.calendar_view_week_rounded),
                   color: Color(0xFF06B6D4),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '주간 운세',
+              '주간 운세',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -878,12 +878,12 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isWeekend 
-                      ? Color(0xFF06B6D4).withValues(alpha: 0.05)
+                      ? Color(0xFF06B6D4).withOpacity(0.05)
                       : AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12))),
                     border: Border.all(
                       color: isWeekend
-                        ? Color(0xFF06B6D4).withValues(alpha: 0.3)
+                        ? Color(0xFF06B6D4).withOpacity(0.3)
                         : AppColors.divider),
                   child: Row(
                     children: [
@@ -892,8 +892,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   height: 32),
                   decoration: BoxDecoration(
                           color: isWeekend
-                            ? Color(0xFF06B6D4).withValues(alpha: 0.2)
-                            : AppColors.divider.withValues(alpha: 0.3),
+                            ? Color(0xFF06B6D4).withOpacity(0.2)
+                            : AppColors.divider.withOpacity(0.3),
                           shape: BoxShape.circle),
                         child: Center(
                           child: Text(
@@ -919,8 +919,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
                   colors: [
-          Color(0xFFEF4444).withValues(alpha: 0.1),
-          Color(0xFFEC4899).withValues(alpha: 0.05),
+          Color(0xFFEF4444).withOpacity(0.1),
+          Color(0xFFEC4899).withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -1011,7 +1011,7 @@ class TraditionalPatternPainter extends CustomPainter {
      
    
     ..color =,
-      Colors.white.withValues(alpha: 0.1);
+      Colors.white.withOpacity(0.1);
 
     // Draw traditional Korean patterns
     final spacing = 40.0;

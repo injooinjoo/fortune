@@ -106,7 +106,7 @@ class _NameStepState extends State<NameStep> {
                     textAlign: TextAlign.center).animate().fadeIn(
                     duration: const Duration(milliseconds: 600)).shimmer(
                     duration: const Duration(milliseconds: 1200),
-                    color: AppColors.textPrimaryDark.withValues(alpha: 0.3)))),
+                    color: AppColors.textPrimaryDark.withOpacity(0.3)))),
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               Text(
                 '운세의 주인공이 되어주세요',
@@ -126,7 +126,7 @@ class _NameStepState extends State<NameStep> {
                 decoration: InputDecoration(
                   hintText: '이름',
                   hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: context.fortuneTheme.subtitleText.withValues(alpha: 0.7),
+                    color: context.fortuneTheme.subtitleText.withOpacity(0.7),
                     fontWeight: FontWeight.normal),
                   border: InputBorder.none,
                   enabledBorder: UnderlineInputBorder(

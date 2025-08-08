@@ -137,16 +137,16 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '상세한 이사 운세 진단을 위해 정보를 입력해주세요.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '상세한 이사 운세 진단을 위해 정보를 입력해주세요.',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Tab Bar
         Container(
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.5),
+            color: theme.colorScheme.surface.withOpacity(0.5),
             borderRadius: BorderRadius.circular(12)),
           child: TabBar(
             controller: _tabController,
@@ -155,7 +155,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               color: theme.colorScheme.primary,
               borderRadius: BorderRadius.circular(12)),
             labelColor: Colors.white,
-            unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
             tabs: const [
               Tab(text: '기본정보'),
               Tab(text: '위치선택'),
@@ -190,8 +190,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                 borderRadius: BorderRadius.circular(12)),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
-              '상세 이사운세 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
+              '상세 이사운세 확인하기',),
+              style: theme.textTheme.titleMedium?.copyWith()
                 color: Colors.white,
                 fontWeight: FontWeight.bold))))]
     );
@@ -204,8 +204,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         children: [
           // Name Input
           Text(
-            '이름',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '이름',),
+            style: theme.textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
@@ -219,8 +219,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Birth Date Selection
           Text(
-            '생년월일',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '생년월일',),
+            style: theme.textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
@@ -238,25 +238,25 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               }
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
                         ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                         : '생년월일을 선택하세요',
-                    style: theme.textTheme.bodyLarge)]))),
+                    style: theme.textTheme.bodyLarge)])))),
           const SizedBox(height: 20),
           
           // Moving Reason
           Text(
-            '이사 이유',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '이사 이유',),
+            style: theme.textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
@@ -277,8 +277,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Housing Type
           Text(
-            '희망 주거 형태',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '희망 주거 형태',),
+            style: theme.textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
@@ -299,8 +299,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           
           // Urgency Level
           Text(
-            '이사 시급성',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '이사 시급성',),
+            style: theme.textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Column(
@@ -322,17 +322,17 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '현재 거주지',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '현재 거주지',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Container(
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12))),
             child: MapLocationPicker(
               onLocationSelected: (location, address) {
                 setState(() {
@@ -345,17 +345,17 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         const SizedBox(height: 20),
         
         Text(
-          '이사 희망 지역',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '이사 희망 지역',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Container(
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12))),
             child: MapLocationPicker(
               onLocationSelected: (location, address) {
                 setState(() {
@@ -376,14 +376,14 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '이사 날짜 선택',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '이사 날짜 선택',),
+            style: theme.textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
-            '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
+            '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',),
+            style: theme.textTheme.bodyMedium?.copyWith()
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 16),
           
           EnhancedDatePicker(

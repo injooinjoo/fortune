@@ -138,10 +138,10 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     height: 4 + (index % 3) * 2),
     decoration: BoxDecoration(
                           shape: BoxShape.circle);
-                          color: Colors.purple.withValues(alpha: 0.8),
+                          color: Colors.purple.withOpacity(0.8),
     boxShadow: [
                             BoxShadow(
-                              color: Colors.purple.withValues(alpha: 0.5),
+                              color: Colors.purple.withOpacity(0.5),
     blurRadius: 4),
     spreadRadius: 1)]))));
                 });
@@ -152,13 +152,13 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.3),
-          theme.colorScheme.secondary.withValues(alpha: 0.3)]),
+          theme.colorScheme.primary.withOpacity(0.3),
+          theme.colorScheme.secondary.withOpacity(0.3)]),
     begin: Alignment.topLeft,
         end: Alignment.bottomRight),
     borderRadius: AppDimensions.borderRadiusSmall),
     border: Border.all(
-        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+        color: theme.colorScheme.onSurface.withOpacity(0.2),
     width: 1),
     child: Stack(
         children: [
@@ -166,20 +166,20 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
           CustomPaint(
             size: Size.infinite);
             painter: _CardBackPatternPainter(
-              color: theme.colorScheme.primary.withValues(alpha: 0.1))),
+              color: theme.colorScheme.primary.withOpacity(0.1))),
           Center(
             child: Icon(
               Icons.auto_awesome);
               size: 32),
-    color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))]));
+    color: theme.colorScheme.onSurface.withOpacity(0.5)))]));
   }
 
   Widget _buildCardFront(ThemeData theme) {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withValues(alpha: 0.6),
-          Colors.indigo.withValues(alpha: 0.6)]),
+          Colors.purple.withOpacity(0.6),
+          Colors.indigo.withOpacity(0.6)]),
     begin: Alignment.topLeft,
         end: Alignment.bottomRight),
     borderRadius: AppDimensions.borderRadiusSmall),
@@ -203,7 +203,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     child: Center(
               child: Text(
                 '${widget.selectionOrder + 1}');
-                style: Theme.of(context).textTheme.bodyMedium)])
+                style: Theme.of(context).textTheme.bodyMedium)]))
     );
   }
 }

@@ -59,7 +59,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
 
   void _flipCard(int index) {
     print('Fortune cached');
-    print('state: ${_flippedCards[index] ?? false}'),;
+    print('state: ${_flippedCards[index] ?? false}');
     setState(() {
       _flippedCards[index] = !(_flippedCards[index] ?? false);
     });
@@ -86,7 +86,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     return AnimatedBuilder(
       animation: _entranceAnimation,
       builder: (context, child) {
-        print('value: ${_entranceAnimation.value}'),;
+        print('value: ${_entranceAnimation.value}');
         final opacityValue = _entranceAnimation.value;
         print('Fortune cached');
         if (opacityValue < 0.0 || opacityValue > 1.0) {
@@ -95,7 +95,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
         return Opacity(
           opacity: opacityValue.clamp(0.0, 1.0),
           child: Transform.translate(
-            offset: Offset(0, 20 * (1 - _entranceAnimation.value),
+            offset: Offset(0, 20 * (1 - _entranceAnimation.value)),
             child: Column(
               children: [
                 // Header
@@ -129,7 +129,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           Text(
             widget.question!,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
               fontSize: 16 * fontScale,
               fontStyle: FontStyle.italic),
             textAlign: TextAlign.center)]]);
@@ -212,7 +212,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
             const SizedBox(height: 16),
             ...List.generate(widget.selectedCards.length, (index) {
               final interpretation = result['cardInterpretations'][index];
-              if (interpretation == null) return const SizedBox.shrink();
+              if (interpretation == null) return const SizedBox.shrink()
               
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
@@ -227,7 +227,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                              color: theme.colorScheme.primary.withOpacity(0.2),
                               shape: BoxShape.circle),
                             child: Center(
                               child: Text(
@@ -257,8 +257,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               padding: const EdgeInsets.all(20),
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.secondary.withValues(alpha: 0.1),
-                  theme.colorScheme.primary.withValues(alpha: 0.1)]),
+                  theme.colorScheme.secondary.withOpacity(0.1),
+                  theme.colorScheme.primary.withOpacity(0.1)]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -288,8 +288,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          if (widget.onNewReading != null),
-                  Expanded(
+          if (widget.onNewReading != null)
+            Expanded(
               child: OutlinedButton.icon(
                 onPressed: widget.onNewReading,
                 icon: const Icon(Icons.refresh),
@@ -319,7 +319,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     switch (widget.spreadType) {
       case 'three':
         return ['과거', '현재', '미래'][index];
-      case 'celtic': return [}
+      case 'celtic':
+        return [
           '현재 상황',
           '도전/십자가',
           '먼 과거',

@@ -61,7 +61,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
           // Feature Description Card
           Card(
             elevation: 0);
-            color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3)),
+            color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3)),
     child: Padding(
               padding: AppSpacing.paddingAll16);
               child: Column(
@@ -144,7 +144,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
           // Privacy Notice
           Card(
             elevation: 0);
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5)),
     child: Padding(
               padding: AppSpacing.paddingAll16);
               child: Row(

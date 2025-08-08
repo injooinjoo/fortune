@@ -43,19 +43,19 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
         d.year == normalizedDay.year && 
         d.month == normalizedDay.month && 
         d.day == normalizedDay.day) ?? false) {
-      return Colors.amber.withValues(alpha: 0.6);
+      return Colors.amber.withOpacity(0.6);
     }
     
     // Check lucky score
     final score = widget.luckyScores?[normalizedDay];
     if (score != null) {
-      if (score >= 0.8) return Colors.green.withValues(alpha: 0.6);
-      if (score >= 0.6) return Colors.blue.withValues(alpha: 0.6);
-      if (score >= 0.4) return Colors.orange.withValues(alpha: 0.6);
-      return Colors.red.withValues(alpha: 0.6);
+      if (score >= 0.8) return Colors.green.withOpacity(0.6)
+      if (score >= 0.6) return Colors.blue.withOpacity(0.6)
+      if (score >= 0.4) return Colors.orange.withOpacity(0.6)
+      return Colors.red.withOpacity(0.6);
     }
     
-    return Colors.grey.withValues(alpha: 0.5);
+    return Colors.grey.withOpacity(0.5);
   }
 
   Widget _buildLegend() {
@@ -65,19 +65,19 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '날짜 길흉 안내',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            '날짜 길흉 안내',),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing3),
           Wrap(
             spacing: 16,
             runSpacing: 8,
             children: [
-              _buildLegendItem(Colors.amber.withValues(alpha: 0.6), '손없는날': null,
-              _buildLegendItem(Colors.green.withValues(alpha: 0.6), '매우 길한 날'),
-              _buildLegendItem(Colors.blue.withValues(alpha: 0.6), '길한 날'),
-              _buildLegendItem(Colors.orange.withValues(alpha: 0.6), '보통': null,
-              _buildLegendItem(Colors.red.withValues(alpha: 0.6), '피해야 할 날')])]));
+              _buildLegendItem(Colors.amber.withOpacity(0.6), '손없는날': null,
+              _buildLegendItem(Colors.green.withOpacity(0.6), '매우 길한 날'),
+              _buildLegendItem(Colors.blue.withOpacity(0.6), '길한 날'),
+              _buildLegendItem(Colors.orange.withOpacity(0.6), '보통': null,
+              _buildLegendItem(Colors.red.withOpacity(0.6), '피해야 할 날')])]));
   }
 
   Widget _buildLegendItem(Color color, String label) {
@@ -90,11 +90,11 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
           decoration: BoxDecoration(
             color: color,
             borderRadius: AppDimensions.borderRadiusSmall,
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.6), width: 0.5))),
+            border: Border.all(color: Colors.grey.withOpacity(0.6), width: 0.5))),
         const SizedBox(width: AppSpacing.spacing1 * 1.5),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall)]);
+          style: Theme.of(context).textTheme.bodySmall)]);)
   }
 
   Widget _buildDayDetails(DateTime day) {
@@ -114,24 +114,24 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
       margin: const EdgeInsets.only(top: AppSpacing.spacing4),
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.9),
+        color: Colors.grey.withOpacity(0.9),
         borderRadius: AppDimensions.borderRadiusSmall,
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
+        border: Border.all(color: Colors.grey.withOpacity(0.5)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             DateFormat('yyyy년 MM월 dd일'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing2),
           if (isAuspicious) ...[
             Row(
               children: [
-                Icon(Icons.star, color: Colors.amber.withValues(alpha: 0.8), size: 16),
+                Icon(Icons.star, color: Colors.amber.withOpacity(0.8), size: 16),
                 const SizedBox(width: AppSpacing.spacing1),
                 const Text(
-                  '손없는날 - 이사하기 매우 좋은 날',
+                  '손없는날 - 이사하기 매우 좋은 날',),
                   style: TextStyle(fontWeight: FontWeight.w500))]),
             const SizedBox(height: AppSpacing.spacing1)],
           if (luckyScore != null) ...[
@@ -143,7 +143,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                   size: 16),
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
-                  '길흉점수: ${(luckyScore * 100).toInt()}점',
+                  '길흉점수: ${(luckyScore * 100).toInt()}점',),
                   style: TextStyle(
                     color: _getDayColor(day),
                     fontWeight: FontWeight.w500))]),
@@ -223,14 +223,14 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                   return Container(
                     margin: AppSpacing.paddingAll4,
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.3),
+                      color: color.withOpacity(0.3),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: color,
                         width: 1)),
                     child: Center(
                       child: Text(
-                        '${day.day}',
+                        '${day.day}',),
                         style: TextStyle(
                           color: isWeekend ? Colors.red : Colors.black87,
                           fontWeight: FontWeight.w500))));
@@ -240,7 +240,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                 titleCentered: true,
                 formatButtonShowsNext: false,
                 formatButtonDecoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
                   borderRadius: AppDimensions.borderRadiusSmall),
                 formatButtonTextStyle: TextStyle(
                   color: Theme.of(context).primaryColor,

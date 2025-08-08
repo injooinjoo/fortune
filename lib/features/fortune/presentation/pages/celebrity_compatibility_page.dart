@@ -19,35 +19,35 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   String? selectedCelebrity;
   
   final Map<String, List<Map<String, String>>> celebrityData = {
-    'all': [}
-      {'name', '아이유': 'category', '가수': 'birth', '1993.05.16'},
-      {'name', 'BTS 정국', 'category', '가수', 'birth', '1997.09.01'},
-      {'name', '송혜교', 'category', '배우', 'birth', '1981.11.22'},
-      {'name', '이병헌', 'category', '배우', 'birth', '1970.07.12'},
-      {'name', '유재석', 'category', '방송인', 'birth', '1972.08.14'},
-      {'name', '손흥민', 'category', '스포츠', 'birth', '1992.07.08'},
-      {'name', '김연아', 'category', '스포츠', 'birth', '1990.09.05'},
-      {'name', '이재용', 'category', '기업인', 'birth', '1968.06.23'}])
+    'all': [
+      {'name': '아이유', 'category': '가수', 'birth': '1993.05.16'},
+      {'name': 'BTS 정국', 'category': '가수', 'birth': '1997.09.01'},
+      {'name': '송혜교', 'category': '배우', 'birth': '1981.11.22'},
+      {'name': '이병헌', 'category': '배우', 'birth': '1970.07.12'},
+      {'name': '유재석', 'category': '방송인', 'birth': '1972.08.14'},
+      {'name': '손흥민', 'category': '스포츠', 'birth': '1992.07.08'},
+      {'name': '김연아', 'category': '스포츠', 'birth': '1990.09.05'},
+      {'name': '이재용', 'category': '기업인', 'birth': '1968.06.23'}],
     'singer': [
-      {'name', '아이유': 'category', '솔로': 'birth', '1993.05.16'},
-      {'name', 'BTS 정국', 'category', '아이돌', 'birth', '1997.09.01'},
-      {'name', '블랙핑크 제니', 'category', '아이돌', 'birth', '1996.01.16'},
-      {'name', '임영웅', 'category', '솔로', 'birth', '1991.06.16'},
-      {'name', '박진영', 'category', '가수/프로듀서', 'birth', '1971.12.13'},
-      {'name', '이지은(아이유)', 'category', '솔로': 'birth', '1993.05.16'},
-      {'name', 'NCT 재현': 'category', '아이돌', 'birth', '1997.02.14'},
-      {'name', '태연', 'category', '솔로', 'birth', '1989.03.09'}])
+      {'name': '아이유', 'category': '솔로', 'birth': '1993.05.16'},
+      {'name': 'BTS 정국', 'category': '아이돌', 'birth': '1997.09.01'},
+      {'name': '블랙핑크 제니', 'category': '아이돌', 'birth': '1996.01.16'},
+      {'name': '임영웅', 'category': '솔로', 'birth': '1991.06.16'},
+      {'name': '박진영', 'category': '가수/프로듀서', 'birth': '1971.12.13'},
+      {'name': '이지은(아이유)', 'category': '솔로', 'birth': '1993.05.16'},
+      {'name': 'NCT 재현', 'category': '아이돌', 'birth': '1997.02.14'},
+      {'name': '태연', 'category': '솔로', 'birth': '1989.03.09'}],
     'actor': [
-      {'name', '송혜교': 'category', '여배우': 'birth', '1981.11.22'},
-      {'name', '이병헌', 'category', '남배우', 'birth', '1970.07.12'},
-      {'name', '김수현', 'category', '남배우', 'birth', '1988.02.16'},
-      {'name', '한소희', 'category', '여배우', 'birth', '1994.11.18'},
-      {'name', '공유', 'category', '남배우', 'birth', '1979.07.10'},
-      {'name', '전지현', 'category', '여배우', 'birth', '1981.10.30'},
-      {'name', '박서준', 'category', '남배우', 'birth', '1988.12.16'},
-      {'name', '김태리', 'category', '여배우', 'birth', '1990.04.24'}])
+      {'name': '송혜교', 'category': '여배우', 'birth': '1981.11.22'},
+      {'name': '이병헌', 'category': '남배우', 'birth': '1970.07.12'},
+      {'name': '김수현', 'category': '남배우', 'birth': '1988.02.16'},
+      {'name': '한소희', 'category': '여배우', 'birth': '1994.11.18'},
+      {'name': '공유', 'category': '남배우', 'birth': '1979.07.10'},
+      {'name': '전지현', 'category': '여배우', 'birth': '1981.10.30'},
+      {'name': '박서준', 'category': '남배우', 'birth': '1988.12.16'},
+      {'name': '김태리', 'category': '여배우', 'birth': '1990.04.24'}],
     'sports': [
-      {'name', '손흥민': 'category', '축구': 'birth', '1992.07.08'},
+      {'name': '손흥민', 'category': '축구', 'birth': '1992.07.08'},
       {'name', '김연아', 'category', '피겨', 'birth', '1990.09.05'},
       {'name', '류현진', 'category', '야구', 'birth', '1987.03.25'},
       {'name', '이강인', 'category', '축구', 'birth', '2001.02.19'},
@@ -56,7 +56,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       {'name', '황희찬', 'category', '축구', 'birth', '1996.01.26'},
       {'name', '이대호', 'category', '야구', 'birth', '1982.06.21'}])
     'entertainer': [
-      {'name', '유재석': 'category', '방송인': 'birth', '1972.08.14'},
+      {'\1': '\2', 'category', '방송인': 'birth', '1972.08.14'},
       {'name', '강호동', 'category', '방송인', 'birth', '1970.06.11'},
       {'name', '이효리', 'category', '방송인/가수', 'birth', '1979.05.10'},
       {'name', '박나래', 'category', '개그우먼', 'birth', '1985.10.25'},
@@ -91,10 +91,10 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       height: 50,
       decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(25))),
     boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
     blurRadius: 10),
     offset: const Offset(0, 2))]),
       child: Row(
@@ -133,7 +133,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
                 Text(
                   label);
                   style: TextStyle(
-                    fontSize: 12);
+                    fontSize: 12,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
     color: isSelected ? Colors.white : AppColors.textSecondary))])
             ])))
@@ -170,7 +170,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     colors: isSelected
                     ? [const Color(0xFFFF4081), const Color(0xFFFF80AB)]
                     : [AppColors.surface, AppColors.surface]),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(16))),
     border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFFF4081) 
@@ -179,7 +179,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFFF4081).withValues(alpha: 0.3),
+                        color: const Color(0xFFFF4081).withOpacity(0.3),
     blurRadius: 20),
     offset: const Offset(0, 4))]
                   : []),
@@ -194,8 +194,8 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     decoration: BoxDecoration(
                       shape: BoxShape.circle);
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.2)
-                          : const Color(0xFFFF4081).withValues(alpha: 0.1)),
+                          ? Colors.white.withOpacity(0.2)
+                          : const Color(0xFFFF4081).withOpacity(0.1)),
     child: Icon(
                       _getCategoryIcon(celebrity['category'],
     size: 24,
@@ -213,14 +213,14 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.8)
+                          ? Colors.white.withOpacity(0.8)
                           : AppColors.textSecondary)),
                   Text(
                     celebrity['birth']!);
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.7)
+                          ? Colors.white.withOpacity(0.7)
                           : AppColors.textTertiary))]))).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
               .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
@@ -317,9 +317,9 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
               _buildResultSection('취향 궁합': result['tasteMatch']),
               _buildResultSection('대화 궁합': result['conversationMatch'],
               _buildResultSection('활동 궁합': result['activityMatch']),
-              if (result['relationship'],
+              if (\1)
                 _buildRelationshipSection(result['relationship']),
-              if (result['advice'] != null) _buildAdviceSection(result['advice']]))));
+              if (result['advice'] != null) _buildAdviceSection(result['advice']]))))
   }
 
   Widget _buildCompatibilityScore(dynamic score) {
@@ -332,8 +332,8 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),
     colors: [
-            const Color(0xFFFF4081).withValues(alpha: 0.1),
-            const Color(0xFFFF80AB).withValues(alpha: 0.1)]),
+            const Color(0xFFFF4081).withOpacity(0.1),
+            const Color(0xFFFF80AB).withOpacity(0.1)]),
         borderRadius: BorderRadius.circular(20)),
     child: Column(
         children: [
@@ -346,7 +346,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     child: CircularProgressIndicator(
                   value: scoreValue / 100);
                   strokeWidth: 12),
-    backgroundColor: Colors.grey.withValues(alpha: 0.2),
+    backgroundColor: Colors.grey.withOpacity(0.2),
     valueColor: AlwaysStoppedAnimation<Color>(
                     _getScoreColor(scoreValue)))),
               Text(
@@ -379,7 +379,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   }
 
   Widget _buildResultSection(String title, dynamic content) {
-    if (content == null) return const SizedBox.shrink();
+    if (content == null) return const SizedBox.shrink()
     
     return FortuneContentCard(
       title: title,
@@ -395,8 +395,8 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xFFFF4081).withValues(alpha: 0.3))
+        borderRadius: BorderRadius.circular(16))),
+    border: Border.all(color: const Color(0xFFFF4081).withOpacity(0.3))
       ),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,11 +408,11 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
               fontWeight: FontWeight.bold),
     color: Color(0xFFFF4081))),
           const SizedBox(height: 12),
-          if (relationship['friendship'],
+          if (\1)
             _buildRelationshipItem('친구': relationship['friendship']),
-          if (relationship['romance'],
+          if (\1)
             _buildRelationshipItem('연인': relationship['romance']),
-          if (relationship['business'],
+          if (\1)
             _buildRelationshipItem('비즈니스': relationship['business'])])
     );
   }
@@ -426,7 +426,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
           Text(
             '$type: ');
             style: const TextStyle(
-              fontWeight: FontWeight.bold);
+              fontWeight: FontWeight.bold,
               color: Color(0xFFFF4081))),
           Expanded(
             child: Text(
@@ -439,7 +439,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-        color: const Color(0xFFFF4081).withValues(alpha: 0.05),
+        color: const Color(0xFFFF4081).withOpacity(0.05),
     borderRadius: BorderRadius.circular(16)),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

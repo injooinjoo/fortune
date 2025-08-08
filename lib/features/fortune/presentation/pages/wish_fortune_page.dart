@@ -38,7 +38,7 @@ class _WishInputForm extends StatelessWidget {
         Text(
           '소원 성취 가능성을 확인해보세요!\n소원을 이루기 위한 방법을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5)),
         const SizedBox(height: 32),
         
@@ -46,7 +46,7 @@ class _WishInputForm extends StatelessWidget {
           child: Icon(
             Icons.star,
             size: 120,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+            color: theme.colorScheme.primary.withOpacity(0.3))),
         
         const SizedBox(height: 32),
         

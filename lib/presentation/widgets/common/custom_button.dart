@@ -34,7 +34,8 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.padding,
     this.variant = ButtonVariant.primary,
-    this.gradient})) : super(key: key);
+    this.gradient,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class CustomButton extends StatelessWidget {
         fgColor = textColor ?? AppColors.textPrimaryDark;
         break;
       case ButtonVariant.secondary:
-        bgColor = backgroundColor ?? theme.primaryColor.withValues(alpha: 0.1);
+        bgColor = backgroundColor ?? theme.primaryColor.withOpacity(0.1);
         fgColor = textColor ?? theme.primaryColor;
         break;
       case ButtonVariant.outline:

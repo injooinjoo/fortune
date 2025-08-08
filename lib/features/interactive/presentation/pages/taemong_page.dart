@@ -29,11 +29,11 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
   
   // 태몽 키워드 카테고리
   final Map<String, List<String>> _keywordCategories = {
-    '동물': ['용': '호랑이': '뱀', '거북이', '학', '봉황', '사자', '독수리', '물고기', '돼지'],
+    '동물': ['용', '호랑이', '뱀', '거북이', '학', '봉황', '사자', '독수리', '물고기', '돼지'],
     '자연': ['해', '달', '별', '구름', '무지개', '산', '바다', '강', '나무', '꽃'],
     '보물': ['금', '은', '보석', '진주', '옥', '거울', '왕관', '반지', '목걸이', '팔찌'],
     '과일/음식': ['복숭아', '사과', '포도', '수박', '밤', '대추', '감', '쌀', '떡', '술'],
-    '기타': ['불', '빛', '신선', '부처', '예수', '천사', '아기', '임금', '장군', '선비': null};
+    '기타': ['불', '빛', '신선', '부처', '예수', '천사', '아기', '임금', '장군', '선비']};
 
   @override
   void dispose() {
@@ -90,7 +90,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.1),
+              color: AppTheme.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -125,7 +125,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             maxLength: 500,
             decoration: InputDecoration(
               hintText: '꿈에서 본 내용을 자세히 적어주세요...',
-              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withValues(alpha: 0.5)),
+              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withOpacity(0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: AppTheme.borderColor)),
@@ -345,7 +345,7 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('해석에 실패했습니다. 다시 시도해주세요.'));
+          const SnackBar(content: Text('해석에 실패했습니다. 다시 시도해주세요.')));
       }
     }
   }
@@ -378,7 +378,7 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
     HapticUtils.lightImpact();
     // TODO: 공유 기능 구현
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다'));
+      const SnackBar(content: Text('공유 기능은 준비 중입니다')));
   }
 
   void _showInsufficientTokensModal() {

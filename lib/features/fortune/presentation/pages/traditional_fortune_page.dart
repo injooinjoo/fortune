@@ -99,8 +99,8 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
         children: [
           // Type Selector
           Text(
-            '운세 유형',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            '운세 유형',),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Column(
@@ -113,14 +113,14 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                       _selectedType = type;
                     });
                   },
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: _selectedType == type 
-                          ? AppColors.primary.withValues(alpha: 0.1)
+                          ? AppColors.primary.withOpacity(0.1)
                           : AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12))),
                       border: Border.all(
                         color: _selectedType == type 
                             ? AppColors.primary
@@ -157,8 +157,8 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
           // Birth Time (for Saju)
           if (_requiresBirthTime(), ...[
             Text(
-              '출생 시간',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              '출생 시간',),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             InkWell(
@@ -173,7 +173,7 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(12)),
@@ -203,8 +203,8 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                   }),
                 const SizedBox(width: 8),
                 Text(
-                  '음력 생년월일',
-                  style: Theme.of(context).textTheme.bodyMedium)]),
+                  '음력 생년월일',),
+                  style: Theme.of(context).textTheme.bodyMedium)])),
             const SizedBox(height: 24)],
 
           // Generate Button
@@ -217,7 +217,7 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12))),
               child: const Text(
-                '운세 보기',
+                '운세 보기',),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold))))]));
@@ -248,7 +248,7 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
       margin: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Saju Chart (if available);
+          // Saju Chart (if available)
           if (_sajuData != null && _requiresBirthTime(), ...[
             SajuChartWidget(sajuData: _sajuData!),
             const SizedBox(height: 24)],
@@ -261,11 +261,11 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1)]),
-              borderRadius: BorderRadius.circular(16),
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.secondary.withOpacity(0.1)]),
+              borderRadius: BorderRadius.circular(16))),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 width: 1)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,15 +279,15 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        '${_selectedType.label} 결과',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        '${_selectedType.label} 결과',),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith()
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary)))]),
                 const SizedBox(height: 20),
                 Text(
                   fortune.content,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.6)),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith()
+                    height: 1.6),
                 if (fortune.advice != null) ...[
                   const SizedBox(height: 20),
                   Container(
@@ -306,14 +306,14 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                               size: 20),
                             const SizedBox(width: 8),
                             Text(
-                              '조언',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              '조언',),
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith()
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.secondary))]),
                         const SizedBox(height: 8),
                         Text(
                           fortune.advice!,
-                          style: Theme.of(context).textTheme.bodyMedium)]))]])).animate()
+                          style: Theme.of(context).textTheme.bodyMedium)]))]])).animate())
             .fadeIn(duration: 500.ms)
             .slideY(begin: 0.2, end: 0)]));
   }

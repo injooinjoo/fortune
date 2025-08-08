@@ -51,44 +51,44 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn);
+      curve: Curves.easeIn));
     
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack);
+      curve: Curves.easeOutBack));
     
     _typingAnimation = IntTween(
       begin: 0,
       end: widget.interpretation.length).animate(CurvedAnimation(
       parent: _typingController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _typingAnimation.addListener(() {
       setState(() {
         _displayedText = widget.interpretation.substring(0, _typingAnimation.value);
-});
-});
+      });
+    });
     
     _typingController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
           _typingComplete = true;
-});
-}
+        });
+      }
     });
     
     if (widget.isCurrentCard) {
       _animationController.forward().then((_) {
         _typingController.forward();
-});
-} else {
+      });
+    } else {
       _animationController.value = 1.0;
       _typingController.value = 1.0;
       _typingComplete = true;
       _displayedText = widget.interpretation;
-}
+    }
   }
 
   @override
@@ -96,7 +96,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
     _animationController.dispose();
     _typingController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +111,9 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
           onTap: () {
             setState(() {
               _isExpanded = !_isExpanded;
-});
+            });
             widget.onTap?.call();
-},
+          },
           child: Container(
             margin: EdgeInsets.only(
               left: widget.isCurrentCard ? 0 : 40,
@@ -126,25 +126,25 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                   gradient: LinearGradient(
                     colors: widget.isCurrentCard
                         ? [
-                            Colors.purple.withValues(alpha: 0.3),
-                            Colors.indigo.withValues(alpha: 0.3)]
+                            Colors.purple.withOpacity(0.3),
+                            Colors.indigo.withOpacity(0.3)]
                         : [
-                            Colors.grey.withValues(alpha: 0.1),
-                            Colors.grey.withValues(alpha: 0.05)],
+                            Colors.grey.withOpacity(0.1),
+                            Colors.grey.withOpacity(0.05)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight),
                   borderRadius: AppDimensions.borderRadiusLarge,
                   border: Border.all(
                     color: widget.isCurrentCard
-                        ? Colors.purple.withValues(alpha: 0.4)
-                        : Colors.white.withValues(alpha: 0.1),
+                        ? Colors.purple.withOpacity(0.4)
+                        : Colors.white.withOpacity(0.1),
                     width: 1),
                   blur: 10,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Tarot reader avatar and name
-                      if (widget.isCurrentCard), Row(
+                      if (widget.isCurrentCard) Row(
                           children: [
                             Container(
                               width: 32,
@@ -153,16 +153,16 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.purple.withValues(alpha: 0.6),
-                                    Colors.indigo.withValues(alpha: 0.6)]),
+                                    Colors.purple.withOpacity(0.6),
+                                    Colors.indigo.withOpacity(0.6)])),
                               child: const Icon(
                                 Icons.auto_awesome,
                                 color: Colors.white,
-                                size: 18),
+                                size: 18)),
                             const SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '타로 마스터',
-                              style: Theme.of(context).textTheme.bodyMedium]),
+                              style: Theme.of(context).textTheme.bodyMedium)]),
                       if (widget.isCurrentCard) const SizedBox(height: AppSpacing.spacing3),
                       
                       // Interpretation text with typing effect
@@ -173,7 +173,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                             Expanded(
                               child: Text(
                                 _displayedText,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.bodyMedium)),
                             // Typing cursor
                             AnimatedBuilder(
                               animation: _typingController,
@@ -181,71 +181,90 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                                 return Container(
                                   width: 2,
                                   height: AppSpacing.spacing4 * 1.125,
-                                  color: Colors.white.withValues(
-                                    alpha: (math.sin(_typingController.value * math.pi * 4) + 1) / 2),;
-})])] else ...[
+                                  color: Colors.white.withOpacity((math.sin(_typingController.value * math.pi * 4) + 1) / 2));
+                              },
+                            ),
+                          ]),
+                      ] else ...[
                         ...lines.asMap().entries.map((entry) {
                           final index = entry.key;
                           final line = entry.value;
                           
                           if (!_isExpanded && index >= 2) {
                             return const SizedBox.shrink();
-}
+                          }
                           
                           return Padding(
                             padding: EdgeInsets.only(
                               bottom: index < lines.length - 1 ? 12 : 0),
-                            child: _buildInterpretationLine(line);
-}).toList()],
+                            child: _buildInterpretationLine(line));
+                        }).toList(),
+                      ],
                       
                       // Show more/less button
-                      if (lines.length > 2), Padding(
+                      if (lines.length > 2) Padding(
                           padding: const EdgeInsets.only(top: AppSpacing.spacing2),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 _isExpanded ? '접기' : '더 보기',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                  fontWeight: FontWeight.w500),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w500)),
                               Icon(
                                 _isExpanded
                                     ? Icons.keyboard_arrow_up
                                     : Icons.keyboard_arrow_down,
                                 size: 16,
-                                color: Colors.purple.withValues(alpha: 0.5)])]),
+                                color: Colors.purple.withOpacity(0.5)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 
-                // Speech bubble tail (only for current card,
-                if (widget.isCurrentCard), Positioned(
+                // Speech bubble tail (only for current card)
+                if (widget.isCurrentCard) Positioned(
                     top: 40,
                     left: -10,
                     child: CustomPaint(
                       painter: _BubbleTailPainter(
-                        color: Colors.purple.withValues(alpha: 0.2),
-                      size: const Size(20, 20))])),;
+                        color: Colors.purple.withOpacity(0.2)),
+                      size: const Size(20, 20),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
 }
 
   Widget _buildInterpretationLine(String line) {
     // Check if this line contains special formatting
-    if (line.startsWith('**') && line.endsWith('**'), {
+    if (line.startsWith('**') && line.endsWith('**')) {
       // Bold emphasis
       return Text(
-        line.replaceAll('**': ''$1',
-        style: Theme.of(context).textTheme.bodyMedium);
-} else if (line.startsWith('- '), {
+        line.replaceAll('**', ''),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold));
+    } else if (line.startsWith('- ')) {
       // Bullet point
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '• ',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium),
           Expanded(
             child: Text(
               line.substring(2),
-              style: Theme.of(context).textTheme.bodyMedium]
+              style: Theme.of(context).textTheme.bodyMedium)),
+        ],
       );
-} else if (line.startsWith('💡') || line.startsWith('⚠️') || line.startsWith('✨'), {
+    } else if (line.startsWith('💡') || line.startsWith('⚠️') || line.startsWith('✨')) {
       // Special callout
       final emoji = line.substring(0, 2);
       final text = line.substring(2).trim();
@@ -253,41 +272,42 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
       return Container(
         padding: AppSpacing.paddingAll12,
         decoration: BoxDecoration(
-          color: _getCalloutColor(emoji).withValues(alpha: 0.1),
+          color: _getCalloutColor(emoji).withOpacity(0.1),
           borderRadius: AppDimensions.borderRadiusSmall,
           border: Border.all(
-            color: _getCalloutColor(emoji).withValues(alpha: 0.3),
-            width: 1),
+            color: _getCalloutColor(emoji).withOpacity(0.3),
+            width: 1)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               emoji,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(width: AppSpacing.spacing2),
             Expanded(
               child: Text(
                 text,
-                style: Theme.of(context).textTheme.bodyMedium]),;
-} else {
+                style: Theme.of(context).textTheme.bodyMedium)),
+          ],
+        ),
+      );
+    } else {
       // Regular text
       return Text(
         line,
-        style: Theme.of(context).textTheme.bodyMedium
-      );
-}
+        style: Theme.of(context).textTheme.bodyMedium);
+    }
   }
 
   Color _getCalloutColor(String emoji) {
     switch (emoji) {
       case '💡': return Colors.amber;
-      case '⚠️':
-        return Colors.orange;
-      case , '✨': return Colors.purple;
-      default:
-        return Colors.blue;}
+      case '⚠️': return Colors.orange;
+      case '✨': return Colors.purple;
+      default: return Colors.blue;
+    }
+  }
 }
-  }}
 
 class _BubbleTailPainter extends CustomPainter {
   final Color color;
@@ -298,40 +318,33 @@ class _BubbleTailPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-     
-   
-    ..style =,
-      PaintingStyle.fill;
+      ..style = PaintingStyle.fill;
 
-    final path = Path(,
-      ..moveTo(size.width, 0,
-      ..lineTo(size.width, size.height * 0.8,
+    final path = Path()
+      ..moveTo(size.width, 0)
+      ..lineTo(size.width, size.height * 0.8)
       ..quadraticBezierTo(
         size.width * 0.5,
         size.height * 0.9,
         0,
-        size.height * 0.5,
-      ,
+        size.height * 0.5)
       ..quadraticBezierTo(
         size.width * 0.5,
         size.height * 0.3,
         size.width,
-        0,
-      ,
+        0)
       ..close();
 
     canvas.drawPath(path, paint);
 
     // Border
     final borderPaint = Paint()
-      ..color = color.withValues(alpha: 0.5)
+      ..color = color.withOpacity(0.5)
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 1;
+      ..strokeWidth = 1;
 
     canvas.drawPath(path, borderPaint);
-}
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;

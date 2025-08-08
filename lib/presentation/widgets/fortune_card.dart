@@ -71,7 +71,7 @@ class FortuneCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: (adjustedGradient?.first ?? theme.colorScheme.primary)
-                  .withValues(alpha: isDarkMode ? 0.3 : 0.15),
+                  .withOpacity(isDarkMode ? 0.3 : 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4))]),
         child: Material(
@@ -94,7 +94,7 @@ class FortuneCard extends StatelessWidget {
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.2),
+                        color: AppColors.textPrimaryDark.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge)),
                       child: Icon(
                         icon,
@@ -120,9 +120,9 @@ class FortuneCard extends StatelessWidget {
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: adjustedGradient != null 
                           ? (isDarkMode 
-                              ? AppColors.textPrimaryDark.withValues(alpha: 0.9) 
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.6))
-                          : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ? AppColors.textPrimaryDark.withOpacity(0.9) 
+                              : theme.colorScheme.onSurface.withOpacity(0.6))
+                          : theme.colorScheme.onSurface.withOpacity(0.6),
                       fontWeight: FontWeight.w400),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -134,7 +134,7 @@ class FortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3,
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withValues(alpha: 0.2),
+                        color: AppColors.textPrimaryDark.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                       child: Text(
                         badge!,

@@ -19,7 +19,7 @@ class AdminApiService {
         '/api/admin/token-stats',
         queryParameters: {
           if (startDate != null) 'startDate': null,
-          if (endDate != null) 'endDate': null});
+          if (endDate != null) 'endDate': null})
 
       return AdminStatsModel.fromJson(response.data);
     } on DioException catch (e) {

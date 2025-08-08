@@ -62,8 +62,8 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               .shimmer(duration: 2000.ms, delay: 600.ms),
           const SizedBox(height: 24),
           Text(
-            'AI가 분석하는 당신의 관상',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            'AI가 분석하는 당신의 관상',),
+            style: theme.textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold),
             textAlign: TextAlign.center)
               .animate()
@@ -71,8 +71,8 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               .slideY(begin: 0.2, end: 0),
           const SizedBox(height: 12),
           Text(
-            '얼굴에 담긴 운명과 성격을 알아보세요',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            '얼굴에 담긴 운명과 성격을 알아보세요',),
+            style: theme.textTheme.bodyLarge?.copyWith()
               color: theme.colorScheme.onSurface.withOpacity(0.7)),
             textAlign: TextAlign.center)
               .animate()
@@ -80,10 +80,10 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               .slideY(begin: 0.2, end: 0),
           const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20))),
               border: Border.all(
                 color: theme.colorScheme.primary.withOpacity(0.3))),
             child: Row(
@@ -95,8 +95,8 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 6),
                 Text(
-                  'AI 정확도 95%',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  'AI 정확도 95%',),
+                  style: theme.textTheme.bodySmall?.copyWith()
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold))]))
               .animate()
@@ -140,7 +140,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: feature['color'] as Color? ?? theme.colorScheme.primary.withValues(alpha: 0.1),
+                    color: feature['color'] as Color? ?? theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: Icon(
                     feature['icon'] as IconData,
@@ -153,13 +153,13 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                     children: [
                       Text(
                         feature['title'] as String,
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith()
                           fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
                       Text(
                         feature['description'] as String,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))
+                        style: theme.textTheme.bodySmall?.copyWith()
+                          color: theme.colorScheme.onSurface.withOpacity(0.7)))
                     ]
                   )
                 )
@@ -189,15 +189,15 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '개인정보 보호',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  '개인정보 보호',),
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(
-                  '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.',),
+                  style: theme.textTheme.bodySmall?.copyWith()
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    height: 1.4))]))]))
+                    height: 1.4)]))]))
         .animate()
         .fadeIn(duration: 600.ms, delay: 400.ms)
         .slideY(begin: 0.2, end: 0);
@@ -228,7 +228,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text(
-              '관상 분석 시작하기',
+              '관상 분석 시작하기',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),

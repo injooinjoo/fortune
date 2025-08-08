@@ -263,7 +263,8 @@ ${_formatMajorFortunes(majorFortunes)}
       '화토': '안정과 결실',
       '화금': '정제와 완성',
       '화수': '조화와 균형',
-      '화목': '지원과 성장'};
+      '화목': '지원과 성장'
+    };
 
     return interactions['$element1$element2'] ??
         interactions['$element2$element1'] ??
@@ -317,7 +318,8 @@ ${_formatMajorFortunes(majorFortunes)}
         '목': ['식신', '상관'],
         '화': ['편재', '정재'],
         '토': ['편관', '정관'],
-        '금': ['편인', '정인']}};
+        '금': ['편인', '정인']}
+    };
 
     final relation = relationships[dayStem]?[stemElement];
     if (relation != null) {
@@ -461,7 +463,7 @@ ${_formatMajorFortunes(majorFortunes)}
 
   Widget _buildFourPillarsDisplay() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final pillars = [
       {'title': '년주', 'data': fortune.metadata?['yearPillar']},
@@ -474,8 +476,8 @@ ${_formatMajorFortunes(majorFortunes)}
       child: Column(
         children: [
           Text(
-            '사주팔자',
-            style: Theme.of(context).textTheme.headlineSmall),
+            '사주팔자',),
+            style: Theme.of(context).textTheme.headlineSmall)),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -483,7 +485,7 @@ ${_formatMajorFortunes(majorFortunes)}
               final index = entry.key;
               final pillar = entry.value;
               final data = pillar['data'] as Map<String, dynamic>?;
-              if (data == null) return const SizedBox.shrink();
+              if (data == null) return const SizedBox.shrink()
               return AnimatedBuilder(
                 animation: _pillarAnimations[index],
                 builder: (context, child) {
@@ -505,7 +507,7 @@ ${_formatMajorFortunes(majorFortunes)}
     return GlassContainer(
       width: 75,
       padding: const EdgeInsets.all(12),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12))),
       blur: 10,
       borderColor: isDay
           ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
@@ -547,16 +549,16 @@ ${_formatMajorFortunes(majorFortunes)}
           Text(
             branch['animal'],
             style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10))]));
+                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10))]));)
   }
 
   Widget _buildElementBalanceChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final elementBalance =
         fortune.metadata?['elementBalance'] as Map<String, int>?;
-    if (elementBalance == null) return const SizedBox.shrink();
+    if (elementBalance == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -572,8 +574,8 @@ ${_formatMajorFortunes(majorFortunes)}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '오행 균형',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '오행 균형',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -613,7 +615,7 @@ ${_formatMajorFortunes(majorFortunes)}
 
   Widget _buildTenGodsDistribution() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final tenGodsDistribution =
         fortune.metadata?['tenGodsDistribution'] as Map<String, int>?;
@@ -635,8 +637,8 @@ ${_formatMajorFortunes(majorFortunes)}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '십신 분포',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '십신 분포',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             AnimatedBuilder(
               animation: _tenGodsController,
@@ -671,7 +673,7 @@ ${_formatMajorFortunes(majorFortunes)}
                               children: [
                                 Text(
                                   info['meaning'],
-                                  style: Theme.of(context).textTheme.bodySmall),
+                                  style: Theme.of(context).textTheme.bodySmall)),
                                 const SizedBox(height: 4),
                                 LinearProgressIndicator(
                                   value:
@@ -683,7 +685,7 @@ ${_formatMajorFortunes(majorFortunes)}
                                   minHeight: 6)])),
                           const SizedBox(width: 8),
                           Text(
-                            '$count',
+                            '$count',),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -694,11 +696,11 @@ ${_formatMajorFortunes(majorFortunes)}
 
   Widget _buildMajorFortunesTimeline() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final majorFortunes =
         fortune.metadata?['majorFortunes'] as List<Map<String, dynamic>>?;
-    if (majorFortunes == null) return const SizedBox.shrink();
+    if (majorFortunes == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -714,8 +716,8 @@ ${_formatMajorFortunes(majorFortunes)}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '대운 흐름',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '대운 흐름',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...majorFortunes.take(4).map((fortune) {
               final isCurrent = fortune['isCurrent'] as bool;
@@ -730,7 +732,7 @@ ${_formatMajorFortunes(majorFortunes)}
                           .primary
                           .withOpacity(0.1)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
                   border: Border.all(
                     color: isCurrent
                         ? Theme.of(context)
@@ -765,7 +767,7 @@ ${_formatMajorFortunes(majorFortunes)}
                               color: Theme.of(context).colorScheme.primary,
                               borderRadius: BorderRadius.circular(10)),
                             child: Text(
-                              '현재',
+                              '현재',),
                               style: TextStyle(
                                 color:
                                     Theme.of(context).colorScheme.onPrimary,
@@ -788,8 +790,9 @@ ${_formatMajorFortunes(majorFortunes)}
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7))])]);
+                                  .withOpacity(0.7)))]));
             }).toList()])));
+  }
 
   Widget _buildSajuInterpretation() {
     return GlassCard(
@@ -804,8 +807,8 @@ ${_formatMajorFortunes(majorFortunes)}
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '사주 활용법',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                '사주 활용법',),
+                style: Theme.of(context).textTheme.headlineSmall)])),
           const SizedBox(height: 16),
           ...[
             '일간의 오행을 강화하는 색상과 방향을 활용하세요',
@@ -826,7 +829,7 @@ ${_formatMajorFortunes(majorFortunes)}
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
+                      style: Theme.of(context).textTheme.bodyMedium))]));)
           }).toList()]));
   }
 }

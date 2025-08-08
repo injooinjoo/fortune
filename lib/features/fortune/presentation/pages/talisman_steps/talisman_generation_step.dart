@@ -176,8 +176,8 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              state.selectedType!.gradientColors[0].withValues(alpha: 0.3),
-                              state.selectedType!.gradientColors[1].withValues(alpha: 0.1),
+                              state.selectedType!.gradientColors[0].withOpacity(0.3),
+                              state.selectedType!.gradientColors[1].withOpacity(0.1),
                               Colors.transparent],
                             stops: const [0.3, 0.7, 1.0]),
                         child: Stack(
@@ -196,7 +196,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: state.selectedType!.gradientColors[0]
-                                            .withValues(alpha: 0.5),
+                                            .withOpacity(0.5),
                                         width: 2),
                                     child: CustomPaint(
                                       painter: _MagicCirclePainter(
@@ -217,14 +217,14 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                 boxShadow: [
                                   BoxShadow(
                                     color: state.selectedType!.gradientColors[0]
-                                        .withValues(alpha: 0.5),
+                                        .withOpacity(0.5),
                                     blurRadius: 20,
                                     spreadRadius: 5)]),
                               child: Icon(
                                 state.selectedType!.icon,
                                 color: Colors.white,
                                 size: 50),.animate(onPlay: (controller) => controller.repeat(),
-                              .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.3)
+                              .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.3)
                               .scale(
                                 begin: const Offset(0.9, 0.9),
                                 end: const Offset(1.1, 1.1),
@@ -269,7 +269,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                           color: AppColors.textSecondary)])),
               
               // Bottom actions
-              if (!_isGenerating), OutlinedButton(
+              if (!_isGenerating) OutlinedButton(
                   onPressed: widget.onBack,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -292,7 +292,7 @@ class _MagicCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withValues(alpha: 0.5)
+      ..color = color.withOpacity(0.5)
       ..style = PaintingStyle.stroke
      
    

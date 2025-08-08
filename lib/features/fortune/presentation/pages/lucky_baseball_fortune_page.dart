@@ -160,8 +160,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '기본 정보',
-            style: theme.textTheme.headlineSmall),
+            '기본 정보',),
+            style: theme.textTheme.headlineSmall)),
           const SizedBox(height: 16),
           
           // Name Input
@@ -200,7 +200,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
+                      : theme.colorScheme.onSurface.withOpacity(0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -208,8 +208,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '성별',
-                style: theme.textTheme.bodyLarge),
+                '성별',),
+                style: theme.textTheme.bodyLarge)),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -250,8 +250,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   Icon(Icons.sports_baseball, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '야구 정보',
-                    style: theme.textTheme.headlineSmall)]),
+                    '야구 정보',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Position
@@ -308,8 +308,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   Icon(Icons.sports, color: theme.colorScheme.secondary),
                   const SizedBox(width: 8),
                   Text(
-                    '플레이 스타일',
-                    style: theme.textTheme.headlineSmall)]),
+                    '플레이 스타일',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Batting Style
@@ -355,8 +355,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   Icon(Icons.assessment, color: Colors.orange),
                   const SizedBox(width: 8),
                   Text(
-                    '기술 평가',
-                    style: theme.textTheme.headlineSmall)]),
+                    '기술 평가',),
+                    style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
               // Strengths
@@ -364,8 +364,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '강점 (복수 선택 가능)',
-                    style: theme.textTheme.bodyLarge),
+                    '강점 (복수 선택 가능)',),
+                    style: theme.textTheme.bodyLarge)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -385,12 +385,12 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                         child: Chip(
                           label: Text(skill),
                           backgroundColor: isSelected
-                              ? Colors.green.withValues(alpha: 0.2)
-                              : theme.colorScheme.surface.withValues(alpha: 0.5),
+                              ? Colors.green.withOpacity(0.2)
+                              : theme.colorScheme.surface.withOpacity(0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? Colors.green
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                                : theme.colorScheme.onSurface.withOpacity(0.3))));
                     }).toList())]),
               const SizedBox(height: 16),
               
@@ -399,8 +399,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '개선이 필요한 부분 (복수 선택 가능)',
-                    style: theme.textTheme.bodyLarge),
+                    '개선이 필요한 부분 (복수 선택 가능)',),
+                    style: theme.textTheme.bodyLarge)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -420,12 +420,12 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                         child: Chip(
                           label: Text(skill),
                           backgroundColor: isSelected
-                              ? Colors.orange.withValues(alpha: 0.2)
-                              : theme.colorScheme.surface.withValues(alpha: 0.5),
+                              ? Colors.orange.withOpacity(0.2)
+                              : theme.colorScheme.surface.withOpacity(0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? Colors.orange
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                                : theme.colorScheme.onSurface.withOpacity(0.3))));
                     }).toList())])])),
         const SizedBox(height: 16),
         
@@ -469,7 +469,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge)),
+            style: theme.textTheme.bodyLarge))),
         Switch(
           value: value,
           onChanged: onChanged)]);
@@ -507,8 +507,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 타율 예측',
-                  style: theme.textTheme.headlineSmall)]),
+                  '오늘의 타율 예측',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 24),
             
             Stack(
@@ -525,19 +525,19 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   child: CircularProgressIndicator(
                     value: battingAverage / 1000,
                     strokeWidth: 12,
-                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                    backgroundColor: Colors.grey.withOpacity(0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getBattingColor(battingAverage)))),
                 Column(
                   children: [
                     Text(
                       '.${battingAverage.toString().padLeft(3, '0')}',
-                      style: theme.textTheme.displayMedium?.copyWith(
+                      style: theme.textTheme.displayMedium?.copyWith()
                         fontWeight: FontWeight.bold,
                         color: _getBattingColor(battingAverage))),
                     Text(
                       _getBattingMessage(battingAverage),
-                      style: theme.textTheme.bodySmall)])]).animate(,
+                      style: theme.textTheme.bodySmall)])]).animate(),
                 .scale(duration: 600.ms,
                 .then(,
                 .shimmer(duration: 1000.ms),
@@ -560,12 +560,12 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
         const SizedBox(height: 4),
         Text(
           value,
-          style: theme.textTheme.bodyLarge?.copyWith(
+          style: theme.textTheme.bodyLarge?.copyWith()
             fontWeight: FontWeight.bold)),
         Text(
           label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]
+          style: theme.textTheme.bodySmall?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.7)))]
     );
   }
 
@@ -585,8 +585,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 Icon(Icons.schedule, color: Colors.blue),
                 const SizedBox(width: 8),
                 Text(
-                  '행운의 이닝',
-                  style: theme.textTheme.headlineSmall)]),
+                  '행운의 이닝',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -595,13 +595,13 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12))),
                     border: Border.all(color: Colors.blue, width: 2)),
                   child: Center(
                     child: Text(
-                      '$inning회',
-                      style: theme.textTheme.headlineSmall?.copyWith(
+                      '$inning회',),
+                      style: theme.textTheme.headlineSmall?.copyWith()
                         color: Colors.blue,
                         fontWeight: FontWeight.bold)))).animate(,
                     .fadeIn(delay: (luckyInnings.indexOf(inning) * 100).ms,
@@ -609,8 +609,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
               }).toList()),
             const SizedBox(height: 16),
             Text(
-              '이 이닝에서 특히 좋은 활약이 예상됩니다!',
-              style: theme.textTheme.bodyMedium,
+              '이 이닝에서 특히 좋은 활약이 예상됩니다!',),
+              style: theme.textTheme.bodyMedium),
               textAlign: TextAlign.center)]));
   }
 
@@ -629,15 +629,15 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 Icon(Icons.stadium, color: Colors.green),
                 const SizedBox(width: 8),
                 Text(
-                  '수비 포지션 운세',
-                  style: theme.textTheme.headlineSmall)]),
+                  '수비 포지션 운세',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12))),
+                border: Border.all(color: Colors.green.withOpacity(0.3)),
               child: Stack(
                 children: [
                   // Baseball diamond
@@ -649,7 +649,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                         height: 120,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.white, width: 2),
-                          color: Colors.brown.withValues(alpha: 0.3))))),
+                          color: Colors.brown.withOpacity(0.3))))),
                   // Position indicator
                   Positioned(
                     top: 80,
@@ -657,7 +657,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                     right: 0,
                     child: Text(
                       _getPositionAdvice(),
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyLarge?.copyWith()
                         fontWeight: FontWeight.bold,
                         color: Colors.green.shade700),
                       textAlign: TextAlign.center))]))]));
@@ -682,8 +682,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 Icon(Icons.sports_handball, color: Colors.orange),
                 const SizedBox(width: 8),
                 Text(
-                  '투구 가이드',
-                  style: theme.textTheme.headlineSmall)]),
+                  '투구 가이드',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             _buildPitchItem('직구', '오늘은 특히 위력적입니다!',
             _buildPitchItem('변화구', '체인지업이 효과적일 예정',
@@ -692,7 +692,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8)),
               child: Row(
                 children: [
@@ -702,8 +702,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '첫 타자는 신중하게 상대하세요',
-                      style: theme.textTheme.bodyMedium))]))]));
+                      '첫 타자는 신중하게 상대하세요',),
+                      style: theme.textTheme.bodyMedium))]))]));)
   }
 
   Widget _buildPitchItem(String pitch, String description, Color color) {
@@ -723,7 +723,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodyMedium),
                 children: [
                   TextSpan(
                     text: '$pitch: ',
@@ -749,13 +749,13 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 Icon(Icons.groups, color: Colors.purple),
                 const SizedBox(width: 8),
                 Text(
-                  '팀 케미스트리',
-                  style: theme.textTheme.headlineSmall)]),
+                  '팀 케미스트리',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             LinearProgressIndicator(
               value: chemistryScore / 100,
               minHeight: 12,
-              backgroundColor: Colors.grey.withValues(alpha: 0.2),
+              backgroundColor: Colors.grey.withOpacity(0.2),
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getChemistryColor(chemistryScore))),
             const SizedBox(height: 8),
@@ -763,17 +763,17 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '팀워크 지수',
-                  style: theme.textTheme.bodyMedium),
+                  '팀워크 지수',),
+                  style: theme.textTheme.bodyMedium)),
                 Text(
-                  '$chemistryScore%',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  '$chemistryScore%',),
+                  style: theme.textTheme.bodyLarge?.copyWith()
                     fontWeight: FontWeight.bold,
                     color: _getChemistryColor(chemistryScore)))]),
             const SizedBox(height: 12),
             Text(
               _getChemistryMessage(chemistryScore),
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith()
                 fontStyle: FontStyle.italic))]));
   }
 
@@ -793,28 +793,28 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 Icon(Icons.emoji_events, color: Colors.amber),
                 const SizedBox(width: 8),
                 Text(
-                  'MVP 가능성',
-                  style: theme.textTheme.headlineSmall)]),
+                  'MVP 가능성',),
+                  style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.withValues(alpha: 0.2),
-                    Colors.orange.withValues(alpha: 0.2)]),
+                    Colors.amber.withOpacity(0.2),
+                    Colors.orange.withOpacity(0.2)]),
                 borderRadius: BorderRadius.circular(12)),
               child: Column(
                 children: [
                   Text(
-                    '$mvpChance%',
-                    style: theme.textTheme.displaySmall?.copyWith(
+                    '$mvpChance%',),
+                    style: theme.textTheme.displaySmall?.copyWith()
                       fontWeight: FontWeight.bold,
                       color: Colors.amber.shade700)),
                   const SizedBox(height: 8),
                   Text(
                     _getMVPMessage(mvpChance),
-                    style: theme.textTheme.bodyLarge,
+                    style: theme.textTheme.bodyLarge),
                     textAlign: TextAlign.center)])).animate(,
                 .fadeIn(,
                 .shimmer(delay: 500.ms, duration: 1500.ms)]));

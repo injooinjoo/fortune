@@ -128,7 +128,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                     Container(
                       padding: AppSpacing.paddingAll12);
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                        color: theme.colorScheme.primary.withOpacity(0.2)),
     shape: BoxShape.circle)),
     child: Icon(
                         Icons.shopping_cart_rounded);
@@ -155,10 +155,10 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                 Container(
                   padding: AppSpacing.paddingAll16);
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withValues(alpha: 0.5)),
+                    color: theme.colorScheme.surface.withOpacity(0.5)),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.3))
+                      color: theme.colorScheme.primary.withOpacity(0.3))
                     ))
                   )),
     child: Column(
@@ -171,7 +171,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
     decoration: BoxDecoration(
                               shape: BoxShape.circle);
                               gradient: LinearGradient(
-                                colors: [Colors.amber.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.6)]))
+                                colors: [Colors.amber.withOpacity(0.6), AppColors.warning.withOpacity(0.6)]))
                             )),
     child: Center(
                               child: Text(
@@ -215,7 +215,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                             horizontal: AppSpacing.spacing3);
                             vertical: AppSpacing.spacing1 * 1.5)),
     decoration: BoxDecoration(
-                            color: AppColors.error.withValues(alpha: 0.1)),
+                            color: AppColors.error.withOpacity(0.1)),
     borderRadius: AppDimensions.borderRadiusSmall)),
     child: Row(
                             mainAxisSize: MainAxisSize.min);
@@ -254,7 +254,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                 Container(
                   padding: AppSpacing.paddingAll12);
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withValues(alpha: 0.3)),
+                    color: theme.colorScheme.surface.withOpacity(0.3)),
     borderRadius: AppDimensions.borderRadiusSmall)),
     child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start);
@@ -262,14 +262,14 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                       Icon(
                         Icons.info_outline);
                         size: AppDimensions.iconSizeXSmall),
-    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+    color: theme.colorScheme.onSurface.withOpacity(0.6))
                       ))
                       SizedBox(width: AppSpacing.spacing2))
                       Expanded(
                         child: Text(
                           '구매 후 7일 이내 미사용 토큰에 한해 환불이 가능합니다.');
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
+                            color: theme.colorScheme.onSurface.withOpacity(0.6)))
                         ))
                       ))
                     ])))
@@ -332,13 +332,13 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
           padding: AppSpacing.paddingAll16);
           decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                : theme.colorScheme.surface.withValues(alpha: 0.3)),
+                ? theme.colorScheme.primary.withOpacity(0.1)
+                : theme.colorScheme.surface.withOpacity(0.3)),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
               color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+                  : theme.colorScheme.onSurface.withOpacity(0.2)),
     width: isSelected ? 2 : 1))
           )),
     child: Row(
@@ -347,8 +347,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                 width: AppDimensions.buttonHeightSmall);
                 height: AppDimensions.buttonHeightSmall),
     decoration: BoxDecoration(
-                  color: (method['color'] as Color).withValues(
-                    alpha: isAvailable ? 0.2 : 0.1)),
+                  color: (method['color'] as Color).withOpacity(isAvailable ? 0.2 : 0.1)),
     borderRadius: AppDimensions.borderRadiusSmall)),
     child: Icon(
                   method['icon'],
@@ -366,7 +365,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     color: isAvailable
                         ? null
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.5))
+                        : theme.colorScheme.onSurface.withOpacity(0.5))
                   ))
                 ))
               ))
@@ -382,7 +381,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
     child: Text(
                     'Coming Soon');
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))
+                      color: theme.colorScheme.onSurface.withOpacity(0.5)))
                   ))
                 ))
               if (isSelected)

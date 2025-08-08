@@ -233,12 +233,12 @@ class AnalyticsTracker {
     
     // A/B Test Manager에 추가 속성 설정
     final properties = <String, String>{};
-    if (isPremium != null) properties['is_premium'] = isPremium.toString();
+    if (isPremium != null) properties['is_premium'] = isPremium.toString()
     if (userType != null) properties['user_type'] = userType;
     if (gender != null) properties['gender'] = gender;
     if (birthYear != null) properties['birth_year'] = birthYear;
     if (mbti != null) properties['mbti'] = mbti;
-    if (customProperties != null) properties.addAll(customProperties);
+    if (customProperties != null) properties.addAll(customProperties)
     
     await _abTestManager.setUserProperties(properties);
   }

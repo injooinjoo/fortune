@@ -32,7 +32,7 @@ class TokenBalance extends ConsumerWidget {
       loading: () => _buildSkeleton(context),
       error: (_, __) => const SizedBox.shrink(),
       data: (user) {
-        if (user == null) return const SizedBox.shrink();
+        if (user == null) return const SizedBox.shrink()
 
         return tokenBalanceAsync.when(
           loading: () => _buildSkeleton(context),

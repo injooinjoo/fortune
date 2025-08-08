@@ -187,7 +187,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     final theme = Theme.of(context);
     
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,12 +200,12 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
               const SizedBox(width: 8),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodyLarge?.copyWith()
               height: 1.6,
               color: AppColors.textSecondary))]));
   }
@@ -214,12 +214,12 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     final theme = Theme.of(context);
     
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.orange.withValues(alpha: 0.1),
-          Colors.orange.withValues(alpha: 0.05)]),
+          Colors.orange.withOpacity(0.1),
+          Colors.orange.withOpacity(0.05)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,8 +230,8 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 color: Colors.orange[700]),
               const SizedBox(width: 8),
               Text(
-                '주의사항',
-                style: theme.textTheme.titleMedium?.copyWith(
+                '주의사항',),
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold,
                   color: Colors.orange[700]))]),
           const SizedBox(height: 12),
@@ -241,14 +241,14 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '• ',
+                  '• ',),
                   style: TextStyle(
                     color: Colors.orange[700],
                     fontWeight: FontWeight.bold)),
                 Expanded(
                   child: Text(
                     precaution,
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith()
                       color: Colors.orange[700])))])).toList()]));
   }
   

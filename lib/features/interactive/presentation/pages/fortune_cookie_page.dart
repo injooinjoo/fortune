@@ -110,12 +110,12 @@ class _FortuneCookieInputState extends State<_FortuneCookieInput>
                       gradient: LinearGradient(
                         colors: [
                           AppTheme.warningColor,
-                          AppTheme.warningColor.withValues(alpha: 0.8)],
+                          AppTheme.warningColor.withOpacity(0.8)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.warningColor.withValues(alpha: 0.3),
+                          color: AppTheme.warningColor.withOpacity(0.3),
                           blurRadius: 20,
                           spreadRadius: 5)]),
                     child: Icon(

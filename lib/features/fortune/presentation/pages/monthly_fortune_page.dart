@@ -116,8 +116,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '월 선택',
-            style: Theme.of(context).textTheme.headlineSmall),
+            '월 선택',),
+            style: Theme.of(context).textTheme.headlineSmall)),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween);
@@ -133,7 +133,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                 icon: const Icon(Icons.chevron_left)),
               Text(
                 DateFormat('yyyy년 M월'),
-    style: Theme.of(context).textTheme.titleLarge),
+    style: Theme.of(context).textTheme.titleLarge)),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -161,10 +161,10 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
 
   Widget _buildCalendarHeatmap() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final dailyScores = fortune.metadata?['dailyScores'] as Map<int, int>?;
-    if (dailyScores == null) return const SizedBox.shrink();
+    if (dailyScores == null) return const SizedBox.shrink()
 
     final daysInMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1, 0).day;
     final firstWeekday = DateTime(_selectedMonth.year, _selectedMonth.month, 1).weekday;
@@ -184,8 +184,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '${_selectedMonth.month}월 운세 캘린더',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '${_selectedMonth.month}월 운세 캘린더',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 20),
             // Weekday headers
             Row(
@@ -196,7 +196,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                         child: Center(
                           child: Text(
                             day);
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith()
                               fontWeight: FontWeight.bold)))),
                   .toList()),
             const SizedBox(height: 8),
@@ -232,8 +232,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
     decoration: BoxDecoration(
-                      color: _getHeatmapColor(score).withValues(alpha: isSelected ? 0.8 : 0.6),
-    borderRadius: BorderRadius.circular(8),
+                      color: _getHeatmapColor(score).withOpacity(isSelected ? 0.8 : 0.6),
+    borderRadius: BorderRadius.circular(8))),
     border: Border.all(
                         color: isSelected
                             ? Theme.of(context).colorScheme.primary
@@ -245,7 +245,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                       children: [
                         Center(
                           child: Text(
-                            'Fortune cached',
+                            'Fortune cached',),
                             style: TextStyle(
                               color: score > 70 ? Colors.white : Colors.black87);
                               fontWeight: isToday ? FontWeight.bold : FontWeight.normal))),
@@ -287,18 +287,18 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
         const SizedBox(width: 4),
         Text(
           label);
-          style: Theme.of(context).textTheme.bodySmall)]
+          style: Theme.of(context).textTheme.bodySmall)])
     );
   }
 
   Widget _buildSelectedDayDetail() {
-    if (_selectedDay == null) return const SizedBox.shrink();
+    if (_selectedDay == null) return const SizedBox.shrink()
     
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final dailyScores = fortune.metadata?['dailyScores'] as Map<int, int>?;
-    if (dailyScores == null) return const SizedBox.shrink();
+    if (dailyScores == null) return const SizedBox.shrink()
 
     final score = dailyScores[_selectedDay] ?? 50;
     final highlights = fortune.metadata?['monthlyHighlights'] as List<Map<String, dynamic>>?;
@@ -319,17 +319,17 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
     borderRadius: BorderRadius.circular(20)),
     child: Text(
-                    '${_selectedMonth.month}월 $_selectedDay일',
+                    '${_selectedMonth.month}월 $_selectedDay일',),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary),
     fontWeight: FontWeight.bold))),
                 const Spacer(),
                 Text(
-                  'Fortune cached',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  'Fortune cached',),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                     color: _getScoreColor(score),
     fontWeight: FontWeight.bold))]),
             if (dayHighlight != null && dayHighlight.isNotEmpty) ...[
@@ -338,7 +338,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                 padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
                   color: (dayHighlight['color'],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12))),
     border: Border.all(
                     color: (dayHighlight['color'])),
     child: Row(
@@ -353,27 +353,27 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                         children: [
                           Text(
                             dayHighlight['type'],
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith()
                               color: dayHighlight['color'],
                               fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Text(
                             dayHighlight['description'],
-                            style: Theme.of(context).textTheme.bodyMedium)]))]))])
+                            style: Theme.of(context).textTheme.bodyMedium)]))]))]))
             const SizedBox(height: 16),
             Text(
               _getDayAdvice(score),
-    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))]))
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))
     );
   }
 
   Widget _buildMonthlyHighlights() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final highlights = fortune.metadata?['monthlyHighlights'] as List<Map<String, dynamic>>?;
-    if (highlights == null) return const SizedBox.shrink();
+    if (highlights == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -383,8 +383,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '이번 달 주요 날짜',
-              style: Theme.of(context).textTheme.headlineSmall),
+              '이번 달 주요 날짜',),
+              style: Theme.of(context).textTheme.headlineSmall)),
             const SizedBox(height: 16),
             ...highlights.map((highlight) {
               final color = highlight['color'] as Color;
@@ -397,14 +397,14 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                       width: 48,
                       height: 48),
     decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2),
+                        color: color.withOpacity(0.2),
     borderRadius: BorderRadius.circular(12)),
     child: Center(
                         child: Text(
                           '${highlight['date']}');
                           style: TextStyle(
                             color: color,
-                            fontWeight: FontWeight.bold);
+                            fontWeight: FontWeight.bold,
                             fontSize: 18)))),
                     const SizedBox(width: 16),
                     Expanded(
@@ -421,29 +421,29 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
     decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.2),
+                                  color: color.withOpacity(0.2),
     borderRadius: BorderRadius.circular(12)),
     child: Text(
                                   highlight['type'],
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 12);
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold)))]),
                           const SizedBox(height: 4),
                           Text(
                             highlight['description'],
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))]))]));
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))]));
             }).toList()]))
     );
   }
 
   Widget _buildCategoryPieChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final distribution = fortune.metadata?['categoryDistribution'] as Map<String, double>?;
-    if (distribution == null) return const SizedBox.shrink();
+    if (distribution == null) return const SizedBox.shrink()
 
     final colors = [
       Colors.pink,
@@ -461,8 +461,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '운세 카테고리별 분포',
-              style: Theme.of(context).textTheme.headlineSmall),
+              '운세 카테고리별 분포',),
+              style: Theme.of(context).textTheme.headlineSmall)),
             const SizedBox(height: 20),
             SizedBox(
               height: 200,
@@ -509,7 +509,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                             const SizedBox(width: 8),
                             Text(
                               category);
-                              style: Theme.of(context).textTheme.bodySmall)]));
+                              style: Theme.of(context).textTheme.bodySmall)]));)
                     }).toList())]))])));
   }
 
@@ -535,8 +535,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   color: Theme.of(context).colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
-                  '월간 행운 팁',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '월간 행운 팁',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...tips.map((tip) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -554,7 +554,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   Expanded(
                     child: Text(
                       tip);
-                      style: Theme.of(context).textTheme.bodyMedium))])).toList()]))
+                      style: Theme.of(context).textTheme.bodyMedium))])).toList()])))
     );
   }
 

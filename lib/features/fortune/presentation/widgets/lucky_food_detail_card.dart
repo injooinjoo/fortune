@@ -36,13 +36,13 @@ class LuckyFoodDetailCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '오늘의 행운 음식',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            '오늘의 행운 음식',),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith()
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
-            '맛있는 음식으로 행운의 에너지를 충전하세요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            '맛있는 음식으로 행운의 에너지를 충전하세요',),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                   color: Colors.grey[600]))])
     );
   }
@@ -63,32 +63,32 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     begin: Alignment.topLeft);
                     end: Alignment.bottomRight),
     colors: [
-                      Colors.orange.withValues(alpha: 0.8),
+                      Colors.orange.withOpacity(0.8),
                       Colors.deepOrange)
                     ]),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.orange.withValues(alpha: 0.3),
+                      color: Colors.orange.withOpacity(0.3),
     blurRadius: 20),
     offset: const Offset(0, 10))]),
                 child: Center(
                   child: Text(
                     _getFoodEmoji(mainLuckyFood),
-    style: Theme.of(context).textTheme.bodyMedium),
+    style: Theme.of(context).textTheme.bodyMedium)),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
                 mainLuckyFood);
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith()
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing2),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
+                  color: Colors.orange.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
     child: Text(
-                  '오늘의 추천 메인 메뉴',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  '오늘의 추천 메인 메뉴',),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                         color: Colors.orange[700]),
     fontWeight: FontWeight.w500)])))
     );
@@ -197,7 +197,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     Container(
                       padding: AppSpacing.paddingAll8);
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.1),
+                        color: Colors.orange.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Icon(
                         category.icon);
@@ -210,14 +210,14 @@ class LuckyFoodDetailCard extends StatelessWidget {
                         children: [
                           Text(
                             category.title);
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith()
                                   fontWeight: FontWeight.bold)),
     maxLines: 1),
     overflow: TextOverflow.ellipsis),
                           if (isHighlighted)
                             Text(
-                              '지금 추천!',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              '지금 추천!',),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: Colors.orange),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     fontWeight: FontWeight.bold))]))]),
@@ -227,26 +227,26 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     children: [
                       Text(
                         _getFoodEmoji(items.first.value),
-    style: Theme.of(context).textTheme.bodyMedium)
+    style: Theme.of(context).textTheme.bodyMedium))
                       const SizedBox(width: AppSpacing.spacing2),
                       Expanded(
                         child: Text(
                           items.first.value);
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith()
                                 fontWeight: FontWeight.w600)),
     maxLines: 1),
     overflow: TextOverflow.ellipsis))]),
                   const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     items.first.reason);
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                           color: Colors.grey[600]),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     maxLines: 2),
     overflow: TextOverflow.ellipsis)] else
                   Text(
                     category.description,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                           color: Colors.grey[600])),
                     maxLines: 3),
     overflow: TextOverflow.ellipsis),
@@ -255,8 +255,8 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end);
                   children: [
                     Text(
-                      '더보기',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      '더보기',),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith()
                             color: Colors.orange),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                     const SizedBox(width: AppSpacing.spacing1),
@@ -291,7 +291,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 height: AppSpacing.spacing1),
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: Colors.grey.withOpacity(0.3),
     borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
               Expanded(
                 child: ListView(
@@ -303,7 +303,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                         Container(
                           padding: AppSpacing.paddingAll12);
                           decoration: BoxDecoration(
-                            color: Colors.orange.withValues(alpha: 0.1),
+                            color: Colors.orange.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                             category.icon);
@@ -345,8 +345,8 @@ class LuckyFoodDetailCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '추천 메뉴 카테고리',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          '추천 메뉴 카테고리',),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: AppSpacing.spacing4),
         ...category.examples.map(
@@ -364,7 +364,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     example);
-                    style: Theme.of(context).textTheme.bodyMedium)
+                    style: Theme.of(context).textTheme.bodyMedium))
               ])))]
     );
   }
@@ -385,12 +385,12 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     width: 48,
                     height: AppDimensions.buttonHeightMedium),
     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.1),
+                      color: Colors.orange.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Center(
                       child: Text(
                         _getFoodEmoji(item.value),
-    style: Theme.of(context).textTheme.bodyMedium),
+    style: Theme.of(context).textTheme.bodyMedium)),
                   const SizedBox(width: AppSpacing.spacing4),
                   Expanded(
                     child: Column(
@@ -408,14 +408,14 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                   color: Colors.grey[200],
                                   borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                                  'Fortune cached',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  'Fortune cached',),
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                         fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
                             Expanded(
                               child: Text(
                                 item.value);
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                                       fontWeight: FontWeight.bold))]),
                         if (item.priority != null)
                           Container(
@@ -428,13 +428,13 @@ class LuckyFoodDetailCard extends StatelessWidget {
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
                               _getPriorityText(item.priority!),
-    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+    style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: Colors.white),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))]))]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
                 item.reason);
-                style: Theme.of(context).textTheme.bodyMedium)
+                style: Theme.of(context).textTheme.bodyMedium))
               if (item.timeRange != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Container(
@@ -442,7 +442,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     horizontal: AppSpacing.spacing3);
                     vertical: AppSpacing.spacing1 * 1.5),
     decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
+                    color: Colors.blue.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusLarge),
     child: Row(
                     mainAxisSize: MainAxisSize.min);
@@ -454,7 +454,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                       const SizedBox(width: AppSpacing.spacing1),
                       Text(
                         item.timeRange!);
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith()
                               color: Colors.blue[700]),
     fontWeight: FontWeight.w500)]))])
               if (item.situation != null) ...[
@@ -462,7 +462,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 Container(
                   padding: AppSpacing.paddingAll8);
                   decoration: BoxDecoration(
-                    color: Colors.amber.withValues(alpha: 0.1),
+                    color: Colors.amber.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Row(
                     children: [
@@ -474,7 +474,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           item.situation!);
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                 color: Colors.amber[900]))]))])
             ])))
     );

@@ -153,9 +153,9 @@ class _MysticalBackground extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.deepPurple.withValues(alpha: 0.05),
-            Colors.indigo.withValues(alpha: 0.05),
-            Colors.purple.withValues(alpha: 0.05)])),
+            Colors.deepPurple.withOpacity(0.05),
+            Colors.indigo.withOpacity(0.05),
+            Colors.purple.withOpacity(0.05)])),
       child: CustomPaint(
         painter: _MysticalParticlesPainter(),
         child: Container()));
@@ -166,7 +166,7 @@ class _MysticalParticlesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.purple.withValues(alpha: 0.1)
+      ..color = Colors.purple.withOpacity(0.1)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);
@@ -234,16 +234,16 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
           
           // Title
           Text(
-            '무엇이 궁금하신가요?',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            '무엇이 궁금하신가요?',),
+            style: theme.textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold,
               fontSize: 24 * widget.fontScale,
               letterSpacing: -0.5)),
           const SizedBox(height: 8),
           Text(
-            '마음을 가라앉히고 질문에 집중해주세요',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            '마음을 가라앉히고 질문에 집중해주세요',),
+            style: theme.textTheme.bodyLarge?.copyWith()
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
               fontSize: 16 * widget.fontScale)),
           const SizedBox(height: 32),
           
@@ -261,8 +261,8 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                       size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      '당신의 질문',
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      '당신의 질문',),
+                      style: theme.textTheme.titleMedium?.copyWith()
                         fontWeight: FontWeight.bold,
                         fontSize: 16 * widget.fontScale))]),
                 const SizedBox(height: 12),
@@ -273,9 +273,9 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                   decoration: InputDecoration(
                     hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
     filled: true,
-                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12))),
                       borderSide: BorderSide.none),
                     contentPadding: const EdgeInsets.all(16)))])),
           const SizedBox(height: 24),
@@ -284,10 +284,10 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.purple.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.purple.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12))),
               border: Border.all(
-                color: Colors.purple.withValues(alpha: 0.3))),
+                color: Colors.purple.withOpacity(0.3))),
             child: Row(
               children: [
                 Icon(
@@ -297,9 +297,9 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',),
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: 14 * widget.fontScale)))])),
           const SizedBox(height: 32),
           
@@ -323,7 +323,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                         Icon(Icons.auto_awesome, size: 20 * widget.fontScale),
                         SizedBox(width: 8),
                         Text(
-                          '애니메이션 타로 (신규)',
+                          '애니메이션 타로 (신규)',),
                           style: TextStyle(
                             fontSize: 18 * widget.fontScale,
                             fontWeight: FontWeight.bold))])))),
@@ -351,7 +351,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                         Icon(Icons.shuffle, size: 20 * widget.fontScale),
                         const SizedBox(width: 8),
                         Text(
-                          '클래식 타로',
+                          '클래식 타로',),
                           style: TextStyle(
                             fontSize: 18 * widget.fontScale,
                             fontWeight: FontWeight.bold))]))))])]));
@@ -388,16 +388,16 @@ class _SpreadSelectionView extends StatelessWidget {
           
           // Title
           Text(
-            '스프레드를 선택하세요',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            '스프레드를 선택하세요',),
+            style: theme.textTheme.headlineSmall?.copyWith()
               fontWeight: FontWeight.bold,
               fontSize: 24 * fontScale,
               letterSpacing: -0.5)),
           const SizedBox(height: 8),
           Text(
-            '각 스프레드는 다른 통찰력을 제공합니다',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            '각 스프레드는 다른 통찰력을 제공합니다',),
+            style: theme.textTheme.bodyLarge?.copyWith()
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
               fontSize: 16 * fontScale)),
           const SizedBox(height: 32),
           
@@ -423,11 +423,11 @@ class _TarotHeaderCard extends StatelessWidget {
     return GlassContainer(
       width: 120,
       height: 120,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(24))),
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withValues(alpha: 0.3),
-          Colors.indigo.withValues(alpha: 0.3)]),
+          Colors.purple.withOpacity(0.3),
+          Colors.indigo.withOpacity(0.3)]),
       child: Center(
         child: Icon(
           Icons.auto_awesome,
@@ -467,9 +467,9 @@ class _SpreadOptionCard extends StatelessWidget {
         width: 40,
         height: 60,
         decoration: BoxDecoration(
-          color: Colors.purple.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.purple.withValues(alpha: 0.5))));
+          color: Colors.purple.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(4))),
+          border: Border.all(color: Colors.purple.withOpacity(0.5))));
 }
 
   Widget _buildThreeCardPreview() {
@@ -481,9 +481,9 @@ class _SpreadOptionCard extends StatelessWidget {
           width: 30,
           height: 45,
           decoration: BoxDecoration(
-            color: Colors.purple.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.purple.withValues(alpha: 0.5)))));
+            color: Colors.purple.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4))),
+            border: Border.all(color: Colors.purple.withOpacity(0.5)))));
 }
 
   Widget _buildCelticCrossPreview() {
@@ -496,27 +496,27 @@ class _SpreadOptionCard extends StatelessWidget {
             width: 20,
         height: 30,
                   decoration: BoxDecoration(
-              color: Colors.purple.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withValues(alpha: 0.5)))),
+              color: Colors.purple.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(2))),
+              border: Border.all(color: Colors.purple.withOpacity(0.5)))),
         Positioned(
           left: -25,
           child: Container(
             width: 20,
         height: 30,
                   decoration: BoxDecoration(
-              color: Colors.purple.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withValues(alpha: 0.5)))),
+              color: Colors.purple.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(2))),
+              border: Border.all(color: Colors.purple.withOpacity(0.5)))),
         Positioned(
           right: -25,
           child: Container(
             width: 20,
         height: 30,
                   decoration: BoxDecoration(
-              color: Colors.purple.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withValues(alpha: 0.5))))]);
+              color: Colors.purple.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(2))),
+              border: Border.all(color: Colors.purple.withOpacity(0.5))))]);
 }
 
   Widget _buildRelationshipPreview() {
@@ -527,19 +527,19 @@ class _SpreadOptionCard extends StatelessWidget {
           width: 25,
         height: 38,
                   decoration: BoxDecoration(
-            color: Colors.pink.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withValues(alpha: 0.5))),
+            color: Colors.pink.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4))),
+            border: Border.all(color: Colors.pink.withOpacity(0.5))),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Icon(Icons.favorite, size: 20, color: Colors.pink.withValues(alpha: 0.5)),
+          child: Icon(Icons.favorite, size: 20, color: Colors.pink.withOpacity(0.5)),
         Container(
           width: 25,
         height: 38,
                   decoration: BoxDecoration(
-            color: Colors.pink.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withValues(alpha: 0.5)))]);
+            color: Colors.pink.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4))),
+            border: Border.all(color: Colors.pink.withOpacity(0.5)))]);
 }
 
   Widget _buildDecisionPreview() {
@@ -550,9 +550,9 @@ class _SpreadOptionCard extends StatelessWidget {
           width: 25,
         height: 38,
                   decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.blue.withValues(alpha: 0.5))),
+            color: Colors.blue.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4))),
+            border: Border.all(color: Colors.blue.withOpacity(0.5))),
         SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -561,17 +561,17 @@ class _SpreadOptionCard extends StatelessWidget {
               width: 20,
         height: 30,
                   decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.5))),
+                color: Colors.green.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(4))),
+                border: Border.all(color: Colors.green.withOpacity(0.5))),
             SizedBox(width: 8),
             Container(
               width: 20,
         height: 30,
                   decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.orange.withValues(alpha: 0.5)))])]);
+                color: Colors.orange.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(4))),
+                border: Border.all(color: Colors.orange.withOpacity(0.5)))])]);
   }
 
   @override
@@ -584,8 +584,8 @@ class _SpreadOptionCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         gradient: LinearGradient(
           colors: [
-            theme.colorScheme.primary.withValues(alpha: 0.05),
-            theme.colorScheme.secondary.withValues(alpha: 0.05)]),
+            theme.colorScheme.primary.withOpacity(0.05),
+            theme.colorScheme.secondary.withOpacity(0.05)]),
         child: Row(
           children: [
             // Spread preview
@@ -602,14 +602,14 @@ class _SpreadOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     spread.displayName,
-                    style: theme.textTheme.titleLarge?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith()
                       fontWeight: FontWeight.bold,
                       fontSize: 18 * fontScale)),
                   const SizedBox(height: 4),
                   Text(
-                    '${spread.cardCount}장의 카드',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    '${spread.cardCount}장의 카드',),
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: 14 * fontScale)),
                   const SizedBox(height: 8),
                   Row(
@@ -620,8 +620,8 @@ class _SpreadOptionCard extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 4),
                       Text(
-                        '${spread.tokenCost} 토큰',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        '${spread.tokenCost} 토큰',),
+                        style: theme.textTheme.bodySmall?.copyWith()
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 13 * fontScale))])])),
@@ -630,7 +630,7 @@ class _SpreadOptionCard extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.3))])));
+              color: theme.colorScheme.onSurface.withOpacity(0.3))])));
 }
 }
 
@@ -694,8 +694,8 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
             padding: const EdgeInsets.all(20),
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withValues(alpha: 0.1),
-                Colors.indigo.withValues(alpha: 0.1)]),
+                Colors.purple.withOpacity(0.1),
+                Colors.indigo.withOpacity(0.1)]),
             child: Column(
               children: [
                 Icon(
@@ -705,14 +705,14 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                 const SizedBox(height: 16),
                 Text(
                   widget.spreadType.displayName,
-                style: theme.textTheme.headlineSmall?.copyWith(
+                style: theme.textTheme.headlineSmall?.copyWith()
                     fontWeight: FontWeight.bold,
                     fontSize: 24 * widget.fontScale)),
                 const SizedBox(height: 8),
                 Text(
                   _getSpreadDescription(widget.spreadType),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 16 * widget.fontScale),
                   textAlign: TextAlign.center)])),
           const SizedBox(height: 24),
@@ -732,8 +732,8 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                         size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        '질문하기',
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        '질문하기',),
+                        style: theme.textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold,
                           fontSize: 16 * widget.fontScale))]),
                   const SizedBox(height: 12),
@@ -744,9 +744,9 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                     decoration: InputDecoration(
                       hintText: _getQuestionHint(widget.spreadType),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12))),
                         borderSide: BorderSide.none),
                       contentPadding: const EdgeInsets.all(16)))])),
             const SizedBox(height: 24)],
@@ -768,7 +768,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                     Icon(Icons.auto_awesome, size: 20 * widget.fontScale),
                     const SizedBox(width: 8),
                     Text(
-                      '카드 뽑기',
+                      '카드 뽑기',),
                       style: TextStyle(
                         fontSize: 18 * widget.fontScale,
                         fontWeight: FontWeight.bold))])))),
@@ -826,17 +826,17 @@ class GlassButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         child: Container(
           decoration: BoxDecoration(
             gradient: gradient ?? LinearGradient(
               colors: [
                 theme.colorScheme.primary,
                 theme.colorScheme.secondary]),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12))),
             boxShadow: [
               BoxShadow(
-                color: (gradient?.colors.first ?? theme.colorScheme.primary).withValues(alpha: 0.3),
+                color: (gradient?.colors.first ?? theme.colorScheme.primary).withOpacity(0.3),
                 blurRadius: 8,
                 offset: Offset(0, 4))]),
           child: DefaultTextStyle(

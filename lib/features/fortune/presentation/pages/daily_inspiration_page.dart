@@ -67,14 +67,14 @@ class DailyInspiration {
     
     // Quotes pool
     final quotes = [
-      ('오늘 하루도 당신의 빛으로 세상을 밝히세요.', '포춘 앱',
-      ('작은 발걸음이 모여 큰 여정이 됩니다.', '노자': null,
-      ('매일 조금씩 나아가는 것이 성공의 비결입니다.', '벤저민 프랭클린',
-      ('당신의 잠재력은 무한합니다.', '포춘 앱',
-      ('오늘은 새로운 시작을 위한 완벽한 날입니다.', '무명': null,
-      ('긍정적인 마음이 긍정적인 결과를 만듭니다.', '부처': null,
-      ('도전은 성장의 기회입니다.', '포춘 앱',
-      ('믿음은 기적을 만드는 첫걸음입니다.', '헬렌 켈러'];
+      ('오늘 하루도 당신의 빛으로 세상을 밝히세요.', '포춘 앱'),
+      ('작은 발걸음이 모여 큰 여정이 됩니다.', '노자'),
+      ('매일 조금씩 나아가는 것이 성공의 비결입니다.', '벤저민 프랭클린'),
+      ('당신의 잠재력은 무한합니다.', '포춘 앱'),
+      ('오늘은 새로운 시작을 위한 완벽한 날입니다.', '무명'),
+      ('긍정적인 마음이 긍정적인 결과를 만듭니다.', '부처'),
+      ('도전은 성장의 기회입니다.', '포춘 앱'),
+      ('믿음은 기적을 만드는 첫걸음입니다.', '헬렌 켈러')];
     
     // Personal messages based on day of week
     final personalMessages = {
@@ -99,26 +99,26 @@ class DailyInspiration {
       '사수자리': ['모험심을 발휘할 때입니다', '보라색이 행운을 부릅니다', '여행이나 학습이 좋습니다'],
       '염소자리': ['목표를 향해 꾸준히 나아가세요', '갈색이 안정감을 줍니다', '실용적인 선택이 좋습니다'],
       '물병자리': ['창의적인 아이디어가 빛납니다', '하늘색이 영감을 줍니다', '친구들과의 만남이 즐겁습니다'],
-      '물고기자리': ['감성적인 활동이 힐링됩니다', '연한 파란색이 마음을 편안하게 합니다', '예술이나 음악이 도움됩니다'};
+      '물고기자리': ['감성적인 활동이 힐링됩니다', '연한 파란색이 마음을 편안하게 합니다', '예술이나 음악이 도움됩니다']};
     
     // MBTI-based affirmations
     final mbtiAffirmations = {
-      'INTJ', '나의 전략적 사고가 오늘도 빛을 발합니다.',
-      'INTP', '나의 분석력이 문제를 해결합니다.',
-      'ENTJ', '나의 리더십이 모두를 이끕니다.',
-      'ENTP', '나의 창의성이 새로운 기회를 만듭니다.',
-      'INFJ', '나의 직관이 올바른 길을 보여줍니다.',
-      'INFP', '나의 가치관이 세상을 더 나은 곳으로 만듭니다.',
-      'ENFJ', '나의 따뜻함이 사람들을 행복하게 합니다.',
-      'ENFP', '나의 열정이 꿈을 현실로 만듭니다.',
-      'ISTJ', '나의 신뢰성이 모두에게 힘이 됩니다.',
-      'ISFJ', '나의 배려심이 주변을 밝게 합니다.',
-      'ESTJ', '나의 추진력이 목표를 달성합니다.',
-      'ESFJ', '나의 친절함이 좋은 관계를 만듭니다.',
-      'ISTP', '나의 실용성이 문제를 해결합니다.',
-      'ISFP', '나의 감성이 아름다움을 만듭니다.',
-      'ESTP', '나의 행동력이 기회를 잡습니다.',
-      'ESFP', '나의 즐거움이 모두를 행복하게 합니다.'};
+      'INTJ': '나의 전략적 사고가 오늘도 빛을 발합니다.',
+      'INTP': '나의 분석력이 문제를 해결합니다.',
+      'ENTJ': '나의 리더십이 모두를 이끕니다.',
+      'ENTP': '나의 창의성이 새로운 기회를 만듭니다.',
+      'INFJ': '나의 직관이 올바른 길을 보여줍니다.',
+      'INFP': '나의 가치관이 세상을 더 나은 곳으로 만듭니다.',
+      'ENFJ': '나의 따뜻함이 사람들을 행복하게 합니다.',
+      'ENFP': '나의 열정이 꿈을 현실로 만듭니다.',
+      'ISTJ': '나의 신뢰성이 모두에게 힘이 됩니다.',
+      'ISFJ': '나의 배려심이 주변을 밝게 합니다.',
+      'ESTJ': '나의 추진력이 목표를 달성합니다.',
+      'ESFJ': '나의 친절함이 좋은 관계를 만듭니다.',
+      'ISTP': '나의 실용성이 문제를 해결합니다.',
+      'ISFP': '나의 감성이 아름다움을 만듭니다.',
+      'ESTP': '나의 행동력이 기회를 잡습니다.',
+      'ESFP': '나의 즐거움이 모두를 행복하게 합니다.'};
     
     // Today's focus based on day
     final todayFocuses = [
@@ -196,19 +196,19 @@ class _DailyInspirationPageState extends ConsumerState<DailyInspirationPage>
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),;
+      curve: const Interval(0.0, 0.5, curve: Curves.easeIn)));
     
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.2, 0.7, curve: Curves.elasticOut)),;
+      curve: const Interval(0.2, 0.7, curve: Curves.elasticOut)));
     
     _slideAnimation = Tween<double>(
       begin: 50,
       end: 0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic)),;
+      curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic)));
     
     _animationController.forward();
   }
@@ -271,7 +271,7 @@ ${inspiration.affirmation}
       body: inspirationAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primary)),
-        error: (error, stack) => '',
+        error: (error, stack) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -290,7 +290,7 @@ ${inspiration.affirmation}
                   '잠시 후 다시 시도해주세요',
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: AppColors.textSecondary))]))),
+                    color: AppColors.textSecondary))])),
         data: (inspiration) => SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: AnimatedBuilder(
@@ -310,14 +310,14 @@ ${inspiration.affirmation}
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              inspiration.themeColor.withValues(alpha: 0.8),
-                              inspiration.themeColor.withValues(alpha: 0.4)],
+                              inspiration.themeColor.withOpacity(0.8),
+                              inspiration.themeColor.withOpacity(0.4)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: inspiration.themeColor.withValues(alpha: 0.3),
+                              color: inspiration.themeColor.withOpacity(0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10))]),
                         child: Column(
@@ -331,7 +331,7 @@ ${inspiration.affirmation}
                               dateFormat.format(now),
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: Colors.white.withValues(alpha: 0.9))),
+                                color: Colors.white.withOpacity(0.9))),
                             const SizedBox(height: 20),
                             Text(
                               '"${inspiration.mainQuote}"',
@@ -346,7 +346,7 @@ ${inspiration.affirmation}
                               '- ${inspiration.author}',
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: Colors.white.withOpacity(0.9),
                                 fontStyle: FontStyle.italic))]))))),
                 
                 // Personal Message
@@ -360,7 +360,7 @@ ${inspiration.affirmation}
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 2))]),
                     child: Column(
@@ -370,7 +370,7 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: AppColors.primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8)),
                               child: const Icon(
                                 Icons.person,
@@ -401,11 +401,11 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.blue.withValues(alpha: 0.1),
-                          Colors.purple.withValues(alpha: 0.1)]),
+                          Colors.blue.withOpacity(0.1),
+                          Colors.purple.withOpacity(0.1)]),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.2))),
+                        color: Colors.blue.withOpacity(0.2))),
                     child: Column(
                       children: [
                         Row(
@@ -441,7 +441,7 @@ ${inspiration.affirmation}
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 2))]),
                     child: Column(
@@ -452,7 +452,7 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.amber.withValues(alpha: 0.1),
+                                color: Colors.amber.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8)),
                               child: const Icon(
                                 Icons.lightbulb_outline,
@@ -485,7 +485,7 @@ ${inspiration.affirmation}
                                       style: TextStyle(
                                         fontSize: 14 * fontScale,
                                         color: AppColors.textPrimary,
-                                        height: 1.4)))]))]))),
+                                        height: 1.4)))]))).toList()]))),
                 
                 // Affirmation Card
                 FadeTransition(
@@ -496,13 +496,13 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.primary.withValues(alpha: 0.1),
-                          AppColors.primary.withValues(alpha: 0.05)],
+                          AppColors.primary.withOpacity(0.1),
+                          AppColors.primary.withOpacity(0.05)],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.2))),
+                        color: AppColors.primary.withOpacity(0.2))),
                     child: Column(
                       children: [
                         const Icon(

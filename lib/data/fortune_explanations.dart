@@ -15,7 +15,7 @@ class FortuneExplanations {
         '행운의 색을 포인트로 활용하면 운이 두 배로 상승합니다'],
       'visualData': {
         'timeFlow': [
-          {'time': '오전 6-9시': 'score': 80, 'icon': '🌅': 'label': '활력 충전 시간'},
+          {'time': '오전 6-9시', 'score': 80, 'icon': '🌅', 'label': '활력 충전 시간'},
           {'time': '오전 9-12시', 'score': 100, 'icon': '⭐', 'label': '최고의 운세'},
           {'time': '오후 12-3시', 'score': 60, 'icon': '🍽️', 'label': '휴식 필요'},
           {'time': '오후 3-6시', 'score': 80, 'icon': '💼', 'label': '업무 집중'},
@@ -25,7 +25,10 @@ class FortuneExplanations {
           '총운': 85,
           '애정운': 75,
           '금전운': 90,
-          '건강운': null}}},
+          '건강운': 70
+        }
+      }
+    },
     'love': {
       'title': '연애운',
       'description': '당신의 사랑 에너지를 정밀하게 진단합니다. 지금 당신에게 다가오고 있는 인연의 신호를 포착하고, 사랑을 키워가는 방법을 알려드립니다.',
@@ -88,11 +91,11 @@ class FortuneExplanations {
         '당신의 직감은 오늘 특히 정확합니다. 믿고 행동하세요'],
       'visualData': {
         'monthlyFlow': [
-          {'month': '1월', 'amount'},
-          {'month': '2월', 'amount'},
-          {'month': '3월', 'amount'},
-          {'month': '4월', 'amount'},
-          {'month': '5월', 'amount'}],
+          {'month': '1월', 'amount': 60},
+          {'month': '2월', 'amount': 70},
+          {'month': '3월', 'amount': 75},
+          {'month': '4월', 'amount': 80},
+          {'month': '5월', 'amount': 85}],
         'investmentSignals': [
           {'type': '주식', 'signal': 'green', 'percentage': 90, 'note': '분산 투자 필수'},
           {'type': '부동산', 'signal': 'yellow', 'percentage': 60, 'note': '시장 조사 선행'},
@@ -113,29 +116,29 @@ class FortuneExplanations {
       'visualData': {
         'biorhythm': {
           'physical': [
-            {'day': 1, 'value'},
-            {'day': 7, 'value'},
-            {'day': 14, 'value'},
-            {'day': 21, 'value'},
-            {'day': 28, 'value'}],
+            {'day': 1, 'value': 50},
+            {'day': 7, 'value': 75},
+            {'day': 14, 'value': 100},
+            {'day': 21, 'value': 75},
+            {'day': 28, 'value': 50}],
           'emotional': [
-            {'day': 1, 'value'},
-            {'day': 7, 'value'},
-            {'day': 14, 'value'},
-            {'day': 21, 'value'},
-            {'day': 28, 'value'}],
+            {'day': 1, 'value': 60},
+            {'day': 7, 'value': 80},
+            {'day': 14, 'value': 60},
+            {'day': 21, 'value': 40},
+            {'day': 28, 'value': 60}],
           'intellectual': [
-            {'day': 1, 'value'},
-            {'day': 7, 'value'},
-            {'day': 14, 'value'},
-            {'day': 21, 'value'},
-            {'day': 28, 'value'}]},
+            {'day': 1, 'value': 70},
+            {'day': 7, 'value': 85},
+            {'day': 14, 'value': 70},
+            {'day': 21, 'value': 55},
+            {'day': 28, 'value': 70}]},
         'healthChecklist': [
-          {'item': '아침 스트레칭 (10분)': 'icon': '🌅': 'completed'},
-          {'item': '물 8잔 이상 섭취': 'icon': '💧': 'completed'},
-          {'item': '채소 중심 식단', 'icon': '🥗', 'completed'},
-          {'item': '30분 이상 걷기', 'icon': '🚶', 'completed'},
-          {'item': '7시간 이상 수면', 'icon': '😴', 'completed'}]}},
+          {'item': '아침 스트레칭 (10분)', 'icon': '🌅', 'completed': true},
+          {'item': '물 8잔 이상 섭취', 'icon': '💧', 'completed': true},
+          {'item': '채소 중심 식단', 'icon': '🥗', 'completed': true},
+          {'item': '30분 이상 걷기', 'icon': '🚶', 'completed': true},
+          {'item': '7시간 이상 수면', 'icon': '😴', 'completed': true}]}},
     'saju': {
       'title': '사주팔자',
       'description': '당신이 태어난 순간부터 정해진 운명의 비밀을 풀어드립니다. 당신만의 특별한 사주가 말하는 인생의 큰 그림을 함께 그려보세요.',
@@ -158,7 +161,7 @@ class FortuneExplanations {
           'description': '목(木), 화(火), 토(土), 금(金), 수(水)의 균형을 통해 성격과 운명을 분석합니다.'}},
       'visualData': {
         'fourPillarsChart': [
-          {'pillar': '年柱': 'label': '년간 년지': 'description': '출생년도', 'value': '갑자'},
+          {'pillar': '年柱', 'label': '년간 년지', 'description': '출생년도', 'value': '갑자'},
           {'pillar': '月柱', 'label': '월간 월지', 'description': '출생월', 'value': '을축'},
           {'pillar': '日柱', 'label': '일간 일지', 'description': '출생일', 'value': '병인'},
           {'pillar': '時柱', 'label': '시간 시지', 'description': '출생시간', 'value': '정묘'}],
@@ -167,7 +170,7 @@ class FortuneExplanations {
           '화': 20,
           '토': 15,
           '금': 25,
-          '수': null}}},
+          '수': 15}}},
     'mbti': {
       'title': 'MBTI 운세',
       'description': '당신의 MBTI 성격에 꼭 맞는 오늘의 행동 가이드입니다. 당신의 강점이 빛나고 약점이 보완되는 하루를 만들어보세요.',
@@ -185,7 +188,7 @@ class FortuneExplanations {
         'analysts': ['INTJ', 'INTP', 'ENTJ', 'ENTP'],
         'diplomats': ['INFJ', 'INFP', 'ENFJ', 'ENFP'],
         'sentinels': ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
-        'explorers': ['ISTP', 'ISFP', 'ESTP', 'ESFP': null},
+        'explorers': ['ISTP', 'ISFP', 'ESTP', 'ESFP']},
       'visualData': {
         'typeGroups': [
           {
@@ -212,7 +215,7 @@ class FortuneExplanations {
           'INTJ': {'color': '보라색', 'activity': '전략 수립', 'time': '새벽'},
           'INTP': {'color': '남색', 'activity': '연구 활동', 'time': '밤'},
           'ENTJ': {'color': '검정색', 'activity': '리더십 발휘', 'time': '오전'},
-          'ENTP': {'color': '주황색', 'activity': '토론/논쟁', 'time': '오후': null}}},
+          'ENTP': {'color': '주황색', 'activity': '토론/논쟁', 'time': '오후'}}},
     'zodiac': {
       'title': '별자리 운세',
       'description': '오늘 밤하늘의 별들이 당신을 위해 속삭이는 메시지입니다. 우주가 준비한 당신만의 특별한 선물을 받아보세요.',
@@ -227,18 +230,18 @@ class FortuneExplanations {
         '별자리 궁합을 참고하세요'],
       'visualData': {
         'zodiacWheel': [
-          {'sign': '양자리', 'symbol': '♈', 'period': '3/21-4/19', 'element': '불', 'angle'},
-          {'sign': '황소자리', 'symbol': '♉', 'period': '4/20-5/20', 'element': '흙', 'angle'},
-          {'sign': '쌍둥이자리', 'symbol': '♊', 'period': '5/21-6/20', 'element': '공기', 'angle'},
-          {'sign': '게자리', 'symbol': '♋', 'period': '6/21-7/22', 'element': '물', 'angle'},
-          {'sign': '사자자리', 'symbol': '♌', 'period': '7/23-8/22', 'element': '불', 'angle'},
-          {'sign': '처녀자리', 'symbol': '♍', 'period': '8/23-9/22', 'element': '흙', 'angle'},
-          {'sign': '천칭자리', 'symbol': '♎', 'period': '9/23-10/22', 'element': '공기', 'angle'},
-          {'sign': '전갈자리', 'symbol': '♏', 'period': '10/23-11/21', 'element': '물', 'angle'},
-          {'sign': '사수자리', 'symbol': '♐', 'period': '11/22-12/21', 'element': '불', 'angle'},
-          {'sign': '염소자리', 'symbol': '♑', 'period': '12/22-1/19', 'element': '흙', 'angle'},
-          {'sign': '물병자리', 'symbol': '♒', 'period': '1/20-2/18', 'element': '공기', 'angle'},
-          {'sign': '물고기자리', 'symbol': '♓', 'period': '2/19-3/20', 'element': '물', 'angle'}]}},
+          {'sign': '양자리', 'symbol': '♈', 'period': '3/21-4/19', 'element': '불', 'angle': 0},
+          {'sign': '황소자리', 'symbol': '♉', 'period': '4/20-5/20', 'element': '흙', 'angle': 30},
+          {'sign': '쌍둥이자리', 'symbol': '♊', 'period': '5/21-6/20', 'element': '공기', 'angle': 60},
+          {'sign': '게자리', 'symbol': '♋', 'period': '6/21-7/22', 'element': '물', 'angle': 90},
+          {'sign': '사자자리', 'symbol': '♌', 'period': '7/23-8/22', 'element': '불', 'angle': 120},
+          {'sign': '처녀자리', 'symbol': '♍', 'period': '8/23-9/22', 'element': '흙', 'angle': 150},
+          {'sign': '천칭자리', 'symbol': '♎', 'period': '9/23-10/22', 'element': '공기', 'angle': 180},
+          {'sign': '전갈자리', 'symbol': '♏', 'period': '10/23-11/21', 'element': '물', 'angle': 210},
+          {'sign': '사수자리', 'symbol': '♐', 'period': '11/22-12/21', 'element': '불', 'angle': 240},
+          {'sign': '염소자리', 'symbol': '♑', 'period': '12/22-1/19', 'element': '흙', 'angle': 270},
+          {'sign': '물병자리', 'symbol': '♒', 'period': '1/20-2/18', 'element': '공기', 'angle': 300},
+          {'sign': '물고기자리', 'symbol': '♓', 'period': '2/19-3/20', 'element': '물', 'angle': 330}]}},
     'biorhythm': {
       'title': '바이오리듬',
       'description': '당신의 몸과 마음, 두뇌가 만들어내는 자연의 리듬을 읽어드립니다. 오늘 당신의 에너지가 가장 빛나는 순간을 포착하세요.',
@@ -298,7 +301,7 @@ class FortuneExplanations {
           'intellectual': 75,
           'physical': 90,
           'values': 80,
-          'lifestyle': null},
+          'lifestyle': 70},
         'scoreInterpretation': [
           {'range': '90-100', 'grade': 'S급', 'meaning': '천생연분', 'advice': '서로를 더욱 아끼세요'},
           {'range': '80-89', 'grade': 'A급', 'meaning': '매우 좋음', 'advice': '작은 차이도 존중하세요'},
@@ -329,7 +332,11 @@ class FortuneExplanations {
           {'industry': '요식업', 'score': 40, 'trend': '하락'},
           {'industry': '교육업', 'score': 100, 'trend': '급상승'},
           {'industry': '유통업', 'score': 60, 'trend': '보합'},
-          {'industry': '서비스업', 'score': 80, 'trend': '상승'}]}}};
+          {'industry': '서비스업', 'score': 80, 'trend': '상승'}]
+      }
+    }
+  }
+};
 
   static Map<String, dynamic> getExplanation(String fortuneType) {
     return explanations[fortuneType] ?? _getDefaultExplanation();

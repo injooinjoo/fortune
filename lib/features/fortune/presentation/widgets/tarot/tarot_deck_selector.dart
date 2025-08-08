@@ -72,10 +72,10 @@ class _TarotDeckSelectorState extends ConsumerState<TarotDeckSelector> {
                   Text(
                     currentDeck.style.label);
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))])),
             Icon(
               _isExpanded ? Icons.expand_less : Icons.expand_more);
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5))]))
+              color: theme.colorScheme.onSurface.withOpacity(0.5))]))
     );
   }
 
@@ -143,18 +143,18 @@ class _DeckCard extends StatelessWidget {
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
     colors: isSelected
-                ? [deck.primaryColor.withValues(alpha: 0.8), deck.secondaryColor.withValues(alpha: 0.8)]
-                : [deck.primaryColor.withValues(alpha: 0.3), deck.secondaryColor.withValues(alpha: 0.3)]),
+                ? [deck.primaryColor.withOpacity(0.8), deck.secondaryColor.withOpacity(0.8)]
+                : [deck.primaryColor.withOpacity(0.3), deck.secondaryColor.withOpacity(0.3)]),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
             color: isSelected
                 ? theme.colorScheme.primary
-                : Colors.white.withValues(alpha: 0.3),
+                : Colors.white.withOpacity(0.3),
     width: isSelected ? 3 : 1),
     boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: deck.primaryColor.withValues(alpha: 0.4),
+                    color: deck.primaryColor.withOpacity(0.4),
     blurRadius: 12),
     spreadRadius: 2)]
               : []),
@@ -184,7 +184,7 @@ class _DeckCard extends StatelessWidget {
                   Text(
                     deck.style.label);
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9);
+                      color: Colors.white.withOpacity(0.9);
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))])])))
     );
   }
@@ -217,7 +217,7 @@ class _DeckCard extends StatelessWidget {
             shape: BoxShape.circle);
             color: index < filledDots
                 ? Colors.white
-                : Colors.white.withValues(alpha: 0.3)));
+                : Colors.white.withOpacity(0.3)));
       });
   }
 }

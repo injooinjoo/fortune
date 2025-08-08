@@ -206,8 +206,8 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
   int _getColorCompatibility(String color1, String color2) {
     if (color1 == color2) return 100;
     if (_getComplementaryColor(color1) == color2) return 95;
-    if (_getAnalogousColors(color1).contains(color2), return 85;
-    if (_getTriadicColors(color1).contains(color2), return 80;
+    if (_getAnalogousColors(color1).contains(color2) return 85;
+    if (_getTriadicColors(color1).contains(color2) return 80;
     return 60;
   }
 
@@ -228,14 +228,14 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
 
   Widget _buildColorPreview() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final primaryColor = fortune.metadata?['primaryColor'] as String?;
     final primaryColorInfo = fortune.metadata?['primaryColorInfo'] as Map<String, dynamic>?;
     final secondaryColor = fortune.metadata?['secondaryColor'] as String?;
     final secondaryColorInfo = fortune.metadata?['secondaryColorInfo'] as Map<String, dynamic>?;
 
-    if (primaryColor == null || primaryColorInfo == null) return const SizedBox.shrink();
+    if (primaryColor == null || primaryColorInfo == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -269,7 +269,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                 borderRadius: BorderRadius.circular(20)),
               child: Text(
                 '${primaryColorInfo['meaning']} & ${secondaryColorInfo?['meaning'] ?? ''}',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold)))]));
   }
 
@@ -286,7 +286,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withValues(alpha: 0.5),
+                color: color.withOpacity(0.5),
                 blurRadius: 20,
                 spreadRadius: 5)],
             border: Border.all(
@@ -302,17 +302,17 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
         const SizedBox(height: 8),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          style: Theme.of(context).textTheme.bodySmall?.copyWith()
             fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal))]
     );
   }
 
   Widget _buildColorMeaningCard() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final primaryColorInfo = fortune.metadata?['primaryColorInfo'] as Map<String, dynamic>?;
-    if (primaryColorInfo == null) return const SizedBox.shrink();
+    if (primaryColorInfo == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -332,13 +332,13 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                   color: primaryColorInfo['color']),
                 const SizedBox(width: 8),
                 Text(
-                  '색상의 의미',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '색상의 의미',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Text(
               primaryColorInfo['description'],
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                height: 1.5)),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                height: 1.5),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -354,10 +354,10 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
 
   Widget _buildColorItemsGrid() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final primaryColorInfo = fortune.metadata?['primaryColorInfo'] as Map<String, dynamic>?;
-    if (primaryColorInfo == null) return const SizedBox.shrink();
+    if (primaryColorInfo == null) return const SizedBox.shrink()
 
     final items = primaryColorInfo['items'] as List<String>;
     final color = primaryColorInfo['color'] as Color;
@@ -376,8 +376,8 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '추천 아이템',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '추천 아이템',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -389,9 +389,9 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
               children: items.map((item) {
                 return GlassContainer(
                   padding: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16))),
                   blur: 10,
-                  borderColor: color.withValues(alpha: 0.3),
+                  borderColor: color.withOpacity(0.3),
                   borderWidth: 1,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -403,7 +403,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                       const SizedBox(height: 8),
                       Text(
                         item,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodySmall),
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis)]));
@@ -411,12 +411,12 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
   }
 
   IconData _getItemIcon(String item) {
-    if (item.contains('셔츠') || item.contains('옷'), return Icons.checkroom;
+    if (item.contains('셔츠') || item.contains('옷') return Icons.checkroom;
     if (item.contains('가방') return Icons.shopping_bag;
-    if (item.contains('액세서리') || item.contains('목걸이'), return Icons.auto_awesome;
+    if (item.contains('액세서리') || item.contains('목걸이') return Icons.auto_awesome;
     if (item.contains('시계') return Icons.watch;
     if (item.contains('꽃') return Icons.local_florist;
-    if (item.contains('펜') || item.contains('노트'), return Icons.edit;
+    if (item.contains('펜') || item.contains('노트') return Icons.edit;
     if (item.contains('립스틱') return Icons.brush;
     if (item.contains('스카프') return Icons.dry_cleaning;
     return Icons.star;
@@ -424,10 +424,10 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
 
   Widget _buildColorHarmonyChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final colorHarmony = fortune.metadata?['colorHarmony'] as Map<String, dynamic>?;
-    if (colorHarmony == null) return const SizedBox.shrink();
+    if (colorHarmony == null) return const SizedBox.shrink()
 
     final harmony = colorHarmony['harmony'] as Map<String, dynamic>;
 
@@ -445,8 +445,8 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '색상 조화',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '색상 조화',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             ...harmony.entries.map((entry) {
               final harmonyType = entry.key;
@@ -459,7 +459,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                   children: [
                     Text(
                       harmonyType,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith()
                         fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     if (harmonyColors is List)
@@ -467,13 +467,13 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                         spacing: 8,
                         children: harmonyColors.map<Widget>((color) {
                           final colorInfo = _colorMeanings[color];
-                          if (colorInfo == null) return const SizedBox.shrink();
+                          if (colorInfo == null) return const SizedBox.shrink()
                           
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: (colorInfo['color'],
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(20))),
                               border: Border.all(
                                 color: (colorInfo['color'])),
                             child: Text(
@@ -488,7 +488,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: (_colorMeanings[harmonyColors]?['color'],
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(20))),
                           border: Border.all(
                             color: (_colorMeanings[harmonyColors]?['color'])),
                         child: Text(
@@ -512,8 +512,8 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '색상 활용 팁',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                '색상 활용 팁',),
+                style: Theme.of(context).textTheme.headlineSmall)])),
           const SizedBox(height: 16),
           ...[
             '작은 액세서리부터 시작해 색상 에너지를 느껴보세요',
@@ -533,7 +533,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
+                      style: Theme.of(context).textTheme.bodyMedium))]));)
           }).toList()]));
   }
 }

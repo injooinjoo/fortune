@@ -307,8 +307,8 @@ class _TestInputView extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             gradient: LinearGradient(
               colors: [
-                theme.colorScheme.primary.withValues(alpha: 0.2),
-                theme.colorScheme.secondary.withValues(alpha: 0.2)]),
+                theme.colorScheme.primary.withOpacity(0.2),
+                theme.colorScheme.secondary.withOpacity(0.2)]),
             child: Center(
               child: Icon(
                 Icons.psychology_outlined,
@@ -345,7 +345,7 @@ class _TestInputView extends StatelessWidget {
                       labelText: '이름',
                       hintText: '이름을 입력하세요',
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none))),
@@ -358,7 +358,7 @@ class _TestInputView extends StatelessWidget {
               width: double.infinity,
               child: GlassButton(
                 onPressed: nameController.text.isNotEmpty && selectedBirthDate != null
-                    ? () => onAnswerSelected('start': 'start')
+                    ? () => onAnswerSelected('start', 'start')
                     : null,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -387,7 +387,7 @@ class _TestInputView extends StatelessWidget {
             Text(
               '${currentQuestionIndex + 1} / ${psychologyQuestions.length}',
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
                 fontSize: 14 * fontScale)),
             const SizedBox(height: 24),
             
@@ -418,8 +418,8 @@ class _TestInputView extends StatelessWidget {
                             gradient: isSelected
                                 ? LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withValues(alpha: 0.2),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.2)])
+                                      theme.colorScheme.primary.withOpacity(0.2),
+                                      theme.colorScheme.secondary.withOpacity(0.2)])
                                 : null,
                             borderRadius: BorderRadius.circular(12),
                             border: isSelected
@@ -437,7 +437,7 @@ class _TestInputView extends StatelessWidget {
                                   border: Border.all(
                                     color: isSelected
                                         ? theme.colorScheme.primary
-                                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                                        : theme.colorScheme.onSurface.withOpacity(0.3),
                                     width: 2)),
                                 child: isSelected
                                     ? Center(
@@ -535,7 +535,7 @@ class _TestResultView extends ConsumerWidget {
             Text(
               '심리를 분석하고 있습니다...',
               style: TextStyle(fontSize: 18))])),
-      error: (error, stack) => '',
+      error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -555,7 +555,7 @@ class _TestResultView extends ConsumerWidget {
                 onPressed: onReset,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text('다시 시도')))]))),
+                  child: Text('다시 시도')))])),
       data: (result) => result == null
           ? const SizedBox.shrink()
           : SingleChildScrollView(
@@ -567,8 +567,8 @@ class _TestResultView extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     gradient: LinearGradient(
                       colors: [
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.1),
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.05)]),
+                        _getLuckColor(result.overallLuck).withOpacity(0.1),
+                        _getLuckColor(result.overallLuck).withOpacity(0.05)]),
                     child: Column(
                       children: [
                         Text(
@@ -586,7 +586,7 @@ class _TestResultView extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: _getLuckColor(result.overallLuck).withValues(alpha: 0.2),
+                            color: _getLuckColor(result.overallLuck).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20)),
                           child: Text(
                             _getLuckText(result.overallLuck),
@@ -618,8 +618,8 @@ class _TestResultView extends ConsumerWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                theme.colorScheme.primary.withValues(alpha: 0.1),
-                                theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+                                theme.colorScheme.primary.withOpacity(0.1),
+                                theme.colorScheme.secondary.withOpacity(0.1)]),
                             borderRadius: BorderRadius.circular(12)),
                           child: Text(
                             result.testResultType,
@@ -707,11 +707,11 @@ class _TestResultView extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withValues(alpha: 0.2),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.2)]),
+                                      theme.colorScheme.primary.withOpacity(0.2),
+                                      theme.colorScheme.secondary.withOpacity(0.2)]),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.3))),
+                                    color: theme.colorScheme.primary.withOpacity(0.3))),
                                 child: Text(
                                   element,
                                   style: TextStyle(

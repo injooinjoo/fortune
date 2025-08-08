@@ -258,12 +258,12 @@ ${numberInfo['description']}
 
   Widget _buildMainNumberDisplay() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final mainNumber = fortune.metadata?['mainNumber'] as int?;
     final numberInfo = fortune.metadata?['numberInfo'] as Map<String, dynamic>?;
     
-    if (mainNumber == null || numberInfo == null) return const SizedBox.shrink();
+    if (mainNumber == null || numberInfo == null) return const SizedBox.shrink()
 
     return AnimatedBuilder(
       animation: _numberAnimation,
@@ -277,8 +277,8 @@ ${numberInfo['description']}
               child: Column(
                 children: [
                   Text(
-                    '오늘의 메인 행운 숫자',
-                    style: Theme.of(context).textTheme.headlineSmall),
+                    '오늘의 메인 행운 숫자',),
+                    style: Theme.of(context).textTheme.headlineSmall)),
                   const SizedBox(height: 24),
                   Container(
                     width: 120,
@@ -304,7 +304,7 @@ ${numberInfo['description']}
                   const SizedBox(height: 16),
                   Text(
                     numberInfo['meaning'],
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith()
                       fontWeight: FontWeight.bold))]))));
       }
     );
@@ -312,10 +312,10 @@ ${numberInfo['description']}
 
   Widget _buildLotteryNumbers() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final lotteryNumbers = fortune.metadata?['lotteryNumbers'] as List<int>?;
-    if (lotteryNumbers == null) return const SizedBox.shrink();
+    if (lotteryNumbers == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -331,8 +331,8 @@ ${numberInfo['description']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '로또 행운 번호',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '로또 행운 번호',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
@@ -342,9 +342,9 @@ ${numberInfo['description']}
               }).toList()),
             const SizedBox(height: 16),
             Text(
-              '※ 이 번호들은 오늘의 운세를 기반으로 생성된 것이며, 실제 당첨을 보장하지 않습니다.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))])));
+              '※ 이 번호들은 오늘의 운세를 기반으로 생성된 것이며, 실제 당첨을 보장하지 않습니다.',),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))])));
   }
 
   Widget _buildLotteryBall(int number) {
@@ -369,7 +369,7 @@ ${numberInfo['description']}
         color: ballColor,
         boxShadow: [
           BoxShadow(
-            color: ballColor.withValues(alpha: 0.5),
+            color: ballColor.withOpacity(0.5),
             blurRadius: 8,
             offset: const Offset(0, 4))]),
       child: Center(
@@ -383,10 +383,10 @@ ${numberInfo['description']}
 
   Widget _buildTimeNumbers() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final timeNumbers = fortune.metadata?['timeNumbers'] as Map<String, int>?;
-    if (timeNumbers == null) return const SizedBox.shrink();
+    if (timeNumbers == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -402,8 +402,8 @@ ${numberInfo['description']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '시간대별 행운 숫자',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '시간대별 행운 숫자',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -425,32 +425,32 @@ ${numberInfo['description']}
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1)]),
-          borderRadius: BorderRadius.circular(16),
+              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              Theme.of(context).colorScheme.secondary.withOpacity(0.1)]),
+          borderRadius: BorderRadius.circular(16))),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3))),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3))),
         child: Column(
           children: [
             Icon(icon, color: Theme.of(context).colorScheme.primary),
             const SizedBox(height: 8),
             Text(
               time,
-              style: Theme.of(context).textTheme.bodySmall),
+              style: Theme.of(context).textTheme.bodySmall)),
             const SizedBox(height: 4),
             Text(
               number.toString(),
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith()
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary))])));
   }
 
   Widget _buildNumerologyAnalysis() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final analysis = fortune.metadata?['numerologyAnalysis'] as Map<String, dynamic>?;
-    if (analysis == null) return const SizedBox.shrink();
+    if (analysis == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -466,8 +466,8 @@ ${numberInfo['description']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '수비학 분석',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '수비학 분석',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             _buildNumerologyItem('생명수': analysis['lifePathNumber'], '인생의 방향',
             _buildNumerologyItem('운명수': analysis['destinyNumber'], '목표와 사명',
@@ -475,8 +475,8 @@ ${numberInfo['description']}
             const SizedBox(height: 12),
             Text(
               analysis['analysis'],
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))])));
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))])));
   }
 
   Widget _buildNumerologyItem(String label, int number, String meaning) {
@@ -489,7 +489,7 @@ ${numberInfo['description']}
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2)),
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.2)),
             child: Center(
               child: Text(
                 number.toString(),
@@ -503,20 +503,20 @@ ${numberInfo['description']}
               children: [
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith()
                     fontWeight: FontWeight.bold)),
                 Text(
                   meaning,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))]))]));
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]))]));
   }
 
   Widget _buildNumberMeaningCard() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink()
 
     final numberInfo = fortune.metadata?['numberInfo'] as Map<String, dynamic>?;
-    if (numberInfo == null) return const SizedBox.shrink();
+    if (numberInfo == null) return const SizedBox.shrink()
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -536,13 +536,13 @@ ${numberInfo['description']}
                   color: numberInfo['color']),
                 const SizedBox(width: 8),
                 Text(
-                  '숫자의 의미',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  '숫자의 의미',),
+                  style: Theme.of(context).textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Text(
               numberInfo['description'],
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                height: 1.5)),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                height: 1.5),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -569,8 +569,8 @@ ${numberInfo['description']}
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '숫자 활용 팁',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                '숫자 활용 팁',),
+                style: Theme.of(context).textTheme.headlineSmall)])),
           const SizedBox(height: 16),
           ...[
             '중요한 약속은 행운 숫자와 관련된 시간에 잡아보세요',
@@ -591,7 +591,7 @@ ${numberInfo['description']}
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
+                      style: Theme.of(context).textTheme.bodyMedium))]));)
           }).toList()]));
   }
 }

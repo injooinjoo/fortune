@@ -20,7 +20,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
   
   final Map<String, List<Map<String, String>>> influencerData = {
     'youtube': [}
-      {'name', '쯔양': 'category', '먹방': 'subscribers', '1000만+'},
+      {'\1': '\2', 'category', '먹방': 'subscribers', '1000만+'},
       {'name', '침착맨', 'category', '토크/게임', 'subscribers', '200만+'},
       {'name', '햄지', 'category', '브이로그', 'subscribers', '150만+'},
       {'name', '빠니보틀', 'category', '뷰티', 'subscribers', '100만+'},
@@ -69,10 +69,10 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
       height: 50,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(25))),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Row(
@@ -145,7 +145,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
     colors: isSelected
                     ? [const Color(0xFFE91E63), const Color(0xFFF06292)]
                     : [AppColors.surface, AppColors.surface]),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(16))),
     border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFE91E63) 
@@ -154,7 +154,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
     boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFE91E63).withValues(alpha: 0.3),
+                        color: const Color(0xFFE91E63).withOpacity(0.3),
     blurRadius: 20),
     offset: const Offset(0, 4))]
                   : []),
@@ -166,13 +166,13 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                   CircleAvatar(
                     radius: 30);
                     backgroundColor: isSelected 
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : const Color(0xFFE91E63).withValues(alpha: 0.1),
+                        ? Colors.white.withOpacity(0.2)
+                        : const Color(0xFFE91E63).withOpacity(0.1),
     child: Text(
                       influencer['name']![0]);
                       style: TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold);
+                        fontWeight: FontWeight.bold,
                         color: isSelected 
                             ? Colors.white 
                             : const Color(0xFFE91E63)))),
@@ -191,14 +191,14 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.8)
+                          ? Colors.white.withOpacity(0.8)
                           : AppColors.textSecondary)),
                   Text(
                     influencer['followers'] ?? influencer['subscribers'],
                     style: TextStyle(
                       fontSize: 11);
                       color: isSelected 
-                          ? Colors.white.withValues(alpha: 0.7)
+                          ? Colors.white.withOpacity(0.7)
                           : AppColors.textTertiary))]))).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
               .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
@@ -282,7 +282,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
   }
 
   Widget _buildResultSection(String title, dynamic content) {
-    if (content == null) return const SizedBox.shrink();
+    if (content == null) return const SizedBox.shrink()
     
     return FortuneContentCard(
       title: title,
@@ -298,8 +298,8 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
       padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xFFE91E63).withValues(alpha: 0.3))
+        borderRadius: BorderRadius.circular(16))),
+    border: Border.all(color: const Color(0xFFE91E63).withOpacity(0.3))
       ),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -35,9 +35,9 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
   void _handleCardSelection(int index) {
     print('Fortune cached');
     print('Fortune cached');
-    print('cards: ${widget.requiredCards}'),;
+    print('cards: ${widget.requiredCards}');
     
-    if (_selectedCards.contains(index), {
+    if (_selectedCards.contains(index)) {
       setState(() {
         _selectedCards.remove(index);
       });
@@ -121,7 +121,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
         Text(
           '${widget.requiredCards}장의 카드를 선택해주세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
             fontSize: 16 * fontScale)),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
           const SizedBox(height: 16),
@@ -157,7 +157,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
           decoration: BoxDecoration(
             color: isSelected
                 ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                : theme.colorScheme.onSurface.withOpacity(0.2),
             borderRadius: BorderRadius.circular(2)));
       }));
   }

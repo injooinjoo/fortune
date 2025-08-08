@@ -128,14 +128,14 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
           padding: const EdgeInsets.only(right: AppSpacing.spacing4),
           child: Icon(
             Icons.close,
-            color: AppColors.textPrimary.withValues(alpha: 0.54))),
+            color: AppColors.textPrimary.withOpacity(0.54))),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: GestureDetector(
             onTap: () => context.push('/profile/edit'),
             child: GlassContainer(
               padding: AppSpacing.paddingAll16,
-              borderColor: AppColors.textPrimary.withValues(alpha: 0.12),
+              borderColor: AppColors.textPrimary.withOpacity(0.12),
               child: Row(
                 children: [
                   // Progress Indicator
@@ -151,8 +151,8 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                           backgroundColor: AppColors.textSecondary,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _completionPercentage < 0.5 
-                                ? AppColors.textPrimary.withValues(alpha: 0.54) 
-                                : AppColors.textPrimary.withValues(alpha: 0.87))),
+                                ? AppColors.textPrimary.withOpacity(0.54) 
+                                : AppColors.textPrimary.withOpacity(0.87))),
                         Text(
                           '${(_completionPercentage * 100).toInt()}%',
                           style: Theme.of(context).textTheme.titleMedium)])),

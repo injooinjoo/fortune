@@ -285,7 +285,7 @@ class _TossToastItemState extends State<_TossToastItem>
               borderRadius: BorderRadius.circular(AppDimensions.radiusSmall)),
     boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1)),
+                  color: Colors.black.withOpacity(0.1)),
     blurRadius: AppDimensions.shadowBlurLight),
     offset: const Offset(0, 2))
                 ))
@@ -346,38 +346,38 @@ class _TossToastItemState extends State<_TossToastItem>
       case TossToastType.success:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.green.withValues(alpha: 0.92).withValues(alpha: 0.9,
+              ? Colors.green.withOpacity(0.92).withOpacity(0.9,
               : Colors.green.withValues(alpha: 0.08)),
-    iconColor: isDark ? Colors.green.withValues(alpha: 0.5) : Colors.green.withValues(alpha: 0.9)),
+    iconColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9)),
     textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.green.withValues(alpha: 0.5) : Colors.green.withValues(alpha: 0.9))
+    actionColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9))
         );
       case TossToastType.error:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.red.withValues(alpha: 0.92).withValues(alpha: 0.9)
-              : Colors.red.withValues(alpha: 0.08)),
-    iconColor: isDark ? Colors.red.withValues(alpha: 0.5) : Colors.red.withValues(alpha: 0.9)),
+              ? Colors.red.withOpacity(0.92).withOpacity(0.9)
+              : Colors.red.withOpacity(0.08)),
+    iconColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9)),
     textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.red.withValues(alpha: 0.5) : Colors.red.withValues(alpha: 0.9))
+    actionColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9))
         );
       case TossToastType.warning:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.orange.withValues(alpha: 0.92).withValues(alpha: 0.9)
-              : Colors.orange.withValues(alpha: 0.08)),
-    iconColor: isDark ? Colors.orange.withValues(alpha: 0.5) : Colors.orange.withValues(alpha: 0.9)),
+              ? Colors.orange.withOpacity(0.92).withOpacity(0.9)
+              : Colors.orange.withOpacity(0.08)),
+    iconColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9)),
     textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.orange.withValues(alpha: 0.5) : Colors.orange.withValues(alpha: 0.9))
+    actionColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9))
         );
       case TossToastType.info:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.grey.withValues(alpha: 0.87).withValues(alpha: 0.9)
-              : Colors.grey.withValues(alpha: 0.9)),
-    iconColor: isDark ? Colors.grey.withValues(alpha: 0.5) : Colors.grey.withValues(alpha: 0.9)),
+              ? Colors.grey.withOpacity(0.87).withOpacity(0.9)
+              : Colors.grey.withOpacity(0.9)),
+    iconColor: isDark ? Colors.grey.withOpacity(0.5) : Colors.grey.withOpacity(0.9)),
     textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.blue.withValues(alpha: 0.5) : Colors.blue.withValues(alpha: 0.9);
+    actionColor: isDark ? Colors.blue.withOpacity(0.5) : Colors.blue.withOpacity(0.9);
     }
   }
 

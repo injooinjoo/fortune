@@ -63,19 +63,19 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
     
     // Start fan animation
     fanController.forward();
-}
+  }
 
   @override
   void dispose() {
     _animationManager.dispose();
     super.dispose();
-}
+  }
 
   void _handleCardTap(int index) {
     if (widget.enableSelection) {
       HapticUtils.lightImpact();
       widget.onCardSelected(index);
-}
+    }
   }
 
   @override
@@ -89,25 +89,25 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
         return _buildGridSpread();
       case SpreadType.stack:
         return _buildStackSpread();
-}
+    }
   }
 
   Widget _buildFanSpread(double screenWidth) {
     return GestureDetector(
       onHorizontalDragStart: (details) {
         _dragStartX = details.globalPosition.dx;
-},
+      },
       onHorizontalDragUpdate: (details) {
         setState(() {
           final dragDistance = details.globalPosition.dx - _dragStartX;
           _currentRotation = (dragDistance / screenWidth) * math.pi * 0.5;
-});
-},
+        });
+      },
       onHorizontalDragEnd: (details) {
         setState(() {
           _currentRotation = 0;
-});
-},
+        });
+      },
       child: Container(
         height: widget.cardHeight * 1.5,
         child: Stack(
@@ -161,11 +161,12 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                 isHovered: isHovered,
                 onTap: () => _handleCardTap(index),
                 enableFlipAnimation: false))));
-      });
+                  },
+    );
   }
 
   Widget _buildGridSpread() {
-    final crossAxisCount = (MediaQuery.of(context).size.width / (widget.cardWidth + 16),.floor();
+    final crossAxisCount = (MediaQuery.of(context).size.width / (widget.cardWidth + 16)).floor();
     
     return GridView.builder(
       shrinkWrap: true,
@@ -189,7 +190,8 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
             height: widget.cardHeight,
             isSelected: isSelected,
             onTap: () => _handleCardTap(index)));
-    });
+                },
+    );
   }
 
   Widget _buildStackSpread() {
@@ -209,8 +211,8 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
               return Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.identity()
-                  ..translate(offset * progress, offset * progress, index.toDouble(),
-                  ..scale(1.0 - (index * 0.02), 1.0 - (index * 0.02),
+                  ..translate(offset * progress, offset * progress, index.toDouble())
+                  ..scale(1.0 - (index * 0.02), 1.0 - (index * 0.02)),
                 child: Opacity(
                   opacity: (isTop ? 1.0 : 0.8 * progress).clamp(0.0, 1.0),
                   child: TarotCardWidget(
@@ -218,18 +220,19 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                     deck: widget.selectedDeck,
                     width: widget.cardWidth,
                     height: widget.cardHeight,
-                    onTap: isTop ? () => _handleCardTap(index) : null));
-            });
+                    onTap: isTop ? () => _handleCardTap(index) : null,
+                  ),
+                ),
+              );
+            },
+          );
         }).reversed.toList()));
   }
+}
 
 /// Different spread types for tarot cards
 enum SpreadType {
-  
-  
   fan,   // Cards spread in a fan/arc
   grid,  // Cards in a grid layout
   stack, // Cards stacked on top of each other
-  
-  
 }

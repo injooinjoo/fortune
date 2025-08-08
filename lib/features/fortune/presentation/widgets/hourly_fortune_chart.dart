@@ -29,7 +29,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
 
   // 시간대별 이름
   static const List<String> timeNames = [
-    '자시', '축시': '인시', '묘시', '진시', '사시',
+    '자시', '축시', '인시', '묘시', '진시', '사시',
     '오시', '미시', '신시', '유시', '술시', '해시'];
 
   // 오행 색상
@@ -37,8 +37,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
     '목': AppColors.success,
     '화': AppColors.warning,
     '토': FortuneColors.goldLight,
-    '금': AppColors.textTertiary,
-    '수': null};
+    '금': AppColors.secondary,
+    '수': AppColors.primary};
 
   @override
   void initState() {
@@ -81,17 +81,16 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           children: [
             Text(
               '시간별 운기',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: AppSpacing.spacing1),
             Text(
               '오늘의 시간대별 운세 흐름',
-              style: Theme.of(context).textTheme.bodyMedium]),
+              style: Theme.of(context).textTheme.bodyMedium)]),
         Icon(
           Icons.access_time,
           color: Colors.white54,
-          size: 32)]
-    );
-}
+          size: 32)]);
+  }
 
   Widget _buildChart() {
     return AnimatedBuilder(
@@ -101,9 +100,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           height: AppSpacing.spacing24 * 3.125,
           padding: AppSpacing.paddingAll20,
           child: LineChart(
-            _mainChartData());
-});
-}
+            _mainChartData()));
+      });
+  }
 
   LineChartData _mainChartData() {
     final hourlyFortune = _calculateHourlyFortune();
@@ -117,7 +116,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         verticalInterval: 2,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withOpacity(0.1),
             strokeWidth: 1
           );
 },
@@ -125,12 +124,12 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           // 현재 시간 강조
           if (value.toInt() == widget.currentTime.hour) {
             return FlLine(
-              color: Colors.purple.withValues(alpha: 0.5),
+              color: Colors.purple.withOpacity(0.5),
               strokeWidth: 2,
               dashArray: [5, 5]);
 }
           return FlLine(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withOpacity(0.1),
             strokeWidth: 1
           );
 }),
@@ -148,11 +147,11 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
                   padding: const EdgeInsets.only(top: AppSpacing.spacing2),
                   child: Text(
                     timeNames[hour ~/ 2],
-                    style: Theme.of(context).textTheme.bodyMedium
+                    style: Theme.of(context).textTheme.bodyMedium)
                 );
 }
               return const SizedBox();
-}),
+})),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
@@ -161,18 +160,17 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             getTitlesWidget: (value, meta) {
               return Text(
                 '${(value * 100).toInt()}%',
-                style: Theme.of(context).textTheme.bodyMedium
-              );
-}),
+                style: Theme.of(context).textTheme.bodyMedium);
+            })),
         topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        rightTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false)),
+        rightTitles: AxisTitles(
+          sideTitles: SideTitles(showTitles: false))),
       borderData: FlBorderData(
         show: true,
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
-          width: 1),
+          color: Colors.white.withOpacity(0.2),
+          width: 1)),
       minX: 0,
       maxX: 23,
       minY: 0,
@@ -187,8 +185,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           isCurved: true,
           gradient: LinearGradient(
             colors: [
-              Colors.purple.withValues(alpha: 0.8),
-              Colors.blue.withValues(alpha: 0.8)]),
+              Colors.purple.withOpacity(0.8),
+              Colors.blue.withOpacity(0.8)]),
           barWidth: 3,
           isStrokeCapRound: true,
           dotData: FlDotData(
@@ -206,10 +204,10 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             show: true,
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withValues(alpha: 0.2),
-                Colors.blue.withValues(alpha: 0.1)],
+                Colors.purple.withOpacity(0.2),
+                Colors.blue.withOpacity(0.1)],
               begin: Alignment.topCenter,
-              end: Alignment.bottomCenter))],
+              end: Alignment.bottomCenter)))],
       lineTouchData: LineTouchData(
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
@@ -224,33 +222,32 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
               
               return LineTooltipItem(
                 '$timeRange\n${timeNames[hour ~/ 2]} (${element}원소)\n운기: ${(fortune * 100).toInt()}%',
-                Theme.of(context).textTheme.bodyMedium
-              );
-}).toList();
-}),
+                Theme.of(context).textTheme.bodyMedium!);
+            }).toList();
+          }),
         touchCallback: (event, response) {
           setState(() {
             if (response?.lineBarSpots != null &&
                 response!.lineBarSpots!.isNotEmpty) {
               _touchedIndex = response.lineBarSpots!.first.spotIndex;
-} else {
+            } else {
               _touchedIndex = null;
-}
+            }
           });
-});
-}
+        }));
+  }
 
   Widget _buildLegend() {
     return Wrap(
       spacing: 16,
       runSpacing: 8,
       children: [
-        _buildLegendItem('좋음': null,
-        _buildLegendItem('보통': null,
-        _buildLegendItem('주의'),
-        _buildLegendItem('현재 시간')]
+        _buildLegendItem('좋음', Colors.green),
+        _buildLegendItem('보통', Colors.orange),
+        _buildLegendItem('주의', Colors.red),
+        _buildLegendItem('현재 시간', Colors.purple)]
     );
-}
+  }
 
   Widget _buildLegendItem(String label, Color color) {
     return Row(
@@ -261,11 +258,11 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           height: AppSpacing.spacing4,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: AppDimensions.borderRadiusSmall),
+            borderRadius: AppDimensions.borderRadiusSmall)),
         const SizedBox(width: AppSpacing.spacing1),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium]
+          style: Theme.of(context).textTheme.bodyMedium)]
     );
 }
 
@@ -279,8 +276,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       padding: AppSpacing.paddingAll16,
       gradient: LinearGradient(
         colors: [
-          elementColors[currentElement]!.withValues(alpha: 0.2),
-          elementColors[currentElement]!.withValues(alpha: 0.1)]),
+          elementColors[currentElement]!.withOpacity(0.2),
+          elementColors[currentElement]!.withOpacity(0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -289,26 +286,26 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             children: [
               Text(
                 '현재 시간 운세',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodyMedium),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
                   color: _getFortuneColor(currentFortune),
-                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
                 child: Text(
                   '${(currentFortune * 100).toInt()}%',
-                  style: Theme.of(context).textTheme.bodyMedium]),
+                  style: Theme.of(context).textTheme.bodyMedium))]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             '${currentHour.toString().padLeft(2, '0')}:00 - $timeName (${currentElement}원소)',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
             _getFortuneDescription(currentFortune, currentElement),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: AppSpacing.spacing3),
-          _buildFortuneAdvice(currentFortune, currentElement)]);
-}
+          _buildFortuneAdvice(currentFortune, currentElement)]));
+  }
 
   Widget _buildFortuneAdvice(double fortune, String element) {
     String advice;
@@ -338,7 +335,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         Expanded(
           child: Text(
             advice,
-            style: Theme.of(context).textTheme.bodyMedium]
+            style: Theme.of(context).textTheme.bodyMedium))]
     );
 }
 
@@ -355,7 +352,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       final timeDiff = (hour - widget.currentTime.hour).abs();
       final timeBonus = timeDiff <= 2 ? 0.1 * (3 - timeDiff) / 3 : 0;
       
-      fortunes.add(math.min(relation + timeBonus, 1.0);
+      fortunes.add(math.min(relation + timeBonus, 1.0));
 }
     
     return fortunes;
@@ -364,7 +361,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
   // 시간대별 오행
   String _getHourElement(int hour) {
     final branchElements = {
-      0: '수': 1: , '토': 2: '목', 3: '목',
+      0: '수', 1: '토', 2: '목', 3: '목',
       4: '토', 5: '화', 6: '화', 7: '토',
       8: '금', 9: '금', 10: '토', 11: '수'};
     
@@ -375,35 +372,42 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
   double _calculateElementRelation(String element1, String element2) {
     // 상생: 목→화→토→금→수→목
     final generating = {
-      '목', '화': '화', '토': '토', '금', '금', '수', '수', '목'};
+      '목': '화', '화': '토', '토': '금', '금': '수', '수': '목'};
     
     // 상극: 목→토→수→화→금→목
     final overcoming = {
-      '목', '토', '토', '수', '수', '화', '화', '금', '금', '목'};
+      '목': '토', '토': '수', '수': '화', '화': '금', '금': '목'};
     
     if (element1 == element2) {
-      return 0.7; // 같은 오행} else if (generating[element1] == element2) {
-      return 0.9; // 상생 (생하는} else if (generating[element2] == element1) {
-      return 0.8; // 상생 (생받는} else if (overcoming[element1] == element2) {
-      return 0.3; // 상극 (극하는} else if (overcoming[element2] == element1) {
-      return 0.4; // 상극 (극받는}
+      return 0.7; // 같은 오행
+    } else if (generating[element1] == element2) {
+      return 0.9; // 상생 (생하는)
+    } else if (generating[element2] == element1) {
+      return 0.8; // 상생 (생받는)
+    } else if (overcoming[element1] == element2) {
+      return 0.3; // 상극 (극하는)
+    } else if (overcoming[element2] == element1) {
+      return 0.4; // 상극 (극받는)
+    }
     
-    return 0.6; // 중립}
+    return 0.6; // 중립
+  }
 
   Color _getFortuneColor(double fortune) {
     if (fortune >= 0.7) return Colors.green;
     if (fortune >= 0.5) return Colors.orange;
     return Colors.red;
-}
+  }
 
   String _getFortuneDescription(double fortune, String element) {
     if (fortune >= 0.8) {
       return '${element}의 기운이 매우 강하게 작용하는 최상의 시간대입니다. 모든 일이 순조롭게 진행될 것입니다.';
-} else if (fortune >= 0.6) {
+    } else if (fortune >= 0.6) {
       return '${element}의 긍정적인 에너지가 흐르는 좋은 시간입니다. 계획한 일을 추진하기에 적합합니다.';
-} else if (fortune >= 0.4) {
+    } else if (fortune >= 0.4) {
       return '${element}의 기운이 안정적인 평범한 시간대입니다. 일상적인 업무를 처리하기 좋습니다.';
-} else {
+    } else {
       return '${element}의 기운이 약하거나 충돌하는 시간입니다. 중요한 일은 다른 시간대로 미루는 것이 좋습니다.';
+    }
+  }
 }
-  }}

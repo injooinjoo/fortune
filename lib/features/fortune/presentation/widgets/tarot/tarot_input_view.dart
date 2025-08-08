@@ -59,7 +59,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         Text(
           '마음을 가라앉히고 질문에 집중해주세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
             fontSize: 16 * fontScale)),
         const SizedBox(height: 32),
         
@@ -89,7 +89,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
                 decoration: InputDecoration(
                   hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none),
@@ -101,10 +101,10 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.purple.withValues(alpha: 0.1),
+            color: Colors.purple.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.purple.withValues(alpha: 0.3))),
+              color: Colors.purple.withOpacity(0.3))),
           child: Row(
             children: [
               Icon(
@@ -116,7 +116,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
                 child: Text(
                   '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 14 * fontScale)))])),
         const SizedBox(height: 32),
         

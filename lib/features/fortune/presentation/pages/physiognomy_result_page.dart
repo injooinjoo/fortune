@@ -127,14 +127,14 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           const SizedBox(height: 24),
           
           Text(
-            'AI가 관상을 분석하고 있습니다...',
-            style: theme.textTheme.titleLarge),
+            'AI가 관상을 분석하고 있습니다...',),
+            style: theme.textTheme.titleLarge)),
           
           const SizedBox(height: 8),
           
           Text(
-            '잠시만 기다려주세요',
-            style: theme.textTheme.bodyMedium?.copyWith(
+            '잠시만 기다려주세요',),
+            style: theme.textTheme.bodyMedium?.copyWith()
               color: theme.colorScheme.onSurface.withOpacity(0.7)))]));
   }
 
@@ -151,12 +151,12 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text(
-              '분석 중 오류가 발생했습니다',
-              style: theme.textTheme.titleLarge),
+              '분석 중 오류가 발생했습니다',),
+              style: theme.textTheme.titleLarge)),
             const SizedBox(height: 8),
             Text(
-              '다시 시도해주세요',
-              style: theme.textTheme.bodyMedium?.copyWith(
+              '다시 시도해주세요',),
+              style: theme.textTheme.bodyMedium?.copyWith()
                 color: theme.colorScheme.onSurface.withOpacity(0.7))),
             const SizedBox(height: 24),
               ElevatedButton.icon(
@@ -206,8 +206,8 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
       child: Column(
         children: [
           Text(
-            '종합 관상 점수',
-            style: theme.textTheme.titleLarge),
+            '종합 관상 점수',),
+            style: theme.textTheme.titleLarge)),
           const SizedBox(height: 16),
           
           // Animated score circle
@@ -222,7 +222,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                      color: theme.colorScheme.onSurface.withOpacity(0.1),
                       width: 4))),
                 
                 // Progress circle
@@ -249,14 +249,14 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                       curve: Curves.easeOutCubic,
                       builder: (context, value, child) {
                         return Text(
-                          '$value',
-                          style: theme.textTheme.displayMedium?.copyWith(
+                          '$value',),
+                          style: theme.textTheme.displayMedium?.copyWith()
                             fontWeight: FontWeight.bold,
                             color: _getScoreColor(score)));
                       }),
                     Text(
                       _getScoreDescription(score),
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith()
                         color: theme.colorScheme.onSurface.withOpacity(0.7)))]))).animate()
             .scale(
               begin: const Offset(0.8, 0.8),
@@ -269,11 +269,11 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _getScoreColor(score).withValues(alpha: 0.1),
+              color: _getScoreColor(score).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12)),
             child: Text(
               _getScoreAdvice(score),
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith()
                 color: _getScoreColor(score),
                 fontWeight: FontWeight.w500),
               textAlign: TextAlign.center))]));
@@ -281,10 +281,10 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
 
   Widget _buildCategoryScores(ThemeData theme, Map<String, int> scores) {
     final categories = [
-      {'name', '재물운':  , 'score': scores['wealth'] ?? 80, 'icon': Icons.attach_money_rounded}
-      {'name', '연애운':  , 'score': scores['love'] ?? 75, 'icon': Icons.favorite_rounded}
-      {'name', '건강운', 'score': scores['health'] ?? 85, 'icon': Icons.health_and_safety_rounded}
-      {'name', '사업운', 'score': scores['business'] ?? 70, 'icon': Icons.business_rounded}
+      {'\1': '\2',  , 'score': scores['wealth'] ?? 80, 'icon': Icons.attach_money_rounded}
+      {'\1': '\2',  , 'score': scores['love'] ?? 75, 'icon': Icons.favorite_rounded}
+      {'\1': '\2', '\3': scores['health'] ?? 85, 'icon': Icons.health_and_safety_rounded}
+      {'\1': '\2', '\3': scores['business'] ?? 70, 'icon': Icons.business_rounded}
     ];
     
     return Column(
@@ -303,7 +303,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10)),
                       child: Icon(
                         category['icon'],
@@ -319,11 +319,11 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                             children: [
                               Text(
                                 category['name'],
-                                style: theme.textTheme.bodyLarge?.copyWith(
+                                style: theme.textTheme.bodyLarge?.copyWith()
                                   fontWeight: FontWeight.bold)),
                               Text(
                                 '${category['score']}점',
-                                style: theme.textTheme.bodyLarge?.copyWith(
+                                style: theme.textTheme.bodyLarge?.copyWith()
                                   color: _getScoreColor(category['score'],
                                   fontWeight: FontWeight.bold))),
                           const SizedBox(height: 8),
@@ -334,7 +334,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                             builder: (context, value, child) {
                               return LinearProgressIndicator(
                                 value: value);
-                                backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                                backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(category['score']),
                                 minHeight: 6
@@ -358,8 +358,8 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                 color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '상세 분석',
-                style: theme.textTheme.titleLarge?.copyWith(
+                '상세 분석',),
+                style: theme.textTheme.titleLarge?.copyWith()
                   fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           
@@ -394,7 +394,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.5),
+            color: theme.colorScheme.surface.withOpacity(0.5),
             borderRadius: BorderRadius.circular(12)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -410,25 +410,25 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                   children: [
                     Text(
                       feature['part'] as String);
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyLarge?.copyWith()
                         fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       feature['analysis'] as String);
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                        height: 1.4)))))));
+                      style: theme.textTheme.bodyMedium?.copyWith()
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        height: 1.4))))));
     }).toList();
   }
 
   Widget _buildPersonalityTraits(ThemeData theme) {
     final traits = [
-      {'trait', '리더십':  , 'level': 0.8, 'color'},
-      {'trait', '창의성':  , 'level': 0.9, 'color'},
-      {'trait', '공감능력', 'level': 0.7, 'color'},
-      {'trait', '분석력', 'level': 0.85, 'color'},
-      {'trait', '인내심', 'level': 0.75, 'color'},
-      {'trait', '소통능력', 'level': 0.95, 'color': Colors.teal},
+      {'\1': '\2',  , 'level': 0.8, 'color'},
+      {'\1': '\2',  , 'level': 0.9, 'color'},
+      {'\1': '\2', '\3': 0.7, 'color'},
+      {'\1': '\2', '\3': 0.85, 'color'},
+      {'\1': '\2', '\3': 0.75, 'color'},
+      {'\1': '\2', '\3': 0.95, 'color': Colors.teal},
     
     return GlassContainer(
       child: Column(
@@ -441,8 +441,8 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                 color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '성격 특성',
-                style: theme.textTheme.titleLarge?.copyWith(
+                '성격 특성',),
+                style: theme.textTheme.titleLarge?.copyWith()
                   fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           
@@ -460,10 +460,10 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                     children: [
                       Text(
                         trait['trait'] as String);
-                        style: theme.textTheme.bodyMedium),
+                        style: theme.textTheme.bodyMedium)),
                       Text(
                         '${((trait['level'] as double) * 100).toInt()}%',
-                        style: theme.textTheme.bodyMedium?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith()
                           color: trait['color'] as Color);
                           fontWeight: FontWeight.bold))),
                   const SizedBox(height: 4),
@@ -511,8 +511,8 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                 color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '인생 조언',
-                style: theme.textTheme.titleLarge?.copyWith(
+                '인생 조언',),
+                style: theme.textTheme.titleLarge?.copyWith()
                   fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           
@@ -535,15 +535,15 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                       children: [
                         Text(
                           advice['category'] as String);
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold);
+                          style: theme.textTheme.bodyLarge?.copyWith()
+                            fontWeight: FontWeight.bold,
                             color: advice['color'])),
                         const SizedBox(height: 4),
                         Text(
                           advice['advice'] as String);
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                            height: 1.4))))));
+                          style: theme.textTheme.bodyMedium?.copyWith()
+                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            height: 1.4)))));
           }).toList()));
   }
 
@@ -562,7 +562,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: Colors.white);
               elevation: 8),
-    shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
+    shadowColor: theme.colorScheme.primary.withOpacity(0.4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16))))),
         

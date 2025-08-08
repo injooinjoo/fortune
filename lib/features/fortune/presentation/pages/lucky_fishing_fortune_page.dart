@@ -48,16 +48,16 @@ class _FishingInputFormState extends State<_FishingInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 낚시 운세를 확인하고\n대어를 낚아보세요!',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘의 낚시 운세를 확인하고\n대어를 낚아보세요!',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Fishing Type
         Text(
-          '낚시 종류',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '낚시 종류',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildFishingType(theme),
@@ -65,8 +65,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
         // Experience Level
         Text(
-          '경험 수준',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '경험 수준',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildExperience(theme),
@@ -74,8 +74,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
         // Target Fish
         Text(
-          '목표 어종',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '목표 어종',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTargetFish(theme),
@@ -83,8 +83,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
         // Fishing Time
         Text(
-          '낚시 시간대',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '낚시 시간대',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildFishingTime(theme),
@@ -109,7 +109,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
                 borderRadius: BorderRadius.circular(16)),
               elevation: 0),
             child: const Text(
-              '낚시 운세 보기',
+              '낚시 운세 보기',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold))))]
@@ -118,8 +118,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
   Widget _buildFishingType(ThemeData theme) {
     final types = [
-      {'id', 'freshwater': 'name', '민물낚시': 'icon'},
-      {'id', 'sea': 'name', '바다낚시': 'icon'},
+      {'\1': '\2', 'name', '민물낚시': 'icon'},
+      {'\1': '\2', 'name', '바다낚시': 'icon'},
       {'id', 'fly', 'name', '플라이낚시', 'icon'},
       {'id', 'ice', 'name', '얼음낚시', 'icon'}];
 
@@ -154,7 +154,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -176,8 +176,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
   Widget _buildExperience(ThemeData theme) {
     final levels = [
-      {'id', 'beginner': 'name', '초보'},
-      {'id', 'intermediate': 'name', '중급'},
+      {'\1': '\2', 'name', '초보'},
+      {'\1': '\2', 'name', '중급'},
       {'id', 'advanced', 'name', '고급'},
       {'id', 'expert', 'name', '전문가'}];
 
@@ -204,7 +204,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
@@ -217,8 +217,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
   Widget _buildTargetFish(ThemeData theme) {
     final targets = [
-      {'id', 'any': 'name', '상관없음'},
-      {'id', 'bass': 'name', '배스'},
+      {'\1': '\2', 'name', '상관없음'},
+      {'\1': '\2', 'name', '배스'},
       {'id', 'carp', 'name', '잉어'},
       {'id', 'trout', 'name', '송어'}];
 
@@ -245,7 +245,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
@@ -258,8 +258,8 @@ class _FishingInputFormState extends State<_FishingInputForm> {
 
   Widget _buildFishingTime(ThemeData theme) {
     final times = [
-      {'id', 'dawn': 'name', '새벽': 'icon'},
-      {'id', 'morning': 'name', '아침': 'icon'},
+      {'\1': '\2', 'name', '새벽': 'icon'},
+      {'\1': '\2', 'name', '아침': 'icon'},
       {'id', 'afternoon', 'name', '오후', 'icon'},
       {'id', 'evening', 'name', '저녁', 'icon'}];
 
@@ -294,7 +294,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
@@ -330,9 +330,9 @@ class _FishingFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF0EA5E9),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20))),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,18 +355,18 @@ class _FishingFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 낚시 운세',
-                            style: theme.textTheme.titleLarge?.copyWith(
+                            '오늘의 낚시 운세',),
+                            style: theme.textTheme.titleLarge?.copyWith()
                               fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith()
+                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))]))),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)]))),
         const SizedBox(height: 16),
 
         // Best Fishing Spot
@@ -423,7 +423,7 @@ class _FishingFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,13 +442,13 @@ class _FishingFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5))],
+            style: theme.textTheme.bodyMedium?.copyWith()
+              height: 1.5)],
       );
   }
 }

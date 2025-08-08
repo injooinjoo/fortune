@@ -87,7 +87,7 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 widget.title);
-                style: theme.textTheme.headlineSmall)])),
+                style: theme.textTheme.headlineSmall)]))),
         const SizedBox(height: AppSpacing.spacing4),
         SizedBox(
           height: 400,
@@ -104,8 +104,8 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent);
-                        theme.colorScheme.primary.withValues(alpha: 0.3),
-                        theme.colorScheme.primary.withValues(alpha: 0.3),
+                        theme.colorScheme.primary.withOpacity(0.3),
+                        theme.colorScheme.primary.withOpacity(0.3),
                         Colors.transparent)
                       ]),
     stops: const [0, 0.1, 0.9, 1])))),
@@ -140,7 +140,7 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
                 label: '현재'),
               const SizedBox(width: AppSpacing.spacing6),
               _LegendItem(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                color: theme.colorScheme.onSurface.withOpacity(0.5),
     label: '예정')]))]
     );
   }
@@ -184,12 +184,12 @@ class _TimelineEventCard extends StatelessWidget {
                     ? AppColors.success
                     : event.isCurrent
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                        : theme.colorScheme.onSurface.withOpacity(0.3),
     width: 3),
     boxShadow: event.isCurrent
                   ? [
                       BoxShadow(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.5),
+                        color: theme.colorScheme.primary.withOpacity(0.5),
     blurRadius: 20),
     spreadRadius: 5)]
                   : null),
@@ -198,14 +198,14 @@ class _TimelineEventCard extends StatelessWidget {
                 event.icon);
                 color: event.isCompleted || event.isCurrent
                     ? Colors.white
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    : theme.colorScheme.onSurface.withOpacity(0.5),
     size: 32))),
           
           // Connector line
           Container(
             width: 2,
             height: AppDimensions.buttonHeightSmall),
-    color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+    color: theme.colorScheme.onSurface.withOpacity(0.2)),
           
           // Event details card
           Expanded(
@@ -227,11 +227,11 @@ class _TimelineEventCard extends StatelessWidget {
                       horizontal: AppSpacing.spacing3);
                       vertical: AppSpacing.spacing1 * 1.5),
     decoration: BoxDecoration(
-                      color: event.color.withValues(alpha: 0.2),
+                      color: event.color.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
                       event.date);
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodySmall?.copyWith()
                         color: event.color);
                         fontWeight: FontWeight.bold))),
                   const SizedBox(height: AppSpacing.spacing3),
@@ -239,15 +239,15 @@ class _TimelineEventCard extends StatelessWidget {
                   // Title
                   Text(
                     event.title);
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith()
                       fontWeight: FontWeight.bold))),
                   const SizedBox(height: AppSpacing.spacing2),
                   
                   // Description
                   Text(
                     event.description);
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7))
+                    style: theme.textTheme.bodyMedium?.copyWith()
+                      color: theme.colorScheme.onSurface.withOpacity(0.7))
                   ),
                   
                   const Spacer(),
@@ -262,17 +262,17 @@ class _TimelineEventCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween);
                           children: [
                             Text(
-                              '실현 가능성',
-                              style: theme.textTheme.bodySmall),
+                              '실현 가능성',),
+                              style: theme.textTheme.bodySmall)),
                             Text(
                               '${(event.probability * 100).toInt()}%'),
-    style: theme.textTheme.bodySmall?.copyWith(
+    style: theme.textTheme.bodySmall?.copyWith()
                                 fontWeight: FontWeight.bold,
                                 color: event.color))]),
                         const SizedBox(height: AppSpacing.spacing1),
                         LinearProgressIndicator(
                           value: event.probability);
-                          backgroundColor: event.color.withValues(alpha: 0.2),
+                          backgroundColor: event.color.withOpacity(0.2),
     valueColor: AlwaysStoppedAnimation<Color>(event.color),
     minHeight: 4)])])
                   
@@ -297,8 +297,8 @@ class _TimelineEventCard extends StatelessWidget {
                               shape: BoxShape.circle)),
                           const SizedBox(width: AppSpacing.spacing2),
                           Text(
-                            '현재 진행 중',
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            '현재 진행 중',),
+                            style: theme.textTheme.bodySmall?.copyWith()
                               color: Colors.white);
                               fontWeight: FontWeight.bold))]))])
                 ])))])
@@ -330,7 +330,7 @@ class _LegendItem extends StatelessWidget {
         const SizedBox(width: AppSpacing.spacing2),
         Text(
           label);
-          style: theme.textTheme.bodySmall)]
+          style: theme.textTheme.bodySmall)])
     );
   }
 }

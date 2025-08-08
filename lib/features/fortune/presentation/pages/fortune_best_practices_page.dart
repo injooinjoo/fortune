@@ -131,7 +131,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop()),
         title: const Text(
-          '운세 활용법',
+          '운세 활용법',),
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
@@ -161,13 +161,13 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary.withValues(alpha: 0.1),
-                        AppColors.primary.withValues(alpha: 0.05)],
+                        AppColors.primary.withOpacity(0.1),
+                        AppColors.primary.withOpacity(0.05)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16))),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.2))),
+                      color: AppColors.primary.withOpacity(0.2))),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -176,7 +176,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.2),
+                              color: AppColors.primary.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12)),
                             child: const Icon(
                               Icons.auto_awesome,
@@ -184,18 +184,18 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                               size: 24)),
                           const SizedBox(width: 12),
                           Text(
-                            '운세를 200% 활용하는 방법',
+                            '운세를 200% 활용하는 방법',),
                             style: TextStyle(
                               fontSize: 18 * fontScale,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary))]),
                       const SizedBox(height: 16),
                       Text(
-                        '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',
+                        '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',),
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textSecondary,
-                          height: 1.5))])),
+                          height: 1.5)])),
                 const SizedBox(height: 24),
                 
                 // 카테고리별 가이드
@@ -244,10 +244,10 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12))),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Theme(
@@ -262,7 +262,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: category.color.withValues(alpha: 0.1),
+              color: category.color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8)),
             child: Icon(
               category.icon,
@@ -293,7 +293,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.background,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8))),
         border: Border.all(
           color: AppColors.divider)),
       child: Column(
@@ -311,7 +311,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             style: TextStyle(
               fontSize: 14 * fontScale,
               color: AppColors.textSecondary,
-              height: 1.5))]));
+              height: 1.5)]));
   }
 
   Widget _buildExpertTipCard({
@@ -323,10 +323,10 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(
@@ -337,7 +337,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8)),
                 child: const Icon(
                   Icons.verified_user,
@@ -380,7 +380,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textPrimary,
-                          height: 1.5)))]))]));
+                          height: 1.5))]))]));
   }
 }
 

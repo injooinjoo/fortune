@@ -41,9 +41,9 @@ class BirthDatePreview extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.vertical * 0.75),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
+        color: Theme.of(context).primaryColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
-        border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.2))),
+        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.2))),
       child: Column(
         children: [
           Text(
@@ -58,7 +58,7 @@ class BirthDatePreview extends StatelessWidget {
             Text(
               selectedTimePeriod.label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.8)),
+                color: Theme.of(context).primaryColor.withOpacity(0.8)),
               textAlign: TextAlign.center)]]));
   }
 }

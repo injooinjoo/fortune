@@ -18,7 +18,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       inputBuilder: (context, onSubmit) => _buildInputSection(context, onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare);
+      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare));
   }
 
   Widget _buildInputSection(BuildContext context, Function(Map<String, dynamic>) onSubmit) {
@@ -28,14 +28,14 @@ class LuckyExamFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '시험 정보를 입력해주세요',
+              '시험 정보를 입력해주세요',),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold)),
@@ -82,8 +82,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('모든 정보를 입력해주세요'),
-                        backgroundColor: Colors.orange,
-                      );
+                        backgroundColor: Colors.orange));
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -92,9 +91,8 @@ class LuckyExamFortunePage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12)),
                   backgroundColor: const Color(0xFF10B981)),
                 child: const Text(
-                  '시험 운세 확인하기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))))]),
-      );
+                  '시험 운세 확인하기',),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))))])));
   }
 
   Widget _buildResultSection(BuildContext context, FortuneResult result, VoidCallback onShare) {
@@ -129,9 +127,9 @@ class LuckyExamFortunePage extends ConsumerWidget {
             icon: Icons.psychology,
             color: Colors.purple),
           const SizedBox(height: 16),
-          _buildLuckyStudyTime(sections['lucky_study_time'],
+          _buildLuckyStudyTime(sections['lucky_study_time']),
           const SizedBox(height: 16),
-          _buildWeeklyPlan(sections['weekly_plan'],
+          _buildWeeklyPlan(sections['weekly_plan']),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: onShare,
@@ -141,21 +139,20 @@ class LuckyExamFortunePage extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)))),
-          const SizedBox(height: 24)],
-      );
+          const SizedBox(height: 24)]));
   }
 
   Widget _buildSummaryCard(String summary) {
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16))),
           gradient: LinearGradient(
-            colors: [Colors.green.shade50, Colors.teal.shade50],
+            colors: [Colors.green.shade50, Colors.teal.shade50]],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight)),
         child: Column(
@@ -163,7 +160,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             Icon(Icons.school, size: 48, color: Colors.green.shade700),
             const SizedBox(height: 16),
             Text(
-              '시험 운세 요약',
+              '시험 운세 요약',),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -172,8 +169,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             Text(
               summary,
               style: const TextStyle(fontSize: 16, height: 1.6),
-              textAlign: TextAlign.center)]),
-      );
+              textAlign: TextAlign.center)])));
   }
 
   Widget _buildMainResultCard({
@@ -183,7 +179,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
     required Color color}) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -194,7 +190,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: Icon(icon, color: color, size: 28)),
                 const SizedBox(width: 16),
@@ -207,16 +203,15 @@ class LuckyExamFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               content,
-              style: const TextStyle(fontSize: 16, height: 1.6))]),
-      );
+              style: const TextStyle(fontSize: 16, height: 1.6)])));
   }
 
   Widget _buildLuckyStudyTime(String? studyTime) {
-    if (studyTime == null) return const SizedBox.shrink();
+    if (studyTime == null) return const SizedBox.shrink()
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -227,28 +222,27 @@ class LuckyExamFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.1),
+                    color: Colors.orange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: const Icon(Icons.access_time, color: Colors.orange, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
-                  '최적의 공부 시간',
+                  '최적의 공부 시간',),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               studyTime,
-              style: const TextStyle(fontSize: 16, height: 1.6))]),
-      );
+              style: const TextStyle(fontSize: 16, height: 1.6)])));
   }
 
   Widget _buildWeeklyPlan(String? plan) {
-    if (plan == null) return const SizedBox.shrink();
+    if (plan == null) return const SizedBox.shrink()
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -259,19 +253,18 @@ class LuckyExamFortunePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.indigo.withValues(alpha: 0.1),
+                    color: Colors.indigo.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: const Icon(Icons.calendar_view_week, color: Colors.indigo, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
-                  '주간 학습 계획',
+                  '주간 학습 계획',),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               plan,
-              style: const TextStyle(fontSize: 16, height: 1.6))]),
-      );
+              style: const TextStyle(fontSize: 16, height: 1.6)])));
   }
 }

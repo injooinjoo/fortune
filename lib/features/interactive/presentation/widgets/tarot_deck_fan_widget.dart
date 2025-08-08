@@ -130,7 +130,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                         alignment: Alignment.center,
                         children: [
                           // Card shadow
-                          if (isHovered);
+                          if (isHovered)
                             Container(
                               width: widget.cardWidth,
                               height: widget.cardHeight,

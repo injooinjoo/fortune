@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
-import 'simple_fortune_page.dart';
+import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 
 class LuckyCyclingFortunePage extends ConsumerWidget {
@@ -13,7 +10,7 @@ class LuckyCyclingFortunePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SimpleFortunePage(
+    return BaseFortunePageV2(
       title: '자전거 운세',
       fortuneType: 'lucky-cycling',
       headerGradient: const LinearGradient(
@@ -21,8 +18,8 @@ class LuckyCyclingFortunePage extends ConsumerWidget {
         end: Alignment.bottomRight,
         colors: [Color(0xFF14B8A6), Color(0xFF0D9488)]),
       inputBuilder: (context, onSubmit) => _CyclingInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, regenerate) =>
-          _CyclingFortuneResult(result: result));
+      resultBuilder: (context, result, onShare) =>
+          _CyclingFortuneResult(result: result, onShare: onShare));
   }
 }
 
@@ -49,16 +46,16 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 자전거 운세를 확인하고\n안전하고 즐거운 라이딩을 시작하세요!',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5)),
+          '오늘의 자전거 운세를 확인하고\n안전하고 즐거운 라이딩을 시작하세요!',),
+          style: theme.textTheme.bodyLarge?.copyWith()
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            height: 1.5),
         const SizedBox(height: 24),
         
         // Bike Type
         Text(
-          '자전거 종류',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '자전거 종류',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildBikeTypeGrid(theme),
@@ -66,8 +63,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
         // Riding Style
         Text(
-          '라이딩 스타일',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '라이딩 스타일',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildRidingStyle(theme),
@@ -75,8 +72,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
         // Distance
         Text(
-          '예상 거리',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '예상 거리',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDistance(theme),
@@ -84,8 +81,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
         // Terrain
         Text(
-          '주행 환경',
-          style: theme.textTheme.titleMedium?.copyWith(
+          '주행 환경',),
+          style: theme.textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTerrain(theme),
@@ -110,7 +107,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                 borderRadius: BorderRadius.circular(16)),
               elevation: 0),
             child: const Text(
-              '자전거 운세 보기',
+              '자전거 운세 보기',),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold))))]
@@ -119,20 +116,19 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
   Widget _buildBikeTypeGrid(ThemeData theme) {
     final types = [
-      {'id', 'road': 'name', '로드바이크': 'icon'},
-      {'id', 'mtb': 'name', 'MTB': 'icon'},
-      {'id', 'hybrid', 'name', '하이브리드', 'icon'},
-      {'id', 'electric', 'name', '전기자전거', 'icon'}];
+      {'id': 'road', 'name': '로드바이크', 'icon': Icons.directions_bike},
+      {'id': 'mtb', 'name': 'MTB', 'icon': Icons.terrain},
+      {'id': 'hybrid', 'name': '하이브리드', 'icon': Icons.pedal_bike},
+      {'id': 'electric', 'name': '전기자전거', 'icon': Icons.electric_bike}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
         mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-      ,
+        crossAxisSpacing: 12),
       itemCount: types.length,
       itemBuilder: (context, index) {
         final type = types[index];
@@ -154,32 +150,31 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  type['icon'],
+                  type['icon'] as IconData,
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                   size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  type['name'],
+                  type['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
-      }
-    );
+      });
   }
 
   Widget _buildRidingStyle(ThemeData theme) {
     final styles = [
-      {'id', 'leisure': 'name', '여유롭게'},
-      {'id', 'training': 'name', '트레이닝'},
-      {'id', 'commute', 'name', '출퇴근'},
-      {'id', 'touring', 'name', '투어링'}];
+      {'id': 'leisure', 'name': '여유롭게'},
+      {'id': 'training', 'name': '트레이닝'},
+      {'id': 'commute', 'name': '출퇴근'},
+      {'id': 'touring', 'name': '투어링'}];
 
     return Row(
       children: styles.map((style) {
@@ -203,11 +198,11 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
-                  style['name'],
+                  style['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
@@ -216,10 +211,10 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
   Widget _buildDistance(ThemeData theme) {
     final distances = [
-      {'id', 'short': 'name', '~20km'},
-      {'id', 'medium': 'name', '20-50km'},
-      {'id', 'long', 'name', '50-100km'},
-      {'id', 'century', 'name', '100km+'}];
+      {'id': 'short', 'name': '~20km'},
+      {'id': 'medium', 'name': '20-50km'},
+      {'id': 'long', 'name': '50-100km'},
+      {'id': 'century', 'name': '100km+'}];
 
     return Row(
       children: distances.map((distance) {
@@ -243,11 +238,11 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
-                  distance['name'],
+                  distance['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
@@ -256,20 +251,19 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
   Widget _buildTerrain(ThemeData theme) {
     final terrains = [
-      {'id', 'flat': 'name', '평지': 'icon'},
-      {'id', 'hilly': 'name', '언덕': 'icon'},
-      {'id', 'mountain', 'name', '산악', 'icon'},
-      {'id', 'mixed', 'name', '혼합', 'icon'}];
+      {'id': 'flat', 'name': '평지', 'icon': Icons.landscape},
+      {'id': 'hilly', 'name': '언덕', 'icon': Icons.filter_hdr},
+      {'id': 'mountain', 'name': '산악', 'icon': Icons.terrain},
+      {'id': 'mixed', 'name': '혼합', 'icon': Icons.layers}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
         mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-      ,
+        crossAxisSpacing: 12),
       itemCount: terrains.length,
       itemBuilder: (context, index) {
         final terrain = terrains[index];
@@ -291,31 +285,31 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
               borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  terrain['icon'],
+                  terrain['icon'] as IconData,
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                   size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  terrain['name'],
+                  terrain['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
-      }
-    );
+      });
   }
 }
 
 class _CyclingFortuneResult extends StatelessWidget {
   final FortuneResult result;
+  final VoidCallback onShare;
 
-  const _CyclingFortuneResult({required this.result});
+  const _CyclingFortuneResult({required this.result, required this.onShare});
 
   @override
   Widget build(BuildContext context) {
@@ -327,9 +321,9 @@ class _CyclingFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF14B8A6),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20))),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,18 +346,18 @@ class _CyclingFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 자전거 운세',
-                            style: theme.textTheme.titleLarge?.copyWith(
+                            '오늘의 자전거 운세',),
+                            style: theme.textTheme.titleLarge?.copyWith()
                               fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith()
+                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))]))),
+                  style: theme.textTheme.bodyLarge?.copyWith()
+                    height: 1.6)]))),
         const SizedBox(height: 16),
 
         // Route Recommendation
@@ -420,7 +414,7 @@ class _CyclingFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,12 +433,12 @@ class _CyclingFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith()
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5))]));
+            style: theme.textTheme.bodyMedium?.copyWith()
+              height: 1.5)]));
   }
 }

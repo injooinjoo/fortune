@@ -126,7 +126,7 @@ class MbtiGridSelector extends StatelessWidget {
             const SizedBox(width: AppSpacing.spacing1),
             Text(
               groupNameKr);
-              style: Theme.of(context).textTheme.bodySmall)
+              style: Theme.of(context).textTheme.bodySmall))
           ]);
       }).toList();
   }
@@ -243,7 +243,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
     boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: widget.colors[0].withValues(alpha: 0.4),
+                          color: widget.colors[0].withOpacity(0.4),
                           blurRadius: 8),
     offset: const Offset(0, 2))]
                     : null),
@@ -262,7 +262,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         widget.type);
-                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface)))]),
+                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface)))])),
                   if (widget.isSelected)
                     Positioned(
                       top: 4);

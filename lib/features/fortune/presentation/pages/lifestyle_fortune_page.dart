@@ -117,7 +117,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           // Type Selector
           Text(
             '운세 유형')
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)
             )),
           const SizedBox(height: 16),
@@ -131,7 +131,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     _selectedType = type;
                   });
                 },
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -140,12 +140,12 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                             begin: Alignment.topLeft)
                             end: Alignment.bottomRight)
                             colors: [
-                              AppColors.primary.withValues(alpha: 0.1),
-                              AppColors.secondary.withValues(alpha: 0.1)])
+                              AppColors.primary.withOpacity(0.1),
+                              AppColors.secondary.withOpacity(0.1)])
                           )
                         : null,
                     color: isSelected ? null : AppColors.surface)
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12))),
                     border: Border.all(
                       color: isSelected 
                           ? AppColors.primary
@@ -158,7 +158,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                         height: 48)
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.primary.withValues(alpha: 0.2)
+                              ? AppColors.primary.withOpacity(0.2)
                               : AppColors.surface)
                           borderRadius: BorderRadius.circular(12)),
                         child: Icon(
@@ -237,7 +237,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       children: [
         Text(
           '건강 관심사 (최대 3개)')
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)
           )),
         const SizedBox(height: 16),
@@ -258,14 +258,14 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   }
                 });
               },
-              selectedColor: AppColors.primary.withValues(alpha: 0.2),
+              selectedColor: AppColors.primary.withOpacity(0.2),
               checkmarkColor: AppColors.primary)
             );
           }).toList()),
         const SizedBox(height: 24),
         Text(
           '활동 수준')
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)
           )),
         const SizedBox(height: 16),
@@ -292,7 +292,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       children: [
         Text(
           '확인할 날짜')
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)
           )),
         const SizedBox(height: 16),
@@ -310,7 +310,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.border),
               borderRadius: BorderRadius.circular(12)),
@@ -332,7 +332,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppColors.surface)
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12))),
             border: Border.all(color: AppColors.border)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start)
@@ -349,13 +349,13 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
               ),
               const SizedBox(height: 8),
               Text(
-                '• 신체리듬 (23일 주기): 체력, 건강 상태\n'
+                '• 신체리듬 (23일 주기): 체력, 건강 상태\n'),
                 '• 감성리듬 (28일 주기): 감정, 기분 상태\n'
                 '• 지성리듬 (33일 주기): 사고력, 판단력')
                 style: TextStyle(
                   fontSize: 12)
                   color: AppColors.textSecondary)
-                  height: 1.5))])
+                  height: 1.5)])
           ))])
     );
   }
@@ -366,7 +366,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       children: [
         Text(
           '현재 거주지')
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)
           )),
         const SizedBox(height: 12),
@@ -380,7 +380,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         const SizedBox(height: 20),
         Text(
           '이사 희망 지역')
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)
           )),
         const SizedBox(height: 12),
@@ -394,7 +394,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         const SizedBox(height: 20),
         Text(
           '이사 목적')
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith()
             fontWeight: FontWeight.bold)
           )),
         const SizedBox(height: 12),
@@ -421,7 +421,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           const SizedBox(height: 20),
           Text(
             '후보 날짜 (최대 3개)')
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith()
               fontWeight: FontWeight.bold)
             )),
           const SizedBox(height: 12),
@@ -431,14 +431,14 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(8))),
                 border: Border.all(color: AppColors.border)),
               child: Row(
                 children: [
                   Icon(Icons.calendar_today, size: 16, color: AppColors.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '${date.year}년 ${date.month}월 ${date.day}일',
+                    '${date.year}년 ${date.month}월 ${date.day}일',),
                     style: const TextStyle(fontWeight: FontWeight.w500)),
                   const Spacer(),
                   IconButton(
@@ -450,7 +450,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     })])
               ));
           }).toList(),
-          if (_candidateDates.length < 3,
+          if (\1)
             TextButton.icon(
               onPressed: () async {
                 final picked = await showDatePicker(
@@ -534,12 +534,12 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 begin: Alignment.topLeft)
                 end: Alignment.bottomRight)
                 colors: [
-                  _getHealthColor(healthScore).withValues(alpha: 0.1),
-                  _getHealthColor(healthScore).withValues(alpha: 0.05)])
+                  _getHealthColor(healthScore).withOpacity(0.1),
+                  _getHealthColor(healthScore).withOpacity(0.05)])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               border: Border.all(
-                color: _getHealthColor(healthScore).withValues(alpha: 0.3),
+                color: _getHealthColor(healthScore).withOpacity(0.3),
                 width: 1)
               )),
             child: Column(
@@ -555,14 +555,14 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     const SizedBox(width: 12),
                     Text(
                       '건강 점수')
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith()
                         fontWeight: FontWeight.bold)
                       ))])
                 ),
                 const SizedBox(height: 16),
                 Text(
                   '$healthScore점')
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: Theme.of(context).textTheme.displayMedium?.copyWith()
                     color: _getHealthColor(healthScore),
                     fontWeight: FontWeight.bold)
                   )),
@@ -576,7 +576,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 const SizedBox(height: 20),
                 Text(
                   fortune.content)
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                     height: 1.6)
                   ),
                   textAlign: TextAlign.center)
@@ -592,7 +592,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16))),
                 border: Border.all(color: AppColors.border)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start)
@@ -606,7 +606,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       const SizedBox(width: 8),
                       Text(
                         '건강 관리 팁')
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold)
                         ))])
                   ),
@@ -624,7 +624,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                         Expanded(
                           child: Text(
                             tip)
-                            style: Theme.of(context).textTheme.bodyMedium)
+                            style: Theme.of(context).textTheme.bodyMedium))
                           ))])
                     )).toList()])
               ))])
@@ -647,7 +647,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppColors.surface)
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               border: Border.all(color: AppColors.border)),
             child: LineChart(
               LineChartData(
@@ -674,7 +674,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       reservedSize: 40,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '${value.toInt()}%',
+                          '${value.toInt()}%',),
                           style: const TextStyle(fontSize: 10));
                       })
                     )),
@@ -739,17 +739,17 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 begin: Alignment.topLeft)
                 end: Alignment.bottomRight)
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1)])
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.secondary.withOpacity(0.1)])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 width: 1)
               )),
             child: Text(
               fortune.content)
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                 height: 1.6)
               )))])
       ));
@@ -771,12 +771,12 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 begin: Alignment.topLeft)
                 end: Alignment.bottomRight)
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1)])
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.secondary.withOpacity(0.1)])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 width: 1)
               )),
             child: Column(
@@ -791,14 +791,14 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     const SizedBox(width: 12),
                     Text(
                       '이사 운세 결과')
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith()
                         fontWeight: FontWeight.bold)
                         color: AppColors.primary))])
                 ),
                 const SizedBox(height: 20),
                 Text(
                   fortune.content)
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith()
                     height: 1.6)
                   ))])
             )),
@@ -810,7 +810,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16))),
                 border: Border.all(color: AppColors.border)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start)
@@ -824,7 +824,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       const SizedBox(width: 8),
                       Text(
                         '길한 방향')
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold)
                         ))])
                   ),
@@ -839,10 +839,10 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                           vertical: 8)
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.secondary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppColors.secondary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20))),
                           border: Border.all(
-                            color: AppColors.secondary.withValues(alpha: 0.3))),
+                            color: AppColors.secondary.withOpacity(0.3))),
                         child: Text(
                           direction)
                           style: TextStyle(
@@ -858,7 +858,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16))),
                 border: Border.all(color: AppColors.border)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start)
@@ -872,7 +872,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       const SizedBox(width: 8),
                       Text(
                         '길일 추천')
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith()
                           fontWeight: FontWeight.bold)
                         ))])
                   ),
@@ -881,10 +881,10 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.success.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8))),
                       border: Border.all(
-                        color: AppColors.success.withValues(alpha: 0.3))),
+                        color: AppColors.success.withOpacity(0.3))),
                     child: Row(
                       children: [
                         Icon(
@@ -921,7 +921,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           color: color),
         const SizedBox(width: 8),
         Text(
-          '$label: ${value.toStringAsFixed(0)}%',
+          '$label: ${value.toStringAsFixed(0)}%',),
           style: TextStyle(
             fontSize: 12)
             fontWeight: FontWeight.w500)
