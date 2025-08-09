@@ -427,7 +427,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     bestTiming['reason'],
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 14 + fontSize))])))),
+                      fontSize: 14 + fontSize))])),
         const SizedBox(height: 20),
         
         // Compatibility Scores
@@ -484,7 +484,8 @@ class _MovingFortuneResult extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Moving Tips
         if (movingTips.isNotEmpty) ...[
@@ -534,7 +535,8 @@ class _MovingFortuneResult extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Direction to Avoid
         if (avoidDirection.isNotEmpty) ...[
@@ -568,7 +570,8 @@ class _MovingFortuneResult extends ConsumerWidget {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: 12 + fontSize))]]))),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Share Button
         Center(
@@ -579,7 +582,12 @@ class _MovingFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))));
+                borderRadius: BorderRadius.circular(25)),
+            ),
+          ),
+        ),
+      ],
+    );
   }
   
   Color _getScoreColor(int score) {

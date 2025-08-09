@@ -363,7 +363,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                       style: TextStyle(
                         fontSize: 10 * fontScale,
                         color: Colors.white,
-                        fontWeight: FontWeight.bold))))]))))));
+                        fontWeight: FontWeight.bold))))]);
   }
 
   Widget _buildDeckPreview(TarotDeck deck) {

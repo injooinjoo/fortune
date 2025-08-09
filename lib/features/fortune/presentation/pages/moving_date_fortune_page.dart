@@ -570,7 +570,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                     _buildLegendItem('최고', Colors.green),
                     _buildLegendItem('좋음', Colors.blue),
                     _buildLegendItem('보통', Colors.orange),
-                    _buildLegendItem('피함', Colors.red)])])))),
+                    _buildLegendItem('피함', Colors.red)])]]),
         const SizedBox(height: 20),
         
         // Good Dates List
@@ -621,7 +621,8 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
               ),
             ),
           ),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Dates to Avoid
         if (avoidDates.isNotEmpty) ...[
@@ -677,8 +678,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
+        ],
         
         // Share Button
         Center(

@@ -380,7 +380,9 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textPrimary,
-                          height: 1.5)))])))).toList()]);
+                          height: 1.5))))]))),
+      ],
+    );
   }
 }
 

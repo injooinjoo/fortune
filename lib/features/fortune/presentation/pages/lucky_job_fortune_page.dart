@@ -335,8 +335,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700]),
-                    textAlign: TextAlign.center)]])))),
-          const SizedBox(height: 20)],
+                    textAlign: TextAlign.center)]]),),
+          const SizedBox(height: 20),
+        ],
         
         // Compatibility Score
         if (result.overallScore != null) ...[
@@ -382,7 +383,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600]))]))))),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Main Fortune
         if (result.mainFortune != null) ...[
@@ -411,7 +413,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   style: const TextStyle(
                     fontSize: 16,
                     height: 1.6))])))),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Alternative Jobs
         if (data['alternative_jobs'] != null && data['alternative_jobs'] is List) ...[
@@ -449,8 +452,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       Expanded(
                         child: Text(
                           job.toString(),
-                          style: const TextStyle(fontSize: 15)))])))).toList())))),
-          const SizedBox(height: 20)],
+                          style: const TextStyle(fontSize: 15)))])))).toList(),)
+          const SizedBox(height: 20),
+        ],
         
         // Skill Requirements
         if (result.sections != null && result.sections!['required_skills'] != null) ...[
@@ -479,7 +483,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   style: const TextStyle(
                     fontSize: 14,
                     height: 1.6))])))),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Career Path
         if (result.sections != null && result.sections!['career_path'] != null) ...[
@@ -509,7 +514,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   style: const TextStyle(
                     fontSize: 14,
                     height: 1.6))])))),
-          const SizedBox(height: 20)],
+          const SizedBox(height: 20),
+        ],
         
         // Action Steps
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
@@ -553,7 +559,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       Expanded(
                         child: Text(
                           entry.value,
-                          style: const TextStyle(fontSize: 14)))])))).toList())))),
+                          style: const TextStyle(fontSize: 14)))])))).toList(),),
         ],
       ],
     );

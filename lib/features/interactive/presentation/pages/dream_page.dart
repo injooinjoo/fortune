@@ -657,7 +657,7 @@ class DreamDetailSheet extends ConsumerWidget {
                   // Analysis
                   analysisAsync.when(
                     data: (analysis) {
-                      if (analysis == null) return const SizedBox.shrink()
+                      if (analysis == null) return const SizedBox.shrink();
                       return GlassContainer(
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),

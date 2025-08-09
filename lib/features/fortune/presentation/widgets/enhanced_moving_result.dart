@@ -326,7 +326,7 @@ class EnhancedMovingResult extends StatelessWidget {
               ),
           ],
         ),
-      ),)
+      ),
     );
   }
 
@@ -353,7 +353,7 @@ class EnhancedMovingResult extends StatelessWidget {
               borderWidth: 2,
               entryRadius: 4,
             ),
-          ],,
+          ],
           getTitle: (index, angle) {
             final titles = scores.keys.toList();
             return RadarChartTitle(
@@ -532,9 +532,11 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icon(Icons.analytics, color: Theme.of(context).primaryColor),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
-                  '상세 운세 분석',),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith()
-                    fontWeight: FontWeight.bold))]),
+                  '상세 운세 분석',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold)),
+              ],
+            ),
             const SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) => _buildScoreBar(
               context,
@@ -582,7 +584,7 @@ class EnhancedMovingResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      );
   }
 
   Widget _buildRecommendationsSection(BuildContext context) {
