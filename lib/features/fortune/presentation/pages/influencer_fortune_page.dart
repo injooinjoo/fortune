@@ -1,20 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:provider/provider.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../presentation/providers/auth_provider.dart';
-import '../widgets/fortune_content_card.dart';
-import 'base_fortune_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'base_fortune_page_v2.dart';
+import '../../domain/models/fortune_result.dart';
+import '../../../../shared/glassmorphism/glass_container.dart';
 
-class InfluencerFortunePage extends StatefulWidget {
+class InfluencerFortunePage extends ConsumerWidget {
   const InfluencerFortunePage({super.key});
 
   @override
-  State<InfluencerFortunePage> createState() => _InfluencerFortunePageState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return BaseFortunePageV2(
+      title: '인플루언서 운세',
+      fortuneType: 'influencer',
+      headerGradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFE91E63), Color(0xFFAD1457)]),
+      inputBuilder: (context, onSubmit) => _InfluencerInputForm(onSubmit: onSubmit),
+      resultBuilder: (context, result, onShare) => _InfluencerFortuneResult(
+        result: result,
+        onShare: onShare));
+  }
 }
 
-class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
+class _InfluencerInputForm extends StatefulWidget {
+  final Function(Map<String, dynamic>) onSubmit;
+
+  const _InfluencerInputForm({required this.onSubmit});
+
+  @override
+  State<_InfluencerInputForm> createState() => _InfluencerInputFormState();
+}
+
+class _InfluencerInputFormState extends State<_InfluencerInputForm> {
   String selectedPlatform = 'youtube';
   String? selectedInfluencer;
   
@@ -51,31 +70,36 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
-    final userProfile = authProvider.userProfile;
-
-    return BaseFortunePage(
-      title: '인플루언서 운세',
-      fortuneType: 'influencer',
-      headerColor: const Color(0xFFE91E63),
-      onGenerateFortune: selectedInfluencer != null 
-          ? () => _generateFortune(context)
-          : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPlatformSelector(),
-          const SizedBox(height: 20),
-          _buildInfluencerGrid(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildPlatformSelector(),
+        const SizedBox(height: 20),
+        _buildInfluencerGrid(),
+        if (selectedInfluencer != null) ...[
+          const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                widget.onSubmit({
+                  'platform': selectedPlatform,
+                  'influencer': selectedInfluencer,
+                });
+              },
+              child: const Text('운세 확인하기'),
+            ),
+          ),
         ],
-      );
+      ],
+    );
   }
 
   Widget _buildPlatformSelector() {
+    final theme = Theme.of(context);
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
@@ -118,7 +142,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? Colors.white : AppColors.textSecondary,
+                color: isSelected ? Colors.white : theme.colorScheme.onSurface.withOpacity(0.6),
               ),
               if (MediaQuery.of(context).size.width > 360) ...[
                 const SizedBox(width: 4),
@@ -127,7 +151,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                    color: isSelected ? Colors.white : theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ],
@@ -167,13 +191,13 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                 end: Alignment.bottomRight,
                 colors: isSelected
                     ? [const Color(0xFFE91E63), const Color(0xFFF06292)]
-                    : [AppColors.surface, AppColors.surface],
+                    : [theme.colorScheme.surface, theme.colorScheme.surface],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFE91E63) 
-                    : AppColors.divider,
+                    : theme.dividerColor,
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: isSelected

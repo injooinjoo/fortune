@@ -42,7 +42,8 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
   @override
   Future<Map<String, dynamic>?> getFortuneParams() async {
     return {
-      'date': null};
+      'date': null
+    };
   }
 
   @override
@@ -88,12 +89,19 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                   const Spacer(),
                   Icon(
                     Icons.arrow_drop_down_rounded,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))]))),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '최대 30일 전후의 운세를 확인할 수 있습니다',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6)))]));
+              color: theme.colorScheme.onSurface.withOpacity(0.6))),
+        ],
+      ),
+    );
   }
 
   @override
@@ -103,7 +111,8 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
       children: [
         super.buildFortuneResult(),
         _buildTimeBasedFortune(),
-        _buildDailyTips()]
+        _buildDailyTips(),
+      ],
     );
   }
 
@@ -163,8 +172,15 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                     Text(
                       data['description'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]));
-            }).toList()])));
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDailyTips() {
@@ -204,7 +220,14 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]))).toList()])));
+                      style: Theme.of(context).textTheme.bodyMedium)),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   String _formatDate(DateTime date) {

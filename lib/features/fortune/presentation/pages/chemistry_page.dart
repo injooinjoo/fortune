@@ -144,8 +144,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
               '궁합 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold))))])
-    );
+                fontWeight: FontWeight.bold)))));
   }
 
   Widget _buildPersonSection(
@@ -174,9 +173,10 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
           decoration: InputDecoration(
             labelText: '이름',
             hintText: '이름을 입력하세요',
-    prefixIcon: const Icon(Icons.person_outline),
-    border: OutlineInputBorder(
+            prefixIcon: const Icon(Icons.person_outline),
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12))),
+        ),
         const SizedBox(height: 16),
         
         // Zodiac Selection
@@ -212,7 +212,9 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
               onSelected: (selected) => onTraitToggled(trait, selected),
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               checkmarkColor: theme.colorScheme.primary);
-          }).toList()])],
+          }).toList(),
+        ),
+      ],
     );
   }
 }
@@ -378,16 +380,15 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.check_circle);
-                          size: 20),
-    color: theme.colorScheme.primary),
+                          Icons.check_circle,
+                          size: 20,
+                          color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             insight.toString(),
-    style: theme.textTheme.bodyLarge?.copyWith()
+    style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 14 + _getFontSizeOffset(fontSize))))])))
-                ]))),
           const SizedBox(height: 20)],
         
         // Recommendations
@@ -403,8 +404,8 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       const Icon(Icons.tips_and_updates, color: Colors.orange),
                       const SizedBox(width: 8),
                       Text(
-                        '관계 발전을 위한 조언',),
-                        style: theme.textTheme.titleMedium?.copyWith()
+                        '관계 발전을 위한 조언',
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...recommendations.map((recommendation) => Padding(
@@ -413,12 +414,12 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
                         color: Colors.orange.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(8))),
+    borderRadius: BorderRadius.circular(8),
     border: Border.all(
                           color: Colors.orange.withOpacity(0.3))),
     child: Text(
                         recommendation.toString(),
-    style: theme.textTheme.bodyMedium?.copyWith()
+    style: theme.textTheme.bodyMedium?.copyWith(
                           fontSize: 14 + _getFontSizeOffset(fontSize))))))
                 ]))),
           const SizedBox(height: 20)],
@@ -436,13 +437,13 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       Icon(Icons.stars, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '추천 데이트 활동',),
-                        style: theme.textTheme.titleMedium?.copyWith()
+                        '추천 데이트 활동',
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
-                    spacing: 8);
-                    runSpacing: 8),
+                    spacing: 8,
+                    runSpacing: 8,
     children: luckyActivities.map((activity) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     decoration: BoxDecoration(
@@ -454,7 +455,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
     child: Text(
                         activity.toString(),
     style: const TextStyle(
-                          color: Colors.white);
+                          color: Colors.white,
                           fontWeight: FontWeight.w600))).toList())]))),
           const SizedBox(height: 20)],
         
@@ -484,19 +485,19 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                label);
-                style: theme.textTheme.bodyMedium?.copyWith()
+                label,
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
               LinearProgressIndicator(
-                value: score / 100);
+                value: score / 100,
                 backgroundColor: Colors.grey.withOpacity(0.2),
     valueColor: AlwaysStoppedAnimation<Color>(color),
     minHeight: 8)])),
         const SizedBox(width: 12),
         Text(
-          '${score}점',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '${score}점',
+          style: theme.textTheme.titleMedium?.copyWith(
             color: color,
             fontWeight: FontWeight.bold))]
     );

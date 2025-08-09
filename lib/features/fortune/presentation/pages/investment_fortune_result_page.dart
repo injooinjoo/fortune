@@ -45,13 +45,13 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _slideAnimation = Tween<double>(
       begin: 50.0,
       end: 0.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutCubic);
+      curve: Curves.easeOutCubic));
     
     _animationController.forward();
   }
@@ -79,7 +79,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             backgroundColor: theme.colorScheme.primary,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                '투자 운세 결과',),
+                '투자 운세 결과',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold)),
@@ -146,7 +146,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 _buildOverallAnalysis(fortuneData),
                 _buildSectorAnalysis(fortuneData),
                 _buildTimingAnalysis(fortuneData),
-                _buildLuckyInfo(fortuneData)]))]));
+                _buildLuckyInfo(fortuneData)])])]);
   }
 
   Widget _buildOverallScore(Map<String, dynamic> fortuneData) {
@@ -164,15 +164,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           colors: [
             scoreColor.withOpacity(0.2),
             scoreColor.withOpacity(0.1)]),
-        borderRadius: BorderRadius.circular(20))),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: scoreColor.withOpacity(0.5),
           width: 2)),
       child: Column(
         children: [
           Text(
-            '오늘의 투자 운세 점수',),
-            style: Theme.of(context).textTheme.titleMedium)),
+            '오늘의 투자 운세 점수',
+            style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 24),
           Stack(
             alignment: Alignment.center,
@@ -189,7 +189,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$score',),
+                    '$score',
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
@@ -203,10 +203,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           const SizedBox(height: 24),
           Text(
             fortuneData['summary'] ?? '오늘은 투자에 좋은 날입니다.',
-            style: Theme.of(context).textTheme.bodyLarge),
-            textAlign: TextAlign.center)])).animate(,
-      .fadeIn(duration: 600.ms, delay: 200.ms,
-      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0);
+            style: Theme.of(context).textTheme.bodyLarge,
+            textAlign: TextAlign.center)]))
+      .animate()
+      .fadeIn(duration: 600.ms, delay: 200.ms)
+      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0));
   }
 
   Widget _buildOverallAnalysis(Map<String, dynamic> fortuneData) {
@@ -250,7 +251,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: color.withOpacity(0.3),
           width: 1)),
@@ -263,14 +264,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               const SizedBox(width: 12),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith()
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: Theme.of(context).textTheme.bodyMedium)])).animate(),
-      .fadeIn(duration: 500.ms,
+            style: Theme.of(context).textTheme.bodyMedium)]))
+      .animate()
+      .fadeIn(duration: 500.ms)
       .slideX(begin: 0.1, end: 0);
   }
 
@@ -293,8 +295,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '추천 포트폴리오',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '추천 포트폴리오',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Container(
@@ -320,11 +322,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       children: [
         const SizedBox(height: 24),
         Text(
-          '위험 관리 분석',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '위험 관리 분석',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
-        ...risks.map((risk) => _buildRiskItem(risk).toList()]);
+        ...risks.map((risk) => _buildRiskItem(risk)).toList()]);
   }
 
   Widget _buildRiskItem(dynamic risk) {
@@ -338,7 +340,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: color.withOpacity(0.3),
           width: 1)),
@@ -357,11 +359,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               children: [
                 Text(
                   risk['title'] ?? '',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith()
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold)),
                 Text(
                   risk['description'] ?? '',
-                  style: Theme.of(context).textTheme.bodySmall)]))]));)
+                  style: Theme.of(context).textTheme.bodySmall)])));
   }
 
   Widget _buildSectorAnalysis(Map<String, dynamic> fortuneData) {
@@ -393,7 +395,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           colors: [
             sector.gradientColors[0].withOpacity(0.2),
             sector.gradientColors[1].withOpacity(0.1)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: sector.gradientColors[0].withOpacity(0.5),
           width: 1)),
@@ -408,10 +410,10 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 children: [
                   Text(
                     sector.label,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith()
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold)),
                   Text(
-                    '점수: $score점',),
+                    '점수: $score점',
                     style: Theme.of(context).textTheme.bodySmall)]))),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -443,14 +445,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 if (sectorFortune['tips'] != null) ...[
                   const SizedBox(height: 12),
                   Text(
-                    '💡 팁',),
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith()
+                    '💡 팁',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(
                     sectorFortune['tips'],
-                    style: Theme.of(context).textTheme.bodySmall)]]))])).animate(),
-      .fadeIn(duration: 500.ms, delay: (100 * index).ms,
+                    style: Theme.of(context).textTheme.bodySmall)]])))
+      .animate()
+      .fadeIn(duration: 500.ms, delay: (100 * index).ms)
       .slideY(begin: 0.1, end: 0);
   }
 
@@ -463,14 +466,14 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.investmentData.wantMarketTiming) ...[
-            _buildTimingSection('오늘의 타이밍': timing['today'],
-            const SizedBox(height: 24,
-            _buildTimingSection('이번 주 타이밍': timing['week'],
-            const SizedBox(height: 24,
-            _buildTimingSection('이번 달 타이밍': timing['month'],
-            const SizedBox(height: 24],
+            _buildTimingSection('오늘의 타이밍', timing['today'], Icons.today),
+            const SizedBox(height: 24),
+            _buildTimingSection('이번 주 타이밍', timing['week'], Icons.date_range),
+            const SizedBox(height: 24),
+            _buildTimingSection('이번 달 타이밍', timing['month'], Icons.calendar_month),
+            const SizedBox(height: 24)],
           
-          _buildLuckyDaysCalendar(timing['luckyDays']]));
+          _buildLuckyDaysCalendar(timing['luckyDays'])]);
   }
 
   Widget _buildTimingSection(String title, dynamic timingData, IconData icon) {
@@ -487,7 +490,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           colors: [
             color.withOpacity(0.2),
             color.withOpacity(0.1)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: color.withOpacity(0.5),
           width: 1)),
@@ -500,7 +503,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               const SizedBox(width: 12),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith()
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold)),
               const Spacer(),
               Container(
@@ -517,8 +520,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           Row(
             children: [
               Text(
-                '강도: ',),
-                style: Theme.of(context).textTheme.bodySmall)),
+                '강도: ',
+                style: Theme.of(context).textTheme.bodySmall),
               ...List.generate(5, (index) {
                 final filled = strength == 'strong' ? index < 5
                               : strength == 'medium' ? index < 3
@@ -531,7 +534,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           const SizedBox(height: 8),
           Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium)]));)
+            style: Theme.of(context).textTheme.bodyMedium)]));
   }
 
   Widget _buildLuckyDaysCalendar(List<dynamic>? luckyDays) {
@@ -539,8 +542,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '투자 길일',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '투자 길일',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Container(
@@ -576,7 +579,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           
           if (widget.investmentData.specificQuestion?.isNotEmpty ?? false) ...[
             const SizedBox(height: 24),
-            _buildSpecificAnswer(fortuneData['specificAnswer']]]));
+            _buildSpecificAnswer(fortuneData['specificAnswer'])]]);
   }
 
   Widget _buildLuckyNumbers(dynamic numbersData) {
@@ -587,8 +590,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '행운의 숫자',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '행운의 숫자',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         
@@ -600,7 +603,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               colors: [
                 Colors.amber.withOpacity(0.2),
                 Colors.orange.withOpacity(0.1)]),
-            borderRadius: BorderRadius.circular(16))),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Colors.amber.withOpacity(0.5),
               width: 1)),
@@ -612,8 +615,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   const Icon(Icons.casino_rounded, color: Colors.amber, size: 28),
                   const SizedBox(width: 12),
                   Text(
-                    '로또 추천 번호',),
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith()
+                    '로또 추천 번호',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold))]),
               const SizedBox(height: 16),
               Wrap(
@@ -647,33 +650,33 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '오늘의 행운 숫자',),
-                style: Theme.of(context).textTheme.titleSmall?.copyWith()
+                '오늘의 행운 숫자',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(
-                luckyNumbers.join(', ',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith()
+                luckyNumbers.join(', '),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold))]))]
     );
   }
 
   Widget _buildLuckyColors(dynamic colorsData) {
-    final colors = colorsData as List<dynamic>? ?? \['['red', 'gold', 'green'];
+    final colors = colorsData as List<dynamic>? ?? ['red', 'gold', 'green'];
     final colorMap = {
-      'red': const Color(0xFFDC2626,
+      'red': const Color(0xFFDC2626),
       'gold': const Color(0xFFFACC15),
       'green': const Color(0xFF16A34A),
       'blue': const Color(0xFF2563EB),
-      'purple': null};
+      'purple': Colors.purple};
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '행운의 색상',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '행운의 색상',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Row(
@@ -703,8 +706,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '행운의 방향',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '행운의 방향',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Container(
@@ -714,19 +717,19 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             borderRadius: BorderRadius.circular(16)),
           child: Row(
             children: [
-              const Icon(Icons.explore_rounded, size: 48, color: Color(0xFF2563EB),
+              const Icon(Icons.explore_rounded, size: 48, color: Color(0xFF2563EB)),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      directions.join(', ',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith()
+                      directions.join(', '),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold)),
                     Text(
-                      '이 방향으로 투자 기회를 찾아보세요',),
-                      style: Theme.of(context).textTheme.bodySmall)]))]))]);)
+                      '이 방향으로 투자 기회를 찾아보세요',
+                      style: Theme.of(context).textTheme.bodySmall)]))])]);
   }
 
   Widget _buildSpecificAnswer(dynamic answer) {
@@ -737,7 +740,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           colors: [
             Theme.of(context).colorScheme.primary.withOpacity(0.1),
             Theme.of(context).colorScheme.secondary.withOpacity(0.1)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
           width: 1)),
@@ -754,12 +757,12 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               Expanded(
                 child: Text(
                   widget.investmentData.specificQuestion!,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith()
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold)))]),
           const SizedBox(height: 12),
           Text(
             answer ?? '당신의 직감을 믿고 신중하게 결정하세요.',
-            style: Theme.of(context).textTheme.bodyMedium)]));)
+            style: Theme.of(context).textTheme.bodyMedium)]));
   }
 
   // Helper methods
@@ -773,9 +776,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF16A34A)
-    if (score >= 60) return const Color(0xFFFACC15)
-    if (score >= 40) return const Color(0xFFFF8F00)
+    if (score >= 80) return const Color(0xFF16A34A);
+    if (score >= 60) return const Color(0xFFFACC15);
+    if (score >= 40) return const Color(0xFFFF8F00);
     return const Color(0xFFDC2626);
   }
 
@@ -784,19 +787,20 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       case '매수': return const Color(0xFF16A34A);
       case '매도':
         return const Color(0xFFDC2626);
-      case , '관망': return const Color(0xFF6B7280);
+      case '관망': 
+        return const Color(0xFF6B7280);
       default:
-        return const Color(0xFF3B82F6);}
+        return const Color(0xFF3B82F6);
     }
   }
 
   String _getColorLabel(String colorName) {
     final labels = {
-      'red', '빨강',
-      'gold', '금색',
-      'green', '초록',
-      'blue', '파랑',
-      'purple', '보라'};
+      'red': '빨강',
+      'gold': '금색',
+      'green': '초록',
+      'blue': '파랑',
+      'purple': '보라'};
     return labels[colorName] ?? colorName;
   }
 

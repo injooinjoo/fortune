@@ -29,7 +29,7 @@ class HexagonChart extends StatelessWidget {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
     final effectiveBackgroundColor = backgroundColor ?? AppColors.textSecondary.withOpacity(0.1);
-    final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall;
+    final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall ?? const TextStyle(fontSize: 12);
 
     return SizedBox(
       width: size * 1.5,

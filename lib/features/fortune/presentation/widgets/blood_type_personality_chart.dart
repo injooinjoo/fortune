@@ -15,7 +15,8 @@ class BloodTypePersonalityChart extends StatefulWidget {
     Key? key,
     required this.bloodType,
     required this.rhType,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true,
+  }) : super(key: key);
 
   @override
   State<BloodTypePersonalityChart> createState() => _BloodTypePersonalityChartState();
@@ -36,7 +37,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     super.initState();
     _animationController = AnimationController(
       duration: AppAnimations.durationSkeleton,
-      vsync: this);
+      vsync: this,
+    );
     
     _biorhythmController = AnimationController(
       duration: const Duration(seconds: 2),
@@ -44,15 +46,19 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     
     _scaleAnimation = Tween<double>(
       begin: 0,
-      end: 1).animate(CurvedAnimation(
+      end: 1,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.elasticOut));
+      curve: Curves.elasticOut,
+    ));
     
     _fadeAnimation = Tween<double>(
       begin: 0,
-      end: 1).animate(CurvedAnimation(
+      end: 1,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn));
+      curve: Curves.easeIn,
+    ));
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -76,7 +82,9 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         const SizedBox(height: AppSpacing.spacing5),
         _buildTabSelector(),
         const SizedBox(height: AppSpacing.spacing5),
-        _buildContent()]);
+        _buildContent(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -99,16 +107,24 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   gradient: LinearGradient(
                     colors: [
                       Colors.red.withOpacity(0.6),
-                      Colors.red.withOpacity(0.8)]),
+                      Colors.red.withOpacity(0.8),
+                    ],
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.red.withOpacity(0.4),
                       blurRadius: 15,
-                      spreadRadius: 3)]),
+                      spreadRadius: 3,
+                    ),
+                  ],
+                ),
                 child: Center(
                   child: Text(
                     '${widget.bloodType}${widget.rhType}',
-                    style: Theme.of(context).textTheme.bodyMedium))),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
               const SizedBox(width: AppSpacing.spacing5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,12 +133,21 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     '${widget.bloodType}형 ${widget.rhType} 혈액형',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: Colors.white,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     '${characteristics['element']} 원소 · ${rhData['description']}',
-                    style: Theme.of(context).textTheme.bodyMedium)])]);
-      });
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildTabSelector() {
@@ -155,8 +180,16 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     title,
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.white70,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
-        }).toList()));
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 
   Widget _buildContent() {
@@ -373,7 +406,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   Icon(
                     Icons.info,
                     color: Colors.amber,
-                    size: 16),
+                    size: 16,
+                  ),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
@@ -536,7 +570,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       ticksTextStyle: TextStyle(
                         color: Colors.white.withOpacity(0.5),
                         fontSize: Theme.of(context).textTheme.bodySmall?.fontSize),
-                      titleTextStyle: Theme.of(context).textTheme.bodyMedium))),
+                      titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 14)))),
                 const SizedBox(height: AppSpacing.spacing5),
                 _buildStrengthLegend(strengths)])));
       });

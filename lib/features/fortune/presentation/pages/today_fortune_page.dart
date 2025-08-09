@@ -324,7 +324,12 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                       Text(
                         '점수: ${selectedData['score']}점',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: _getScoreColor(selectedData['score']))))]),
+                          color: _getScoreColor(selectedData['score']))),
+                    ]
+                  )
+                )
+              ]
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),

@@ -162,7 +162,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 4,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium,
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
                     color: Colors.white.withOpacity(0.2),
                     width: 1),
@@ -172,7 +172,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   radarBorderData: BorderSide(
                     color: Colors.purple.withOpacity(0.5),
                     width: 2),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   titlePositionPercentageOffset: 0.2,
                   getTitle: (index, angle) {
                     final elements = ['목', '화', '토', '금', '수'];

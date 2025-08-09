@@ -696,8 +696,8 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

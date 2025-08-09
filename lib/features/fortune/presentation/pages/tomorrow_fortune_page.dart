@@ -85,7 +85,8 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
           '약속이 있다면 시간과 장소를 재확인하세요',
           '긍정적인 마음가짐을 유지하세요'
         ]
-      }];
+      }
+    ];
   }
 
   List<String> _getWarnings() {
@@ -156,12 +157,17 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                     children: [
                       Icon(
                         prep['icon'],
-                        color: Theme.of(context).colorScheme.primary),
+                        color: Theme.of(context).colorScheme.primary
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         prep['title'],
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold
+                        )
+                      )
+                    ]
+                  ),
                   const SizedBox(height: 12),
                   ...(prep['tips'] as List<String>).map((tip) {
                     return Padding(
@@ -175,14 +181,26 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                             height: 6,
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
-                              shape: BoxShape.circle)),
+                              shape: BoxShape.circle
+                            )
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               tip,
-                              style: Theme.of(context).textTheme.bodyMedium))]))
-                  }).toList()])));
-        }).toList())
+                              style: Theme.of(context).textTheme.bodyMedium
+                            )
+                          )
+                        ]
+                      )
+                    );
+                  }).toList()
+                ]
+              )
+            )
+          );
+        }).toList()
+      )
     );
   }
 
@@ -204,11 +222,15 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
               children: [
                 Icon(
                   Icons.timeline_rounded,
-                  color: Theme.of(context).colorScheme.secondary),
+                  color: Theme.of(context).colorScheme.secondary
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '내일의 기회 타임라인',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall
+                )
+              ]
+            ),
             const SizedBox(height: 20),
             ...opportunities.map((opp) {
               final color = opp['color'] as Color;
@@ -227,17 +249,25 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: color,
-                              width: 2)),
+                              width: 2
+                            )
+                          ),
                           child: Center(
                             child: Icon(
                               Icons.star_rounded,
                               size: 20,
-                              color: color))),
+                              color: color
+                            )
+                          )
+                        ),
                         if (opportunities.last != opp)
                           Container(
                             width: 2,
                             height: 40,
-                            color: color.withOpacity(0.3))]),
+                            color: color.withOpacity(0.3)
+                          )
+                      ]
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -249,25 +279,45 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                                 opp['time'],
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: color,
-                                  fontWeight: FontWeight.bold)),
+                                  fontWeight: FontWeight.bold
+                                )
+                              ),
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: color.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12)),
+                                  borderRadius: BorderRadius.circular(12)
+                                ),
                                 child: Text(
                                   opp['type'],
                                   style: TextStyle(
                                     color: color,
                                     fontSize: 12,
-                                    fontWeight: FontWeight.bold)))]),
+                                    fontWeight: FontWeight.bold
+                                  )
+                                )
+                              )
+                            ]
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             opp['description'],
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))]));
-            }).toList()])));
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)
+                            )
+                          )
+                        ]
+                      )
+                    )
+                  ]
+                )
+              );
+            }).toList()
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildWarningsSection() {
@@ -283,7 +333,9 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.error.withOpacity(0.1),
-            Theme.of(context).colorScheme.error.withOpacity(0.05)]),
+            Theme.of(context).colorScheme.error.withOpacity(0.05)
+          ]
+        ),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,13 +344,18 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
               children: [
                 Icon(
                   Icons.warning_amber_rounded,
-                  color: Theme.of(context).colorScheme.error),
+                  color: Theme.of(context).colorScheme.error
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '주의사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.error,
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold
+                  )
+                )
+              ]
+            ),
             const SizedBox(height: 12),
             ...warnings.map((warning) {
               return Padding(
@@ -309,13 +366,22 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                     Icon(
                       Icons.error_outline,
                       size: 16,
-                      color: Theme.of(context).colorScheme.error.withOpacity(0.7)),
+                      color: Theme.of(context).colorScheme.error.withOpacity(0.7)
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         warning,
-                        style: Theme.of(context).textTheme.bodyMedium))]));
-            }).toList()]))
+                        style: Theme.of(context).textTheme.bodyMedium
+                      )
+                    )
+                  ]
+                )
+              );
+            }).toList()
+          ]
+        )
+      )
     );
   }
 
@@ -325,54 +391,72 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
       {'task': '중요한 서류 준비하기', 'done': false},
       {'task': '교통편 확인하기', 'done': false},
       {'task': '필요한 물건 챙기기', 'done': false},
-      {'task': '일찍 잠자리에 들기', 'done': false}];
+      {'task': '일찍 잠자리에 들기', 'done': false}
+    ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16)
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
-    child: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.checklist_rounded);
-                  color: Theme.of(context).colorScheme.primary),
+                  Icons.checklist_rounded,
+                  color: Theme.of(context).colorScheme.primary
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  '내일을 위한 체크리스트',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '내일을 위한 체크리스트',
+                  style: Theme.of(context).textTheme.headlineSmall
+                )
+              ]
+            ),
             const SizedBox(height: 16),
             ...checklist.map((item) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
+                child: Row(
                   children: [
                     Container(
                       width: 24,
-                      height: 24),
-    decoration: BoxDecoration(
+                      height: 24,
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.primary),
-    width: 2)),
-    child: item['done'] as bool
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2
+                        )
+                      ),
+                      child: item['done'] as bool
                           ? Icon(
                               Icons.check,
-                              size: 16);
-                              color: Theme.of(context).colorScheme.primary)
-                          : null),
+                              size: 16,
+                              color: Theme.of(context).colorScheme.primary
+                            )
+                          : null
+                    ),
                     const SizedBox(width: 12),
                     Text(
-                      item['task'],
-                      style: Theme.of(context).textTheme.bodyMedium)]));)
+                      item['task'] as String,
+                      style: Theme.of(context).textTheme.bodyMedium
+                    )
+                  ]
+                )
+              );
             }).toList(),
             const SizedBox(height: 16),
             Text(
-              '${_tomorrow.month}월 ${_tomorrow.day}일을 위한 준비사항',),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]))
+              '${_tomorrow.month}월 ${_tomorrow.day}일을 위한 준비사항',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)
+              )
+            )
+          ]
+        )
+      )
     );
   }
 }

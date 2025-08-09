@@ -197,16 +197,20 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '탄생월 선택',),
+            '탄생월 선택',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           const Text(
-            '당신이 태어난 월을 선택하면, 그 달의 탄생석이 전하는 특별한 메시지를 확인할 수 있습니다.',),
+            '당신이 태어난 월을 선택하면, 그 달의 탄생석이 전하는 특별한 메시지를 확인할 수 있습니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey)),
+              color: Colors.grey,
+            ),
+          ),
           const SizedBox(height: 20),
           
           // Month grid
@@ -241,35 +245,46 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                           ? birthstone['color'] as Color
                           : Colors.grey[300]!,
                       width: isSelected ? 2 : 1),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
                               color: birthstone['color'] as Color,
                               blurRadius: 8,
-                              offset: const Offset(0, 2))]
-                        : []),
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : [],
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         birthstone['icon'],
                         size: 32,
-                        color: birthstone['color']),
+                        color: birthstone['color'],
+                      ),
                       const SizedBox(height: 8),
                       Text(
-                        '$month월',),
+                        '$month월',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: isSelected
                               ? birthstone['color'] as Color
-                              : Colors.grey[700]!)),
+                              : Colors.grey[700]!,
+                        ),
+                      ),
                       Text(
                         birthstone['name'],
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.grey))]))
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             }),
           
@@ -281,15 +296,18 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: (birthstones[_selectedMonth]!['color'] as Color).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: birthstones[_selectedMonth]!['color'] as Color)),
+                  color: birthstones[_selectedMonth]!['color'] as Color,
+                ),
+              ),
               child: Row(
                 children: [
                   Icon(
                     birthstones[_selectedMonth]!['icon'] as IconData,
                     size: 48,
-                    color: birthstones[_selectedMonth]!['color'] as Color),
+                    color: birthstones[_selectedMonth]!['color'] as Color,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -299,20 +317,33 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                           birthstones[_selectedMonth]!['name'] as String,
                           style: const TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
                           birthstones[_selectedMonth]!['englishName'] as String,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600])),
+                            color: Colors.grey[600],
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           birthstones[_selectedMonth]!['meaning'] as String,
                           style: TextStyle(
                             fontSize: 14,
                             color: birthstones[_selectedMonth]!['color'] as Color,
-                            fontWeight: FontWeight.w500))]))])),
-            const SizedBox(height: 24)],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
           
           // Submit button
           SizedBox(
@@ -328,17 +359,27 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                     ? birthstones[_selectedMonth]!['color'] as Color
                     : Colors.grey,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.diamond, size: 20),
                   SizedBox(width: 8),
                   Text(
-                    '탄생석 운세 확인하기',),
+                    '탄생석 운세 확인하기',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold))])))])
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -362,37 +403,52 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             gradient: LinearGradient(
               colors: [
                 birthstone['color'] as Color,
-                (birthstone['color'] as Color).withOpacity(0.8)]),
-            borderRadius: BorderRadius.circular(12)),
+                (birthstone['color'] as Color).withOpacity(0.8),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Column(
             children: [
               Icon(
                 birthstone['icon'] as IconData,
                 size: 64,
-                color: Colors.white),
+                color: Colors.white,
+              ),
               const SizedBox(height: 16),
               Text(
                 birthstone['name'] as String,
                 style: const TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 birthstone['englishName'] as String,
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.grey[600])),
+                  color: Colors.grey[600],
+                ),
+              ),
               const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: (birthstone['color'] as Color).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Text(
                   birthstone['meaning'] as String,
                   style: TextStyle(
                     fontSize: 16,
                     color: birthstone['color'] as Color,
-                    fontWeight: FontWeight.w600)))])),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         
         const SizedBox(height: 20),
         
@@ -401,13 +457,17 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12))),
-            border: Border.all(color: Colors.grey[200]!)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
           child: Text(
             birthstone['description'] as String,
             style: const TextStyle(
               fontSize: 16,
-              height: 1.6)),
+              height: 1.6,
+            ),
+          ),
+        ),
         
         const SizedBox(height: 20),
         
@@ -416,8 +476,9 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12))),
-            border: Border.all(color: Colors.grey[200]!)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -426,12 +487,16 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                   Icon(Icons.auto_awesome, color: birthstone['color'] as Color),
                   const SizedBox(width: 8),
                   const Text(
-                    '탄생석의 효능',),
+                    '탄생석의 효능',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
-              ...((birthstone['benefits'] as List<String>).map((benefit) => Padding(
+              ...(birthstone['benefits'] as List<String>).map((benefit) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,12 +504,22 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                         Icon(
                           Icons.check_circle,
                           size: 20,
-                          color: birthstone['color'] as Color),
+                          color: birthstone['color'] as Color,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             benefit,
-                            style: const TextStyle(fontSize: 14)))]))).toList())])),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ).toList(),
+            ],
+          ),
+        ),
         
         const SizedBox(height: 20),
         
@@ -455,8 +530,11 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             gradient: LinearGradient(
               colors: [
                 Colors.purple[50]!,
-                Colors.blue[50]!]),
-            borderRadius: BorderRadius.circular(12)),
+                Colors.blue[50]!,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Column(
             children: [
               Row(
@@ -464,15 +542,22 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                   const Icon(Icons.spa, color: Colors.purple),
                   const SizedBox(width: 8),
                   const Text(
-                    '영적 정보',),
+                    '영적 정보',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               _buildInfoRow('차크라', birthstone['chakra'] as String),
               _buildInfoRow('원소', birthstone['element'] as String),
               _buildInfoRow('지배 행성', birthstone['planet'] as String),
-              _buildInfoRow('치유 효과', birthstone['healing'] as String)])),
+              _buildInfoRow('치유 효과', birthstone['healing'] as String),
+            ],
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Additional content from API
@@ -482,7 +567,11 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             data['content'],
             style: const TextStyle(
               fontSize: 16,
-              height: 1.6)]]
+              height: 1.6,
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -498,13 +587,21 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
               label,
               style: TextStyle(
                 color: Colors.grey[600],
-                fontSize: 14))),
+                fontSize: 14,
+              ),
+            ),
+          ),
           Expanded(
             child: Text(
               value,
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w500)))])
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

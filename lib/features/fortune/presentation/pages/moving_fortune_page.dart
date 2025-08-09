@@ -295,7 +295,10 @@ class _MovingInputFormState extends State<_MovingInputForm> {
               '이사 운세 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold)),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -367,7 +370,12 @@ class _MovingFortuneResult extends ConsumerWidget {
                             style: theme.textTheme.headlineSmall?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20 + fontSize))]))]),
+                              fontSize: 20 + fontSize)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 if (bestDirection['description'] != null) ...[
                   const SizedBox(height: 16),
                   Text(
@@ -381,7 +389,12 @@ class _MovingFortuneResult extends ConsumerWidget {
                     '지역: ${bestDirection['areas']}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.secondary,
-                      fontWeight: FontWeight.w600))]]))),
+                      fontWeight: FontWeight.w600)),
+                ],
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Best Timing Card
@@ -414,7 +427,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     bestTiming['reason'],
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 14 + fontSize))]]))),
+                      fontSize: 14 + fontSize))])))),
         const SizedBox(height: 20),
         
         // Compatibility Scores
@@ -460,7 +473,17 @@ class _MovingFortuneResult extends ConsumerWidget {
                               '${entry.value}점',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: _getScoreColor(entry.value)))])])).toList()]))),
+                                color: _getScoreColor(entry.value)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20)],
         
         // Moving Tips
@@ -501,7 +524,16 @@ class _MovingFortuneResult extends ConsumerWidget {
                             tip,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               height: 1.5,
-                              fontSize: 14 + fontSize)))])).toList()]))),
+                              fontSize: 14 + fontSize),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20)],
         
         // Direction to Avoid
@@ -547,8 +579,7 @@ class _MovingFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]
-    );
+                borderRadius: BorderRadius.circular(25)))))));
   }
   
   Color _getScoreColor(int score) {

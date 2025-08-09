@@ -18,7 +18,8 @@ class FortuneSnapScrollPage extends BaseFortunePage {
     Key? key,
     required String title,
     required String description,
-    required this.fortuneTypes}) : super(
+    required this.fortuneTypes,
+  }) : super(
     key: key,
     title: title,
     description: description,
@@ -49,7 +50,8 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
       type: 'multi',
       userId: '',
       content: '',
-      createdAt: DateTime.now());
+      createdAt: DateTime.now(),
+    );
   }
 
   Future<void> _loadAllFortunes() async {
@@ -70,7 +72,9 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
           details: {
             'luckyColor': _getLuckyColorForType(fortuneType),
             'luckyNumber': widget.fortuneTypes.indexOf(fortuneType) + 1,
-            'advice': _getAdviceForType(fortuneType)});
+            'advice': _getAdviceForType(fortuneType),
+          },
+        );
         
         _fortunes.add(fortuneData);
       }
@@ -89,7 +93,8 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
   Widget buildContent(BuildContext context) {
     if (_isLoadingAll) {
       return const Center(
-        child: CircularProgressIndicator());
+        child: CircularProgressIndicator(),
+      );
     }
 
     // Create snap cards from fortunes
@@ -99,14 +104,16 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
         title: fortune.title,
         description: widget.title,
         content: _buildFortuneContent(context, fortune),
-        imageHeight: 400);
+        imageHeight: 400,
+      );
     }).toList();
 
     return FortuneSnapScrollView(
       cards: snapCards,
       imageHeight: 400,
       snapDistance: 100,
-      velocityThreshold: 150);
+      velocityThreshold: 150,
+    );
   }
 
   Widget _buildFortuneContent(BuildContext context, FortuneData fortune) {
@@ -119,7 +126,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
         // Score Section
         GlassContainer(
           padding: const EdgeInsets.all(20),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           blur: 20,
           child: Row(
             children: [
@@ -131,23 +138,35 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                   gradient: RadialGradient(
                     colors: [
                       scoreColor.withOpacity(0.3),
-                      scoreColor.withOpacity(0.1)]),
+                      scoreColor.withOpacity(0.1),
+                    ],
+                  ),
                   border: Border.all(
                     color: scoreColor,
-                    width: 3)),
+                    width: 3,
+                  ),
+                ),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '${fortune.score}',),
-                        style: theme.textTheme.headlineMedium?.copyWith()
+                        '${fortune.score}',
+                        style: theme.textTheme.headlineMedium?.copyWith(
                           color: scoreColor,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       Text(
-                        '점',),
-                        style: theme.textTheme.bodySmall?.copyWith()
-                          color: scoreColor))]))),
+                        '점',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scoreColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -155,33 +174,50 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                   children: [
                     Text(
                       fortune.title,
-                      style: theme.textTheme.titleLarge?.copyWith()
-                        fontWeight: FontWeight.bold)),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       _getScoreMessage(fortune.score),
-                      style: theme.textTheme.bodyMedium?.copyWith()
-                        color: theme.colorScheme.onSurface.withOpacity(0.7)))]))])),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
 
         const SizedBox(height: 16),
 
         // Description
         GlassContainer(
           padding: const EdgeInsets.all(20),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           blur: 20,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '상세 운세',),
-                style: theme.textTheme.titleLarge?.copyWith()
-                  fontWeight: FontWeight.bold)),
+                '상세 운세',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 12),
               Text(
                 fortune.description,
-                style: theme.textTheme.bodyLarge?.copyWith()
-                  height: 1.6)])),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  height: 1.6,
+                ),
+              ),
+            ],
+          ),
+        ),
 
         const SizedBox(height: 16),
 
@@ -191,7 +227,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
             Expanded(
               child: GlassContainer(
                 padding: const EdgeInsets.all(16),
-                borderRadius: BorderRadius.circular(16))),
+                borderRadius: BorderRadius.circular(16),
                 blur: 15,
                 child: Column(
                   children: [
@@ -200,20 +236,28 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                       height: 50,
                       decoration: BoxDecoration(
                         color: fortune.details['luckyColor'],
-                        shape: BoxShape.circle),
+                        shape: BoxShape.circle,
+                      ),
                       child: Icon(
                         Icons.palette,
                         color: fortune.details['luckyColor'],
-                      size: 24)),
+                        size: 24,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Text(
-                      '행운의 색',),
-                      style: theme.textTheme.bodySmall)])))),
+                      '행운의 색',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: GlassContainer(
                 padding: const EdgeInsets.all(16),
-                borderRadius: BorderRadius.circular(16))),
+                borderRadius: BorderRadius.circular(16),
                 blur: 15,
                 child: Column(
                   children: [
@@ -222,17 +266,29 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                       height: 50,
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.2),
-                        shape: BoxShape.circle),
+                        shape: BoxShape.circle,
+                      ),
                       child: Center(
                         child: Text(
                           '${fortune.details['luckyNumber']}',
-                          style: theme.textTheme.headlineSmall?.copyWith()
+                          style: theme.textTheme.headlineSmall?.copyWith(
                             color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold)))),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Text(
-                      '행운의 숫자',),
-                      style: theme.textTheme.bodySmall)])))])),
+                      '행운의 숫자',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
 
         const SizedBox(height: 16),
 
@@ -240,20 +296,28 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
         if (fortune.details['advice'] != null)
           GlassContainer(
             padding: const EdgeInsets.all(16),
-            borderRadius: BorderRadius.circular(16))),
+            borderRadius: BorderRadius.circular(16),
             blur: 15,
             child: Row(
               children: [
                 Icon(
                   Icons.tips_and_updates,
-                  color: theme.colorScheme.primary),
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     fortune.details['advice'],
-                    style: theme.textTheme.bodyMedium))]))),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-        const SizedBox(height: 24)]);
+        const SizedBox(height: 24),
+      ],
+    );
   }
 
   String _getTitleForType(String type) {

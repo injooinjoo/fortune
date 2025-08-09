@@ -261,7 +261,11 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                     _birthDate != null
                         ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                         : '생년월일을 선택하세요',
-                    style: theme.textTheme.bodyLarge)])))),
+                    style: theme.textTheme.bodyLarge),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
           
           // Moving Reason
@@ -324,8 +328,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                   setState(() {
                     _urgencyLevel = value;
                   });
-                });
-            }).toList())]));
+                },
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildLocationTab(ThemeData theme) {
@@ -378,7 +387,11 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               initialAddress: _targetAddress,
               showDirectionOverlay: true,
               auspiciousDirections: const ['동쪽', '남동쪽'], // This will be calculated
-            ))]);
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildDateTab(ThemeData theme) {
@@ -455,7 +468,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       'reason': _selectedReason ?? '기타',
       'housingType': _selectedType ?? '아파트',
       'urgencyLevel': _urgencyLevel ?? '보통 (1-3개월)',
-      'luckyScore': null});
+      'luckyScore': _luckyScores[_plannedDate]});
   }
 
   void _showError(String message) {
@@ -525,6 +538,6 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
         '가족 운': 80,
         '재물 운': 70},
       'recommendations': result.recommendations ?? [],
-      'cautions': additionalInfo['cautions']};;
+      'cautions': additionalInfo['cautions']};
   }
 }

@@ -24,54 +24,54 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
   String? _selectedMealTime;
   
   final Map<String, Map<String, dynamic>> _foodCategories = {
-    '한식': {}
-      'icon', '🍚',
-      'foods': \['['김치찌개', '비빔밥', '삼겹살', '김밥', '떡볶이', '잡채', '갈비탕', '냉면'],
-      'energy', '따뜻한 정과 활력',
+    '한식': {
+      'icon': '🍚',
+      'foods': ['김치찌개', '비빔밥', '삼겹살', '김밥', '떡볶이', '잡채', '갈비탕', '냉면'],
+      'energy': '따뜻한 정과 활력',
       'color': null},
     '중식': {
-      'icon', '🥟',
+      'icon': '🥟',
       'foods': ['짜장면', '짬뽕', '탕수육', '마파두부', '깐풍기', '볶음밥', '양장피', '팔보채'],
-      'energy', '풍요와 번영',
+      'energy': '풍요와 번영',
       'color': null},
     '일식': {
-      'icon', '🍱',
+      'icon': '🍱',
       'foods': ['초밥', '라멘', '돈카츠', '우동', '덴푸라', '야키토리', '오코노미야키', '카레'],
-      'energy', '섬세함과 균형',
+      'energy': '섬세함과 균형',
       'color': null},
     '양식': {
-      'icon', '🍝',
+      'icon': '🍝',
       'foods': ['파스타', '피자', '스테이크', '리조또', '샐러드', '햄버거', '샌드위치', '수프'],
-      'energy', '자유와 창의성',
+      'energy': '자유와 창의성',
       'color': null},
     '디저트': {
-      'icon', '🍰',
+      'icon': '🍰',
       'foods': ['케이크', '마카롱', '티라미수', '푸딩', '아이스크림', '와플', '팬케이크', '초콜릿'],
-      'energy', '달콤한 행복',
+      'energy': '달콤한 행복',
       'color': null},
     '음료': {
-      'icon', '☕',
+      'icon': '☕',
       'foods': ['커피', '녹차', '과일주스', '스무디', '에이드', '차', '코코아', '탄산음료'],
-      'energy', '상쾌한 활력',
+      'energy': '상쾌한 활력',
       'color': null}};
 
   final Map<String, Map<String, dynamic>> _nutritionInfo = {
-    '단백질': {}
+    '단백질': {
       'icon': Icons.fitness_center,
-      'benefit', '체력과 집중력 향상',
-      'foods': ['닭가슴살', '계란', '두부', '연어': null},
+      'benefit': '체력과 집중력 향상',
+      'foods': ['닭가슴살', '계란', '두부', '연어']},
     '비타민': {
-      , 'icon': Icons.wb_sunny,
-      'benefit', '면역력과 활력 증진',
-      'foods': ['과일', '샐러드', '녹색 채소', '견과류': null},
+      'icon': Icons.wb_sunny,
+      'benefit': '면역력과 활력 증진',
+      'foods': ['과일', '샐러드', '녹색 채소', '견과류']},
     '탄수화물': {
-      , 'icon': Icons.battery_charging_full,
-      'benefit', '즉각적인 에너지 공급',
-      'foods': ['밥', '빵', '파스타', '감자': null},
+      'icon': Icons.battery_charging_full,
+      'benefit': '즉각적인 에너지 공급',
+      'foods': ['밥', '빵', '파스타', '감자']},
     '오메가3': {
-      , 'icon': Icons.favorite,
-      'benefit', '두뇌 활동과 심장 건강',
-      'foods': ['연어', '참치', '호두', '아보카도': null}};
+      'icon': Icons.favorite,
+      'benefit': '두뇌 활동과 심장 건강',
+      'foods': ['연어', '참치', '호두', '아보카도']}};
 
   @override
   Widget buildInputForm() {
@@ -81,14 +81,14 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '음식 선호도 (선택사항)',),
-          style: theme.textTheme.titleMedium)),
+          '음식 선호도 (선택사항)',
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildPreferenceSelector(),
         const SizedBox(height: 24),
         Text(
-          '식사 시간대 (선택사항)',),
-          style: theme.textTheme.titleMedium)),
+          '식사 시간대 (선택사항)',
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildMealTimeSelector()]
     );
@@ -96,12 +96,12 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
 
   Widget _buildPreferenceSelector() {
     final preferences = [
-      {'\1': '\2', 'label', '매운맛': 'icon', '🌶️'},
-      {'id', 'sweet', 'label', '단맛', 'icon', '🍯'},
-      {'id', 'sour', 'label', '신맛', 'icon', '🍋'},
-      {'id', 'salty', 'label', '짠맛', 'icon', '🧂'},
-      {'id', 'light', 'label', '담백한맛', 'icon', '🥗'},
-      {'id', 'rich', 'label', '진한맛', 'icon', '🍖'}];
+      {'id': 'spicy', 'label': '매운맛', 'icon': '🌶️'},
+      {'id': 'sweet', 'label': '단맛', 'icon': '🍯'},
+      {'id': 'sour', 'label': '신맛', 'icon': '🍋'},
+      {'id': 'salty', 'label': '짠맛', 'icon': '🧂'},
+      {'id': 'light', 'label': '담백한맛', 'icon': '🥗'},
+      {'id': 'rich', 'label': '진한맛', 'icon': '🍖'}];
 
     return Wrap(
       spacing: 12,
@@ -113,14 +113,13 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
           label: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(pref['icon'],
+              Text(pref['icon']!),
               const SizedBox(width: 4),
-              Text(pref['label']]),
+              Text(pref['label']!)]),
           selected: isSelected,
           onSelected: (selected) {
             setState(() {
-              _selectedPreference = selected ? pref['id'],
-    String : null;
+              _selectedPreference = selected ? pref['id'] as String : null;
             });
           },
           selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2));
@@ -129,10 +128,10 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
 
   Widget _buildMealTimeSelector() {
     final mealTimes = [
-      {'\1': '\2', 'label', '아침': 'icon'},
-      {'id', 'lunch', 'label', '점심', 'icon'},
-      {'id', 'dinner', 'label', '저녁', 'icon'},
-      {'id', 'snack', 'label', '간식', 'icon'}];
+      {'id': 'breakfast', 'label': '아침', 'icon': Icons.wb_sunny},
+      {'id': 'lunch', 'label': '점심', 'icon': Icons.wb_sunny},
+      {'id': 'dinner', 'label': '저녁', 'icon': Icons.nights_stay},
+      {'id': 'snack', 'label': '간식', 'icon': Icons.cookie}];
 
     return Row(
       children: mealTimes.map((time) {
@@ -143,7 +142,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: GlassContainer(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               blur: 20,
               borderColor: isSelected 
                   ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
@@ -163,20 +162,20 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
                     _selectedMealTime = time['id'] as String;
                   });
                 },
-                borderRadius: BorderRadius.circular(16))),
+                borderRadius: BorderRadius.circular(16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      time['icon'],
+                      time['icon'] as IconData,
                       size: 28,
                       color: isSelected 
                           ? Theme.of(context).colorScheme.primary 
                           : Theme.of(context).colorScheme.onSurface),
                     const SizedBox(height: 8),
                     Text(
-                      time['label'],
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                      time['label']!,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])))));
       }).toList());
   }
@@ -277,7 +276,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
         '서브 음식': secondaryFood,
         '카테고리': primaryCategory,
         '영양소': recommendedNutrition,
-        '최적 시간', '${(birthDate.day % 12 + 11)}시-${(birthDate.day % 12 + 13)}시'},
+        '최적 시간': '${(birthDate.day % 12 + 11)}시-${(birthDate.day % 12 + 13)}시'},
       recommendations: [
         '$mainFood을(를) 천천히 음미하며 드세요',
         '음식의 색과 향을 충분히 느껴보세요',
@@ -299,21 +298,21 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
 
   String _getPreferenceLabel(String preference) {
     final labels = {
-      'spicy', '매운맛',
-      'sweet', '단맛',
-      'sour', '신맛',
-      'salty', '짠맛',
-      'light', '담백한맛',
-      'rich', '진한맛'};
+      'spicy': '매운맛',
+      'sweet': '단맛',
+      'sour': '신맛',
+      'salty': '짠맛',
+      'light': '담백한맛',
+      'rich': '진한맛'};
     return labels[preference] ?? preference;
   }
 
   String _getMealTimeLabel(String mealTime) {
     final labels = {
-      'breakfast', '아침',
-      'lunch', '점심',
-      'dinner', '저녁',
-      'snack', '간식 시간'};
+      'breakfast': '아침',
+      'lunch': '점심',
+      'dinner': '저녁',
+      'snack': '간식 시간'};
     return labels[mealTime] ?? mealTime;
   }
 

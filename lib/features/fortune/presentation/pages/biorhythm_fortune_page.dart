@@ -96,10 +96,18 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.5))),
+                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
+                ),
                 Icon(
                   Icons.calendar_today_rounded,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5))]))),
+                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 24),
 
         // Target Date Selection
@@ -141,7 +149,11 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                     style: theme.textTheme.bodyLarge)),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5))]))),
+                  color: theme.colorScheme.onSurface.withOpacity(0.5)),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 24),
 
         // Biorhythm Explanation
@@ -161,16 +173,23 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                ),
                       child: const Icon(
                         Icons.info_outline_rounded,
                         color: Colors.white,
-                        size: 20)),
+                        size: 20,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       '바이오리듬이란?',
                       style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold))])),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   '생체 리듬의 주기적 변화를 분석하여 신체(23일), 감정(28일), 지적(33일) 상태를 예측하는 이론입니다.',
@@ -182,7 +201,11 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                 const SizedBox(height: 8),
                 _buildRhythmInfo(theme, '감정 리듬', '28일', Colors.blue),
                 const SizedBox(height: 8),
-                _buildRhythmInfo(theme, '지적 리듬', '33일', Colors.green)]))),
+                _buildRhythmInfo(theme, '지적 리듬', '33일', Colors.green),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 32),
 
         // Submit Button
@@ -207,7 +230,10 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
               '바이오리듬 분석하기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold)),
+          ),
+        ),
+      ],
     );
   }
 
@@ -231,8 +257,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
         Text(
           '($cycle 주기)',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6)))]
-    );
+            color: theme.colorScheme.onSurface.withOpacity(0.6)))]);
   }
 }
 
@@ -327,12 +352,24 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                           Text(
                             '${targetDate.year}년 ${targetDate.month}월 ${targetDate.day}일',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
-                const SizedBox(height: 20),
-                Text(
-                  result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6)]))),
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                result.mainFortune ?? '',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  height: 1.6),
+              ),
+            ],
+            ),
+          ),
+        ),
         const SizedBox(height: 16),
 
         // Current Status Card
@@ -357,11 +394,14 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              _buildRhythmIndicator(context, '신체'),
+              _buildRhythmIndicator(context, '신체', physicalPercent, Colors.red),
               const SizedBox(height: 12),
-              _buildRhythmIndicator(context, '감정'),
+              _buildRhythmIndicator(context, '감정', emotionalPercent, Colors.blue),
               const SizedBox(height: 12),
-              _buildRhythmIndicator(context, '지적')])),
+              _buildRhythmIndicator(context, '지적', intellectualPercent, Colors.green),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
 
         // Biorhythm Chart
@@ -413,8 +453,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                       }),
                     titlesData: FlTitlesData(
                       show: true,
-                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false),
-                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
@@ -630,7 +670,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
             Text(
               label,
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500)),
+                fontWeight: FontWeight.w500),
+            ),
             Row(
               children: [
                 Icon(
@@ -645,10 +686,11 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
@@ -706,7 +748,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Icon(
                   icon,
                   color: color,
@@ -730,8 +773,9 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Text(
             description,
@@ -751,7 +795,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                 Icon(
                   Icons.lightbulb_outline_rounded,
                   color: color,
-                  size: 16),
+                  size: 16,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -810,7 +855,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Text(
                   day,
                   style: TextStyle(

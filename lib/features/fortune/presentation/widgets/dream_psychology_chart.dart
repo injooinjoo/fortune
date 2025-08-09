@@ -86,30 +86,30 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     child: Stack(
             children: [
               CustomPaint(
-                size: Size.infinite);
+                size: Size.infinite,
                 painter: _RadarBackgroundPainter()),
               RadarChart(
                 RadarChartData(
-                  radarShape: RadarShape.polygon);
-                  tickCount: 5),
-    ticksTextStyle: Theme.of(context).textTheme.bodyMedium),
-    tickBorderData: BorderSide(
+                  radarShape: RadarShape.polygon,
+                  tickCount: 5,
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  tickBorderData: BorderSide(
                     color: Colors.white.withOpacity(0.2),
-    width: 1),
-    gridBorderData: BorderSide(
+                    width: 1),
+                  gridBorderData: BorderSide(
                     color: Colors.white.withOpacity(0.2),
-    width: 1),
-    radarBorderData: BorderSide(
+                    width: 1),
+                  radarBorderData: BorderSide(
                     color: Colors.deepPurple.withOpacity(0.5),
-    width: 2),
-    titleTextStyle: Theme.of(context).textTheme.bodyMedium),
-    titlePositionPercentageOffset: 0.15),
-    getTitle: (index, angle) {
-                    final titles = \['['의식', '무의식', '긍정', '부정', '안정', '변화', '내향', '외향'];
+                    width: 2),
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  titlePositionPercentageOffset: 0.15,
+                  getTitle: (index, angle) {
+                    final titles = ['의식', '무의식', '긍정', '부정', '안정', '변화', '내향', '외향'];
                     return RadarChartTitle(
                       text: titles[index],
                       angle: 0);
-                  }),
+                  },
     dataSets: [
                     RadarDataSet(
                       fillColor: Colors.deepPurple.withOpacity(0.3),

@@ -53,8 +53,7 @@ class EnhancedSportsFortunePage extends BaseFortunePage {
   ConsumerState<EnhancedSportsFortunePage> createState() => _EnhancedSportsFortunePageState();
 }
 
-class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSportsFortunePage> 
-    with TickerProviderStateMixin {
+class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSportsFortunePage> {
   
   // All sports items
   final List<SportItem> allSports = [
@@ -377,7 +376,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).primaryColor.withOpacity(0.3),
           width: 1)),
@@ -397,13 +396,23 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor)),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondaryColor))]))]));
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSportsGrid() {
@@ -433,7 +442,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           _selectedTeam = null; // Reset team selection
         });
       },
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -443,7 +452,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             colors: isSelected
                 ? sport.gradientColors
                 : [Colors.grey[200]!, Colors.grey[300]!]),
-          borderRadius: BorderRadius.circular(16))),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -459,14 +468,16 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         child: Stack(
           children: [
             // Background pattern
-            if (isSelected),
-                  Positioned(
+            if (isSelected)
+              Positioned(
                 right: -20,
                 bottom: -20,
                 child: Icon(
                   sport.icon,
                   size: 80,
-                  color: Colors.white.withOpacity(0.2))),
+                  color: Colors.white.withOpacity(0.2),
+                ),
+              ),
             
             // Content
             Padding(
@@ -489,12 +500,22 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   if (sport.teams != null) ...[
                     const SizedBox(height: 4),
                     Text(
-                      '${sport.teams!.length}개 팀',),
+                      '${sport.teams!.length}개 팀',
                       style: TextStyle(
                         fontSize: 12,
                         color: isSelected
                             ? Colors.white.withOpacity(0.8)
-                            : Colors.grey[500]))]]))]))).animate(delay: (50 * index).ms)
+                            : Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate(delay: (50 * index).ms)
       .fadeIn(duration: 300.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
   }
@@ -509,7 +530,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           colors: [
             _selectedSport!.gradientColors[0].withOpacity(0.1),
             _selectedSport!.gradientColors[1].withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedSport!.gradientColors[0].withOpacity(0.3),
           width: 1)),
@@ -534,7 +555,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           if (_selectedSport!.teams != null) ...[
             const SizedBox(height: 20),
             Text(
-              '팀 선택',),
+              '팀 선택',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -559,7 +580,8 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 children: [
                   Icon(
                     _selectedSport!.icon,
-                    color: Colors.white),
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     _selectedTeam != null
@@ -568,7 +590,16 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white))])))])).animate()
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -581,7 +612,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         // Personal fortune option
         _buildTeamChip('개인'),
         // Team options
-        ..._selectedSport!.teams!.map((team) => _buildTeamChip(team)]
+        ..._selectedSport!.teams!.map((team) => _buildTeamChip(team))]
     );
   }
 
@@ -594,15 +625,15 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           _selectedTeam = isPersonal ? null : team;
         });
       },
-      borderRadius: BorderRadius.circular(20))),
+      borderRadius: BorderRadius.circular(20),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? _selectedSport!.gradientColors[0]
               : Colors.grey[200],
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
                 ? _selectedSport!.gradientColors[0]
@@ -628,7 +659,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           colors: [
             _selectedSport!.gradientColors[0].withOpacity(0.1),
             _selectedSport!.gradientColors[1].withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedSport!.gradientColors[0].withOpacity(0.3),
           width: 1)),
@@ -650,18 +681,25 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedSport!.gradientColors[0]))),
+                    color: _selectedSport!.gradientColors[0]),
+                ),
+              ),
               if (fortune.score != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
-                    '${fortune.score}점',),
+                    '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold)))]),
+                      fontWeight: FontWeight.bold),
+                  ),
+                ),
+            ],
+          ),
           const SizedBox(height: 20),
           
           // Main message
@@ -703,7 +741,16 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor)))]))]])).animate()
+                        color: AppTheme.textColor),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -724,7 +771,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         if (details['keyPlayers'] != null)
           _buildDetailItem(
             '주목할 선수',
-            details['keyPlayers'].join(', ',
+            details['keyPlayers'].join(', '),
             Icons.star,
             Colors.orange),
         
@@ -742,7 +789,8 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '추천 전략',
             details['strategy'],
             Icons.psychology,
-            Colors.purple)]
+            Colors.purple),
+        ],
     );
   }
 
@@ -778,11 +826,12 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         if (details['tips'] != null) ...[
           const SizedBox(height: 16),
           Text(
-            '운동 팁',),
+            '운동 팁',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _selectedSport!.gradientColors[0])),
+              color: _selectedSport!.gradientColors[0]),
+            ),
           const SizedBox(height: 8),
           ...List<String>.from(details['tips']).map((tip) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -797,7 +846,14 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 Expanded(
                   child: Text(
                     tip,
-                    style: const TextStyle(fontSize: 14)))])).toList()]]
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ],
+      ],
     );
   }
 
@@ -824,12 +880,20 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppTheme.textSecondaryColor)),
+                    color: AppTheme.textSecondaryColor),
+                ),
                 Text(
                   value,
                   style: const TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.bold))]))]));
+                    fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onGenerateFortune() {

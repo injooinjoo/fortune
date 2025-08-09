@@ -120,7 +120,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 5,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium,
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
                     color: Colors.white.withOpacity(0.2),
                     width: 1),
@@ -130,7 +130,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   radarBorderData: BorderSide(
                     color: Colors.purple.withOpacity(0.5),
                     width: 2),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   titlePositionPercentageOffset: 0.15,
                   getTitle: (index, angle) {
                     final functions = MbtiCognitiveFunctionsService.cognitiveFunctions;

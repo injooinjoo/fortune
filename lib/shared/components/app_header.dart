@@ -174,7 +174,16 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                       if (showTokenBalance) ...[
                         const TokenBalanceWidget(),
                         SizedBox(width: AppSpacing.spacing2)],
-                      if (showActions && actions != null) ...actions!]))))));
+                      if (showActions && actions != null) ...actions!,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

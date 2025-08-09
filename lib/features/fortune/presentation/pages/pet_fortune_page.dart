@@ -16,7 +16,7 @@ class PetFortunePage extends BaseFortunePage {
     required super.fortuneType,
     required super.title,
     required super.description,
-    this.petType)
+    this.petType,
   });
 
   @override
@@ -92,12 +92,19 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 _buildPetInfoForm(),
                 const SizedBox(height: 16),
                 buildFortuneResult(),
-                _buildPetCareTips()]))),
+                _buildPetCareTips()
+              ]
+            )
+          ),
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
-            child: _buildGenerateButton())]);
+            child: _buildGenerateButton()
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildLoginPrompt() {
@@ -119,7 +126,11 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () => context.push('/onboarding'),
-            child: const Text('로그인하기'))])));
+            child: const Text('로그인하기')
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildPetInfoForm() {
@@ -198,7 +209,15 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                       setState(() {
                         _petAge = int.tryParse(value);
                       });
-                    }))])])]));
+                    }
+                  )
+                )
+              ]
+            )
+          ]
+        )
+      )
+    );
   }
 
   Map<String, dynamic> _buildAdditionalData() {
@@ -254,7 +273,15 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 Expanded(
                   child: Text(
                     tip,
-                    style: Theme.of(context).textTheme.bodyMedium))])))].toList()])));
+                    style: Theme.of(context).textTheme.bodyMedium
+                  )
+                )
+              ]
+            )
+          )).toList()
+        ]
+      )
+    );
   }
 
   List<String> _getPetCareTips() {
@@ -327,6 +354,10 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('확인'))])));
+            child: const Text('확인')
+          )
+        ]
+      )
+    );
   }
 }

@@ -322,7 +322,13 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                 '인맥 리포트 확인하기',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold)))]);
+                  fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -377,7 +383,9 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       child: Icon(
                         Icons.people_alt,
                         color: theme.colorScheme.primary,
-                        size: 28)),
+                        size: 28,
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -400,12 +408,25 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                               Text(
                                 _getScoreMessage(networkScore),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7)))])])),
+                                  color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 // Network Score Gauge
                 SizedBox(
                   height: 180,
-                  child: _buildNetworkGauge(networkScore, theme)])),
+                  child: _buildNetworkGauge(networkScore, theme),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Network Types Analysis
@@ -451,8 +472,15 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         const SizedBox(width: 4),
                         Text(
                           '${entry.key}: ${entry.value}%',
-                          style: theme.textTheme.bodySmall)]);
-                  }).toList())]))),
+                          style: theme.textTheme.bodySmall),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Key People to Meet
@@ -538,18 +566,23 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       Icon(
                         Icons.timeline,
                         color: Colors.blue,
-                        size: 24),
+                        size: 24,
+                      ),
                       const SizedBox(width: 12),
                       Text(
                         '월별 인맥 운세',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 200,
                     child: _buildMonthlyChart(monthlyForecast, theme),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -617,7 +650,13 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25))))]);
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
   
   Widget _buildNetworkGauge(int score, ThemeData theme) {

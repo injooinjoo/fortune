@@ -191,14 +191,14 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '관계 정보',),
-                style: theme.textTheme.headlineSmall)),
+                '관계 정보',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               
               // Relationship Type
               Text(
-                '관계 유형',),
-                style: theme.textTheme.bodyLarge?.copyWith()
+                '관계 유형',
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -211,9 +211,9 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     onTap: () {
                       setState(() {
                         _relationshipType = entry.key;
-});
-},
-                    borderRadius: BorderRadius.circular(20))),
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(20),
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
@@ -222,8 +222,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3)))
-                    );
+                            : theme.colorScheme.onSurface.withOpacity(0.3))));
                 }).toList()),
               const SizedBox(height: 16),
               

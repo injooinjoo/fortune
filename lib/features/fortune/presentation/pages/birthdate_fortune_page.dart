@@ -430,8 +430,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12))),
-            border: Border.all(color: Colors.grey[200]!)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -439,13 +440,18 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 children: [
                   Icon(
                     Icons.calendar_today,
-                    color: weekdayInfo['color']),
+                    color: weekdayInfo['color'],
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '${weekdayInfo['day']} 출생',
                     style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -453,14 +459,21 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 children: (weekdayInfo['characteristics'] as List<String>)
                     .map((trait) => Chip(
                           label: Text(trait),
-                          backgroundColor: weekdayInfo['color'] as Color?)).toList()),
+                          backgroundColor: weekdayInfo['color'] as Color?,
+                        )).toList(),
+              ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildInfoChip(context, '행성', weekdayInfo['planet']),
                   _buildInfoChip(context, '원소', weekdayInfo['element']),
-                  _buildInfoChip(context, '보석', weekdayInfo['gemstone'])])])),
+                  _buildInfoChip(context, '보석', weekdayInfo['gemstone']),
+                ],
+              ),
+            ],
+          ),
+        ),
         
         const SizedBox(height: 20),
         
@@ -469,16 +482,19 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12))),
-            border: Border.all(color: Colors.grey[200]!)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                '성격 분석',),
+                '성격 분석',
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 16),
               _buildAnalysisRow('강점', lifePathInfo['strength']!, Colors.green),
               const SizedBox(height: 12),
@@ -488,7 +504,8 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Row(
                   children: [
                     const Icon(Icons.lightbulb, color: Colors.blue),
@@ -496,7 +513,15 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                     Expanded(
                       child: Text(
                         lifePathInfo['advice']!,
-                        style: const TextStyle(fontSize: 14)))]))])),
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         
         // Additional content from API
         ...(data['content'] != null ? [
@@ -505,7 +530,10 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             data['content'],
             style: const TextStyle(
               fontSize: 16,
-              height: 1.6)] : []),
+              height: 1.6,
+            ),
+          ),
+        ] : []),
       ]);
   }
 

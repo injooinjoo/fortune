@@ -435,7 +435,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               const SizedBox(width: 12),
               Text(
                 name,
-                style: Theme.of(context).textTheme.headlineSmall)])),
+                style: Theme.of(context).textTheme.headlineSmall),
+            ],
+          ),
           const SizedBox(height: 16),
           _buildAnalysisItem(
             icon: Icons.person_outline_rounded,
@@ -450,7 +452,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
           _buildAnalysisItem(
             icon: Icons.star_outline_rounded,
             title: '강점',
-            content: analysis['strength'])]));
+            content: analysis['strength']),
+        ],
+      ));
   }
 
   Widget _buildAnalysisItem({
@@ -471,11 +475,16 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
               Text(
                 content,
-                style: Theme.of(context).textTheme.bodyMedium)]))]);)
+                style: Theme.of(context).textTheme.bodyMedium),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildStrengthsAndChallenges() {
@@ -518,7 +527,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: Theme.of(context).textTheme.headlineSmall)])),
+                style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...items.map((item) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -526,7 +535,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '•',),
+                  '•',
                   style: TextStyle(
                     color: color,
                     fontSize: 20,
@@ -535,7 +544,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 Expanded(
                   child: Text(
                     item,
-                    style: Theme.of(context).textTheme.bodyMedium))]))).toList()]));)
+                    style: Theme.of(context).textTheme.bodyMedium))]))).toList()]));
   }
 
   Widget _buildLuckyElements() {
@@ -543,7 +552,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
 
     return ShimmerGlass(
       shimmerColor: Colors.amber,
-      borderRadius: BorderRadius.circular(24))),
+      borderRadius: BorderRadius.circular(24),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -563,8 +572,8 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                     size: 24)),
                 const SizedBox(width: 12),
                 Text(
-                  '행운의 요소',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '행운의 요소',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 20),
             GridView.count(
               shrinkWrap: true,
@@ -581,7 +590,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                       colors: [
                         Colors.amber.shade50,
                         Colors.amber.shade100]),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: Colors.amber.shade300)),
                   child: Column(
@@ -590,12 +599,12 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                     children: [
                       Text(
                         entry.key,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.amber.shade800)),
                       const SizedBox(height: 2),
                       Text(
                         entry.value.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.amber.shade900))]));
               }).toList())])));

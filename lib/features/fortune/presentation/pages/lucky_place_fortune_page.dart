@@ -111,14 +111,14 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '선호하는 환경 (선택사항)',),
-          style: theme.textTheme.titleMedium)),
+          '선호하는 환경 (선택사항)',
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildEnvironmentSelector(),
         const SizedBox(height: 24),
         Text(
-          '오늘의 활동 (선택사항)',),
-          style: theme.textTheme.titleMedium)),
+          '오늘의 활동 (선택사항)',
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildActivitySelector()]
     );
@@ -338,8 +338,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
       child: Column(
         children: [
           Text(
-            '오늘의 메인 행운의 장소',),
-            style: Theme.of(context).textTheme.headlineSmall)),
+            '오늘의 메인 행운의 장소',
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Container(
             width: 120,
@@ -349,7 +349,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               gradient: RadialGradient(
                 colors: [
                   (primaryCategoryInfo['color'] as Color).withOpacity(0.3),
-                  (primaryCategoryInfo['color'] as Color).withOpacity(0.6)],
+                  (primaryCategoryInfo['color'] as Color).withOpacity(0.6)]),
               boxShadow: [
                 BoxShadow(
                   color: (primaryCategoryInfo['color'] as Color).withOpacity(0.5),
@@ -363,7 +363,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
           const SizedBox(height: 16),
           Text(
             mainPlace,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith()
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Container(
@@ -373,7 +373,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               borderRadius: BorderRadius.circular(20)),
             child: Text(
               '$primaryCategory • ${primaryCategoryInfo['energy']}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w600)))]));
   }
@@ -400,8 +400,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '행운의 방향',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '행운의 방향',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 20),
             Stack(
               alignment: Alignment.center,
@@ -429,13 +429,13 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   children: [
                     Text(
                       luckyDirection,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith()
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.primary)),
                     const SizedBox(height: 8),
                     Text(
-                      '약 ${luckyDistance}m',),
-                      style: Theme.of(context).textTheme.bodyMedium)])])),
+                      '약 ${luckyDistance}m',
+                      style: Theme.of(context).textTheme.bodyMedium)])]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -452,8 +452,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '이 방향으로 ${luckyDistance}m 이내의 $luckyDirection 지역을 탐색해보세요',),
-                      style: Theme.of(context).textTheme.bodySmall),
+                      '이 방향으로 ${luckyDistance}m 이내의 $luckyDirection 지역을 탐색해보세요',
+                      style: Theme.of(context).textTheme.bodySmall,
                       textAlign: TextAlign.center))]))])));
   }
 
@@ -477,8 +477,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '장소 카테고리별 운세',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '장소 카테고리별 운세',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -494,7 +494,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                 
                 return GlassContainer(
                   padding: const EdgeInsets.all(12),
-                  borderRadius: BorderRadius.circular(16))),
+                  borderRadius: BorderRadius.circular(16),
                   blur: 10,
                   borderColor: isPrimary
                       ? (info['color'] as Color).withOpacity(0.5)
@@ -518,7 +518,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                       const SizedBox(height: 8),
                       Text(
                         category,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal),
                         textAlign: TextAlign.center),
                       if (isPrimary)
@@ -529,8 +529,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                             color: (info['color'] as Color).withOpacity(0.3),
                             borderRadius: BorderRadius.circular(10)),
                           child: Text(
-                            '오늘',),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                            '오늘',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontSize: 10,
                               color: Colors.white,
                               fontWeight: FontWeight.bold)))]));
@@ -562,8 +562,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '시간대별 최적 활동',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '시간대별 최적 활동',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             _buildTimeSlot(
               '오전',
@@ -592,7 +592,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: color.withOpacity(0.3))),
       child: Row(
@@ -613,18 +613,18 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   children: [
                     Text(
                       period,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith()
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold)),
                     const SizedBox(width: 8),
                     Text(
                       time,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith()
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: color,
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 4),
                 Text(
                   activity,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith()
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)))]))]));
   }
 
@@ -653,12 +653,12 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '$selectedActivity 최적 장소',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '$selectedActivity 최적 장소',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Text(
               activityInfo['description'],
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))),
             const SizedBox(height: 16),
             Wrap(
@@ -686,8 +686,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                 color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '장소 방문 팁',),
-                style: Theme.of(context).textTheme.headlineSmall)])),
+                '장소 방문 팁',
+                style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
             '장소에 도착하면 먼저 주변을 천천히 둘러보세요',
@@ -709,7 +709,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));)
+                      style: Theme.of(context).textTheme.bodyMedium))]));
           }).toList()]));
   }
 }

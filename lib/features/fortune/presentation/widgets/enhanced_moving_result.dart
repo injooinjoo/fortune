@@ -362,7 +362,7 @@ class EnhancedMovingResult extends StatelessWidget {
             );
           },
           tickCount: 5,
-          ticksTextStyle: Theme.of(context).textTheme.bodyMedium,
+          ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
           tickBorderData: const BorderSide(color: Colors.grey, width: 0.5),
         ),
       ),

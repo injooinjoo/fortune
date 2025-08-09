@@ -397,7 +397,18 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         const SizedBox(height: 4),
                         Text(
                           dayData['warning'],
-                          style: Theme.of(context).textTheme.bodyMedium)]))])])])));
+                          style: Theme.of(context).textTheme.bodyMedium
+                        )
+                      ]
+                    )
+                  )
+                ]
+              )
+            )
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildWeekHighlights() {
@@ -456,13 +467,30 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                                   style: TextStyle(
                                     color: color,
                                     fontSize: 12,
-                                    fontWeight: FontWeight.bold)))]),
+                                    fontWeight: FontWeight.bold
+                                  )
+                                )
+                              )
+                            ]
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             highlight['description'],
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))]);
-            }).toList()])));
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)
+                            )
+                          )
+                        ]
+                      )
+                    )
+                  ]
+                )
+              );
+            }).toList()
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildCategoryTrendsChart() {
@@ -582,7 +610,14 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                             strokeColor: Colors.white);
                         }),
                       belowBarData: BarAreaData(show: false));
-                  }).toList()))))])));
+                  }).toList()
+                )
+              )
+            )
+          ]
+        )
+      )
+    );
   }
 
   Color _getScoreColor(int score) {

@@ -95,8 +95,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
           child: Column(
             children: [
               Text(
-                '손금 가이드',),
-                style: theme.textTheme.headlineSmall)),
+                '손금 가이드',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               SizedBox(
                 height: 250,
@@ -114,8 +114,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '주로 사용하는 손',),
-                style: theme.textTheme.headlineSmall)),
+                '주로 사용하는 손',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -123,8 +123,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                     child: _buildHandOption('left', '왼손', Icons.pan_tool_alt_rounded)),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildHandOption('right', '오른손', Icons.pan_tool_rounded))])
-            ]
+                    child: _buildHandOption('right', '오른손', Icons.pan_tool_rounded))]
+            ])
           )
         ),
         const SizedBox(height: 16),
@@ -136,8 +136,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '손 모양',),
-                style: theme.textTheme.headlineSmall)),
+                '손 모양',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               GridView.count(
                 shrinkWrap: true,
@@ -155,10 +155,10 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                         _palmShape = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     child: GlassContainer(
                       padding: const EdgeInsets.all(16),
-                      borderRadius: BorderRadius.circular(12))),
+                      borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.5)
@@ -167,7 +167,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                       child: Center(
                         child: Text(
                           entry.value,
-                          style: theme.textTheme.bodyMedium?.copyWith()
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                             color: isSelected ? theme.colorScheme.primary : null),
                           textAlign: TextAlign.center))));
@@ -181,8 +181,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '주요 손금 분석',),
-                style: theme.textTheme.headlineSmall)),
+                '주요 손금 분석',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               
               // Life Line
@@ -212,7 +212,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                 Colors.blue),
               const SizedBox(height: 16),
               
-              // Fate Line (Optional,
+              // Fate Line (Optional)
               _buildLineAnalysis(
                 '운명선',
                 _fateLine,
@@ -229,8 +229,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '기타 손금',),
-                style: theme.textTheme.headlineSmall)),
+                '기타 손금',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               _buildSwitchTile(
                 '결혼선이 있나요?',
@@ -256,10 +256,10 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
           _dominantHand = value;
         });
       },
-      borderRadius: BorderRadius.circular(12))),
+      borderRadius: BorderRadius.circular(12),
       child: GlassContainer(
         padding: const EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         blur: 10,
         borderColor: isSelected
             ? theme.colorScheme.primary.withOpacity(0.5)
@@ -274,7 +274,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             const SizedBox(height: 8),
             Text(
               label,
-              style: theme.textTheme.bodyLarge?.copyWith()
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 color: isSelected ? theme.colorScheme.primary : null))])));
   }
@@ -304,7 +304,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
         const SizedBox(width: 4),
         Text(
           label,
-          style: theme.textTheme.bodySmall)])
+          style: theme.textTheme.bodySmall)]
     );
   }
 
@@ -326,13 +326,13 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             const SizedBox(width: 8),
             Text(
               lineName,
-              style: theme.textTheme.bodyLarge?.copyWith()
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold)),
             if (isOptional) ...[
               const SizedBox(width: 8),
               Text(
-                '(선택사항)',),
-                style: theme.textTheme.bodySmall?.copyWith()
+                '(선택사항)',
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6)))]]),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
@@ -343,7 +343,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
               borderRadius: BorderRadius.circular(12)),
             filled: true,
             fillColor: theme.colorScheme.surface.withOpacity(0.5),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16) vertical: 12)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
           items: [
             if (isOptional)
               const DropdownMenuItem(
@@ -368,7 +368,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge))),
+            style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
           onChanged: onChanged)]);
@@ -403,8 +403,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '손금 분석 결과',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '손금 분석 결과',
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 24),
             _buildAnalysisItem(
               '전체적인 운명',
@@ -444,12 +444,12 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             children: [
               Text(
                 title,
-                style: theme.textTheme.bodyLarge?.copyWith()
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text(
                 description,
-                style: theme.textTheme.bodyMedium?.copyWith()
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.8)))]))]
     );
   }
@@ -493,8 +493,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '손금별 해석',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '손금별 해석',
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...interpretations.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -507,7 +507,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                     colors: [
                       (item['color'] as Color).withOpacity(0.1),
                       (item['color'] as Color).withOpacity(0.2)]),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: (item['color'] as Color).withOpacity(0.3))),
                 child: Column(
@@ -522,18 +522,18 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                         const SizedBox(width: 8),
                         Text(
                           item['line'] as String,
-                          style: theme.textTheme.bodyLarge?.copyWith()
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: item['color'] as Color)),
                         const Text(' - '),
                         Text(
                           item['meaning'] as String,
-                          style: theme.textTheme.bodyMedium)])),
+                          style: theme.textTheme.bodyMedium)]),
                     const SizedBox(height: 8),
                     Text(
                       item['interpretation'] as String,
-                      style: theme.textTheme.bodyMedium?.copyWith()
-                        color: theme.colorScheme.onSurface.withOpacity(0.8)))]))))).toList()])));
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.8)))]))))).toList()]))))));
   }
 
   Widget _buildPersonalityTraits() {
@@ -560,8 +560,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '성격 특성',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '성격 특성',
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...traits.map((trait) {
               final score = trait['score'] as int;
@@ -576,10 +576,10 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                       children: [
                         Text(
                           trait['trait'] as String,
-                          style: theme.textTheme.bodyMedium)),
+                          style: theme.textTheme.bodyMedium),
                         Text(
-                          '$score%',),
-                          style: theme.textTheme.bodyMedium?.copyWith()
+                          '$score%',
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: theme.colorScheme.primary))]),
                     const SizedBox(height: 4),
@@ -633,8 +633,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '인생 가이드',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '인생 가이드',
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...guidances.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -657,12 +657,12 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                       children: [
                         Text(
                           item['age'] as String,
-                          style: theme.textTheme.bodyLarge?.copyWith()
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
                           item['guidance'] as String,
-                          style: theme.textTheme.bodyMedium?.copyWith()
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.8)))]))]))).toList()])));
   }
 }
@@ -702,7 +702,7 @@ class PalmGuidePainter extends CustomPainter {
     palmPath.close();
     canvas.drawPath(palmPath, paint);
 
-    // Draw life line (red,
+    // Draw life line (red)
     paint.color = Colors.red;
     final lifeLine = Path();
     lifeLine.moveTo(size.width * 0.3, size.height * 0.2);
@@ -712,7 +712,7 @@ class PalmGuidePainter extends CustomPainter {
     );
     canvas.drawPath(lifeLine, paint);
 
-    // Draw heart line (pink,
+    // Draw heart line (pink)
     paint.color = Colors.pink;
     final heartLine = Path();
     heartLine.moveTo(size.width * 0.2, size.height * 0.3);
@@ -722,14 +722,14 @@ class PalmGuidePainter extends CustomPainter {
     );
     canvas.drawPath(heartLine, paint);
 
-    // Draw head line (blue,
+    // Draw head line (blue)
     paint.color = Colors.blue;
     final headLine = Path();
     headLine.moveTo(size.width * 0.25, size.height * 0.4);
     headLine.lineTo(size.width * 0.7, size.height * 0.45);
     canvas.drawPath(headLine, paint);
 
-    // Draw fate line (purple,
+    // Draw fate line (purple)
     paint.color = Colors.purple;
     paint.strokeWidth = 1.5;
     // Note: Dashed lines not directly supported in Flutter Canvas
@@ -759,12 +759,12 @@ extension on _PalmistryFortunePageState {
                 color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '손 사진 촬영',),
-                style: theme.textTheme.headlineSmall)])),
+                '손 사진 촬영',
+                style: theme.textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           if (_palmImage != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(12))),
+              borderRadius: BorderRadius.circular(12),
               child: Stack(
                 children: [
                   Image.file(
@@ -784,17 +784,17 @@ extension on _PalmistryFortunePageState {
                       icon: const Icon(Icons.close),
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.black54,
-                        foregroundColor: Colors.white)))])),
+                        foregroundColor: Colors.white))]),
             const SizedBox(height: 16)],
           Row(
             children: [
               Expanded(
                 child: InkWell(
                   onTap: _takePicture,
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   child: GlassContainer(
                     padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: theme.colorScheme.primary.withOpacity(0.3),
                     borderWidth: 1,
@@ -806,16 +806,16 @@ extension on _PalmistryFortunePageState {
                           color: theme.colorScheme.primary),
                         const SizedBox(height: 8),
                         Text(
-                          '사진 촬영',),
-                          style: theme.textTheme.bodyMedium)]))))),
+                          '사진 촬영',
+                          style: theme.textTheme.bodyMedium)])))),
               const SizedBox(width: 12),
               Expanded(
                 child: InkWell(
                   onTap: _pickFromGallery,
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   child: GlassContainer(
                     padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: theme.colorScheme.primary.withOpacity(0.3),
                     borderWidth: 1,
@@ -827,14 +827,14 @@ extension on _PalmistryFortunePageState {
                           color: theme.colorScheme.primary),
                         const SizedBox(height: 8),
                         Text(
-                          '갤러리에서 선택',),
-                          style: theme.textTheme.bodyMedium)]))))])),
+                          '갤러리에서 선택',
+                          style: theme.textTheme.bodyMedium)]))))]),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8))),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: theme.colorScheme.primary.withOpacity(0.3))),
             child: Row(
@@ -846,9 +846,9 @@ extension on _PalmistryFortunePageState {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '밝은 곳에서 손바닥을 평평하게 펴고 촬영해주세요',),
-                    style: theme.textTheme.bodySmall?.copyWith()
-                      color: theme.colorScheme.onSurface.withOpacity(0.8))))]))]));
+                    '밝은 곳에서 손바닥을 평평하게 펴고 촬영해주세요',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.8))))])]));
   }
 
   Future<void> _takePicture() async {

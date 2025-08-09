@@ -193,14 +193,16 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               height: currentHeight,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(borderRadius))),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.3 * (1 - progress * 0.5)),
                       blurRadius: 20 + (10 * progress),
-                      offset: Offset(0, 10 * (1 - progress)))]),
+                      offset: Offset(0, 10 * (1 - progress))),
+                  ],
+                ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(borderRadius))),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
@@ -210,8 +212,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                         child: const Icon(
                           Icons.image,
                           size: 60,
-                          color: Colors.grey));
-                    }))));
+                          color: Colors.grey),
+                      );
+                    },
+                  ),
+                ),
+              );
           });
       }
     );
@@ -649,8 +655,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       const CircularProgressIndicator(),
                       const SizedBox(height: 16),
                       Text(
-                        '맞춤 운세를 준비하고 있어요...',),
-                        style: theme.textTheme.bodyMedium?.copyWith()
+                        '맞춤 운세를 준비하고 있어요...',
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant))])))),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -890,13 +896,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             ref.read(_viewModeProvider.notifier).state = ViewMode.trend;
           }
         },
-        borderRadius: BorderRadius.circular(20))),
+        borderRadius: BorderRadius.circular(20),
         child: Container(
           height: 36,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: theme.colorScheme.outline.withOpacity(0.2))),
           child: Icon(
@@ -927,7 +933,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? LinearGradient(
@@ -935,7 +941,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       )
                     : null,
                 color: isSelected ? null : theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(22))),
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent

@@ -62,8 +62,8 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               .shimmer(duration: 2000.ms, delay: 600.ms),
           const SizedBox(height: 24),
           Text(
-            'AI가 분석하는 당신의 관상',),
-            style: theme.textTheme.headlineSmall?.copyWith()
+            'AI가 분석하는 당신의 관상',
+            style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold),
             textAlign: TextAlign.center)
               .animate()
@@ -71,8 +71,8 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               .slideY(begin: 0.2, end: 0),
           const SizedBox(height: 12),
           Text(
-            '얼굴에 담긴 운명과 성격을 알아보세요',),
-            style: theme.textTheme.bodyLarge?.copyWith()
+            '얼굴에 담긴 운명과 성격을 알아보세요',
+            style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withOpacity(0.7)),
             textAlign: TextAlign.center)
               .animate()
@@ -80,10 +80,10 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               .slideY(begin: 0.2, end: 0),
           const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20))),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: theme.colorScheme.primary.withOpacity(0.3))),
             child: Row(

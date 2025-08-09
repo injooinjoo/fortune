@@ -11,14 +11,14 @@ class YearlyFortunePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return BaseFortunePageV2(
       title: '연간 운세',
-      fortuneType: 'yearly');
+      fortuneType: 'yearly',
       headerGradient: const LinearGradient(
-        begin: Alignment.topLeft);
-        end: Alignment.bottomRight),
-    colors: [Color(0xFFFFD54F), Color(0xFFFFB300)]),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFD54F), Color(0xFFFFB300)]),
       inputBuilder: (context, onSubmit) => _YearlyInputForm(onSubmit: onSubmit),
-    resultBuilder: (context, result, onShare) => _YearlyFortuneResult(
-        result: result);
+      resultBuilder: (context, result, onShare) => _YearlyFortuneResult(
+        result: result,
         onShare: onShare)
     );
   }
@@ -37,28 +37,28 @@ class _YearlyInputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '올해의 전체 운세를 확인해보세요!\n월별 운세와 주요 이벤트를 알려드립니다.');
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '올해의 전체 운세를 확인해보세요!\n월별 운세와 주요 이벤트를 알려드립니다.',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-    height: 1.5),
+            height: 1.5)),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
-            Icons.calendar_today);
-            size: 120),
-    color: theme.colorScheme.primary.withOpacity(0.3))),
+            Icons.calendar_today,
+            size: 120,
+            color: theme.colorScheme.primary.withOpacity(0.3))),
         
         const SizedBox(height: 32),
         
         Center(
           child: ElevatedButton.icon(
             onPressed: () => onSubmit({}),
-    icon: const Icon(Icons.calendar_today),
+            icon: const Icon(Icons.calendar_today),
             label: const Text('운세 확인하기'),
-    style: ElevatedButton.styleFrom(
+            style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-    shape: RoundedRectangleBorder(
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30)))))]
     );
   }
@@ -85,130 +85,130 @@ class _YearlyFortuneResult extends StatelessWidget {
           // Main Fortune Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
-    borderRadius: BorderRadius.circular(16))),
-    child: Column(
+            borderRadius: BorderRadius.circular(16),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
-                      Icons.calendar_today);
+                      Icons.calendar_today,
                       color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '연간 운세',),
-                      style: theme.textTheme.titleLarge?.copyWith()
+                      '연간 운세',
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
-                  fortune.content);
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)])),
+                  fortune.content,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    height: 1.6))])),
           const SizedBox(height: 16),
 
           // Score Breakdown
           if (fortune.scoreBreakdown != null) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-    borderRadius: BorderRadius.circular(16))),
-    child: Column(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.analytics);
+                        Icons.analytics,
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '상세 분석',),
-                        style: theme.textTheme.titleLarge?.copyWith()
+                        '상세 분석',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
+                    child: Row(
                       children: [
                         Expanded(
                           child: Text(
-                            entry.key);
-                            style: theme.textTheme.bodyLarge))),
+                            entry.key,
+                            style: theme.textTheme.bodyLarge)),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-    decoration: BoxDecoration(
+                          decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
-    borderRadius: BorderRadius.circular(12)),
-    child: Text(
-                            '${entry.value}점');
-                            style: theme.textTheme.bodyLarge?.copyWith()
+                            borderRadius: BorderRadius.circular(12)),
+                          child: Text(
+                            '${entry.value}점',
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold),
-    textAlign: TextAlign.center))])).toList()])),
-            const SizedBox(height: 16)])
+                            textAlign: TextAlign.center))]))).toList()])),
+            const SizedBox(height: 16)],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
-    child: Column(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.stars);
+                        Icons.stars,
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '행운 아이템',),
-                        style: theme.textTheme.titleLarge?.copyWith()
+                        '행운 아이템',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
-                    spacing: 8);
-                    runSpacing: 8),
-    children: fortune.luckyItems!.entries.map((entry) {
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: fortune.luckyItems!.entries.map((entry) {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
                         backgroundColor: theme.colorScheme.primaryContainer);
                     }).toList())])),
-            const SizedBox(height: 16)])
+            const SizedBox(height: 16)],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
-    child: Column(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.tips_and_updates);
+                        Icons.tips_and_updates,
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '조언',),
-                        style: theme.textTheme.titleLarge?.copyWith()
+                        '조언',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.check_circle);
-                          size: 20),
-    color: theme.colorScheme.primary),
+                          Icons.check_circle,
+                          size: 20,
+                          color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            rec);
-                            style: theme.textTheme.bodyMedium))])).toList()]))]))
+                            rec,
+                            style: theme.textTheme.bodyMedium))]))).toList()]))]
         ])
     );
   }

@@ -18,7 +18,8 @@ class LuckySideJobFortunePage extends ConsumerWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       inputBuilder: (context, onSubmit) => _buildInputSection(context, onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare));
+      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare),
+    );
   }
 
   Widget _buildInputSection(BuildContext context, Function(Map<String, dynamic>) onSubmit) {
@@ -38,7 +39,9 @@ class LuckySideJobFortunePage extends ConsumerWidget {
               '부업 정보를 입력해주세요',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 24),
             TextField(
               controller: currentJobController,
@@ -92,18 +95,27 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('모든 정보를 입력해주세요'),
-                        backgroundColor: Colors.orange))
+                        backgroundColor: Colors.orange,
+                      ),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: const Color(0xFFFF6B6B)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: const Color(0xFFFF6B6B),
+                ),
                 child: const Text(
                   '부업 운세 확인하기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))))]))
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -119,25 +131,29 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             title: '추천 부업',
             content: sections['recommended_sidejobs'] ?? '맞춤 부업을 추천 중입니다.',
             icon: Icons.recommend,
-            color: Colors.red),
+            color: Colors.red,
+          ),
           const SizedBox(height: 16),
           _buildMainResultCard(
             title: '시작 시기',
             content: sections['timing'] ?? '최적의 시작 시기를 분석 중입니다.',
             icon: Icons.calendar_today,
-            color: Colors.blue),
+            color: Colors.blue,
+          ),
           const SizedBox(height: 16),
           _buildMainResultCard(
             title: '예상 수익',
             content: sections['income_forecast'] ?? '예상 수익을 계산 중입니다.',
             icon: Icons.attach_money,
-            color: Colors.green),
+            color: Colors.green,
+          ),
           const SizedBox(height: 16),
           _buildMainResultCard(
             title: '성공 전략',
             content: sections['success_strategy'] ?? '부업 성공 전략을 준비 중입니다.',
             icon: Icons.trending_up,
-            color: Colors.orange),
+            color: Colors.orange,
+          ),
           const SizedBox(height: 16),
           _buildWorkLifeBalance(sections['work_life_balance']),
           const SizedBox(height: 16),
@@ -150,8 +166,13 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)))),
-          const SizedBox(height: 24)])
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
 
@@ -167,7 +188,9 @@ class LuckySideJobFortunePage extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [Colors.red.shade50, Colors.yellow.shade50],
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight)),
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Column(
           children: [
             Icon(Icons.work_outline, size: 48, color: Colors.red.shade700),
@@ -177,12 +200,18 @@ class LuckySideJobFortunePage extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.red.shade800)),
+                color: Colors.red.shade800,
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               summary,
               style: const TextStyle(fontSize: 16, height: 1.6),
-              textAlign: TextAlign.center)])))
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -190,7 +219,8 @@ class LuckySideJobFortunePage extends ConsumerWidget {
     required String title,
     required String content,
     required IconData icon,
-    required Color color}) {
+    required Color color,
+  }) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -205,19 +235,30 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
-                  child: Icon(icon, color: color, size: 28)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold)))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Text(
               content,
-              style: const TextStyle(fontSize: 16, height: 1.6))]))))
+              style: const TextStyle(fontSize: 16, height: 1.6),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -238,18 +279,28 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.purple.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(Icons.balance, color: Colors.purple, size: 28)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.balance, color: Colors.purple, size: 28),
+                ),
                 const SizedBox(width: 16),
                 const Text(
                   '일과 삶의 균형',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Text(
               balance,
-              style: const TextStyle(fontSize: 16, height: 1.6))]))))
+              style: const TextStyle(fontSize: 16, height: 1.6),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -270,18 +321,28 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.teal.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(Icons.trending_up, color: Colors.teal, size: 28)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.trending_up, color: Colors.teal, size: 28),
+                ),
                 const SizedBox(width: 16),
                 const Text(
                   '성장 가능성',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Text(
               potential,
-              style: const TextStyle(fontSize: 16, height: 1.6))]))))
+              style: const TextStyle(fontSize: 16, height: 1.6),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

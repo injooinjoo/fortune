@@ -121,11 +121,15 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
           end: Alignment.bottomRight,
           colors: [
             Color(0xFFE11D48).withOpacity(0.1),
-            Color(0xFF9333EA).withOpacity(0.05)],
+            Color(0xFF9333EA).withOpacity(0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFFE11D48).withOpacity(0.3),
-          width: 1)),
+          width: 1,
+        ),
+      ),
       child: Column(
         children: [
           Icon(
@@ -144,8 +148,10 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             '사랑하는 반려동물과의 특별한 하루를 만들어보세요',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center)
+              color: AppTheme.textSecondaryColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ]
       )
     );
@@ -221,10 +227,12 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                       type.description,
                       style: TextStyle(
                         color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[500],
-                        fontSize: 11),
+                        fontSize: 11,
+                      ),
                       textAlign: TextAlign.center,
                       maxLines: 2,
-                      overflow: TextOverflow.ellipsis))
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   )
                 ]
               )
@@ -243,12 +251,15 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87))
-                )
-              )
-          ]
-        )
-      ).animate(delay: (50 * index).ms)
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ).animate(delay: (50 * index).ms)
       .fadeIn(duration: 300.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
   }
@@ -291,9 +302,9 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                 borderRadius: BorderRadius.circular(8))),
             onChanged: (value) {
               _petSpecies = value;
-            })
-          ]
-        )
+            }
+          )
+        ]
       )
     );
   }
@@ -363,11 +374,15 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
           end: Alignment.bottomRight,
           colors: [
             _selectedType.gradientColors[0].withOpacity(0.1),
-            _selectedType.gradientColors[1].withOpacity(0.05)],
+            _selectedType.gradientColors[1].withOpacity(0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withOpacity(0.3),
-          width: 1)),
+          width: 1
+        )
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -395,7 +410,10 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold)))
+                      fontWeight: FontWeight.bold
+                    )
+                  )
+                )
               ]
             ),
           const SizedBox(height: 20),
@@ -439,15 +457,17 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor)))
-                )
-              ]
+                        color: AppTheme.textColor
+                      )
+                    )
+                  )
+                ]
+              )
             )
           ]
         ]
-      ).animate()
-      .fadeIn(duration: 500.ms)
-      .slideY(begin: 0.2, end: 0);
+      )
+    );
   }
 
   Widget _buildPetCareTips(List<String> tips) {
@@ -461,29 +481,32 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             fontWeight: FontWeight.bold,
             color: _selectedType.gradientColors[0])),
         const SizedBox(height: 12),
-        ...tips.map((tip) => Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: _selectedType.gradientColors[0].withOpacity(0.05),
-            borderRadius: BorderRadius.circular(8)),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.pets,
-                size: 18,
-                color: _selectedType.gradientColors[0]),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  tip,
-                  style: const TextStyle(fontSize: 14)))
+        ...tips.map((tip) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _selectedType.gradientColors[0].withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.pets,
+                  size: 18,
+                  color: _selectedType.gradientColors[0]),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    tip,
+                    style: const TextStyle(fontSize: 14)
+                  )
+                )
               ]
             )
-          )).toList()
-        ]
-      )
+          );
+        }).toList()
+      ]
     );
   }
 
@@ -504,7 +527,9 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
               height: 40,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 1000),
               height: 40,
@@ -512,7 +537,9 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: _selectedType.gradientColors),
-                borderRadius: BorderRadius.circular(20))),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             Positioned.fill(
               child: Center(
                 child: Text(
@@ -520,12 +547,13 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16))
-              )
-            )
-          ]
-        )
-      ]
+                    fontSize: 16),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

@@ -116,7 +116,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
   Widget buildInputForm() {
     return GlassCard(
       padding: const EdgeInsets.all(20),
-      child: Column(
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -177,7 +177,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
 
   Widget _buildCalendarHeatmap() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink();;
 
     final dailyScores = fortune.metadata?['dailyScores'] as Map<int, int>?;
     if (dailyScores == null) return const SizedBox.shrink();
@@ -221,8 +221,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                             ),
                           ),
                         ),
-                      ),
-                  ))
+                      ))
                   .toList(),
             ),
             const SizedBox(height: 8),
@@ -268,7 +267,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                                 : Colors.transparent,
                         width: isSelected || isToday ? 2 : 1,
                       ),
-                    ),,
+                    ),
                     child: Stack(
                       children: [
                         Center(
@@ -294,7 +293,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                     ),
                   ),
                 );
-              }),
+              },
+            ),
             const SizedBox(height: 16),
             // Legend
             Row(
@@ -339,7 +339,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     if (_selectedDay == null) return const SizedBox.shrink();
     
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink();;
 
     final dailyScores = fortune.metadata?['dailyScores'] as Map<int, int>?;
     if (dailyScores == null) return const SizedBox.shrink();
@@ -347,7 +347,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     final score = dailyScores[_selectedDay] ?? 50;
     final highlights = fortune.metadata?['monthlyHighlights'] as List<Map<String, dynamic>>?;
     final dayHighlight = highlights?.firstWhere(
-      (h) => h['date'],
+      (h) => h['date'] == _selectedDay,
       orElse: () => {}
     );
 
@@ -355,7 +355,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
-        child: Column(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -397,7 +397,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                       color: dayHighlight['color']),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Column(
+                          child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -431,7 +431,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
 
   Widget _buildMonthlyHighlights() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    if (fortune == null) return const SizedBox.shrink();;
 
     final highlights = fortune.metadata?['monthlyHighlights'] as List<Map<String, dynamic>>?;
     if (highlights == null) return const SizedBox.shrink();
@@ -440,12 +440,12 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
-        child: Column(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '이번 달 주요 날짜',),
-              style: Theme.of(context).textTheme.headlineSmall)),
+              '이번 달 주요 날짜',
+              style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
             ...highlights.map((highlight) {
               final color = highlight['color'] as Color;
@@ -456,20 +456,22 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   children: [
                     Container(
                       width: 48,
-                      height: 48),
-    decoration: BoxDecoration(
+                      height: 48,
+                      decoration: BoxDecoration(
                         color: color.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(12)),
-    child: Center(
+                        borderRadius: BorderRadius.circular(12)),
+                      child: Center(
                         child: Text(
-                          '${highlight['date']}');
+                          '${highlight['date']}',
                           style: TextStyle(
                             color: color,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18)))),
+                            fontSize: 18)),
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: Column(
+                          child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
@@ -489,41 +491,55 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                                   style: TextStyle(
                                     color: color,
                                     fontSize: 12,
-                                    fontWeight: FontWeight.bold)))]),
+                                    fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             highlight['description'],
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)))]))]));
-            }).toList()]))
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildCategoryPieChart() {
     final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink()
+    if (fortune == null) return const SizedBox.shrink();
 
     final distribution = fortune.metadata?['categoryDistribution'] as Map<String, double>?;
-    if (distribution == null) return const SizedBox.shrink()
+    if (distribution == null) return const SizedBox.shrink();
 
     final colors = [
       Colors.pink,
-      Colors.green)
-      Colors.orange)
-      Colors.blue)
-      Colors.purple)
+      Colors.green,
+      Colors.orange,
+      Colors.blue,
+      Colors.purple,
     ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
-    child: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '운세 카테고리별 분포',),
-              style: Theme.of(context).textTheme.headlineSmall)),
+              '운세 카테고리별 분포',
+              style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 20),
             SizedBox(
               height: 200,
@@ -532,90 +548,116 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   Expanded(
                     child: PieChart(
                       PieChartData(
-                        sectionsSpace: 2);
-                        centerSpaceRadius: 40),
-    sections: distribution.entries.toList().asMap().entries.map((entry) {
+                        sectionsSpace: 2,
+                        centerSpaceRadius: 40,
+                        sections: distribution.entries.toList().asMap().entries.map((entry) {
                           final index = entry.key;
                           final category = entry.value.key;
                           final percentage = entry.value.value;
                           
                           return PieChartSectionData(
-                            color: colors[index % colors.length]);
+                            color: colors[index % colors.length],
                             value: percentage,
-                            title: '${(percentage * 100).toInt()}%'),
-    radius: 50,
+                            title: '${(percentage * 100).toInt()}%',
+                            radius: 50,
                             titleStyle: const TextStyle(
-                              fontSize: 12);
-                              fontWeight: FontWeight.bold),
-    color: Colors.white));
-                        }).toList()))),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 20),
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.center);
-                    crossAxisAlignment: CrossAxisAlignment.start),
-    children: distribution.entries.toList().asMap().entries.map((entry) {
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: distribution.entries.toList().asMap().entries.map((entry) {
                       final index = entry.key;
                       final category = entry.value.key;
                       
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-    child: Row(
+                        child: Row(
                           children: [
                             Container(
                               width: 16,
-                              height: 16),
-    decoration: BoxDecoration(
-                                color: colors[index % colors.length]);
-                                borderRadius: BorderRadius.circular(4))),
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: colors[index % colors.length],
+                                borderRadius: BorderRadius.circular(4)),
+                            ),
                             const SizedBox(width: 8),
                             Text(
-                              category);
-                              style: Theme.of(context).textTheme.bodySmall)]));)
-                    }).toList())]))])));
+                              category,
+                              style: Theme.of(context).textTheme.bodySmall),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMonthlyTips() {
     final tips = [
       '월초에는 새로운 시작을 위한 계획을 세우세요',
-      '중순에는 인간관계에 집중하는 것이 좋습니다')
-      '월말에는 한 달을 정리하고 다음 달을 준비하세요')
-      '건강 관리는 꾸준히 해야 합니다')
+      '중순에는 인간관계에 집중하는 것이 좋습니다',
+      '월말에는 한 달을 정리하고 다음 달을 준비하세요',
+      '건강 관리는 꾸준히 해야 합니다',
     ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
-    child: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.tips_and_updates_rounded);
+                  Icons.tips_and_updates_rounded,
                   color: Theme.of(context).colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
-                  '월간 행운 팁',),
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  '월간 행운 팁',
+                  style: Theme.of(context).textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             ...tips.map((tip) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
-    child: Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     margin: const EdgeInsets.only(top: 6),
-    width: 6),
-    height: 6),
-    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondary),
-    shape: BoxShape.circle)),
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      shape: BoxShape.circle),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      tip);
-                      style: Theme.of(context).textTheme.bodyMedium))])).toList()])))
+                      tip,
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
     );
   }
 

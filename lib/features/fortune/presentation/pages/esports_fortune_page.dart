@@ -210,7 +210,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                           game.label.substring(0, 2),
                           style: const TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold))),
+                            fontWeight: FontWeight.bold)))),
                     const SizedBox(height: 8),
                     Text(
                       game.label,
@@ -565,8 +565,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                         fontWeight: FontWeight.bold)))
                 ])
               )
-          ])
-      );
+          ]));
   }
 
   Widget _buildTipItem(String tip) {

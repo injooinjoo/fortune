@@ -324,7 +324,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
               '최적의 이사 날짜 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold)))))]
+                fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -446,7 +450,12 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                             style: theme.textTheme.headlineSmall?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20 + _getFontSizeOffset(fontSize)))]))]),
+                              fontSize: 20 + _getFontSizeOffset(fontSize))),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 if (bestDate['reason'] != null) ...[
                   const SizedBox(height: 16),
                   Text(
@@ -472,7 +481,15 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                           '${bestDate['score']}점',
                           style: TextStyle(
                             color: _getScoreColor(bestDate['score']),
-                            fontWeight: FontWeight.bold)))])]]))),
+                            fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Calendar View
@@ -553,7 +570,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                     _buildLegendItem('최고', Colors.green),
                     _buildLegendItem('좋음', Colors.blue),
                     _buildLegendItem('보통', Colors.orange),
-                    _buildLegendItem('피함', Colors.red)])]))),
+                    _buildLegendItem('피함', Colors.red)])])))),
         const SizedBox(height: 20),
         
         // Good Dates List
@@ -595,7 +612,15 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                             '${date['score']}점',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.blue,
-                              fontWeight: FontWeight.bold))])).toList()]))),
+                              fontWeight: FontWeight.bold),
+                          ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20)],
         
         // Dates to Avoid
@@ -640,8 +665,20 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                                 Text(
                                   date['reason'],
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface.withOpacity(0.7)))])))])).toList()]))),
-          const SizedBox(height: 20)],
+                                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
         
         // Share Button
         Center(
@@ -652,7 +689,12 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
   
@@ -671,7 +713,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
           style: TextStyle(
             fontSize: 12,
             color: color,
-            fontWeight: FontWeight.w600))])
+            fontWeight: FontWeight.w600),
+        ),
+      ],
     );
   }
 }

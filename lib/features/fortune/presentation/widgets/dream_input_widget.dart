@@ -125,7 +125,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withOpacity(0.3)]),
+            Colors.black.withOpacity(0.3)])),
       child: SafeArea(
         top: false,
         child: Column(
@@ -191,7 +191,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               : LinearGradient(
                   colors: [
                     Colors.deepPurple.withOpacity(0.3),
-                    Colors.deepPurple.withOpacity(0.3)]))
+                    Colors.deepPurple.withOpacity(0.3)])),
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
           color: Colors.white,
@@ -217,7 +217,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               : LinearGradient(
                   colors: [
                     Colors.grey.withOpacity(0.9).withOpacity(0.3),
-                    Colors.grey.withOpacity(0.87).withOpacity(0.3)]))
+                    Colors.grey.withOpacity(0.87).withOpacity(0.3)])),
         child: Icon(
           Icons.send_rounded,
           color: canSend ? Colors.white : Colors.white30,

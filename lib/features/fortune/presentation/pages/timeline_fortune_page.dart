@@ -91,12 +91,17 @@ class _TimelineFortuneResult extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.timeline,
-                      color: theme.colorScheme.primary),
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       '인생 타임라인',
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
@@ -164,7 +169,8 @@ class _TimelineFortuneResult extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16)],
+            const SizedBox(height: 16),
+          ],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
@@ -178,12 +184,17 @@ class _TimelineFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.stars,
-                        color: theme.colorScheme.primary),
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '행운 아이템',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -191,9 +202,15 @@ class _TimelineFortuneResult extends StatelessWidget {
                     children: fortune.luckyItems!.entries.map((entry) {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
-                        backgroundColor: theme.colorScheme.primaryContainer);
-                    }).toList())])),
-            const SizedBox(height: 16)],
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
@@ -207,12 +224,17 @@ class _TimelineFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.tips_and_updates,
-                        color: theme.colorScheme.primary),
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '조언',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -222,13 +244,25 @@ class _TimelineFortuneResult extends StatelessWidget {
                         Icon(
                           Icons.check_circle,
                           size: 20,
-                          color: theme.colorScheme.primary),
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))]))]).toList()])),
-            const SizedBox(height: 16)]]);
+                            style: theme.textTheme.bodyMedium),
+                        ),
+                      ],
+                    ),
+                  )),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Color _getScoreColor(int score) {
