@@ -160,8 +160,12 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         child: CustomPaint(
           painter: DirectionOverlayPainter(
             auspiciousDirections: widget.auspiciousDirections!,
-            directions: directions))));
-}
+            directions: directions,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,20 +186,30 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         _searchController.clear();
-}),
+                      },
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium),
+                      borderRadius: AppDimensions.borderRadiusMedium,
+                    ),
                     filled: true,
-                    fillColor: Colors.grey.withOpacity(0.9)),
-                  onSubmitted: _searchLocation),
+                    fillColor: Colors.grey.withOpacity(0.9),
+                  ),
+                  onSubmitted: _searchLocation,
+                ),
+              ),
               const SizedBox(width: AppSpacing.spacing2),
               IconButton(
-                icon: Icon(Icons.my_location),
+                icon: const Icon(Icons.my_location),
                 onPressed: _isLoading ? null : _getCurrentLocation,
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white))])),
-        
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+
         // 지도
         Expanded(
           child: Stack(
@@ -205,47 +219,78 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 options: MapOptions(
                   initialCenter: _selectedLocation!,
                   initialZoom: 13.0,
-                  onTap: (tapPosition, point) => _updateLocationAndAddress(point)),
+                  onTap: (tapPosition, point) =>
+                      _updateLocationAndAddress(point),
+                ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.fortune.app'),
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.fortune.app',
+                  ),
                   MarkerLayer(
                     markers: [
-                      if (_selectedLocation != null) Marker(
+                      if (_selectedLocation != null)
+                        Marker(
                           point: _selectedLocation!,
                           width: 80,
                           height: 80,
                           child: Icon(
                             Icons.location_pin,
                             color: Theme.of(context).primaryColor,
-                            size: 40))])]),
+                            size: 40,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
               _buildDirectionOverlay(),
-              if (_isLoading) Container(
+              if (_isLoading)
+                Container(
                   color: Colors.black26,
-                  child: Center(
-                    child: CircularProgressIndicator()))])),
-        
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
+          ),
+        ),
+
         // 선택된 주소 표시
-        if (_selectedAddress.isNotEmpty) Container(
+        if (_selectedAddress.isNotEmpty)
+          Container(
             width: double.infinity,
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.9),
               border: Border(
-                top: BorderSide(color: Colors.grey.withOpacity(0.5)))),
+                top: BorderSide(
+                  color: Colors.grey.withOpacity(0.5),
+                ),
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '선택된 주소',
-                  style: Theme.of(context).textTheme.labelMedium),
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   _selectedAddress,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500))]))]));
-}
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }
 
 class DirectionOverlayPainter extends CustomPainter {
