@@ -31,17 +31,18 @@ class WeatherData {
       temperature: json['main']['temp'],
     humidity: json['main']['humidity'],
       windSpeed: json['wind']['speed'],
-      windDirection: _getWindDirection(json['wind']['deg'],
+      windDirection: _getWindDirection(json['wind']['deg']),
       precipitation: json['rain']?['1h'],
       uvIndex: json['uvi'],
       fineDust: json['air_quality'],
       condition: json['weather'][0]['main'],
       description: json['weather'][0]['description'],
-      timestamp: DateTime.now());
+      timestamp: DateTime.now(),
+    );
   }
 
   static String _getWindDirection(int degrees) {
-    const directions = ['북': '북동': '동', '남동', '남', '남서', '서', '북서'];
+    const directions = ['북', '북동', '동', '남동', '남', '남서', '서', '북서'];
     final index = ((degrees + 22.5) / 45).floor() % 8;
     return directions[index];
   }
@@ -95,8 +96,7 @@ class WeatherService {
         
         return weatherData;
       } else {
-        throw Exception('),
-    data: ${response.statusCode}');
+        throw Exception('Failed to fetch weather data: ${response.statusCode}');
       }
     } catch (e) {
       Logger.error('Weather API error', e);
@@ -121,8 +121,8 @@ class WeatherService {
     // For now, using default Seoul coordinates
     final coordinates = _getCoordinatesForLocation(location);
     return getWeatherData(
-      latitude: coordinates['lat'],
-      longitude: coordinates['lng']);
+      latitude: coordinates['lat'] ?? 0.0,
+      longitude: coordinates['lng'] ?? 0.0);
   }
 
   static Map<String, double> _getCoordinatesForLocation(String location) {
@@ -136,7 +136,8 @@ class WeatherService {
       '광주': {'lat': 35.1595, 'lng': 126.8526},
       '대전': {'lat': 36.3504, 'lng': 127.3845},
       '울산': {'lat': 35.5384, 'lng': 129.3114},
-      '제주': {'lat': 33.4996, 'lng': null};
+      '제주': {'lat': 33.4996, 'lng': 126.5312},
+    };
     
     return locations[location] ?? locations['서울']!;
   }

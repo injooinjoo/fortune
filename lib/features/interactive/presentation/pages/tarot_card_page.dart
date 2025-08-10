@@ -260,7 +260,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     print('[TarotCardPage] === Build ===');
     final theme = Theme.of(context);
     final state = ref.watch(tarotReadingStateProvider);
-    print('step: ${state.currentStep}'));
+    print('step: ${state.currentStep}');
     print('Fortune cached');
     
     // Show loading if no deck selected

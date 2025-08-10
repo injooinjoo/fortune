@@ -455,7 +455,8 @@ class EnhancedMovingResult extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
                   ),
                 ),
             const SizedBox(height: AppSpacing.spacing3),
@@ -584,7 +585,8 @@ class EnhancedMovingResult extends StatelessWidget {
             ),
           ),
         ],
-      );
+      ),
+    );
   }
 
   Widget _buildRecommendationsSection(BuildContext context) {

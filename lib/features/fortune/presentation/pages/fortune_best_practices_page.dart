@@ -328,7 +328,10 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, 2))]),
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -380,8 +383,12 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textPrimary,
-                          height: 1.5))))]))),
-      ],
+                          height: 1.5))),
+                  ],
+                ),
+              )),
+        ],
+      ),
     );
   }
 }

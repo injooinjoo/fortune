@@ -591,8 +591,9 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               },
             ),
           ],
-        ),
-      );
+        ],
+      ),
+    );
   }
 
   Widget _buildInfoItem({
@@ -923,7 +924,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     tarotCardInfo!.psychologicalMeaning!,
-                    style: Theme.of(context).textTheme.bodyLarge)])),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+            ),
+          ],
           
           if (tarotCardInfo?.spiritualMeaning != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -952,9 +958,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               ),
             ),
           ],
-        ),
-      );
-}
+        ],
+      ),
+    );
+  }
 
   Widget _buildPracticalGuidePage(Map<String, dynamic> cardInfo) {
     final tarotCardInfo = widget.cardIndex < 22 
@@ -1064,7 +1071,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
         ],
       ),
     );
-}
+  }
 
   Widget _buildRelationshipsPage(Map<String, dynamic> cardInfo) {
     final tarotCardInfo = widget.cardIndex < 22 
@@ -1073,7 +1080,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     
     if (tarotCardInfo?.cardCombinations == null) {
       return _buildComingSoonPage('카드 조합', '곧 업데이트됩니다');
-}
+    }
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.spacing5),
@@ -1120,9 +1127,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   ],
                 ),
               ),
-            )
+            ),
           ).toList(),
-          ],
           
           if (tarotCardInfo.colorSymbolism != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -1198,6 +1204,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           const SizedBox(height: AppSpacing.spacing4),
           Text(
             message,
-            style: Theme.of(context).textTheme.titleMedium]);)
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ],
+      ),
+    );
   }
 }

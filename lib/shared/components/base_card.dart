@@ -153,7 +153,16 @@ class InfoCard extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6)))]])),
-          if (trailing != null) trailing!]))
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (trailing != null) trailing!,
+        ],
+      ),
+    );
   }
 }

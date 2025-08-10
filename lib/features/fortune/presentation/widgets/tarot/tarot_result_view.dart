@@ -212,7 +212,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
             const SizedBox(height: 16),
             ...List.generate(widget.selectedCards.length, (index) {
               final interpretation = result['cardInterpretations'][index];
-              if (interpretation == null) return const SizedBox.shrink()
+              if (interpretation == null) return const SizedBox.shrink();
               
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),

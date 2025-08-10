@@ -333,7 +333,12 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                         _buildTag(
                           deck.style.displayName,
                           deck.primaryColor,
-                          fontScale)])])),
+                          fontScale),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               
               // 선택됨 표시
               if (isSelected) Positioned(
@@ -363,7 +368,15 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                       style: TextStyle(
                         fontSize: 10 * fontScale,
                         color: Colors.white,
-                        fontWeight: FontWeight.bold))))]);
+                        fontWeight: FontWeight.bold),
+                    ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildDeckPreview(TarotDeck deck) {

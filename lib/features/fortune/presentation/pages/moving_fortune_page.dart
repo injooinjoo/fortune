@@ -427,7 +427,12 @@ class _MovingFortuneResult extends ConsumerWidget {
                     bestTiming['reason'],
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 14 + fontSize))])),
+                      fontSize: 14 + fontSize)),
+                ],
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Compatibility Scores

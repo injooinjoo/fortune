@@ -89,7 +89,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    if (userProfile == null) return const SizedBox.shrink()
+    if (userProfile == null) return const SizedBox.shrink();
     
     return BaseCard(
       padding: AppSpacing.paddingAll20,

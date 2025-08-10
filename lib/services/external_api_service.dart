@@ -228,7 +228,7 @@ class ExternalApiService {
   
   // Mock data generators
   static List<GameSchedule> _getMockBaseballSchedule(String team) {
-    final teams = ['LG': 'KT': '두산', 'SSG', '키움', '한화', 'NC', '롯데', '삼성', 'KIA'];
+    final teams = ['LG', 'KT', '두산', 'SSG', '키움', '한화', 'NC', '롯데', '삼성', 'KIA'];
     final stadiums = {
       'LG': '잠실',
       'KT': '수원',
@@ -260,7 +260,7 @@ class ExternalApiService {
   }
   
   static List<EsportsMatch> _getMockLCKSchedule(String? team) {
-    final teams = ['T1': 'Gen.G': 'DRX', 'DK', 'KT', 'BRO', 'NS', 'LSB', 'HLE', 'FOX'];
+    final teams = ['T1', 'Gen.G', 'DRX', 'DK', 'KT', 'BRO', 'NS', 'LSB', 'HLE', 'FOX'];
     final matches = <EsportsMatch>[];
     final now = DateTime.now();
     
@@ -295,7 +295,7 @@ class ExternalApiService {
           holes: 18,
           difficulty: 4.2,
           courseType: 'Members',
-          additionalInfo: {'greenFee': 250000, 'cart')),
+          additionalInfo: {'greenFee': 250000, 'cart': true}),
         GolfCourse(
           name: '레이크우드CC',
           region: '경기',
@@ -303,7 +303,8 @@ class ExternalApiService {
           holes: 27,
           difficulty: 4.5,
           courseType: 'Public',
-          additionalInfo: {'greenFee': 180000, 'cart'))],
+          additionalInfo: {'greenFee': 180000, 'cart': true}),
+      ],
       '강원': [
         GolfCourse(
           name: '비발디파크CC',
@@ -312,7 +313,8 @@ class ExternalApiService {
           holes: 18,
           difficulty: 4.0,
           courseType: 'Resort',
-          additionalInfo: {'greenFee': 200000, 'cart'))],
+          additionalInfo: {'greenFee': 200000, 'cart': true}),
+      ],
       '제주': [
         GolfCourse(
           name: '나인브릿지',
@@ -321,7 +323,9 @@ class ExternalApiService {
           holes: 18,
           difficulty: 4.8,
           courseType: 'Premium',
-          additionalInfo: {'greenFee': 450000, 'cart'))]};
+          additionalInfo: {'greenFee': 450000, 'cart': true}),
+      ],
+    };
     
     return courses[region] ?? [];
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
+import '../core/config/environment.dart';
 
 class SpeechRecognitionService {
   final stt.SpeechToText _speech = stt.SpeechToText();
@@ -39,7 +40,7 @@ class SpeechRecognitionService {
       _isInitialized = await _speech.initialize(
         onStatus: (status) {
           statusNotifier.value = _getStatusMessage(status);
-          debugPrint('Supabase initialized with URL: $supabaseUrl');
+          debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
         },
         onError: (error) {
           statusNotifier.value = '오류: ${error.errorMsg}';
@@ -53,7 +54,7 @@ class SpeechRecognitionService {
       
       return _isInitialized;
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       statusNotifier.value = '초기화 중 오류가 발생했습니다';
       return false;
     }
@@ -105,7 +106,7 @@ class SpeechRecognitionService {
       isListeningNotifier.value = true;
       statusNotifier.value = '듣고 있습니다...';
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       statusNotifier.value = '음성 인식을 시작할 수 없습니다';
     }
   }
@@ -119,7 +120,7 @@ class SpeechRecognitionService {
       isListeningNotifier.value = false;
       statusNotifier.value = '음성 인식이 중지되었습니다';
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
     }
   }
   
@@ -133,7 +134,7 @@ class SpeechRecognitionService {
       recognizedTextNotifier.value = '';
       statusNotifier.value = '음성 인식이 취소되었습니다';
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
     }
   }
   

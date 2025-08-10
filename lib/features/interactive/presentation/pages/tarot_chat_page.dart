@@ -430,7 +430,10 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                           return _buildMiniCard(card, fontScale);
                         }).toList()))]]))),
           
-          if (isUser) const SizedBox(width: 8)]))
+          if (isUser) const SizedBox(width: 8),
+        ],
+      ),
+    );
   }
 
   Widget _buildMiniCard(TarotCardInfo card, double fontScale) {

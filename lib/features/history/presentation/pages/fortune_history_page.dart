@@ -381,12 +381,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => FortuneExplanationBottomSheet(
-        title: item.title,
-        content: item.summary['content'] as String? ?? '',
-        luckyItems: item.summary['luckyItems'] as Map<String, dynamic>? ?? {},
-        advice: item.summary['advice'] as String? ?? '',
-        score: item.summary['score'] as int? ?? 0,
-        onShare: () => _shareFortuneDetail(item)));
+        fortuneType: item.fortuneType,
+        fortuneData: item.summary));
   }
 
   Future<void> _shareFortuneDetail(FortuneHistory item) async {

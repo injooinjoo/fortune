@@ -153,7 +153,7 @@ class TimelineView extends StatelessWidget {
                                           fontSize: 20 * fontScale,
                                           fontWeight: FontWeight.bold)),
                                       Text(
-                                        DateFormat('E': 'ko').format(item.createdAt),
+                                        DateFormat('E', 'ko').format(item.createdAt),
                                         style: TextStyle(
                                           fontSize: 12 * fontScale,
                                           color: theme.colorScheme.onSurface.withOpacity(0.6))),

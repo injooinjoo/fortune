@@ -51,7 +51,7 @@ class _FortuneCookieInputState extends State<_FortuneCookieInput>
       begin: -5,
       end: 5).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut)));
+      curve: Curves.easeInOut));
   }
 
   @override

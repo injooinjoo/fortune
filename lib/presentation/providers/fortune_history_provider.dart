@@ -24,8 +24,8 @@ class FortuneHistoryNotifier extends StateNotifier<AsyncValue<List<FortuneHistor
       final response = await supabase
           .from('fortune_results')
           .select()
-          .eq('user_id': userId)
-          .order('created_at': ascending: false)
+          .eq('user_id', userId)
+          .order('created_at', ascending: false)
           .limit(100);
       
       final history = (response as List)
@@ -45,7 +45,7 @@ class FortuneHistoryNotifier extends StateNotifier<AsyncValue<List<FortuneHistor
       await supabase
           .from('fortune_results')
           .delete()
-          .eq('id': id);
+          .eq('id', id);
       
       // Reload history
       await loadHistory();

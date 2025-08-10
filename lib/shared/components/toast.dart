@@ -236,14 +236,13 @@ class _ToastWidgetState extends State<_ToastWidget>
             ),
           ),
         ),
-      ).animate().scale(
-            begin: const Offset(0.8, 0.8),
-            end: const Offset(1, 1),
-            duration: 300.ms,
-            curve: Curves.easeOutBack,
-          ),
-        ),
-      );
+      ),
+    ).animate().scale(
+          begin: const Offset(0.8, 0.8),
+          end: const Offset(1, 1),
+          duration: 300.ms,
+          curve: Curves.easeOutBack,
+        );
   }
 }
 

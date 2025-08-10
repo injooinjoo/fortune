@@ -261,7 +261,9 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       height: 4,
                       decoration: BoxDecoration(
                         color: Colors.white60,
-                        shape: BoxShape.circle))
+                        shape: BoxShape.circle,
+                      ),
+                    )
                       .animate(
                         onPlay: (controller) => controller.repeat())
                       .scale(
@@ -274,8 +276,14 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                         duration: 600.ms,
                         begin: const Offset(1.5, 1.5),
                         end: const Offset(0.5, 0.5));
-                  });
-                })])).animate()
+                  }),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ).animate()
         .fadeIn()
         .slideY(begin: -0.2, end: 0)
         .scale(begin: const Offset(0.95, 0.95));

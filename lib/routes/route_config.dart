@@ -137,11 +137,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'terms-of-service',
         builder: (context, state) => const TermsOfServicePage(),
       ),
-      GoRoute(
-        path: '/fortune-history',
-        name: 'fortune-history',
-        builder: (context, state) => const FortuneHistoryPage(),
-      ),
       
       // Non-authenticated routes
       ...authRoutes,

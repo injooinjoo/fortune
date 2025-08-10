@@ -115,9 +115,11 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
     // Position animation with curve
     _positionAnimation = Tween<Offset>(
       begin: widget.startPosition,
-      end: widget.endPosition).animate(CurvedAnimation(
+      end: widget.endPosition,
+    ).animate(CurvedAnimation(
       parent: _mainController,
-      curve: Curves.easeInBack);
+      curve: Curves.easeInBack,
+    ));
     
     // Generate particles
     _generateParticles();

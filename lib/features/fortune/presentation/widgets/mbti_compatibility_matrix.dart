@@ -374,7 +374,8 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
       children: [
         Text(
           '인지기능 비교',
-          style: Theme.of(context).textTheme.bodyMedium),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: AppSpacing.spacing3),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,7 +386,8 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                 children: [
                   Text(
                     widget.selectedType1!,
-                    style: Theme.of(context).textTheme.bodyMedium),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   const SizedBox(height: AppSpacing.spacing1),
                   ...functions1.map((func) => Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.spacing0 * 0.5),
@@ -406,7 +408,8 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                 children: [
                   Text(
                     widget.selectedType2!,
-                    style: Theme.of(context).textTheme.bodyMedium),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   const SizedBox(height: AppSpacing.spacing1),
                   ...functions2.map((func) => Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.spacing0 * 0.5),
@@ -415,7 +418,15 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
                             ? Colors.green
-                            : Colors.white.withOpacity(0.8))))).toList()])])]),
+                            : Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ],
+        ),
         if (commonFunctions.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.spacing3),
           Container(

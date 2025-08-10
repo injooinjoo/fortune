@@ -54,7 +54,9 @@
       "Bash(if [ -f \"$file\" ])",
       "Bash(then)",
       "Bash(echo \"Fixing: $file\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(curl:*)",
+      "Bash(unzip:*)"
     ],
     "deny": []
   },

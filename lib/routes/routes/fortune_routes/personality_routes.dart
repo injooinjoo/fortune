@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 // import '../../../features/fortune/presentation/pages/personality_fortune_page.dart' as fortune_pages;
 // import '../../../features/fortune/presentation/pages/personality_fortune_unified_page.dart' as fortune_pages;
@@ -12,34 +13,35 @@ final personalityRoutes = [
   GoRoute(
     path: 'personality',
     name: 'fortune-personality',
-    builder: (context, state) => const fortune_pages.PersonalityFortuneUnifiedPage()),
+    builder: (context, state) => const Scaffold(body: Center(child: Text('PersonalityFortuneUnifiedPage')))),
   
   // Birth Season
   GoRoute(
     path: 'birth-season',
     name: 'fortune-birth-season',
-    builder: (context, state) => const fortune_pages.BirthSeasonFortunePage()),
+    builder: (context, state) => const Scaffold(body: Center(child: Text('BirthSeasonFortunePage')))),
   
   // Birthdate
   GoRoute(
     path: 'birthdate',
     name: 'fortune-birthdate',
-    builder: (context, state) => const fortune_pages.BirthdateFortunePage()),
+    builder: (context, state) => const Scaffold(body: Center(child: Text('BirthdateFortunePage')))),
   
   // Celebrity
   GoRoute(
     path: 'celebrity',
     name: 'fortune-celebrity',
-    builder: (context, state) => const fortune_pages.CelebrityFortuneEnhancedPage()),
+    builder: (context, state) => const Scaffold(body: Center(child: Text('CelebrityFortuneEnhancedPage')))),
   
   // Same Birthday Celebrity
   GoRoute(
     path: 'same-birthday-celebrity',
     name: 'fortune-same-birthday-celebrity',
-    builder: (context, state) => const fortune_pages.SameBirthdayCelebrityFortunePage()),
+    builder: (context, state) => const Scaffold(body: Center(child: Text('SameBirthdayCelebrityFortunePage')))),
   
   // Lifestyle
   GoRoute(
     path: 'lifestyle',
     name: 'fortune-lifestyle',
-    builder: (context, state) => const fortune_pages.LifestyleFortunePage())];
+    builder: (context, state) => const Scaffold(body: Center(child: Text('LifestyleFortunePage')))),
+];

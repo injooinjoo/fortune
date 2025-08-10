@@ -51,16 +51,10 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
-    final userProfile = authProvider.userProfile;
+    // final authProvider = context.watch<AuthProvider>();
+    // final userProfile = authProvider.userProfile;
 
-    return BaseFortunePage(
-      title: '정치인 운세',
-      fortuneType: 'politician',
-      headerColor: const Color(0xFF1976D2),
-      onGenerateFortune: selectedPolitician != null 
-          ? () => _generateFortune(context)
-          : null,
+    return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -76,7 +70,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
@@ -120,7 +114,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? Colors.white : AppColors.textSecondary,
+                color: isSelected ? Colors.white : Colors.grey,
               ),
               const SizedBox(width: 4),
               Text(
@@ -128,7 +122,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                  color: isSelected ? Colors.white : Colors.grey,
                 ),
               ),
             ],
@@ -168,10 +162,10 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 end: Alignment.bottomRight,
                 colors: isSelected
                     ? [partyColor, partyColor.withOpacity(0.7)]
-                    : [AppColors.surface, AppColors.surface]),
+                    : [Colors.white, Colors.white]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isSelected ? partyColor : AppColors.divider,
+                color: isSelected ? partyColor : Colors.grey[300]!,
                 width: isSelected ? 2 : 1),
               boxShadow: isSelected
                   ? [
@@ -206,7 +200,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : Colors.black,
                     ),
                   ),
                   Text(
@@ -215,7 +209,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                       fontSize: 12,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.8)
-                          : AppColors.textSecondary,
+                          : Colors.grey,
                     ),
                   ),
                   Text(
@@ -255,36 +249,36 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
   }
 
   Future<void> _generateFortune(BuildContext context) async {
-    final authProvider = context.read<AuthProvider>();
-    final fortuneProvider = context.read<FortuneProvider>();
-    final userProfile = authProvider.userProfile;
+    // // final authProvider = context.read<AuthProvider>();
+    // // final fortuneProvider = context.read<FortuneProvider>();
+    // final userProfile = authProvider.userProfile;
 
-    final requestData = {
-      'fortuneType': 'politician',
-      'userId': authProvider.userId,
-      'name': userProfile?.name ?? '시민',
-      'birthDate': userProfile?.birthDate ?? DateTime.now().toIso8601String(),
-      'politician': selectedPolitician,
-      'party': politicianData[selectedParty]
-          ?.firstWhere((p) => p['name'] == selectedPolitician)['party']
-    };
+    // final requestData = {
+    //   'fortuneType': 'politician',
+    //   'userId': authProvider.userId,
+    //   'name': userProfile?.name ?? '시민',
+    //   'birthDate': userProfile?.birthDate ?? DateTime.now().toIso8601String(),
+    //   'politician': selectedPolitician,
+    //   'party': politicianData[selectedParty]
+    //       ?.firstWhere((p) => p['name'] == selectedPolitician)['party']
+    // };
 
-    try {
-      final result = await fortuneProvider.generateFortune(
-        fortuneType: 'politician',
-        requestData: requestData
-      );
+    // try {
+    //   final result = await fortuneProvider.generateFortune(
+    //     fortuneType: 'politician',
+    //     requestData: requestData
+    //   );
 
-      if (result != null && mounted) {
-        _showFortuneResult(context, result);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('발생했습니다: $e')),
-        );
-      }
-    }
+    //   if (result != null && mounted) {
+    //     _showFortuneResult(context, result);
+    //   }
+    // } catch (e) {
+    //   if (mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(content: Text('발생했습니다: $e')),
+    //     );
+    //   }
+    // }
   }
 
   void _showFortuneResult(BuildContext context, Map<String, dynamic> result) {
@@ -297,9 +291,9 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
         minChildSize: 0.5,
         maxChildSize: 0.95,
         builder: (context, scrollController) => Container(
-          decoration: const BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          decoration: BoxDecoration(
+            color: Colors.grey[100]!,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: ListView(
             controller: scrollController,
@@ -310,7 +304,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.divider,
+                    color: Colors.grey[300]!,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -345,11 +339,36 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
   Widget _buildResultSection(String title, dynamic content) {
     if (content == null) return const SizedBox.shrink();
     
-    return FortuneContentCard(
-      title: title,
-      content: content.toString(),
-      gradientColors: const [Color(0xFF1976D2), Color(0xFF42A5F5)],
-      delay: 0,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content.toString(),
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -358,7 +377,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.3)),
       ),
@@ -398,9 +417,9 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                       ),
                       Text(
                         entry.value.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
-                          color: AppColors.textSecondary,
+                          color: Colors.grey,
                         ),
                       ),
                     ],
@@ -449,9 +468,9 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
             const SizedBox(height: 8),
             Text(
               '이정표: ${career['milestone']}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: Colors.grey,
                 fontStyle: FontStyle.italic,
               ),
             ),

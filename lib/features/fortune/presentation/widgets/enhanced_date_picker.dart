@@ -278,6 +278,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                     ),
                   );
                 },
+              ),
               headerStyle: HeaderStyle(
                 formatButtonVisible: true,
                 titleCentered: true,

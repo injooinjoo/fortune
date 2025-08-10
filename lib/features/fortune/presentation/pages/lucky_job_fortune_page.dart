@@ -382,7 +382,15 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         _getScoreMessage(result.overallScore!),
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600]))]))))),
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
         ],
         
@@ -406,13 +414,22 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       '상세 분석',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6))])))),
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
         ],
         
@@ -436,7 +453,11 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       '다른 추천 직업',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 ...(data['alternative_jobs'] as List).map((job) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -452,7 +473,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       Expanded(
                         child: Text(
                           job.toString(),
-                          style: const TextStyle(fontSize: 15)))])))).toList(),)
+                          style: const TextStyle(fontSize: 15))),
+                    ],
+                  ),
+                )).toList(),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
         ],
         
@@ -476,13 +503,22 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       '필요한 역량',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   result.sections!['required_skills'] ?? '',
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6))])))),
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
         ],
         
@@ -507,13 +543,22 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       '경력 개발 경로',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   result.sections!['career_path'] ?? '',
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6))])))),
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
         ],
         
@@ -535,7 +580,11 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       '시작하기 위한 단계',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 ...result.recommendations!.asMap().entries.map((entry) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -559,7 +608,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       Expanded(
                         child: Text(
                           entry.value,
-                          style: const TextStyle(fontSize: 14)))])))).toList(),),
+                          style: const TextStyle(fontSize: 14))),
+                    ],
+                  ),
+                )).toList(),
+              ],
+            ),
+          ),
         ],
       ],
     );
