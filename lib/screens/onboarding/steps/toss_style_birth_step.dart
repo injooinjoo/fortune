@@ -527,58 +527,52 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
             
             const Spacer(),
             
-            // Custom Number Pad - GestureDetector로 감싸서 포커스 유지
+            // Custom Number Pad with Next Button - GestureDetector로 감싸서 포커스 유지
             if (showCustomKeypad)
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  // 키패드 영역을 탭해도 포커스 유지
-                  if (_isDateFieldFocused && !_dateFocusNode.hasFocus) {
-                    _dateFocusNode.requestFocus();
-                  } else if (_isTimeFieldFocused && !_timeFocusNode.hasFocus) {
-                    _timeFocusNode.requestFocus();
-                  }
-                },
-                child: TossNumberPad(
-                  onNumberPressed: _handleNumberInput,
-                  onBackspacePressed: _handleBackspace,
-                ),
-              ).animate().slideY(begin: 0.5, end: 0, duration: 300.ms),
-            
-            // Bottom button area - Only show when date is valid
-            AnimatedOpacity(
-              opacity: _isDateValid ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 300),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                height: _isDateValid ? 58 : 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                margin: EdgeInsets.only(
-                  bottom: _isDateValid ? 24.0 : 0,
-                ),
-                child: _isDateValid
-                    ? SizedBox(
+              Column(
+                children: [
+                  // Next Button - Show only when both date and time are completed
+                  if (_isDateValid && (_isTimeValid || _isTimeUnknown))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Container(
                         width: double.infinity,
                         height: 58,
+                        margin: const EdgeInsets.only(bottom: 16.0),
                         child: ElevatedButton(
-                          onPressed: (_isDateValid && (_isTimeValid || _isTimeUnknown || !_showTimeInput)) 
-                            ? widget.onNext : null,
-                          style: TossTheme.primaryButtonStyle(
-                            _isDateValid && (_isTimeValid || _isTimeUnknown || !_showTimeInput)
-                          ),
+                          onPressed: widget.onNext,
+                          style: TossTheme.primaryButtonStyle(true),
                           child: Text(
                             '다음',
                             style: TossTheme.button.copyWith(
-                              color: (_isDateValid && (_isTimeValid || _isTimeUnknown || !_showTimeInput))
-                                ? Colors.white 
-                                : TossTheme.textGray600,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ),
+                      ),
+                    ).animate().fadeIn(duration: 300.ms),
+                  
+                  // Number Pad
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      // 키패드 영역을 탭해도 포커스 유지
+                      if (_isDateFieldFocused && !_dateFocusNode.hasFocus) {
+                        _dateFocusNode.requestFocus();
+                      } else if (_isTimeFieldFocused && !_timeFocusNode.hasFocus) {
+                        _timeFocusNode.requestFocus();
+                      }
+                    },
+                    child: TossNumberPad(
+                      onNumberPressed: _handleNumberInput,
+                      onBackspacePressed: _handleBackspace,
+                    ),
+                  ),
+                ],
+              ).animate().slideY(begin: 0.5, end: 0, duration: 300.ms),
+            
+            // Bottom padding for safe area
+            const SizedBox(height: 24),
           ],
         ),
       ),

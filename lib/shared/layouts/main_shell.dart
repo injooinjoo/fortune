@@ -35,7 +35,7 @@ class _MainShellState extends ConsumerState<MainShell>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 80),
       vsync: this
     );
     _slideAnimation = Tween<Offset>(

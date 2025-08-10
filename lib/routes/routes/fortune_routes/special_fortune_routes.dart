@@ -13,7 +13,7 @@ import '../../../features/fortune/presentation/pages/sports_player_fortune_page.
 final specialFortuneRoutes = [
   // Dream Fortune
   GoRoute(
-    path: 'dream',
+    path: '/dream',
     name: 'fortune-dream',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -23,7 +23,7 @@ final specialFortuneRoutes = [
   
   // Dream Chat
   GoRoute(
-    path: 'dream-chat',
+    path: '/dream-chat',
     name: 'fortune-dream-chat',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -33,13 +33,13 @@ final specialFortuneRoutes = [
   
   // Family Fortune Unified
   GoRoute(
-    path: 'family',
+    path: '/family',
     name: 'fortune-family',
     builder: (context, state) => const FamilyFortuneUnifiedPage()),
   
   // Children
   GoRoute(
-    path: 'children',
+    path: '/children',
     name: 'fortune-children',
     builder: (context, state) => const ChildrenFortunePage(
       fortuneType: 'children',
@@ -49,7 +49,7 @@ final specialFortuneRoutes = [
   
   // Parenting
   GoRoute(
-    path: 'parenting',
+    path: '/parenting',
     name: 'fortune-parenting',
     builder: (context, state) => const ChildrenFortunePage(
       fortuneType: 'parenting',
@@ -59,7 +59,7 @@ final specialFortuneRoutes = [
   
   // Pregnancy
   GoRoute(
-    path: 'pregnancy',
+    path: '/pregnancy',
     name: 'fortune-pregnancy',
     builder: (context, state) => const ChildrenFortunePage(
       fortuneType: 'pregnancy',
@@ -69,7 +69,7 @@ final specialFortuneRoutes = [
   
   // Family Harmony
   GoRoute(
-    path: 'family-harmony',
+    path: '/family-harmony',
     name: 'fortune-family-harmony',
     builder: (context, state) => const ChildrenFortunePage(
       fortuneType: 'family-harmony',
@@ -79,43 +79,43 @@ final specialFortuneRoutes = [
   
   // Best Practices
   GoRoute(
-    path: 'best-practices',
+    path: '/best-practices',
     name: 'fortune-best-practices',
     builder: (context, state) => const FortuneBestPracticesPage()),
   
   // Lucky Job
   GoRoute(
-    path: 'lucky-job',
+    path: '/lucky-job',
     name: 'fortune-lucky-job',
     builder: (context, state) => const LuckyJobFortunePage()),
   
   // Lucky Side Job
   GoRoute(
-    path: 'lucky-sidejob',
+    path: '/lucky-sidejob',
     name: 'fortune-lucky-sidejob',
     builder: (context, state) => const LuckySideJobFortunePage()),
   
   // E-Sports
   GoRoute(
-    path: 'esports',
+    path: '/esports',
     name: 'fortune-esports',
     builder: (context, state) => const EsportsFortunePage()),
   
   // Influencer
   GoRoute(
-    path: 'influencer',
+    path: '/influencer',
     name: 'fortune-influencer',
     builder: (context, state) => const InfluencerFortunePage()),
   
   // Politician
   GoRoute(
-    path: 'politician',
+    path: '/politician',
     name: 'fortune-politician',
     builder: (context, state) => const PoliticianFortunePage()),
   
   // Sports Player
   GoRoute(
-    path: 'sports-player',
+    path: '/sports-player',
     name: 'fortune-sports-player',
     builder: (context, state) => const SportsPlayerFortunePage()),
   

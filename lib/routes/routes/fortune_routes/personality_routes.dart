@@ -11,37 +11,37 @@ import 'package:go_router/go_router.dart';
 final personalityRoutes = [
   // Personality Fortune Unified
   GoRoute(
-    path: 'personality',
+    path: '/personality',
     name: 'fortune-personality',
     builder: (context, state) => const Scaffold(body: Center(child: Text('PersonalityFortuneUnifiedPage')))),
   
   // Birth Season
   GoRoute(
-    path: 'birth-season',
+    path: '/birth-season',
     name: 'fortune-birth-season',
     builder: (context, state) => const Scaffold(body: Center(child: Text('BirthSeasonFortunePage')))),
   
   // Birthdate
   GoRoute(
-    path: 'birthdate',
+    path: '/birthdate',
     name: 'fortune-birthdate',
     builder: (context, state) => const Scaffold(body: Center(child: Text('BirthdateFortunePage')))),
   
   // Celebrity
   GoRoute(
-    path: 'celebrity',
+    path: '/celebrity',
     name: 'fortune-celebrity',
     builder: (context, state) => const Scaffold(body: Center(child: Text('CelebrityFortuneEnhancedPage')))),
   
   // Same Birthday Celebrity
   GoRoute(
-    path: 'same-birthday-celebrity',
+    path: '/same-birthday-celebrity',
     name: 'fortune-same-birthday-celebrity',
     builder: (context, state) => const Scaffold(body: Center(child: Text('SameBirthdayCelebrityFortunePage')))),
   
   // Lifestyle
   GoRoute(
-    path: 'lifestyle',
+    path: '/lifestyle',
     name: 'fortune-lifestyle',
     builder: (context, state) => const Scaffold(body: Center(child: Text('LifestyleFortunePage')))),
 ];

@@ -61,7 +61,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
       // Get current user
       final user = ref.read(authStateProvider).value;
       if (user == null) {
-        state = AsyncValue.error('User not authenticated': StackTrace.current);
+        state = AsyncValue.error('User not authenticated', StackTrace.current);
         return;
       }
 
@@ -89,8 +89,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
             'top_type': recommendations.firstOrNull?.fortuneType,
             'top_score': null});
   } else {
-        throw Exception('$1',
-    recommendations: ${response.statusCode}');
+        throw Exception('Failed to fetch recommendations: ${response.statusCode}');
       }
     } catch (error, stackTrace) {
       Logger.error('Failed to fetch fortune recommendations', error, stackTrace);

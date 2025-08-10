@@ -30,9 +30,24 @@ class FortuneApiService {
       'userId': userId,
       'date': null});
     
+    // Get user profile for saju information
+    final supabase = Supabase.instance.client;
+    final userProfileResponse = await supabase
+        .from('user_profiles')
+        .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac')
+        .eq('id', userId)
+        .maybeSingle();
+    
     final params = {
       'userId': null,
-      if (date != null) 'date': null};
+      if (date != null) 'date': null,
+      if (userProfileResponse != null) ...{
+        'birthDate': userProfileResponse['birth_date'],
+        'birthTime': userProfileResponse['birth_time'],
+        'gender': userProfileResponse['gender'],
+        'isLunar': false,  // Default to false as column doesn't exist yet
+        'zodiacSign': userProfileResponse['zodiac_sign'],
+        'zodiacAnimal': userProfileResponse['chinese_zodiac']}};
 
     // Check cache first
     Logger.debug('🔍 [FortuneApiService] Checking cache for daily fortune...');
@@ -54,12 +69,25 @@ class FortuneApiService {
 
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.dailyFortune,
-        'queryParams': null});
+        'queryParams': null,
+        'hasSajuData': userProfileResponse != null});
       
       final apiStopwatch = Logger.startTimer('API Call - daily');
-      final response = await _apiClient.get(
-        ApiEndpoints.dailyFortune,
-        queryParameters: queryParams);
+      final response = userProfileResponse != null 
+        ? await _apiClient.post(
+            ApiEndpoints.dailyFortune,
+            data: {
+              ...queryParams,
+              'birthDate': userProfileResponse['birth_date'],
+              'birthTime': userProfileResponse['birth_time'],
+              'gender': userProfileResponse['gender'],
+              'isLunar': false,  // Default to false as column doesn't exist yet
+              'zodiacSign': userProfileResponse['zodiac_sign'],
+              'zodiacAnimal': userProfileResponse['chinese_zodiac']
+            })
+        : await _apiClient.get(
+            ApiEndpoints.dailyFortune,
+            queryParameters: queryParams);
       Logger.endTimer('API Call - daily', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {

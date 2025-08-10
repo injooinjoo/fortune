@@ -70,9 +70,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           'birthDate': userProfileResponse['birth_date'],
           'birthTime': userProfileResponse['birth_time'],
           'gender': userProfileResponse['gender'],
+          'isLunar': false,  // Default to false as column doesn't exist yet
           'mbtiType': userProfileResponse['mbti'],
           'bloodType': userProfileResponse['blood_type'],
-          'zodiacSign': userProfileResponse['zodiac_sign']}};
+          'zodiacSign': userProfileResponse['zodiac_sign'],
+          'zodiacAnimal': userProfileResponse['chinese_zodiac']}};
       // Debug info
       debugPrint('keys: ${requestData.keys.toList()}');
       debugPrint('request: ${requestData[')period']}');

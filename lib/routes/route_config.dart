@@ -21,6 +21,7 @@ import '../screens/premium/premium_screen.dart';
 
 // Import feature pages
 import '../features/trend/presentation/pages/trend_page.dart';
+import '../features/fortune/presentation/pages/fortune_list_page.dart';
 import '../features/notification/presentation/pages/notification_settings_page.dart';
 import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
@@ -47,35 +48,74 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ),
     routes: [
-      // Special onboarding route (not in auth routes)
+      // Non-authenticated routes (outside shell)
+      ...authRoutes,
+      
+      // Special onboarding route (not in shell)
       GoRoute(
         path: '/onboarding/toss-style',
         name: 'onboarding-toss-style',
         builder: (context, state) => const OnboardingPage(),
       ),
       
-      // Home route
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const HomeScreen(),
-      ),
-      
-      // Profile routes
-      GoRoute(
-        path: '/profile',
-        name: 'profile',
-        builder: (context, state) => const ProfileScreen(),
+      // Shell route that provides persistent navigation
+      ShellRoute(
+        builder: (context, state, child) => MainShell(
+          child: child,
+          state: state,
+        ),
         routes: [
+          // Home route
           GoRoute(
-            path: 'edit',
-            name: 'profile-edit',
-            builder: (context, state) => const ProfileEditPage(),
+            path: '/home',
+            name: 'home',
+            builder: (context, state) => const HomeScreen(),
           ),
+          
+          // Profile routes
+          GoRoute(
+            path: '/profile',
+            name: 'profile',
+            builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: 'profile-edit',
+                builder: (context, state) => const ProfileEditPage(),
+              ),
+            ],
+          ),
+          
+          // Premium & Payment routes
+          GoRoute(
+            path: '/premium',
+            name: 'premium',
+            builder: (context, state) => const PremiumScreen(),
+          ),
+          
+          // Feature pages
+          GoRoute(
+            path: '/trend',
+            name: 'trend',
+            builder: (context, state) => const TrendPage(),
+          ),
+          
+          // Main fortune page
+          GoRoute(
+            path: '/fortune',
+            name: 'fortune',
+            builder: (context, state) => const FortuneListPage(),
+          ),
+          
+          // Fortune routes (inside shell for navigation bar)
+          ...fortuneRoutes,
+          
+          // Interactive routes (inside shell)
+          ...interactiveRoutes,
         ],
       ),
       
-      // Settings routes
+      // Settings routes (outside shell - no navigation bar)
       GoRoute(
         path: '/settings',
         name: 'settings',
@@ -99,12 +139,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
       
-      // Premium & Payment routes
-      GoRoute(
-        path: '/premium',
-        name: 'premium',
-        builder: (context, state) => const PremiumScreen(),
-      ),
+      // Other routes outside shell
       GoRoute(
         path: '/subscription',
         name: 'subscription',
@@ -114,13 +149,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/token-purchase',
         name: 'token-purchase',
         builder: (context, state) => const TokenPurchasePageV2(),
-      ),
-      
-      // Feature pages
-      GoRoute(
-        path: '/trend',
-        name: 'trend',
-        builder: (context, state) => const TrendPage(),
       ),
       GoRoute(
         path: '/help',
@@ -137,15 +165,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'terms-of-service',
         builder: (context, state) => const TermsOfServicePage(),
       ),
-      
-      // Non-authenticated routes
-      ...authRoutes,
-      
-      // Fortune routes
-      ...fortuneRoutes,
-      
-      // Interactive routes  
-      ...interactiveRoutes,
     ],
   );
 });

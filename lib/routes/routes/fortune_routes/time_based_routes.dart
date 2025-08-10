@@ -10,7 +10,7 @@ import '../../../features/fortune/presentation/pages/monthly_fortune_page.dart';
 final timeBasedRoutes = [
   // Time-based Fortune
   GoRoute(
-    path: 'time',
+    path: '/time',
     name: 'fortune-time',
     builder: (context, state) {
       final periodParam = state.uri.queryParameters['period'];
@@ -31,7 +31,7 @@ final timeBasedRoutes = [
   
   // Time-based redirect (for backward compatibility)
   GoRoute(
-    path: 'time-based',
+    path: '/time-based',
     name: 'fortune-time-based',
     redirect: (_, state) {
       final tabParam = state.uri.queryParameters['tab'];
@@ -43,43 +43,43 @@ final timeBasedRoutes = [
   
   // Hourly
   GoRoute(
-    path: 'hourly',
+    path: '/hourly',
     name: 'fortune-hourly',
     builder: (context, state) => const HourlyFortunePage()),
   
   // Daily
   GoRoute(
-    path: 'daily',
+    path: '/daily',
     name: 'fortune-daily',
     builder: (context, state) => const DailyFortunePage()),
   
   // Today
   GoRoute(
-    path: 'today',
+    path: '/today',
     name: 'fortune-today',
     builder: (context, state) => const TodayFortunePage()),
   
   // Tomorrow
   GoRoute(
-    path: 'tomorrow',
+    path: '/tomorrow',
     name: 'fortune-tomorrow',
     builder: (context, state) => const TomorrowFortunePage()),
   
   // Weekly
   GoRoute(
-    path: 'weekly',
+    path: '/weekly',
     name: 'fortune-weekly',
     builder: (context, state) => const WeeklyFortunePage()),
   
   // Monthly
   GoRoute(
-    path: 'monthly',
+    path: '/monthly',
     name: 'fortune-monthly',
     builder: (context, state) => const MonthlyFortunePage()),
   
   // Yearly
   GoRoute(
-    path: 'yearly',
+    path: '/yearly',
     name: 'fortune-yearly',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -90,7 +90,7 @@ final timeBasedRoutes = [
   
   // New Year
   GoRoute(
-    path: 'new-year',
+    path: '/new-year',
     name: 'fortune-new-year',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;

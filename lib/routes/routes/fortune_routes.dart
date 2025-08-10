@@ -11,7 +11,7 @@ import 'fortune_routes/personality_routes.dart';
 import 'fortune_routes/time_based_routes.dart';
 import 'fortune_routes/special_fortune_routes.dart';
 
-// import '../../features/fortune/presentation/pages/fortune_list_page.dart' as fortune_pages;
+import '../../features/fortune/presentation/pages/fortune_list_page.dart';
 // import '../../features/fortune/presentation/pages/batch_fortune_page.dart' as fortune_pages;
 // import '../../features/fortune/presentation/pages/fortune_snap_scroll_page.dart' as fortune_pages;
 // import '../../features/fortune/presentation/pages/tarot_main_page.dart';

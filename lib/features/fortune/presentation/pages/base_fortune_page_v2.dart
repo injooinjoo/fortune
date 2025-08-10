@@ -126,7 +126,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
     try {
       Fortune? generatedFortune;
       
-      // Show ad loading screen (or premium loading for premium users,
+      // Show ad loading screen (or premium loading for premium users)
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -139,29 +139,22 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
             },
             onSkip: () {
               Navigator.pop(context);
-              // Navigate to premium page
-              Navigator.pushNamed(context, '/premium');
             },
-            fetchData: () async {
-              // Generate fortune during ad loading
-              final fortune = await ref.read(
-                fortuneGenerationProvider(
-                  FortuneGenerationParams(
-                    fortuneType: widget.fortuneType,
-                    userInfo: params)).future
-              );
-              generatedFortune = fortune;
-              return fortune;
-            },
-            onAdComplete: isPremium ? null : () async {
-              // Reward tokens for watching ad (free users only,
-              await ref.read(tokenProvider.notifier).rewardTokensForAd(
-                fortuneType: widget.fortuneType,
-                rewardAmount: 1);
-            }),
-          fullscreenDialog: true
-        )
+          ),
+          fullscreenDialog: true,
+        ),
       );
+      
+      // Generate fortune after ad screen
+      final fortune = await ref.read(
+        fortuneGenerationProvider(
+          FortuneGenerationParams(
+            fortuneType: widget.fortuneType,
+            userInfo: params,
+          ),
+        ).future,
+      );
+      generatedFortune = fortune;
 
       // Check if fortune was successfully generated
       if (generatedFortune != null) {

@@ -49,8 +49,13 @@ class FortuneListTile extends ConsumerWidget {
                         child: Icon(
                           category.icon,
                           size: 24,
-                          color: Colors.white),;
-})),
+                          color: Colors.white),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
             const SizedBox(width: AppSpacing.spacing4),
             // Title and description
             Expanded(
@@ -62,19 +67,24 @@ class FortuneListTile extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           category.title,
-                          style: theme.textTheme.bodyLarge?.copyWith()
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis),
+                      ),
                       if (category.isNew) Container(
                           margin: const EdgeInsets.only(left: AppSpacing.spacing2),
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0 * 0.5),
                           decoration: BoxDecoration(
                             color: AppColors.error,
                             borderRadius: AppDimensions.borderRadiusSmall),
-                          child: const Text(
-                            'NEW',),
-                            style: Theme.of(context).textTheme.bodyMedium),
+                          child: Text(
+                            'NEW',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold)),
+                        ),
                       if (category.isPremium) Container(
                           margin: const EdgeInsets.only(left: AppSpacing.spacing2),
                           padding: AppSpacing.paddingAll4,
@@ -84,18 +94,28 @@ class FortuneListTile extends ConsumerWidget {
                           child: const Icon(
                             Icons.star_rounded,
                             size: 12,
-                            color: Colors.white)]),
+                            color: Colors.white),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     category.description,
-                    style: theme.textTheme.bodyMedium?.copyWith()
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7)),
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis)]),
+                    overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
             const SizedBox(width: AppSpacing.spacing2),
             Icon(
               Icons.chevron_right,
               color: theme.colorScheme.onSurface.withOpacity(0.3),
-              size: 24)]),;
-}
+              size: 24),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -6,13 +6,13 @@ class AppAnimations {
   // Duration constants
   static const Duration durationInstant = Duration(milliseconds: 0);
   static const Duration durationMicro =
-      Duration(milliseconds: 100); // Hover, tap feedback
+      Duration(milliseconds: 50); // Hover, tap feedback
   static const Duration durationShort =
-      Duration(milliseconds: 200); // Fade, slide
+      Duration(milliseconds: 60); // Fade, slide
   static const Duration durationMedium =
-      Duration(milliseconds: 300); // Expand, collapse
+      Duration(milliseconds: 80); // Expand, collapse
   static const Duration durationLong =
-      Duration(milliseconds: 500); // Page transitions
+      Duration(milliseconds: 100); // Page transitions
   static const Duration durationXLong =
       Duration(milliseconds: 800); // Complex animations
 
@@ -20,8 +20,8 @@ class AppAnimations {
   static const Duration durationFade = durationShort;
   static const Duration durationSlide = durationShort;
   static const Duration durationScale = durationMicro;
-  static const Duration durationPageTransition = durationLong;
-  static const Duration durationBottomSheet = durationMedium;
+  static const Duration durationPageTransition = Duration(milliseconds: 80);
+  static const Duration durationBottomSheet = Duration(milliseconds: 80);
   static const Duration durationDialog = durationShort;
   static const Duration durationToast = durationShort;
   static const Duration durationRipple = durationMedium;

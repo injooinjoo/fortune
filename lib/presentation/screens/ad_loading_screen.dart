@@ -10,6 +10,7 @@ import '../widgets/ads/cross_platform_ad_widget.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../core/components/toss_fortune_loading_screen.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -274,13 +275,11 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                             duration: 300.ms,
                             curve: Curves.easeOut)]
                   ] else ...[
-                    // 프리미엄 사용자는 로딩 표시
-                    CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(height: AppSpacing.spacing4),
-                    Text(
-                      '운세를 준비하고 있습니다...',
-                      style: Theme.of(context).textTheme.bodyMedium)]
+                    // 프리미엄 사용자는 토스 스타일 로딩 표시
+                    TossFortuneLoadingWidget(
+                      message: '운세를 준비하고 있습니다',
+                      size: 50,
+                    ),]
                 ])),
             
             // 헤더 영역

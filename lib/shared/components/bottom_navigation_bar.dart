@@ -1,5 +1,6 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/toss_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -16,27 +17,27 @@ class FortuneBottomNavigationBar extends StatelessWidget {
   static const List<_NavItem> _items = [
     _NavItem(
       icon: Icons.home_outlined,
-      selectedIcon: Icons.home_rounded,
+      selectedIcon: Icons.home,
       label: '홈',
       route: '/home'),
     _NavItem(
-      icon: Icons.explore_outlined,
-      selectedIcon: Icons.explore_rounded,
+      icon: Icons.auto_awesome_outlined,
+      selectedIcon: Icons.auto_awesome,
       label: '운세',
       route: '/fortune'),
     _NavItem(
-      icon: Icons.trending_up,
+      icon: Icons.trending_up_outlined,
       selectedIcon: Icons.trending_up,
       label: '트렌드',
       route: '/trend'),
     _NavItem(
-      icon: Icons.stars_outlined,
-      selectedIcon: Icons.stars_rounded,
+      icon: Icons.workspace_premium_outlined,
+      selectedIcon: Icons.workspace_premium,
       label: '프리미엄',
       route: '/premium'),
     _NavItem(
-      icon: Icons.person_outline_rounded,
-      selectedIcon: Icons.person_rounded,
+      icon: Icons.person_outline,
+      selectedIcon: Icons.person,
       label: '프로필',
       route: '/profile')];
 
@@ -57,15 +58,20 @@ class FortuneBottomNavigationBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.background,
-        border: Border(
-          top: BorderSide(
-            color: context.fortuneTheme.dividerColor,
-            width: AppSpacing.spacing0 * 0.5))),
+        color: TossTheme.backgroundWhite,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            offset: const Offset(0, -1),
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: AppDimensions.buttonHeightLarge,
+          height: 56.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
@@ -129,15 +135,21 @@ class _NavItemWidget extends StatelessWidget {
           children: [
             Icon(
               isSelected ? item.selectedIcon : item.icon,
-              size: AppDimensions.iconSizeMedium,
+              size: 24,
               color: isSelected 
-                ? theme.colorScheme.primary 
-                : context.fortuneTheme.subtitleText),
-            SizedBox(height: AppSpacing.spacing1),
+                ? TossTheme.textBlack 
+                : TossTheme.textGray600),
+            const SizedBox(height: 2),
             Text(
               item.label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: isSelected 
-                  ? theme.colorScheme.primary 
-                  : context.fortuneTheme.subtitleText))])));
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected 
+                  ? TossTheme.textBlack 
+                  : TossTheme.textGray600,
+                letterSpacing: -0.2,
+              ),
+            )])));
   }
 }

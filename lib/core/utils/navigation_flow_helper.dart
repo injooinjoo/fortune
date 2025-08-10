@@ -47,7 +47,7 @@ class NavigationFlowHelper {
             opacity: animation,
             child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300)));
+        transitionDuration: const Duration(milliseconds: 80)));
   }
 
   /// Replace current route with a new route after showing an ad
@@ -92,7 +92,7 @@ class NavigationFlowHelper {
             opacity: animation,
             child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300)));
+        transitionDuration: const Duration(milliseconds: 80)));
   }
 
   /// Show an interstitial ad and execute a callback
@@ -127,6 +127,6 @@ class NavigationFlowHelper {
             opacity: animation,
             child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300)));
+        transitionDuration: const Duration(milliseconds: 80)));
   }
 }

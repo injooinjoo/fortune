@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 class StorageService {
   static const String _userProfileKey = 'userProfile';
@@ -34,40 +35,108 @@ class StorageService {
   }
 
   Future<List<Map<String, dynamic>>> getRecentFortunes() async {
+    debugPrint('📦 [StorageService.getRecentFortunes] START');
     final prefs = await SharedPreferences.getInstance();
     final fortunesString = prefs.getString(_recentFortunesKey);
+    debugPrint('📦 [StorageService.getRecentFortunes] Raw string from prefs: $fortunesString');
     
     if (fortunesString != null) {
       try {
+        debugPrint('📦 [StorageService.getRecentFortunes] Decoding JSON...');
         final List<dynamic> fortunes = json.decode(fortunesString);
-        return fortunes.cast<Map<String, dynamic>>();
-      } catch (e) {
+        debugPrint('📦 [StorageService.getRecentFortunes] Decoded ${fortunes.length} fortunes');
+        // 각 fortune 항목의 visitedAt 형식을 확인하고 정리
+        final cleanedFortunes = <Map<String, dynamic>>[];
+        
+        for (var fortune in fortunes) {
+          debugPrint('📦 [StorageService.getRecentFortunes] Processing fortune: $fortune');
+          if (fortune is Map<String, dynamic>) {
+            final visitedAt = fortune['visitedAt'];
+            debugPrint('📦 [StorageService.getRecentFortunes] visitedAt value: $visitedAt');
+            debugPrint('📦 [StorageService.getRecentFortunes] visitedAt type: ${visitedAt.runtimeType}');
+            
+            // visitedAt이 숫자인 경우 ISO 문자열로 변환
+            if (visitedAt is int) {
+              debugPrint('📦 [StorageService.getRecentFortunes] Converting int to ISO string...');
+              fortune['visitedAt'] = DateTime.fromMillisecondsSinceEpoch(visitedAt).toIso8601String();
+              debugPrint('📦 [StorageService.getRecentFortunes] Converted to: ${fortune['visitedAt']}');
+            } else if (visitedAt is String) {
+              // 이미 문자열인 경우 유효성 검사
+              try {
+                debugPrint('📦 [StorageService.getRecentFortunes] Validating string date...');
+                DateTime.parse(visitedAt);
+                debugPrint('📦 [StorageService.getRecentFortunes] Valid date string');
+              } catch (e) {
+                // 파싱할 수 없는 문자열인 경우 현재 시간으로 대체
+                debugPrint('❌ [StorageService.getRecentFortunes] Date parsing failed: $e');
+                fortune['visitedAt'] = DateTime.now().toIso8601String();
+                debugPrint('📦 [StorageService.getRecentFortunes] Replaced with current time');
+              }
+            } else {
+              // visitedAt이 없거나 다른 타입인 경우 현재 시간으로 설정
+              debugPrint('⚠️ [StorageService.getRecentFortunes] Unknown type for visitedAt, using current time');
+              fortune['visitedAt'] = DateTime.now().toIso8601String();
+            }
+            
+            cleanedFortunes.add(fortune);
+            debugPrint('📦 [StorageService.getRecentFortunes] Added cleaned fortune');
+          }
+        }
+        
+        // 정리된 데이터를 다시 저장
+        if (cleanedFortunes.isNotEmpty) {
+          debugPrint('📦 [StorageService.getRecentFortunes] Saving cleaned fortunes back to prefs...');
+          await prefs.setString(_recentFortunesKey, json.encode(cleanedFortunes));
+        }
+        
+        debugPrint('📦 [StorageService.getRecentFortunes] Returning ${cleanedFortunes.length} cleaned fortunes');
+        debugPrint('📦 [StorageService.getRecentFortunes] END - SUCCESS');
+        return cleanedFortunes;
+      } catch (e, stackTrace) {
+        // 복구 불가능한 경우 초기화
+        debugPrint('❌ [StorageService.getRecentFortunes] JSON parsing error: $e');
+        debugPrint('❌ [StorageService.getRecentFortunes] Stack trace: $stackTrace');
+        await prefs.remove(_recentFortunesKey);
+        debugPrint('📦 [StorageService.getRecentFortunes] END - ERROR');
         return [];
       }
     }
+    debugPrint('📦 [StorageService.getRecentFortunes] No fortunes found in storage');
+    debugPrint('📦 [StorageService.getRecentFortunes] END - EMPTY');
     return [];
   }
 
   Future<void> addRecentFortune(String path, String title) async {
+    debugPrint('📝 [StorageService.addRecentFortune] START - path: $path, title: $title');
     final prefs = await SharedPreferences.getInstance();
+    debugPrint('📝 [StorageService.addRecentFortune] Getting existing fortunes...');
     List<Map<String, dynamic>> fortunes = await getRecentFortunes();
+    debugPrint('📝 [StorageService.addRecentFortune] Current fortunes count: ${fortunes.length}');
     
     // 기존에 같은 path가 있으면 제거
+    final beforeRemove = fortunes.length;
     fortunes.removeWhere((f) => f['path'] == path);
+    debugPrint('📝 [StorageService.addRecentFortune] Removed ${beforeRemove - fortunes.length} duplicate(s)');
     
     // 새로운 항목을 맨 앞에 추가
-    fortunes.insert(0, {
+    final newFortune = {
       'path': path,
       'title': title,
       'visitedAt': DateTime.now().toIso8601String(),
-    });
+    };
+    debugPrint('📝 [StorageService.addRecentFortune] Adding new fortune: $newFortune');
+    fortunes.insert(0, newFortune);
     
     // 최대 10개까지만 저장
     if (fortunes.length > 10) {
       fortunes = fortunes.sublist(0, 10);
+      debugPrint('📝 [StorageService.addRecentFortune] Trimmed to 10 items');
     }
     
-    await prefs.setString(_recentFortunesKey, json.encode(fortunes));
+    final jsonString = json.encode(fortunes);
+    debugPrint('📝 [StorageService.addRecentFortune] Saving JSON: $jsonString');
+    await prefs.setString(_recentFortunesKey, jsonString);
+    debugPrint('📝 [StorageService.addRecentFortune] END - Saved ${fortunes.length} fortunes');
   }
 
   Future<String?> getLastUpdateDate() async {
@@ -83,6 +152,42 @@ class StorageService {
   Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+  
+  // 문제가 있는 캐시 데이터 정리
+  Future<void> cleanupCorruptedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    // recentFortunes 데이터 검사 및 정리
+    final fortunesString = prefs.getString(_recentFortunesKey);
+    if (fortunesString != null) {
+      try {
+        final fortunes = json.decode(fortunesString);
+        if (fortunes is List) {
+          bool needsCleanup = false;
+          
+          for (var fortune in fortunes) {
+            if (fortune is Map) {
+              final visitedAt = fortune['visitedAt'];
+              // visitedAt이 int 타입이거나 유효하지 않은 문자열인 경우
+              if (visitedAt is int || (visitedAt is String && visitedAt.contains('"'))) {
+                needsCleanup = true;
+                break;
+              }
+            }
+          }
+          
+          if (needsCleanup) {
+            await prefs.remove(_recentFortunesKey);
+            debugPrint('🗑️ Cleaned up corrupted fortune data');
+          }
+        }
+      } catch (e) {
+        // 파싱 실패 시 데이터 제거
+        await prefs.remove(_recentFortunesKey);
+        debugPrint('🗑️ Removed unparseable fortune data');
+      }
+    }
   }
   
   // Guest mode management

@@ -48,7 +48,7 @@ class SportsFortunePage extends BaseFortunePage {
 class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
   late SportType _selectedType;
   Map<String, dynamic>? _sportsData;
-  WeatherData? _weatherData;
+  WeatherInfo? _weatherData;
   List<GameSchedule>? _baseballSchedule;
   String _selectedLocation = '서울';
 
@@ -61,7 +61,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
 
   Future<void> _loadWeatherData() async {
     try {
-      _weatherData = await WeatherService.getWeatherForLocation(_selectedLocation);
+      _weatherData = await WeatherService.getCurrentWeather();
       
       // Load baseball schedule if baseball is selected
       if (_selectedType == SportType.baseball) {
@@ -194,7 +194,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
     }
   }
 
-  List<String> _getSportTips(SportType sport, WeatherData? weather) {
+  List<String> _getSportTips(SportType sport, WeatherInfo? weather) {
     final baseTips = _getBaseSportTips(sport);
     final weatherTips = <String>[];
     
@@ -210,12 +210,12 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
         weatherTips.add('강한 바람 - 균형 유지 주의');
       }
       
-      if (weather.precipitation > 0) {
-        weatherTips.add('비 예상 - 미끄럼 주의');
+      if (weather.condition == 'Rain' || weather.condition == 'Snow') {
+        weatherTips.add('비/눈 예상 - 미끄럼 주의');
       }
       
-      if (weather.uvIndex > 7) {
-        weatherTips.add('자외선 강함 - 선크림 필수');
+      if (weather.temperature > 30) {
+        weatherTips.add('고온 주의 - 충분한 수분 섭취');
       }
     }
     
@@ -252,6 +252,52 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
       case 'fog': return '안개';
       default:
         return '보통';
+    }
+  }
+
+  String _getWeatherAdviceForSport(String sportType, WeatherInfo weather) {
+    final condition = weather.condition.toLowerCase();
+    final temp = weather.temperature;
+    final wind = weather.windSpeed;
+    
+    // Sport-specific weather advice
+    switch (sportType) {
+      case 'golf':
+        if (wind > 10) return '강한 바람으로 공의 궤적이 영향받을 수 있습니다';
+        if (condition == 'rain') return '비로 인해 그립과 클럽 관리가 중요합니다';
+        return '골프하기 좋은 날씨입니다';
+      
+      case 'tennis':
+        if (temp > 30) return '고온 주의 - 충분한 수분 섭취가 필요합니다';
+        if (wind > 8) return '바람이 강해 서브와 랠리에 영향이 있을 수 있습니다';
+        return '테니스하기 적절한 날씨입니다';
+      
+      case 'baseball':
+        if (condition == 'rain') return '우천 시 경기 취소 가능성이 있습니다';
+        if (wind > 12) return '강풍으로 타구 방향 예측이 어려울 수 있습니다';
+        return '야구 관람하기 좋은 날씨입니다';
+      
+      case 'swimming':
+        if (temp < 20) return '실외 수영장은 춥게 느껴질 수 있습니다';
+        return '수영하기 좋은 날씨입니다';
+      
+      case 'hiking':
+        if (condition == 'rain' || condition == 'snow') return '미끄러운 등산로 주의가 필요합니다';
+        if (temp > 30) return '고온 주의 - 충분한 휴식과 수분 섭취가 필요합니다';
+        return '등산하기 좋은 날씨입니다';
+      
+      case 'cycling':
+        if (wind > 10) return '맞바람이 강해 체력 소모가 클 수 있습니다';
+        if (condition == 'rain') return '젖은 노면 주의 - 제동거리가 길어집니다';
+        return '자전거 타기 좋은 날씨입니다';
+      
+      case 'running':
+        if (temp > 28) return '고온 주의 - 이른 아침이나 저녁 운동을 추천합니다';
+        if (condition == 'rain') return '미끄러운 노면 주의가 필요합니다';
+        return '러닝하기 좋은 날씨입니다';
+        
+      default:
+        return '운동하기 적절한 날씨입니다';
     }
   }
 
@@ -566,8 +612,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                   children: [
                     _buildWeatherDetail(Icons.air, '바람', '${windSpeed.round()}m/s'),
                     _buildWeatherDetail(Icons.water_drop, '습도', '${humidity.round()}%'),
-                    if (_weatherData!.uvIndex > 0)
-                      _buildWeatherDetail(Icons.wb_sunny, 'UV', '${_weatherData!.uvIndex}'),
+                    if (_weatherData!.temperature > 25)
+                      _buildWeatherDetail(Icons.wb_sunny, '체감', '${_weatherData!.feelsLike.round()}°'),
                   ],
                 ),
               ),
@@ -585,7 +631,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        WeatherService.getWeatherAdviceForSport(_selectedType.value, _weatherData!),
+                        _getWeatherAdviceForSport(_selectedType.value, _weatherData!),
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.white)),
@@ -654,7 +700,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
     
     if (_weatherData!.temperature > 30 || _weatherData!.temperature < 5) {
       return Colors.red;
-    } else if (_weatherData!.windSpeed > 10 || _weatherData!.precipitation > 0) {
+    } else if (_weatherData!.windSpeed > 10 || _weatherData!.condition == 'Rain' || _weatherData!.condition == 'Snow') {
       return Colors.orange;
     } else {
       return Colors.green;

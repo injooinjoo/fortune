@@ -217,7 +217,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                     },
                   ),
                 ),
-              );
+              ),
+            );
           });
       }
     );
@@ -957,7 +958,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   const SizedBox(width: 6),
                   Text(
                     filter.name,
-                    style: theme.textTheme.bodyMedium?.copyWith()
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: isSelected
                           ? Colors.white
                           : theme.colorScheme.onSurface,

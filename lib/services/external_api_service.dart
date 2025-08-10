@@ -65,9 +65,11 @@ class ExternalApiService {
   static const Duration _scheduleCacheDuration = Duration(hours: 24);
   static const Duration _golfCourseCacheDuration = Duration(days: 7);
   
-  // Weather API (delegated to WeatherService,
-  static Future<WeatherData> getWeatherData(String location) async {
-    return WeatherService.getWeatherForLocation(location);
+  // Weather API (delegated to WeatherService)
+  static Future<WeatherInfo> getWeatherData(String location) async {
+    // Use the current location weather method for now
+    // In the future, can add location-specific search
+    return WeatherService.getCurrentWeather();
   }
   
   // Baseball Schedule API

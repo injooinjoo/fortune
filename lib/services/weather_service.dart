@@ -1,187 +1,330 @@
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../core/utils/logger.dart';
 
-class WeatherData {
-  final double temperature;
-  final double humidity;
-  final double windSpeed;
-  final String windDirection;
-  final double precipitation;
-  final int uvIndex;
-  final double fineDust;
-  final String condition;
-  final String description;
-  final DateTime timestamp;
-
-  WeatherData({
-    required this.temperature,
-    required this.humidity,
-    required this.windSpeed,
-    required this.windDirection,
-    required this.precipitation,
-    required this.uvIndex,
-    required this.fineDust,
-    required this.condition,
-    required this.description,
-    required this.timestamp});
-
-  factory WeatherData.fromJson(Map<String, dynamic> json) {
-    return WeatherData(
-      temperature: json['main']['temp'],
-    humidity: json['main']['humidity'],
-      windSpeed: json['wind']['speed'],
-      windDirection: _getWindDirection(json['wind']['deg']),
-      precipitation: json['rain']?['1h'],
-      uvIndex: json['uvi'],
-      fineDust: json['air_quality'],
-      condition: json['weather'][0]['main'],
-      description: json['weather'][0]['description'],
-      timestamp: DateTime.now(),
-    );
-  }
-
-  static String _getWindDirection(int degrees) {
-    const directions = ['북', '북동', '동', '남동', '남', '남서', '서', '북서'];
-    final index = ((degrees + 22.5) / 45).floor() % 8;
-    return directions[index];
-  }
-
-  Map<String, dynamic> toJson() => {
-    'temperature': temperature,
-    'humidity': humidity,
-    'windSpeed': windSpeed,
-    'windDirection': windDirection,
-    'precipitation': precipitation,
-    'uvIndex': uvIndex,
-    'fineDust': fineDust,
-    'condition': condition,
-    'description': description,
-    'timestamp': null};
-}
-
+/// 날씨 정보를 가져오는 서비스
 class WeatherService {
+  // OpenWeatherMap API Key
+  static const String _apiKey = '378423f7fe3cf4848a8b5573845302b3';
   static const String _baseUrl = 'https://api.openweathermap.org/data/2.5';
-  static const String _apiKey = 'YOUR_OPENWEATHER_API_KEY'; // Replace with actual API key
-  
-  // Cache management
-  static final Map<String, WeatherData> _cache = {};
-  static const Duration _cacheExpiry = Duration(hours: 1);
 
-  static Future<WeatherData> getWeatherData({
-    required double latitude,
-    required double longitude}) async {
-    final cacheKey = '${latitude}_$longitude';
-    
-    // Check cache first
-    if (_cache.containsKey(cacheKey)) {
-      final cached = _cache[cacheKey]!;
-      if (DateTime.now().difference(cached.timestamp) < _cacheExpiry) {
-        Logger.info('Supabase initialized successfully');
-        return cached;
-      }
-    }
-
+  /// 현재 위치의 날씨 정보 가져오기 (캐싱 적용)
+  static Future<WeatherInfo> getCurrentWeather() async {
     try {
-      final url = Uri.parse('Fortune cached');
-      final response = await http.get(url);
+      // 1. 위치 권한 확인
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // 위치 권한이 거부되면 서울 날씨 사용
+          return await _getWeatherByCity('Seoul');
+        }
+      }
+
+      // 2. 현재 위치 가져오기
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+      );
+
+      // 3. 지역명 가져오기 (캐싱을 위해)
+      final cityResponse = await http.get(
+        Uri.parse(
+          '$_baseUrl/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$_apiKey&units=metric&lang=kr',
+        ),
+      );
+
+      if (cityResponse.statusCode == 200) {
+        final data = json.decode(cityResponse.body);
+        final cityName = data['name'] ?? 'Unknown';
+        
+        // 4. 캐시 확인
+        final cachedWeather = await _getCachedWeather(cityName);
+        if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
+          print('📋 캐시된 날씨 사용: $cityName');
+          return WeatherInfo.fromJson(cachedWeather['data']);
+        }
+        
+        // 5. 캐시가 없거나 만료된 경우 새로 저장
+        print('🌤️ API에서 날씨 가져오기: $cityName');
+        await _cacheWeather(cityName, data);
+        return WeatherInfo.fromJson(data);
+      } else {
+        // API 호출 실패 시 기본값
+        return WeatherInfo.defaultWeather();
+      }
+    } catch (e) {
+      print('날씨 정보 가져오기 실패: $e');
+      return WeatherInfo.defaultWeather();
+    }
+  }
+
+  /// 도시 이름으로 날씨 가져오기 (캐싱 적용)
+  static Future<WeatherInfo> _getWeatherByCity(String city) async {
+    try {
+      // 1. 캐시 확인
+      final cachedWeather = await _getCachedWeather(city);
+      if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
+        print('📋 캐시된 날씨 사용: $city');
+        return WeatherInfo.fromJson(cachedWeather['data']);
+      }
+
+      // 2. 캐시가 없으면 API 호출
+      print('🌤️ API에서 날씨 가져오기: $city');
+      final response = await http.get(
+        Uri.parse(
+          '$_baseUrl/weather?q=$city&appid=$_apiKey&units=metric&lang=kr',
+        ),
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final weatherData = WeatherData.fromJson(data);
-        
-        // Update cache
-        _cache[cacheKey] = weatherData;
-        Logger.info('Supabase initialized successfully');
-        
-        return weatherData;
-      } else {
-        throw Exception('Failed to fetch weather data: ${response.statusCode}');
+        // 3. 캐시에 저장
+        await _cacheWeather(city, data);
+        return WeatherInfo.fromJson(data);
       }
     } catch (e) {
-      Logger.error('Weather API error', e);
+      print('도시 날씨 정보 가져오기 실패: $e');
+    }
+    return WeatherInfo.defaultWeather();
+  }
+  
+  /// 캐시된 날씨 정보 가져오기
+  static Future<Map<String, dynamic>?> _getCachedWeather(String cityName) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cacheKey = 'weather_cache_$cityName';
+      final cachedString = prefs.getString(cacheKey);
       
-      // Return default data on error
-      return WeatherData(
-        temperature: 20.0,
-        humidity: 50.0,
-        windSpeed: 5.0,
-        windDirection: '북',
-        precipitation: 0.0,
-        uvIndex: 5,
-        fineDust: 30.0,
-        condition: 'Clear',
-        description: '맑음',
-        timestamp: DateTime.now());
+      if (cachedString != null) {
+        return json.decode(cachedString);
+      }
+    } catch (e) {
+      print('캐시 읽기 오류: $e');
+    }
+    return null;
+  }
+  
+  /// 날씨 정보 캐싱
+  static Future<void> _cacheWeather(String cityName, Map<String, dynamic> weatherData) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cacheKey = 'weather_cache_$cityName';
+      final cacheData = {
+        'data': weatherData,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+      
+      await prefs.setString(cacheKey, json.encode(cacheData));
+      print('✅ 날씨 정보 캐싱 완료: $cityName');
+    } catch (e) {
+      print('캐시 저장 오류: $e');
     }
   }
-
-  static Future<WeatherData> getWeatherForLocation(String location) async {
-    // Convert location name to coordinates
-    // For now, using default Seoul coordinates
-    final coordinates = _getCoordinatesForLocation(location);
-    return getWeatherData(
-      latitude: coordinates['lat'] ?? 0.0,
-      longitude: coordinates['lng'] ?? 0.0);
+  
+  /// 캐시 유효성 검증 (30분)
+  static bool _isCacheValid(dynamic timestamp) {
+    if (timestamp == null) return false;
+    
+    final cacheTime = DateTime.fromMillisecondsSinceEpoch(timestamp as int);
+    final now = DateTime.now();
+    final difference = now.difference(cacheTime);
+    
+    // 30분 이내면 유효
+    return difference.inMinutes < 30;
   }
+}
 
-  static Map<String, double> _getCoordinatesForLocation(String location) {
-    // This would normally use a geocoding API
-    // For now, returning major Korean cities
-    final locations = {
-      '서울': {'lat': 37.5665, 'lng': 126.9780},
-      '부산': {'lat': 35.1796, 'lng': 129.0756},
-      '대구': {'lat': 35.8714, 'lng': 128.6014},
-      '인천': {'lat': 37.4563, 'lng': 126.7052},
-      '광주': {'lat': 35.1595, 'lng': 126.8526},
-      '대전': {'lat': 36.3504, 'lng': 127.3845},
-      '울산': {'lat': 35.5384, 'lng': 129.3114},
-      '제주': {'lat': 33.4996, 'lng': 126.5312},
+/// 날씨 정보 모델
+class WeatherInfo {
+  final String condition;       // 날씨 상태 (맑음, 흐림, 비, 눈 등)
+  final String description;     // 상세 설명
+  final double temperature;     // 현재 온도
+  final double feelsLike;       // 체감 온도
+  final double humidity;        // 습도
+  final double windSpeed;       // 풍속
+  final String cityName;        // 도시명
+  final DateTime sunrise;       // 일출 시간
+  final DateTime sunset;        // 일몰 시간
+  final String icon;           // 날씨 아이콘 코드
+
+  WeatherInfo({
+    required this.condition,
+    required this.description,
+    required this.temperature,
+    required this.feelsLike,
+    required this.humidity,
+    required this.windSpeed,
+    required this.cityName,
+    required this.sunrise,
+    required this.sunset,
+    required this.icon,
+  });
+
+  factory WeatherInfo.fromJson(Map<String, dynamic> json) {
+    // 영어 도시명을 한글로 변환
+    String cityName = json['name'] ?? '서울';
+    cityName = _translateCityName(cityName);
+    
+    return WeatherInfo(
+      condition: json['weather'][0]['main'] ?? '맑음',
+      description: json['weather'][0]['description'] ?? '맑은 날씨',
+      temperature: (json['main']['temp'] ?? 20).toDouble(),
+      feelsLike: (json['main']['feels_like'] ?? 20).toDouble(),
+      humidity: (json['main']['humidity'] ?? 50).toDouble(),
+      windSpeed: (json['wind']['speed'] ?? 0).toDouble(),
+      cityName: cityName,
+      sunrise: DateTime.fromMillisecondsSinceEpoch(
+        (json['sys']['sunrise'] ?? 0) * 1000,
+      ),
+      sunset: DateTime.fromMillisecondsSinceEpoch(
+        (json['sys']['sunset'] ?? 0) * 1000,
+      ),
+      icon: json['weather'][0]['icon'] ?? '01d',
+    );
+  }
+  
+  /// 영어 도시명을 한글로 변환
+  static String _translateCityName(String englishName) {
+    // 주요 도시 매핑
+    final Map<String, String> cityNameMap = {
+      'Seoul': '서울',
+      'Busan': '부산',
+      'Incheon': '인천',
+      'Daegu': '대구',
+      'Daejeon': '대전',
+      'Gwangju': '광주',
+      'Ulsan': '울산',
+      'Sejong': '세종',
+      'Suwon': '수원',
+      'Suwon-si': '수원',
+      'Seongnam': '성남',
+      'Seongnam-si': '성남',
+      'Goyang': '고양',
+      'Goyang-si': '고양',
+      'Yongin': '용인',
+      'Yongin-si': '용인',
+      'Bucheon': '부천',
+      'Bucheon-si': '부천',
+      'Ansan': '안산',
+      'Ansan-si': '안산',
+      'Anyang': '안양',
+      'Anyang-si': '안양',
+      'Namyangju': '남양주',
+      'Namyangju-si': '남양주',
+      'Hwaseong': '화성',
+      'Hwaseong-si': '화성',
+      'Cheongju': '청주',
+      'Cheongju-si': '청주',
+      'Cheonan': '천안',
+      'Cheonan-si': '천안',
+      'Jeonju': '전주',
+      'Jeonju-si': '전주',
+      'Gimhae': '김해',
+      'Gimhae-si': '김해',
+      'Pohang': '포항',
+      'Pohang-si': '포항',
+      'Changwon': '창원',
+      'Changwon-si': '창원',
+      'Jeju': '제주',
+      'Jeju City': '제주',
+      'Jeju-si': '제주',
+      'Uijeongbu': '의정부',
+      'Uijeongbu-si': '의정부',
+      'Siheung': '시흥',
+      'Siheung-si': '시흥',
+      'Paju': '파주',
+      'Paju-si': '파주',
+      'Gwangmyeong': '광명',
+      'Gwangmyeong-si': '광명',
+      'Gimpo': '김포',
+      'Gimpo-si': '김포',
+      'Pyeongtaek': '평택',
+      'Pyeongtaek-si': '평택',
+      'Gyeonggi-do': '경기도',
+      'Gangwon-do': '강원도',
+      'Chungcheongbuk-do': '충청북도',
+      'Chungcheongnam-do': '충청남도',
+      'Jeollabuk-do': '전라북도',
+      'Jeollanam-do': '전라남도',
+      'Gyeongsangbuk-do': '경상북도',
+      'Gyeongsangnam-do': '경상남도',
     };
     
-    return locations[location] ?? locations['서울']!;
+    // -si, -gu, -dong 등의 접미사 제거
+    String cleanedName = englishName;
+    if (cleanedName.endsWith('-si')) {
+      cleanedName = cleanedName.substring(0, cleanedName.length - 3);
+    }
+    if (cleanedName.endsWith('-gu')) {
+      cleanedName = cleanedName.substring(0, cleanedName.length - 3);
+    }
+    if (cleanedName.endsWith('-dong')) {
+      cleanedName = cleanedName.substring(0, cleanedName.length - 5);
+    }
+    
+    // 매핑에서 찾기
+    return cityNameMap[englishName] ?? cityNameMap[cleanedName] ?? englishName;
   }
 
-  static String getWeatherAdviceForSport(String sport, WeatherData weather) {
-    switch (sport) {
-      case 'golf':
-        if (weather.windSpeed > 10) {
-          return '바람이 강해 클럽 선택에 주의가 필요합니다. 낮은 탄도로 플레이하세요.';
-        } else if (weather.precipitation > 0) {
-          return '비가 예상됩니다. 우산과 레인 장비를 준비하세요.';
-        } else if (weather.temperature > 30) {
-          return '더운 날씨입니다. 수분 보충과 자외선 차단에 신경쓰세요.';
-        }
-        return '골프하기 좋은 날씨입니다. 좋은 스코어를 기대해보세요!';
-        
-      case 'tennis':
-        if (weather.windSpeed > 8) {
-          return '바람이 있어 서브와 로브샷에 영향이 있을 수 있습니다.';
-        } else if (weather.humidity > 70) {
-          return '습도가 높아 체력 소모가 클 수 있습니다. 페이스 조절하세요.';
-        }
-        return '테니스하기 좋은 컨디션입니다. 적극적인 플레이를 해보세요!';
-        
-      case 'running':
-        if (weather.temperature < 5) {
-          return '추운 날씨입니다. 충분한 워밍업과 보온에 신경쓰세요.';
-        } else if (weather.temperature > 25) {
-          return '더운 날씨입니다. 수분 섭취를 자주하고 페이스를 조절하세요.';
-        } else if (weather.fineDust > 50) {
-          return '미세먼지가 나쁩니다. 실내 운동을 고려해보세요.';
-        }
-        return '러닝하기 좋은 날씨입니다. 목표 거리에 도전해보세요!';
-        
-      case 'fishing':
-        if (weather.precipitation > 0) {
-          return '비가 오면 물고기 활동이 활발해집니다. 좋은 조과를 기대해보세요!';
-        } else if (weather.windSpeed > 12) {
-          return '바람이 강해 캐스팅에 주의가 필요합니다.';
-        }
-        return '낚시하기 좋은 날씨입니다. 대물을 기대해보세요!';
-        
-      default:
-        return '운동하기 좋은 날씨입니다. 안전에 유의하며 즐기세요!';
+  /// 기본 날씨 정보 (API 실패 시)
+  factory WeatherInfo.defaultWeather() {
+    return WeatherInfo(
+      condition: 'Clear',
+      description: '맑은 날씨',
+      temperature: 20.0,
+      feelsLike: 20.0,
+      humidity: 50.0,
+      windSpeed: 2.0,
+      cityName: '서울',
+      sunrise: DateTime.now().copyWith(hour: 6, minute: 0),
+      sunset: DateTime.now().copyWith(hour: 18, minute: 0),
+      icon: '01d',
+    );
+  }
+
+  /// 날씨를 한국어 감성 표현으로 변환
+  String get emotionalDescription {
+    if (condition == 'Clear') {
+      if (temperature > 25) return '화창하고 따뜻한';
+      if (temperature > 15) return '맑고 상쾌한';
+      return '쌀쌀하지만 맑은';
+    } else if (condition == 'Clouds') {
+      if (description.contains('구름조금')) return '구름이 살짝 낀';
+      return '잔잔한 구름의';
+    } else if (condition == 'Rain') {
+      if (windSpeed > 5) return '비바람이 부는';
+      return '촉촉한 비가 내리는';
+    } else if (condition == 'Snow') {
+      return '포근한 눈이 내리는';
+    } else if (condition == 'Mist' || condition == 'Fog') {
+      return '안개가 자욱한';
+    } else if (condition == 'Thunderstorm') {
+      return '천둥번개가 치는';
     }
+    return '평온한';
+  }
+
+  /// 날씨에 따른 운세 키워드
+  List<String> get fortuneKeywords {
+    List<String> keywords = [];
+    
+    if (condition == 'Clear') {
+      keywords.addAll(['밝은 기운', '긍정적 에너지', '새로운 시작']);
+    } else if (condition == 'Rain') {
+      keywords.addAll(['내면의 성찰', '정화', '새로운 변화']);
+    } else if (condition == 'Clouds') {
+      keywords.addAll(['안정', '균형', '차분함']);
+    } else if (condition == 'Snow') {
+      keywords.addAll(['순수', '새로운 기회', '희망']);
+    }
+    
+    if (temperature > 25) {
+      keywords.add('열정');
+    } else if (temperature < 10) {
+      keywords.add('인내');
+    }
+    
+    return keywords;
   }
 }

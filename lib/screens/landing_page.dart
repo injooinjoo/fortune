@@ -591,83 +591,142 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
       children: [
-          // 몽환적인 배경 효과
-          // 떠다니는 원형 보케 효과
-          ...List.generate(15, (index) {
-            final random = math.Random(index);
-            final size = random.nextDouble() * 80 + 40;
-            final opacity = random.nextDouble() * 0.1 + 0.05;
-            final duration = random.nextInt(10) + 15;
-            
-            return Positioned(
-              left: random.nextDouble() * MediaQuery.of(context).size.width,
-              top: random.nextDouble() * MediaQuery.of(context).size.height,
-              child: Container(
-      width: size,
-                height: size,
-                decoration: BoxDecoration(
-      shape: BoxShape.circle,
-                  gradient: RadialGradient(
-      colors: [
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.purple.withOpacity(opacity)
-                          : Colors.blue.withOpacity(opacity),
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.purple.withOpacity(opacity * 0.5)
-                          : Colors.blue.withOpacity(opacity * 0.5),
-                      Colors.transparent],
-                    stops: const [0.0, 0.5, 1.0])))
-                .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(
-                  begin: -30,
-                  end: 30,
-                  duration: Duration(seconds: duration),
-                  curve: Curves.easeInOut)
-                .moveY(
-                  begin: -20,
-                  end: 20,
-                  duration: Duration(seconds: duration + 2),
-                  curve: Curves.easeInOut)
-                .fadeIn(duration: 2000.ms));
-          }),
+          // GPT-5 스타일 그라데이션 배경
+          Container(
+            decoration: BoxDecoration(
+              gradient: Theme.of(context).brightness == Brightness.dark
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF1a1a2e),  // 진한 남색
+                        Color(0xFF16213e),  // 어두운 파란색
+                        Color(0xFF0f1624),  // 거의 검정
+                        Color(0xFF1a1a2e),  // 진한 남색
+                      ],
+                      stops: [0.0, 0.3, 0.6, 1.0],
+                    )
+                  : LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFF5E6FF),  // 연한 보라
+                        Color(0xFFFFE6F0),  // 연한 핑크
+                        Color(0xFFFFEFE6),  // 연한 살구색
+                        Color(0xFFFFF9E6),  // 연한 노란색
+                      ],
+                      stops: [0.0, 0.3, 0.6, 1.0],
+                    ),
+            ),
+          ),
           
-          // 빛나는 작은 입자들
-          ...List.generate(20, (index) {
-            final random = math.Random(index + 100);
-            final duration = random.nextInt(5) + 10;
-            
-            return Positioned(
-              left: random.nextDouble() * MediaQuery.of(context).size.width,
-              top: random.nextDouble() * MediaQuery.of(context).size.height,
+          // 부드러운 색상 블러 효과 (GPT-5 스타일)
+          if (Theme.of(context).brightness == Brightness.light) ...[
+            Positioned(
+              top: -100,
+              left: -100,
               child: Container(
-      width: 3,
-                height: 3,
+                width: 400,
+                height: 400,
                 decoration: BoxDecoration(
-      shape: BoxShape.circle,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white.withOpacity(0.3)
-                      : Colors.black.withOpacity(0.2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      spreadRadius: 1)]))
-                .animate(onPlay: (controller) => controller.repeat())
-                .fadeIn(duration: 1000.ms)
-                .then(delay: Duration(seconds: random.nextInt(3)))
-                .fadeOut(duration: 1000.ms)
-                .then(delay: Duration(seconds: random.nextInt(2)))
-                .moveY(
-                  begin: 0,
-                  end: -50,
-                  duration: Duration(seconds: duration),
-                  curve: Curves.linear));
-          }),
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Color(0xFFE8B4FF).withOpacity(0.5),  // 보라색
+                      Color(0xFFE8B4FF).withOpacity(0.3),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(begin: 0, end: 50, duration: 15.seconds, curve: Curves.easeInOut)
+                .moveY(begin: 0, end: 30, duration: 20.seconds, curve: Curves.easeInOut),
+            ),
+            Positioned(
+              bottom: -150,
+              right: -150,
+              child: Container(
+                width: 500,
+                height: 500,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Color(0xFFFFB4B4).withOpacity(0.5),  // 분홍색
+                      Color(0xFFFFB4B4).withOpacity(0.3),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(begin: 0, end: -40, duration: 18.seconds, curve: Curves.easeInOut)
+                .moveY(begin: 0, end: -40, duration: 22.seconds, curve: Curves.easeInOut),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.3,
+              left: -200,
+              child: Container(
+                width: 450,
+                height: 450,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Color(0xFFFFE4B4).withOpacity(0.4),  // 노란색
+                      Color(0xFFFFE4B4).withOpacity(0.2),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(begin: 0, end: 60, duration: 25.seconds, curve: Curves.easeInOut)
+                .moveY(begin: 0, end: -30, duration: 20.seconds, curve: Curves.easeInOut),
+            ),
+          ] else ...[
+            // 다크 모드용 은은한 색상 효과
+            Positioned(
+              top: -100,
+              left: -100,
+              child: Container(
+                width: 400,
+                height: 400,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Color(0xFF6B46C1).withOpacity(0.15),  // 보라색
+                      Color(0xFF6B46C1).withOpacity(0.08),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(begin: 0, end: 50, duration: 15.seconds, curve: Curves.easeInOut)
+                .moveY(begin: 0, end: 30, duration: 20.seconds, curve: Curves.easeInOut),
+            ),
+            Positioned(
+              bottom: -150,
+              right: -150,
+              child: Container(
+                width: 500,
+                height: 500,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Color(0xFF2563EB).withOpacity(0.15),  // 파란색
+                      Color(0xFF2563EB).withOpacity(0.08),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(begin: 0, end: -40, duration: 18.seconds, curve: Curves.easeInOut)
+                .moveY(begin: 0, end: -40, duration: 22.seconds, curve: Curves.easeInOut),
+            ),
+          ],
           
           SafeArea(
             child: Column(

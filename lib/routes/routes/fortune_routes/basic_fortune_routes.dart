@@ -18,7 +18,7 @@ import '../../../features/history/presentation/pages/fortune_history_page.dart';
 final basicFortuneRoutes = [
   // Saju (Four Pillars)
   GoRoute(
-    path: 'saju',
+    path: '/saju',
     name: 'fortune-saju',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -28,7 +28,7 @@ final basicFortuneRoutes = [
   
   // Zodiac
   GoRoute(
-    path: 'zodiac',
+    path: '/zodiac',
     name: 'fortune-zodiac',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -38,7 +38,7 @@ final basicFortuneRoutes = [
   
   // Zodiac Animal
   GoRoute(
-    path: 'zodiac-animal',
+    path: '/zodiac-animal',
     name: 'fortune-zodiac-animal',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -48,7 +48,7 @@ final basicFortuneRoutes = [
   
   // Blood Type
   GoRoute(
-    path: 'blood-type',
+    path: '/blood-type',
     name: 'fortune-blood-type',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -58,7 +58,7 @@ final basicFortuneRoutes = [
   
   // MBTI
   GoRoute(
-    path: 'mbti',
+    path: '/mbti',
     name: 'fortune-mbti',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -68,7 +68,7 @@ final basicFortuneRoutes = [
   
   // Wealth
   GoRoute(
-    path: 'wealth',
+    path: '/wealth',
     name: 'fortune-wealth',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -78,48 +78,48 @@ final basicFortuneRoutes = [
   
   // Health
   GoRoute(
-    path: 'health',
+    path: '/health',
     name: 'fortune-health',
     builder: (context, state) => const HealthFortunePage()),
   
   // Destiny
   GoRoute(
-    path: 'destiny',
+    path: '/destiny',
     name: 'fortune-destiny',
     builder: (context, state) => const DestinyFortunePage()),
   
   // Past Life
   GoRoute(
-    path: 'past-life',
+    path: '/past-life',
     name: 'fortune-past-life',
     builder: (context, state) => const PastLifeFortunePage()),
   
   // Wish
   GoRoute(
-    path: 'wish',
+    path: '/wish',
     name: 'fortune-wish',
     builder: (context, state) => const WishFortunePage()),
   
   // Timeline
   GoRoute(
-    path: 'timeline',
+    path: '/timeline',
     name: 'fortune-timeline',
     builder: (context, state) => const TimelineFortunePage()),
   
   // Network Report
   GoRoute(
-    path: 'network-report',
+    path: '/network-report',
     name: 'fortune-network-report',
     builder: (context, state) => const NetworkReportFortunePage()),
   
   // Daily Inspiration
   GoRoute(
-    path: 'inspiration',
+    path: '/inspiration',
     name: 'fortune-inspiration',
     builder: (context, state) => const DailyInspirationPage()),
   
   // History
   GoRoute(
-    path: 'history',
+    path: '/history',
     name: 'fortune-history',
     builder: (context, state) => const FortuneHistoryPage())];

@@ -42,9 +42,12 @@ class SocialAuthService {
       Logger.info('Supabase initialized successfully');
       
       // Supabase OAuth 리다이렉트 방식 사용
-      final redirectUrl = kIsWeb ? null : 'io.supabase.flutter://login-callback/';
-      print('URL: ${redirectUrl ?? "null (web default)"}');
-      Logger.info('URL: ${redirectUrl ?? "null (web default)"}');
+      // 웹에서는 현재 URL을 기준으로 리다이렉트
+      final redirectUrl = kIsWeb 
+        ? '${Uri.base.origin}/auth/callback'
+        : 'io.supabase.flutter://login-callback/';
+      print('Redirect URL: $redirectUrl');
+      Logger.info('Redirect URL: $redirectUrl');
       
       // Debug: Log OAuth provider settings
       print('Provider: ${OAuthProvider.google}');
@@ -157,7 +160,7 @@ class SocialAuthService {
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.apple,
         redirectTo: kIsWeb 
-          ? null 
+          ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
         authScreenLaunchMode: LaunchMode.externalApplication);
       
@@ -329,7 +332,7 @@ class SocialAuthService {
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.facebook,
         redirectTo: kIsWeb 
-          ? null 
+          ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
         authScreenLaunchMode: LaunchMode.externalApplication);
       
@@ -357,7 +360,7 @@ class SocialAuthService {
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.kakao,
         redirectTo: kIsWeb 
-          ? null 
+          ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
         authScreenLaunchMode: LaunchMode.externalApplication);
       

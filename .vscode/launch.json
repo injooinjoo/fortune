@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Fortune Web (Port 9002)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--web-port",
+        "9002"
+      ]
+    },
+    {
+      "name": "Fortune Web Debug (Port 9002)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--web-port",
+        "9002",
+        "--web-renderer",
+        "html"
+      ]
+    },
+    {
+      "name": "Fortune iOS",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "Fortune Android",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    }
+  ]
+}

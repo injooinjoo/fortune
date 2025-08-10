@@ -154,6 +154,29 @@
   <script src="flutter_bootstrap.js" async=""></script>
   
   <script>
+    // TEMPORARY FIX: Clear ALL recentFortunes cache to fix type errors
+    // This will force a fresh start for fortune cache
+    try {
+      // Remove all recentFortunes related cache
+      localStorage.removeItem('flutter.recentFortunes');
+      console.log('🗑️ Force cleared ALL recentFortunes cache from localStorage');
+      
+      // Also clear any other potentially problematic cache
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.includes('recentFortunes')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+        console.log(`🗑️ Removed cache key: ${key}`);
+      });
+    } catch(e) {
+      console.log('Could not clear cache:', e);
+    }
+    
     // Hide loading screen when Flutter is ready
     window.addEventListener('flutter-first-frame', function() {
       document.getElementById('loading').classList.add('hidden');

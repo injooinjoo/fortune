@@ -128,9 +128,9 @@ class FortuneCardScore extends Equatable {
       description: json['description'],
       route: json['route'],
       category: json['category'],
-      popularityScore: (json['popularity_score'],
-      personalScore: (json['personal_score'],
-      totalScore: (json['total_score'],
+      popularityScore: json['popularity_score'] as double,
+      personalScore: json['personal_score'] as double,
+      totalScore: json['total_score'] as double,
       recommendationReason: json['recommendation_reason'],
       recommendationType: RecommendationType.fromString(
         json['recommendation_type']),
@@ -139,10 +139,10 @@ class FortuneCardScore extends Equatable {
           ? DateTime.parse(json['last_user_visit'] as String)
           : null,
       totalVisitCount: json['total_visit_count'],
-      weeklyTrend: (json['weekly_trend'],
+      weeklyTrend: json['weekly_trend'] as double,
       isNew: json['is_new'],
       isPremium: json['is_premium'],
-      lastUpdated: DateTime.parse(json['last_updated']);
+      lastUpdated: DateTime.parse(json['last_updated']));
   }
 
   /// Convert to JSON for storage/API

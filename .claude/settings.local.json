@@ -56,7 +56,9 @@
       "Bash(echo \"Fixing: $file\")",
       "Bash(fi)",
       "Bash(curl:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Bash(supabase functions deploy:*)",
+      "Bash(supabase link:*)"
     ],
     "deny": []
   },

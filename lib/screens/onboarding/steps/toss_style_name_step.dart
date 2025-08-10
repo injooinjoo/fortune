@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/toss_theme.dart';
+import '../../../services/social_auth_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../landing_page.dart';
 
 class TossStyleNameStep extends StatefulWidget {
@@ -23,12 +28,15 @@ class TossStyleNameStep extends StatefulWidget {
 class _TossStyleNameStepState extends State<TossStyleNameStep> {
   late TextEditingController _nameController;
   final FocusNode _focusNode = FocusNode();
+  late final SocialAuthService _socialAuthService;
   bool _isValid = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialName);
+    _socialAuthService = SocialAuthService(Supabase.instance.client);
     _isValid = _nameController.text.isNotEmpty;
     
     _nameController.addListener(() {
@@ -86,71 +94,53 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                   children: [
                     // Title
                     Text(
-                      '로그인',
-                      style: TossTheme.heading2,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
                       '기존 계정으로 로그인하세요',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: TossTheme.textGray600,
+                      style: TossTheme.heading2.copyWith(
+                        fontSize: 20,
                       ),
                     ),
                     
                     const SizedBox(height: 40),
                     
-                    // Social Login Buttons (simplified)
-                    _buildSocialLoginButton(
+                    // Loading indicator
+                    if (_isLoading)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: CircularProgressIndicator(),
+                      )
+                    else ...[                    
+                      // Social Login Buttons (unified design)
+                      _buildSocialLoginButton(
                       context: context,
                       label: 'Google로 계속하기',
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black87,
-                      borderColor: Colors.grey[300]!,
-                      onTap: () {
-                        Navigator.pop(context);
-                        // TODO: Implement Google login
-                      },
+                      logoPath: 'assets/images/social/google.svg',
+                      onTap: () => _handleSocialLogin('google'),
                     ),
                     const SizedBox(height: 12),
                     
                     _buildSocialLoginButton(
                       context: context,
                       label: 'Apple로 계속하기',
-                      backgroundColor: Colors.black,
-                      textColor: Colors.white,
-                      borderColor: Colors.black,
-                      onTap: () {
-                        Navigator.pop(context);
-                        // TODO: Implement Apple login
-                      },
+                      logoPath: 'assets/images/social/apple.svg',
+                      onTap: () => _handleSocialLogin('apple'),
                     ),
                     const SizedBox(height: 12),
                     
                     _buildSocialLoginButton(
                       context: context,
                       label: '카카오로 계속하기',
-                      backgroundColor: const Color(0xFFFEE500),
-                      textColor: Colors.black87,
-                      borderColor: const Color(0xFFFEE500),
-                      onTap: () {
-                        Navigator.pop(context);
-                        // TODO: Implement Kakao login
-                      },
+                      logoPath: 'assets/images/social/kakao.svg',
+                      onTap: () => _handleSocialLogin('kakao'),
                     ),
                     const SizedBox(height: 12),
                     
                     _buildSocialLoginButton(
                       context: context,
                       label: '네이버로 계속하기',
-                      backgroundColor: const Color(0xFF03C75A),
-                      textColor: Colors.white,
-                      borderColor: const Color(0xFF03C75A),
-                      onTap: () {
-                        Navigator.pop(context);
-                        // TODO: Implement Naver login
-                      },
+                      logoPath: 'assets/images/social/naver.svg',
+                      onTap: () => _handleSocialLogin('naver'),
                     ),
+                    ],  // Close the else block for loading
                     
                     const SizedBox(height: 30),
                     
@@ -174,12 +164,66 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
     );
   }
 
+  Future<void> _handleSocialLogin(String provider) async {
+    // Close the bottom sheet first
+    Navigator.pop(context);
+    
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      AuthResponse? response;
+      
+      switch (provider) {
+        case 'google':
+          response = await _socialAuthService.signInWithGoogle();
+          break;
+        case 'apple':
+          response = await _socialAuthService.signInWithApple();
+          break;
+        case 'kakao':
+          response = await _socialAuthService.signInWithKakao();
+          break;
+        case 'naver':
+          response = await _socialAuthService.signInWithNaver();
+          break;
+      }
+      
+      // OAuth flows return null (handled by deep linking)
+      // Direct auth flows return AuthResponse
+      if (response != null && response.user != null && mounted) {
+        // Login successful, navigate to home
+        context.go('/home');
+      }
+      // For OAuth flows, the auth state listener will handle navigation
+      
+    } catch (error) {
+      Logger.error('소셜 로그인 실패: $provider', error);
+      
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        
+        // Reopen the bottom sheet for retry
+        _showSocialLoginBottomSheet(context);
+      }
+    }
+  }
+  
   Widget _buildSocialLoginButton({
     required BuildContext context,
     required String label,
-    required Color backgroundColor,
-    required Color textColor,
-    required Color borderColor,
+    required String logoPath,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -188,19 +232,28 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: backgroundColor,
-          border: Border.all(color: borderColor, width: 1),
+          color: Colors.white,
+          border: Border.all(color: Colors.grey[300]!, width: 1),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: textColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              logoPath,
+              width: 24,
+              height: 24,
             ),
-          ),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
         ),
       ),
     );

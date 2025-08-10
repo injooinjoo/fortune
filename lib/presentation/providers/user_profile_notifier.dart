@@ -38,7 +38,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
         state = const AsyncValue.data(null);
       }
     } catch (e, stackTrace) {
-      Logger.error('Failed to load user profile': e, stackTrace);
+      Logger.error('Failed to load user profile', e, stackTrace);
       state = AsyncValue.error(e, stackTrace);
     }
   }
@@ -54,7 +54,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
       state = AsyncValue.data(updatedProfile);
       Logger.info('User profile updated successfully');
     } catch (e, stackTrace) {
-      Logger.error('Failed to update user profile': e, stackTrace);
+      Logger.error('Failed to update user profile', e, stackTrace);
       state = AsyncValue.error(e, stackTrace);
     }
   }
