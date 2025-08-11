@@ -60,7 +60,8 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       userId: params['userId'],
       fortuneType: _selectedType.value,
       params: {
-        'investmentType': _selectedType.value}
+        'investmentType': _selectedType.value,
+      },
     );
 
     // Extract investment-specific data
@@ -78,7 +79,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
         'gender': null
-      }
+      };
       generateFortune(params);
     }
   }
@@ -91,7 +92,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           'sectors': ['IT', '바이오', '제조업', '금융', '소비재'],
           'scores': [85, 70, 60, 75, 80],
           'recommendations': ['성장주 주목', '단기 매매 자제', '분산 투자 필수']
-        }
+        };
       case InvestmentType.crypto:
         return {
           'coins': ['BTC', 'ETH', 'SOL', 'BNB', 'XRP'],
@@ -146,7 +147,10 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           const SizedBox(height: 20),
           
           // Investment-specific content
-          ..._buildTypeSpecificContent(fortune)]));
+          ..._buildTypeSpecificContent(fortune),
+        ],
+      ),
+    );
   }
 
   Widget _buildTypeSelector() {
@@ -165,7 +169,8 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               avatar: Icon(
                 type.icon,
                 size: 18,
-                color: isSelected ? Colors.white : AppTheme.primaryColor),
+                color: isSelected ? Colors.white : AppTheme.primaryColor,
+              ),
               label: Text(type.label),
               selected: isSelected,
               onSelected: (selected) {
@@ -179,8 +184,13 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               selectedColor: AppTheme.primaryColor,
               labelStyle: TextStyle(
                 color: isSelected ? Colors.white : AppTheme.textColor,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal));
-        }));
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildMainFortuneCard(Fortune fortune) {
@@ -188,6 +198,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       elevation: 8,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+      ),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -196,8 +207,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             end: Alignment.bottomRight,
             colors: [
               _getInvestmentColor(_selectedType).withOpacity(0.1),
-              _getInvestmentColor(_selectedType).withOpacity(0.05)]),
+              _getInvestmentColor(_selectedType).withOpacity(0.05),
+            ],
+          ),
           borderRadius: BorderRadius.circular(16),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -209,33 +223,51 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                     Icon(
                       _selectedType.icon,
                       color: _getInvestmentColor(_selectedType),
-                      size: 28),
+                      size: 28,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       '${_selectedType.label} 운세',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score),
                     borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Text(
               fortune.message,
               style: TextStyle(
                 fontSize: 16,
                 height: 1.5,
-                color: AppTheme.textColor)),
+                color: AppTheme.textColor,
+              ),
+            ),
             if (_selectedType != InvestmentType.general) ...[
               const SizedBox(height: 16),
-              _buildRiskIndicator(fortune.score)]])).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
+              _buildRiskIndicator(fortune.score),
+            ],
+          ],
+        ),
+      ),
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildRiskIndicator(int score) {
@@ -250,13 +282,19 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           '위험도: ',
           style: TextStyle(
             fontSize: 14,
-            color: AppTheme.textSecondaryColor)),
+            color: AppTheme.textSecondaryColor,
+          ),
+        ),
         Text(
           risk,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: riskColor))]);
+            color: riskColor,
+          ),
+        ),
+      ],
+    );
   }
 
   List<Widget> _buildTypeSpecificContent(Fortune fortune) {
@@ -285,9 +323,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       children: [
         _buildSectorChart(sectors, scores),
         const SizedBox(height: 16),
-        _buildRecommendationCard('오늘의 투자 전략'),
+        _buildRecommendationCard('오늘의 투자 전략', recommendations),
         const SizedBox(height: 16),
-        _buildStockTips()]);
+        _buildStockTips(),
+      ],
+    );
   }
 
   Widget _buildSectorChart(List<String> sectors, List<int> scores) {
@@ -301,7 +341,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '섹터별 투자 운세',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -325,10 +367,14 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                           if (value.toInt() < sectors.length) {
                             return Text(
                               sectors[value.toInt()],
-                              style: const TextStyle(fontSize: 10));
+                              style: const TextStyle(fontSize: 10),
+                            );
                           }
                           return const Text('');
-                        })),
+                        },
+                      ),
+                    ),
+                  ),
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   barGroups: scores.asMap().entries.map((entry) {
@@ -340,14 +386,18 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                           color: _getScoreColor(entry.value),
                           width: 25,
                           borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4))]);
-                  }).toList()
-                )
-              )
-            )
-          ]
-        )
-      )
+                            top: Radius.circular(4),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -362,7 +412,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         const SizedBox(height: 16),
         _buildVolatilityWarning(),
         const SizedBox(height: 16),
-        _buildRecommendationCard('암호화폐 투자 가이드')]);
+        _buildRecommendationCard('암호화폐 투자 가이드', recommendations),
+      ],
+    );
   }
 
   Widget _buildCoinList(List<String> coins, List<int> scores) {
@@ -376,7 +428,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '코인별 투자 운세',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             ...coins.asMap().entries.map((entry) {
               final index = entry.key;
@@ -384,7 +438,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               final score = index < scores.length ? scores[index] : 50;
               
               return _buildCoinItem(coin, score);
-            }).toList(),);
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildCoinItem(String coin, int score) {
@@ -398,12 +456,17 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             decoration: BoxDecoration(
               color: Colors.orange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(25),
+            ),
             child: Center(
               child: Text(
                 coin,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14)),
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -413,23 +476,29 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   coin,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16)),
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 LinearProgressIndicator(
                   value: score / 100,
                   backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score)]),
+                  valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score)),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(width: 12),
           Text(
             '$score점',
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
-              fontSize: 16
-            )
-          ]
-        )
-      ]
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -440,6 +509,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         color: Colors.orange.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
       child: Row(
         children: [
           Icon(Icons.warning, color: Colors.orange, size: 24),
@@ -452,20 +522,22 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   '높은 변동성 주의',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16)),
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   '암호화폐 시장은 변동성이 매우 높습니다. 투자금 전액 손실 가능성을 항상 염두에 두세요.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondaryColor
-                  )
-                ]
-              )
-            )
-          ]
-        )
-      ]
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -480,7 +552,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         const SizedBox(height: 16),
         _buildMarketTrend(),
         const SizedBox(height: 16),
-        _buildRecommendationCard('부동산 투자 전략')]);
+        _buildRecommendationCard('부동산 투자 전략', recommendations),
+      ],
+    );
   }
 
   Widget _buildRegionMap(List<String> regions, List<int> scores) {
@@ -494,7 +568,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '지역별 투자 매력도',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             ...regions.asMap().entries.map((entry) {
               final index = entry.key;
@@ -502,7 +578,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               final score = index < scores.length ? scores[index] : 50;
               
               return _buildRegionItem(region, score);
-            }).toList(),);
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildRegionItem(String region, int score) {
@@ -518,7 +598,10 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               region,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14)),
+                fontSize: 14,
+              ),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Stack(
@@ -528,24 +611,32 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 FractionallySizedBox(
                   widthFactor: score / 100,
                   child: Container(
                     height: 24,
                     decoration: BoxDecoration(
                       color: _getScoreColor(score),
-                      borderRadius: BorderRadius.circular(12),])),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(width: 12),
           Text(
             '$score점',
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
-              fontSize: 14
-            )
-          ]
-        )
-      ]
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -598,7 +689,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         const SizedBox(height: 16),
         _buildLotteryWarning(),
         const SizedBox(height: 16),
-        _buildRecommendationCard('복권 구매 가이드')]);
+        _buildRecommendationCard('복권 구매 가이드', recommendations),
+      ],
+    );
   }
 
   Widget _buildLuckyNumbers(List<int> numbers) {
@@ -609,15 +702,20 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           gradient: LinearGradient(
             colors: [
               Colors.purple.withOpacity(0.1),
-              Colors.blue.withOpacity(0.1)]),
+              Colors.blue.withOpacity(0.1),
+            ],
+          ),
           borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           children: [
             const Text(
               '오늘의 행운 번호',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 20),
             Wrap(
               spacing: 12,
@@ -628,21 +726,34 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   height: 50,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.purple, Colors.blue]),
+                      colors: [Colors.purple, Colors.blue],
+                    ),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.purple.withOpacity(0.3),
                         blurRadius: 8,
-                        offset: const Offset(0, 4))]),
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: Center(
                     child: Text(
                       '$number',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18)));
-              }).toList(),);
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildBestTimeCard(String bestTime) {
@@ -660,14 +771,24 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   '최적 구매 시간',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   bestTime,
                   style: TextStyle(
                     fontSize: 18,
                     color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold))])]));
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLotteryWarning() {
@@ -677,6 +798,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         color: Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.red.withOpacity(0.3)),
+      ),
       child: Row(
         children: [
           Icon(Icons.info_outline, color: Colors.red, size: 24),
@@ -686,12 +808,12 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '복권은 확률이 매우 낮은 게임입니다. 오락 목적으로만 소액을 사용하세요.',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.red[700]
-              )
-            )
-          )
-        ]
-      )
+                color: Colors.red[700],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -706,7 +828,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         const SizedBox(height: 16),
         _buildIncomeProjection(),
         const SizedBox(height: 16),
-        _buildRecommendationCard('부업 시작 가이드')]);
+        _buildRecommendationCard('부업 시작 가이드', recommendations),
+      ],
+    );
   }
 
   Widget _buildOpportunityList(List<String> opportunities, List<int> scores) {

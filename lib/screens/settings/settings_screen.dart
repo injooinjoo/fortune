@@ -189,13 +189,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16)),
+                    ),
                     child: Row(
                       children: [
                         Text(
                           '결제',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 20)]),
+                            fontSize: 20)),
+                      ],
+                    ),
+                  ),
                   _buildSettingItem(
                     icon: Icons.local_offer_outlined,
                     title: '토큰 구매',
@@ -208,7 +212,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitle: tokenState.hasUnlimitedAccess ? '프리미엄 구독 중' : '프리미엄 시작하기',
                     showBadge: tokenState.hasUnlimitedAccess,
                     onTap: () => context.go('/subscription'),
-                    isLast: true)])),
+                    isLast: true),
+                ],
+              ),
+            ),
             
             // 지원 섹션
             const SizedBox(height: 24),
@@ -232,13 +239,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16)),
+                    ),
                     child: Row(
                       children: [
                         Text(
                           '지원',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 20)]),
+                            fontSize: 20)),
+                      ],
+                    ),
+                  ),
                   _buildSettingItem(
                     icon: Icons.help_outline,
                     title: '도움말',
@@ -252,7 +263,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     icon: Icons.description_outlined,
                     title: '이용약관',
                     onTap: () => context.push('/policy/terms'),
-                    isLast: true)])),
+                    isLast: true),
+                ],
+              ),
+            ),
             
             // 로그아웃
             const SizedBox(height: 32),
@@ -275,7 +289,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             onPressed: () => Navigator.pop(context, true),
                             child: Text(
                               '로그아웃',
-                              style: TextStyle(color: theme.colorScheme.error))]);
+                              style: TextStyle(color: theme.colorScheme.error))),
+                        ],
+                      ),
+                    );
                     
                     if (shouldLogout == true) {
                       await supabase.auth.signOut();
@@ -289,11 +306,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     side: BorderSide(color: theme.colorScheme.error),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                   child: Text(
                     '로그아웃',
                     style: TextStyle(
                       color: theme.colorScheme.error,
-                      fontWeight: FontWeight.w600))),
+                      fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ),
             
             // 버전 정보
             const SizedBox(height: 24),
@@ -303,7 +325,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12)),
-            const SizedBox(height: 32)])));
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
   }
   
   Widget _buildSettingItem({
@@ -327,6 +354,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             bottom: isLast ? BorderSide.none : const BorderSide(
               color: AppColors.divider,
               width: 1)),
+        ),
         child: Row(
           children: [
             Container(
@@ -335,10 +363,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               decoration: BoxDecoration(
                 color: _getIconBackgroundColor(icon),
                 borderRadius: BorderRadius.circular(8),
+              ),
               child: Icon(
                 icon,
                 color: _getIconColor(icon),
-                size: 22)),
+                size: 22),
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -361,23 +391,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             borderRadius: BorderRadius.circular(4),
+                          ),
                           child: const Text(
                             'PRO',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.bold)))]]),
+                              fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ],
+                  ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary))]])),
+                        color: AppColors.textSecondary)),
+                  ],
+                ],
+              ),
+            ),
             trailing ?? (onTap != null ? const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary) : const SizedBox.shrink()]));
+              color: AppColors.textSecondary) : const SizedBox.shrink()),
+          ],
+        ),
+      ),
+    );
   }
   
   Color _getIconBackgroundColor(IconData icon) {

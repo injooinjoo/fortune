@@ -261,7 +261,9 @@ class ExplorePage extends ConsumerWidget {
         filteredItems.addAll(
           category.items.where((item) =>
               item.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              item.description.toLowerCase().contains(searchQuery.toLowerCase()));
+              item.description.toLowerCase().contains(searchQuery.toLowerCase()),
+          ),
+        );
       });
     }
 
@@ -295,7 +297,11 @@ class ExplorePage extends ConsumerWidget {
                 fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none)),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
 
           // Category Tabs
           if (searchQuery.isEmpty)
@@ -328,7 +334,9 @@ class ExplorePage extends ConsumerWidget {
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : theme.colorScheme.outline.withOpacity(0.3)),
+                              : theme.colorScheme.outline.withOpacity(0.3),
+                        ),
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -346,8 +354,16 @@ class ExplorePage extends ConsumerWidget {
                               color: isSelected
                                   ? Colors.white
                                   : theme.colorScheme.onSurface,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]));
-                })),
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           const SizedBox(height: 16),
 
           // Results Count
@@ -360,7 +376,12 @@ class ExplorePage extends ConsumerWidget {
                     '결과: ${filteredItems.length}개',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize.value - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.7))]),
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
           // Fortune Items Grid
           Expanded(
@@ -374,7 +395,8 @@ class ExplorePage extends ConsumerWidget {
                               ? Icons.search_off_rounded
                               : Icons.category_rounded,
                           size: 80,
-                          color: theme.colorScheme.onSurface.withOpacity(0.3)),
+                          color: theme.colorScheme.onSurface.withOpacity(0.3),
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           searchQuery.isNotEmpty
@@ -382,7 +404,12 @@ class ExplorePage extends ConsumerWidget {
                               : '카테고리가 비어있습니다',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontSize: fontSize.value + 2,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7))])
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -422,7 +449,8 @@ class _FortuneItemCard extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: item.gradientColors
                   .map((color) => color.withOpacity(0.1))
-                  .toList()),
+                  .toList(),
+            ),
             child: Container(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -434,12 +462,16 @@ class _FortuneItemCard extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: item.gradientColors),
+                        colors: item.gradientColors,
+                      ),
                       borderRadius: BorderRadius.circular(16),
+                    ),
                     child: Icon(
                       item.icon,
                       size: 32,
-                      color: Colors.white)),
+                      color: Colors.white,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     item.name,

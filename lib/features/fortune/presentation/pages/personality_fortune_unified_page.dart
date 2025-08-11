@@ -184,8 +184,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                 });
               },
               borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: AnimatedContainer(
+              child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 height: 120,
                 padding: const EdgeInsets.all(16),
@@ -195,42 +194,52 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                     end: Alignment.bottomRight,
                     colors: isSelected
                         ? type.gradientColors
-                        : [Colors.grey[200]!, Colors.grey[300]!]),
+                        : [Colors.grey[200]!, Colors.grey[300]!],
+                  ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
                             color: type.gradientColors[0].withOpacity(0.4),
                             blurRadius: 12,
-                            offset: const Offset(0, 4))]
-                      : []),
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : [],
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       type.icon,
                       size: 36,
-                      color: isSelected ? Colors.white : Colors.grey[600]),
+                      color: isSelected ? Colors.white : Colors.grey[600],
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       type.label,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[600],
                         fontWeight: FontWeight.bold,
-                        fontSize: 16)),
+                        fontSize: 16,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       type.description,
                       style: TextStyle(
                         color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[500],
-                        fontSize: 11),
+                        fontSize: 11,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-            );
-      }).toList()
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -281,8 +290,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                   });
                 },
                 borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Container(
+                child: Container(
                   decoration: BoxDecoration(
                     color: isSelected
                         ? _selectedType.gradientColors[0]
@@ -299,7 +307,10 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                       ),
                     ),
                   ),
-            }),
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
@@ -365,8 +376,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                       });
                     },
                     borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Container(
+                    child: Container(
                       height: 60,
                       decoration: BoxDecoration(
                         gradient: isSelected
@@ -383,6 +393,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                                 ),
                               ]
                             : [],
+                      ),
                       child: Center(
                         child: Text(
                           '$blood형',
@@ -421,8 +432,8 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
       decoration: BoxDecoration(
         color: _selectedType.gradientColors[0].withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+      ),
+      child: Row(
         children: [
           Icon(
             Icons.water_drop,
@@ -433,7 +444,12 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             descriptions[_bloodType] ?? '',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textColor)]);
+              color: AppTheme.textColor,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   bool _canGenerateFortune() {
@@ -453,7 +469,9 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-          backgroundColor: _selectedType.gradientColors[0]),
+          ),
+          backgroundColor: _selectedType.gradientColors[0],
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -466,7 +484,13 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white)]);
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildRefreshButton() {
@@ -476,12 +500,15 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         icon: const Icon(Icons.refresh),
         label: const Text('다시 보기'),
         style: TextButton.styleFrom(
-          foregroundColor: _selectedType.gradientColors[0]));
+          foregroundColor: _selectedType.gradientColors[0],
+        ),
+      ),
+    );
   }
 
   void _onGenerateFortune() {
     final profile = userProfile;
-    if (profile != null && _canGenerateFortune(), {
+    if (profile != null && _canGenerateFortune()) {
       setState(() {
         _fortuneCache[_selectedType] = null;
       });
@@ -489,7 +516,8 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null};
+        'gender': null,
+      };
       generateFortuneAction(params: params);
     }
   }
@@ -526,8 +554,11 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0])),
-              if (fortune.score != null),
+                    color: _selectedType.gradientColors[0],
+                  ),
+                ),
+              ),
+              if (fortune.score != null)
             Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
@@ -538,7 +569,12 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           const SizedBox(height: 20),
           // Main message
           Text(
@@ -551,12 +587,14 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           // Personality traits
           if (fortune.additionalInfo?['personalityTraits'] != null) ...[
             const SizedBox(height: 20),
-            _buildPersonalityTraits(List<String>.from(fortune.additionalInfo!['personalityTraits']],
+            _buildPersonalityTraits(List<String>.from(fortune.additionalInfo!['personalityTraits'])),
+          ],
           
           // Compatibility
           if (fortune.additionalInfo?['compatibility'] != null) ...[
             const SizedBox(height: 20),
-            _buildCompatibility(fortune.additionalInfo!['compatibility']],
+            _buildCompatibility(fortune.additionalInfo!['compatibility']),
+          ],
           
           // Advice
           if (fortune.advice != null) ...[
@@ -566,8 +604,8 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
                 borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+              ),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
@@ -580,8 +618,18 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor)])]])).animate(,
-      .fadeIn(duration: 500.ms,
+                        color: AppTheme.textColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    ).animate()
+      .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
   }
 
@@ -605,12 +653,19 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               color: _selectedType.gradientColors[0].withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _selectedType.gradientColors[0].withOpacity(0.3)),
+                color: _selectedType.gradientColors[0].withOpacity(0.3),
+              ),
+            ),
             child: Text(
               trait,
               style: TextStyle(
                 fontSize: 13,
-                color: _selectedType.gradientColors[0])).toList()]
+                color: _selectedType.gradientColors[0],
+              ),
+            ),
+          )).toList(),
+        ),
+      ],
     );
   }
 
@@ -631,19 +686,23 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             gradient: LinearGradient(
               colors: [
                 _selectedType.gradientColors[0].withOpacity(0.05),
-                _selectedType.gradientColors[1].withOpacity(0.02)]),
+                _selectedType.gradientColors[1].withOpacity(0.02),
+              ],
+            ),
             borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-
+          ),
+          child: Column(
             children: [
               if (compatibility['best'] != null)
-                _buildCompatibilityRow('최고의 궁합': compatibility['best'],
-              if (compatibility['good'] != null),
-                  _buildCompatibilityRow('좋은 궁합': compatibility['good'],
+                _buildCompatibilityRow('최고의 궁합', compatibility['best'], Colors.green),
+              if (compatibility['good'] != null)
+                _buildCompatibilityRow('좋은 궁합', compatibility['good'], Colors.blue),
               if (compatibility['caution'] != null)
-                _buildCompatibilityRow('주의할 궁합': compatibility['caution']],
-          )]
+                _buildCompatibilityRow('주의할 궁합', compatibility['caution'], Colors.orange),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -657,20 +716,29 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             height: 6,
             decoration: BoxDecoration(
               color: color,
-              shape: BoxShape.circle)),
+              shape: BoxShape.circle,
+            ),
+          ),
           const SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
               fontSize: 13,
-              color: AppTheme.textSecondaryColor)),
+              color: AppTheme.textSecondaryColor,
+            ),
+          ),
           const Spacer(),
           Text(
             value,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: color)]);
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Color _getScoreColor(int score) {

@@ -71,7 +71,13 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '알림 설정',
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold)]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -111,7 +117,14 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                   const SizedBox(height: 32),
                   
                   _buildTestNotificationButton(),
-                  const SizedBox(height: 20)]))]));
+                  const SizedBox(height: 20),
+                ]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSectionTitle(String title) {
@@ -121,7 +134,9 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       title,
       style: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.primary));
+        color: theme.colorScheme.primary,
+      ),
+    );
   }
 
   Widget _buildMasterSwitch() {
@@ -137,10 +152,13 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
+            ),
             child: Icon(
               Icons.notifications,
               color: AppColors.primary,
-              size: 28)),
+              size: 28,
+            ),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -149,12 +167,19 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   '알림 허용',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   '모든 알림을 켜거나 끕니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))]),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Switch(
             value: _settings.enabled,
             onChanged: (value) {
@@ -169,7 +194,11 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               });
               _saveSettings();
             },
-            activeColor: AppColors.primary)])).animate().fadeIn().scale();
+            activeColor: AppColors.primary,
+          ),
+        ],
+      ),
+    ).animate().fadeIn().scale();
   }
 
   Widget _buildNotificationMethods() {

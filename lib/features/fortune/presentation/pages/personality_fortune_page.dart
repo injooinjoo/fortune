@@ -472,11 +472,10 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
-                              ],
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -493,15 +492,14 @@ class _PersonalityFortuneResult extends ConsumerWidget {
               ],
             ),
           ),
-        ),
         const SizedBox(height: 20),
         // Personality Traits Radar Chart
         if (personalityTraits.isNotEmpty) ...[
           GlassContainer(
             padding: const EdgeInsets.all(20),
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                   Row(
                     children: [
                       Icon(
@@ -522,8 +520,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                     height: 250,
                     child: _buildRadarChart(personalityTraits, theme),
                   ),
-                ],
-              ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -567,7 +564,8 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                 margin: const EdgeInsets.only(top: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.green,
-                                  shape: BoxShape.circle)),
+                                  shape: BoxShape.circle),
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -605,7 +603,11 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                             Text(
                               '약점',
                               style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold))]),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 12),
                         ...weaknesses.map((weakness) => Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -618,13 +620,27 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                 margin: const EdgeInsets.only(top: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.orange,
-                                  shape: BoxShape.circle)),
+                                  shape: BoxShape.circle),
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   weakness,
                                   style: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: 12 + fontSize)]).toList()])))]),
+                                    fontSize: 12 + fontSize,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )).toList(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
         const SizedBox(height: 20),
         // Compatible Personality Types
         if (compatibleTypes.isNotEmpty) ...[
@@ -644,7 +660,11 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                       Text(
                         '잘 맞는 성격 유형',
                         style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -658,13 +678,23 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: theme.colorScheme.primary.withOpacity(0.3)),
+                      ),
                       child: Text(
                         type['type'] ?? '',
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w500,
-                          fontSize: 12 + fontSize)).toList()])),
-          const SizedBox(height: 20)],
+                          fontSize: 12 + fontSize,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Career Suggestions
         if (careerSuggestions.isNotEmpty) ...[
@@ -684,7 +714,11 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                       Text(
                         '추천 직업',
                         style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...careerSuggestions.map((career) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -695,6 +729,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: theme.colorScheme.outline.withOpacity(0.2)),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -709,15 +744,31 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                 Text(
                                   career['title'] ?? '',
                                   style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-                                    fontSize: 14 + fontSize)),
-                                if (career['description'] != null),
-            Text(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14 + fontSize,
+                                  ),
+                                ),
+                                if (career['description'] != null)
+                                  Text(
                                     career['description'],
                                     style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                      fontSize: 11 + fontSize)])])).toList()])),
-          const SizedBox(height: 20)],
+                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      fontSize: 11 + fontSize,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Recommendations
         if (result.recommendations?.isNotEmpty ?? false) ...[
@@ -737,7 +788,11 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                       Text(
                         '성격 개발 조언',
                         style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...(result.recommendations ?? []).map((tip) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -750,15 +805,27 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                           margin: const EdgeInsets.only(top: 8),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primary,
-                            shape: BoxShape.circle)),
+                            shape: BoxShape.circle),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             tip,
                             style: theme.textTheme.bodyLarge?.copyWith(
-            height: 1.5,
-                              fontSize: 14 + fontSize)]).toList()])),
-          const SizedBox(height: 20)],
+                              height: 1.5,
+                              fontSize: 14 + fontSize,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Share Button
         Center(
@@ -769,7 +836,12 @@ class _PersonalityFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),)]
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
   
@@ -787,14 +859,16 @@ class _PersonalityFortuneResult extends ConsumerWidget {
       index++;
     });
     
-    final values = traits.values.map((v) => (v as num).toDouble(),.toList();
+    final values = traits.values.map((v) => (v as num).toDouble()).toList();
     
     dataEntries.add(
       RadarDataSet(
         fillColor: theme.colorScheme.primary.withOpacity(0.3),
         borderColor: theme.colorScheme.primary,
         borderWidth: 2,
-        dataEntries: values.map((v) => RadarEntry(value: v).toList());
+        dataEntries: values.map((v) => RadarEntry(value: v)).toList(),
+      ),
+    );
     
     return RadarChart(
       RadarChartData(
@@ -821,7 +895,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
           fontSize: 12),
         ticksTextStyle: TextStyle(
           color: theme.colorScheme.onSurface.withOpacity(0.5),
-          fontSize: 10));
+          fontSize: 10),
+      ),
+    );
   }
   
   Color _getScoreColor(int score) {

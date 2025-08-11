@@ -200,15 +200,21 @@ class SpecialPage extends ConsumerWidget {
                     child: const Icon(Icons.image_not_supported))),
             
             // Gradient Overlay
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7)])),
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             
             // Content
             Positioned(
@@ -226,12 +232,15 @@ class SpecialPage extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: const Color(0xFFEF4444),
                             borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Text(
                             'NEW',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: fontSize - 6,
-                              fontWeight: FontWeight.bold)),
+                              fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       if (item.isNew) const SizedBox(width: 8),
                       if (item.availableUntil != null)
                         Container(
@@ -239,25 +248,40 @@ class SpecialPage extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: Colors.orange,
                             borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Text(
                             '${item.availableUntil!.month}/${item.availableUntil!.day}까지',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: fontSize - 6,
-                              fontWeight: FontWeight.bold)))]),
+                              fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     item.title,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: fontSize + 4,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: Colors.white),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     item.description,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: fontSize,
-                      color: Colors.white.withOpacity(0.9))])])));
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSection(
@@ -323,7 +347,8 @@ class SpecialPage extends ConsumerWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: item.gradientColors)),
+                          colors: item.gradientColors),
+                      ),
                       child: CachedNetworkImage(
                         imageUrl: item.imageUrl,
                         fit: BoxFit.cover,
@@ -331,7 +356,11 @@ class SpecialPage extends ConsumerWidget {
                           color: theme.colorScheme.surfaceContainerHighest),
                         errorWidget: (context, url, error) => Container(
                           color: theme.colorScheme.surfaceContainerHighest,
-                          child: const Icon(Icons.image_not_supported))),
+                          child: const Icon(Icons.image_not_supported),
+                        ),
+                      ),
+                    ),
+                  ),
                   
                   // Content
                   Padding(
@@ -351,9 +380,17 @@ class SpecialPage extends ConsumerWidget {
                           item.description,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontSize: fontSize - 2,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          ),
                           maxLines: 2,
-                          overflow: TextOverflow.ellipsis)])]),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             
             // Badges
             if (item.isNew)
@@ -365,12 +402,16 @@ class SpecialPage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444),
                     borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Text(
                     'NEW',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: fontSize - 6,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
             if (item.isPremium)
               Positioned(
                 top: 8,
@@ -379,12 +420,21 @@ class SpecialPage extends ConsumerWidget {
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+                      colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                    ),
                     borderRadius: BorderRadius.circular(8),
+                  ),
                   child: const Icon(
                     Icons.star_rounded,
                     size: 16,
-                    color: Colors.white))]));
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildComingSoonSection(ThemeData theme, double fontSize) {
@@ -396,7 +446,9 @@ class SpecialPage extends ConsumerWidget {
         end: Alignment.bottomRight,
         colors: [
           theme.colorScheme.primary.withOpacity(0.1),
-          theme.colorScheme.secondary.withOpacity(0.1)]),
+          theme.colorScheme.secondary.withOpacity(0.1),
+        ],
+      ),
       child: Column(
         children: [
           Icon(
@@ -415,7 +467,12 @@ class SpecialPage extends ConsumerWidget {
             '매주 새로운 운세가 추가됩니다',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withOpacity(0.7)),
-            textAlign: TextAlign.center)]));
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
   }
 }

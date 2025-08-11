@@ -28,54 +28,80 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
   final Map<String, Map<String, dynamic>> _placeCategories = {
     '자연': {
       'icon': Icons.park,
-      'places': ['공원': '산', '해변': '강변', '호수': '숲', '정원': '들판'],
-      'energy': '자연의 치유와 재충전': 'color': Colors.green,
-      'directions': ['동쪽': '남동쪽', '북동쪽']},
+      'places': ['공원', '산', '해변', '강변', '호수', '숲', '정원', '들판'],
+      'energy': '자연의 치유와 재충전',
+      'color': Colors.green,
+      'directions': ['동쪽', '남동쪽', '북동쪽'],
+    },
     '도시': {
       'icon': Icons.location_city,
-      'places': ['카페': '도서관', '백화점': '광장', '전망대': '미술관', '공연장': '시장'],
-      'energy': '활기와 영감의 에너지': 'color': Colors.blue,
-      'directions': ['서쪽': '남서쪽', '북서쪽']},
+      'places': ['카페', '도서관', '백화점', '광장', '전망대', '미술관', '공연장', '시장'],
+      'energy': '활기와 영감의 에너지',
+      'color': Colors.blue,
+      'directions': ['서쪽', '남서쪽', '북서쪽'],
+    },
     '실내': {
       'icon': Icons.home,
-      'places': ['거실': '침실', '서재': '발코니', '욕실': '주방', '다락방': '지하실'],
-      'energy': '안정과 집중의 공간': 'color': Colors.orange,
-      'directions': ['중앙': '남쪽', '북쪽']},
+      'places': ['거실', '침실', '서재', '발코니', '욕실', '주방', '다락방', '지하실'],
+      'energy': '안정과 집중의 공간',
+      'color': Colors.orange,
+      'directions': ['중앙', '남쪽', '북쪽'],
+    },
     '종교/영성': {
       'icon': Icons.temple_buddhist,
-      'places': ['절': '교회', '성당': '명상센터', '요가원': '기도실', '묘지': '성지'],
-      'energy': '영혼의 평화와 깨달음': 'color': Colors.purple,
-      'directions': ['북쪽': '북동쪽', '북서쪽']},
+      'places': ['절', '교회', '성당', '명상센터', '요가원', '기도실', '묘지', '성지'],
+      'energy': '영혼의 평화와 깨달음',
+      'color': Colors.purple,
+      'directions': ['북쪽', '북동쪽', '북서쪽'],
+    },
     '업무': {
       'icon': Icons.business,
-      'places': ['사무실': '회의실', '로비': '휴게실', '옥상': '주차장', '엘리베이터': '계단'],
-      'energy': '성공과 성취의 기운': 'color': Colors.indigo,
-      'directions': ['동쪽': '남쪽', '서쪽']},
+      'places': ['사무실', '회의실', '로비', '휴게실', '옥상', '주차장', '엘리베이터', '계단'],
+      'energy': '성공과 성취의 기운',
+      'color': Colors.indigo,
+      'directions': ['동쪽', '남쪽', '서쪽'],
+    },
     '문화': {
       'icon': Icons.museum,
-      'places': ['박물관': '갤러리', '극장': '콘서트홀', '도서관': '서점', '영화관': '전시장'],
-      'energy': '창의성과 영감의 샘': 'color': Colors.pink,
-      'directions': ['남동쪽': '남서쪽', '중앙']}}
+      'places': ['박물관', '갤러리', '극장', '콘서트홀', '도서관', '서점', '영화관', '전시장'],
+      'energy': '창의성과 영감의 샘',
+      'color': Colors.pink,
+      'directions': ['남동쪽', '남서쪽', '중앙'],
+    },
+  };
 
   final Map<String, Map<String, dynamic>> _activityInfo = {
     '휴식': {
       'icon': Icons.spa,
-      'description': '재충전과 회복을 위한 장소': 'bestPlaces': ['공원': '해변', '침실': '명상센터']},
+      'description': '재충전과 회복을 위한 장소',
+      'bestPlaces': ['공원', '해변', '침실', '명상센터'],
+    },
     '업무': {
       'icon': Icons.work,
-      'description': '생산성과 집중력을 높이는 장소': 'bestPlaces': ['도서관': '카페', '사무실': '서재']},
+      'description': '생산성과 집중력을 높이는 장소',
+      'bestPlaces': ['도서관', '카페', '사무실', '서재'],
+    },
     '만남': {
       'icon': Icons.people,
-      'description': '인연과 소통을 원활하게 하는 장소': 'bestPlaces': ['카페': '광장', '공원': '레스토랑']},
+      'description': '인연과 소통을 원활하게 하는 장소',
+      'bestPlaces': ['카페', '광장', '공원', '레스토랑'],
+    },
     '운동': {
       'icon': Icons.fitness_center,
-      'description': '활력과 건강을 증진시키는 장소': 'bestPlaces': ['공원': '산', '체육관': '해변']},
+      'description': '활력과 건강을 증진시키는 장소',
+      'bestPlaces': ['공원', '산', '체육관', '해변'],
+    },
     '쇼핑': {
       'icon': Icons.shopping_bag,
-      'description': '행운의 아이템을 찾을 수 있는 장소': 'bestPlaces': ['백화점': '시장', '쇼핑몰': '편의점']},
+      'description': '행운의 아이템을 찾을 수 있는 장소',
+      'bestPlaces': ['백화점', '시장', '쇼핑몰', '편의점'],
+    },
     '데이트': {
       'icon': Icons.favorite,
-      'description': '로맨스와 사랑이 넘치는 장소': 'bestPlaces': ['공원': '카페', '전망대': '해변']}}
+      'description': '로맨스와 사랑이 넘치는 장소',
+      'bestPlaces': ['공원', '카페', '전망대', '해변'],
+    },
+  };
 
   @override
   void initState() {
@@ -271,10 +297,15 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
         '메인 장소': mainPlace,
         '파워 스팟': powerSpot,
         '방향': luckyDirection,
-        '거리': '${luckyDistance}m': '최적 시간': '${morningTime}시, ${afternoonTime}시, ${eveningTime}시'},
+        '거리': '${luckyDistance}m',
+        '최적 시간': '${morningTime}시, ${afternoonTime}시, ${eveningTime}시',
+      },
       recommendations: [
-        '$mainPlace에 가기 전 마음을 비우고 가세요': '장소에 도착하면 주변을 천천히 둘러보세요',
-        '직감적으로 끌리는 곳으로 발걸음을 옮기세요': '장소의 에너지를 온몸으로 느껴보세요'],
+        '$mainPlace에 가기 전 마음을 비우고 가세요',
+        '장소에 도착하면 주변을 천천히 둘러보세요',
+        '직감적으로 끌리는 곳으로 발걸음을 옮기세요',
+        '장소의 에너지를 온몸으로 느껴보세요',
+      ],
       metadata: {
         'primaryCategory': primaryCategory,
         'primaryCategoryInfo': primaryCategoryInfo,
@@ -285,10 +316,13 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
         'bestTimes': {
           'morning': morningTime,
           'afternoon': afternoonTime,
-          'evening': eveningTime},
+          'evening': eveningTime,
+        },
         'selectedEnvironment': _selectedEnvironment,
         'selectedActivity': _selectedActivity,
-        'activityInfo': _selectedActivity != null ? _activityInfo[_selectedActivity] : null});
+        'activityInfo': _selectedActivity != null ? _activityInfo[_selectedActivity] : null,
+      },
+    );
   }
 
   @override
@@ -305,7 +339,10 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
           _buildTimeSchedule(),
           _buildPlaceEnergyMap(),
           _buildPlaceVisitTips(),
-          const SizedBox(height: 32)]));
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
   }
 
   Widget _buildMainPlaceCard() {
@@ -356,11 +393,18 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             decoration: BoxDecoration(
               color: (primaryCategoryInfo['color'] as Color).withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
+            ),
             child: Text(
               '$primaryCategory • ${primaryCategoryInfo['energy']}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.w600)]);
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDirectionCompass() {
@@ -439,7 +483,16 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                     child: Text(
                       '이 방향으로 ${luckyDistance}m 이내의 $luckyDirection 지역을 탐색해보세요',
                       style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.center)])]));
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildPlaceCategoryGrid() {
@@ -506,20 +559,32 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal),
                         textAlign: TextAlign.center),
-                      if (isPrimary),
-            Container(
+                      if (isPrimary)
+                        Container(
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: (info['color'] as Color).withOpacity(0.3),
                             borderRadius: BorderRadius.circular(10),
+                          ),
                           child: Text(
                             '오늘',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontSize: 10,
                               color: Colors.white,
-                              fontWeight: FontWeight.bold)]);
-              }).toList(),);
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildTimeSchedule() {
@@ -551,19 +616,29 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             _buildTimeSlot(
-              '오전': '${bestTimes['morning']}:00': '새로운 시작과 계획',
+              '오전',
+              '${bestTimes['morning']}:00',
+              '새로운 시작과 계획',
               Icons.wb_sunny,
               Colors.orange),
             const SizedBox(height: 12),
             _buildTimeSlot(
-              '오후': '${bestTimes['afternoon']}:00': '활발한 활동과 만남',
+              '오후',
+              '${bestTimes['afternoon']}:00',
+              '활발한 활동과 만남',
               Icons.wb_cloudy,
               Colors.blue),
             const SizedBox(height: 12),
             _buildTimeSlot(
-              '저녁': '${bestTimes['evening']}:00': '휴식과 재충전',
+              '저녁',
+              '${bestTimes['evening']}:00',
+              '휴식과 재충전',
               Icons.nightlight_round,
-              Colors.indigo)]));
+              Colors.indigo),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildTimeSlot(String period, String time, String activity, IconData icon, Color color) {
@@ -573,7 +648,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3)),
+          color: color.withOpacity(0.3),
+        ),
+      ),
       child: Row(
         children: [
           Container(
@@ -593,18 +670,32 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                     Text(
                       period,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold)),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       time,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: color,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 4),
                 Text(
                   activity,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)])]));
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPlaceEnergyMap() {
@@ -638,7 +729,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             Text(
               activityInfo['description'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+              ),
+            ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -648,8 +741,15 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   label: Text(place),
                   backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5));
-              }).toList(),);
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildPlaceVisitTips() {
@@ -669,9 +769,13 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                 style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
-            '장소에 도착하면 먼저 주변을 천천히 둘러보세요': '깊은 호흡을 하며 장소의 에너지를 느껴보세요',
-            '직감적으로 끌리는 자리나 공간을 찾아보세요': '최소 30분 이상 머물러 충분히 에너지를 흡수하세요',
-            '중요한 생각이나 결정은 메모해두세요': '장소를 떠날 때는 감사의 마음을 전하세요'].map((tip) {
+            '장소에 도착하면 먼저 주변을 천천히 둘러보세요',
+            '깊은 호흡을 하며 장소의 에너지를 느껴보세요',
+            '직감적으로 끌리는 자리나 공간을 찾아보세요',
+            '최소 30분 이상 머물러 충분히 에너지를 흡수하세요',
+            '중요한 생각이나 결정은 메모해두세요',
+            '장소를 떠날 때는 감사의 마음을 전하세요',
+          ].map((tip) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -685,8 +789,16 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium)]);
-          }).toList(),);
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
   }
 }
 

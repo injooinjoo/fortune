@@ -152,13 +152,22 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     '여러분의 의견을 들려주세요',
                                     style: TextStyle(
                                       fontSize: 18 * fontScale,
-                                      fontWeight: FontWeight.bold)),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   const SizedBox(height: 4),
                                   Text(
                                     '더 나은 서비스를 만들어가겠습니다',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7))])])),
+                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       const SizedBox(height: 24),
                       
                       // Category Selection
@@ -166,7 +175,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '카테고리',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
@@ -193,14 +204,19 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                   Icon(
                                     category['icon'],
                                     size: 18,
-                                    color: isSelected ? theme.colorScheme.primary : null),
+                                    color: isSelected ? theme.colorScheme.primary : null,
+                                  ),
                                   const SizedBox(width: 8),
                                   Text(
                                     category['label'],
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                      color: isSelected ? theme.colorScheme.primary : null)])
+                                      color: isSelected ? theme.colorScheme.primary : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
                           );
                         }).toList()),
                       const SizedBox(height: 24),
@@ -210,7 +226,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '만족도',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -231,7 +249,8 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     size: 36,
                                     color: starValue <= _rating 
                                         ? Colors.amber 
-                                        : theme.colorScheme.onSurface.withOpacity(0.3))
+                                        : theme.colorScheme.onSurface.withOpacity(0.3),
+                                  ),
                                 );
                               })),
                             const SizedBox(height: 8),
@@ -240,7 +259,12 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: _getRatingColor(_rating))]),
+                                color: _getRatingColor(_rating),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       
                       // Message
@@ -248,7 +272,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '내용',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -260,9 +286,11 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                             hintText: '의견을 자유롭게 작성해주세요',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none),
+                              borderSide: BorderSide.none,
+                            ),
                             filled: true,
-                            fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                          ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return '내용을 입력해주세요';
@@ -271,7 +299,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               return '10자 이상 입력해주세요';
                             }
                             return null;
-                          })),
+                          },
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       
                       // Email (optional)
@@ -279,13 +309,17 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '이메일 (선택)',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         '답변이 필요한 경우 이메일을 남겨주세요',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
-                          color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -298,9 +332,11 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                             prefixIcon: Icon(Icons.email, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none),
+                              borderSide: BorderSide.none,
+                            ),
                             filled: true,
-                            fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                          ),
                           validator: (value) {
                             if (value != null && value.isNotEmpty) {
                               final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -309,7 +345,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               }
                             }
                             return null;
-                          })),
+                          },
+                        ),
+                      ),
                       const SizedBox(height: 32),
                       
                       // Submit Button
@@ -335,8 +373,23 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     style: TextStyle(
                                       fontSize: 18 * fontScale,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white))),
-                      const SizedBox(height: 24)]))]));
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   String _getRatingText(int rating) {

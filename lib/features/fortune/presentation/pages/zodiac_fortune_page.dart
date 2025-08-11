@@ -28,18 +28,18 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
   String _selectedPeriod = 'today';
 
   final List<Map<String, dynamic>> _zodiacSigns = [
-    {'name': '양자리': 'period': '3.21 - 4.19': 'symbol': '♈': 'element': '불': 'color': Colors.red},
-    {'name': '황소자리': 'period': '4.20 - 5.20': 'symbol': '♉': 'element': '땅': 'color': Colors.brown},
-    {'name': '쌍둥이자리': 'period': '5.21 - 6.21': 'symbol': '♊': 'element': '공기': 'color': Colors.lightBlue},
-    {'name': '게자리': 'period': '6.22 - 7.22': 'symbol': '♋': 'element': '물': 'color': Colors.blue},
-    {'name': '사자자리': 'period': '7.23 - 8.22': 'symbol': '♌': 'element': '불': 'color': Colors.orange},
-    {'name': '처녀자리': 'period': '8.23 - 9.22': 'symbol': '♍': 'element': '땅': 'color': Colors.green},
-    {'name': '천칭자리': 'period': '9.23 - 10.23': 'symbol': '♎': 'element': '공기': 'color': Colors.pink},
-    {'name': '전갈자리': 'period': '10.24 - 11.21': 'symbol': '♏': 'element': '물': 'color': Colors.deepPurple},
-    {'name': '사수자리': 'period': '11.22 - 12.21': 'symbol': '♐': 'element': '불': 'color': Colors.purple},
-    {'name': '염소자리': 'period': '12.22 - 1.19': 'symbol': '♑': 'element': '땅': 'color': Colors.grey},
-    {'name': '물병자리': 'period': '1.20 - 2.18': 'symbol': '♒': 'element': '공기': 'color': Colors.cyan},
-    {'name': '물고기자리': 'period': '2.19 - 3.20': 'symbol': '♓': 'element': '물': 'color': Colors.indigo}];
+    {'name': '양자리', 'period': '3.21 - 4.19', 'symbol': '♈', 'element': '불', 'color': Colors.red},
+    {'name': '황소자리', 'period': '4.20 - 5.20', 'symbol': '♉', 'element': '땅', 'color': Colors.brown},
+    {'name': '쌍둥이자리', 'period': '5.21 - 6.21', 'symbol': '♊', 'element': '공기', 'color': Colors.lightBlue},
+    {'name': '게자리', 'period': '6.22 - 7.22', 'symbol': '♋', 'element': '물', 'color': Colors.blue},
+    {'name': '사자자리', 'period': '7.23 - 8.22', 'symbol': '♌', 'element': '불', 'color': Colors.orange},
+    {'name': '처녀자리', 'period': '8.23 - 9.22', 'symbol': '♍', 'element': '땅', 'color': Colors.green},
+    {'name': '천칭자리', 'period': '9.23 - 10.23', 'symbol': '♎', 'element': '공기', 'color': Colors.pink},
+    {'name': '전갈자리', 'period': '10.24 - 11.21', 'symbol': '♏', 'element': '물', 'color': Colors.deepPurple},
+    {'name': '사수자리', 'period': '11.22 - 12.21', 'symbol': '♐', 'element': '불', 'color': Colors.purple},
+    {'name': '염소자리', 'period': '12.22 - 1.19', 'symbol': '♑', 'element': '땅', 'color': Colors.grey},
+    {'name': '물병자리', 'period': '1.20 - 2.18', 'symbol': '♒', 'element': '공기', 'color': Colors.cyan},
+    {'name': '물고기자리', 'period': '2.19 - 3.20', 'symbol': '♓', 'element': '물', 'color': Colors.indigo}];
 
   @override
   void initState() {
@@ -105,7 +105,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       description: fortune.description,
       luckyItems: fortune.luckyItems ?? {
         '행운의 색': zodiacInfo['color'].toString().split('(0x')[1].split(')')[0],
-        '행운의 숫자': '${DateTime.now().day % 9 + 1}': '행운의 방향': _getLuckyDirection(zodiacInfo['element']),
+        '행운의 숫자': '${DateTime.now().day % 9 + 1}', '행운의 방향': _getLuckyDirection(zodiacInfo['element']),
         '행운의 시간': '${(DateTime.now().day % 12) + 10}시'},
       recommendations: fortune.recommendations,
       metadata: {
@@ -131,18 +131,18 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
 
   Map<String, dynamic> _getCompatibility(String zodiac) {
     final compatibleSigns = {
-      '양자리': ['사자자리': '사수자리', '쌍둥이자리'],
-      '황소자리': ['처녀자리': '염소자리', '게자리'],
-      '쌍둥이자리': ['천칭자리': '물병자리', '양자리'],
-      '게자리': ['전갈자리': '물고기자리', '황소자리'],
-      '사자자리': ['양자리': '사수자리', '쌍둥이자리'],
-      '처녀자리': ['황소자리': '염소자리', '전갈자리'],
-      '천칭자리': ['쌍둥이자리': '물병자리', '사자자리'],
-      '전갈자리': ['게자리': '물고기자리', '처녀자리'],
-      '사수자리': ['양자리': '사자자리', '천칭자리'],
-      '염소자리': ['황소자리': '처녀자리', '전갈자리'],
-      '물병자리': ['쌍둥이자리': '천칭자리', '사수자리'],
-      '물고기자리': ['게자리': '전갈자리', '염소자리']};
+      '양자리': ['사자자리', '사수자리', '쌍둥이자리'],
+      '황소자리': ['처녀자리', '염소자리', '게자리'],
+      '쌍둥이자리': ['천칭자리', '물병자리', '양자리'],
+      '게자리': ['전갈자리', '물고기자리', '황소자리'],
+      '사자자리': ['양자리', '사수자리', '쌍둥이자리'],
+      '처녀자리': ['황소자리', '염소자리', '전갈자리'],
+      '천칭자리': ['쌍둥이자리', '물병자리', '사자자리'],
+      '전갈자리': ['게자리', '물고기자리', '처녀자리'],
+      '사수자리': ['양자리', '사자자리', '천칭자리'],
+      '염소자리': ['황소자리', '처녀자리', '전갈자리'],
+      '물병자리': ['쌍둥이자리', '천칭자리', '사수자리'],
+      '물고기자리': ['게자리', '전갈자리', '염소자리']};
 
     return {
       'best': compatibleSigns[zodiac]![0],
@@ -300,9 +300,9 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
 
   Widget _buildPeriodSelector() {
     final periods = [
-      {'value': 'today': 'label': '오늘'},
-      {'value': 'week': 'label': '이번 주'},
-      {'value': 'month': 'label': '이번 달'}];
+      {'value': 'today', 'label': '오늘'},
+      {'value': 'week', 'label': '이번 주'},
+      {'value': 'month', 'label': '이번 달'}];
 
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -316,8 +316,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
           const SizedBox(height: 12),
           Row(
             children: periods.map((period) {
-              final isSelected = _selectedPeriod == period['value'
-  ];
+              final isSelected = _selectedPeriod == period['value'];
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -341,6 +340,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                             ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
                             : null,
                         borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Center(
                         child: Text(
                           period['label']!,
@@ -352,7 +352,8 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                       ),
                     ),
                   ),
-                ));
+                ),
+              );
             }).toList(),
           ),
         ],
@@ -447,15 +448,15 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
 
   String _getRulingPlanet(String zodiac) {
     final planets = {
-      '양자리': '화성': '황소자리': '금성': '쌍둥이자리': '수성': '게자리': '달': '사자자리': '태양': '처녀자리': '수성': '천칭자리': '금성': '전갈자리': '명왕성': '사수자리': '목성': '염소자리': '토성': '물병자리': '천왕성': '물고기자리': '해왕성'
-  };
+      '양자리': '화성', '황소자리': '금성', '쌍둥이자리': '수성', '게자리': '달', '사자자리': '태양', '처녀자리': '수성', '천칭자리': '금성', '전갈자리': '명왕성', '사수자리': '목성', '염소자리': '토성', '물병자리': '천왕성', '물고기자리': '해왕성'
+    };
     return planets[zodiac] ?? '알 수 없음';
   }
 
   String _getCharacteristic(String zodiac) {
     final characteristics = {
-      '양자리': '열정적': '황소자리': '실용적': '쌍둥이자리': '호기심': '게자리': '감성적': '사자자리': '리더십': '처녀자리': '완벽주의': '천칭자리': '조화': '전갈자리': '신비': '사수자리': '자유': '염소자리': '야망': '물병자리': '혁신': '물고기자리': '상상력'
-  };
+      '양자리': '열정적', '황소자리': '실용적', '쌍둥이자리': '호기심', '게자리': '감성적', '사자자리': '리더십', '처녀자리': '완벽주의', '천칭자리': '조화', '전갈자리': '신비', '사수자리': '자유', '염소자리': '야망', '물병자리': '혁신', '물고기자리': '상상력'
+    };
     return characteristics[zodiac] ?? '특별함';
   }
 
@@ -597,11 +598,11 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                             '${value.toInt()}',
                             style: const TextStyle(fontSize: 10),
                           );
-                        })),
+                        }))),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2))),
                   minX: 0,
                   maxX: monthlyTrend.length - 1,
                   minY: 40,
@@ -628,7 +629,13 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                             Theme.of(context).colorScheme.primary.withOpacity(0.3),
                             Theme.of(context).colorScheme.primary.withOpacity(0.0)],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)])]));
+                          end: Alignment.bottomCenter)))]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildElementalBalance() {
@@ -677,7 +684,13 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                     LinearProgressIndicator(
                       value: entry.value,
                       backgroundColor: color.withOpacity(0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(color)]);
-            }).toList(),);
+                      valueColor: AlwaysStoppedAnimation<Color>(color))],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 }

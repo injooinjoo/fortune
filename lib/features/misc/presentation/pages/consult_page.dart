@@ -192,15 +192,25 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                                 color: isActive
                                     ? Colors.white
                                     : theme.colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
                   Text(
                     _getStepTitle(index),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isActive
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant)]));
-        })));
+                          : theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+          );
+        },
+      ),
+    );
   }
 
   String _getStepTitle(int index) {
@@ -228,15 +238,22 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             '전문가를 선택해주세요',
             style: theme.textTheme.headlineSmall?.copyWith(
               fontSize: fontSize + 4,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '원하시는 상담 분야의 전문가를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
-              color: theme.colorScheme.onSurface.withOpacity(0.7)),
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
           const SizedBox(height: 24),
-          ...mockExperts.map((expert) => _buildExpertCard(theme, fontSize, expert)]);
+          ...mockExperts.map((expert) => _buildExpertCard(theme, fontSize, expert)),
+        ],
+      ),
+    );
   }
 
   Widget _buildExpertCard(ThemeData theme, double fontSize, Expert expert) {
@@ -283,7 +300,9 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                           expert.name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontSize: fontSize + 2,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         if (!expert.isAvailable)
                           Container(
@@ -291,12 +310,18 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                             decoration: BoxDecoration(
                               color: theme.colorScheme.error.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
+                            ),
                             child: Text(
                               '예약 불가',
                               style: TextStyle(
                                 color: theme.colorScheme.error,
                                 fontSize: fontSize - 4,
-                                fontWeight: FontWeight.bold)))]),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       expert.title,
@@ -318,7 +343,11 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                               expert.rating.toString(),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontSize: fontSize - 2,
-                                fontWeight: FontWeight.bold))]),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(width: 16),
                         
                         // Price
@@ -329,7 +358,11 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontSize: fontSize,
                             fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary))]),
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 6,
@@ -340,12 +373,25 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Text(
                             specialty,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: fontSize - 4,
-                              color: theme.colorScheme.onPrimaryContainer)));
-                      }).toList()])]))));
+                              color: theme.colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildDateSelection(ThemeData theme, double fontSize) {

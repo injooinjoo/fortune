@@ -188,7 +188,12 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                           onPressed: () => ref.invalidate(adminStatsProvider),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            child: Text('다시 시도'))]),
+                            child: Text('다시 시도'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 data: (stats) => Column(
                   children: [
                     // Tab Bar
@@ -221,8 +226,17 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                                       style: TextStyle(
                                         fontSize: 14 * fontScale,
                                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                        color: isSelected ? theme.colorScheme.primary : null))))));
-                        })),
+                                        color: isSelected ? theme.colorScheme.primary : null,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                     // Tab Content
                     Expanded(
                       child: IndexedStack(
@@ -231,7 +245,18 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                           _OverviewTab(stats: stats, fontScale: fontScale),
                           _UsageTrendTab(stats: stats, fontScale: fontScale),
                           _PackageAnalysisTab(stats: stats, fontScale: fontScale),
-                          _TopUsersTab(stats: stats, fontScale: fontScale)])]))])));
+                          _TopUsersTab(stats: stats, fontScale: fontScale),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

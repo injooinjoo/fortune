@@ -214,7 +214,11 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 end: Alignment.bottomRight,
                 colors: [
                   theme.colorScheme.primary.withOpacity(0.05),
-                  theme.colorScheme.secondary.withOpacity(0.05)])),
+                  theme.colorScheme.secondary.withOpacity(0.05),
+                ],
+              ),
+            ),
+          ),
 
           // Floating stars background
           ...List.generate(10, (index) {
@@ -230,8 +234,12 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     child: Icon(
                       Icons.star_rounded,
                       size: 20 + random.nextDouble() * 20,
-                      color: theme.colorScheme.primary.withOpacity(0.1)));
-                }));
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                    ),
+                  );
+                },
+              ),
+            );
           }),
 
           // Wish notes
@@ -243,13 +251,19 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   Icon(
                     Icons.note_add_rounded,
                     size: 80,
-                    color: theme.colorScheme.onSurface.withOpacity(0.3)),
+                    color: theme.colorScheme.onSurface.withOpacity(0.3),
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     '첫 번째 소원을 적어보세요',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: fontSize.value + 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.7))])
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
+            )
           else
             ...wishes.map((wish) => _buildWishNote(context, theme, fontSize.value, wish)),
 
@@ -309,14 +323,17 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                       style: TextStyle(
                         fontSize: fontSize - 4,
                         color: Colors.black54,
-                        fontStyle: FontStyle.italic)),
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           wish.isLiked ? Icons.favorite : Icons.favorite_border,
                           size: 16,
-                          color: wish.isLiked ? Colors.red : Colors.black54),
+                          color: wish.isLiked ? Colors.red : Colors.black54,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           wish.likes.toString(),
@@ -350,7 +367,10 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     setState(() {
                       _showWriteForm = false;
                     });
-                  })]),
+                  },
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             
             // Wish input
@@ -364,6 +384,9 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 hintText: '이루고 싶은 소원을 적어주세요',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             
             // Author input
@@ -376,6 +399,9 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 hintText: '닉네임을 입력하세요',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
             
             // Submit button
@@ -388,7 +414,15 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)))]));
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showWishDetail(
@@ -404,6 +438,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,6 +452,9 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 decoration: BoxDecoration(
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
             
             // Content
             Container(
@@ -424,6 +462,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
               decoration: BoxDecoration(
                 color: wish.color,
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -432,7 +471,9 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     style: TextStyle(
                       fontSize: fontSize + 2,
                       color: Colors.black87,
-                      height: 1.5)),
+                      height: 1.5,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     '- ${wish.author}',

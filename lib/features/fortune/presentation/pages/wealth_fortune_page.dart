@@ -207,16 +207,28 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         '$wealthIndex점',
                         style: theme.textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold)]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
             const SizedBox(height: 24),
             Text(
               '재물 지수',
-              style: theme.textTheme.headlineSmall),
+              style: theme.textTheme.headlineSmall,
+            ),
             const SizedBox(height: 8),
             Text(
               _getWealthIndexMessage(wealthIndex),
               style: theme.textTheme.bodyLarge,
-              textAlign: TextAlign.center)]));
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildMonthlyTrendChart() {
     final trendData = _wealthData!['monthlyTrend'] as List<dynamic>;
@@ -234,16 +246,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.green.shade400, Colors.green.shade600]),
+                      colors: [Colors.green.shade400, Colors.green.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.show_chart_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '월별 재물운 추이',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
@@ -279,8 +298,12 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10));
-                        })),
+                            style: const TextStyle(fontSize: 10),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   borderData: FlBorderData(show: false),
                   minX: 0,
                   maxX: trendData.length - 1.0,
@@ -297,7 +320,9 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                       gradient: LinearGradient(
                         colors: [
                           Colors.amber.shade400,
-                          Colors.orange.shade400]),
+                          Colors.orange.shade400,
+                        ],
+                      ),
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(
@@ -307,16 +332,30 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             radius: 4,
                             color: Colors.white,
                             strokeWidth: 2,
-                            strokeColor: Colors.amber.shade600);
-                        }),
+                            strokeColor: Colors.amber.shade600,
+                          );
+                        },
+                      ),
                       belowBarData: BarAreaData(
                         show: true,
                         gradient: LinearGradient(
                           colors: [
                             Colors.amber.shade200.withOpacity(0.3),
-                            Colors.amber.shade100.withOpacity(0.1)],
+                            Colors.amber.shade100.withOpacity(0.1),
+                          ],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)])]));
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 
   Widget _buildIncomeBreakdown() {
     final breakdown = _wealthData!['incomeBreakdown'] as Map<String, dynamic>;
@@ -334,16 +373,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.blue.shade400, Colors.blue.shade600]),
+                      colors: [Colors.blue.shade400, Colors.blue.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.pie_chart_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '수입원별 운세',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...breakdown.entries.map((entry) {
               final score = entry.value as int;
@@ -355,7 +401,9 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                       flex: 3,
                       child: Text(
                         entry.key,
-                        style: Theme.of(context).textTheme.bodyMedium)),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
                     Expanded(
                       flex: 7,
                       child: Row(
@@ -368,6 +416,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                   decoration: BoxDecoration(
                                     color: Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                                 AnimatedContainer(
                                   duration: const Duration(milliseconds: 1000),
                                   height: 24,
@@ -376,15 +426,34 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                     gradient: LinearGradient(
                                       colors: [
                                         _getIncomeColor(score),
-                                        _getIncomeColor(score).withOpacity(0.7)]),
-                                    borderRadius: BorderRadius.circular(12)]),
+                                        _getIncomeColor(score).withOpacity(0.7),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(width: 12),
                           Text(
                             '$score점',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: _getIncomeColor(score))])])]));
-            }).toList(),]);
+                                  color: _getIncomeColor(score),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildFinancialAdvice() {
@@ -403,22 +472,30 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.indigo.shade400, Colors.indigo.shade600]),
+                      colors: [Colors.indigo.shade400, Colors.indigo.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.lightbulb_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '재테크 조언',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -426,16 +503,24 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     advice['summary'],
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.green.shade700)),
+                          color: Colors.green.shade700,
+                        ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     advice['details'],
-                    style: Theme.of(context).textTheme.bodyMedium)])),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               '주의사항',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
             const SizedBox(height: 8),
             ...(advice['warnings'] as List<dynamic>).map((warning) {
               return Padding(
@@ -446,13 +531,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     Icon(
                       Icons.warning_amber_rounded,
                       color: Colors.orange.shade600,
-                      size: 20),
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         warning.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium))]);
-            }).toList(),]);
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLuckyInvestments() {
@@ -471,16 +566,24 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.purple.shade400, Colors.purple.shade600]),
+                      colors: [Colors.purple.shade400, Colors.purple.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.trending_up_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '투자 운세',
-                  style: Theme.of(context).textTheme.headlineSmall)])),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
           ...investments.map((investment) {
             final type = investment['type'] as String;
@@ -500,11 +603,14 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                       center: Text(
                         '$score',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold)),
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
                       progressColor: _getInvestmentColor(score),
                       backgroundColor: Colors.grey.shade200,
                       animation: true,
-                      animationDuration: 1000),
+                      animationDuration: 1000,
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -513,21 +619,27 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                           Text(
                             type,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold)),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             description,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))
-                          )
-                        ]
-                      )
-                    )
-                  ]
-                )
-              )
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
-          }).toList(),]);
+          }).toList(),
+        ],
+      ),
+    );
   }
 
   Widget _buildSpendingAnalysis() {
@@ -546,16 +658,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.orange.shade400, Colors.orange.shade600]),
+                      colors: [Colors.orange.shade400, Colors.orange.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.account_balance_wallet_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '지출 분석',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...categories.entries.map((entry) {
               final category = entry.key;
@@ -571,7 +690,9 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                       width: 80,
                       child: Text(
                         category,
-                        style: Theme.of(context).textTheme.bodyMedium)),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
                     Expanded(
                       child: Stack(
                         children: [
@@ -580,34 +701,56 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             decoration: BoxDecoration(
                               color: Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 1000),
                             height: 30,
                             width: MediaQuery.of(context).size.width * 0.5 * percentage / 100,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: _getSpendingColors(status)),
+                                colors: _getSpendingColors(status),
+                              ),
                               borderRadius: BorderRadius.circular(15),
+                            ),
                             child: Center(
                               child: Text(
                                 '$percentage%',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12))]),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: _getStatusColor(status).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Text(
                         status,
                         style: TextStyle(
                           color: _getStatusColor(status),
                           fontSize: 12,
-                          fontWeight: FontWeight.bold)]);
-            }).toList(),]);
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildWealthBoosters() {
@@ -629,16 +772,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber.shade400, Colors.amber.shade600]),
+                        colors: [Colors.amber.shade400, Colors.amber.shade600],
+                      ),
                       borderRadius: BorderRadius.circular(12),
+                    ),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
                       color: Colors.white,
-                      size: 24)),
+                      size: 24,
+                    ),
+                  ),
                   const SizedBox(width: 12),
                   Text(
                     '재물 부스터',
-                    style: Theme.of(context).textTheme.headlineSmall)]),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
               GridView.count(
                 shrinkWrap: true,
@@ -651,7 +801,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   final value = entry.value;
                   String displayValue = '';
                   if (value is List) {
-                    displayValue = value.join(': ');
+                    displayValue = value.join(', ');
                   } else {
                     displayValue = value.toString();
                   }
@@ -661,16 +811,21 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                       gradient: LinearGradient(
                         colors: [
                           Colors.amber.shade50,
-                          Colors.amber.shade100]),
+                          Colors.amber.shade100,
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.amber.shade300)),
+                        color: Colors.amber.shade300,
+                      ),
+                    ),
                     child: Row(
                       children: [
                         Icon(
                           _getBoosterIcon(entry.key),
                           color: Colors.amber.shade700,
-                          size: 20),
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Column(
@@ -681,16 +836,32 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                 entry.key,
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: Colors.amber.shade800,
-                                      fontSize: 10)),
+                                      fontSize: 10,
+                                    ),
+                              ),
                               Text(
                                 displayValue,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.amber.shade900,
-                                      fontSize: 12),
+                                      fontSize: 12,
+                                    ),
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis)])]);
-                }).toList(),));
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildActionItems() {
@@ -710,16 +881,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.teal.shade400, Colors.teal.shade600]),
+                      colors: [Colors.teal.shade400, Colors.teal.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.checklist_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '재물운 향상 액션 플랜',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...items.asMap().entries.map((entry) {
               final index = entry.key;
@@ -732,7 +910,9 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -740,20 +920,35 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         height: 24,
                         decoration: BoxDecoration(
                           color: Colors.teal.withOpacity(0.1),
-                          shape: BoxShape.circle),
+                          shape: BoxShape.circle,
+                        ),
                         child: Center(
                           child: Text(
                             '${index + 1}',
                             style: TextStyle(
                               color: Colors.teal.shade700,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12)),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           item,
-                          style: Theme.of(context).textTheme.bodyMedium))]);
-            }).toList(),]);
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   String _getWealthIndexMessage(int score) {

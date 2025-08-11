@@ -28,16 +28,18 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
     
     _rotationAnimation = Tween<double>(
       begin: 0,
-      end: 2 * math.pi).animate(CurvedAnimation(
+      end: 2 * math.pi,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.linear));
-}
+      curve: Curves.linear,
+    ));
+  }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,10 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             end: Alignment.bottomCenter,
             colors: [
               Color(0xFFEF4444).withOpacity(0.05),
-              AppColors.background])),
+              AppColors.background,
+            ],
+          ),
+        ),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -64,13 +69,18 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                       end: Alignment.bottomRight,
                       colors: [
                         Color(0xFFEF4444),
-                        Color(0xFFEC4899)])),
+                        Color(0xFFEC4899),
+                      ],
+                    ),
+                  ),
                   child: Stack(
                     children: [
                       // Background pattern
                       Positioned.fill(
                         child: CustomPaint(
-                          painter: TraditionalBackgroundPainter()),
+                          painter: TraditionalBackgroundPainter(),
+                        ),
+                      ),
                       // Rotating elements
                       Center(
                         child: AnimatedBuilder(
@@ -82,9 +92,13 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                                 width: 200,
                                 height: 200,
                                 child: CustomPaint(
-                                  painter: YinYangPainter())
+                                  painter: YinYangPainter(),
+                                ),
+                              ),
                             );
-                          })),
+                          },
+                        ),
+                      ),
                       // Title overlay
                       Center(
                         child: Column(
@@ -94,8 +108,9 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                             Icon(
                               Icons.auto_awesome_rounded,
                               size: 60,
-                              color: Colors.white).animate()
-                  .scale(delay: 300.ms, duration: 600.ms)
+                              color: Colors.white,
+                            ).animate()
+                              .scale(delay: 300.ms, duration: 600.ms)
                               .fade(),
                             const SizedBox(height: 16),
                             Text(
@@ -108,18 +123,32 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                                   Shadow(
                                     offset: Offset(0, 2),
                                     blurRadius: 4,
-                                    color: Colors.black.withOpacity(0.3)]).animate()
+                                    color: Colors.black.withOpacity(0.3),
+                                  ),
+                                ],
+                              ),
+                            ).animate()
                   .fadeIn(delay: 500.ms, duration: 600.ms)
                               .slideY(begin: 0.2, end: 0),
                             const SizedBox(height: 8),
                             Text(
-                              '사주 · 토정비결 · 주역'),
-                  style: TextStyle(
-                                fontSize: 18),
-                  color: Colors.white.withOpacity(0.9)).animate()
-                  .fadeIn(delay: 700.ms, duration: 600.ms)),
+                              '사주 · 토정비결 · 주역',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ).animate()
+                              .fadeIn(delay: 700.ms, duration: 600.ms),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 title: const Text('전통운세 종합'),
-                centerTitle: true),
+                centerTitle: true,
+              ),
+            ),
             
             SliverPadding(
               padding: const EdgeInsets.all(16),
@@ -145,7 +174,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   _buildMainFortuneButton(context)
                       .animate()
                   .fadeIn(delay: 500.ms, duration: 500.ms)
-                      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0),
+                      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0)),
                   
                   const SizedBox(height: 20),
                   
@@ -155,17 +184,27 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   .fadeIn(delay: 700.ms, duration: 500.ms)
                       .slideY(begin: 0.1, end: 0),
                   
-                  const SizedBox(height: 32));
+                  const SizedBox(height: 32),
+                ]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
   Widget _buildIntroductionCard() {
     return BaseCard(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight),
-                  colors: [
+        end: Alignment.bottomRight,
+        colors: [
           Color(0xFFEF4444).withOpacity(0.05),
           Color(0xFFEC4899).withOpacity(0.02),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -174,26 +213,36 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Color(0xFFEF4444).withOpacity(0.1),
-                shape: BoxShape.circle),
+                shape: BoxShape.circle,
+              ),
               child: Icon(
-                Icons.menu_book_rounded),
-                  size: 40),
-                  color: Color(0xFFEF4444)),
+                Icons.menu_book_rounded,
+                size: 40,
+                color: Color(0xFFEF4444),
+              ),
             const SizedBox(height: 16),
             Text(
               '5000년 동양철학의 지혜',
               style: TextStyle(
-                fontSize: 24),
-                  fontWeight: FontWeight.bold),
-                  color: Color(0xFFEF4444)),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFEF4444),
+              ),
+            ),
             const SizedBox(height: 12),
             Text(
               '사주명리학, 토정비결, 주역을 통합하여\n당신의 운명과 미래를 깊이 있게 분석합니다',
               style: TextStyle(
                 fontSize: 16,
-                height: 1.6),
-                  color: AppColors.textPrimary),
-              textAlign: TextAlign.center));
+                height: 1.6,
+                color: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
 }
 
   Widget _buildFeaturesGrid() {
@@ -203,30 +252,36 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
         'title': '정통 사주',
         'description': '생년월일시를 바탕으로\n타고난 운명 분석',
         'color': null,
+      },
       {
         'icon': Icons.menu_book_rounded,
         'title': '토정비결',
         'description': '전통 비결서로 보는\n월별·연간 운세',
         'color': null,
+      },
       {
         'icon': Icons.auto_awesome_rounded,
         'title': '주역 64괘',
         'description': '변화의 원리로 보는\n오늘의 메시지',
         'color': null,
+      },
       {
         'icon': Icons.insights_rounded,
         'title': '종합 분석',
         'description': '세 가지 지혜를 통합한\n깊이 있는 해석',
-        'color': Color(0xFF10B981);
+        'color': Color(0xFF10B981),
+      },
+    ];
 
-    return GridView.builder(}
-      shrinkWrap: true),
-                  physics: const NeverScrollableScrollPhysics(),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.2),
+        childAspectRatio: 1.2,
+      ),
       itemCount: features.length,
       itemBuilder: (context, index) {
         final feature = features[index];
@@ -234,37 +289,48 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center),
-                  children: [
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (feature['color'],
+                    color: feature['color'] as Color?,
                     borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Icon(
-                    feature['icon'],
-                    size: 32),
-                  color: feature['color']),
+                    feature['icon'] as IconData,
+                    size: 32,
+                    color: feature['color'] as Color?,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 Text(
-                  feature['title'],
+                  feature['title'] as String,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
-                  feature['description'],
+                  feature['description'] as String,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary),
-                  height: 1.4),
-                  textAlign: TextAlign.center)),.animate(delay: (100 * index).ms,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ).animate(delay: (100 * index).ms)
           .fadeIn(duration: 400.ms)
-          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0);
-}
+          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
+      },
     );
-}
+  }
 
   Widget _buildMainFortuneButton(BuildContext context) {
     return InkWell(
@@ -272,31 +338,36 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
         SimpleFortunInfoSheet.show(
           context,
           fortuneType: 'traditional-unified',
-          title: '전통운세 종합'),
-                  description: '사주, 토정비결, 주역을 통합한 깊이 있는 운세 분석'),
-                  onDismiss: () {},
+          title: '전통운세 종합',
+          description: '사주, 토정비결, 주역을 통합한 깊이 있는 운세 분석',
+          onDismiss: () {},
           onFortuneButtonPressed: () {
             // Navigate to fortune generation
             context.push('/fortune/traditional-unified');
-}
+          },
         );
-},
+      },
       borderRadius: BorderRadius.circular(20),
       child: Container(
         height: 180,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft),
-                  end: Alignment.bottomRight),
-                  colors: [
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
               Color(0xFFEF4444),
               Color(0xFFEC4899),
+            ],
+          ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Color(0xFFEF4444).withOpacity(0.4),
               blurRadius: 20,
-              offset: const Offset(0, 10)),
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Stack(
           children: [
             // Pattern overlay
@@ -305,6 +376,9 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                 borderRadius: BorderRadius.circular(20),
                 child: CustomPaint(
                   painter: UnifiedPatternPainter(),
+                ),
+              ),
+            ),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -315,27 +389,43 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.auto_awesome_rounded),
-                  size: 32),
-                  color: Colors.white),
+                        Icons.auto_awesome_rounded,
+                        size: 32,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 12),
                       Text(
                         '운세 보기',
                         style: TextStyle(
                           fontSize: 28,
-                          fontWeight: FontWeight.bold),
-                  color: Colors.white)),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Text(
                       '오늘의 종합 운세를 확인하세요',
                       style: TextStyle(
-                        fontSize: 16),
-                  color: Colors.white)));
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 }
 
   Widget _buildPhilosophyCard() {
@@ -343,43 +433,54 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Icon(
-                  Icons.auto_stories_rounded),
-                  size: 24),
+                  Icons.auto_stories_rounded,
+                  size: 24,
                   color: Color(0xFF795548),
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '동양철학의 핵심',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             _buildPhilosophyItem(
-              '음양오행': '만물의 생성과 변화 원리',
+              '음양오행', '만물의 생성과 변화 원리',
               Icons.sync_rounded),
             const SizedBox(height: 12),
             _buildPhilosophyItem(
-              '천지인': '하늘, 땅, 사람의 조화',
+              '천지인', '하늘, 땅, 사람의 조화',
               Icons.public_rounded),
             const SizedBox(height: 12),
             _buildPhilosophyItem(
-              '사시순환': '시간의 흐름과 운의 변화',
-              Icons.loop_rounded));
+              '사시순환', '시간의 흐름과 운의 변화',
+              Icons.loop_rounded),
+          ],
+        ),
+      ),
+    );
 }
 
   Widget _buildPhilosophyItem(String title, String description, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.divider),
+          color: AppColors.divider,
+        ),
+      ),
       child: Row(
         children: [
           Container(
@@ -387,10 +488,13 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             decoration: BoxDecoration(
               color: Color(0xFF795548).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
+            ),
             child: Icon(
-              icon),
-                  size: 20),
-                  color: Color(0xFF795548)),
+              icon,
+              size: 20,
+              color: Color(0xFF795548),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -399,14 +503,24 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 16),
-                  fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 Text(
                   description,
                   style: TextStyle(
-                    fontSize: 14),
-                  color: AppColors.textSecondary));
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
 }
 }
 
@@ -417,18 +531,16 @@ class TraditionalBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-     
-   
-    ..color =,
-      Colors.white.withOpacity(0.1);
+      ..color = Colors.white.withOpacity(0.1);
 
     // Draw traditional patterns
     final spacing = 60.0;
     for (double x = -spacing; x < size.width + spacing; x += spacing) {
       for (double y = -spacing; y < size.height + spacing; y += spacing) {
         _drawPattern(canvas, Offset(x, y), 20, paint);
-}
-    }}
+      }
+    }
+  }
 
   void _drawPattern(Canvas canvas, Offset center, double radius, Paint paint) {
     // Draw hexagon pattern
@@ -440,13 +552,13 @@ class TraditionalBackgroundPainter extends CustomPainter {
       
       if (i == 0) {
         path.moveTo(x, y);
-} else {
+      } else {
         path.lineTo(x, y);
-}
+      }
     }
     path.close();
     canvas.drawPath(path, paint);
-}
+  }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
@@ -513,21 +625,21 @@ class YinYangPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(center.dx, center.dy - radius / 2),
       radius / 8,
-      Paint()..color = Colors.black.withOpacity(0.2);
+      Paint()..color = Colors.black.withOpacity(0.2),
+    );
     canvas.drawCircle(
       Offset(center.dx, center.dy + radius / 2),
       radius / 8,
-      Paint()..color = Colors.white.withOpacity(0.3);
+      Paint()..color = Colors.white.withOpacity(0.3),
+    );
     
     // Outer circle
     final outlinePaint = Paint()
       ..color = Colors.white.withOpacity(0.3)
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 2.0;
+      ..strokeWidth = 2.0;
     canvas.drawCircle(center, radius, outlinePaint);
-}
+  }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
@@ -540,16 +652,13 @@ class UnifiedPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5
-     
-   
-    ..color =,
-      Colors.white.withOpacity(0.15);
+      ..color = Colors.white.withOpacity(0.15);
 
     // Draw multiple elements representing different fortune types
     _drawSajuElements(canvas, size, paint);
     _drawTojeongPattern(canvas, size, paint);
     _drawJuyeokSymbols(canvas, size, paint);
-}
+  }
 
   void _drawSajuElements(Canvas canvas, Size size, Paint paint) {
     // Draw 5 elements circles
@@ -558,11 +667,12 @@ class UnifiedPatternPainter extends CustomPainter {
       Offset(size.width * 0.8, size.height * 0.2),
       Offset(size.width * 0.5, size.height * 0.5),
       Offset(size.width * 0.2, size.height * 0.8),
-      Offset(size.width * 0.8, size.height * 0.8);
+      Offset(size.width * 0.8, size.height * 0.8),
+    ];
     
     for (final pos in positions) {
       canvas.drawCircle(pos, 15, paint);
-}
+    }
   }
 
   void _drawTojeongPattern(Canvas canvas, Size size, Paint paint) {
@@ -572,14 +682,16 @@ class UnifiedPatternPainter extends CustomPainter {
       canvas.drawLine(
         Offset(x, 0),
         Offset(x, size.height),
-        paint..color = Colors.white.withOpacity(0.05);
-}
+        paint..color = Colors.white.withOpacity(0.05),
+      );
+    }
     for (double y = 0; y < size.height; y += spacing) {
       canvas.drawLine(
         Offset(0, y),
         Offset(size.width, y),
-        paint..color = Colors.white.withOpacity(0.05);
-}
+        paint..color = Colors.white.withOpacity(0.05),
+      );
+    }
   }
 
   void _drawJuyeokSymbols(Canvas canvas, Size size, Paint paint) {
@@ -600,22 +712,23 @@ class UnifiedPatternPainter extends CustomPainter {
         canvas.drawLine(
           Offset(centerX - lineWidth / 2, y),
           Offset(centerX - 5, y),
-          paint
+          paint,
         );
         canvas.drawLine(
           Offset(centerX + 5, y),
           Offset(centerX + lineWidth / 2, y),
-          paint
+          paint,
         );
-} else {
+      } else {
         // Solid line
         canvas.drawLine(
           Offset(centerX - lineWidth / 2, y),
           Offset(centerX + lineWidth / 2, y),
-          paint
+          paint,
         );
-}
-    }}
+      }
+    }
+  }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;

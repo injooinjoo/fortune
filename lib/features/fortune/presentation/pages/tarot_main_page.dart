@@ -530,18 +530,23 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                   colors: [
                                     (_previousCardData!['color'] as Color)
                                         .withOpacity(0.8),
-                                    _previousCardData!['color']]),
+                                    _previousCardData!['color'] as Color,
+                                  ],
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: (_previousCardData!['color'] as Color)
                                         .withOpacity(0.4),
                                     blurRadius: 20,
-                                    spreadRadius: 5)]),
+                                    spreadRadius: 5,
+                                  ),
+                                ],
+                              ),
                               child: Stack(
                                 children: [
                                   // Background icon
-                                  if (_previousCardData!['icon'] != null),
-            Positioned(
+                                  if (_previousCardData!['icon'] != null)
+                                    Positioned(
                                       top: 30,
                                       left: 0,
                                       right: 0,
@@ -561,8 +566,18 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 24 - (8 * swapProgress),
-                                        fontWeight: FontWeight.bold)]));
-                      })),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
 
                 // Animated positioned card with swap animation
                 AnimatedBuilder(
@@ -634,8 +649,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      child: _buildTarotDeck();
-                  })()],
+                      child: _buildTarotDeck(),
+                    ),
+                  ),
+                ],
 
                 // Card detail overlay with full-screen dark background
                 if (isShowingCardDetail && selectedCardIndex != null) ...[
@@ -662,17 +679,21 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                 ? Opacity(
                                     opacity:
                                         (_cardFlipController.value - 0.3) / 0.7,
-                                    child: _buildAnimatedBackground()
-                                : null);
-                        })),
+                                    child: _buildAnimatedBackground(),
+                                  )
+                                : null;
+                        },
+                      ),
+                    ),,
 
                   // Overlay UI elements with scrollable content
                   AnimatedBuilder(
                       animation: _flipAnimation,
                       builder: (context, child) {
                         // Only show after flip completes
-                        if (_flipAnimation.value < 0.5),
-            return const SizedBox();
+                        if (_flipAnimation.value < 0.5) {
+                          return const SizedBox();
+                        }
 
                         final cardInfo = selectedCardIndex != null
                             ? TarotMetadata.getCard(selectedCardIndex!) ??
@@ -697,10 +718,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     Color gradientEnd = const Color(0xFFE64A19);
 
     if (_selectedCardType != 'daily' && _selectedCardData != null) {
-      title = _selectedCardData!['title'
-  ];
-      icon = _selectedCardData!['icon'
-  ];
+      title = _selectedCardData!['title'];
+      icon = _selectedCardData!['icon'];
       final color = _selectedCardData!['color'] as Color;
       const alpha = 0.8;
       gradientStart = color.withOpacity(alpha);
@@ -728,13 +747,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
             width: cardWidth,
             height: cardHeight,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(_cardRadiusAnimation.value)),
+              borderRadius: BorderRadius.circular(_cardRadiusAnimation.value),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
                   gradientStart,
-                  gradientEnd]),
+                  gradientEnd,
+                ],
+              ),
               boxShadow: [
                 BoxShadow(
                   color: (() {
@@ -742,7 +763,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     return gradientStart.withOpacity(alpha);
                   })(),
                   blurRadius: 30,
-                  spreadRadius: 5)]),
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
             child: Stack(
               children: [
                 // Card background pattern

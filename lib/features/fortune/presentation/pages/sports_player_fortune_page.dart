@@ -19,46 +19,46 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
   
   final Map<String, List<Map<String, String>>> playerData = {
     'all': [
-      {'name': '손흥민': 'sport': '축구': 'team': '토트넘': 'position': 'FW'},
-      {'name': '김민재': 'sport': '축구': 'team': '바이에른 뮌헨': 'position': 'DF'},
-      {'name': '이강인': 'sport': '축구': 'team': 'PSG': 'position': 'MF'},
-      {'name': '류현진': 'sport': '야구': 'team': '한화 이글스': 'position': '투수'},
-      {'name': '김하성': 'sport': '야구': 'team': '샌디에이고': 'position': '내야수'},
-      {'name': '김연아': 'sport': '피겨': 'team': '은퇴': 'position': '싱글'},
-      {'name': '안산': 'sport': '양궁': 'team': '광주시청': 'position': '리커브'},
-      {'name': '김연경': 'sport': '배구': 'team': '흥국생명': 'position': '아웃사이드'},
+      {'name': '손흥민', 'sport': '축구', 'team': '토트넘', 'position': 'FW'},
+      {'name': '김민재', 'sport': '축구', 'team': '바이에른 뮌헨', 'position': 'DF'},
+      {'name': '이강인', 'sport': '축구', 'team': 'PSG', 'position': 'MF'},
+      {'name': '류현진', 'sport': '야구', 'team': '한화 이글스', 'position': '투수'},
+      {'name': '김하성', 'sport': '야구', 'team': '샌디에이고', 'position': '내야수'},
+      {'name': '김연아', 'sport': '피겨', 'team': '은퇴', 'position': '싱글'},
+      {'name': '안산', 'sport': '양궁', 'team': '광주시청', 'position': '리커브'},
+      {'name': '김연경', 'sport': '배구', 'team': '흥국생명', 'position': '아웃사이드'},
     ],
     'soccer': [
-      {'name': '손흥민': 'sport': '축구': 'team': '토트넘': 'position': 'FW'},
-      {'name': '김민재': 'sport': '축구': 'team': '바이에른 뮌헨': 'position': 'DF'},
-      {'name': '이강인': 'sport': '축구': 'team': 'PSG': 'position': 'MF'},
-      {'name': '황희찬': 'sport': '축구': 'team': '울버햄튼': 'position': 'FW'},
-      {'name': '황인범': 'sport': '축구': 'team': '페예노르트': 'position': 'MF'},
-      {'name': '조규성': 'sport': '축구': 'team': 'FC 미틸란': 'position': 'FW'},
-      {'name': '김진수': 'sport': '축구': 'team': '전북 현대': 'position': 'DF'},
-      {'name': '이재성': 'sport': '축구': 'team': '마인츠': 'position': 'MF'},
+      {'name': '손흥민', 'sport': '축구', 'team': '토트넘', 'position': 'FW'},
+      {'name': '김민재', 'sport': '축구', 'team': '바이에른 뮌헨', 'position': 'DF'},
+      {'name': '이강인', 'sport': '축구', 'team': 'PSG', 'position': 'MF'},
+      {'name': '황희찬', 'sport': '축구', 'team': '울버햄튼', 'position': 'FW'},
+      {'name': '황인범', 'sport': '축구', 'team': '페예노르트', 'position': 'MF'},
+      {'name': '조규성', 'sport': '축구', 'team': 'FC 미틸란', 'position': 'FW'},
+      {'name': '김진수', 'sport': '축구', 'team': '전북 현대', 'position': 'DF'},
+      {'name': '이재성', 'sport': '축구', 'team': '마인츠', 'position': 'MF'},
     ],
     'baseball': [
-      {'name': '류현진': 'sport': '야구': 'team': '한화 이글스': 'position': '투수'},
-      {'name': '김하성': 'sport': '야구': 'team': '샌디에이고': 'position': '내야수'},
-      {'name': '이정후': 'sport': '야구': 'team': '샌프란시스코': 'position': '외야수'},
-      {'name': '김광현': 'sport': '야구': 'team': 'SSG 랜더스': 'position': '투수'},
-      {'name': '양현종': 'sport': '야구': 'team': 'KIA 타이거즈': 'position': '투수'},
-      {'name': '이대호': 'sport': '야구': 'team': '은퇴': 'position': '타자'},
-      {'name': '추신수': 'sport': '야구': 'team': '은퇴': 'position': '외야수'},
-      {'name': '오승환': 'sport': '야구': 'team': '삼성 라이온즈': 'position': '투수'},
+      {'name': '류현진', 'sport': '야구', 'team': '한화 이글스', 'position': '투수'},
+      {'name': '김하성', 'sport': '야구', 'team': '샌디에이고', 'position': '내야수'},
+      {'name': '이정후', 'sport': '야구', 'team': '샌프란시스코', 'position': '외야수'},
+      {'name': '김광현', 'sport': '야구', 'team': 'SSG 랜더스', 'position': '투수'},
+      {'name': '양현종', 'sport': '야구', 'team': 'KIA 타이거즈', 'position': '투수'},
+      {'name': '이대호', 'sport': '야구', 'team': '은퇴', 'position': '타자'},
+      {'name': '추신수', 'sport': '야구', 'team': '은퇴', 'position': '외야수'},
+      {'name': '오승환', 'sport': '야구', 'team': '삼성 라이온즈', 'position': '투수'},
     ],
     'other': [
-      {'name': '김연아': 'sport': '피겨': 'team': '은퇴': 'position': '싱글'},
-      {'name': '안산': 'sport': '양궁': 'team': '광주시청': 'position': '리커브'},
-      {'name': '김연경': 'sport': '배구': 'team': '흥국생명': 'position': '아웃사이드'},
-      {'name': '신유빈': 'sport': '탁구': 'team': '대한항공': 'position': '단식/복식'},
-      {'name': '임시현': 'sport': '양궁': 'team': '현대모비스': 'position': '리커브'},
-      {'name': '황선우': 'sport': '수영': 'team': '강원도청': 'position': '자유형'},
-      {'name': '우상혁': 'sport': '육상': 'team': '국군체육부대': 'position': '높이뛰기'},
-      {'name': '양학선': 'sport': '체조': 'team': '은퇴': 'position': '도마'},
+      {'name': '김연아', 'sport': '피겨', 'team': '은퇴', 'position': '싱글'},
+      {'name': '안산', 'sport': '양궁', 'team': '광주시청', 'position': '리커브'},
+      {'name': '김연경', 'sport': '배구', 'team': '흥국생명', 'position': '아웃사이드'},
+      {'name': '신유빈', 'sport': '탁구', 'team': '대한항공', 'position': '단식/복식'},
+      {'name': '임시현', 'sport': '양궁', 'team': '현대모비스', 'position': '리커브'},
+      {'name': '황선우', 'sport': '수영', 'team': '강원도청', 'position': '자유형'},
+      {'name': '우상혁', 'sport': '육상', 'team': '국군체육부대', 'position': '높이뛰기'},
+      {'name': '양학선', 'sport': '체조', 'team': '은퇴', 'position': '도마'},
     ],
-  }
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
           children: [
             _buildSportSelector(),
             const SizedBox(height: 20),
-            Expanded(child: _buildPlayerGrid(),
+            Expanded(child: _buildPlayerGrid()),
           ],
         ),
       ),
@@ -105,10 +105,10 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
       ),
       child: Row(
         children: [
-          _buildSportTab('all': '전체', Icons.sports),
-          _buildSportTab('soccer': '축구', Icons.sports_soccer),
-          _buildSportTab('baseball': '야구', Icons.sports_baseball),
-          _buildSportTab('other': '기타', Icons.emoji_events),
+          _buildSportTab('all', '전체', Icons.sports),
+          _buildSportTab('soccer', '축구', Icons.sports_soccer),
+          _buildSportTab('baseball', '야구', Icons.sports_baseball),
+          _buildSportTab('other', '기타', Icons.emoji_events),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
@@ -164,18 +164,17 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
         crossAxisCount: 2,
         childAspectRatio: 1.15,
         crossAxisSpacing: 12,
-        mainAxisSpacing: 12),
+        mainAxisSpacing: 12,
+      ),
       itemCount: players.length,
-    itemBuilder: (context, index) {
+      itemBuilder: (context, index) {
         final player = players[index];
-        final isSelected = selectedPlayer == player['name'
-  ];
+        final isSelected = selectedPlayer == player['name'];
         
         return GestureDetector(
           onTap: () {
             setState(() {
-              selectedPlayer = player['name'
-  ];
+              selectedPlayer = player['name'];
             });
           },
           child: Container(
@@ -185,23 +184,28 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                 end: Alignment.bottomRight,
                 colors: isSelected
                     ? [const Color(0xFF00897B), const Color(0xFF00BFA5)]
-                    : [AppColors.surface, AppColors.surface]),
+                    : [AppColors.surface, AppColors.surface],
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected 
                     ? const Color(0xFF00897B) 
                     : AppColors.divider,
-                width: isSelected ? 2 : 1),
+                width: isSelected ? 2 : 1,
+              ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
                         color: const Color(0xFF00897B).withOpacity(0.3),
                         blurRadius: 20,
-                        offset: const Offset(0, 4))]
-                  : []),
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : [],
+            ),
             child: Padding(
               padding: const EdgeInsets.all(12),
-                child: Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
@@ -211,37 +215,47 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                       shape: BoxShape.circle,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.2)
-                          : const Color(0xFF00897B).withOpacity(0.1)),
+                          : const Color(0xFF00897B).withOpacity(0.1),
+                    ),
                     child: Icon(
                       _getSportIcon(player['sport'] ?? ''),
                       size: 24,
-                      color: isSelected ? Colors.white : const Color(0xFF00897B)),
+                      color: isSelected ? Colors.white : const Color(0xFF00897B),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     player['name']!,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : AppColors.textPrimary)),
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
                   Text(
                     player['position']!,
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.9)
-                          : AppColors.textSecondary)),
+                          : AppColors.textSecondary,
+                    ),
+                  ),
                   Text(
                     player['team']!,
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.7)
-                          : AppColors.textSecondary),
-                    overflow: TextOverflow.ellipsis),
+                          : AppColors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
-          )).animate()
+          ),
+        ).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
               .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
       },

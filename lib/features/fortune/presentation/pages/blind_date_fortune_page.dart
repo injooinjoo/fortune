@@ -352,15 +352,17 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     labelText: '만남 예정일',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
+                    ),
                     filled: true,
                     fillColor: theme.colorScheme.surface.withOpacity(0.5),
-                    suffixIcon: const Icon(Icons.calendar_today)),
+                    suffixIcon: const Icon(Icons.calendar_today),
+                  ),
                   child: Text(
                     _meetingDate != null
                         ? '${_meetingDate!.year}년 ${_meetingDate!.month}월 ${_meetingDate!.day}일'
-                        : '날짜를 선택하세요'
-                  )
-                )
+                        : '날짜를 선택하세요',
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               // Meeting Time
@@ -384,8 +386,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       });
                     },
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Chip(
+                    child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.2)
@@ -395,7 +396,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                             ? theme.colorScheme.primary
                             : theme.colorScheme.onSurface.withOpacity(0.3),
                       ),
-                    )
+                    ),
                   );
                 }).toList()
               ),
@@ -449,8 +450,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       });
                     },
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Chip(
+                    child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.2)
@@ -458,9 +458,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3)
-                      )
-                    )
+                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                      ),
+                    ),
                   );
                 }).toList()
               ),
@@ -511,8 +511,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       });
                     },
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Chip(
+                    child: Chip(
                       label: Text(quality),
                       backgroundColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.2)
@@ -520,11 +519,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3)),
+                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                      ),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
                           : null,
-                      onDeleted: isSelected ? () {} : null));
+                      onDeleted: isSelected ? () {} : null,
+                    ),
+                  );
                 }).toList()
               ),
               const SizedBox(height: 16),
@@ -548,8 +550,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       });
                     },
                     borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: GlassContainer(
+                    child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
                         horizontal: 16),
@@ -580,8 +581,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 );
               }).toList(),
-          ),
-          const SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Ideal First Date
               Text(
                 '이상적인 첫 데이트',
@@ -609,13 +609,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     _idealFirstDate = value;
                   });
                 },
-              )
-            ]
-          )
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
-        // Self Assessment
-        GlassCard(
+      ),
+      const SizedBox(height: 16),
+      // Self Assessment
+      GlassCard(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -656,8 +657,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       });
                     },
                     borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: GlassContainer(
+                    child: GlassContainer(
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
@@ -699,8 +699,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 );
               }).toList(),
-          ),
-          const SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Concerns
               Text(
                 '걱정되는 부분 (선택)',
@@ -726,8 +725,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       });
                     },
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Chip(
+                    child: Chip(
                       label: Text(concern),
                       backgroundColor: isSelected
                           ? Colors.orange.withOpacity(0.2)
@@ -735,9 +733,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       side: BorderSide(
                         color: isSelected
                             ? Colors.orange
-                            : theme.colorScheme.onSurface.withOpacity(0.3)
-                      )
-                    )
+                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                      ),
+                    ),
                   );
                 }).toList()
               ),
@@ -748,11 +746,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 _isFirstBlindDate,
                 (value) => setState(() => _isFirstBlindDate = value),
                 Icons.favorite_border
-              )
-            ]
-          )
-        )
-      ]
+              ),
+            ],
+          ),
+        ),
+      ),
+      ],
     );
   }
 
@@ -792,7 +791,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         _buildConversationTopics(),
         _buildOutfitRecommendation(),
         _buildDateLocationAdvice(),
-        _buildDosDonts()]);
+        _buildDosDonts(),
+      ],
+    );
   }
 
   Widget _buildSuccessPrediction() {
@@ -805,7 +806,6 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-
             children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -862,16 +862,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     theme.colorScheme.primary.withOpacity(0.1),
                     theme.colorScheme.secondary.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
+              ),
+              child: Text(
                 _getSuccessAdvice(successRate),
                 style: theme.textTheme.bodyLarge,
                 textAlign: TextAlign.center
-              )
-            )
-          ]
-        )
-      )
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -982,7 +982,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   child: Icon(
                       tip['icon'] as IconData,
                       size: 20,
-                      color: theme.colorScheme.primary)),
+                      color: theme.colorScheme.primary,
+                  ),
+                ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -991,25 +993,26 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Text(
                           tip['tip'] as String,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold
-                )
-              ),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           tip['detail'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.7)
-                          )
-                        )
-                      ]
-                    )
-                  ]
-                )
-              )
-            )).toList()
-          ]
-        )
-      )
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -1077,10 +1080,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         color: theme.colorScheme.onSurface.withOpacity(0.2)
                       )
                     )).toList()
-                  )
-                ]
-              )
-            ).toList(),
+                  ),
+                ],
+              ),
+            )).toList(),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(12),
@@ -1112,7 +1115,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     runSpacing: 8,
                     children: avoidTopics.map((topic) => Text(
                       '• $topic',
-                      style: theme.textTheme.bodySmall).toList()])]);)
+                      style: theme.textTheme.bodySmall,
+                    )).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildOutfitRecommendation() {
@@ -1163,7 +1175,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   const SizedBox(height: 8),
                   Text(
                     outfitStyle,
-                    style: theme.textTheme.bodyMedium)])),
+                    style: theme.textTheme.bodyMedium),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -1175,7 +1190,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 Text(
                   '행운의 색상',
                   style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
             Row(
               children: colors.map((color) => Padding(
@@ -1187,7 +1206,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     color: color['color'],
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2)),
+                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                    ),
+                  ),
                   child: Center(
                     child: Text(
                       color['name'],
@@ -1195,7 +1216,18 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             color: (color['color'] as Color).computeLuminance() > 0.5
                             ? Colors.black
                             : Colors.white,
-                        fontSize: 10))).toList()]));
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                ),
+              )).toList(),
+            ),
+          ],
+          ),
+        ),
+      ),
+    );
   }
 
   String _getOutfitStyle() {
@@ -1213,9 +1245,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   List<Map<String, dynamic>> _getLuckyColors() {
     return [
-      {'name': '블루': 'color': Colors.blue},
-      {'name': '화이트': 'color': Colors.white},
-      {'name': '핑크': 'color': Colors.pink}];
+      {'name': '블루', 'color': Colors.blue},
+      {'name': '화이트', 'color': Colors.white},
+      {'name': '핑크', 'color': Colors.pink},
+    ];
   }
 
   Widget _buildDateLocationAdvice() {
@@ -1260,7 +1293,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Expanded(
                     child: Text(
                       advice,
-                      style: theme.textTheme.bodyMedium)]).toList(),
+                      style: theme.textTheme.bodyMedium),
+                  ),
+                ],
+              ),
+            )).toList(),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -1279,30 +1316,40 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Expanded(
                     child: Text(
                       '조용하고 대화하기 좋은 장소를 선택하세요. 너무 시끄럽거나 붐비는 곳은 피하는 것이 좋습니다.',
-                      style: theme.textTheme.bodyMedium)])]));)
+                      style: theme.textTheme.bodyMedium),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          ),
+        ),
+      ),
+    );
   }
 
   List<String> _getLocationAdvice() {
     switch (_meetingType) {
       case 'coffee':
         return [
-          '분위기 좋은 독립 카페 추천': '창가 자리나 조용한 코너 선택',
+          '분위기 좋은 독립 카페 추천, 창가 자리나 조용한 코너 선택',
           '음악이 너무 크지 않은 곳'
-  ];
+        ];
       case 'meal':
         return [
-          '예약 가능한 레스토랑 선택': '메뉴가 다양한 곳 추천',
+          '예약 가능한 레스토랑 선택, 메뉴가 다양한 곳 추천',
           '개인 공간이 보장되는 자리'
-  ];
-      case 'activity': return [
-          '서로 즐길 수 있는 활동 선택': '대화할 기회가 있는 활동',
+        ];
+      case 'activity': 
+        return [
+          '서로 즐길 수 있는 활동 선택, 대화할 기회가 있는 활동',
           '너무 경쟁적이지 않은 분위기'
-  ];
+        ];
       default:
         return [
-          '편안한 분위기의 장소': '대화에 집중할 수 있는 환경',
+          '편안한 분위기의 장소, 대화에 집중할 수 있는 환경',
           '적당한 프라이버시 보장'
-  ];
+        ];
     }
   }
 
@@ -1310,16 +1357,20 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     final theme = Theme.of(context);
     
     final dos = [
-      '시간 약속 지키기 (10분 전 도착)': '긍정적인 태도 유지하기',
-      '상대방에게 질문하고 관심 보이기': '적당한 유머로 분위기 풀기',
+      '시간 약속 지키기 (10분 전 도착)',
+      '긍정적인 태도 유지하기',
+      '상대방에게 질문하고 관심 보이기',
+      '적당한 유머로 분위기 풀기',
       '감사 인사 전하기'
-  ];
+    ];
     
     final donts = [
-      '핸드폰 자주 확인하지 않기': '과도한 자기 자랑 피하기',
-      '부정적인 이야기 하지 않기': '너무 개인적인 질문 피하기',
+      '핸드폰 자주 확인하지 않기',
+      '과도한 자기 자랑 피하기',
+      '부정적인 이야기 하지 않기',
+      '너무 개인적인 질문 피하기',
       '결론 급하게 내리지 않기'
-  ];
+    ];
     
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
@@ -1349,6 +1400,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Colors.green.withOpacity(0.3)),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1362,8 +1414,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Text(
                         'DO\'s - 꼭 하세요',
                         style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-                          color: Colors.green))]),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   ...dos.map((item) => Padding(
                     padding: const EdgeInsets.only(bottom: 4),
@@ -1374,7 +1429,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Expanded(
                           child: Text(
                             item,
-                            style: theme.textTheme.bodyMedium)]).toList()])),
+                            style: theme.textTheme.bodyMedium),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -1383,6 +1445,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Colors.red.withOpacity(0.3)),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1408,7 +1471,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Expanded(
                           child: Text(
                             item,
-                            style: theme.textTheme.bodyMedium)]).toList()])),
+                            style: theme.textTheme.bodyMedium),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -1418,8 +1488,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     Colors.amber.withOpacity(0.1),
                     Colors.orange.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
+              ),
+              child: Row(
                 children: [
                   Icon(
                     Icons.auto_awesome,
@@ -1429,6 +1499,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Text(
                       '가장 중요한 것은 진실된 자신의 모습을 보여주는 것입니다. 행운을 빕니다!',
                       style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w500)])]));
+                        fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

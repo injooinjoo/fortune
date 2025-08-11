@@ -7,9 +7,9 @@ import 'package:go_router/go_router.dart';
 import './traditional_fortune_enhanced_page.dart';
 
 enum TraditionalType {
-  saju('정통 사주': 'saju', '사주팔자로 보는 운명', Icons.auto_stories_rounded, [Color(0xFF7C3AED), Color(0xFF6D28D9)], false),
-  sajuChart('사주 차트': 'saju-chart', '시각적 사주 분석', Icons.analytics_rounded, [Color(0xFF0284C7), Color(0xFF0369A1)], false),
-  tojeong('토정비결': 'tojeong', '전통 토정비결', Icons.menu_book_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)], true);
+  saju('정통 사주', 'saju', '사주팔자로 보는 운명', Icons.auto_stories_rounded, [Color(0xFF7C3AED), Color(0xFF6D28D9)], false),
+  sajuChart('사주 차트', 'saju-chart', '시각적 사주 분석', Icons.analytics_rounded, [Color(0xFF0284C7), Color(0xFF0369A1)], false),
+  tojeong('토정비결', 'tojeong', '전통 토정비결', Icons.menu_book_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)], true);
   
   final String label;
   final String value;
@@ -35,52 +35,69 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const TraditionalFortuneEnhancedPage());
+          builder: (context) => const TraditionalFortuneEnhancedPage(),
+        ),
+      );
     });
     
     // Show loading while navigating
     return Scaffold(
       body: Center(
         child: CircularProgressIndicator(
-          color: Color(0xFFEF4444)));
+          color: Color(0xFFEF4444),
+        ),
+      ),
+    );
   }
 
   Widget _buildHeaderCard() {
     return Container(
-      width: double.infinity),
-                  padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight),
-                  colors: [
+          end: Alignment.bottomRight,
+          colors: [
             Color(0xFFEF4444).withOpacity(0.1),
             Color(0xFFEC4899).withOpacity(0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFFEF4444).withOpacity(0.3),
-          width: 1),
+          width: 1,
+        ),
+      ),
       child: Column(
         children: [
           Icon(
-            Icons.auto_awesome_rounded),
-                  size: 48),
-                  color: Color(0xFFEF4444),
+            Icons.auto_awesome_rounded,
+            size: 48,
+            color: Color(0xFFEF4444),
+          ),
           const SizedBox(height: 12),
           Text(
             '전통 운세',
             style: TextStyle(
-              fontSize: 20),
-                  fontWeight: FontWeight.bold),
-                  color: Color(0xFFEF4444)),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFEF4444),
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '5000년 역사의 동양 철학으로 보는 운명',
             style: TextStyle(
-              fontSize: 14),
-                  color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center);
-}
+              fontSize: 14,
+              color: AppTheme.textSecondaryColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildTraditionalGrid() {
     return Column(
@@ -89,9 +106,11 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         final type = entry.value;
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: _buildEnhancedTraditionalCard(type, index);
-}).toList();
-}
+          child: _buildEnhancedTraditionalCard(type, index),
+        );
+      }).toList(),
+    );
+  }
 
   Widget _buildEnhancedTraditionalCard(TraditionalType type, int index) {
     switch (type) {
@@ -101,7 +120,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         return _buildSajuChartCard(type, index);
       case TraditionalType.tojeong:
         return _buildTojeongCard(type, index);
-}
+    }
   }
 
   Widget _buildSajuCard(TraditionalType type, int index) {
@@ -113,20 +132,26 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
-                  colors: type.gradientColors),
+            end: Alignment.bottomRight,
+            colors: type.gradientColors,
+          ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: type.gradientColors[0].withOpacity(0.4),
               blurRadius: 20,
-              offset: const Offset(0, 10)),
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Stack(
           children: [
             // Background pattern
             Positioned.fill(
               child: CustomPaint(
                 painter: SajuPatternPainter(),
+              ),
+            ),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -136,9 +161,10 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                   Row(
                     children: [
                       Icon(
-                        type.icon),
-                  size: 36),
-                  color: Colors.white),
+                        type.icon,
+                        size: 36,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -147,62 +173,93 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                             Text(
                               type.label,
                               style: const TextStyle(
-                                fontSize: 20),
-                  fontWeight: FontWeight.bold),
-                  color: Colors.white),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                             Text(
-                              type.description),
-                  style: TextStyle(
-                                fontSize: 14),
-                  color: Colors.white.withOpacity(0.9)),
+                              type.description,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   const Spacer(),
                   // Preview elements
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround),
-                  children: [
-                      _buildElementIcon('목': null,
-                      _buildElementIcon('화': null,
-                      _buildElementIcon('토': null,
-                      _buildElementIcon('금': null,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildElementIcon('목'),
+                      _buildElementIcon('화'),
+                      _buildElementIcon('토'),
+                      _buildElementIcon('금'),
                       _buildElementIcon('수'),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.access_time_rounded),
-                  size: 16),
-                  color: Colors.white),
+                          Icons.access_time_rounded,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           '생년월일시로 정밀 분석',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white),
-                  fontWeight: FontWeight.w500)),
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             // Premium badge
-            if (type.isPremium) Positioned(
+            if (type.isPremium) 
+              Positioned(
                 top: 16,
-                right: 16),
-                  child: Container(
+                right: 16,
+                child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.amber),
-                  borderRadius: BorderRadius.circular(16),
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: const Text(
                     'Premium',
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.bold),
-                  color: Colors.black87))).animate(delay: (100 * index).ms,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ).animate(delay: (100 * index).ms)
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
-}
+  }
 
   Widget _buildSajuChartCard(TraditionalType type, int index) {
     return InkWell(
@@ -213,14 +270,18 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
-                  colors: type.gradientColors),
+            end: Alignment.bottomRight,
+            colors: type.gradientColors,
+          ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: type.gradientColors[0].withOpacity(0.4),
               blurRadius: 20,
-              offset: const Offset(0, 10)),
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Stack(
           children: [
             // Chart preview
@@ -228,13 +289,17 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
               right: -30,
               bottom: -30,
               child: Container(
-                width: 150),
-                  height: 150),
-                  decoration: BoxDecoration(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.1),
-                  shape: BoxShape.circle),
+                  shape: BoxShape.circle,
+                ),
                 child: CustomPaint(
                   painter: ChartPreviewPainter(),
+                ),
+              ),
+            ),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -242,25 +307,30 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
-                    type.icon),
-                  size: 36),
-                  color: Colors.white),
+                    type.icon,
+                    size: 36,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     type.label,
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                  color: Colors.white),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
-                    type.description),
-                  style: TextStyle(
-                      fontSize: 14),
-                  color: Colors.white.withOpacity(0.9)),
+                    type.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
