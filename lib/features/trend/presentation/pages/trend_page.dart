@@ -70,7 +70,7 @@ class _TrendPageState extends State<TrendPage> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: Colors.white))),
+              color: Colors.white)),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_outlined, color: Colors.black87),
@@ -134,13 +134,13 @@ class _TrendPageState extends State<TrendPage> {
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w600))),
+                          fontWeight: FontWeight.w600)),
                     SizedBox(height: 12),
                     // Emoji and title
                     Row(
@@ -166,7 +166,7 @@ class _TrendPageState extends State<TrendPage> {
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w400))]))]),
+                                  fontWeight: FontWeight.w400)])]),
                     Spacer(),
                     // Stats
                     Row(
@@ -203,7 +203,7 @@ class _TrendPageState extends State<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1)))),
+                    color: Colors.white.withOpacity(0.1)),
               Positioned(
                 right: 20,
                 bottom: 20,
@@ -212,6 +212,6 @@ class _TrendPageState extends State<TrendPage> {
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.15))))]))));
+                    color: Colors.white.withOpacity(0.15))]));
   }
 }

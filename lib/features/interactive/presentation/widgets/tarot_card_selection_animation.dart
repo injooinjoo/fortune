@@ -177,7 +177,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                   // Card
                   GestureDetector(
                     onTap: () {}, // Prevent interaction during animation
-                    child: _buildCard())]));
+                    child: _buildCard()]);
           })]);
   }
 
@@ -207,7 +207,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                       Theme.of(context).colorScheme.secondary.withOpacity(0.6)]),
                   border: Border.all(
                     color: Colors.white.withOpacity(0.2),
-                    width: 2)))));
+                    width: 2))));
         });
     });
   }
@@ -247,7 +247,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                         Colors.white.withOpacity(0),
                         Colors.white.withOpacity(0.3),
                         Colors.white.withOpacity(0)],
-                      transform: GradientRotation(_flipAnimation.value * math.pi)))))])));
+                      transform: GradientRotation(_flipAnimation.value * math.pi)))]));
   }
 
   Widget _buildCardBack() {
@@ -266,14 +266,14 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: CustomPaint(
               painter: AnimatedMandalaPainter(
                 color: Colors.white.withOpacity(0.2),
-                progress: _pickAnimation.value))),
+                progress: _pickAnimation.value)),
           
           // Center icon
           Center(
             child: Icon(
               Icons.auto_awesome,
               size: 60,
-              color: Colors.white.withOpacity(0.8)))]));
+              color: Colors.white.withOpacity(0.8))]);
   }
 
   Widget _buildCardFront() {

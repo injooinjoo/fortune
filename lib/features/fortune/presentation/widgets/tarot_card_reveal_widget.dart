@@ -278,7 +278,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 Positioned.fill(
                   child: CustomPaint(
                     painter: _EnhancedCardBackPatternPainter(
-                      glowAnimation: _glowAnimation.value))),
+                      glowAnimation: _glowAnimation.value)),
                 
                 // Center mystical design
                 Center(
@@ -320,7 +320,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                           child: Icon(
                             Icons.auto_awesome,
                             size: 40,
-                            color: Colors.white.withOpacity(0.9))))])),
+                            color: Colors.white.withOpacity(0.9))]),
                 
                 // Mystical particles overlay
                 Positioned.fill(
@@ -357,7 +357,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.8),
                                   fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-                                  fontWeight: FontWeight.w500))]))))),
+                                  fontWeight: FontWeight.w500)])),
                 
                 // Premium border with gradient
                 Positioned.fill(
@@ -373,7 +373,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 colors: [
                   Colors.white.withOpacity(0.3),
                   FortuneColors.spiritualPrimary.withOpacity(0.2),
-                  Colors.white.withOpacity(0.3)]))))])))]);
+                  Colors.white.withOpacity(0.3)]))]))]);
   }
 
   Widget _buildFrontSide() {
@@ -393,7 +393,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               BoxShadow(
                 color: Colors.black.withOpacity(0.3),
                 blurRadius: 10,
-                offset: const Offset(0, 5))])),
+                offset: const Offset(0, 5)]),
         
         // Gradient overlay for better text visibility
         Positioned(
@@ -411,7 +411,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.7)])))),
+                  Colors.black.withOpacity(0.7)])),
         
         // Card name
         if (cardInfo != null)
@@ -430,7 +430,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             child: _SparkleOverlay(
               // Clamp opacity to valid range [0.0, 1.0] as the calculation could exceed 1.0
               // when _flipAnimation.value approaches 1.0: (1.0 - 0.8) * 5 = 1.0,
-              opacity: ((_flipAnimation.value - 0.8) * 5).clamp(0.0, 1.0))),
+              opacity: ((_flipAnimation.value - 0.8) * 5).clamp(0.0, 1.0)),
         
         // Border
         Positioned.fill(
@@ -439,7 +439,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
                 color: Colors.white.withOpacity(0.3),
-                width: 2)))),
+                width: 2)),
       ],
     );
   }

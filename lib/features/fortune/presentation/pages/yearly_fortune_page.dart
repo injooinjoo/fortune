@@ -47,7 +47,7 @@ class _YearlyInputForm extends StatelessWidget {
           child: Icon(
             Icons.calendar_today,
             size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3))),
+            color: theme.colorScheme.primary.withOpacity(0.3)),
         
         const SizedBox(height: 32),
         
@@ -59,7 +59,7 @@ class _YearlyInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)))))]
+                borderRadius: BorderRadius.circular(30),)]
     );
   }
 }
@@ -103,7 +103,7 @@ class _YearlyFortuneResult extends StatelessWidget {
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6))])),
+                    height: 1.6)]),
           const SizedBox(height: 16),
 
           // Score Breakdown
@@ -138,13 +138,13 @@ class _YearlyFortuneResult extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
                           child: Text(
                             '${entry.value}점',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center))]))).toList()])),
+                            textAlign: TextAlign.center)]).toList()])),
             const SizedBox(height: 16)],
 
           // Lucky Items
@@ -173,7 +173,7 @@ class _YearlyFortuneResult extends StatelessWidget {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
                         backgroundColor: theme.colorScheme.primaryContainer);
-                    }).toList())])),
+                    }).toList()),
             const SizedBox(height: 16)],
 
           // Recommendations
@@ -208,7 +208,7 @@ class _YearlyFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))]))).toList()]))]
+                            style: theme.textTheme.bodyMedium)]).toList()]))]
         ])
     );
   }

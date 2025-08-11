@@ -135,10 +135,10 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildSituation(ThemeData theme) {
     final situations = [
-      {'id': 'work', 'name': '직장/학교', 'icon': Icons.work},
-      {'id': 'social', 'name': '사교모임', 'icon': Icons.groups},
-      {'id': 'family', 'name': '가족모임', 'icon': Icons.family_restroom},
-      {'id': 'date', 'name': '데이트', 'icon': Icons.favorite}];
+      {'id': 'work': 'name': '직장/학교': 'icon': Icons.work},
+      {'id': 'social': 'name': '사교모임': 'icon': Icons.groups},
+      {'id': 'family': 'name': '가족모임': 'icon': Icons.family_restroom},
+      {'id': 'date': 'name': '데이트': 'icon': Icons.favorite}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -151,7 +151,8 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
       itemCount: situations.length,
       itemBuilder: (context, index) {
         final situation = situations[index];
-        final isSelected = _situation == situation['id'];
+        final isSelected = _situation == situation['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -201,14 +202,15 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildCurrentMood(ThemeData theme) {
     final moods = [
-      {'id': 'great', 'name': '좋음', 'icon': Icons.sentiment_very_satisfied},
-      {'id': 'normal', 'name': '보통', 'icon': Icons.sentiment_neutral},
-      {'id': 'tired', 'name': '피곤', 'icon': Icons.sentiment_dissatisfied},
-      {'id': 'stressed', 'name': '스트레스', 'icon': Icons.sentiment_very_dissatisfied}];
+      {'id': 'great': 'name': '좋음': 'icon': Icons.sentiment_very_satisfied},
+      {'id': 'normal': 'name': '보통': 'icon': Icons.sentiment_neutral},
+      {'id': 'tired': 'name': '피곤': 'icon': Icons.sentiment_dissatisfied},
+      {'id': 'stressed': 'name': '스트레스': 'icon': Icons.sentiment_very_dissatisfied}];
 
     return Row(
       children: moods.map((mood) {
-        final isSelected = _currentMood == mood['id'];
+        final isSelected = _currentMood == mood['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -260,13 +262,14 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildSocialPreference(ThemeData theme) {
     final preferences = [
-      {'id': 'introvert', 'name': '혼자가 좋아'},
-      {'id': 'moderate', 'name': '적당히'},
-      {'id': 'extrovert', 'name': '사람이 좋아'}];
+      {'id': 'introvert': 'name': '혼자가 좋아'},
+      {'id': 'moderate': 'name': '적당히'},
+      {'id': 'extrovert': 'name': '사람이 좋아'}];
 
     return Row(
       children: preferences.map((preference) {
-        final isSelected = _socialPreference == preference['id'];
+        final isSelected = _socialPreference == preference['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -309,14 +312,15 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
 
   Widget _buildRelationshipStatus(ThemeData theme) {
     final statuses = [
-      {'id': 'single', 'name': '싱글'},
-      {'id': 'dating', 'name': '연애중'},
-      {'id': 'married', 'name': '기혼'},
-      {'id': 'complicated', 'name': '복잡'}];
+      {'id': 'single': 'name': '싱글'},
+      {'id': 'dating': 'name': '연애중'},
+      {'id': 'married': 'name': '기혼'},
+      {'id': 'complicated': 'name': '복잡'}];
 
     return Row(
       children: statuses.map((status) {
-        final isSelected = _relationshipStatus == status['id'];
+        final isSelected = _relationshipStatus == status['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {

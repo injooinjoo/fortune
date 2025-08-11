@@ -155,10 +155,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                           _selectedIndex = null;
                         }
                       });
-                    }))),
+                    })),
               // 중앙 정보
               Center(
-                child: _buildCenterInfo())]));
+                child: _buildCenterInfo()]);
       });
   }
 
@@ -236,7 +236,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   child: Center(
                     child: Text(
                       info['icon'],
-                      style: Theme.of(context).textTheme.bodyMedium))),
+                      style: Theme.of(context).textTheme.bodyMedium)),
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
@@ -361,7 +361,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -371,7 +371,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
             const SizedBox(height: AppSpacing.spacing5),
             Text(
               info['icon'],
@@ -427,7 +427,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               Expanded(
                 child: Text(
                   item,
-                  style: Theme.of(context).textTheme.bodyMedium))]))).toList()]);
+                  style: Theme.of(context).textTheme.bodyMedium)])).toList()]);
   }
 }
 

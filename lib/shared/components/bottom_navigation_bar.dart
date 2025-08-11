@@ -96,7 +96,7 @@ class FortuneBottomNavigationBar extends StatelessWidget {
                   } else {
                     context.go(_items[index].route);
                   }
-                }))))));
+                })))));
   }
 }
 

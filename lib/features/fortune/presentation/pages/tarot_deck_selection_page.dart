@@ -114,7 +114,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                               Icon(
                                 Icons.style,
                                 size: 60,
-                                color: Colors.white.withOpacity(0.9)),
+                                color: Colors.white.withOpacity(0.9),
+                              ),
                               const SizedBox(height: 16),
                               Text(
                                 '당신에게 맞는 타로 덱을 선택하세요',
@@ -122,14 +123,19 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                                   fontSize: 24 * fontScale,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
-                                textAlign: TextAlign.center),
+                                textAlign: TextAlign.center,
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 '각 덱은 고유한 특성과 에너지를 가지고 있습니다',
                                 style: TextStyle(
                                   fontSize: 16 * fontScale,
                                   color: Colors.white70),
-                                textAlign: TextAlign.center)])),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 32),
 
                         // 경험 레벨 선택
@@ -145,7 +151,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                             currentDeckId,
                             mostUsedDeckId,
                             fontScale),
-                          const SizedBox(height: 32)],
+                          const SizedBox(height: 32),
+                        ],
 
                         // 모든 덱 섹션
                         _buildSectionTitle('모든 타로 덱', fontScale),
@@ -154,7 +161,14 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                           TarotDeckMetadata.getAllDecks(),
                           currentDeckId,
                           mostUsedDeckId,
-                          fontScale)]))))]),
+                          fontScale),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
               // Floating Action Button
               if (_tempSelectedDeckId != null) Positioned(
                 bottom: 20,
@@ -169,8 +183,17 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                       style: TextStyle(
                         fontSize: 16 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white)),
-                    icon: const Icon(Icons.check, color: Colors.white))))]))));
+                        color: Colors.white),
+                    ),
+                    icon: const Icon(Icons.check, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildSectionTitle(String title, double fontScale) {
@@ -183,15 +206,22 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
             gradient: LinearGradient(
               colors: [
                 const Color(0xFF9333EA),
-                const Color(0xFF7C3AED)]),
-            borderRadius: BorderRadius.circular(2))),
+                const Color(0xFF7C3AED),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
         const SizedBox(width: 12),
         Text(
           title,
           style: TextStyle(
             fontSize: 20 * fontScale,
             fontWeight: FontWeight.bold,
-            color: Colors.white))]);
+            color: Colors.white),
+        ),
+      ],
+    );
   }
 
   Widget _buildExperienceLevelSection(ThemeData theme, double fontScale) {
@@ -213,7 +243,10 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                 '나의 타로 경험',
                 style: TextStyle(
                   fontSize: 16 * fontScale,
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
@@ -223,7 +256,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
               return ChoiceChip(
                 label: Text(
                   level.displayName,
-                  style: TextStyle(fontSize: 14 * fontScale)),
+                  style: TextStyle(fontSize: 14 * fontScale),
+                ),
                 selected: isSelected,
                 onSelected: (selected) {
                   if (selected) {
@@ -231,9 +265,14 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   }
                 },
                 selectedColor: level.color.withOpacity(0.3),
-                backgroundColor: Colors.white.withOpacity(0.1));
-            }).toList())]));
-}
+                backgroundColor: Colors.white.withOpacity(0.1),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildDeckGrid(
     List<TarotDeck> decks,
@@ -298,7 +337,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     // 덱 프리뷰 이미지
                     Expanded(
                       child: Center(
-                        child: _buildDeckPreview(deck))),
+                        child: _buildDeckPreview(deck)),
                     const SizedBox(height: 12),
                     
                     // 덱 이름
@@ -352,7 +391,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     child: Icon(
                       Icons.check,
                       color: Colors.white,
-                      size: 16))),
+                      size: 16)),
               
               // 가장 많이 사용한 덱 표시
               if (isMostUsed && !isSelected) Positioned(
@@ -362,7 +401,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.orange.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     child: Text(
                       '자주 사용',
                       style: TextStyle(
@@ -425,8 +464,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                 child: Icon(
                   Icons.style,
                   color: Colors.white.withOpacity(0.5),
-                  size: 30)));
-          })));
+                  size: 30));
+          }));
   }
 
   Widget _buildTag(String text, Color color, double fontScale) {
@@ -443,6 +482,6 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         style: TextStyle(
           fontSize: 10 * fontScale,
           color: Colors.white,
-          fontWeight: FontWeight.w500)));
+          fontWeight: FontWeight.w500));
   }
 }

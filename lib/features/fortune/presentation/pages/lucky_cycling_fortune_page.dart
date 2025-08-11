@@ -46,16 +46,16 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 자전거 운세를 확인하고\n안전하고 즐거운 라이딩을 시작하세요!',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 자전거 운세를 확인하고\n안전하고 즐거운 라이딩을 시작하세요!',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5),
         const SizedBox(height: 24),
         
         // Bike Type
         Text(
-          '자전거 종류',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '자전거 종류',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildBikeTypeGrid(theme),
@@ -63,8 +63,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
         // Riding Style
         Text(
-          '라이딩 스타일',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '라이딩 스타일',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildRidingStyle(theme),
@@ -72,8 +72,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
         // Distance
         Text(
-          '예상 거리',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '예상 거리',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDistance(theme),
@@ -81,8 +81,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
 
         // Terrain
         Text(
-          '주행 환경',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '주행 환경',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTerrain(theme),
@@ -104,22 +104,22 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
               backgroundColor: const Color(0xFF14B8A6),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(16),
               elevation: 0),
             child: const Text(
-              '자전거 운세 보기',),
+              '자전거 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold)))]
     );
   }
 
   Widget _buildBikeTypeGrid(ThemeData theme) {
     final types = [
-      {'id': 'road', 'name': '로드바이크', 'icon': Icons.directions_bike},
-      {'id': 'mtb', 'name': 'MTB', 'icon': Icons.terrain},
-      {'id': 'hybrid', 'name': '하이브리드', 'icon': Icons.pedal_bike},
-      {'id': 'electric', 'name': '전기자전거', 'icon': Icons.electric_bike}];
+      {'id': 'road': 'name': '로드바이크': 'icon': Icons.directions_bike},
+      {'id': 'mtb': 'name': 'MTB': 'icon': Icons.terrain},
+      {'id': 'hybrid': 'name': '하이브리드': 'icon': Icons.pedal_bike},
+      {'id': 'electric': 'name': '전기자전거': 'icon': Icons.electric_bike}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -132,7 +132,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
       itemCount: types.length,
       itemBuilder: (context, index) {
         final type = types[index];
-        final isSelected = _bikeType == type['id'];
+        final isSelected = _bikeType == type['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -152,7 +153,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -165,20 +166,21 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                   type['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       });
   }
 
   Widget _buildRidingStyle(ThemeData theme) {
     final styles = [
-      {'id': 'leisure', 'name': '여유롭게'},
-      {'id': 'training', 'name': '트레이닝'},
-      {'id': 'commute', 'name': '출퇴근'},
-      {'id': 'touring', 'name': '투어링'}];
+      {'id': 'leisure': 'name': '여유롭게'},
+      {'id': 'training': 'name': '트레이닝'},
+      {'id': 'commute': 'name': '출퇴근'},
+      {'id': 'touring': 'name': '투어링'}];
 
     return Row(
       children: styles.map((style) {
-        final isSelected = _ridingStyle == style['id'];
+        final isSelected = _ridingStyle == style['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -199,26 +201,27 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                   color: isSelected
                       ? Colors.transparent
                       : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Center(
                 child: Text(
                   style['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
-      }).toList());
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
+      }).toList();
   }
 
   Widget _buildDistance(ThemeData theme) {
     final distances = [
-      {'id': 'short', 'name': '~20km'},
-      {'id': 'medium', 'name': '20-50km'},
-      {'id': 'long', 'name': '50-100km'},
-      {'id': 'century', 'name': '100km+'}];
+      {'id': 'short': 'name': '~20km'},
+      {'id': 'medium': 'name': '20-50km'},
+      {'id': 'long': 'name': '50-100km'},
+      {'id': 'century': 'name': '100km+'}];
 
     return Row(
       children: distances.map((distance) {
-        final isSelected = _distance == distance['id'];
+        final isSelected = _distance == distance['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -239,22 +242,22 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                   color: isSelected
                       ? Colors.transparent
                       : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Center(
                 child: Text(
                   distance['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
-      }).toList());
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
+      }).toList();
   }
 
   Widget _buildTerrain(ThemeData theme) {
     final terrains = [
-      {'id': 'flat', 'name': '평지', 'icon': Icons.landscape},
-      {'id': 'hilly', 'name': '언덕', 'icon': Icons.filter_hdr},
-      {'id': 'mountain', 'name': '산악', 'icon': Icons.terrain},
-      {'id': 'mixed', 'name': '혼합', 'icon': Icons.layers}];
+      {'id': 'flat': 'name': '평지': 'icon': Icons.landscape},
+      {'id': 'hilly': 'name': '언덕': 'icon': Icons.filter_hdr},
+      {'id': 'mountain': 'name': '산악': 'icon': Icons.terrain},
+      {'id': 'mixed': 'name': '혼합': 'icon': Icons.layers}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -267,7 +270,8 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
       itemCount: terrains.length,
       itemBuilder: (context, index) {
         final terrain = terrains[index];
-        final isSelected = _terrain == terrain['id'];
+        final isSelected = _terrain == terrain['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -287,7 +291,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -300,7 +304,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                   terrain['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       });
   }
 }
@@ -321,9 +325,9 @@ class _CyclingFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF14B8A6),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,7 +339,7 @@ class _CyclingFortuneResult extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFF14B8A6), Color(0xFF0D9488)]),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: const Icon(
                         Icons.directions_bike,
                         color: Colors.white,
@@ -346,18 +350,18 @@ class _CyclingFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 자전거 운세',),
-                            style: theme.textTheme.titleLarge?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '오늘의 자전거 운세',
+                            style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6)])]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)]))),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6)])),
         const SizedBox(height: 16),
 
         // Route Recommendation
@@ -414,7 +418,7 @@ class _CyclingFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,7 +429,7 @@ class _CyclingFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
                 child: Icon(
                   icon,
                   color: Colors.white,
@@ -433,12 +437,12 @@ class _CyclingFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith()
-                  fontWeight: FontWeight.bold))]),
+                style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              height: 1.5)]));
+            style: theme.textTheme.bodyMedium?.copyWith(
+            height: 1.5)]));
   }
 }

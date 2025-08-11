@@ -48,7 +48,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     _buildActionButtons(),
                     if (_analysisResult != null) ...[
                       const SizedBox(height: 32),
-                      _buildResultSection()]])))])));
+                      _buildResultSection()]]))]));
   }
 
   Widget _buildInstructions() {
@@ -76,7 +76,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -89,7 +89,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold))]))])).animate()
+                    fontWeight: FontWeight.bold)])])).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -119,11 +119,11 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Colors.black54,
-                          borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(20),
                         child: const Icon(
                           Icons.close,
                           color: Colors.white,
-                          size: 20))))])
+                          size: 20)))])
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -135,7 +135,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 Text(
                   '탭하여 사진 선택',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]))).animate()
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))])).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -154,7 +154,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     children: [
                       const Icon(Icons.camera_alt),
                       const SizedBox(width: 8),
-                      const Text('카메라로 촬영')]))),
+                      const Text('카메라로 촬영')])),
               const SizedBox(width: 12),
               Expanded(
                 child: GlassButton(
@@ -215,7 +215,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Expanded(
                 child: GlassButton(
                   onPressed: _resetAnalysis,
-                  child: const Text('다시 분석하기'))),
+                  child: const Text('다시 분석하기')),
               const SizedBox(width: 12),
               Expanded(
                 child: GlassButton(
@@ -258,7 +258,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               ListTile(
                 leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                 title: const Text('취소'),
-                onTap: () => Navigator.pop(context))]))));
+                onTap: () => Navigator.pop(context)]));
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -398,7 +398,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Navigator.pop(context);
               openAppSettings();
             },
-            child: const Text('설정으로 이동'))]));
+            child: const Text('설정으로 이동')]);
   }
 
   void _showInsufficientTokensModal() {

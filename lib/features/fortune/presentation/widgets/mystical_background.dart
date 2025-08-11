@@ -169,7 +169,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
                 FortuneColors.tarotDarkest, // Deep purple
                 FortuneColors.tarotDarkest, // Darker purple
                 Colors.black],
-              stops: const [0.0, 0.7, 1.0])),),
+              stops: const [0.0, 0.7, 1.0]))),
         
         // Animated nebulae
         if (widget.showNebula)
@@ -213,7 +213,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               radius: 1.5,
               colors: [
                 Colors.transparent,
-                Colors.black.withOpacity(0.3)])),),
+                Colors.black.withOpacity(0.3)]))),
         
         // Child widget
         widget.child,

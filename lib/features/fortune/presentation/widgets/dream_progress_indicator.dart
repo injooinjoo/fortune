@@ -112,7 +112,7 @@ class DreamProgressIndicator extends StatelessWidget {
                   height: AppSpacing.spacing1,
                   decoration: BoxDecoration(
                     color: Colors.grey.withOpacity(0.87),
-                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
                 // Progress line
                 AnimatedContainer(
                   duration: AppAnimations.durationLong,
@@ -124,14 +124,14 @@ class DreamProgressIndicator extends StatelessWidget {
                       colors: [
                         Colors.deepPurple.withOpacity(0.6),
                         Colors.deepPurple.withOpacity(0.8)]),
-                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.deepPurple.withOpacity(0.3),
                         blurRadius: 8,
-                        offset: const Offset(0, 2))])).animate().shimmer(
+                        offset: const Offset(0, 2)]).animate().shimmer(
                   duration: const Duration(seconds: 2),
-                  color: Colors.white.withOpacity(0.3))]))])
+                  color: Colors.white.withOpacity(0.3)])])
     );
   }
   

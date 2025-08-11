@@ -67,14 +67,15 @@ class DailyInspiration {
     
     // Quotes pool
     final quotes = [
-      ('오늘 하루도 당신의 빛으로 세상을 밝히세요.', '포춘 앱'),
-      ('작은 발걸음이 모여 큰 여정이 됩니다.', '노자'),
-      ('매일 조금씩 나아가는 것이 성공의 비결입니다.', '벤저민 프랭클린'),
-      ('당신의 잠재력은 무한합니다.', '포춘 앱'),
-      ('오늘은 새로운 시작을 위한 완벽한 날입니다.', '무명'),
-      ('긍정적인 마음이 긍정적인 결과를 만듭니다.', '부처'),
-      ('도전은 성장의 기회입니다.', '포춘 앱'),
-      ('믿음은 기적을 만드는 첫걸음입니다.', '헬렌 켈러')];
+      {'quote': '오늘 하루도 당신의 빛으로 세상을 밝히세요.', 'author': '포춘 앱'},
+      {'quote': '작은 발걸음이 모여 큰 여정이 됩니다.', 'author': '노자'},
+      {'quote': '매일 조금씩 나아가는 것이 성공의 비결입니다.', 'author': '벤저민 프랭클린'},
+      {'quote': '당신의 잠재력은 무한합니다.', 'author': '포춘 앱'},
+      {'quote': '오늘은 새로운 시작을 위한 완벽한 날입니다.', 'author': '무명'},
+      {'quote': '긍정적인 마음이 긍정적인 결과를 만듭니다.', 'author': '부처'},
+      {'quote': '도전은 성장의 기회입니다.', 'author': '포춘 앱'},
+      {'quote': '믿음은 기적을 만드는 첫걸음입니다.', 'author': '헬렌 켈러'},
+    ];
     
     // Personal messages based on day of week
     final personalMessages = {
@@ -84,60 +85,45 @@ class DailyInspiration {
       4: '목표에 가까워지고 있는 $name님, 조금만 더 힘내세요!',
       5: '불금을 앞둔 $name님, 오늘 하루도 활기차게!',
       6: '주말의 시작! $name님만의 특별한 시간을 만드세요.',
-      7: '편안한 일요일, $name님의 마음도 쉬어가는 시간이 되길.'};
+      7: '편안한 일요일, $name님의 마음도 쉬어가는 시간이 되길.'
+  };
     
     // Lucky tips based on zodiac
     final zodiacTips = {
-      '양자리': ['적극적인 행동이 행운을 부릅니다', '빨간색 소품을 활용해보세요', '오전 시간대가 행운의 시간입니다'],
-      '황소자리': ['인내심을 가지고 기다리세요', '초록색이 오늘의 행운색입니다', '맛있는 음식이 기분을 좋게 합니다'],
-      '쌍둥이자리': ['소통과 대화가 기회를 만듭니다', '노란색 물건이 행운을 가져옵니다', '새로운 정보를 접해보세요'],
-      '게자리': ['가족과의 시간이 힐링이 됩니다', '흰색이나 은색이 좋습니다', '집에서 보내는 시간도 소중해요'],
-      '사자자리': ['자신감 있는 모습이 매력적입니다', '금색 액세서리가 행운입니다', '리더십을 발휘해보세요'],
-      '처녀자리': ['세심한 계획이 성공을 만듭니다', '네이비색이 안정감을 줍니다', '건강 관리에 신경쓰세요'],
-      '천칭자리': ['균형잡힌 하루를 보내세요', '파스텔톤이 좋은 기운을 줍니다', '예술 활동이 영감을 줍니다'],
-      '전갈자리': ['직관을 믿고 행동하세요', '검은색이 카리스마를 높입니다', '비밀스러운 계획이 성공합니다'],
-      '사수자리': ['모험심을 발휘할 때입니다', '보라색이 행운을 부릅니다', '여행이나 학습이 좋습니다'],
-      '염소자리': ['목표를 향해 꾸준히 나아가세요', '갈색이 안정감을 줍니다', '실용적인 선택이 좋습니다'],
-      '물병자리': ['창의적인 아이디어가 빛납니다', '하늘색이 영감을 줍니다', '친구들과의 만남이 즐겁습니다'],
-      '물고기자리': ['감성적인 활동이 힐링됩니다', '연한 파란색이 마음을 편안하게 합니다', '예술이나 음악이 도움됩니다']};
+      '양자리': ['적극적인 행동이 행운을 부릅니다': '빨간색 소품을 활용해보세요', '오전 시간대가 행운의 시간입니다'],
+      '황소자리': ['인내심을 가지고 기다리세요': '초록색이 오늘의 행운색입니다', '맛있는 음식이 기분을 좋게 합니다'],
+      '쌍둥이자리': ['소통과 대화가 기회를 만듭니다': '노란색 물건이 행운을 가져옵니다', '새로운 정보를 접해보세요'],
+      '게자리': ['가족과의 시간이 힐링이 됩니다': '흰색이나 은색이 좋습니다', '집에서 보내는 시간도 소중해요'],
+      '사자자리': ['자신감 있는 모습이 매력적입니다': '금색 액세서리가 행운입니다', '리더십을 발휘해보세요'],
+      '처녀자리': ['세심한 계획이 성공을 만듭니다': '네이비색이 안정감을 줍니다', '건강 관리에 신경쓰세요'],
+      '천칭자리': ['균형잡힌 하루를 보내세요': '파스텔톤이 좋은 기운을 줍니다', '예술 활동이 영감을 줍니다'],
+      '전갈자리': ['직관을 믿고 행동하세요': '검은색이 카리스마를 높입니다', '비밀스러운 계획이 성공합니다'],
+      '사수자리': ['모험심을 발휘할 때입니다': '보라색이 행운을 부릅니다', '여행이나 학습이 좋습니다'],
+      '염소자리': ['목표를 향해 꾸준히 나아가세요': '갈색이 안정감을 줍니다', '실용적인 선택이 좋습니다'],
+      '물병자리': ['창의적인 아이디어가 빛납니다': '하늘색이 영감을 줍니다', '친구들과의 만남이 즐겁습니다'],
+      '물고기자리': ['감성적인 활동이 힐링됩니다': '연한 파란색이 마음을 편안하게 합니다', '예술이나 음악이 도움됩니다']};
     
     // MBTI-based affirmations
     final mbtiAffirmations = {
-      'INTJ': '나의 전략적 사고가 오늘도 빛을 발합니다.',
-      'INTP': '나의 분석력이 문제를 해결합니다.',
-      'ENTJ': '나의 리더십이 모두를 이끕니다.',
-      'ENTP': '나의 창의성이 새로운 기회를 만듭니다.',
-      'INFJ': '나의 직관이 올바른 길을 보여줍니다.',
-      'INFP': '나의 가치관이 세상을 더 나은 곳으로 만듭니다.',
-      'ENFJ': '나의 따뜻함이 사람들을 행복하게 합니다.',
-      'ENFP': '나의 열정이 꿈을 현실로 만듭니다.',
-      'ISTJ': '나의 신뢰성이 모두에게 힘이 됩니다.',
-      'ISFJ': '나의 배려심이 주변을 밝게 합니다.',
-      'ESTJ': '나의 추진력이 목표를 달성합니다.',
-      'ESFJ': '나의 친절함이 좋은 관계를 만듭니다.',
-      'ISTP': '나의 실용성이 문제를 해결합니다.',
-      'ISFP': '나의 감성이 아름다움을 만듭니다.',
-      'ESTP': '나의 행동력이 기회를 잡습니다.',
-      'ESFP': '나의 즐거움이 모두를 행복하게 합니다.'};
+      'INTJ': '나의 전략적 사고가 오늘도 빛을 발합니다.': 'INTP': '나의 분석력이 문제를 해결합니다.': 'ENTJ': '나의 리더십이 모두를 이끕니다.': 'ENTP': '나의 창의성이 새로운 기회를 만듭니다.': 'INFJ': '나의 직관이 올바른 길을 보여줍니다.': 'INFP': '나의 가치관이 세상을 더 나은 곳으로 만듭니다.': 'ENFJ': '나의 따뜻함이 사람들을 행복하게 합니다.': 'ENFP': '나의 열정이 꿈을 현실로 만듭니다.': 'ISTJ': '나의 신뢰성이 모두에게 힘이 됩니다.': 'ISFJ': '나의 배려심이 주변을 밝게 합니다.': 'ESTJ': '나의 추진력이 목표를 달성합니다.': 'ESFJ': '나의 친절함이 좋은 관계를 만듭니다.': 'ISTP': '나의 실용성이 문제를 해결합니다.': 'ISFP': '나의 감성이 아름다움을 만듭니다.': 'ESTP': '나의 행동력이 기회를 잡습니다.': 'ESFP': '나의 즐거움이 모두를 행복하게 합니다.'
+  };
     
     // Today's focus based on day
     final todayFocuses = [
-      '새로운 시작과 계획',
-      '실행과 추진력',
-      '소통과 네트워킹',
-      '집중과 완성',
-      '마무리와 정리',
-      '휴식과 충전',
-      '성찰과 준비'];
+      '새로운 시작과 계획': '실행과 추진력',
+      '소통과 네트워킹': '집중과 완성',
+      '마무리와 정리': '휴식과 충전',
+      '성찰과 준비'
+  ];
     
     // Select random quote
     final selectedQuote = quotes[random.nextInt(quotes.length)];
     
     // Get zodiac tips
     final userZodiacTips = zodiacTips[zodiacSign] ?? [
-      '긍정적인 마음가짐을 유지하세요',
-      '오늘의 행운색은 파란색입니다',
-      '새로운 만남에 열린 마음을 가지세요'];
+      '긍정적인 마음가짐을 유지하세요': '오늘의 행운색은 파란색입니다',
+      '새로운 만남에 열린 마음을 가지세요'
+  ];
     
     // Colors and icons
     final colors = [
@@ -196,19 +182,19 @@ class _DailyInspirationPageState extends ConsumerState<DailyInspirationPage>
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeIn)));
+      curve: const Interval(0.0, 0.5, curve: Curves.easeIn));
     
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.2, 0.7, curve: Curves.elasticOut)));
+      curve: const Interval(0.2, 0.7, curve: Curves.elasticOut));
     
     _slideAnimation = Tween<double>(
       begin: 50,
       end: 0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic)));
+      curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic));
     
     _animationController.forward();
   }
@@ -245,7 +231,7 @@ ${inspiration.affirmation}
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
     final inspirationAsync = ref.watch(dailyInspirationProvider);
     final now = DateTime.now();
-    final dateFormat = DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR');
+    final dateFormat = DateFormat('yyyy년 MM월 dd일 EEEE': 'ko_KR');
     
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -254,7 +240,7 @@ ${inspiration.affirmation}
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop()),
+          onPressed: () => context.pop(),
         title: Text(
           '오늘의 영감',
           style: TextStyle(
@@ -267,7 +253,7 @@ ${inspiration.affirmation}
               icon: const Icon(Icons.share_outlined, color: AppColors.textPrimary),
               onPressed: () => _shareInspiration(inspiration)),
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink())]),
+            error: (_, __) => const SizedBox.shrink()]),
       body: inspirationAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primary)),
@@ -290,7 +276,7 @@ ${inspiration.affirmation}
                   '잠시 후 다시 시도해주세요',
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: AppColors.textSecondary))])),
+                    color: AppColors.textSecondary)]),
         data: (inspiration) => SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: AnimatedBuilder(
@@ -321,6 +307,7 @@ ${inspiration.affirmation}
                               blurRadius: 20,
                               offset: const Offset(0, 10))]),
                         child: Column(
+
                           children: [
                             Icon(
                               inspiration.icon,
@@ -331,7 +318,7 @@ ${inspiration.affirmation}
                               dateFormat.format(now),
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: Colors.white.withOpacity(0.9))),
+                                color: Colors.white.withOpacity(0.9)),
                             const SizedBox(height: 20),
                             Text(
                               '"${inspiration.mainQuote}"',
@@ -347,7 +334,7 @@ ${inspiration.affirmation}
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
                                 color: Colors.white.withOpacity(0.9),
-                                fontStyle: FontStyle.italic))]))))),
+                                fontStyle: FontStyle.italic)]),
                 
                 // Personal Message
                 FadeTransition(
@@ -364,6 +351,7 @@ ${inspiration.affirmation}
                           blurRadius: 10,
                           offset: const Offset(0, 2))]),
                     child: Column(
+
                       children: [
                         Row(
                           children: [
@@ -371,8 +359,9 @@ ${inspiration.affirmation}
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: AppColors.primary.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(
+                                borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
                                 Icons.person,
                                 color: AppColors.primary,
                                 size: 20)),
@@ -390,7 +379,7 @@ ${inspiration.affirmation}
                             fontSize: 15 * fontScale,
                             color: AppColors.textPrimary,
                             height: 1.5),
-                          textAlign: TextAlign.center)]))),
+                          textAlign: TextAlign.center)])),
                 
                 // Today's Focus
                 FadeTransition(
@@ -405,8 +394,9 @@ ${inspiration.affirmation}
                           Colors.purple.withOpacity(0.1)]),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.blue.withOpacity(0.2))),
+                        color: Colors.blue.withOpacity(0.2)),
                     child: Column(
+
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -428,7 +418,7 @@ ${inspiration.affirmation}
                           style: TextStyle(
                             fontSize: 18 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary))]))),
+                            color: AppColors.textPrimary)]),
                 
                 // Lucky Tips
                 FadeTransition(
@@ -453,8 +443,9 @@ ${inspiration.affirmation}
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: Colors.amber.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(
+                                borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
                                 Icons.lightbulb_outline,
                                 color: Colors.amber,
                                 size: 20)),
@@ -477,7 +468,7 @@ ${inspiration.affirmation}
                                     height: 6,
                                     decoration: BoxDecoration(
                                       color: Colors.amber,
-                                      borderRadius: BorderRadius.circular(3))),
+                                      borderRadius: BorderRadius.circular(3),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
@@ -485,7 +476,7 @@ ${inspiration.affirmation}
                                       style: TextStyle(
                                         fontSize: 14 * fontScale,
                                         color: AppColors.textPrimary,
-                                        height: 1.4)))]))).toList()]))),
+                                        height: 1.4)]).toList()])),
                 
                 // Affirmation Card
                 FadeTransition(
@@ -502,8 +493,9 @@ ${inspiration.affirmation}
                         end: Alignment.bottomCenter),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primary.withOpacity(0.2))),
+                        color: AppColors.primary.withOpacity(0.2)),
                     child: Column(
+
                       children: [
                         const Icon(
                           Icons.favorite,
@@ -524,8 +516,8 @@ ${inspiration.affirmation}
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                             height: 1.4),
-                          textAlign: TextAlign.center)]))),
+                          textAlign: TextAlign.center)])),
                 
-                const SizedBox(height: 32)])))));
+                const SizedBox(height: 32)])));
   }
 }

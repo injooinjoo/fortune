@@ -16,7 +16,7 @@ class DreamElementsChart extends StatefulWidget {
     Key? key,
     required this.elementWeights,
     required this.elements,
-    this.showAnimation = true)
+    this.showAnimation = true,
   }) : super(key: key);
 
   @override
@@ -34,10 +34,12 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     super.initState();
     _animationController = AnimationController(
       duration: AppAnimations.durationShimmer,
-      vsync: this);
+      vsync: this,
+    );
     _animation = CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeInOut);
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -70,8 +72,8 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '꿈 요소 분석',),
-          style: Theme.of(context).textTheme.bodyMedium))
+          '꿈 요소 분석',
+          style: Theme.of(context).textTheme.bodyMedium),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
     decoration: BoxDecoration(
@@ -81,7 +83,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               color: Colors.deepPurple.withOpacity(0.3),
     width: 1)),
     child: Text(
-            '${_getTotalElements()}개 요소 발견',),
+            '${_getTotalElements()}개 요소 발견',
             style: Theme.of(context).textTheme.bodyMedium))
       ]
     );
@@ -126,7 +128,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     swapAnimationCurve: Curves.linear),
               // 중앙 텍스트
               Center(
-                child: _buildCenterInfo())]));
+                child: _buildCenterInfo()]);
       });
   }
 
@@ -298,7 +300,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               height: AppSpacing.spacing1),
     decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
             const SizedBox(height: AppSpacing.spacing5),
             Icon(
               _getCategoryIcon(category),

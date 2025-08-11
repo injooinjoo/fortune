@@ -49,24 +49,24 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '여러 운세를 한 번에!',),
+                    '여러 운세를 한 번에!',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
                   const SizedBox(height: 8),
                   const Text(
-                    '패키지로 구매하면 최대 50% 토큰 절약',),
+                    '패키지로 구매하면 최대 50% 토큰 절약',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70)),
                   const SizedBox(height: 16),
                   // 토큰 잔액 표시
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -78,7 +78,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                               size: 20),
                             const SizedBox(width: 8),
                             const Text(
-                              '보유 토큰',),
+                              '보유 토큰',
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14))]),
@@ -89,7 +89,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
-                            fontWeight: FontWeight.bold))]))])),
+                            fontWeight: FontWeight.bold)])]),
 
             // 패키지 리스트
             Padding(
@@ -98,7 +98,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '운세 패키지 선택',),
+                    '운세 패키지 선택',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
@@ -110,8 +110,8 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: BatchFortunePackageCard(
                         packageType: packageType,
-                        onTap: () => _onPackageSelected(packageType)));
-                  })])),
+                        onTap: () => _onPackageSelected(packageType));
+                  }).toList()),
 
             // 생성된 운세 결과
             if (batchState.results != null && batchState.results!.isNotEmpty) ...[
@@ -125,7 +125,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          '생성된 운세',),
+                          '생성된 운세',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold)),
@@ -135,7 +135,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                           },
                           child: const Text('초기화'))]),
                     const SizedBox(height: 16),
-                    const BatchFortuneResultsList()]))]])));
+                    const BatchFortuneResultsList()]))]]));
   }
 
   void _onPackageSelected(BatchPackageType packageType) async {
@@ -177,7 +177,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               Navigator.pop(context);
               context.push('/signup');
             },
-            child: const Text('로그인'))]));
+            child: const Text('로그인')]);
   }
 
   void _showInsufficientTokensDialog(int shortage) {
@@ -219,7 +219,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.green.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Row(
                 children: [
                   const Icon(
@@ -229,13 +229,13 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '${packageType.tokenCost} 토큰으로 ${savings.toStringAsFixed(0)}% 절약!',),
+                      '${packageType.tokenCost} 토큰으로 ${savings.toStringAsFixed(0)}% 절약!',
                       style: const TextStyle(
                         color: Colors.green,
-                        fontWeight: FontWeight.bold)))])),
+                        fontWeight: FontWeight.bold)]),
             const SizedBox(height: 16),
             const Text(
-              '운세:',),
+              '운세:',
               style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ...fortuneTypes.map((type) => Padding(
@@ -244,7 +244,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 children: [
                   const Icon(Icons.check, size: 16, color: Colors.green),
                   const SizedBox(width: 8),
-                  Text(_getFortuneTypeName(type))])))]),
+                  Text(_getFortuneTypeName(type)])]),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -258,32 +258,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
 
   String _getFortuneTypeName(String type) {
     final nameMap = {
-      'daily': '오늘의 운세',
-      'tomorrow': '내일의 운세',
-      'weekly': '주간 운세',
-      'monthly': '월간 운세',
-      'yearly': '연간 운세',
-      'saju': '사주팔자',
-      'love': '연애운',
-      'career': '직업운',
-      'wealth': '재물운',
-      'health': '건강운',
-      'personality': '성격 운세',
-      'talent': '재능 운세',
-      'biorhythm': '바이오리듬',
-      'lucky-color': '행운의 색',
-      'lucky-number': '행운의 숫자',
-      'lucky-items': '행운의 아이템',
-      'lucky-food': '행운의 음식',
-      'lucky-outfit': '행운의 의상',
-      'blind-date': '소개팅운',
-      'marriage': '결혼운',
-      'chemistry': '케미스트리',
-      'couple-match': '커플 매칭',
-      'business': '사업운',
-      'investment': '투자운',
-      'destiny': '운명',
-      'past-life': '전생'
+      'daily': '오늘의 운세': 'tomorrow': '내일의 운세': 'weekly': '주간 운세': 'monthly': '월간 운세': 'yearly': '연간 운세': 'saju': '사주팔자': 'love': '연애운': 'career': '직업운': 'wealth': '재물운': 'health': '건강운': 'personality': '성격 운세': 'talent': '재능 운세': 'biorhythm': '바이오리듬': 'lucky-color': '행운의 색': 'lucky-number': '행운의 숫자': 'lucky-items': '행운의 아이템': 'lucky-food': '행운의 음식': 'lucky-outfit': '행운의 의상': 'blind-date': '소개팅운': 'marriage': '결혼운': 'chemistry': '케미스트리': 'couple-match': '커플 매칭': 'business': '사업운': 'investment': '투자운': 'destiny': '운명': 'past-life': '전생'
     };
     return nameMap[type] ?? type;
   }

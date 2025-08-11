@@ -29,7 +29,7 @@ class LoadingIndicator extends StatelessWidget {
         child: CircularProgressIndicator(
           strokeWidth: strokeWidth,
           valueColor: AlwaysStoppedAnimation<Color>(
-            color ?? theme.primaryColor))));
+            color ?? theme.primaryColor)));
   }
 }
 
@@ -93,7 +93,7 @@ class GlassLoadingOverlay extends StatelessWidget {
                           SizedBox(height: AppSpacing.spacing4),
                           Text(
                             message!,
-                            style: Theme.of(context).textTheme.bodyMedium)]]))))))]);
+                            style: Theme.of(context).textTheme.bodyMedium)]])))))]);
   }
 }
 
@@ -212,7 +212,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                         const Expanded(
                           child: SkeletonLoader(height: 8)),
                         SizedBox(width: AppSpacing.spacing3),
-                        const SkeletonLoader(width: 40, height: 16)])))])),
+                        const SkeletonLoader(width: 40, height: 16)]))]),
           SizedBox(height: AppSpacing.spacing4),
 
           // Lucky Items Skeleton
@@ -235,7 +235,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                   children: List.generate(
                     6,
                     (index) => const SkeletonLoader(
-                      borderRadius: BorderRadius.all(Radius.circular(16)))))])),
+                      borderRadius: BorderRadius.all(Radius.circular(16)))]),
           SizedBox(height: AppSpacing.spacing4),
 
           // Description Skeleton
@@ -252,8 +252,8 @@ class FortuneResultSkeleton extends StatelessWidget {
                   5,
                   (index) => const Padding(
                     padding: EdgeInsets.only(bottom: AppSpacing.xSmall),
-                    child: SkeletonLoader(height: 16))),
-                const SkeletonLoader(width: 200, height: 16)]))]));
+                    child: SkeletonLoader(height: 16)),
+                const SkeletonLoader(width: 200, height: 16)])]);
   }
 }
 
@@ -286,7 +286,7 @@ class ListItemSkeleton extends StatelessWidget {
                 const SkeletonLoader(
                   width: AppDimensions.buttonHeightMedium,
                   height: AppDimensions.buttonHeightMedium,
-                  borderRadius: BorderRadius.all(Radius.circular(24))),
+                  borderRadius: BorderRadius.all(Radius.circular(24)),
                 SizedBox(width: AppSpacing.spacing4),
                 Expanded(
                   child: Column(
@@ -335,7 +335,7 @@ class GridSkeleton extends StatelessWidget {
               SkeletonLoader(
                 width: 60,
                 height: 60,
-                borderRadius: BorderRadius.all(Radius.circular(30))),
+                borderRadius: BorderRadius.all(Radius.circular(30)),
               SizedBox(height: AppSpacing.spacing3),
               SkeletonLoader(width: 80, height: 16)]));
       });

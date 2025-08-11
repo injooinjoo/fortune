@@ -29,7 +29,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
     {'id': 'media', 'label': '미디어/방송', 'icon': Icons.movie},
     {'id': 'sports', 'label': '스포츠/운동', 'icon': Icons.sports},
     {'id': 'nature', 'label': '자연/환경', 'icon': Icons.eco},
-    {'id': 'law', 'label': '법률/정책', 'icon': Icons.gavel},
+    {'id': 'law', 'label': '법률/정첅', 'icon': Icons.gavel},
     {'id': 'trade', 'label': '무역/물류', 'icon': Icons.local_shipping},
   ];
   
@@ -284,7 +284,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
       context: context,
       initialDate: _birthdate ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now());
+      lastDate: DateTime.now(),
+    );
     if (picked != null) {
       setState(() {
         _birthdate = picked;
@@ -305,8 +306,11 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.blue[100]!,
-                  Colors.cyan[100]!]),
-              borderRadius: BorderRadius.circular(16)),
+                  Colors.cyan[100]!,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Column(
               children: [
                 const Icon(
@@ -326,16 +330,24 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   data['recommended_job'] ?? '분석 중',
                   style: const TextStyle(
                     fontSize: 28,
-                    fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
                 if (data['job_description'] != null) ...[
                   const SizedBox(height: 12),
                   Text(
                     data['job_description'],
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[700]),
-                    textAlign: TextAlign.center)]]),),
+                      color: Colors.grey[700],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
         ],
         
@@ -358,7 +370,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     strokeWidth: 8,
                     backgroundColor: Colors.grey[200],
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      _getScoreColor(result.overallScore!)))),
+                      _getScoreColor(result.overallScore!),
+                    ),
+                  ),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
@@ -377,7 +391,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: _getScoreColor(result.overallScore!))),
+                          color: _getScoreColor(result.overallScore!),
+                        ),
+                      ),
                       Text(
                         _getScoreMessage(result.overallScore!),
                         style: TextStyle(
@@ -468,12 +484,16 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         height: 8,
                         decoration: const BoxDecoration(
                           color: Colors.orange,
-                          shape: BoxShape.circle)),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           job.toString(),
-                          style: const TextStyle(fontSize: 15))),
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                      ),
                     ],
                   ),
                 )).toList(),
@@ -530,8 +550,11 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.purple[50]!,
-                  Colors.blue[50]!]),
-              borderRadius: BorderRadius.circular(12)),
+                  Colors.blue[50]!,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -568,7 +591,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.green[50],
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -596,19 +620,26 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         height: 24,
                         decoration: BoxDecoration(
                           color: Colors.green,
-                          shape: BoxShape.circle),
+                          shape: BoxShape.circle,
+                        ),
                         child: Center(
                           child: Text(
                             '${entry.key + 1}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
-                              fontWeight: FontWeight.bold)))),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           entry.value,
-                          style: const TextStyle(fontSize: 14))),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ],
                   ),
                 )).toList(),

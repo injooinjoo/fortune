@@ -71,7 +71,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '알림 설정',
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold))]))),
+                        fontWeight: FontWeight.bold)]),
             
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -111,7 +111,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                   const SizedBox(height: 32),
                   
                   _buildTestNotificationButton(),
-                  const SizedBox(height: 20)])))])));
+                  const SizedBox(height: 20)]))]));
   }
 
   Widget _buildSectionTitle(String title) {
@@ -136,7 +136,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             height: 48,
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Icon(
               Icons.notifications,
               color: AppColors.primary,
@@ -154,7 +154,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   '모든 알림을 켜거나 끕니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))]),
           Switch(
             value: _settings.enabled,
             onChanged: (value) {
@@ -187,7 +187,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 child: Text(
                   '푸시 알림',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600))),
+                    fontWeight: FontWeight.w600)),
               Switch(
                 value: _settings.enabled,
                 onChanged: _settings.enabled ? (value) {
@@ -212,7 +212,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '프리미엄 회원 전용',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary))])),
+                        color: theme.colorScheme.primary)]),
               Switch(
                 value: false,
                 onChanged: null,
@@ -228,7 +228,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 child: Text(
                   '이메일 알림',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600))),
+                    fontWeight: FontWeight.w600)),
               Switch(
                 value: false,
                 onChanged: _settings.enabled ? (value) {
@@ -357,7 +357,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 height: 48,
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Icon(
                   Icons.wb_sunny,
                   color: AppColors.secondary)),
@@ -374,12 +374,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '매일 ${_morningTime.format(context)}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6))]),
               TextButton(
                 onPressed: _settings.enabled && _settings.dailyFortune
                     ? () => _selectTime(true)
                     : null,
-                child: const Text('변경'))])),
+                child: const Text('변경')]),
         const SizedBox(height: 8),
         GlassContainer(
           padding: const EdgeInsets.all(20),
@@ -390,7 +390,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 height: 48,
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Icon(
                   Icons.nightlight_round,
                   color: AppColors.secondary)),
@@ -407,7 +407,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '매일 ${_eveningTime.format(context)}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6))]),
               Row(
                 children: [
                   Switch(
@@ -468,7 +468,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             height: 40,
             decoration: BoxDecoration(
               color: AppColors.secondary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10)),
+              borderRadius: BorderRadius.circular(10),
             child: Icon(
               icon,
               color: AppColors.secondary,
@@ -486,7 +486,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   subtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))]),
           Switch(
             value: value && _settings.enabled,
             onChanged: _settings.enabled ? onChanged : null,

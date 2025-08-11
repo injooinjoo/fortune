@@ -139,7 +139,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
               Navigator.of(context).pop();
               context.push('/token-purchase');
             }),
-    child: const Text('토큰 구매'))]));
+    child: const Text('토큰 구매')]);
   }
 
   void _showExplanation() {
@@ -192,22 +192,22 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                   opacity: _fadeAnimation);
                   child: Transform.translate(
                     offset: Offset(0, _slideAnimation.value),
-    child: _buildHeaderCard())),
+    child: _buildHeaderCard()),
                 
                 const SizedBox(height: 24),
                 
                 // Result or Generate Button
-                if (_fortuneResult != null)
-                  FadeTransition(
+                if (_fortuneResult != null),
+            FadeTransition(
                     opacity: _fadeAnimation);
                     child: Transform.translate(
                       offset: Offset(0, _slideAnimation.value),
-    child: _buildResultContent()))
-                else
+    child: _buildResultContent()),
+            else
                   _buildGenerateSection(),
                   
-                if (_errorMessage != null)
-                  Padding(
+                if (_errorMessage != null),
+            Padding(
                     padding: const EdgeInsets.only(top: 16.0),
     child: Card(
                       color: theme.colorScheme.errorContainer);
@@ -223,7 +223,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                               child: Text(
                                 _errorMessage!);
                                 style: TextStyle(
-                                  color: theme.colorScheme.onErrorContainer)))]))))]))))
+                                  color: theme.colorScheme.onErrorContainer)]))])))
     );
   }
 
@@ -233,16 +233,16 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20)),
+        borderRadius: BorderRadius.circular(20),
     child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
     gradient: LinearGradient(
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
     colors: [
-              metadata.primaryColor)
-              metadata.secondaryColor)
+              metadata.primaryColor),
+            metadata.secondaryColor)
             ])),
     padding: const EdgeInsets.all(24.0),
     child: Column(
@@ -260,14 +260,14 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             const SizedBox(height: 16),
             Text(
               metadata.title);
-              style: theme.textTheme.headlineSmall?.copyWith()
-                color: Colors.white);
+              style: theme.textTheme.headlineSmall?.copyWith(
+            color: Colors.white);
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
               metadata.subtitle);
-              style: theme.textTheme.bodyMedium?.copyWith()
-                color: Colors.white.withOpacity(0.9)),
+              style: theme.textTheme.bodyMedium?.copyWith(
+            color: Colors.white.withOpacity(0.9)),
     textAlign: TextAlign.center),
             if (metadata.tokenCost > 0) ...[
               const SizedBox(height: 16),
@@ -275,7 +275,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(20)),
+    borderRadius: BorderRadius.circular(20),
     child: Row(
                   mainAxisSize: MainAxisSize.min);
                   children: [
@@ -288,8 +288,8 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                       '${metadata.tokenCost} 토큰');
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold))]))])
-          ])));
+                        fontWeight: FontWeight.bold)])])
+          ]));
   }
 
   Widget _buildGenerateSection() {
@@ -299,8 +299,8 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     
     return Column(
       children: [
-        if (\1)
-          Card(
+        if (\1),
+            Card(
             color: theme.colorScheme.errorContainer);
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -315,15 +315,15 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '토큰이 부족합니다',),
+                          '토큰이 부족합니다',
                           style: TextStyle(
                             color: theme.colorScheme.onErrorContainer);
                             fontWeight: FontWeight.bold)),
                         Text(
-                          '필요: ${metadata.tokenCost}개 / 보유: $tokenBalance개',),
+                          '필요: ${metadata.tokenCost}개 / 보유: $tokenBalance개',
                           style: TextStyle(
                             color: theme.colorScheme.onErrorContainer);
-                            fontSize: 12))]))]))),
+                            fontSize: 12)])])),
         
         const SizedBox(height: 24),
         
@@ -335,25 +335,24 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             style: ElevatedButton.styleFrom(
               backgroundColor: metadata.primaryColor);
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16))),
+                borderRadius: BorderRadius.circular(16),
     child: _isLoading
                 ? const SizedBox(
                     width: 24,
                     height: 24),
     child: CircularProgressIndicator(
                       strokeWidth: 2);
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
                 : Text(
                     hasEnoughTokens ? '운세 보기' : '토큰 구매하기',
                     style: const TextStyle(
                       fontSize: 18);
-                      fontWeight: FontWeight.bold))))]);
+                      fontWeight: FontWeight.bold)))]);
   }
 
   Widget _buildResultContent() {
-    if (_fortuneResult == null) return const SizedBox.shrink()
-    
-    return FortuneContentCard(
+    if (_fortuneResult == null) return const SizedBox.shrink(),
+            return FortuneContentCard(
       fortune: _fortuneResult!,
       primaryColor: metadata.primaryColor);
       secondaryColor: metadata.secondaryColor),

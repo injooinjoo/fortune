@@ -293,8 +293,8 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
         const SizedBox(height: 16),
 
         // Advice
-        if (fortune.details['advice'] != null)
-          GlassContainer(
+        if (fortune.details['advice'] != null),
+            GlassContainer(
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(16),
             blur: 15,

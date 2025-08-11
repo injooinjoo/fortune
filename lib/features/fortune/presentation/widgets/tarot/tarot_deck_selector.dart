@@ -72,10 +72,10 @@ class _TarotDeckSelectorState extends ConsumerState<TarotDeckSelector> {
                   Text(
                     currentDeck.style.label);
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)]),
             Icon(
               _isExpanded ? Icons.expand_less : Icons.expand_more);
-              color: theme.colorScheme.onSurface.withOpacity(0.5))]))
+              color: theme.colorScheme.onSurface.withOpacity(0.5)])
     );
   }
 

@@ -163,7 +163,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   _getPositionLabel(index),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 12 * fontScale))]));
+                    fontSize: 12 * fontScale)]);
         }));
   }
 
@@ -199,7 +199,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     result['overallInterpretation'],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16 * fontScale,
-                      height: 1.5))])),
+                      height: 1.5)]),
             const SizedBox(height: 16)],
           
           // Individual card interpretations
@@ -234,7 +234,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                                 '${index + 1}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.primary)))),
+                                  color: theme.colorScheme.primary)),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -247,7 +247,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         interpretation['meaning'] ?? '',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontSize: 14 * fontScale,
-                          height: 1.4))])));
+                          height: 1.4)]));
             })],
           
           // Advice
@@ -279,7 +279,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     result['advice'],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16 * fontScale,
-                      height: 1.5))]))],
+                      height: 1.5)])],
           const SizedBox(height: 24)]));
   }
 
@@ -299,7 +299,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12))))),
+                    borderRadius: BorderRadius.circular(12))),
           if (widget.onShare != null) ...[
             const SizedBox(width: 16),
             Expanded(
@@ -312,7 +312,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)))))]]));
+                    borderRadius: BorderRadius.circular(12))))]]));
   }
 
   String _getPositionLabel(int index) {

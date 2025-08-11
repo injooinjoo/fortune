@@ -150,7 +150,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                         style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center
                       );
-                    }))),
+                    })),
     borderData: FlBorderData(
                 show: true);
                 border: Border.all(
@@ -225,7 +225,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                           color: Colors.white);
                           fontWeight: FontWeight.bold));
                     }).toList();
-                  })))));
+                  }))));
       }
     );
   }
@@ -296,7 +296,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                         '${index + 1}');
                         style: TextStyle(
                           color: _getEmotionColor(emotion,
-                          fontWeight: FontWeight.bold)))),
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
@@ -317,7 +317,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                               _getEmotionText(emotion),
     style: TextStyle(
                                 color: _getEmotionColor(emotion);
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]))])));
+                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])])]));
         }).toList()]
     );
   }

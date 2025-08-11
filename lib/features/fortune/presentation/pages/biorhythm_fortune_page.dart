@@ -70,7 +70,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
               initialDate: _birthDate ?? DateTime(1990),
               firstDate: DateTime(1900),
               lastDate: DateTime.now(),
-              locale: const Locale('ko', 'KR'));
+              locale: const Locale('ko': 'KR'));
             if (date != null) {
               setState(() {
                 _birthDate = date;
@@ -81,7 +81,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               children: [
                 Icon(
@@ -125,7 +125,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
               initialDate: _targetDate,
               firstDate: DateTime.now().subtract(const Duration(days: 365)),
               lastDate: DateTime.now().add(const Duration(days: 365)),
-              locale: const Locale('ko', 'KR'));
+              locale: const Locale('ko': 'KR'));
             if (date != null) {
               setState(() {
                 _targetDate = date;
@@ -136,7 +136,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               children: [
                 Icon(
@@ -197,11 +197,11 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                     color: theme.colorScheme.onSurface.withOpacity(0.8),
                     height: 1.5)),
                 const SizedBox(height: 12),
-                _buildRhythmInfo(theme, '신체 리듬', '23일', Colors.red),
+                _buildRhythmInfo(theme, '신체 리듬': '23일', Colors.red),
                 const SizedBox(height: 8),
-                _buildRhythmInfo(theme, '감정 리듬', '28일', Colors.blue),
+                _buildRhythmInfo(theme, '감정 리듬': '28일', Colors.blue),
                 const SizedBox(height: 8),
-                _buildRhythmInfo(theme, '지적 리듬', '33일', Colors.green),
+                _buildRhythmInfo(theme, '지적 리듬': '33일', Colors.green),
               ],
             ),
           ),
@@ -224,7 +224,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
               backgroundColor: const Color(0xFF6366F1),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(16),
               elevation: 0),
             child: const Text(
               '바이오리듬 분석하기',
@@ -257,7 +257,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
         Text(
           '($cycle 주기)',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6)))]);
+            color: theme.colorScheme.onSurface.withOpacity(0.6))]);
   }
 }
 
@@ -306,8 +306,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
     
     // Extract dates from result
-    final birthDate = DateTime.parse(result.details?['birthDate'] ?? DateTime(1990).toIso8601String());
-    final targetDate = DateTime.parse(result.details?['targetDate'] ?? DateTime.now().toIso8601String());
+    final birthDate = DateTime.parse(result.details?['birthDate'] ?? DateTime(1990).toIso8601String();
+    final targetDate = DateTime.parse(result.details?['targetDate'] ?? DateTime.now().toIso8601String();
     
     // Calculate biorhythms
     final biorhythms = calculateBiorhythms(birthDate, targetDate);
@@ -335,7 +335,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: const Icon(
                         Icons.timeline_rounded,
                         color: Colors.white,
@@ -460,7 +460,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                           showTitles: true,
                           interval: 1,
                           getTitlesWidget: (value, meta) {
-                            final date = targetDate.add(Duration(days: value.toInt()));
+                            final date = targetDate.add(Duration(days: value.toInt());
                             return Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
@@ -476,11 +476,11 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                             return Text(
                               '${(value * 100).toInt()}%',
                               style: theme.textTheme.bodySmall);
-                          }))),
+                          })),
                     borderData: FlBorderData(
                       show: true,
                       border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.3))),
+                        color: theme.colorScheme.outline.withOpacity(0.3)),
                     minX: 0,
                     maxX: 6,
                     minY: -1.2,
@@ -506,7 +506,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Colors.red.withOpacity(0.1))),
+                          color: Colors.red.withOpacity(0.1)),
                       // Emotional rhythm
                       LineChartBarData(
                         spots: generateChartData(birthDate, targetDate, emotionalCycle, 7),
@@ -764,7 +764,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: _getStatusColor(status).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Text(
                   _getStatusText(status),
                   style: TextStyle(
@@ -788,7 +788,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -829,7 +829,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12)),
+        borderRadius: BorderRadius.circular(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -881,7 +881,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
   }
 
   Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
+    switch (status.toLowerCase() {
       case 'high': return Colors.green;
       case 'medium':
         return Colors.blue;
@@ -894,7 +894,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
   }
 
   String _getStatusText(String status) {
-    switch (status.toLowerCase()) {
+    switch (status.toLowerCase() {
       case 'high': return '최고';
       case 'medium':
         return '양호';

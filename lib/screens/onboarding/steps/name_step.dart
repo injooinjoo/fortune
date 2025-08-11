@@ -82,7 +82,7 @@ class _NameStepState extends State<NameStep> {
                               context.isDarkMode ? context.fortuneTheme.primaryText : AppColors.textPrimary, Colors.transparent)
                               animation.value),
                             borderRadius: BorderRadius.circular(
-                              (context.fortuneTheme.bottomSheetStyles.borderRadius + 4) * (1 - animation.value))),
+                              (context.fortuneTheme.bottomSheetStyles.borderRadius + 4) * (1 - animation.value)),
                           padding: EdgeInsets.symmetric(
                             horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25 * (1 - animation.value),
                             vertical: context.fortuneTheme.formStyles.inputPadding.horizontal * (1 - animation.value)),
@@ -93,7 +93,7 @@ class _NameStepState extends State<NameStep> {
                                 color: Color.lerp(
                                   context.isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary, context.fortuneTheme.primaryText)
                                   animation.value)),
-                              child: const Text('이름이 뭐예요?')))));
+                              child: const Text('이름이 뭐예요?'))));
                     });
                 },
                 child: Material(
@@ -106,7 +106,7 @@ class _NameStepState extends State<NameStep> {
                     textAlign: TextAlign.center).animate().fadeIn(
                     duration: const Duration(milliseconds: 600)).shimmer(
                     duration: const Duration(milliseconds: 1200),
-                    color: AppColors.textPrimaryDark.withOpacity(0.3)))),
+                    color: AppColors.textPrimaryDark.withOpacity(0.3)),
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               Text(
                 '운세의 주인공이 되어주세요',
@@ -136,7 +136,7 @@ class _NameStepState extends State<NameStep> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: Theme.of(context).primaryColor,
-                      width: context.fortuneTheme.formStyles.focusBorderWidth))),
+                      width: context.fortuneTheme.formStyles.focusBorderWidth)),
                 textCapitalization: TextCapitalization.words).animate(
                 delay: const Duration(milliseconds: 500)).fadeIn(
                 duration: const Duration(milliseconds: 600)).slideY(
@@ -158,7 +158,7 @@ class _NameStepState extends State<NameStep> {
                   child: Text(
                     '확인',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600)))).animate(
+                      fontWeight: FontWeight.w600))).animate(
                 delay: const Duration(milliseconds: 700)).fadeIn(
                 duration: const Duration(milliseconds: 600)),
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
@@ -172,6 +172,6 @@ class _NameStepState extends State<NameStep> {
                   delay: const Duration(milliseconds: 800)).fadeIn(
                   duration: const Duration(milliseconds: 600)),
               // Add padding to account for keyboard
-              SizedBox(height: keyboardHeight > 0 ? 20 : 0)]))));
+              SizedBox(height: keyboardHeight > 0 ? 20 : 0)])));
   }
 }

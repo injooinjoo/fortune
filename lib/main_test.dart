@@ -31,6 +31,6 @@ class TestApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Test')),
         body: const Center(
-          child: Text('테스트 화면입니다'))));
+          child: Text('테스트 화면입니다')));
   }
 }

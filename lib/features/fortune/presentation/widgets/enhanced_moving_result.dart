@@ -520,7 +520,7 @@ class EnhancedMovingResult extends StatelessWidget {
       '지역 적합성': 90,
       '가족 운': 80,
       '재물 운': 70,
-    };;
+    };
     
     return Card(
       child: Padding(

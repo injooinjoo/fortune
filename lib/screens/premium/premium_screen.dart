@@ -71,7 +71,7 @@ class PremiumScreen extends StatelessWidget {
                             backgroundColor: theme.colorScheme.primary),
                           child: const Text(
                             '프리미엄 시작하기',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))]))])))]));
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))])]))]);
   }
 
   Widget _buildFeatureItem(
@@ -87,7 +87,7 @@ class PremiumScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           child: Icon(
             icon,
             color: theme.colorScheme.primary)),
@@ -104,6 +104,6 @@ class PremiumScreen extends StatelessWidget {
               Text(
                 description,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]);
+                  color: theme.colorScheme.onSurface.withOpacity(0.6))])]);
   }
 }

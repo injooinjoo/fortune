@@ -98,7 +98,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
           'id': user.id,
           'email': user.email,
           'created_at': DateTime.now().toIso8601String(),
-          'updated_at': null};
+          'updated_at': null
+        };
         
         // Add additional info from user metadata if available
         if (user.userMetadata != null) {
@@ -287,7 +288,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('네이버 로그인을 처리하고 있습니다...')));
+            content: Text('네이버 로그인을 처리하고 있습니다...')
+          )
+        );
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');
@@ -295,7 +298,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red));
+            backgroundColor: Colors.red
+          )
+        );
       }
     } finally {
       if (mounted) {
@@ -315,7 +320,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Instagram 로그인은 준비 중입니다.'),
-            backgroundColor: Colors.orange));
+            backgroundColor: Colors.orange
+          )
+        );
       }
     } finally {
       if (mounted) {
@@ -335,7 +342,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('TikTok 로그인은 준비 중입니다.'),
-            backgroundColor: Colors.orange));
+            backgroundColor: Colors.orange
+          )
+        );
       }
     } finally {
       if (mounted) {
@@ -360,12 +369,12 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         maxChildSize: 0.9,
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.only(
-      topLeft: Radius.circular(25),
-              topRight: Radius.circular(25))),
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25)),
           child: Column(
-      children: [
+            children: [
               // Drag handle
               Container(
                 margin: const EdgeInsets.only(top: 12),
@@ -373,7 +382,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                 height: 4,
                 decoration: BoxDecoration(
       color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2))),
+                  borderRadius: BorderRadius.circular(2),
               
               // Content
               Expanded(
@@ -470,7 +479,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                           height: 1.5),
                         textAlign: TextAlign.center),
                       
-                      const SizedBox(height: 20)])))]))));
+                      const SizedBox(height: 20)]))]));
   }
 
   Future<void> _handleSocialLogin(String provider) async {
@@ -491,7 +500,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                     height: 20,
                     child: CircularProgressIndicator(
       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
                   SizedBox(width: 16),
                   Text('Google 로그인 진행 중...')]),
               duration: Duration(seconds: 10), // Auth timeout과 동일
@@ -587,7 +596,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                 '로그인 상태를 확인하고 있습니다...',
                 style: TextStyle(
       fontSize: 16,
-                  color: Colors.grey[600]))])));
+                  color: Colors.grey[600])]));
     }
 
     return Scaffold(
@@ -765,7 +774,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                         size: 24,
                         color: Theme.of(context).brightness == Brightness.dark 
                             ? Colors.grey[300] 
-                            : Colors.grey[600])))),
+                            : Colors.grey[600])),
                 
                 // Main content
                 Expanded(
@@ -828,18 +837,18 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       backgroundColor: Colors.black,
                                   foregroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(28)),
+      borderRadius: BorderRadius.circular(28),
                                   elevation: 0),
                                 child: Text(
                                   '시작하기',
                                   style: TextStyle(
       fontSize: 18,
-                                    fontWeight: FontWeight.w600)))))).animate()
+                                    fontWeight: FontWeight.w600))))).animate()
                           .fadeIn(delay: 600.ms, duration: 600.ms)
                           .scale(
                             begin: Offset(0.9, 0.9),
                             end: Offset(1.0, 1.0),
-                            duration: 400.ms)])))]))]));
+                            duration: 400.ms)]))])]));
   }
 
   Widget _buildSocialLoginButton({
@@ -882,7 +891,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               style: TextStyle(
       fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black))));
+                color: Colors.black)));
         text = '카카오로 계속하기';
         backgroundColor = Color(0xFFFEE500);
         foregroundColor = Colors.black87;
@@ -900,7 +909,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               style: TextStyle(
       fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white))));
+                color: Colors.white)));
         text = '네이버로 계속하기';
         backgroundColor = Color(0xFF03C75A);
         foregroundColor = Colors.white;
@@ -937,7 +946,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               text,
               style: TextStyle(
       fontSize: 16,
-                fontWeight: FontWeight.w600))]))).animate()
+                fontWeight: FontWeight.w600)])).animate()
       .fadeIn(delay: Duration(milliseconds: delay), duration: 600.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -1017,7 +1026,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       borderRadius: BorderRadius.circular(26),
             side: BorderSide(
       color: borderColor ?? Colors.transparent,
-              width: 1))),
+              width: 1)),
         child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1027,7 +1036,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               text,
               style: TextStyle(
       fontSize: 16,
-                fontWeight: FontWeight.w600))])));
+                fontWeight: FontWeight.w600)]));
   }
   
   Widget _buildTikTokStyleButton({
@@ -1063,7 +1072,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               style: TextStyle(
       fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black))));
+                color: Colors.black)));
         text = 'Continue with Kakao';
         break;
       case 'naver':
@@ -1079,7 +1088,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               style: TextStyle(
       fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white))));
+                color: Colors.white)));
         text = 'Continue with Naver';
         break;
       case 'instagram':
@@ -1123,7 +1132,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       color: Theme.of(context).brightness == Brightness.dark 
                   ? Colors.grey[300]! 
                   : Colors.grey[800]!,
-              width: 1))),
+              width: 1)),
         child: Row(
       children: [
             icon,

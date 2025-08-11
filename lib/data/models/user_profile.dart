@@ -248,7 +248,7 @@ class FortunePreferences extends Equatable {
     return {
       'category_weights': categoryWeights,
       'visited_fortunes': visitedFortunes,
-      'last_visited': lastVisited.map((k, v) => MapEntry(k, v.toIso8601String())),
+      'last_visited': lastVisited.map((k, v) => MapEntry(k, v.toIso8601String()),
       'favorites': favorites,
       'excluded': excluded,
       'preferred_hour': preferredHour,

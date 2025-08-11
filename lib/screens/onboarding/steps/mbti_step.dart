@@ -33,10 +33,10 @@ class _MbtiStepState extends State<MbtiStep> {
   int _currentDimension = 0;
   
   final List<Map<String, String>> dimensions = [
-    {'title': '에너지 방향': 'option1': 'E': 'option2': 'I'},
+    {'title': '에너지 방향', 'option1': 'E', 'option2': 'I'},
     {'title': '인식 기능', 'option1': 'N', 'option2': 'S'},
     {'title': '판단 기능', 'option1': 'T', 'option2': 'F'},
-    {'title': '생활 양식', 'option1': 'J', 'option2': 'P'}}
+    {'title': '생활 양식', 'option1': 'J', 'option2': 'P'}
   ];
 
   @override
@@ -53,25 +53,22 @@ class _MbtiStepState extends State<MbtiStep> {
       dimension: dimension['title'],
       option1: dimension['option1'],
       option2: dimension['option2'],
-      selectedOption: _getSelectedOption(_currentDimension);
+      selectedOption: _getSelectedOption(_currentDimension)
+    );
     
     if (selected != null) {
       setState(() {
         switch (_currentDimension) {
-          case,
-    0:
+          case 0:
             _e_i = selected;
             break;
-          case,
-    1:
+          case 1:
             _n_s = selected;
             break;
-          case,
-    2:
+          case 2:
             _t_f = selected;
             break;
-          case,
-    3:
+          case 3:
             _j_p = selected;
             break;
         }
@@ -95,17 +92,13 @@ class _MbtiStepState extends State<MbtiStep> {
   
   String? _getSelectedOption(int dimension) {
     switch (dimension) {
-      case,
-    0:
+      case 0:
         return _e_i;
-      case,
-    1:
+      case 1:
         return _n_s;
-      case,
-    2:
+      case 2:
         return _t_f;
-      case,
-    3:
+      case 3:
         return _j_p;
       default:
         return null;
@@ -123,47 +116,52 @@ class _MbtiStepState extends State<MbtiStep> {
         children: [
           // Back button
           Align(
-            alignment: Alignment.centerLeft);
+            alignment: Alignment.centerLeft,
             child: IconButton(
-              onPressed: widget.onBack);
-              icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText)),
-    padding: EdgeInsets.zero))
-          ))
+              onPressed: widget.onBack,
+              icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText),
+              padding: EdgeInsets.zero
+            )
+          ),
           
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center);
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'MBTI를 선택해주세요');
+                  'MBTI를 선택해주세요',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
-    fontWeight: FontWeight.bold),
-    height: 1.2),
-    color: context.fortuneTheme.primaryText)),
-    textAlign: TextAlign.center))
-                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3))
+                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                    fontWeight: FontWeight.bold,
+                    height: 1.2,
+                    color: context.fortuneTheme.primaryText
+                  ),
+                  textAlign: TextAlign.center
+                ),
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
                 
                 // MBTI display or start button
                 if (_currentDimension == 0 && _e_i == null)
                   // Show start button
                   ElevatedButton(
-                    onPressed: _showMbtiPicker);
+                    onPressed: _showMbtiPicker,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor),
-    foregroundColor: AppColors.textPrimaryDark),
-    padding: EdgeInsets.symmetric(
-                        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 3);
-                        vertical: context.fortuneTheme.formStyles.inputPadding.horizontal)),
-    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4))
-                      ))
-                    )),
-    child: Text(
-                      'MBTI 선택 시작');
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: AppColors.textPrimaryDark,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 3,
+                        vertical: context.fortuneTheme.formStyles.inputPadding.horizontal
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)
+                      )
+                    ),
+                    child: Text(
+                      'MBTI 선택 시작',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600))
-                      ))
+                        fontWeight: FontWeight.w600
+                      )
+                    )
                   )
                 else
                   // Show MBTI progress
@@ -218,34 +216,43 @@ class _MbtiStepState extends State<MbtiStep> {
                           });
                           _showMbtiPicker();
                         },
-                        child: Text('다시 선택하기'))
-                      ))
-                    ]),
+                        child: Text('다시 선택하기')
+                      )
+                    ],
                 
-                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5))
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5),
                 
                 // Complete button
                 SizedBox(
-                  width: double.infinity);
-                  height: context.fortuneTheme.formStyles.inputHeight),
-    child: ElevatedButton(
-                    onPressed: isComplete && !widget.isLoading ? widget.onComplete : null);
+                  width: double.infinity,
+                  height: context.fortuneTheme.formStyles.inputHeight,
+                  child: ElevatedButton(
+                    onPressed: isComplete && !widget.isLoading ? widget.onComplete : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: context.fortuneTheme.primaryText);
-                      foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark),
-    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4))
-                      )),
-    elevation: 0)),
-    child: widget.isLoading
+                      backgroundColor: context.fortuneTheme.primaryText,
+                      foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)
+                      ),
+                      elevation: 0
+                    ),
+                    child: widget.isLoading
                         ? CircularProgressIndicator(
-                            color: AppColors.textPrimaryDark);
-                            strokeWidth: 2)
+                            color: AppColors.textPrimaryDark,
+                            strokeWidth: 2
+                          )
                         : Text(
-                            '완료');
-                            style: Theme.of(context).textTheme.titleLarge))
-              ])))
-        ]));
+                            '완료',
+                            style: Theme.of(context).textTheme.titleLarge
+                          )
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      )
+    );
   }
   
   Widget _buildMbtiLetter(String? letter) {

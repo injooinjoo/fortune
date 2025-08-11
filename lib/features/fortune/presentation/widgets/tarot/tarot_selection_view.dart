@@ -103,7 +103,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
     selectedDeck: widget.selectedDeck,
                     onCardSelected: _handleCardSelection,
                     selectedIndices: _selectedCards,
-                    spreadType: SpreadType.fan))),
+                    spreadType: SpreadType.fan)),
         
         // Action buttons
         _buildActionButtons(theme, fontScale)]);
@@ -142,7 +142,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                       fontStyle: FontStyle.italic,
                       fontSize: 14 * fontScale),
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis))]))]]);
+                    overflow: TextOverflow.ellipsis)])]]);
   }
 
   Widget _buildProgressIndicator(ThemeData theme) {
@@ -201,7 +201,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))))),
+                  borderRadius: BorderRadius.circular(12))),
           const SizedBox(width: 16),
           Expanded(
             child: FilledButton.icon(
@@ -217,7 +217,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)))))]));
+                  borderRadius: BorderRadius.circular(12)))]);
   }
 }
 

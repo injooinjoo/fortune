@@ -276,7 +276,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                   ] : [
                     const Color(0xFF2C1810),
                     const Color(0xFF1A0F08)
-                  ]))),
+                  ])),
             
             // Card pattern
             Positioned.fill(

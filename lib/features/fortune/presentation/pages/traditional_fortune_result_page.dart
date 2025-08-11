@@ -10,7 +10,8 @@ class TraditionalFortuneResultPage extends ConsumerStatefulWidget {
   
   const TraditionalFortuneResultPage({
     super.key,
-    required this.fortuneData)});
+    required this.fortuneData,
+  });
 
   @override
   ConsumerState<TraditionalFortuneResultPage> createState() => _TraditionalFortuneResultPageState();
@@ -36,10 +37,10 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
-    end: Alignment.bottomCenter),
-                  colors: [
+            end: Alignment.bottomCenter,
+            colors: [
               Color(0xFFEF4444).withOpacity(0.1),
-              AppColors.background),
+              AppColors.background])),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -60,7 +61,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       // Traditional pattern overlay
                       Positioned.fill(
                         child: CustomPaint(
-                          painter: TraditionalPatternPainter()),
+                          painter: TraditionalPatternPainter(),
                       Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -73,13 +74,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                               .fade(),
                             const SizedBox(height: 16),
                             Text(
-                              '전통운세 종합',),
+                              '전통운세 종합',
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold),
                   color: Colors.white),.animate()
                   .fadeIn(delay: 500.ms, duration: 600.ms)
-                              .slideY(begin: 0.2, end: 0))),
+                              .slideY(begin: 0.2, end: 0)),
                 title: const Text('전통운세 종합'),
                 centerTitle: true),
             
@@ -187,7 +188,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: _getElementColor(theme['element'] ?? '화'),
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
               child: Icon(
                 Icons.today_rounded),
                   color: _getElementColor(theme['element'] ?? '화'),
@@ -208,7 +209,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                       fontSize: 18,
     fontWeight: FontWeight.bold),
-                  color: _getElementColor(theme['element'] ?? '화'))),
+                  color: _getElementColor(theme['element'] ?? '화')),
         initiallyExpanded: _expandedSections['todayTheme'],
     onExpansionChanged: (expanded) {
           setState(() {
@@ -233,7 +234,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: AppColors.divider),
                     child: Row(
@@ -259,7 +260,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                                 theme['hexagram']['meaning'] ?? ''$1',
                   style: TextStyle(
                                   fontSize: 14,
-    color: AppColors.textSecondary)))));
+    color: AppColors.textSecondary)));
 }
 
   Widget _buildCoreReadingCard(Map<String, dynamic> reading) {
@@ -271,14 +272,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Color(0xFFEF4444).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
               child: Icon(
                 Icons.insights_rounded),
                   color: Color(0xFFEF4444),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '핵심 운세 분석',),
+              '핵심 운세 분석',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -316,7 +317,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   colors: [
                           Color(0xFFEF4444).withOpacity(0.1),
                           Color(0xFFEC4899).withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(12))),
+                      borderRadius: BorderRadius.circular(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -328,7 +329,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFFEF4444),
                             const SizedBox(width: 8),
                             Text(
-                              '종합 해석',),
+                              '종합 해석',
                               style: TextStyle(
                                 fontSize: 16),
                   fontWeight: FontWeight.bold),
@@ -339,7 +340,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                           style: TextStyle(
                             fontSize: 15,
                             height: 1.6),
-                  color: AppColors.textPrimary))));
+                  color: AppColors.textPrimary)));
 }
 
   Widget _buildSajuSection(Map<String, dynamic> saju) {
@@ -354,7 +355,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFFEF4444),
             const SizedBox(width: 8),
             Text(
-              '사주 분석',),
+              '사주 분석',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
@@ -379,13 +380,12 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
 }
 
   Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
-    if (pillar == null) return const SizedBox()
-    
-    return Container(
+    if (pillar == null) return const SizedBox(),
+            return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppColors.divider),
       child: Column(
@@ -405,8 +405,10 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
 }
 
   Widget _buildElementBalance(Map<String, dynamic> balance) {
-    final elements = \['['wood', 'fire', 'earth', 'metal': 'water'];}
-    final elementNames = ['목', '화', '토', '금', '수'];
+    final elements = \['['wood': 'fire', 'earth': 'metal': 'water'
+  ];}
+    final elementNames = ['목': '화', '토': '금', '수'
+  ];
     final elementColors = [
       Color(0xFF4CAF50,
       Color(0xFFFF5252,
@@ -418,7 +420,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
       crossAxisAlignment: CrossAxisAlignment.start,
     children: [
         Text(
-          '오행 균형도',),
+          '오행 균형도',
           style: TextStyle(
             fontSize: 14),
                   fontWeight: FontWeight.bold),
@@ -442,7 +444,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 const SizedBox(width: 8),
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4))),
+                    borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: value / 100,
                       minHeight: 8),
@@ -450,7 +452,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       valueColor: AlwaysStoppedAnimation<Color>(elementColors[index])),
                 const SizedBox(width: 8),
                 Text(
-                  '${value.toInt()}%',),
+                  '${value.toInt()}%',
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary)),;
@@ -469,7 +471,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFF8B5CF6),
             const SizedBox(width: 8),
             Text(
-              '토정비결',),
+              '토정비결',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
@@ -479,7 +481,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Color(0xFF8B5CF6).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12))),
+            borderRadius: BorderRadius.circular(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -500,7 +502,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               if (tojeong['monthlyMessage'] != null) ...[
                 const SizedBox(height: 12),
                 Text(
-                  '이번 달 메시지',),
+                  '이번 달 메시지',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold),
@@ -511,7 +513,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5),
-                  color: AppColors.textPrimary)));
+                  color: AppColors.textPrimary));
 }
 
   Widget _buildLifeAspectsCard(List<dynamic> aspects) {
@@ -523,14 +525,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Color(0xFF3B82F6).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
               child: Icon(
                 Icons.category_rounded),
                   color: Color(0xFF3B82F6),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '분야별 운세',),
+              '분야별 운세',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -544,7 +546,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: _buildAspectItem(aspectMap),;
-}).toList()),;
+}).toList(),;
 }
 
   Widget _buildAspectItem(Map<String, dynamic> aspect) {
@@ -561,7 +563,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   colors: [
             color.withOpacity(0.1),
             color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: color.withOpacity(0.3)),
       child: Column(
@@ -583,7 +585,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getEnergyColor(aspect['currentEnergy'],
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                   child: Text(
                     aspect['currentEnergy'],
                     style: TextStyle(
@@ -603,7 +605,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(8))),
+                  borderRadius: BorderRadius.circular(8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -617,7 +619,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       aspect['advice'],
                   style: TextStyle(
                         fontSize: 13),
-                  color: AppColors.textPrimary))),
+                  color: AppColors.textPrimary)),
           if (aspect['luckyFactors'] != null && (aspect['luckyFactors'] as List).isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
@@ -628,7 +630,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16))),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: color.withOpacity(0.3)),
                   child: Text(
@@ -636,7 +638,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     style: TextStyle(
                       fontSize: 12,
                       color: color));
-}).toList());
+}).toList();
 }
 
   Widget _buildWisdomCard(Map<String, dynamic> wisdom) {
@@ -660,7 +662,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: Color(0xFF795548),
                 const SizedBox(width: 8),
                 Text(
-                  '고전의 지혜',),
+                  '고전의 지혜',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
@@ -670,19 +672,19 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Color(0xFF795548).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                   child: Text(
                     wisdom['source'] ?? ''$1',
                   style: TextStyle(
                       fontSize: 12),
-                  color: Color(0xFF795548))),
+                  color: Color(0xFF795548)),
             const SizedBox(height: 16),
             if (wisdom['originalQuote'] != null) ...[
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: AppColors.divider),
                 child: Column(
@@ -713,7 +715,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Color(0xFF795548).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8))),
+                  borderRadius: BorderRadius.circular(8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -727,7 +729,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                         wisdom['personalApplication'],
                   style: TextStyle(
                           fontSize: 13),
-                  color: AppColors.textPrimary))));
+                  color: AppColors.textPrimary)));
 }
 
   Widget _buildRemediesCard(Map<String, dynamic> remedies) {
@@ -739,14 +741,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Color(0xFF10B981).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
               child: Icon(
                 Icons.spa_rounded),
                   color: Color(0xFF10B981),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '전통 처방',),
+              '전통 처방',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -822,7 +824,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       color: isAvoid 
                         ? Colors.red.withOpacity(0.1)
                         : Color(0xFF10B981).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(16))),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isAvoid 
                           ? Colors.red.withOpacity(0.3)
@@ -832,7 +834,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       style: TextStyle(
                         fontSize: 13),
                   color: isAvoid ? Colors.red : Color(0xFF10B981)),;
-}).toList());
+}).toList();
 }
           return const SizedBox();
 }).toList()
@@ -840,8 +842,10 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
 }
 
   Widget _buildWeeklyOutlookCard(Map<String, dynamic> outlook) {
-    final days = \['['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
+    final days = \['['monday': 'tuesday', 'wednesday': 'thursday', 'friday': 'saturday', 'sunday'
+  ];
+    final dayNames = ['월': '화', '수': '목', '금': '토', '일'
+  ];
     
     return BaseCard(
       child: ExpansionTile(
@@ -851,14 +855,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               padding: const EdgeInsets.all(8,
               decoration: BoxDecoration(
                 color: Color(0xFF06B6D4).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
               child: Icon(
                 Icons.calendar_view_week_rounded),
                   color: Color(0xFF06B6D4),
                 size: 24),
             const SizedBox(width: 12),
             Text(
-              '주간 운세',),
+              '주간 운세',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -880,7 +884,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     color: isWeekend 
                       ? Color(0xFF06B6D4).withOpacity(0.05)
                       : AppColors.surface,
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isWeekend
                         ? Color(0xFF06B6D4).withOpacity(0.3)
@@ -909,8 +913,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                           fortune),
                   style: TextStyle(
                             fontSize: 14),
-                  color: AppColors.textPrimary)));
-})));
+                  color: AppColors.textPrimary));
+}));
 }
 
   Widget _buildClosingMessageCard(String message) {
@@ -1030,13 +1034,13 @@ class TraditionalPatternPainter extends CustomPainter {
     path.quadraticBezierTo(
       center.dx + radius,
       center.dy);
-      center.dx)
-      center.dy + radius);
+      center.dx),
+            center.dy + radius);
     path.quadraticBezierTo(
       center.dx - radius,
       center.dy);
-      center.dx)
-      center.dy - radius
+      center.dx),
+            center.dy - radius
     );
     
     canvas.drawPath(path, paint);

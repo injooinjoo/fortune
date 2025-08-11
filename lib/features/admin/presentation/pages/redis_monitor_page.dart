@@ -93,7 +93,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () => ref.read(redisStatsProvider.notifier).fetchRedisStats(),
-                              child: const Text('다시 시도'))]))))))]))));
+                              child: const Text('다시 시도')])))]));
   }
 
   Widget _buildConnectionStatus(RedisConnectionInfo connection) {
@@ -123,7 +123,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                 Text(
                   connection.status,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7))),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 if (connection.error != null) ...[
                   const SizedBox(height: 4),
                     Text(
@@ -190,7 +190,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                             fontWeight: FontWeight.bold)),
                         Text(
                           'Misses',
-                          style: theme.textTheme.bodySmall)])])]))),
+                          style: theme.textTheme.bodySmall)])])])),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -332,7 +332,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                   Text(
                     '재설정: ${_formatResetTime(info.resetAt)}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5)))]));
+                      color: theme.colorScheme.onSurface.withOpacity(0.5))]);
           }).toList()]));
   }
 

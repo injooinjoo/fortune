@@ -36,8 +36,9 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),..repeat();
-}
+      duration: const Duration(seconds: 3))
+      ..repeat();
+  }
 
   @override
   void dispose() {
@@ -69,7 +70,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                 end: Alignment.bottomRight,
                 colors: [
                   widget.primaryColor,
-                  widget.secondaryColor]))),
+                  widget.secondaryColor])),
           
           // Pattern overlay
           Container(
@@ -80,7 +81,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
               size: Size(widget.size, widget.size),
               painter: _TalismanPatternPainter(
                 style: widget.symbol,
-                color: Colors.white.withOpacity(0.2)))),
+                color: Colors.white.withOpacity(0.2)),
           
           // Central symbol
           AnimatedBuilder(
@@ -103,7 +104,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                     child: Icon(
                       widget.type.icon,
                       size: widget.size * 0.3,
-                      color: widget.primaryColor))));
+                      color: widget.primaryColor)));
             }),
           
           // User name at bottom
@@ -118,16 +119,14 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
-                    offset: const Offset(0, 2)]),
+                    offset: const Offset(0, 2)])),
               child: Text(
                 widget.userName,
-                style: Theme.of(context).textTheme.bodyMedium)))),
+                style: Theme.of(context).textTheme.bodyMedium)),
           
           // Decorative corners
-          ..._buildCornerDecorations()]).animate()
-        .fadeIn(duration: const Duration(milliseconds: 600),
-        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
-}
+          ..._buildCornerDecorations()]));
+  }
   
   List<Widget> _buildCornerDecorations() {
     final decorations = <Widget>[];
@@ -161,7 +160,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                     : const Radius.circular(15),
                 bottomRight: pos.bottom != null && pos.right != null 
                     ? const Radius.circular(0) 
-                    : const Radius.circular(15))))));
+                    : const Radius.circular(15)))));
     }
     
     return decorations;

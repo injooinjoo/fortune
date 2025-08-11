@@ -124,6 +124,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                   ]
                 ),
                 child: Column(
+
                   children: [
                     _buildHandle(),
                     _buildHeader(theme),
@@ -261,7 +262,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
                     : '생년월일을 선택하세요',
                 style: TextStyle(
-                  color: _selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary)))),
+                  color: _selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.spacing4),
           
           // Gender selection
@@ -471,7 +472,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 color: theme.colorScheme.primary.withOpacity( 0.05),
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
-      color: theme.colorScheme.primary.withOpacity( 0.2))),
+      color: theme.colorScheme.primary.withOpacity( 0.2)),
             child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -485,7 +486,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     specialNote,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       height: 1.5,
-                      color: theme.colorScheme.primary)))])),
+                      color: theme.colorScheme.primary))]),
         if (hasSpecialNote && hasCustomSections) const SizedBox(height: AppSpacing.spacing4),
         if (hasCustomSections)
           Column(
@@ -503,7 +504,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusMedium,
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity( 0.1))),
+                    color: theme.colorScheme.primary.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -536,7 +537,8 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       icon: Icons.analytics,
       color: context.fortuneTheme.scoreExcellent,
       child: Column(
-      children: scoreInterpretations.entries.map((entry) {
+
+        children: scoreInterpretations.entries.map((entry) {
           final score = entry.key;
           final interpretation = entry.value as Map<String, dynamic>;
           final color = interpretation['color'] as Color;
@@ -565,7 +567,8 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       icon: Icons.stars,
       color: Colors.amber,
       child: Column(
-      children: [
+
+        children: [
           if (luckyItemExplanations.containsKey('색상'))
             _buildEnhancedLuckyItem(theme, '색상', Icons.palette, luckyItemExplanations['색상'] as Map<String, String>),
           if (luckyItemExplanations.containsKey('숫자'))
@@ -656,7 +659,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       decoration: BoxDecoration(
                 color: color.withOpacity( 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(color: color.withOpacity( 0.2))),
+        border: Border.all(color: color.withOpacity( 0.2)),
       child: Theme(
         data: theme.copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
@@ -671,7 +674,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               range,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: color,
-                fontWeight: FontWeight.bold))),
+                fontWeight: FontWeight.bold)),
           title: Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -717,7 +720,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       decoration: BoxDecoration(
                 color: Colors.amber.withOpacity( 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(color: Colors.amber.withOpacity( 0.2))),
+        border: Border.all(color: Colors.amber.withOpacity( 0.2)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -789,7 +792,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 child: Text(
                   '운세 생성에 사용되는 내 정보입니다.',
               style: theme.textTheme.bodyLarge?.copyWith(
-                height: 1.6))),
+                height: 1.6)),
               if (missingRequiredInfo.isNotEmpty)
                 TextButton.icon(
                   onPressed: () {
@@ -808,7 +811,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               decoration: BoxDecoration(
                 color: AppColors.warning.withOpacity( 0.1),
                 borderRadius: AppDimensions.borderRadiusSmall,
-                border: Border.all(color: AppColors.warning.withOpacity( 0.3))),
+                border: Border.all(color: AppColors.warning.withOpacity( 0.3)),
       child: Row(
                 children: [
                   Icon(Icons.warning_amber_rounded, 
@@ -931,7 +934,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         '입력하기',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: isOptional ? AppColors.textPrimary : AppColors.warning,
-                          fontWeight: FontWeight.bold))))
+                          fontWeight: FontWeight.bold)))
               ],
                 ]
           ))
@@ -1144,7 +1147,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             end: Alignment.bottomRight),
           borderRadius: AppDimensions.borderRadiusLarge,
           border: Border.all(
-            color: theme.colorScheme.primary.withOpacity( 0.1))),
+            color: theme.colorScheme.primary.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1187,7 +1190,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         child: Text(
                           data['time'] ?? '',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w500))),
+                            fontWeight: FontWeight.w500)),
                       Expanded(
                         child: Stack(
                           children: [
@@ -1211,14 +1214,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                                       color: barColor.withOpacity( 0.3),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2))
-                                  ]))),
+                                  ])),
                             Positioned.fill(
                               child: Center(
                                 child: Text(
                                   '${score.toStringAsFixed(0)}%',
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: score >= 50 ? AppColors.textPrimaryDark : AppColors.textPrimary.withOpacity( 0.87), 
-                                    fontWeight: FontWeight.bold))))
+                                    fontWeight: FontWeight.bold)))
                           ])),
                       const SizedBox(width: AppSpacing.spacing2),
                       Text(
@@ -1277,8 +1280,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 color: scoreColor.withOpacity( 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall,
                     border: Border.all(
-                      color: scoreColor.withOpacity( 0.3))),
+                      color: scoreColor.withOpacity( 0.3)),
                   child: Column(
+
                     children: [
                       Text(
                         entry.key,
@@ -1328,7 +1332,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           end: Alignment.bottomRight),
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-          color: Colors.deepPurple.withOpacity( 0.2))),
+          color: Colors.deepPurple.withOpacity( 0.2)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1354,8 +1358,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 color: Colors.deepPurple.withOpacity( 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall,
                     border: Border.all(
-                      color: Colors.deepPurple.withOpacity( 0.3))),
+                      color: Colors.deepPurple.withOpacity( 0.3)),
                   child: Column(
+
                     children: [
                         Text(
                           pillar['pillar'] ?? '',
@@ -1371,7 +1376,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         child: Text(
                           pillar['value'] ?? '',
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold))),
+                            fontWeight: FontWeight.bold)),
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
                         pillar['label'] ?? '',
@@ -1430,7 +1435,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                       element,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                          color: color))),
+                          color: color)),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Stack(
@@ -1439,14 +1444,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           height: AppSpacing.spacing5,
                           decoration: BoxDecoration(
                             color: AppColors.divider,
-                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))),
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
                         FractionallySizedBox(
                           widthFactor: value / 100,
                           child: Container(
                             height: AppSpacing.spacing5,
                             decoration: BoxDecoration(
                               color: color,
-                              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))
+                              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)))
                       ])),
                   const SizedBox(width: AppSpacing.spacing2),
                   Text(
@@ -1485,7 +1490,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           end: Alignment.bottomRight),
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-          color: theme.colorScheme.secondary.withOpacity( 0.1))),
+          color: theme.colorScheme.secondary.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1520,7 +1525,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                   color: color.withOpacity( 0.1),
                   borderRadius: AppDimensions.borderRadiusMedium,
                   border: Border.all(
-                    color: color.withOpacity( 0.3))),
+                    color: color.withOpacity( 0.3)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1572,7 +1577,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             end: Alignment.bottomRight),
           borderRadius: AppDimensions.borderRadiusLarge,
           border: Border.all(
-            color: Colors.purple.withOpacity( 0.1))),
+            color: Colors.purple.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1611,7 +1616,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                   color: color.withOpacity( 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
                   border: Border.all(
-                    color: color.withOpacity( 0.3))),
+                    color: color.withOpacity( 0.3)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1648,7 +1653,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           end: Alignment.bottomRight),
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-          color: AppColors.warning.withOpacity( 0.1))),
+          color: AppColors.warning.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1696,7 +1701,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-      color: Colors.deepPurple.withOpacity(0.1))),
+      color: Colors.deepPurple.withOpacity(0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1737,6 +1742,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         offset: const Offset(0, 4))
                     ]),
                   child: Column(
+
                     children: [
                       Text(
                         card['position'] ?? '',
@@ -1751,7 +1757,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 color: AppColors.textPrimaryDark,
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
                           border: Border.all(
-      color: Colors.deepPurple.withOpacity( 0.2))),
+      color: Colors.deepPurple.withOpacity( 0.2)),
       child: Center(
                           child: Text(
                             card['icon'] ?? '',
@@ -1803,7 +1809,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-      color: Colors.pink.withOpacity( 0.1))),
+      color: Colors.pink.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1857,7 +1863,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         height: AppSpacing.spacing2,
                         decoration: BoxDecoration(
                 color: AppColors.divider,
-                          borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))),
+                          borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall)),
                       FractionallySizedBox(
                         widthFactor: score / 100,
                         child: Container(
@@ -1908,7 +1914,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
       border: Border.all(
-        color: Colors.pink.withOpacity(0.1))),
+        color: Colors.pink.withOpacity(0.1)),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1926,7 +1932,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 color: Colors.pink.withOpacity( 0.05),
                 borderRadius: AppDimensions.borderRadiusSmall,
                 border: Border.all(
-      color: Colors.pink.withOpacity(0.2))),
+      color: Colors.pink.withOpacity(0.2)),
       child: Row(
                 children: [
                   Container(
@@ -1985,7 +1991,8 @@ Expanded(
               final phase = item as Map<String, dynamic>;
               return Expanded(
                 child: Column(
-                children: [
+
+                  children: [
                     Text(
                       phase['icon'] ?? '',
                       style: Theme.of(context).textTheme.displaySmall),
@@ -2032,7 +2039,7 @@ Expanded(
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-      color: AppColors.primary.withOpacity( 0.1))),
+      color: AppColors.primary.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2123,7 +2130,7 @@ Expanded(
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-      color: AppColors.success.withOpacity( 0.1))),
+      color: AppColors.success.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2171,7 +2178,7 @@ Expanded(
                 color: signalColor.withOpacity( 0.05),
                 borderRadius: AppDimensions.borderRadiusSmall,
                 border: Border.all(
-      color: signalColor.withOpacity( 0.2))),
+      color: signalColor.withOpacity( 0.2)),
       child: Row(
                 children: [
                   Icon(
@@ -2238,7 +2245,7 @@ Expanded(
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-      color: Colors.teal.withOpacity( 0.1))),
+      color: Colors.teal.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2316,7 +2323,7 @@ Expanded(
           end: Alignment.bottomRight),
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-          color: Colors.indigo.withOpacity( 0.1))),
+          color: Colors.indigo.withOpacity( 0.1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2434,7 +2441,7 @@ Expanded(
                     child: Text(
                       industry['industry'] ?? '',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500))),
+                        fontWeight: FontWeight.w500)),
                   Expanded(
                     child: Stack(
                       children: [
@@ -2442,7 +2449,7 @@ Expanded(
                           height: AppSpacing.spacing5,
                           decoration: BoxDecoration(
                             color: AppColors.divider,
-                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))),
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
                         FractionallySizedBox(
                           widthFactor: score / 100,
                           child: Container(

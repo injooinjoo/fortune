@@ -175,7 +175,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                   curve: const Interval(
                     0.4,
                     1.0,
-                    curve: Curves.easeOut))),
+                    curve: Curves.easeOut)),
                 child: Transform.translate(
                   offset: Offset(
                     math.cos(particle.angle) * particle.distance * (1 - _particleController.value),
@@ -191,7 +191,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                           color: AppColors.warning.withOpacity(0.4),
                           blurRadius: 3,
                           spreadRadius: 1)]))).animate(delay: particle.delay)
-                  .fadeIn(duration: 200.ms)))),
+                  .fadeIn(duration: 200.ms)),
             
             // Main soul animation
             Positioned(
@@ -221,7 +221,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                           '-${widget.soulAmount}',
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: AppColors.warning,
-                            fontWeight: FontWeight.bold))])))))]);
+                            fontWeight: FontWeight.bold)])))]);
       }
     );
   }

@@ -119,7 +119,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                           alignment: Alignment.center,
                           transform: Matrix4.identity()..rotateY(math.pi),
                           child: _buildCardFront())
-                      : _buildCardBack())));})));
+                      : _buildCardBack()));})));
   }
 
   List<BoxShadow> _buildBoxShadow() {
@@ -186,7 +186,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     letterSpacing: 1),
-                  textAlign: TextAlign.center)]))]));
+                  textAlign: TextAlign.center)])]);
   }
 
   Widget _buildCardFront() {
@@ -216,7 +216,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   style: TextStyle(
                     fontSize: widget.width * 0.15,
                     fontWeight: FontWeight.bold,
-                    color: widget.deck.primaryColor))])),
+                    color: widget.deck.primaryColor)]),
           // Card number
           Positioned(
             top: 8,
@@ -228,7 +228,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 borderRadius: AppDimensions.borderRadiusMedium),
               child: Text(
                 '${widget.cardIndex + 1}',
-                style: Theme.of(context).textTheme.bodyMedium)))]));
+                style: Theme.of(context).textTheme.bodyMedium))]);
   }
 }
 

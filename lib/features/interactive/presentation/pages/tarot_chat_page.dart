@@ -311,7 +311,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
             alignment: WrapAlignment.center,
             children: tarotExampleQuestions.map((question) {
               return _buildExampleCard(question, fontScale);
-            }).toList())]));
+            }).toList()]);
   }
 
   Widget _buildExampleCard(String question, double fontScale) {
@@ -405,7 +405,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.textSecondary))),
+                              AppColors.textSecondary)),
                         const SizedBox(width: 8),
                         Text(
                           message.text,
@@ -428,7 +428,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                       child: Row(
                         children: message.cards!.map((card) {
                           return _buildMiniCard(card, fontScale);
-                        }).toList()))]]))),
+                        }).toList()))]])),
           
           if (isUser) const SizedBox(width: 8),
         ],
@@ -484,7 +484,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
         border: Border(
           top: BorderSide(
             color: AppColors.eventbriteButtonBorder,
-            width: 1))),
+            width: 1)),
       child: Row(
         children: [
           Expanded(
@@ -520,6 +520,6 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                 Icons.send,
                 color: Colors.white,
                 size: 20),
-              onPressed: _isProcessing ? null : () => _sendMessage(_inputController.text)))]));
+              onPressed: _isProcessing ? null : () => _sendMessage(_inputController.text))]);
   }
 }

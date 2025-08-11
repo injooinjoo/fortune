@@ -123,7 +123,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 }),
               belowBarData: BarAreaData(
                 show: true,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1)))])));
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1))]));
   }
 
   @override
@@ -201,7 +201,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 child: Text(
                   '아직 확인한 운세가 없습니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))))]]));
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)))]]));
   }
   
   Widget _buildFortuneItem(BuildContext context, Map<String, dynamic> fortune) {
@@ -230,7 +230,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 '${fortune['score'] ?? 0}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold)))),
+                  fontWeight: FontWeight.bold)),
           SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
@@ -245,6 +245,6 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.7)),
                   maxLines: 2,
-                  overflow: TextOverflow.ellipsis)]))]));
+                  overflow: TextOverflow.ellipsis)])]);
   }
 }

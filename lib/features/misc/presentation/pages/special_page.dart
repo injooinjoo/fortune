@@ -197,7 +197,7 @@ class SpecialPage extends ConsumerWidget {
                     color: theme.colorScheme.surfaceContainerHighest),
                   errorWidget: (context, url, error) => Container(
                     color: theme.colorScheme.surfaceContainerHighest,
-                    child: const Icon(Icons.image_not_supported))))),
+                    child: const Icon(Icons.image_not_supported))),
             
             // Gradient Overlay
             Container(
@@ -208,7 +208,7 @@ class SpecialPage extends ConsumerWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.7)]))),
+                    Colors.black.withOpacity(0.7)])),
             
             // Content
             Positioned(
@@ -225,20 +225,20 @@ class SpecialPage extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEF4444),
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           child: Text(
                             'NEW',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: fontSize - 6,
-                              fontWeight: FontWeight.bold))),
+                              fontWeight: FontWeight.bold)),
                       if (item.isNew) const SizedBox(width: 8),
                       if (item.availableUntil != null)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.orange,
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           child: Text(
                             '${item.availableUntil!.month}/${item.availableUntil!.day}까지',
                             style: TextStyle(
@@ -257,7 +257,7 @@ class SpecialPage extends ConsumerWidget {
                     item.description,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: fontSize,
-                      color: Colors.white.withOpacity(0.9)))]))])));
+                      color: Colors.white.withOpacity(0.9))])])));
   }
 
   Widget _buildSection(
@@ -331,7 +331,7 @@ class SpecialPage extends ConsumerWidget {
                           color: theme.colorScheme.surfaceContainerHighest),
                         errorWidget: (context, url, error) => Container(
                           color: theme.colorScheme.surfaceContainerHighest,
-                          child: const Icon(Icons.image_not_supported))))),
+                          child: const Icon(Icons.image_not_supported))),
                   
                   // Content
                   Padding(
@@ -353,7 +353,7 @@ class SpecialPage extends ConsumerWidget {
                             fontSize: fontSize - 2,
                             color: theme.colorScheme.onSurface.withOpacity(0.7)),
                           maxLines: 2,
-                          overflow: TextOverflow.ellipsis)]))])),
+                          overflow: TextOverflow.ellipsis)])]),
             
             // Badges
             if (item.isNew)
@@ -364,13 +364,13 @@ class SpecialPage extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
                   child: Text(
                     'NEW',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: fontSize - 6,
-                      fontWeight: FontWeight.bold)))),
+                      fontWeight: FontWeight.bold)),
             if (item.isPremium)
               Positioned(
                 top: 8,
@@ -380,11 +380,11 @@ class SpecialPage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
                   child: const Icon(
                     Icons.star_rounded,
                     size: 16,
-                    color: Colors.white)))])));
+                    color: Colors.white))]));
   }
 
   Widget _buildComingSoonSection(ThemeData theme, double fontSize) {

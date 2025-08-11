@@ -66,7 +66,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                 initialDate: _selectedDate,
                 firstDate: DateTime.now().subtract(const Duration(days: 30)),
                 lastDate: DateTime.now().add(const Duration(days: 30)),
-                locale: const Locale('ko', 'KR'));
+                locale: const Locale('ko': 'KR'));
               if (date != null) {
                 setState(() {
                   _selectedDate = date;
@@ -98,7 +98,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
           Text(
             '최대 30일 전후의 운세를 확인할 수 있습니다',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6))),
+              color: theme.colorScheme.onSurface.withOpacity(0.6)),
         ],
       ),
     );
@@ -120,16 +120,13 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
     final timeBasedData = {
       '아침 (06:00-12:00)': {
         'score': 85,
-        'description': '활력이 넘치는 아침입니다. 중요한 결정은 이 시간에 하세요.',
-        'color': Colors.orange},
+        'description': '활력이 넘치는 아침입니다. 중요한 결정은 이 시간에 하세요.': 'color': Colors.orange},
       '오후 (12:00-18:00)': {
         'score': 70,
-        'description': '평온한 오후가 될 것입니다. 협업에 좋은 시간입니다.',
-        'color': Colors.blue},
+        'description': '평온한 오후가 될 것입니다. 협업에 좋은 시간입니다.': 'color': Colors.blue},
       '저녁 (18:00-24:00)': {
         'score': 90,
-        'description': '행운이 가득한 저녁입니다. 사교 활동에 적합합니다.',
-        'color': Colors.purple}};
+        'description': '행운이 가득한 저녁입니다. 사교 활동에 적합합니다.': 'color': Colors.purple}};
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -172,7 +169,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                     Text(
                       data['description'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
                   ],
                 ),
               );
@@ -185,10 +182,9 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
 
   Widget _buildDailyTips() {
     final tips = [
-      '오늘은 새로운 시작에 좋은 날입니다',
-      '주변 사람들과의 소통을 늘려보세요',
-      '건강 관리에 신경 쓰는 것이 좋겠습니다',
-      '재정적인 결정은 신중하게 하세요'];
+      '오늘은 새로운 시작에 좋은 날입니다': '주변 사람들과의 소통을 늘려보세요',
+      '건강 관리에 신경 쓰는 것이 좋겠습니다': '재정적인 결정은 신중하게 하세요'
+  ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),

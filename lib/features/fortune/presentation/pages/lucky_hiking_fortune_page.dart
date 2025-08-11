@@ -56,16 +56,16 @@ class _HikingInputFormState extends State<_HikingInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 등산 운세를 확인하고\n안전하고 즐거운 산행을 즐기세요!',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 등산 운세를 확인하고\n안전하고 즐거운 산행을 즐기세요!',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5),
         const SizedBox(height: 24),
         
         // Difficulty Level
         Text(
-          '난이도',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '난이도',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDifficulty(theme),
@@ -73,8 +73,8 @@ class _HikingInputFormState extends State<_HikingInputForm> {
 
         // Duration
         Text(
-          '예상 시간',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '예상 시간',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDuration(theme),
@@ -82,8 +82,8 @@ class _HikingInputFormState extends State<_HikingInputForm> {
 
         // Purpose
         Text(
-          '등산 목적',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '등산 목적',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildPurpose(theme),
@@ -91,8 +91,8 @@ class _HikingInputFormState extends State<_HikingInputForm> {
 
         // Season
         Text(
-          '계절',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '계절',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSeason(theme),
@@ -114,26 +114,26 @@ class _HikingInputFormState extends State<_HikingInputForm> {
               backgroundColor: const Color(0xFF10B981),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(16),
               elevation: 0),
             child: const Text(
-              '등산 운세 보기',),
+              '등산 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold)))]
     );
   }
 
   Widget _buildDifficulty(ThemeData theme) {
     final levels = [
-      {'\1': '\2', 'name', '초급': 'icon'},
-      {'\1': '\2', 'name', '중급': 'icon'},
-      {'id', 'hard', 'name', '상급', 'icon'},
-      {'id', 'extreme', 'name', '전문가', 'icon'}];
+      {'id': 'name', '초급': 'icon'},
+      {'id': 'name', '중급': 'icon'},
+      {'id': 'hard', 'name': '상급', 'icon'},
+      {'id': 'extreme', 'name': '전문가', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
@@ -143,7 +143,8 @@ class _HikingInputFormState extends State<_HikingInputForm> {
       itemCount: levels.length,
       itemBuilder: (context, index) {
         final level = levels[index];
-        final isSelected = _difficulty == level['id'];
+        final isSelected = _difficulty == level['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -164,7 +165,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -177,21 +178,22 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                   level['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       }
     );
   }
 
   Widget _buildDuration(ThemeData theme) {
     final durations = [
-      {'\1': '\2', 'name', '2시간 이내'},
-      {'\1': '\2', 'name', '반나절'},
-      {'id', 'fullday', 'name', '종일'},
-      {'id', 'overnight', 'name', '1박2일'}];
+      {'id': 'name', '2시간 이내'},
+      {'id': 'name', '반나절'},
+      {'id': 'fullday', 'name': '종일'},
+      {'id': 'overnight', 'name': '1박2일'}];
 
     return Row(
       children: durations.map((duration) {
-        final isSelected = _duration == duration['id'];
+        final isSelected = _duration == duration['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -213,27 +215,27 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                   color: isSelected
                       ? Colors.transparent
                       : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Center(
                 child: Text(
                   duration['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 12))))));
+                    fontSize: 12)));
       }).toList();
   }
 
   Widget _buildPurpose(ThemeData theme) {
     final purposes = [
-      {'\1': '\2', 'name', '휴식': 'icon'},
-      {'\1': '\2', 'name', '운동': 'icon'},
-      {'id', 'photography', 'name', '사진', 'icon'},
-      {'id', 'meditation', 'name', '명상', 'icon'}];
+      {'id': 'name', '휴식': 'icon'},
+      {'id': 'name', '운동': 'icon'},
+      {'id': 'photography', 'name': '사진', 'icon'},
+      {'id': 'meditation', 'name': '명상', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
@@ -243,7 +245,8 @@ class _HikingInputFormState extends State<_HikingInputForm> {
       itemCount: purposes.length,
       itemBuilder: (context, index) {
         final purpose = purposes[index];
-        final isSelected = _purpose == purpose['id'];
+        final isSelected = _purpose == purpose['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -264,7 +267,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -277,21 +280,22 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                   purpose['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       }
     );
   }
 
   Widget _buildSeason(ThemeData theme) {
     final seasons = [
-      {'\1': '\2', 'name', '봄': 'icon'},
-      {'id', 'summer', 'name', '여름', 'icon'},
-      {'id', 'autumn', 'name', '가을', 'icon'},
-      {'id', 'winter', 'name', '겨울', 'icon'}];
+      {'id': 'name', '봄': 'icon'},
+      {'id': 'summer', 'name': '여름', 'icon'},
+      {'id': 'autumn', 'name': '가을', 'icon'},
+      {'id': 'winter', 'name': '겨울', 'icon'}];
 
     return Row(
       children: seasons.map((season) {
-        final isSelected = _season == season['id'];
+        final isSelected = _season == season['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -313,7 +317,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                   color: isSelected
                       ? Colors.transparent
                       : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Column(
                 children: [
                   Icon(
@@ -325,7 +329,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                     season['name'],
                     style: TextStyle(
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))]))));
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]));
       }).toList();
   }
 }
@@ -345,9 +349,9 @@ class _HikingFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF10B981),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +363,7 @@ class _HikingFortuneResult extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFF10B981), Color(0xFF059669)]),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: const Icon(
                         Icons.terrain,
                         color: Colors.white,
@@ -370,18 +374,18 @@ class _HikingFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 등산 운세',),
-                            style: theme.textTheme.titleLarge?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '오늘의 등산 운세',
+                            style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6)])]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)]))),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6)])),
         const SizedBox(height: 16),
 
         // Best Trail
@@ -438,7 +442,7 @@ class _HikingFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,7 +453,7 @@ class _HikingFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
                 child: Icon(
                   icon,
                   color: Colors.white,
@@ -457,13 +461,13 @@ class _HikingFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith()
-                  fontWeight: FontWeight.bold))]),
+                style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              height: 1.5)],
+            style: theme.textTheme.bodyMedium?.copyWith(
+            height: 1.5)],
       );
   }
 }

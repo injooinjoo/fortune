@@ -297,7 +297,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       Text(
                         '카메라 또는 갤러리에서 사진을 선택하세요',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6))]),
                 const SizedBox(height: 16),
                 
                 GlassContainer(
@@ -312,10 +312,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           labelText: '이름',
                           hintText: '홍길동',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12))),
+                            vertical: 12)),
                       const SizedBox(height: 20),
 
                       // Birth year
@@ -324,7 +324,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '생년',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12)),
@@ -354,7 +354,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '생월',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12)),
@@ -384,7 +384,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '생일',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12)),
@@ -405,7 +405,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '태어난 시진 (선택사항)',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12)),
@@ -420,7 +420,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 period.description,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey[600]))]))).toList(),
+                                  color: Colors.grey[600])])).toList(),
                         onChanged: (value) {
                           setState(() => _birthTimePeriod = value);
                         },
@@ -445,7 +445,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       Text(
                         'MBTI를 모르시나요? 온라인 테스트를 통해 확인해보세요.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6)),
                       const SizedBox(height: 16),
                       GridView.builder(
                         shrinkWrap: true,
@@ -474,7 +474,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                   color: isSelected
                                       ? theme.colorScheme.primary
                                       : theme.colorScheme.outline),
-                                borderRadius: BorderRadius.circular(8)),
+                                borderRadius: BorderRadius.circular(8),
                               child: Center(
                                 child: Text(
                                   type,
@@ -482,7 +482,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                     color: isSelected
                                         ? theme.colorScheme.onPrimary
                                         : theme.colorScheme.onSurface,
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)))));
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
                         }),
                       const SizedBox(height: 24),
 
@@ -515,7 +515,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                       color: isSelected
                                           ? theme.colorScheme.primary
                                           : theme.colorScheme.outline),
-                                    borderRadius: BorderRadius.circular(8)),
+                                    borderRadius: BorderRadius.circular(8),
                                   child: Column(
                                     children: [
                                       Icon(
@@ -533,7 +533,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                               : theme.colorScheme.onSurface,
                                           fontWeight: isSelected
                                               ? FontWeight.bold
-                                              : FontWeight.normal))])))));
+                                              : FontWeight.normal)])));
                         }).toList()),
                       const SizedBox(height: 32),
 
@@ -543,7 +543,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8))),
+                            borderRadius: BorderRadius.circular(8),
                         child: _isSaving
                             ? const SizedBox(
                                 height: 20,
@@ -558,7 +558,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         onPressed: _isSaving ? null : () => context.pop(),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16)),
-                        child: const Text('취소'))]))])))]));
+                        child: const Text('취소')])]))]);
   }
   
   @override

@@ -94,24 +94,24 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
         '일상 궁합': 78,
         '직장 궁합': 75},
       'person1Analysis': fortune.additionalInfo?['person1Analysis'] ?? {
-        'personality': '따뜻하고 배려심이 깊은 성격',
-        'loveStyle': '헌신적이고 로맨틱한 사랑',
+        'personality': '따뜻하고 배려심이 깊은 성격', 
+        'loveStyle': '헌신적이고 로맨틱한 사랑', 
         'strength': '상대방을 포용하는 넓은 마음'},
       'person2Analysis': fortune.additionalInfo?['person2Analysis'] ?? {
-        'personality': '활발하고 긍정적인 성격',
-        'loveStyle': '열정적이고 적극적인 사랑',
+        'personality': '활발하고 긍정적인 성격', 
+        'loveStyle': '열정적이고 적극적인 사랑', 
         'strength': '밝은 에너지로 분위기를 이끄는 힘'},
       'strengths': fortune.additionalInfo?['strengths'] ?? [
-        '서로를 보완하는 완벽한 조합',
+        '서로를 보완하는 완벽한 조합', 
         '갈등 상황에서도 대화로 해결 가능',
         '함께 성장할 수 있는 관계'],
       'challenges': fortune.additionalInfo?['challenges'] ?? [
-        '가끔 의견 차이로 인한 마찰 가능',
+        '가끔 의견 차이로 인한 마찰 가능', 
         '서로의 공간을 존중하는 것이 필요'],
       'luckyElements': fortune.luckyItems ?? {
-        '행운의 날': '금요일',
-        '행운의 장소': '자연이 있는 곳',
-        '행운의 활동': '함께하는 운동',
+        '행운의 날': '금요일', 
+        '행운의 장소': '자연이 있는 곳', 
+        '행운의 활동': '함께하는 운동', 
         '행운의 색': '파란색과 초록색'}};
 
     return fortune;
@@ -147,7 +147,10 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               });
             },
             gradientColors: [Colors.blue.shade300, Colors.blue.shade500],
-            icon: Icons.person)]));
+            icon: Icons.person),
+        ],
+      ),
+    );
   }
 
   Widget _buildPersonInputSection({
@@ -170,12 +173,16 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: gradientColors),
-                  borderRadius: BorderRadius.circular(12)),
-                child: material.Icon(icon, color: Colors.white, size: 24)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: material.Icon(icon, color: Colors.white, size: 24),
+              ),
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.headlineSmall)]),
+                style: theme.textTheme.headlineSmall),
+            ],
+          ),
           const SizedBox(height: 20),
           TextFormField(
             controller: nameController,
@@ -184,19 +191,24 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               hintText: '이름을 입력하세요',
               prefixIcon: const material.Icon(Icons.edit_rounded),
               filled: true,
-              fillColor: theme.colorScheme.surface),
+              fillColor: theme.colorScheme.surface,
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return '이름을 입력해주세요';
               }
               return null;
-            }),
+            },
+          ),
           const SizedBox(height: 16),
           KoreanDatePicker(
             label: '생년월일',
             initialDate: birthDate,
             onDateSelected: onDateSelected,
-            showAge: true)])).animate().fadeIn().slideY(begin: 0.1, end: 0);
+            showAge: true),
+        ],
+      ),
+    ).animate().fadeIn().slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildHeartConnector() {
@@ -215,7 +227,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 colors: [
                   Colors.pink.shade300,
                   Colors.red.shade400,
-                  Colors.blue.shade300]))),
+                  Colors.blue.shade300],
+              ),
+            ),
           Container(
             width: 50,
             height: 50,
@@ -223,17 +237,24 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               gradient: RadialGradient(
                 colors: [
                   Colors.red.shade400,
-                  Colors.red.shade600]),
+                  Colors.red.shade600],
+              ),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
                   color: Colors.red.withOpacity(0.3),
                   blurRadius: 20,
-                  spreadRadius: 5)]),
+                  spreadRadius: 5),
+              ],
+            ),
             child: const material.Icon(
               Icons.favorite_rounded,
               color: Colors.white,
-              size: 28))])).animate(onPlay: (controller) => controller.repeat())
+              size: 28),
+          ),
+        ],
+      ),
+    ).animate(onPlay: (controller) => controller.repeat())
         .scale(
           begin: const Offset(0.9, 0.9),
           end: const Offset(1.1, 1.1),
@@ -262,7 +283,10 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
           _buildStrengthsAndChallenges(),
           const SizedBox(height: 24),
           _buildLuckyElements(),
-          const SizedBox(height: 32)]));
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
   }
 
   Widget _buildOverallCompatibility() {
@@ -295,7 +319,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 Text(
                   '전체 궁합',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)),
+              ],
+            ),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: Colors.red.shade400,
             backgroundColor: Colors.red.shade100),
@@ -311,15 +337,21 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 child: material.Icon(
                   Icons.favorite_rounded,
                   color: Colors.red.shade400,
-                  size: 32)),
+                  size: 32),
+              ),
               _buildPersonBadge(
                 _person2NameController.text,
-                Colors.blue.shade400)]),
+                Colors.blue.shade400),
+            ],
+          ),
           const SizedBox(height: 16),
           Text(
             _getCompatibilityMessage(overallScore),
             style: theme.textTheme.bodyLarge,
-            textAlign: TextAlign.center)])).animate().fadeIn().scale(
+            textAlign: TextAlign.center),
+        ],
+      ),
+    ).animate().fadeIn().scale(
       begin: const Offset(0.8, 0.8),
       end: const Offset(1, 1));
   }
@@ -330,12 +362,15 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3))),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
       child: Text(
         name,
         style: TextStyle(
           color: color,
-          fontWeight: FontWeight.bold)));
+          fontWeight: FontWeight.bold),
+      ),
+    );
   }
 
   Widget _buildDetailedScores() {
@@ -363,8 +398,10 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12)),
-                    child: material.Icon(icon, color: color, size: 24)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: material.Icon(icon, color: color, size: 24),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -386,8 +423,8 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                           value: (entry.value as int) / 100,
                           backgroundColor: color.withOpacity(0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(color),
-                          minHeight: 8)]))]));
-          }).toList()]));
+                          minHeight: 8)])]);
+          }).toList(),);
   }
 
   Widget _buildPersonalityAnalysis() {
@@ -424,14 +461,14 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: color.withOpacity(0.3))),
+                  border: Border.all(color: color.withOpacity(0.3)),
                 child: Center(
                   child: Text(
                     name[0],
                     style: TextStyle(
                       color: color,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18)))),
+                      fontSize: 18)),
               const SizedBox(width: 12),
               Text(
                 name,
@@ -476,7 +513,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodyMedium),
@@ -522,7 +559,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: material.Icon(icon, color: color, size: 24)),
               const SizedBox(width: 12),
               Text(
@@ -544,7 +581,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 Expanded(
                   child: Text(
                     item,
-                    style: Theme.of(context).textTheme.bodyMedium))]))).toList()]));
+                    style: Theme.of(context).textTheme.bodyMedium)]).toList()]));
   }
 
   Widget _buildLuckyElements() {
@@ -565,7 +602,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.amber.shade400, Colors.amber.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const material.Icon(
                     Icons.stars_rounded,
                     color: Colors.white,
@@ -606,8 +643,8 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                         entry.value.toString(),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber.shade900))]));
-              }).toList())])));
+                          color: Colors.amber.shade900)]);
+              }).toList(),);
   }
 
   String _getCompatibilityMessage(int score) {

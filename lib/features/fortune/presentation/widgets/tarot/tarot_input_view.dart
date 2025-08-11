@@ -104,7 +104,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
             color: Colors.purple.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.purple.withOpacity(0.3))),
+              color: Colors.purple.withOpacity(0.3)),
           child: Row(
             children: [
               Icon(
@@ -117,7 +117,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
                   '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    fontSize: 14 * fontScale)))])),
+                    fontSize: 14 * fontScale))]),
         const SizedBox(height: 32),
         
         // Proceed button
@@ -128,7 +128,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -138,6 +138,6 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
                   '계속하기',
                   style: TextStyle(
                     fontSize: 18 * fontScale,
-                    fontWeight: FontWeight.bold))])))]);
+                    fontWeight: FontWeight.bold)]))]);
   }
 }

@@ -104,7 +104,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                     : Transform(
                         alignment: Alignment.center);
                         transform: Matrix4.identity()..rotateY(math.pi),
-    child: _buildCardFront()))));
+    child: _buildCardFront())));
         })
     );
   }
@@ -166,7 +166,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
     colors: [
                   Colors.transparent)
                   Colors.black.withOpacity(0.7)]),
-    stops: const [0.6, 1.0]))),
+    stops: const [0.6, 1.0])),
           
           // Card information
           Positioned(

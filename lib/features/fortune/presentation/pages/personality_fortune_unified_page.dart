@@ -43,7 +43,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
 
   // MBTI types
   final List<String> _mbtiTypes = [
-    'INTJ', 'INTP': 'ENTJ', 'ENTP',
+    'INTJ', 'INTP', 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
     'ISTP', 'ISFP', 'ESTP', 'ESFP'
@@ -86,34 +86,37 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Card
-          _buildHeaderCard(,
-              .animate(,
-              .fadeIn(duration: 600.ms,
+          _buildHeaderCard()
+              .animate()
+              .fadeIn(duration: 600.ms)
               .slideY(begin: -0.1, end: 0),
           const SizedBox(height: 24),
-          
           // Type Selector
           Text(
-            '성격 유형 선택',),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '성격 유형 선택',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold
+            )
+          ),
           const SizedBox(height: 16),
           _buildTypeSelector(),
           const SizedBox(height: 24),
-          
           // Personality Type Selection
           _buildPersonalityTypeSelection(),
           const SizedBox(height: 24),
-          
           // Generate Button
-          if (_fortuneCache[_selectedType] == null && _canGenerateFortune(),
+          if (_fortuneCache[_selectedType] == null && _canGenerateFortune())
             _buildGenerateButton(),
           
           // Fortune Result
           if (_fortuneCache[_selectedType] != null) ...[
             _buildFortuneResult(_fortuneCache[_selectedType]!),
             const SizedBox(height: 16),
-            _buildRefreshButton()]]));
+            _buildRefreshButton()
+          ]
+        ]
+      )
+    );
   }
 
   Widget _buildHeaderCard() {
@@ -126,31 +129,44 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           end: Alignment.bottomRight,
           colors: [
             Color(0xFF6366F1).withOpacity(0.1),
-            Color(0xFFDC2626).withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+            Color(0xFFDC2626).withOpacity(0.05)
+          ]
+        ),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFF6366F1).withOpacity(0.3),
-          width: 1)),
+          width: 1
+        )
+      ),
       child: Column(
+
         children: [
           Icon(
             Icons.psychology_rounded,
             size: 48,
-            color: Color(0xFF6366F1)),
+            color: Color(0xFF6366F1)
+          ),
           const SizedBox(height: 12),
           Text(
-            '성격 운세',),
+            '성격 운세',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF6366F1))),
+              color: Color(0xFF6366F1)
+            )
+          ),
           const SizedBox(height: 8),
           Text(
-            '당신의 성격 유형에 맞는 맞춤형 운세를 확인하세요',),
+            '당신의 성격 유형에 맞는 맞춤형 운세를 확인하세요',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center)]));
+              color: AppTheme.textSecondaryColor
+            ),
+            textAlign: TextAlign.center
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildTypeSelector() {
@@ -167,8 +183,9 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                   _selectedType = type;
                 });
               },
-              borderRadius: BorderRadius.circular(12))),
-              child: AnimatedContainer(
+              borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 height: 120,
                 padding: const EdgeInsets.all(16),
@@ -179,7 +196,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                     colors: isSelected
                         ? type.gradientColors
                         : [Colors.grey[200]!, Colors.grey[300]!]),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
@@ -207,10 +224,14 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                       style: TextStyle(
                         color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[500],
                         fontSize: 11),
-                      textAlign: TextAlign.center)]))).animate(,
-              .fadeIn(duration: 300.ms,
-              .slideX(begin: type == PersonalityType.mbti ? -0.2 : 0.2, end: 0)));
-      }).toList());
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+      }).toList()
+    );
   }
 
   Widget _buildPersonalityTypeSelection() {
@@ -226,14 +247,14 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppTheme.dividerColor)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'MBTI 유형 선택',),
+            'MBTI 유형 선택',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -259,27 +280,33 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                     _fortuneCache[_selectedType] = null;
                   });
                 },
-                borderRadius: BorderRadius.circular(8))),
-                child: Container(
+                borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Container(
                   decoration: BoxDecoration(
                     color: isSelected
                         ? _selectedType.gradientColors[0]
                         : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Center(
                     child: Text(
                       mbti,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[700],
                         fontWeight: FontWeight.bold,
-                        fontSize: 14)))));
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
             }),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: _selectedType.gradientColors[0].withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: Row(
               children: [
                 Icon(
@@ -289,10 +316,19 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'MBTI를 모르시나요? 무료 성격유형 검사를 해보세요!',),
+                    'MBTI를 모르시나요? 무료 성격유형 검사를 해보세요!',
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppTheme.textSecondaryColor)))]))]));
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBloodTypeSelection() {
@@ -300,14 +336,14 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppTheme.dividerColor)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '혈액형 선택',),
+            '혈액형 선택',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -319,7 +355,8 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: blood == _bloodTypes.last ? 0 : 8),
+                    right: blood == _bloodTypes.last ? 0 : 8,
+                  ),
                   child: InkWell(
                     onTap: () {
                       setState(() {
@@ -327,49 +364,65 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                         _fortuneCache[_selectedType] = null;
                       });
                     },
-                    borderRadius: BorderRadius.circular(8))),
-                    child: Container(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Container(
                       height: 60,
                       decoration: BoxDecoration(
                         gradient: isSelected
-                            ? LinearGradient(colors: _selectedType.gradientColors,
+                            ? LinearGradient(colors: _selectedType.gradientColors)
                             : null,
                         color: isSelected ? null : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8))),
+                        borderRadius: BorderRadius.circular(8),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
                                   color: _selectedType.gradientColors[0].withOpacity(0.3),
                                   blurRadius: 8,
-                                  offset: const Offset(0, 2))]
-                            : []),
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : [],
                       child: Center(
                         child: Text(
-                          '$blood형',),
+                          '$blood형',
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.grey[700],
                             fontWeight: FontWeight.bold,
-                            fontSize: 18)))))));
-            }).toList()),
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
           const SizedBox(height: 16),
-          _buildBloodTypeDescription()]));
+          _buildBloodTypeDescription(),
+        ],
+      ),
+    );
   }
 
   Widget _buildBloodTypeDescription() {
-    if (_bloodType == null) return const SizedBox.shrink()
+    if (_bloodType == null) return const SizedBox.shrink();
     
     final descriptions = {
-      'A', '꼼꼼하고 신중한 성격의 A형',
-      'B', '자유롭고 창의적인 성격의 B형',
-      'O', '활발하고 사교적인 성격의 O형',
-      'AB', '이성적이고 독창적인 성격의 AB형'};
+      'A': '꼼꼼하고 신중한 성격의 A형',
+      'B': '자유롭고 창의적인 성격의 B형',
+      'O': '활발하고 사교적인 성격의 O형',
+      'AB': '이성적이고 독창적인 성격의 AB형'
+  };
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: _selectedType.gradientColors[0].withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8)),
-      child: Row(
+        borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
         children: [
           Icon(
             Icons.water_drop,
@@ -380,7 +433,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             descriptions[_bloodType] ?? '',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textColor))]));
+              color: AppTheme.textColor)]);
   }
 
   bool _canGenerateFortune() {
@@ -399,7 +452,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           backgroundColor: _selectedType.gradientColors[0]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -409,11 +462,11 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               color: Colors.white),
             const SizedBox(width: 8),
             Text(
-              '${_selectedType.label} 운세 확인하기',),
+              '${_selectedType.label} 운세 확인하기',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white))])));
+                color: Colors.white)]);
   }
 
   Widget _buildRefreshButton() {
@@ -423,7 +476,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         icon: const Icon(Icons.refresh),
         label: const Text('다시 보기'),
         style: TextButton.styleFrom(
-          foregroundColor: _selectedType.gradientColors[0])));
+          foregroundColor: _selectedType.gradientColors[0]));
   }
 
   void _onGenerateFortune() {
@@ -451,7 +504,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           colors: [
             _selectedType.gradientColors[0].withOpacity(0.1),
             _selectedType.gradientColors[1].withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withOpacity(0.3),
           width: 1)),
@@ -473,20 +526,20 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0]))),
-              if (fortune.score != null)
-                Container(
+                    color: _selectedType.gradientColors[0])),
+              if (fortune.score != null),
+            Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
-                    '${fortune.score}점',),
+                    '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold)))]),
+                      fontWeight: FontWeight.bold))]),
           const SizedBox(height: 20),
-          
           // Main message
           Text(
             fortune.message,
@@ -512,8 +565,9 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8)),
-              child: Row(
+                borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
@@ -526,7 +580,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor)))]))]])).animate(,
+                        color: AppTheme.textColor)])]])).animate(,
       .fadeIn(duration: 500.ms,
       .slideY(begin: 0.2, end: 0);
   }
@@ -536,7 +590,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 성격 특성',),
+          '오늘의 성격 특성',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -549,14 +603,14 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: _selectedType.gradientColors[0].withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _selectedType.gradientColors[0].withOpacity(0.3))),
+                color: _selectedType.gradientColors[0].withOpacity(0.3)),
             child: Text(
               trait,
               style: TextStyle(
                 fontSize: 13,
-                color: _selectedType.gradientColors[0]))).toList())]
+                color: _selectedType.gradientColors[0])).toList()]
     );
   }
 
@@ -565,7 +619,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 궁합',),
+          '오늘의 궁합',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -578,8 +632,10 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               colors: [
                 _selectedType.gradientColors[0].withOpacity(0.05),
                 _selectedType.gradientColors[1].withOpacity(0.02)]),
-            borderRadius: BorderRadius.circular(8)),
-          child: Column(
+            borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+
             children: [
               if (compatibility['best'] != null)
                 _buildCompatibilityRow('최고의 궁합': compatibility['best'],
@@ -614,7 +670,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: color))]));
+              color: color)]);
   }
 
   Color _getScoreColor(int score) {

@@ -64,7 +64,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_baseball,
       gradientColors: [Color(0xFFE53E3E), Color(0xFFC53030)],
       category: SportCategory.ballGames,
-      teams: ['LG', '두산', 'KT', '삼성', 'SSG', '롯데', 'NC', '한화', 'KIA', '키움'],
+      teams: ['LG': '두산', 'KT': '삼성', 'SSG': '롯데', 'NC': '한화', 'KIA': '키움'],
     ),
     SportItem(
       name: '야구 (해외)',
@@ -72,7 +72,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_baseball,
       gradientColors: [Color(0xFF2B6CB0), Color(0xFF1E4E8C)],
       category: SportCategory.ballGames,
-      teams: ['양키스', '다저스', '레드삭스', '자이언츠', '컵스'],
+      teams: ['양키스': '다저스', '레드삭스': '자이언츠', '컵스'],
     ),
     SportItem(
       name: '축구 (국내)',
@@ -80,7 +80,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_soccer,
       gradientColors: [Color(0xFF48BB78), Color(0xFF38A169)],
       category: SportCategory.ballGames,
-      teams: ['울산', '전북', '포항', '인천', '서울', '수원', '대구', '강원', '제주', '광주'],
+      teams: ['울산': '전북', '포항': '인천', '서울': '수원', '대구': '강원', '제주': '광주'],
     ),
     SportItem(
       name: '축구 (해외)',
@@ -88,7 +88,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_soccer,
       gradientColors: [Color(0xFF805AD5), Color(0xFF6B46C1)],
       category: SportCategory.ballGames,
-      teams: ['맨유', '맨시티', '첼시', '리버풀', '아스날', '토트넘', '바르샤', '레알'],
+      teams: ['맨유': '맨시티', '첼시': '리버풀', '아스날': '토트넘', '바르샤': '레알'],
     ),
     SportItem(
       name: '농구 (국내)',
@@ -96,7 +96,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_basketball,
       gradientColors: [Color(0xFFED8936), Color(0xFFDD6B20)],
       category: SportCategory.ballGames,
-      teams: ['서울SK', 'LG', '삼성', 'KT', '현대모비스', 'KCC', '한국가스공사', '원주DB', '안양정관장'],
+      teams: ['서울SK': 'LG', '삼성': 'KT', '현대모비스': 'KCC', '한국가스공사': '원주DB', '안양정관장'],
     ),
     SportItem(
       name: '농구 (해외)',
@@ -104,7 +104,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_basketball,
       gradientColors: [Color(0xFF9F7AEA), Color(0xFF805AD5)],
       category: SportCategory.ballGames,
-      teams: ['레이커스', '셀틱스', '워리어스', '불스', '히트', '넷츠'],
+      teams: ['레이커스': '셀틱스', '워리어스': '불스', '히트': '넷츠'],
     ),
     SportItem(
       name: '배구',
@@ -112,7 +112,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_volleyball,
       gradientColors: [Color(0xFF4299E1), Color(0xFF3182CE)],
       category: SportCategory.ballGames,
-      teams: ['현대건설', '흥국생명', 'GS칼텍스', 'IBK', '한국도로공사', 'KGC인삼공사', '페퍼저축은행'],
+      teams: ['현대건설': '흥국생명', 'GS칼텍스': 'IBK', '한국도로공사': 'KGC인삼공사', '페퍼저축은행'],
     ),
     SportItem(
       name: '테니스',
@@ -468,8 +468,8 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         child: Stack(
           children: [
             // Background pattern
-            if (isSelected)
-              Positioned(
+            if (isSelected),
+            Positioned(
                 right: -20,
                 bottom: -20,
                 child: Icon(
@@ -573,7 +573,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 backgroundColor: _selectedSport!.gradientColors[0]),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -644,7 +644,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           style: TextStyle(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : Colors.grey[700]))));
+            color: isSelected ? Colors.white : Colors.grey[700])));
   }
 
   Widget _buildFortuneResult(Fortune fortune) {
@@ -684,8 +684,8 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                     color: _selectedSport!.gradientColors[0]),
                 ),
               ),
-              if (fortune.score != null)
-                Container(
+              if (fortune.score != null),
+            Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
@@ -727,7 +727,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -762,8 +762,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         // Win probability
         if (details['winProbability'] != null)
           _buildDetailItem(
-            '승리 확률',
-            '${details['winProbability']}%',
+            '승리 확률': '${details['winProbability']}%',
             Icons.emoji_events,
             Colors.amber),
         
@@ -771,7 +770,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         if (details['keyPlayers'] != null)
           _buildDetailItem(
             '주목할 선수',
-            details['keyPlayers'].join(', '),
+            details['keyPlayers'].join(': '),
             Icons.star,
             Colors.orange),
         
@@ -866,7 +865,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
             child: Icon(
               icon,
               color: color,

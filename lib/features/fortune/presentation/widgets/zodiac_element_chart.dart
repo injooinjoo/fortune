@@ -185,7 +185,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           offset: Offset(x, y),
           child: Transform.scale(
             scale: _scaleAnimation.value,
-            child: _buildElementNode(element.key, element.value, isSelected))));
+            child: _buildElementNode(element.key, element.value, isSelected)));
     }
     
     return nodes;
@@ -229,7 +229,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                     style: TextStyle(
                       fontSize: isSelected ? 14 : 12,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: Colors.white))])));
+                      color: Colors.white)]));
         }));
   }
 
@@ -274,7 +274,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: data.color.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
               child: const Text(
                 '나의 오행',
                 style: TextStyle(
@@ -310,7 +310,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                       '${data.season} · ${data.direction}',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.8)))]))]),
+                        color: Colors.white.withOpacity(0.8))])]),
           const SizedBox(height: 16),
           Text(
             data.description,
@@ -357,7 +357,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   '띠: ',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8))),
+                    color: Colors.white.withOpacity(0.8)),
                 ...data.zodiacs.map((zodiac) {
                   final isCurrentZodiac = zodiac == widget.selectedZodiac;
                   return Padding(
@@ -368,7 +368,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                         fontSize: 14,
                         fontWeight: isCurrentZodiac ? FontWeight.bold : FontWeight.normal,
                         color: isCurrentZodiac ? data.color : Colors.white)));
-                })]))]));
+                })])]);
   }
 
   Widget _buildElementRelationships() {
@@ -401,7 +401,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             '상극',
             Icons.flash_on,
             Colors.red,
-            _getOvercomingRelation())]));
+            _getOvercomingRelation()]);
   }
 
   Widget _buildRelationshipRow(String title, IconData icon, Color color, String relation) {
@@ -411,7 +411,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: color.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(8)),
+            borderRadius: BorderRadius.circular(8),
           child: Icon(icon, color: color, size: 20)),
         const SizedBox(width: 12),
         Expanded(
@@ -428,7 +428,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 relation,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.8)))]))]);
+                  color: Colors.white.withOpacity(0.8))])]);
   }
 
   String _getGeneratingRelation() {

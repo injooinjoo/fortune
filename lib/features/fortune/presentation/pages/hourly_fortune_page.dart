@@ -70,7 +70,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                     context: context,
                     initialDate: _selectedDate,
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 7)));
+                    lastDate: DateTime.now().add(const Duration(days: 7));
                   if (date != null) {
                     setState(() {
                       _selectedDate = date;
@@ -342,9 +342,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
       'focus': 85,
       'social': 60,
       'luck': 90,
-      'description': '이 시간대는 집중력이 높아 중요한 업무를 처리하기에 좋습니다. 창의적인 아이디어가 떠오를 수 있으니 메모를 준비하세요.',
-      'activity': '중요한 회의나 프레젠테이션',
-      'avoid': '충동적인 결정'
+      'description': '이 시간대는 집중력이 높아 중요한 업무를 처리하기에 좋습니다. 창의적인 아이디어가 떠오를 수 있으니 메모를 준비하세요.': 'activity': '중요한 회의나 프레젠테이션': 'avoid': '충동적인 결정'
     };
     
     return Padding(
@@ -362,7 +360,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                     vertical: 6),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
                   child: Text(
                     '${_selectedHour!.toString().padLeft(2, '0')}:00',
                     style: theme.textTheme.bodyLarge?.copyWith(
@@ -493,10 +491,10 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     final theme = Theme.of(context);
     
     final luckyHours = [
-      {'time': '09:00-10:00', 'activity': '중요한 결정', 'score': 95},
-      {'time': '14:00-15:00', 'activity': '창의적 작업', 'score': 88},
-      {'time': '19:00-20:00', 'activity': '사교 활동', 'score': 92},
-      {'time': '22:00-23:00', 'activity': '명상/휴식', 'score': 85}
+      {'time': '09:00-10:00': 'activity': '중요한 결정': 'score': 95},
+      {'time': '14:00-15:00': 'activity': '창의적 작업': 'score': 88},
+      {'time': '19:00-20:00': 'activity': '사교 활동': 'score': 92},
+      {'time': '22:00-23:00': 'activity': '명상/휴식': 'score': 85}
     ];
     
     return Padding(
@@ -543,7 +541,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                         vertical: 4),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
                       child: Text(
                         hour['time'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -594,27 +592,23 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     
     final timeSlots = [
       {
-        'period': '새벽 (00:00-06:00)',
-        'icon': Icons.nightlight_round,
-        'activities': ['깊은 수면', '명상', '일기 쓰기'],
+        'period': '새벽 (00:00-06:00)': 'icon': Icons.nightlight_round,
+        'activities': ['깊은 수면': '명상', '일기 쓰기'],
         'color': Colors.indigo
       },
       {
-        'period': '아침 (06:00-12:00)',
-        'icon': Icons.wb_sunny,
-        'activities': ['운동', '중요한 업무', '학습'],
+        'period': '아침 (06:00-12:00)': 'icon': Icons.wb_sunny,
+        'activities': ['운동': '중요한 업무', '학습'],
         'color': Colors.orange
       },
       {
-        'period': '오후 (12:00-18:00)',
-        'icon': Icons.wb_twilight,
-        'activities': ['미팅', '창의적 작업', '네트워킹'],
+        'period': '오후 (12:00-18:00)': 'icon': Icons.wb_twilight,
+        'activities': ['미팅': '창의적 작업', '네트워킹'],
         'color': Colors.amber
       },
       {
-        'period': '저녁 (18:00-24:00)',
-        'icon': Icons.nights_stay,
-        'activities': ['가족 시간', '취미 활동', '휴식'],
+        'period': '저녁 (18:00-24:00)': 'icon': Icons.nights_stay,
+        'activities': ['가족 시간': '취미 활동', '휴식'],
         'color': Colors.purple
       }
     ];

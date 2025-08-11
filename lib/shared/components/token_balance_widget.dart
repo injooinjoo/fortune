@@ -118,7 +118,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                 child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      theme.colorScheme.primary))))
+                      theme.colorScheme.primary)))
             else
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +161,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                   '영혼 충전하기',
                   style: AppTypography.bodyMedium.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w600))))])));
+                    fontWeight: FontWeight.w600))]));
   }
 }
 

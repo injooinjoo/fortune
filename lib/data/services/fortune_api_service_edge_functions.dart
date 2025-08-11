@@ -123,12 +123,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       
       final authToken = 'Bearer ${session.accessToken}';
       edgeFunctionsDio.options.headers['Authorization'] = authToken;
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] Auth token added to headers');
-      debugPrint('prefix: ${authToken.substring(0, 30)}...');
-
-      // Debug info
-      debugPrint('method: POST');
-      debugPrint('body: ${requestData}');
+      // Auth token added to headers
       
       final stopwatch = Stopwatch()..start();
       final response = await edgeFunctionsDio.post(
@@ -136,14 +131,10 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         data: requestData);
       stopwatch.stop();
       
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] Response received in ${stopwatch.elapsedMilliseconds}ms');
-      debugPrint('status: ${response.statusCode}');
-      debugPrint('headers: ${response.headers}');
-      debugPrint('type: ${response.data.runtimeType}');
-      debugPrint('data: ${response.data}');
+      // Response received in ${stopwatch.elapsedMilliseconds}ms
 
       // Edge Functions return a slightly different format
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] Extracting fortune data from response...');
+      // Extracting fortune data from response...
       
       if (response.data == null) {
         debugPrint('❌ [_getFortuneFromEdgeFunction] Response data is null!');
@@ -158,26 +149,20 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       final fortuneData = response.data['fortune'];
       final tokensUsed = response.data['tokensUsed'] ?? 0;
       
-      debugPrint('present: ${fortuneData != null}');
-      debugPrint('type: ${fortuneData.runtimeType}');
+      // Fortune data validated
       
       // Debug info
       // Debug info
       
       // Convert to FortuneResponseModel format
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] Converting to FortuneData model...');
+      // Converting to FortuneData model...
       
       if (fortuneData == null) {
         debugPrint('❌ [_getFortuneFromEdgeFunction] Fortune data is null!');
         throw Exception('No fortune data in response');
       }
       
-      debugPrint('keys: ${fortuneData.keys.toList()}');
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] content: ${fortuneData['content']}');
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] description: ${fortuneData['description']}');
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] overallScore: ${fortuneData['overallScore']}');
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] hexagonScores: ${fortuneData['hexagonScores']}');
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] luckyItems: ${fortuneData['luckyItems']}');
+      // Fortune data extracted and validated
       
       final fortuneDataModel = FortuneData(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -204,7 +189,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         specialTip: fortuneData['special_tip'] ?? fortuneData['specialTip'],
         period: fortuneData['period']);
       
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] FortuneData model created successfully');
+      // FortuneData model created
       
       final fortuneResponse = FortuneResponseModel(
         success: true,
@@ -212,9 +197,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         tokensUsed: tokensUsed);
 
       final fortune = fortuneResponse.toEntity();
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune entity created successfully');
-      debugPrint('ID: ${fortune.id}');
-      debugPrint('type: ${fortune.type}');
+      // Fortune entity created
       
       return fortune;
       

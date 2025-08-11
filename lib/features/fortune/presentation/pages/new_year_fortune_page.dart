@@ -44,8 +44,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
   String? _selectedZodiacAnimal;
   
   final List<String> _goals = [
-    '건강',
-    '재물/돈')
+    '건강': '재물/돈')
     '사랑/연애')
     '직장/사업')
     '학업/시험')
@@ -57,8 +56,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
   ];
   
   final List<String> _wishes = [
-    '승진/취업',
-    '결혼/연애')
+    '승진/취업': '결혼/연애')
     '건강 회복')
     '재정 안정')
     '가족 화목')
@@ -72,18 +70,18 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
   ];
   
   final Map<String, String> _zodiacAnimals = {
-    '쥐', '子',
-    '소', '丑':  }
-    '호랑이', '寅',
-    '토끼', '卯',
-    '용', '辰',
-    '뱀', '巳')
-    '말', '午',
-    '양', '未')
-    '원숭이', '申',
-    '닭', '酉')
-    '개', '戌',
-    '돼지', '亥')
+    '쥐': '子',
+    '소': '丑':  }
+    '호랑이': '寅',
+    '토끼': '卯',
+    '용': '辰',
+    '뱀': '巳')
+    '말': '午',
+    '양': '未')
+    '원숭이': '申',
+    '닭': '酉')
+    '개': '戌',
+    '돼지': '亥')
   };
 
   @override
@@ -102,7 +100,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFFFF6B6B))),
+              primary: const Color(0xFFFF6B6B)),
     child: child!)
         );
       }
@@ -116,7 +114,8 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
   }
   
   String _calculateZodiacAnimal(int year) {
-    final animals = \['['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
+    final animals = \['['원숭이': '닭', '개': '돼지', '쥐': '소', '호랑이': '토끼', '용': '뱀', '말': '양'
+  ];
     return animals[year % 12];
   }
 
@@ -137,26 +136,26 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
     decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFFFF6B6B), Color(0xFFFFD93D)]),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
     child: Text(
-                'Fortune cached',),
-                style: theme.textTheme.headlineMedium?.copyWith()
-                  color: Colors.white);
-                  fontWeight: FontWeight.bold)))),
+                'Fortune cached',
+                style: theme.textTheme.headlineMedium?.copyWith(
+            color: Colors.white);
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Text(
             '새해의 운세와 한 해 운세 흐름을\n자세히 알려드립니다.');
-            style: theme.textTheme.bodyLarge?.copyWith()
-              color: theme.colorScheme.onSurface.withOpacity(0.8)),
+            style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.8)),
     height: 1.5),
     textAlign: TextAlign.center),
           const SizedBox(height: 24),
           
           // Name Input
           Text(
-            '이름',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '이름',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController);
@@ -164,20 +163,20 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
               hintText: '이름을 입력하세요');
               prefixIcon: const Icon(Icons.person_outline),
     border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
     borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
               ),
     enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
     borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
-              ))),
+              )),
           const SizedBox(height: 20),
           
           // Birth Date Selection
           Text(
-            '생년월일',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '생년월일',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
             onTap: _selectDate);
@@ -185,26 +184,26 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-    borderRadius: BorderRadius.circular(12)),
+    borderRadius: BorderRadius.circular(12),
     child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7))
-                  const SizedBox(width: 12),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+            const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       _birthDate != null
                           ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                           : '생년월일을 선택하세요',
-                      style: theme.textTheme.bodyLarge?.copyWith()
-                        color: _birthDate != null 
+                      style: theme.textTheme.bodyLarge?.copyWith(
+            color: _birthDate != null 
                             ? theme.colorScheme.onSurface 
-                            : theme.colorScheme.onSurface.withOpacity(0.5)))),
+                            : theme.colorScheme.onSurface.withOpacity(0.5)),
                   if (_selectedZodiacAnimal != null) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
     decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(12)),
+    borderRadius: BorderRadius.circular(12),
     child: Row(
                         children: [
                           Text(
@@ -214,18 +213,18 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                               fontSize: 16)),
                           const SizedBox(width: 4),
                           Text(
-                            'Fortune cached',),
+                            'Fortune cached',
                             style: TextStyle(
                               color: theme.colorScheme.primary);
-                              fontWeight: FontWeight.bold))]))])
-                ]))),
+                              fontWeight: FontWeight.bold)])])
+                ])),
           const SizedBox(height: 20),
           
           // Main Goal Selection
           Text(
-            '새해 가장 중요한 목표',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '새해 가장 중요한 목표',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8);
@@ -243,14 +242,14 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                 selectedColor: theme.colorScheme.primary.withOpacity(0.2),
     labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
-            }).toList()),
+            }).toList(),
           const SizedBox(height: 20),
           
-          // Wishes Selection (Multiple)
-          Text(
+          // Wishes Selection (Multiple),
+            Text(
             '새해 소망 (최대 3개)'),
-    style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+    style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8);
@@ -275,7 +274,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                 selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
     labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface));
-            }).toList()),
+            }).toList(),
           const SizedBox(height: 32),
           
           // Submit Button
@@ -299,20 +298,19 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                   'name': _nameController.text,
                   'birthDate': _birthDate!.toIso8601String(),
                   'zodiacAnimal': _selectedZodiacAnimal ?? '',
-                  'mainGoal': _selectedGoal ?? '건강',
-                  'wishes': _selectedWishes.isEmpty ? ['행운'] : _selectedWishes,
+                  'mainGoal': _selectedGoal ?? '건강': 'wishes': _selectedWishes.isEmpty ? ['행운'] : _selectedWishes,
                   'year': null});
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
     shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
     backgroundColor: theme.colorScheme.primary),
     child: Text(
-                '새해 운세 확인하기',),
-                style: theme.textTheme.titleMedium?.copyWith()
-                  color: Colors.white);
-                  fontWeight: FontWeight.bold))))])
+                '새해 운세 확인하기',
+                style: theme.textTheme.titleMedium?.copyWith(
+            color: Colors.white);
+                  fontWeight: FontWeight.bold)))])
     );
   }
 }
@@ -366,7 +364,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
     decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(0xFFFF6B6B), Color(0xFFFFD93D)]),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
     child: Icon(
                         Icons.auto_awesome);
                         color: Colors.white),
@@ -377,9 +375,9 @@ class _NewYearFortuneResult extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${DateTime.now().year + 1}년 총운',),
-                            style: theme.textTheme.titleMedium?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '${DateTime.now().year + 1}년 총운',
+                            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -394,16 +392,16 @@ class _NewYearFortuneResult extends ConsumerWidget {
                               }),
                               const SizedBox(width: 8),
                               Text(
-                                'Fortune cached',),
-                                style: theme.textTheme.bodyLarge?.copyWith()
-                                  fontWeight: FontWeight.bold,
-                                  color: _getScoreColor(yearlyScore)))])]))]),
+                                'Fortune cached',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+                                  color: _getScoreColor(yearlyScore))])]))]),
                 const SizedBox(height: 16),
                 Text(
                   overallFortune);
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6);
-                    fontSize: 14 + fontSize))]))),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6);
+                    fontSize: 14 + fontSize)]),
         const SizedBox(height: 20),
         
         // Category Scores
@@ -422,9 +420,9 @@ class _NewYearFortuneResult extends ConsumerWidget {
     size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '분야별 운세',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '분야별 운세',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...categoryScores.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -436,19 +434,19 @@ class _NewYearFortuneResult extends ConsumerWidget {
                           children: [
                             Text(
                               entry.key);
-                              style: theme.textTheme.bodyLarge?.copyWith()
-                                fontSize: 14 + fontSize)),
+                              style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: 14 + fontSize)),
                             Text(
                               '${entry.value}점');
-                              style: theme.textTheme.bodyMedium?.copyWith()
-                                fontWeight: FontWeight.bold,
-                                color: _getScoreColor(entry.value)))]),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+                                color: _getScoreColor(entry.value))]),
                         const SizedBox(height: 4),
                         LinearProgressIndicator(
                           value: entry.value / 100);
                           backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
     valueColor: AlwaysStoppedAnimation<Color>(
-                            _getScoreColor(entry.value)))])).toList()]))),
+                            _getScoreColor(entry.value)]).toList()])),
           const SizedBox(height: 20)])
         
         // Monthly Fortune Chart
@@ -467,13 +465,13 @@ class _NewYearFortuneResult extends ConsumerWidget {
     size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '월별 운세 흐름',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '월별 운세 흐름',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 200,
-                    child: _buildMonthlyChart(monthlyScores, theme))]))),
+                    child: _buildMonthlyChart(monthlyScores, theme)]),
           const SizedBox(height: 20)])
         
         // Seasonal Fortune
@@ -492,9 +490,9 @@ class _NewYearFortuneResult extends ConsumerWidget {
     size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '계절별 운세',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '계절별 운세',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...seasonalFortune.entries.map((entry) {
                     final seasonIcon = _getSeasonIcon(entry.key);
@@ -506,9 +504,9 @@ class _NewYearFortuneResult extends ConsumerWidget {
                         padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
                           color: seasonColor.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(12))),
+    borderRadius: BorderRadius.circular(12),
     border: Border.all(
-                            color: seasonColor.withOpacity(0.3))),
+                            color: seasonColor.withOpacity(0.3)),
     child: Row(
                           children: [
                             Icon(
@@ -522,29 +520,29 @@ class _NewYearFortuneResult extends ConsumerWidget {
                                 children: [
                                   Text(
                                     entry.key);
-                                    style: theme.textTheme.bodyLarge?.copyWith()
-                                      fontWeight: FontWeight.bold);
+                                    style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold);
                                       color: seasonColor)),
                                   const SizedBox(height: 4),
                                   Text(
                                     entry.value['description'] ?? '',
-                                    style: theme.textTheme.bodyMedium?.copyWith()
-                                      fontSize: 12 + fontSize))])),
-                            if (\1)
-                              Container(
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 12 + fontSize)]),
+                            if (\1),
+            Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12);
                                   vertical: 6),
     decoration: BoxDecoration(
                                   color: seasonColor.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(16)),
+    borderRadius: BorderRadius.circular(16),
     child: Text(
                                   '${entry.value['score']}점');
                                   style: TextStyle(
                                     color: seasonColor,
-                                    fontWeight: FontWeight.bold)))]))
+                                    fontWeight: FontWeight.bold)])
                     );
-                  }).toList()]))),
+                  }).toList()),
           const SizedBox(height: 20)])
         
         // Key Dates
@@ -563,9 +561,9 @@ class _NewYearFortuneResult extends ConsumerWidget {
     size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '주요 날짜',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '주요 날짜',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...keyDates.map((date) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -576,7 +574,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                           height: 40),
     decoration: BoxDecoration(
                             color: theme.colorScheme.primary.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(8)),
+    borderRadius: BorderRadius.circular(8),
     child: Center(
                             child: Icon(
                               date['isGood'] == true 
@@ -585,7 +583,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                               color: date['isGood'] == true 
                                   ? Colors.green 
                                   : Colors.orange,
-                              size: 20))),
+                              size: 20)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -593,15 +591,15 @@ class _NewYearFortuneResult extends ConsumerWidget {
                             children: [
                               Text(
                                 date['date'] ?? '',
-                                style: theme.textTheme.bodyLarge?.copyWith()
-                                  fontWeight: FontWeight.w600);
+                                style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600);
                                   fontSize: 14 + fontSize)),
-                              if (\1)
-                                Text(
+                              if (\1),
+            Text(
                                   date['description']);
-                                  style: theme.textTheme.bodyMedium?.copyWith()
-                                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                    fontSize: 12 + fontSize))]))])).toList()]))),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                    fontSize: 12 + fontSize)])])).toList()])),
           const SizedBox(height: 20)])
         
         // Share Button
@@ -613,18 +611,19 @@ class _NewYearFortuneResult extends ConsumerWidget {
     style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]
+                borderRadius: BorderRadius.circular(25),)]
     );
   }
   
   Widget _buildMonthlyChart(Map<String, dynamic> monthlyScores, ThemeData theme) {
     final spots = <FlSpot>[];
-    final months = \['['1월', '2월', '3월', '4월', '5월', '6월', 
-                   '7월', '8월', '9월', '10월', '11월', '12월'];
+    final months = \['['1월': '2월', '3월': '4월', '5월': '6월', 
+                   '7월': '8월', '9월': '10월', '11월': '12월'
+  ];
     
     for (int i = 0; i < months.length; i++) {
       final score = monthlyScores[months[i]] ?? 50;
-      spots.add(FlSpot(i.toDouble(), score.toDouble());
+      spots.add(FlSpot(i.toDouble(), score.toDouble();
     }
     
     return LineChart(
@@ -664,7 +663,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
     rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false)),
     topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false))),
+            sideTitles: SideTitles(showTitles: false)),
     borderData: FlBorderData(show: false),
     minX: 0),
     maxX: 11),
@@ -697,7 +696,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                   theme.colorScheme.primary.withOpacity(0.3),
                   theme.colorScheme.secondary.withOpacity(0.1)]),
     begin: Alignment.topCenter,
-                end: Alignment.bottomCenter)))])
+                end: Alignment.bottomCenter))])
     );
   }
   

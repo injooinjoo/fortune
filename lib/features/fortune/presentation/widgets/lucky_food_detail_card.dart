@@ -220,7 +220,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: Colors.orange),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    fontWeight: FontWeight.bold))]))]),
+    fontWeight: FontWeight.bold)])]),
                 const SizedBox(height: AppSpacing.spacing3),
                 if (items.isNotEmpty) ...[
                   Row(
@@ -263,7 +263,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     Icon(
                       Icons.arrow_forward_ios);
                       size: 12),
-    color: Colors.orange)])]))))
+    color: Colors.orange)])])))
     );
   }
 
@@ -283,7 +283,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor),
     borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24))),
+              top: Radius.circular(24)),
     child: Column(
             children: [
               Container(
@@ -292,7 +292,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);
@@ -320,7 +320,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                     .textTheme
                                     .headlineSmall
                                     ?.copyWith(
-                                      fontWeight: FontWeight.bold))),
+                                      fontWeight: FontWeight.bold)),
                               const SizedBox(height: AppSpacing.spacing1),
                               Text(
                                 category.description);
@@ -328,13 +328,13 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.grey[600])))]))]),
+                                      color: Colors.grey[600]))])]),
                     const SizedBox(height: AppSpacing.spacing6),
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)] else ...[
                       ...items.asMap().entries.map((entry) => 
                         _buildDetailItem(context, entry.value, index: entry.key + 1)])
-                  ]))])))
+                  ])]))
     );
   }
 
@@ -411,7 +411,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                   'Fortune cached',),
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                         fontWeight: FontWeight.bold),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                             Expanded(
                               child: Text(
                                 item.value);
@@ -430,7 +430,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                               _getPriorityText(item.priority!),
     style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: Colors.white),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))]))]),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
                 item.reason);
@@ -475,7 +475,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                         child: Text(
                           item.situation!);
                           style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                                color: Colors.amber[900]))]))])
+                                color: Colors.amber[900])])])
             ])))
     );
   }

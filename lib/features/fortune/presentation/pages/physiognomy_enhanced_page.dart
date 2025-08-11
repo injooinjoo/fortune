@@ -32,7 +32,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                     _buildPrivacyNotice(theme),
                     const SizedBox(height: 32),
                     _buildStartButton(context, ref, theme),
-                    const SizedBox(height: 24)])))])));
+                    const SizedBox(height: 24)])]);
   }
 
   Widget _buildHeroSection(ThemeData theme) {
@@ -85,7 +85,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: theme.colorScheme.primary.withOpacity(0.3))),
+                color: theme.colorScheme.primary.withOpacity(0.3)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -95,37 +95,29 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 6),
                 Text(
-                  'AI 정확도 95%',),
-                  style: theme.textTheme.bodySmall?.copyWith()
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold))]))
+                  'AI 정확도 95%',
+                  style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold)])
               .animate()
               .fadeIn(duration: 600.ms, delay: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0))]));
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0)]);
   }
 
   Widget _buildFeaturesSection(ThemeData theme) {
     final features = [
       {
         'icon': Icons.camera_alt_rounded,
-        'title': 'AI 사진 분석',
-        'description': '최신 AI 기술로 정확한 관상 분석',
-        'color': null},
+        'title': 'AI 사진 분석': 'description': '최신 AI 기술로 정확한 관상 분석': 'color': null},
       {
         'icon': Icons.touch_app_rounded,
-        'title': '간편한 수동 입력',
-        'description': '사진 없이도 간단하게 분석 가능',
-        'color': null},
+        'title': '간편한 수동 입력': 'description': '사진 없이도 간단하게 분석 가능': 'color': null},
       {
         'icon': Icons.psychology_rounded,
-        'title': '종합적인 분석',
-        'description': '성격, 재물운, 연애운 등 상세 분석',
-        'color': null},
+        'title': '종합적인 분석': 'description': '성격, 재물운, 연애운 등 상세 분석': 'color': null},
       {
         'icon': Icons.share_rounded,
-        'title': '결과 공유',
-        'description': '친구들과 재미있는 결과 공유',
-        'color': null}];
+        'title': '결과 공유': 'description': '친구들과 재미있는 결과 공유': 'color': null}];
 
     return Column(
       children: features.asMap().entries.map((entry) {
@@ -141,7 +133,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     color: feature['color'] as Color? ?? theme.colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: Icon(
                     feature['icon'] as IconData,
                     color: feature['color'] as Color? ?? theme.colorScheme.primary,
@@ -153,13 +145,13 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                     children: [
                       Text(
                         feature['title'] as String,
-                        style: theme.textTheme.bodyLarge?.copyWith()
-                          fontWeight: FontWeight.bold)),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
                       Text(
                         feature['description'] as String,
-                        style: theme.textTheme.bodySmall?.copyWith()
-                          color: theme.colorScheme.onSurface.withOpacity(0.7)))
+                        style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7))
                     ]
                   )
                 )
@@ -189,15 +181,15 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '개인정보 보호',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  '개인정보 보호',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(
-                  '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.',),
-                  style: theme.textTheme.bodySmall?.copyWith()
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    height: 1.4)]))]))
+                  '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    height: 1.4)])])
         .animate()
         .fadeIn(duration: 600.ms, delay: 400.ms)
         .slideY(begin: 0.2, end: 0);
@@ -223,17 +215,17 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
           elevation: 8,
           shadowColor: theme.colorScheme.primary.withOpacity(0.4),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16))),
+            borderRadius: BorderRadius.circular(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text(
-              '관상 분석 시작하기',),
+              '관상 분석 시작하기',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
             SizedBox(width: 8),
-            Icon(Icons.arrow_forward_rounded)])))
+            Icon(Icons.arrow_forward_rounded)]))
         .animate()
         .fadeIn(duration: 600.ms, delay: 600.ms)
         .slideY(begin: 0.3, end: 0)

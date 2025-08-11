@@ -57,7 +57,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
-    ));;
+    ));
   }
 
   @override
@@ -378,7 +378,7 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
-    ));;
+    ));
   }
 
   @override

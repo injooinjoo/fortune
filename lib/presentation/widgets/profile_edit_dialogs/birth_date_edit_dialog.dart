@@ -90,6 +90,6 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
                 setState(() {
                   _selectedDate = date;
                 });
-              }))]));
+              })]);
   }
 }

@@ -44,16 +44,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-    'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+    'ISTP', 'ISFP', 'ESTP', 'ESFP'
+  ];
 
   // Fortune Categories
   static const List<String> _categories = [
-    '연애운',
-    '직업운',
-    '재물운',
-    '건강운',
-    '대인관계',
-    '학업운'];
+    '연애운', '직업운',
+    '재물운', '건강운',
+    '대인관계', '학업운'
+  ];
 
   // MBTI Colors
   static const Map<String, List<Color>> _mbtiColors = {
@@ -198,11 +197,11 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               child: const Icon(
                 Icons.psychology_rounded,
                 color: Colors.white,
-                size: 24)),
+                size: 24))),
             const SizedBox(width: 12),
             Text(
               'MBTI 유형 선택',
-              style: theme.textTheme.headlineSmall)]),
+              style: theme.textTheme.headlineSmall)])]),
         const SizedBox(height: 16),
         GridView.count(
           shrinkWrap: true,
@@ -249,8 +248,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       fontWeight: FontWeight.bold,
                       color: isSelected
                           ? Colors.white
-                          : theme.colorScheme.onSurface)))));
-          }).toList())]);
+                          : theme.colorScheme.onSurface))));
+          }).toList());
   }
 
   Widget _buildCategorySelector() {
@@ -270,11 +269,11 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               child: const Icon(
                 Icons.category_rounded,
                 color: Colors.white,
-                size: 24)),
+                size: 24))),
             const SizedBox(width: 12),
             Text(
               '운세 카테고리 선택',
-              style: theme.textTheme.headlineSmall)]),
+              style: theme.textTheme.headlineSmall)])]),
         const SizedBox(height: 8),
         Text(
           '여러 개 선택 가능',
@@ -306,7 +305,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 color: isSelected
                     ? theme.colorScheme.primary
                     : theme.colorScheme.outline.withOpacity(0.3)));
-          }).toList())]);
+          }).toList());
   }
 
   Widget _buildGenerateButton() {
@@ -324,7 +323,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                     theme.colorScheme.primary,
                     theme.colorScheme.primary.withOpacity(0.8)])
               : null,
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(16),
         child: Center(
           child: Text(
             'MBTI 운세 보기',
@@ -332,7 +331,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               color: canGenerate
                   ? Colors.white
                   : theme.colorScheme.onSurface.withOpacity(0.5),
-              fontWeight: FontWeight.bold)))));
+              fontWeight: FontWeight.bold))));
   }
 
 
@@ -357,11 +356,11 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   child: const Icon(
                     Icons.insights_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24))),
                 const SizedBox(width: 12),
                 Text(
                   'MBTI 인사이트',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall)])]),
             const SizedBox(height: 20),
             ...(_selectedCategories.map((category) {
               return Padding(
@@ -385,8 +384,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                     Text(
                       _getMbtiCategoryInsight(_selectedMbti!, category),
                       style: theme.textTheme.bodyMedium)]));
-            }).toList())])));
-  }
+            }).toList())]));
 
   Widget _buildMbtiStrengthsWeaknesses() {
     final theme = Theme.of(context);
@@ -416,7 +414,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       Text(
                         '강점',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold))])],
                   const SizedBox(height: 12),
                   ..._getMbtiStrengths(_selectedMbti!).map((strength) {
                     return Padding(
@@ -432,7 +430,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                             child: Text(
                               strength,
                               style: theme.textTheme.bodySmall))]));
-                  }).toList()]))),
+                  }).toList()])))))),
           const SizedBox(width: 12),
           Expanded(
             child: glass.GlassCard(
@@ -455,7 +453,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       Text(
                         '약점',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold))])],
                   const SizedBox(height: 12),
                   ..._getMbtiWeaknesses(_selectedMbti!).map((weakness) {
                     return Padding(
@@ -471,7 +469,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                             child: Text(
                               weakness,
                               style: theme.textTheme.bodySmall))]));
-                  }).toList()])))]));
+                  }).toList()]))))]))]);
   }
 
   Widget _buildMbtiCompatibility() {
@@ -500,7 +498,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 const SizedBox(width: 12),
                 Text(
                   '궁합이 좋은 MBTI',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall)])],
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
@@ -614,50 +612,21 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             value,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withOpacity(0.8)))]));
+              color: Colors.white.withOpacity(0.8)))]]));
   }
 
   // MBTI Helper Methods
   String _getMbtiTitle(String mbti) {
     final titles = {
-      'INTJ': '전략가',
-      'INTP': '사색가',
-      'ENTJ': '통솔자',
-      'ENTP': '변론가',
-      'INFJ': '옹호자',
-      'INFP': '중재자',
-      'ENFJ': '선도자',
-      'ENFP': '활동가',
-      'ISTJ': '현실주의자',
-      'ISFJ': '수호자',
-      'ESTJ': '경영자',
-      'ESFJ': '집정관',
-      'ISTP': '장인',
-      'ISFP': '모험가',
-      'ESTP': '사업가',
-      'ESFP': '연예인'
+      'INTJ': '전략가', 'INTP': '사색가', 'ENTJ': '통솔자', 'ENTP': '변론가', 'INFJ': '옹호자', 'INFP': '중재자', 'ENFJ': '선도자', 'ENFP': '활동가', 'ISTJ': '현실주의자', 'ISFJ': '수호자', 'ESTJ': '경영자', 'ESFJ': '집정관', 'ISTP': '장인', 'ISFP': '모험가', 'ESTP': '사업가', 'ESFP': '연예인'
     };
     return titles[mbti] ?? mbti;
   }
 
   String _getMbtiDescription(String mbti) {
     final descriptions = {
-      'INTJ': '독립적이고 전략적인 사고를 가진 완벽주의자',
-      'INTP': '논리적이고 창의적인 사고를 즐기는 분석가',
-      'ENTJ': '대담하고 상상력이 풍부한 강한 의지의 지도자',
-      'ENTP': '똑똑하고 호기심이 많은 사색가',
-      'INFJ': '조용하고 신비로우며 영감을 주는 이상주의자',
-      'INFP': '상냥하고 창의적이며 이상적인 중재자',
-      'ENFJ': '카리스마 있고 영감을 주는 리더',
-      'ENFP': '열정적이고 창의적인 사교적인 자유영혼',
-      'ISTJ': '실용적이고 사실적이며 신뢰할 수 있는 사람',
-      'ISFJ': '헌신적이고 따뜻한 수호자',
-      'ESTJ': '탁월한 관리자이자 행정가',
-      'ESFJ': '배려심이 많고 사교적인 협력자',
-      'ISTP': '대담하고 실용적인 실험가',
-      'ISFP': '유연하고 매력적인 예술가',
-      'ESTP': '똑똑하고 에너지 넘치는 인식력이 뛰어난 사람',
-      'ESFP': '자발적이고 열정적인 연예인'};
+      'INTJ': '독립적이고 전략적인 사고를 가진 완벽주의자', 'INTP': '논리적이고 창의적인 사고를 즐기는 분석가', 'ENTJ': '대담하고 상상력이 풍부한 강한 의지의 지도자', 'ENTP': '똑똑하고 호기심이 많은 사색가', 'INFJ': '조용하고 신비로우며 영감을 주는 이상주의자', 'INFP': '상냥하고 창의적이며 이상적인 중재자', 'ENFJ': '카리스마 있고 영감을 주는 리더', 'ENFP': '열정적이고 창의적인 사교적인 자유영혼', 'ISTJ': '실용적이고 사실적이며 신뢰할 수 있는 사람', 'ISFJ': '헌신적이고 따뜻한 수호자', 'ESTJ': '탁월한 관리자이자 행정가', 'ESFJ': '배려심이 많고 사교적인 협력자', 'ISTP': '대담하고 실용적인 실험가', 'ISFP': '유연하고 매력적인 예술가', 'ESTP': '똑똑하고 에너지 넘치는 인식력이 뛰어난 사람', 'ESFP': '자발적이고 열정적인 연예인'
+  };
     return descriptions[mbti] ?? '';
   }
 
@@ -666,11 +635,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     // For now, return mock insights based on MBTI and category
     final insights = {
       '연애운': {
-        'INTJ': '이성적인 접근보다는 감정적인 교감을 시도해보세요. 상대방의 작은 변화에도 관심을 가져주면 좋은 결과가 있을 것입니다.',
-        'ENFP': '당신의 열정과 긍정적인 에너지가 상대방을 매료시킬 것입니다. 다만 너무 앞서가지 않도록 주의하세요.'},
+        'INTJ': '이성적인 접근보다는 감정적인 교감을 시도해보세요. 상대방의 작은 변화에도 관심을 가져주면 좋은 결과가 있을 것입니다.', 'ENFP': '당신의 열정과 긍정적인 에너지가 상대방을 매료시킬 것입니다. 다만 너무 앞서가지 않도록 주의하세요.'},
       '직업운': {
-        'INTJ': '당신의 전략적 사고가 빛을 발할 시기입니다. 장기적인 프로젝트에 집중하면 큰 성과를 얻을 수 있습니다.',
-        'ENFP': '창의적인 아이디어가 샘솟는 시기입니다. 동료들과의 브레인스토밍에서 좋은 결과를 얻을 수 있습니다.'}
+        'INTJ': '당신의 전략적 사고가 빛을 발할 시기입니다. 장기적인 프로젝트에 집중하면 큰 성과를 얻을 수 있습니다.', 'ENFP': '창의적인 아이디어가 샘솟는 시기입니다. 동료들과의 브레인스토밍에서 좋은 결과를 얻을 수 있습니다.'}
     };
 
     return insights[category]?[mbti] ?? 

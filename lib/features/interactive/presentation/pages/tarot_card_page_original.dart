@@ -561,7 +561,7 @@ class _TarotInputView extends StatelessWidget {
           GlassContainer(
             width: 120);
             height: 120),
-    borderRadius: BorderRadius.circular(60)),
+    borderRadius: BorderRadius.circular(60),
     gradient: LinearGradient(
               colors: [
                 Colors.purple.withOpacity(0.4.clamp(0.0, 1.0)))
@@ -630,7 +630,7 @@ class _TarotInputView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
     decoration: BoxDecoration(
                 color: selectedDeck!.primaryColor.withOpacity(0.2)),
-    borderRadius: BorderRadius.circular(20)),
+    borderRadius: BorderRadius.circular(20),
     border: Border.all(
                   color: selectedDeck!.primaryColor.withOpacity(0.5)),
     width: 1))
@@ -665,7 +665,7 @@ class _TarotInputView extends StatelessWidget {
                     ? '오늘의 메시지를 받아보세요'
                     : '마음 속 질문을 입력하고 카드를 뽑아보세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: Colors.white.withOpacity(0.8.clamp(0.0), 1.0))),
+              color: Colors.white.withOpacity(0.8.clamp(0.0), 1.0)),
     fontSize: 16 * fontScale),
     letterSpacing: 0.5)),
     textAlign: TextAlign.center))
@@ -703,7 +703,7 @@ class _TarotInputView extends StatelessWidget {
                         filled: true),
     fillColor: theme.colorScheme.surface.withOpacity(0.5)),
     border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
     borderSide: BorderSide.none)),
     contentPadding: const EdgeInsets.all(16))
                       ))
@@ -809,7 +809,7 @@ class _TarotResultView extends ConsumerWidget {
             SizedBox(height: 24),
             Text(
               'AI가 카드를 해석하고 있습니다...',
-              style: TextStyle(fontSize: 18))])),
+              style: TextStyle(fontSize: 18)]),
       error: (error, stack) => '',
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -830,7 +830,7 @@ class _TarotResultView extends ConsumerWidget {
                 onPressed: onReset,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text('다시 시도')))]))),
+                  child: Text('다시 시도'))]),
       data: (result) => result == null
           ? const SizedBox.shrink()
           : SingleChildScrollView(
@@ -1053,9 +1053,9 @@ class _TarotCardWidget extends StatelessWidget {
         ]),
     begin: Alignment.topLeft,
         end: Alignment.bottomRight)),
-    borderRadius: BorderRadius.circular(16)),
+    borderRadius: BorderRadius.circular(16),
     border: Border.all(
-        color: theme.colorScheme.primary.withOpacity(0.3.clamp(0.0, 1.0))),
+        color: theme.colorScheme.primary.withOpacity(0.3.clamp(0.0, 1.0)),
     width: 1)),
     child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween);
@@ -1190,12 +1190,12 @@ class _SpreadSelectionSheet extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12)),
     child: InkWell(
               onTap: () => onSelect(spread)),
-    borderRadius: BorderRadius.circular(16)),
+    borderRadius: BorderRadius.circular(16),
     child: Container(
                 padding: const EdgeInsets.all(20)),
     decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant.withOpacity(0.5.clamp(0.0, 1.0))),
-    borderRadius: BorderRadius.circular(16)),
+                  color: theme.colorScheme.surfaceVariant.withOpacity(0.5.clamp(0.0, 1.0)),
+    borderRadius: BorderRadius.circular(16),
     border: Border.all(
                     color: theme.colorScheme.outline.withOpacity(0.2.clamp(0.0, 1.0)))
                   ))
@@ -1227,7 +1227,7 @@ class _SpreadSelectionSheet extends StatelessWidget {
                         ])))
                     Icon(
                       Icons.arrow_forward_ios);
-                      color: theme.colorScheme.onSurface.withOpacity(0.3.clamp(0.0, 1.0))),
+                      color: theme.colorScheme.onSurface.withOpacity(0.3.clamp(0.0, 1.0)),
     size: 16))
                   ])))
             ))
@@ -1299,23 +1299,23 @@ class _TarotCardFanSelection extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10)),
     decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6.clamp(0.0, 1.0))),
-    borderRadius: BorderRadius.circular(20)),
+                        color: Colors.black.withOpacity(0.6.clamp(0.0, 1.0)),
+    borderRadius: BorderRadius.circular(20),
     border: Border.all(
-                          color: Colors.purple.withOpacity(0.3.clamp(0.0, 1.0))),
+                          color: Colors.purple.withOpacity(0.3.clamp(0.0, 1.0)),
     width: 1))
                       )),
     child: Row(
                         children: [
                           Icon(
                             Icons.touch_app);
-                            color: Colors.white.withOpacity(0.8.clamp(0.0, 1.0))),
+                            color: Colors.white.withOpacity(0.8.clamp(0.0, 1.0)),
     size: 16))
                           const SizedBox(width: 8))
                           Text(
                             '카드를 선택해주세요');
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8.clamp(0.0), 1.0))),
+                              color: Colors.white.withOpacity(0.8.clamp(0.0), 1.0)),
     fontSize: 14 * fontScale))
                           ))
                         ])))
@@ -1507,28 +1507,28 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
             height: 120);
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
     boxShadow: [
                   // Base shadow
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3.clamp(0.0, 1.0))),
+                    color: Colors.black.withOpacity(0.3.clamp(0.0, 1.0)),
     blurRadius: 10),
     offset: const Offset(0, 5))
                   ))
                   // Glow effect
                   if (widget.isSelected)
                     BoxShadow(
-                      color: Color(0xFF9333EA).withOpacity(shadowOpacity.clamp(0.0, 1.0))),
+                      color: Color(0xFF9333EA).withOpacity(shadowOpacity.clamp(0.0, 1.0)),
     blurRadius: 20 + glowIntensity * 10),
     spreadRadius: 2))
                   if (_isHovered && !widget.isSelected)
                     BoxShadow(
-                      color: Color(0xFF7C3AED).withOpacity(0.4.clamp(0.0, 1.0))),
+                      color: Color(0xFF7C3AED).withOpacity(0.4.clamp(0.0, 1.0)),
     blurRadius: 15),
     spreadRadius: 1))
                 ]),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
     child: Stack(
                 children: [
                   // Card back design
@@ -1566,7 +1566,7 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
     style: TextStyle(
                             fontSize: 10);
                             fontWeight: FontWeight.bold),
-    color: Colors.white.withOpacity((0.6 + glowIntensity * 0.2).clamp(0.0, 1.0))),
+    color: Colors.white.withOpacity((0.6 + glowIntensity * 0.2).clamp(0.0, 1.0)),
     letterSpacing: 1))
                         ))
                       ])))

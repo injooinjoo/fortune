@@ -44,7 +44,7 @@ class TodoStatsCard extends ConsumerWidget {
           loading: () => const Center(
             child: CircularProgressIndicator()),
           error: (_, __) => const Center(
-            child: Text('통계를 불러올 수 없습니다')))));
+            child: Text('통계를 불러올 수 없습니다'))));
   }
 
   Widget _buildStatItem(

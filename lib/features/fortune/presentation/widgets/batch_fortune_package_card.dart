@@ -113,7 +113,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
               borderRadius: AppDimensions.borderRadiusMedium),
             child: Text(
               '${savings.toStringAsFixed(0)}% 절약',),
-              style: Theme.of(context).textTheme.bodyMedium))));)
+              style: Theme.of(context).textTheme.bodyMedium)));)
   }
 
   Widget _buildGeneratedInfo(BuildContext context, WidgetRef ref) {
@@ -247,7 +247,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
         height: MediaQuery.of(context).size.height * 0.8,
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         child: Column(
           children: [
             Container(
@@ -256,7 +256,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
             Expanded(
               child: SingleChildScrollView(
                 padding: AppSpacing.paddingAll20,
@@ -291,7 +291,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
                           borderRadius: AppDimensions.borderRadiusSmall),
                         child: Text(
                           result.fortune.summary!,
-                          style: Theme.of(context).textTheme.bodyMedium))),
+                          style: Theme.of(context).textTheme.bodyMedium)),
                       const SizedBox(height: AppSpacing.spacing4)],
                     Text(
                       result.fortune.content,

@@ -286,7 +286,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
             ]),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.3))),
+            color: AppColors.primary.withOpacity(0.3)),
         child: Row(
           children: [
             const Icon(
@@ -334,11 +334,11 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
         
         context.push(category['route']);
       },
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface);
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(16),
     boxShadow: [
             BoxShadow(
               color: (category['color'],

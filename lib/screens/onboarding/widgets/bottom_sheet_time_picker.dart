@@ -49,7 +49,7 @@ class BottomSheetTimePicker extends StatelessWidget {
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
-          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))),
+          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius)),
       child: Column(
         children: [
           // Handle bar
@@ -59,7 +59,7 @@ class BottomSheetTimePicker extends StatelessWidget {
             height: context.fortuneTheme.bottomSheetStyles.handleHeight,
             decoration: BoxDecoration(
               color: context.fortuneTheme.dividerColor,
-              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2))),
+              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2)),
           
           // Header
           Padding(
@@ -67,7 +67,7 @@ class BottomSheetTimePicker extends StatelessWidget {
             child: Text(
               '태어난 시간',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600))),
+                fontWeight: FontWeight.w600)),
           
           // Time options
           Expanded(
@@ -87,7 +87,7 @@ class BottomSheetTimePicker extends StatelessWidget {
                       border: Border(
                         bottom: BorderSide(
                           color: context.fortuneTheme.dividerColor,
-                          width: context.fortuneTheme.formStyles.inputBorderWidth))),
+                          width: context.fortuneTheme.formStyles.inputBorderWidth)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -108,6 +108,6 @@ class BottomSheetTimePicker extends StatelessWidget {
                           Icon(
                             Icons.check_circle,
                             color: Theme.of(context).primaryColor)])));
-              }))]));
+              })]);
   }
 }

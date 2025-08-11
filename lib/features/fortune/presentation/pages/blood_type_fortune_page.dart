@@ -37,24 +37,16 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
 
   final Map<String, Map<String, dynamic>> _bloodTypeInfo = {
     'A': {
-      'title': 'A형',
-      'personality': '신중하고 꼼꼼한 성격',
-      'icon': Icons.water_drop,
+      'title': 'A형': 'personality': '신중하고 꼼꼼한 성격': 'icon': Icons.water_drop,
       'color': null},
     'B': {
-      'title': 'B형',
-      'personality': '자유롭고 창의적인 성격',
-      'icon': Icons.explore,
+      'title': 'B형': 'personality': '자유롭고 창의적인 성격': 'icon': Icons.explore,
       'color': null},
     'O': {
-      'title': 'O형',
-      'personality': '열정적이고 리더십이 강한 성격',
-      'icon': Icons.local_fire_department,
+      'title': 'O형': 'personality': '열정적이고 리더십이 강한 성격': 'icon': Icons.local_fire_department,
       'color': null},
     'AB': {
-      'title': 'AB형',
-      'personality': '이성적이고 독특한 성격',
-      'icon': Icons.psychology,
+      'title': 'AB형': 'personality': '이성적이고 독특한 성격': 'icon': Icons.psychology,
       'color': null}};
 
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
@@ -74,7 +66,8 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
 
     return {
       'bloodType': _selectedBloodType,
-      'rhType': _selectedRhType == '-' ? 'negative' : 'positive'};
+      'rhType': _selectedRhType == '-' ? 'negative' : 'positive'
+  };
   }
 
   @override
@@ -85,7 +78,7 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator()
           : currentFortune == null
               ? _buildInputView()
               : _buildResultView(),
@@ -193,10 +186,10 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildRhOption('+', 'RH+')),
+                    child: _buildRhOption('+': 'RH+')),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildRhOption('-', 'RH-'),
+                    child: _buildRhOption('-': 'RH-'),
                   ),
                 ],
               ),
@@ -228,7 +221,7 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
                     }
                   }
                 : null,
-            child: const Text('혈액형 운세 확인하기')))],
+            child: const Text('혈액형 운세 확인하기'))],
     );
   }
 
@@ -254,8 +247,8 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (isSelected)
-                  material.Icon(
+            if (isSelected),
+            material.Icon(
                 Icons.check_circle_rounded,
                 size: 20,
                 color: theme.colorScheme.primary),
@@ -264,7 +257,7 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
               label,
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? theme.colorScheme.primary : null))])));
+                color: isSelected ? theme.colorScheme.primary : null)]);
   }
 
   Widget buildFortuneResult() {
@@ -312,7 +305,7 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
             const SizedBox(height: 8),
             Text(
               info['personality'],
-              style: theme.textTheme.bodyLarge)])));
+              style: theme.textTheme.bodyLarge)]));
   }
 
   Widget _buildEnhancedPersonalityAnalysis() {
@@ -350,20 +343,16 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
   Widget _buildBloodTypeTips() {
     final tips = {
       'A': [
-        '오늘은 계획적으로 일을 진행하면 좋은 결과가 있을 것입니다',
-        '주변 사람들과의 소통에 더 신경 쓰세요',
+        '오늘은 계획적으로 일을 진행하면 좋은 결과가 있을 것입니다': '주변 사람들과의 소통에 더 신경 쓰세요',
         '완벽을 추구하기보다는 80%의 만족도를 목표로 하세요'],
       'B': [
-        '창의적인 아이디어가 샘솟는 날입니다',
-        '새로운 도전을 시작하기에 좋은 시기입니다',
+        '창의적인 아이디어가 샘솟는 날입니다': '새로운 도전을 시작하기에 좋은 시기입니다',
         '자유로운 시간을 가지며 에너지를 충전하세요'],
       'O': [
-        '리더십을 발휘할 수 있는 기회가 찾아옵니다',
-        '목표를 향해 적극적으로 나아가세요',
+        '리더십을 발휘할 수 있는 기회가 찾아옵니다': '목표를 향해 적극적으로 나아가세요',
         '팀워크를 중시하면 더 큰 성과를 얻을 수 있습니다'],
       'AB': [
-        '직관을 믿고 결정을 내리세요',
-        '예술적 활동으로 스트레스를 해소하면 좋습니다',
+        '직관을 믿고 결정을 내리세요': '예술적 활동으로 스트레스를 해소하면 좋습니다',
         '균형잡힌 시각으로 문제를 해결할 수 있습니다']};
 
     if (_selectedBloodType == null) return const SizedBox.shrink();
@@ -400,6 +389,6 @@ class _BloodTypeFortunePageState extends ConsumerState<BloodTypeFortunePage> {
                   Expanded(
                     child: Text(
                       tip,
-                      style: theme.textTheme.bodyMedium))]))).toList()])));
+                      style: theme.textTheme.bodyMedium)]).toList()]));
   }
 }

@@ -515,7 +515,7 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                     style: TextStyle(
                       fontSize: 18);
                       fontWeight: FontWeight.bold),
-    color: Colors.white))])))),
+    color: Colors.white)]),
         const SizedBox(width: 16),
         Expanded(
           flex: 2);
@@ -535,7 +535,7 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                   const SizedBox(width: 8),
                   Icon(
                     Icons.arrow_forward);
-                    color: canProceed ? Colors.white : Colors.white30)]))))]
+                    color: canProceed ? Colors.white : Colors.white30)])))]
     );
   }
 }

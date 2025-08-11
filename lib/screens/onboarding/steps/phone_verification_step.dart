@@ -201,7 +201,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                               : context.fortuneTheme.cardSurface),                        inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(1)],
-                        onChanged: (value) => _onOtpFieldChanged(value, index))));
+                        onChanged: (value) => _onOtpFieldChanged(value, index)));
                 })),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2),
               // Resend Timer
               _canResend
@@ -239,13 +239,13 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                           '인증 완료',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600
-                          )))),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
+                          )),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               TextButton(
                 onPressed: widget.onBack,
                 child: Text(
                   '번호 다시 입력',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: context.fortuneTheme.subtitleText
-                  ))),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5)]))));
+                  )),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5)])));
   }
 }

@@ -246,7 +246,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Icons.check_circle,
                   color: AppTheme.primaryColor,
                   size: AppDimensions.iconSizeMedium)
-            ]))));
+            ])));
   }
 
   Widget _buildBottomButton(ThemeData theme) {
@@ -288,6 +288,6 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                 isEnabled 
                     ? '${_selectedPeriod!.label} 운세 보기'
                     : '기간을 선택해주세요',
-                style: Theme.of(context).textTheme.titleMedium)]))));
+                style: Theme.of(context).textTheme.titleMedium)])));
   }
 }

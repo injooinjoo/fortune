@@ -46,11 +46,10 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
   String? _selectedUrgency;
   
   final List<String> _urgencyLevels = [
-    '매우 급함 (1개월 이내)',
-    '급함 (2개월 이내)',
-    '보통 (3개월 이내)',
-    '여유 있음 (6개월 이내)',
-    '매우 여유 있음 (1년 이내)'];
+    '매우 급함 (1개월 이내)': '급함 (2개월 이내)',
+    '보통 (3개월 이내)': '여유 있음 (6개월 이내)',
+    '매우 여유 있음 (1년 이내)'
+  ];
 
   @override
   void dispose() {
@@ -70,7 +69,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF667EEA))),
+              primary: const Color(0xFF667EEA)),
           child: child!);
       }
     );
@@ -94,7 +93,6 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5)),
         const SizedBox(height: 24),
-        
         // Name Input
         Text(
           '이름',
@@ -110,12 +108,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
         const SizedBox(height: 20),
-        
         // Birth Date Selection
         Text(
           '생년월일',
@@ -130,8 +127,9 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-              borderRadius: BorderRadius.circular(12)),
-            child: Row(
+              borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
               children: [
                 Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
                 const SizedBox(width: 12),
@@ -142,9 +140,8 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
+                        : theme.colorScheme.onSurface.withOpacity(0.5)]),
         const SizedBox(height: 20),
-        
         // From Address
         Text(
           '출발지 (현재 거주지)',
@@ -160,12 +157,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             prefixIcon: const Icon(Icons.location_on_outlined),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
         const SizedBox(height: 20),
-        
         // To Address
         Text(
           '도착지 (이사할 지역)',
@@ -181,12 +177,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             prefixIcon: const Icon(Icons.location_searching),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
         const SizedBox(height: 20),
-        
         // Urgency Selection
         Text(
           '이사 급한 정도',
@@ -209,9 +204,9 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
               },
               activeColor: theme.colorScheme.primary,
               contentPadding: EdgeInsets.zero);
-          }).toList()),
-        const SizedBox(height: 20),
-        
+          }).toList(),
+          ),
+          const SizedBox(height: 20),
         // Date Range Selection
         Text(
           '이사 가능 기간',
@@ -229,7 +224,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                     context: context,
                     initialDate: _selectedStartDate ?? DateTime.now(),
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)));
+                    lastDate: DateTime.now().add(const Duration(days: 365));
                   if (picked != null) {
                     setState(() {
                       _selectedStartDate = picked;
@@ -243,13 +238,14 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Text(
                     _selectedStartDate != null
                         ? '${_selectedStartDate!.month}/${_selectedStartDate!.day}'
                         : '시작일',
                     style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center)))),
+                    textAlign: TextAlign.center)),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text('~')),
@@ -258,9 +254,9 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                 onTap: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: _selectedEndDate ?? (_selectedStartDate ?? DateTime.now()),
+                    initialDate: _selectedEndDate ?? (_selectedStartDate ?? DateTime.now(),
                     firstDate: _selectedStartDate ?? DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)));
+                    lastDate: DateTime.now().add(const Duration(days: 365));
                   if (picked != null) {
                     setState(() {
                       _selectedEndDate = picked;
@@ -271,15 +267,15 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Text(
                     _selectedEndDate != null
                         ? '${_selectedEndDate!.month}/${_selectedEndDate!.day}'
                         : '종료일',
                     style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center))))]),
+                    textAlign: TextAlign.center)))]),
         const SizedBox(height: 32),
-        
         // Submit Button
         SizedBox(
           width: double.infinity,
@@ -287,22 +283,22 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             onPressed: () {
               if (_nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('이름을 입력해주세요')));
+                  const SnackBar(content: Text('이름을 입력해주세요'));
                 return;
               }
               if (_birthDate == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('생년월일을 선택해주세요')));
+                  const SnackBar(content: Text('생년월일을 선택해주세요'));
                 return;
               }
               if (_fromAddressController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('출발지를 입력해주세요')));
+                  const SnackBar(content: Text('출발지를 입력해주세요'));
                 return;
               }
               if (_toAddressController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('도착지를 입력해주세요')));
+                  const SnackBar(content: Text('도착지를 입력해주세요'));
                 return;
               }
               
@@ -311,14 +307,13 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                 'birthDate': _birthDate!.toIso8601String(),
                 'fromAddress': _fromAddressController.text,
                 'toAddress': _toAddressController.text,
-                'urgency': _selectedUrgency ?? '보통 (3개월 이내)',
-                'startDate': _selectedStartDate?.toIso8601String(),
+                'urgency': _selectedUrgency ?? '보통 (3개월 이내)': 'startDate': _selectedStartDate?.toIso8601String(),
                 'endDate': _selectedEndDate?.toIso8601String()});
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
               '최적의 이사 날짜 확인하기',
@@ -428,8 +423,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12)),
-                      child: Icon(
+                        borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
                         Icons.star,
                         color: theme.colorScheme.primary,
                         size: 28)),
@@ -450,7 +446,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                             style: theme.textTheme.headlineSmall?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20 + _getFontSizeOffset(fontSize))),
+                              fontSize: 20 + _getFontSizeOffset(fontSize)),
                         ],
                       ),
                     ),
@@ -462,7 +458,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                     bestDate['reason'],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       height: 1.6,
-                      fontSize: 14 + _getFontSizeOffset(fontSize)))],
+                      fontSize: 14 + _getFontSizeOffset(fontSize))],
                 if (bestDate['score'] != null) ...[
                   const SizedBox(height: 12),
                   Row(
@@ -476,8 +472,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           color: _getScoreColor(bestDate['score']).withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12)),
-                        child: Text(
+                          borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
                           '${bestDate['score']}점',
                           style: TextStyle(
                             color: _getScoreColor(bestDate['score']),
@@ -491,7 +488,6 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
           ),
         ),
         const SizedBox(height: 20),
-        
         // Calendar View
         GlassContainer(
           child: Padding(
@@ -542,7 +538,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                               day.day.toString(),
                               style: TextStyle(
                                 color: _getScoreColor(score),
-                                fontWeight: FontWeight.bold))));
+                                fontWeight: FontWeight.bold)));
                       }
                       return null;
                     }),
@@ -561,7 +557,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                     formatButtonShowsNext: false,
                     formatButtonDecoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12)))),
+                      borderRadius: BorderRadius.circular(12),,
                 const SizedBox(height: 16),
                 // Legend
                 Row(
@@ -578,7 +574,6 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
           ),
         ),
         const SizedBox(height: 20),
-        
         // Good Dates List
         if (goodDates.isNotEmpty) ...[
           GlassContainer(
@@ -612,9 +607,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                           child: Text(
                             date['date'] ?? '',
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: 14 + _getFontSizeOffset(fontSize)))),
-                        if (date['score'] != null)
-                          Text(
+                              fontSize: 14 + _getFontSizeOffset(fontSize)),
+                        if (date['score'] != null),
+            Text(
                             '${date['score']}점',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.blue,
@@ -667,9 +662,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                               Text(
                                 date['date'] ?? '',
                                 style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontSize: 14 + _getFontSizeOffset(fontSize))),
-                              if (date['reason'] != null)
-                                Text(
+                                  fontSize: 14 + _getFontSizeOffset(fontSize)),
+                              if (date['reason'] != null),
+            Text(
                                   date['reason'],
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurface.withOpacity(0.7)),

@@ -206,7 +206,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                     LineChartBarData(
                       spots: List.generate(24, (index) {
                         final data = hourlyData['$index'] as Map<String, dynamic>;
-                        return FlSpot(index.toDouble(), (data['score'] as int).toDouble());
+                        return FlSpot(index.toDouble(), (data['score'] as int).toDouble();
                       }),
                       isCurved: true,
                       gradient: LinearGradient(
@@ -307,12 +307,12 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
                   child: Text(
                     '$_selectedHour:00',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold))),
+                      fontWeight: FontWeight.bold)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -324,7 +324,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                       Text(
                         '점수: ${selectedData['score']}점',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: _getScoreColor(selectedData['score']))),
+                          color: _getScoreColor(selectedData['score'])),
                     ]
                   )
                 )
@@ -335,7 +335,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Row(
                 children: [
                   Icon(
@@ -379,7 +379,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.error,
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
@@ -393,7 +393,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.bold))])),
+                          fontWeight: FontWeight.bold)]),
                 const SizedBox(width: 8),
                 Text(
                   '현재 시간 운세',
@@ -404,15 +404,13 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
               children: [
                 Expanded(
                   child: _buildTimeCard(
-                    '지금',
-                    '$currentHour:00 - $nextHour:00',
+                    '지금': '$currentHour:00 - $nextHour:00',
                     Icons.access_time_filled,
                     Theme.of(context).colorScheme.primary)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildTimeCard(
-                    '다음 시간',
-                    '$nextHour:00 - ${(nextHour + 1) % 24}:00',
+                    '다음 시간': '$nextHour:00 - ${(nextHour + 1) % 24}:00',
                     Icons.update_rounded,
                     Theme.of(context).colorScheme.secondary))])]))
     );
@@ -425,7 +423,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3))),
+          color: color.withOpacity(0.3)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

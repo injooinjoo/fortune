@@ -43,26 +43,18 @@ class _MovingInputFormState extends State<_MovingInputForm> {
   String? _selectedType;
   
   final List<String> _movingReasons = [
-    '직장 이동',
-    '결혼',
-    '환경 개선',
-    '자녀 교육',
-    '경제적 이유',
-    '건강',
-    '가족과 함께',
-    '독립',
+    '직장 이동': '결혼',
+    '환경 개선': '자녀 교육',
+    '경제적 이유': '건강',
+    '가족과 함께': '독립',
     '기타',
   ];
   
   final List<String> _movingTypes = [
-    '아파트',
-    '빌라/연립',
-    '단독주택',
-    '오피스텔',
-    '원룸',
-    '기숙사',
-    '전원주택',
-    '기타',
+    '아파트': '빌라/연립',
+    '단독주택': '오피스텔',
+    '원룸': '기숙사',
+    '전원주택': '기타',
   ];
 
   @override
@@ -76,7 +68,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isPlannedDate 
-          ? (_plannedDate ?? DateTime.now().add(const Duration(days: 30)))
+          ? (_plannedDate ?? DateTime.now().add(const Duration(days: 30))
           : (_birthDate ?? DateTime(1990, 1, 1)),
       firstDate: isPlannedDate ? DateTime.now() : DateTime(1900),
       lastDate: isPlannedDate 
@@ -86,7 +78,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF3A7BD5))),
+              primary: const Color(0xFF3A7BD5)),
           child: child!);
       }
     );
@@ -114,7 +106,6 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5)),
         const SizedBox(height: 24),
-        
         // Name Input
         Text(
           '이름',
@@ -128,12 +119,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
         const SizedBox(height: 20),
-        
         // Birth Date Selection
         Text(
           '생년월일',
@@ -146,8 +136,9 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-              borderRadius: BorderRadius.circular(12)),
-            child: Row(
+              borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
               children: [
                 Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
                 const SizedBox(width: 12),
@@ -158,9 +149,8 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
+                        : theme.colorScheme.onSurface.withOpacity(0.5)]),
         const SizedBox(height: 20),
-        
         // Current Address
         Text(
           '현재 거주지 (시/구 단위)',
@@ -174,12 +164,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             prefixIcon: const Icon(Icons.home_outlined),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))))),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
         const SizedBox(height: 20),
-        
         // Planned Moving Date
         Text(
           '예상 이사 시기',
@@ -192,8 +181,9 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-              borderRadius: BorderRadius.circular(12)),
-            child: Row(
+              borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
               children: [
                 Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7)),
                 const SizedBox(width: 12),
@@ -204,9 +194,8 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _plannedDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
+                        : theme.colorScheme.onSurface.withOpacity(0.5)]),
         const SizedBox(height: 20),
-        
         // Moving Reason Selection
         Text(
           '이사 이유',
@@ -229,9 +218,9 @@ class _MovingInputFormState extends State<_MovingInputForm> {
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
-          }).toList()),
-        const SizedBox(height: 20),
-        
+          }).toList(),
+          ),
+          const SizedBox(height: 20),
         // Housing Type Selection
         Text(
           '희망 주거 형태',
@@ -254,9 +243,9 @@ class _MovingInputFormState extends State<_MovingInputForm> {
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
-          }).toList()),
-        const SizedBox(height: 32),
-        
+          }).toList(),
+          ),
+          const SizedBox(height: 32),
         // Submit Button
         SizedBox(
           width: double.infinity,
@@ -264,17 +253,17 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             onPressed: () {
               if (_nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('이름을 입력해주세요')));
+                  const SnackBar(content: Text('이름을 입력해주세요'));
                 return;
               }
               if (_birthDate == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('생년월일을 선택해주세요')));
+                  const SnackBar(content: Text('생년월일을 선택해주세요'));
                 return;
               }
               if (_currentAddressController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('현재 거주지를 입력해주세요')));
+                  const SnackBar(content: Text('현재 거주지를 입력해주세요'));
                 return;
               }
               
@@ -283,13 +272,12 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                 'birthDate': _birthDate!.toIso8601String(),
                 'currentAddress': _currentAddressController.text,
                 'plannedDate': _plannedDate?.toIso8601String() ?? '',
-                'reason': _selectedReason ?? '기타',
-                'housingType': _selectedType ?? '아파트'});
+                'reason': _selectedReason ?? '기타': 'housingType': _selectedType ?? '아파트'});
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
               '이사 운세 확인하기',
@@ -350,8 +338,9 @@ class _MovingFortuneResult extends ConsumerWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12)),
-                      child: Icon(
+                        borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
                         Icons.explore,
                         color: theme.colorScheme.primary,
                         size: 28)),
@@ -396,7 +385,6 @@ class _MovingFortuneResult extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
-        
         // Best Timing Card
         GlassContainer(
           child: Padding(
@@ -434,7 +422,6 @@ class _MovingFortuneResult extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
-        
         // Compatibility Scores
         if (compatibility.isNotEmpty) ...[
           GlassContainer(
@@ -472,7 +459,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                                 value: entry.value / 100,
                                 backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  _getScoreColor(entry.value)))),
+                                  _getScoreColor(entry.value)),
                             const SizedBox(width: 8),
                             Text(
                               '${entry.value}점',
@@ -574,7 +561,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                       avoidDirection['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.7),
-                        fontSize: 12 + fontSize))]]))),
+                        fontSize: 12 + fontSize))]])),
           const SizedBox(height: 20),
         ],
         
@@ -587,7 +574,7 @@ class _MovingFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)),
+                borderRadius: BorderRadius.circular(25),
             ),
           ),
         ),

@@ -73,7 +73,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getPageTitle()),
+        title: Text(_getPageTitle(),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
@@ -172,7 +172,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 labelText: '반려동물 이름',
                 hintText: '예: 코코, 루루',
                 prefixIcon: Icon(Icons.edit),
-                border: OutlineInputBorder()),
+                border: OutlineInputBorder(),
               onChanged: (value) {
                 setState(() {
                   _petName = value.isEmpty ? null : value;
@@ -187,7 +187,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                       ? '예: 푸들, 말티즈, 믹스견' 
                       : '예: 코리안숏헤어, 러시안블루, 믹스묘',
                   prefixIcon: const Icon(Icons.category),
-                  border: const OutlineInputBorder()),
+                  border: const OutlineInputBorder(),
                 onChanged: (value) {
                   setState(() {
                     _petBreed = value.isEmpty ? null : value;
@@ -288,20 +288,17 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
     switch (_selectedPetType) {
       case 'dog':
         return [
-          '매일 규칙적인 산책으로 건강을 유지해주세요',
-          '충분한 놀이 시간으로 스트레스를 해소시켜주세요',
-          '정기적인 그루밍으로 피부 건강을 체크하세요',
-          '사회성 훈련으로 다른 강아지들과 잘 어울리게 해주세요'];
+          '매일 규칙적인 산책으로 건강을 유지해주세요': '충분한 놀이 시간으로 스트레스를 해소시켜주세요',
+          '정기적인 그루밍으로 피부 건강을 체크하세요': '사회성 훈련으로 다른 강아지들과 잘 어울리게 해주세요'
+  ];
       case 'cat': return [
-          '고양이의 독립성을 존중하며 적당한 거리를 유지하세요',
-          '캣타워나 스크래처로 본능적 행동을 충족시켜주세요',
-          '깨끗한 화장실 환경을 항상 유지해주세요',
-          '놀이를 통해 사냥 본능을 만족시켜주세요'];
+          '고양이의 독립성을 존중하며 적당한 거리를 유지하세요': '캣타워나 스크래처로 본능적 행동을 충족시켜주세요',
+          '깨끗한 화장실 환경을 항상 유지해주세요': '놀이를 통해 사냥 본능을 만족시켜주세요'
+  ];
       default: return [
-          '반려동물의 특성에 맞는 환경을 제공해주세요',
-          '정기적인 건강 검진으로 질병을 예방하세요',
-          '충분한 애정과 관심으로 유대감을 형성하세요',
-          '균형 잡힌 식단으로 건강을 지켜주세요'];
+          '반려동물의 특성에 맞는 환경을 제공해주세요': '정기적인 건강 검진으로 질병을 예방하세요',
+          '충분한 애정과 관심으로 유대감을 형성하세요': '균형 잡힌 식단으로 건강을 지켜주세요'
+  ];
     }
   }
 
@@ -325,19 +322,19 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
           child: isLoading
               ? const SizedBox(
                   height: 24,
     width: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
               : const Text(
                   '운세 보기',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold)))));
+                    fontWeight: FontWeight.bold)));
   }
 
   void _showHelpDialog(BuildContext context) {

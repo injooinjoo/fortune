@@ -176,7 +176,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600))),
+            fontWeight: FontWeight.w600)),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -189,7 +189,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     child: Row(
                       children: [
                         Icon(
@@ -203,7 +203,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 14,
-                              height: 1.5)))])),
+                              height: 1.5))]),
                   
                   // Current phone number
                   Container(
@@ -237,7 +237,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                     _formatDisplayPhone(userProfile?['phone']),
                                     style: TextStyle(
                                       color: AppColors.textSecondary,
-                                      fontSize: 14))])),
+                                      fontSize: 14)]),
                             if (userProfile?['phone_verified'] == true)
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -245,7 +245,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                   vertical: 4),
                                 decoration: BoxDecoration(
                                   color: Colors.green.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12)),
+                                  borderRadius: BorderRadius.circular(12),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -259,7 +259,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                       style: TextStyle(
                                         color: Colors.green,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w600))]))]),
+                                        fontWeight: FontWeight.w600)])]),
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
@@ -274,12 +274,12 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8))),
+                                borderRadius: BorderRadius.circular(8),
                             child: Text(
                               hasPhone ? '전화번호 변경' : '전화번호 등록',
                               style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600))))])),
+                                fontWeight: FontWeight.w600))]),
                   
                   // Benefits
                   const SizedBox(height: 32),
@@ -327,7 +327,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             height: 40,
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
             child: Icon(
               icon,
               color: AppColors.primary,
@@ -348,6 +348,6 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 13,
-                    height: 1.4))]))]));
+                    height: 1.4)])]));
   }
 }

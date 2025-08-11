@@ -89,14 +89,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             height: screenHeight * 0.9,
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.9),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: Stack(
               children: [
                 // Background blur
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(color: Colors.transparent))),
+                    child: Container(color: Colors.transparent)),
                 
                 // Content
                 Column(
@@ -108,7 +108,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       height: 4,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
                     
                     // Header
                     _buildHeader(cardInfo),
@@ -154,7 +154,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                     _pageController.previousPage(
                                       duration: AppAnimations.durationMedium,
                                       curve: Curves.easeInOut);
-                                  }))),
+                                  })),
                           
                           // Right arrow
                           if (_currentPage < 7) Positioned(
@@ -176,7 +176,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                     _pageController.nextPage(
                                       duration: AppAnimations.durationMedium,
                                       curve: Curves.easeInOut);
-                                  }))),
+                                  })),
                         ],
                       ),
                     ),
@@ -554,14 +554,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                               style: TextStyle(
                                 color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
                                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                fontSize: isActive ? 14 : 12)))),
+                                fontSize: isActive ? 14 : 12)),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           pageNames[index],
                           style: Theme.of(context).textTheme.copyWith(
                             titleMedium: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: isActive ? FontWeight.bold : FontWeight.normal)).titleMedium)])));
-              }))),
+              })),
           
           // Swipe hint with animation
           if (_currentPage == 0) ...[
@@ -579,7 +579,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       child: Icon(
                         Icons.swipe,
                         size: 20,
-                        color: Colors.white.withOpacity(0.7))),
+                        color: Colors.white.withOpacity(0.7)),
                     const SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '좌우로 스와이프하거나 숫자를 탭하세요',
@@ -696,7 +696,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             data['description'] as String,
             style: TextStyle(
               color: Colors.white.withOpacity(0.7),
-              fontSize: Theme.of(context).textTheme.bodySmall!.fontSize))]));
+              fontSize: Theme.of(context).textTheme.bodySmall!.fontSize)]);
   }
 
   Map<String, dynamic> _getCardInfo() {

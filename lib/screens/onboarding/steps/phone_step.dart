@@ -93,6 +93,6 @@ class _PhoneStepState extends State<PhoneStep> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isValid ? widget.onNext : null,
-                  child: const Text('다음')))]))));
+                  child: const Text('다음'))]));
   }
 }

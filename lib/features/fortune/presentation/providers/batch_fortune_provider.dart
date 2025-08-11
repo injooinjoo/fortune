@@ -56,7 +56,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
   final dynamic _authService;
   final Ref _ref;
 
-  BatchFortuneNotifier(this._service, this._authService, this._ref) : super(BatchFortuneState();
+  BatchFortuneNotifier(this._service, this._authService, this._ref) : super(BatchFortuneState());
 
   /// 온보딩 완료 시 배치 운세 생성
   Future<void> generateOnboardingFortunes() async {
@@ -93,8 +93,8 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
 } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString();
-}
+        error: e.toString());
+    }
   }
 
   /// 일일 운세 갱신
@@ -131,8 +131,8 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
 } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString();
-}
+        error: e.toString());
+    }
   }
 
   /// 패키지별 운세 생성
@@ -170,8 +170,8 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
 } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString();
-}
+        error: e.toString());
+    }
   }
 
   /// 커스텀 운세 타입으로 배치 생성
@@ -206,16 +206,16 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
 } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),;
-}
+        error: e.toString());
+    }
   }
 
   /// 특정 운세 타입 결과 가져오기
   BatchFortuneResult? getFortuneByType(String fortuneType) {
     return state.results?.firstWhere(
       (result) => result.type == fortuneType,
-      orElse: () => throw Exception('운세를 찾을 수 없습니다');
-}
+      orElse: () => throw Exception('운세를 찾을 수 없습니다'));
+  }
 
   /// 캐시된 운세 개수
   int get cachedCount {
@@ -250,7 +250,7 @@ final systemFortuneProvider = FutureProvider.family<Map<String, dynamic>, String
 
 /// 특정 MBTI 타입의 운세 가져오기
 final mbtiFortuneProvider = Provider.family<Map<String, dynamic>?, String>((ref, mbtiType) {
-  final systemFortune = ref.watch(systemFortuneProvider('mbti');
+  final systemFortune = ref.watch(systemFortuneProvider('mbti'));
   
   return systemFortune.when(
     data: (data) => data['data'],
@@ -261,7 +261,7 @@ final mbtiFortuneProvider = Provider.family<Map<String, dynamic>?, String>((ref,
 
 /// 특정 혈액형의 운세 가져오기
 final bloodTypeFortuneProvider = Provider.family<Map<String, dynamic>?, String>((ref, bloodType) {
-  final systemFortune = ref.watch(systemFortuneProvider('blood_type');
+  final systemFortune = ref.watch(systemFortuneProvider('blood_type'));
   
   return systemFortune.when(
     data: (data) => data['data'],
@@ -272,7 +272,7 @@ final bloodTypeFortuneProvider = Provider.family<Map<String, dynamic>?, String>(
 
 /// 특정 별자리의 운세 가져오기
 final zodiacFortuneProvider = Provider.family<Map<String, dynamic>?, String>((ref, zodiacSign) {
-  final systemFortune = ref.watch(systemFortuneProvider('zodiac');
+  final systemFortune = ref.watch(systemFortuneProvider('zodiac'));
   
   return systemFortune.when(
     data: (data) => data['data'],
@@ -283,11 +283,11 @@ final zodiacFortuneProvider = Provider.family<Map<String, dynamic>?, String>((re
 
 /// 특정 띠의 운세 가져오기
 final zodiacAnimalFortuneProvider = Provider.family<Map<String, dynamic>?, String>((ref, zodiacAnimal) {
-  final systemFortune = ref.watch(systemFortuneProvider('zodiac_animal');
+  final systemFortune = ref.watch(systemFortuneProvider('zodiac_animal'));
   
   return systemFortune.when(
     data: (data) => data['data'],
     loading: () => null,
     error: (_, __) => null
   );
-};
+});

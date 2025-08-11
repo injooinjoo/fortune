@@ -284,7 +284,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
-                child: _buildCurrentStep(state)))])));
+                child: _buildCurrentStep(state))]));
   }
 
   Widget _buildCurrentStep(TarotReadingState state) {

@@ -131,14 +131,14 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                             '여러 소셜 계정을 연동하면 어떤 방법으로든 로그인할 수 있습니다.',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: AppColors.textSecondary,
-                              height: 1.5)))])),
+                              height: 1.5))]),
                   if (userIdentities.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
                       child: Text(
                         '연동된 계정',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))),
+                          fontWeight: FontWeight.bold)),
                     ...userIdentities.map(
                       (identity) => _buildConnectedAccount(
                         provider: identity.provider ?? '',
@@ -152,7 +152,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                       child: Text(
                         '전화번호',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))),
+                          fontWeight: FontWeight.bold)),
                     _buildConnectedAccount(
                       provider: 'phone',
                       email: userProfile!['phone'],
@@ -163,7 +163,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                     child: Text(
                       '연동 가능한 계정',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))),
+                        fontWeight: FontWeight.bold)),
                   Padding(
                     padding: AppSpacing.paddingHorizontal16,
                     child: SocialAccountsSection(
@@ -239,7 +239,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
-                    ?.copyWith(color: AppColors.error)))]));
+                    ?.copyWith(color: AppColors.error))]);
   }
 
   void _showUnlinkDialog(String provider) {
@@ -260,7 +260,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             },
             child: const Text('연동 해제'),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.error))]));
+              foregroundColor: AppColors.error)]);
   }
 
   Future<void> _unlinkProvider(String provider) async {

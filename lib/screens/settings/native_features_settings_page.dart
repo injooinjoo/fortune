@@ -145,7 +145,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                   const Divider(height: 1))
                   ListTile(
                     title: const Text('알림 시간'),
-    subtitle: Text(_notificationTime.format(context))),
+    subtitle: Text(_notificationTime.format(context)),
     trailing: const Icon(Icons.access_time)),
     onTap: _selectTime))
                 ])

@@ -8,13 +8,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 enum HealthSportsType {
-  health('건강운', 'health', '오늘의 건강 상태와 조언', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
-  fitness('피트니스', 'fitness', '운동 효과와 최적의 운동법', Icons.fitness_center_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
-  yoga('요가', 'yoga', '요가 수행과 명상 가이드', Icons.self_improvement_rounded, [Color(0xFFA78BFA), Color(0xFF8B5CF6)]),
-  golf('골프', 'golf', '골프 경기 운세와 스코어 예측', Icons.golf_course_rounded, [Color(0xFF22C55E), Color(0xFF16A34A)]),
-  tennis('테니스', 'tennis', '테니스 경기 운세와 플레이 팁', Icons.sports_tennis_rounded, [Color(0xFFFFD600), Color(0xFFFFB300)]),
-  running('런닝', 'running', '러닝 컨디션과 최적의 코스', Icons.directions_run_rounded, [Color(0xFF3B82F6), Color(0xFF2563EB)]),
-  fishing('낚시', 'fishing', '낚시 운세와 포인트 추천', Icons.phishing_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]);
+  health('건강운': 'health', '오늘의 건강 상태와 조언', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
+  fitness('피트니스': 'fitness', '운동 효과와 최적의 운동법', Icons.fitness_center_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
+  yoga('요가': 'yoga', '요가 수행과 명상 가이드', Icons.self_improvement_rounded, [Color(0xFFA78BFA), Color(0xFF8B5CF6)]),
+  golf('골프': 'golf', '골프 경기 운세와 스코어 예측', Icons.golf_course_rounded, [Color(0xFF22C55E), Color(0xFF16A34A)]),
+  tennis('테니스': 'tennis', '테니스 경기 운세와 플레이 팁', Icons.sports_tennis_rounded, [Color(0xFFFFD600), Color(0xFFFFB300)]),
+  running('런닝': 'running', '러닝 컨디션과 최적의 코스', Icons.directions_run_rounded, [Color(0xFF3B82F6), Color(0xFF2563EB)]),
+  fishing('낚시': 'fishing', '낚시 운세와 포인트 추천', Icons.phishing_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]);
   
   final String label;
   final String value;
@@ -130,7 +130,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF10B981))),
+              color: Color(0xFF10B981)),
           const SizedBox(height: 8),
           Text(
             '오늘의 건강 상태와 최적의 운동 방법을 알아보세요',
@@ -221,7 +221,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           backgroundColor: _selectedType.gradientColors[0]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -307,12 +307,12 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
                   ),
                 ),
               ),
-              if (fortune.score != null)
-                Container(
+              if (fortune.score != null),
+            Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
@@ -355,7 +355,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -434,7 +434,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: _selectedType.gradientColors[0].withOpacity(0.05),
-            borderRadius: BorderRadius.circular(8)),
+            borderRadius: BorderRadius.circular(8),
           child: Row(
             children: [
               Icon(

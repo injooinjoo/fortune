@@ -91,34 +91,34 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         '주 수입': 75,
         '부 수입': 85,
         '투자 수익': 70,
-        '예상외 수입': 60},
+        '예상외 수입': 60,
+      },
       'financialAdvice': {
         'summary': '재물운이 상승하는 시기입니다',
         'details': '이번 달은 예상치 못한 수입이 들어올 가능성이 높습니다. 투자보다는 저축에 집중하며 미래를 준비하는 것이 좋겠습니다.',
         'warnings': [
-          '충동구매를 주의하세요',
-          '과도한 투자는 피하세요',
-          '계획적인 소비를 하세요']},
+          '충동구매를 주의하세요', '과도한 투자는 피하세요',
+          '계획적인 소비를 하세요',
+        ],
+      },
       'luckyInvestments': [
         {'type': '부동산', 'score': 88, 'description': '안정적인 수익 예상'},
         {'type': '주식', 'score': 72, 'description': '변동성 주의 필요'},
         {'type': '예적금', 'score': 95, 'description': '가장 안전한 선택'},
-        {'type': '암호화폐', 'score': 45, 'description': '높은 위험도'}],
+        {'type': '암호화폐', 'score': 45, 'description': '높은 위험도'},
+      ],
       'spendingCategories': {
         '생활비': {'percentage': 35, 'status': '적정'},
         '여가/취미': {'percentage': 20, 'status': '양호'},
         '저축': {'percentage': 30, 'status': '우수'},
-        '투자': {'percentage': 15, 'status': '적정'}},
+        '투자': {'percentage': 15, 'status': '적정'},
+      },
       'wealthBoosters': {
         '행운의 숫자': ['7', '23', '45'],
-        '행운의 방향': '동쪽',
-        '행운의 색상': '금색, 노란색',
-        '행운의 시간': '오전 9시~11시'},
+        '행운의 방향': '동쪽', '행운의 색상': '금색, 노란색', '행운의 시간': '오전 9시~11시'},
       'actionItems': [
-        '매일 가계부 작성하기',
-        '월 저축 목표 설정하기',
-        '불필요한 구독 서비스 정리하기',
-        '투자 포트폴리오 점검하기',
+        '매일 가계부 작성하기', '월 저축 목표 설정하기',
+        '불필요한 구독 서비스 정리하기', '투자 포트폴리오 점검하기',
         '비상금 준비하기']};
 
     final fortune = state.fortune!;
@@ -137,8 +137,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       luckyItems:
           fortune.luckyItems ?? _wealthData!['wealthBoosters'],
       recommendations: fortune.recommendations ?? [
-        '계획적인 소비 습관을 유지하세요',
-        '투자는 신중하게 접근하세요',
+        '계획적인 소비 습관을 유지하세요', '투자는 신중하게 접근하세요',
         '비상금을 준비하는 것이 좋습니다']);
   }
 
@@ -208,7 +207,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         '$wealthIndex점',
                         style: theme.textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold))])))),
+                          fontWeight: FontWeight.bold)]),
             const SizedBox(height: 24),
             Text(
               '재물 지수',
@@ -217,8 +216,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
             Text(
               _getWealthIndexMessage(wealthIndex),
               style: theme.textTheme.bodyLarge,
-              textAlign: TextAlign.center)])));
-  }
+              textAlign: TextAlign.center)]));
 
   Widget _buildMonthlyTrendChart() {
     final trendData = _wealthData!['monthlyTrend'] as List<dynamic>;
@@ -237,7 +235,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.green.shade400, Colors.green.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Icon(
                     Icons.show_chart_rounded,
                     color: Colors.white,
@@ -251,20 +249,15 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
               height: 200,
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(
+                  gridData: const FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    horizontalInterval: 20,
-                    getDrawingHorizontalLine: (value) {
-                      return FlLine(
-                        color: Colors.grey.shade300,
-                        strokeWidth: 1);
-                    }),
+                    horizontalInterval: 20),
                   titlesData: FlTitlesData(
                     show: true,
-                    rightTitles: AxisTitles(
+                    rightTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
-                    topTitles: AxisTitles(
+                    topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -287,7 +280,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                           return Text(
                             '${value.toInt()}',
                             style: const TextStyle(fontSize: 10));
-                        }))),
+                        })),
                   borderData: FlBorderData(show: false),
                   minX: 0,
                   maxX: trendData.length - 1.0,
@@ -323,8 +316,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             Colors.amber.shade200.withOpacity(0.3),
                             Colors.amber.shade100.withOpacity(0.1)],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)))])))])));
-  }
+                          end: Alignment.bottomCenter)])]));
 
   Widget _buildIncomeBreakdown() {
     final breakdown = _wealthData!['incomeBreakdown'] as Map<String, dynamic>;
@@ -343,7 +335,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.blue.shade400, Colors.blue.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Icon(
                     Icons.pie_chart_rounded,
                     color: Colors.white,
@@ -375,7 +367,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                   height: 24,
                                   decoration: BoxDecoration(
                                     color: Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(12))),
+                                    borderRadius: BorderRadius.circular(12),
                                 AnimatedContainer(
                                   duration: const Duration(milliseconds: 1000),
                                   height: 24,
@@ -385,14 +377,14 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                       colors: [
                                         _getIncomeColor(score),
                                         _getIncomeColor(score).withOpacity(0.7)]),
-                                    borderRadius: BorderRadius.circular(12)))])),
+                                    borderRadius: BorderRadius.circular(12)]),
                           const SizedBox(width: 12),
                           Text(
                             '$score점',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: _getIncomeColor(score)))]))]));
-            }).toList()])));
+                                  color: _getIncomeColor(score))])])]));
+            }).toList(),]);
   }
 
   Widget _buildFinancialAdvice() {
@@ -412,7 +404,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.indigo.shade400, Colors.indigo.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Icon(
                     Icons.lightbulb_rounded,
                     color: Colors.white,
@@ -426,7 +418,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.green.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -459,8 +451,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     Expanded(
                       child: Text(
                         warning.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium))]));
-            }).toList()])));
+                        style: Theme.of(context).textTheme.bodyMedium))]);
+            }).toList(),]);
   }
 
   Widget _buildLuckyInvestments() {
@@ -480,7 +472,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.purple.shade400, Colors.purple.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Icon(
                     Icons.trending_up_rounded,
                     color: Colors.white,
@@ -535,7 +527,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                 )
               )
             );
-          }).toList()]));
+          }).toList(),]);
   }
 
   Widget _buildSpendingAnalysis() {
@@ -555,7 +547,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.orange.shade400, Colors.orange.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Icon(
                     Icons.account_balance_wallet_rounded,
                     color: Colors.white,
@@ -587,7 +579,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             height: 30,
                             decoration: BoxDecoration(
                               color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(15))),
+                              borderRadius: BorderRadius.circular(15),
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 1000),
                             height: 30,
@@ -595,27 +587,27 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: _getSpendingColors(status)),
-                              borderRadius: BorderRadius.circular(15)),
+                              borderRadius: BorderRadius.circular(15),
                             child: Center(
                               child: Text(
                                 '$percentage%',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12))))])),
+                                  fontSize: 12))]),
                     const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: _getStatusColor(status).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
                       child: Text(
                         status,
                         style: TextStyle(
                           color: _getStatusColor(status),
                           fontSize: 12,
-                          fontWeight: FontWeight.bold)))]));
-            }).toList()])));
+                          fontWeight: FontWeight.bold)]);
+            }).toList(),]);
   }
 
   Widget _buildWealthBoosters() {
@@ -638,7 +630,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Colors.amber.shade400, Colors.amber.shade600]),
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
                       color: Colors.white,
@@ -659,7 +651,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   final value = entry.value;
                   String displayValue = '';
                   if (value is List) {
-                    displayValue = value.join(', ');
+                    displayValue = value.join(': ');
                   } else {
                     displayValue = value.toString();
                   }
@@ -697,8 +689,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                       color: Colors.amber.shade900,
                                       fontSize: 12),
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis)]))]));
-                }).toList())]))));
+                                overflow: TextOverflow.ellipsis)])]);
+                }).toList(),));
   }
 
   Widget _buildActionItems() {
@@ -719,7 +711,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.teal.shade400, Colors.teal.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Icon(
                     Icons.checklist_rounded,
                     color: Colors.white,
@@ -740,7 +732,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2))),
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                   child: Row(
                     children: [
                       Container(
@@ -755,13 +747,13 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             style: TextStyle(
                               color: Colors.teal.shade700,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12)))),
+                              fontSize: 12)),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           item,
-                          style: Theme.of(context).textTheme.bodyMedium))])));
-            }).toList()])));
+                          style: Theme.of(context).textTheme.bodyMedium))]);
+            }).toList(),]);
   }
 
   String _getWealthIndexMessage(int score) {

@@ -93,7 +93,7 @@ class FortuneDisplay extends StatelessWidget {
             child: Center(
               child: Text(
                 '$overallScore',
-                style: Theme.of(context).textTheme.bodyMedium)))]));
+                style: Theme.of(context).textTheme.bodyMedium))]);
   }
 
   Widget _buildLuckyItems(BuildContext context) {
@@ -121,7 +121,7 @@ class FortuneDisplay extends StatelessWidget {
                 entry.key,
                 entry.value.toString(),
                 context);
-            }).toList())]));
+            }).toList()]);
   }
 
   Widget _buildLuckyItemChip(String label, String value, BuildContext context) {

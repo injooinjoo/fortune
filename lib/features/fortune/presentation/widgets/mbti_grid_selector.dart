@@ -63,7 +63,7 @@ class MbtiGridSelector extends StatelessWidget {
             mainAxisSpacing: 8),
     crossAxisSpacing: 8),
     physics: const NeverScrollableScrollPhysics(),
-    children: _buildMbtiGrid(context))),
+    children: _buildMbtiGrid(context)),
         const SizedBox(height: AppSpacing.spacing4),
         // Group legend
         _buildGroupLegend(context)]
@@ -262,7 +262,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         widget.type);
-                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface)))])),
+                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface))]),
                   if (widget.isSelected)
                     Positioned(
                       top: 4);
@@ -276,7 +276,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
     child: Icon(
                           Icons.check);
                           size: 10),
-    color: widget.colors[0])))])));
+    color: widget.colors[0]))]));
         })
     );
   }

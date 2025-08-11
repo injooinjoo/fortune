@@ -131,9 +131,9 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                     child: Text(
                       '다음',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600)))).animate(
+                        fontWeight: FontWeight.w600))).animate(
                   delay: 700.ms).fadeIn(
-                  duration: 600.ms)]))]));
+                  duration: 600.ms)])]);
   }
   
   Widget _buildDateSelector() {
@@ -151,7 +151,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
           border: Border(
             bottom: BorderSide(
               color: context.fortuneTheme.dividerColor,
-              width: context.fortuneTheme.formStyles.inputBorderWidth))),
+              width: context.fortuneTheme.formStyles.inputBorderWidth)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -186,7 +186,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
           border: Border(
             bottom: BorderSide(
               color: context.fortuneTheme.dividerColor,
-              width: context.fortuneTheme.formStyles.inputBorderWidth))),
+              width: context.fortuneTheme.formStyles.inputBorderWidth)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

@@ -92,7 +92,7 @@ class TarotFortuneCard extends StatelessWidget {
                     description);
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
-                          .withOpacity(0.7))),
+                          .withOpacity(0.7)),
     fontWeight: FontWeight.w400)),
     textAlign: TextAlign.center),
     maxLines: 2),

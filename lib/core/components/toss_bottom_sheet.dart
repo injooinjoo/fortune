@@ -36,7 +36,7 @@ class TossBottomSheet {
       barrierColor: AppColors.textPrimary.withOpacity(bottomSheetStyles.barrierOpacity),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius))),
+          top: Radius.circular(bottomSheetStyles.borderRadius)),
       builder: (context) => _TossBottomSheetWrapper(
         showHandle: showHandle,
         height: height,
@@ -136,7 +136,7 @@ class _TossBottomSheetWrapper extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? context.toss.cardSurface,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius))),
+          top: Radius.circular(bottomSheetStyles.borderRadius)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -147,7 +147,7 @@ class _TossBottomSheetWrapper extends StatelessWidget {
               height: bottomSheetStyles.handleHeight,
               decoration: BoxDecoration(
                 color: context.toss.dividerColor.withOpacity(bottomSheetStyles.handleOpacity),
-                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2))),
+                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2)),
           Flexible(child: child)]))
         .animate()
         .slideY(
@@ -200,7 +200,7 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
                         color: context.toss.secondaryText,
                         fontFamily: 'TossProductSans'))]])),
             Divider(height: context.toss.cardStyles.borderWidth, color: context.toss.dividerColor),
-            ...options.map((option) => _OptionTile(option: option))])));
+            ...options.map((option) => _OptionTile(option: option)]));
   }
 }
 
@@ -263,7 +263,7 @@ class _OptionTile<T> extends StatelessWidget {
                               : AppColors.textSecondary.withOpacity(0.4),
                           fontFamily: 'TossProductSans'))]])),
               if (option.trailing != null)
-                option.trailing!]))));
+                option.trailing!])));
   }
 }
 
@@ -418,7 +418,7 @@ class _TossBottomSheetButton extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             text,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor)))));
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor))));
   }
 }
 

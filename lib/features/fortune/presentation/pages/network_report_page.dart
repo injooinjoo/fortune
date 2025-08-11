@@ -42,11 +42,12 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
   String? _selectedGoal;
   final _challengeController = TextEditingController();
 
-  final List<String> _interestAreas = \['['비즈니스', '학업', '취미', '연애', '가족', '친구'];
-  final List<String> _networkStatuses = ['매우 좁음', '좁음', '보통', '넓음', '매우 넓음'];
+  final List<String> _interestAreas = \['['비즈니스': '학업', '취미': '연애', '가족': '친구'
+  ];
+  final List<String> _networkStatuses = ['매우 좁음': '좁음', '보통': '넓음', '매우 넓음'
+  ];
   final List<String> _networkGoals = [
-    '새로운 인맥 확장',
-    '기존 인맥 강화')
+    '새로운 인맥 확장': '기존 인맥 강화')
     '전문 네트워크 구축')
     '멘토/멘티 찾기')
     '비즈니스 파트너 찾기'
@@ -66,16 +67,16 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '당신의 인간관계를 분석하고 개선 방안을 제시합니다',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '당신의 인간관계를 분석하고 개선 방안을 제시합니다',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
     height: 1.5),
         const SizedBox(height: 24),
         
         // Interest Area Selection
         Text(
-          '주요 관심 분야',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '주요 관심 분야',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
@@ -83,7 +84,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
     decoration: InputDecoration(
             hintText: '관심 분야를 선택하세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))),
+              borderRadius: BorderRadius.circular(12),
     items: _interestAreas.map((area) {
             return DropdownMenuItem(
               value: area);
@@ -98,8 +99,8 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         
         // Network Status
         Text(
-          '현재 인맥 상태',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '현재 인맥 상태',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
@@ -107,7 +108,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
     decoration: InputDecoration(
             hintText: '인맥 상태를 선택하세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))),
+              borderRadius: BorderRadius.circular(12),
     items: _networkStatuses.map((status) {
             return DropdownMenuItem(
               value: status);
@@ -122,8 +123,8 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         
         // Network Goal
         Text(
-          '인맥 관리 목표',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '인맥 관리 목표',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
@@ -131,7 +132,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
     decoration: InputDecoration(
             hintText: '목표를 선택하세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))),
+              borderRadius: BorderRadius.circular(12),
     items: _networkGoals.map((goal) {
             return DropdownMenuItem(
               value: goal);
@@ -146,8 +147,8 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         
         // Current Challenge
         Text(
-          '현재 인맥 관련 고민',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '현재 인맥 관련 고민',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         TextField(
@@ -156,7 +157,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
     decoration: InputDecoration(
             hintText: '인맥 관련 고민이나 어려움을 자유롭게 작성해주세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12)))),
+              borderRadius: BorderRadius.circular(12),,
         const SizedBox(height: 32),
         
         // Submit Button
@@ -179,20 +180,19 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               widget.onSubmit({
                 'interestArea': _selectedInterestArea,
                 'networkStatus': _selectedNetworkStatus,
-                'goal': _selectedGoal ?? '새로운 인맥 확장',
-                'challenge': _challengeController.text)}
+                'goal': _selectedGoal ?? '새로운 인맥 확장': 'challenge': _challengeController.text)}
               });
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
     backgroundColor: theme.colorScheme.primary),
     child: Text(
-              '인맥 리포트 확인하기',),
-              style: theme.textTheme.titleMedium?.copyWith()
-                color: Colors.white);
-                fontWeight: FontWeight.bold))))]
+              '인맥 리포트 확인하기',
+              style: theme.textTheme.titleMedium?.copyWith(
+            color: Colors.white);
+                fontWeight: FontWeight.bold)))]
     );
   }
 }
@@ -247,7 +247,7 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                 colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)]),
     begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
-    borderRadius: BorderRadius.circular(20)),
+    borderRadius: BorderRadius.circular(20),
     child: Column(
               children: [
                 const Icon(
@@ -256,22 +256,22 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
     color: Colors.white),
                 const SizedBox(height: 16),
                 Text(
-                  '인맥 지수',),
-                  style: theme.textTheme.titleMedium?.copyWith()
-                    color: Colors.white.withOpacity(0.9))),
+                  '인맥 지수',
+                  style: theme.textTheme.titleMedium?.copyWith(
+            color: Colors.white.withOpacity(0.9)),
                 const SizedBox(height: 8),
                 Text(
-                  'Fortune cached',),
-                  style: theme.textTheme.displayLarge?.copyWith()
-                    color: Colors.white);
+                  'Fortune cached',
+                  style: theme.textTheme.displayLarge?.copyWith(
+            color: Colors.white);
                     fontWeight: FontWeight.w900),
-    fontSize: 56 + _getFontSizeOffset(fontSize))),
+    fontSize: 56 + _getFontSizeOffset(fontSize)),
                 const SizedBox(height: 8),
                 Text(
                   _getScoreDescription(networkScore),
-    style: theme.textTheme.titleMedium?.copyWith()
-                    color: Colors.white);
-                    fontWeight: FontWeight.w600))]))),
+    style: theme.textTheme.titleMedium?.copyWith(
+            color: Colors.white);
+                    fontWeight: FontWeight.w600)]),
         const SizedBox(height: 24),
         
         // Network Analysis Chart
@@ -283,9 +283,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '인맥 분석 차트',),
-                    style: theme.textTheme.titleMedium?.copyWith()
-                      fontWeight: FontWeight.bold)),
+                    '인맥 분석 차트',
+                    style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   SizedBox(
                     height: 200,
@@ -307,9 +307,10 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
     borderWidth: 2),
     dataEntries: _getRadarDataEntries(chartData))]),
     getTitle: (index, angle) {
-                          final titles = \['['깊이', '다양성', '신뢰도', '활발함', '성장성'];
+                          final titles = \['['깊이': '다양성', '신뢰도': '활발함', '성장성'
+  ];
                           return RadarChartTitle(text: titles[index % titles.length]);
-                        })))]))),
+                        })]),
           const SizedBox(height: 20)])
         
         // Main Analysis
@@ -325,15 +326,15 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       Icon(Icons.analytics, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '종합 분석',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '종합 분석',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 12),
                   Text(
                     widget.result.mainFortune!);
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      height: 1.6);
-                      fontSize: 16 + _getFontSizeOffset(fontSize)))]))),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6);
+                      fontSize: 16 + _getFontSizeOffset(fontSize)]),
           const SizedBox(height: 20)])
         
         // Strengths
@@ -349,9 +350,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       const Icon(Icons.thumb_up, color: Colors.green),
                       const SizedBox(width: 8),
                       Text(
-                        '강점',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '강점',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...strengths.map((strength) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -366,9 +367,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                         Expanded(
                           child: Text(
                             strength.toString(),
-    style: theme.textTheme.bodyLarge?.copyWith()
-                              fontSize: 14 + _getFontSizeOffset(fontSize))))])))
-                ]))),
+    style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: 14 + _getFontSizeOffset(fontSize))])
+                ])),
           const SizedBox(height: 20)])
         
         // Weaknesses
@@ -384,9 +385,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       const Icon(Icons.warning, color: Colors.orange),
                       const SizedBox(width: 8),
                       Text(
-                        '개선점',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '개선점',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...weaknesses.map((weakness) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -401,9 +402,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                         Expanded(
                           child: Text(
                             weakness.toString(),
-    style: theme.textTheme.bodyLarge?.copyWith()
-                              fontSize: 14 + _getFontSizeOffset(fontSize))))])))
-                ]))),
+    style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: 14 + _getFontSizeOffset(fontSize))])
+                ])),
           const SizedBox(height: 20)])
         
         // Opportunities
@@ -419,9 +420,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       Icon(Icons.lightbulb, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '기회',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '기회',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...opportunities.map((opportunity) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -429,14 +430,14 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(8))),
+    borderRadius: BorderRadius.circular(8),
     border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity(0.3))),
+                          color: theme.colorScheme.primary.withOpacity(0.3)),
     child: Text(
                         opportunity.toString(),
-    style: theme.textTheme.bodyMedium?.copyWith()
-                          fontSize: 14 + _getFontSizeOffset(fontSize))))))
-                ]))),
+    style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 14 + _getFontSizeOffset(fontSize)))
+                ])),
           const SizedBox(height: 20)])
         
         // Strategies
@@ -452,9 +453,9 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       const Icon(Icons.rocket_launch, color: Colors.purple),
                       const SizedBox(width: 8),
                       Text(
-                        '전략 제안',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '전략 제안',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...strategies.asMap().entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -472,14 +473,14 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                               '${entry.key + 1}');
                               style: TextStyle(
                                 color: Colors.purple.shade700,
-                                fontWeight: FontWeight.bold)))),
+                                fontWeight: FontWeight.bold)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             entry.value.toString(),
-    style: theme.textTheme.bodyLarge?.copyWith()
-                              fontSize: 14 + _getFontSizeOffset(fontSize))))])))
-                ]))),
+    style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: 14 + _getFontSizeOffset(fontSize))])
+                ])),
           const SizedBox(height: 20)])
         
         // Share Button
@@ -491,7 +492,7 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
     style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]
+                borderRadius: BorderRadius.circular(25),)]
     );
   }
   

@@ -160,9 +160,9 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
                   border: GlassEffects.glassBorder(
                     opacity: 0.2 + (_animation.value * 0.1)),
                   boxShadow: GlassEffects.glassShadow(
-                    elevation: 10 + (_animation.value * 5))),
+                    elevation: 10 + (_animation.value * 5)),
                 padding: widget.padding,
-                child: widget.child))));
+                child: widget.child)));
       });
   }
 }
@@ -232,7 +232,7 @@ class _ShimmerGlassState extends State<ShimmerGlass>
                         widget.shimmerColor.withOpacity(0.2),
                         widget.shimmerColor.withOpacity(0.1),
                         Colors.transparent],
-                      stops: const [0.0, 0.35, 0.5, 0.65, 1.0]))))]));
+                      stops: const [0.0, 0.35, 0.5, 0.65, 1.0]))]);
       });
   }
 }

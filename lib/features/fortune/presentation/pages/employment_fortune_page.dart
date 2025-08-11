@@ -36,17 +36,21 @@ class _EmploymentInputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 취업 운세를 확인해보세요!\n면접운과 합격 가능성을 알려드립니다.',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 취업 운세를 확인해보세요!\n면접운과 합격 가능성을 알려드립니다.',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5,
+          ),
+        ),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
             Icons.work,
             size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3))),
+            color: theme.colorScheme.primary.withOpacity(0.3),
+          ),
+        ),
         
         const SizedBox(height: 32),
         
@@ -58,7 +62,12 @@ class _EmploymentInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)))))]
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -84,7 +93,7 @@ class _EmploymentFortuneResult extends StatelessWidget {
           // Main Fortune Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(16))),
+            borderRadius: BorderRadius.circular(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -95,21 +104,21 @@ class _EmploymentFortuneResult extends StatelessWidget {
                       color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '취업운',),
-                      style: theme.textTheme.titleLarge?.copyWith()
+                      '취업운',
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)])),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    height: 1.6)]),
           const SizedBox(height: 16),
 
           // Score Breakdown
           if (fortune.scoreBreakdown != null) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -120,8 +129,8 @@ class _EmploymentFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '상세 분석',),
-                        style: theme.textTheme.titleLarge?.copyWith()
+                        '상세 분석',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
@@ -131,26 +140,26 @@ class _EmploymentFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: theme.textTheme.bodyLarge))),
+                            style: theme.textTheme.bodyLarge)),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
                           child: Text(
-                            '${entry.value}점',),
-                            style: theme.textTheme.bodyLarge?.copyWith()
+                            '${entry.value}점',
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center))]))).toList()])),
+                            textAlign: TextAlign.center)]).toList()])),
             const SizedBox(height: 16)],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -161,8 +170,8 @@ class _EmploymentFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '행운 아이템',),
-                        style: theme.textTheme.titleLarge?.copyWith()
+                        '행운 아이템',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
@@ -172,14 +181,14 @@ class _EmploymentFortuneResult extends StatelessWidget {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
                         backgroundColor: theme.colorScheme.primaryContainer);
-                    }).toList())])),
+                    }).toList()),
             const SizedBox(height: 16)],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -190,8 +199,8 @@ class _EmploymentFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '조언',),
-                        style: theme.textTheme.titleLarge?.copyWith()
+                        '조언',
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
@@ -207,7 +216,7 @@ class _EmploymentFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))]))).toList()]))]]));)
+                            style: theme.textTheme.bodyMedium)]).toList()]))]]));
   }
 
   Color _getScoreColor(int score) {

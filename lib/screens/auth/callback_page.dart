@@ -257,6 +257,6 @@ class _CallbackPageState extends State<CallbackPage> {
               SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary))]))));
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary)]));
   }
 }

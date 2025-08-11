@@ -42,7 +42,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
           status: 'active');
           planName: '무제한 이용권'),
     price: 2500),
-    currentPeriodEnd: DateTime.now().add(const Duration(days: 15))),
+    currentPeriodEnd: DateTime.now().add(const Duration(days: 15)),
     cancelAtPeriodEnd: false),
     features: [
             '모든 운세 무제한 이용')
@@ -392,7 +392,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
         ...[1, 2, 3].map((index) => Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: _buildPaymentHistoryItem(
-            date: DateTime.now().subtract(Duration(days: 30 * index))),
+            date: DateTime.now().subtract(Duration(days: 30 * index)),
     amount: 2500),
     status: 'succeeded'))
         )).toList())

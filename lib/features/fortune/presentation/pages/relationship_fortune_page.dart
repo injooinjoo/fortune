@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -26,10 +26,9 @@ class RelationshipFortunePage extends BaseFortunePage {
   final RelationshipType initialType;
   
   const RelationshipFortunePage({
-    Key? key,
+    super.key,
     this.initialType = RelationshipType.love,
   }) : super(
-          key: key,
           title: '연애 & 관계 운세',
           description: '사랑과 인연에 대한 운세를 확인해보세요',
           fortuneType: 'relationship',
@@ -95,7 +94,6 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
     return _selectedType == RelationshipType.soulmate;
   }
 
-  @override
   Widget buildContent(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -111,12 +109,12 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           ),
           const SizedBox(height: 16),
           Wrap(
-            spacing: 8)
-            runSpacing: 8)
+            spacing: 8,
+            runSpacing: 8,
             children: RelationshipType.values.map((type) {
               return ChoiceChip(
                 label: Text(type.label),
-                selected: _selectedType == type)
+                selected: _selectedType == type,
                 onSelected: (selected) {
                   if (selected) {
                     setState(() {
@@ -124,113 +122,132 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                     });
                   }
                 },
-                selectedColor: AppColors.primary)
+                selectedColor: AppColors.primary,
                 labelStyle: TextStyle(
-                  color: _selectedType == type ? Colors.white : AppColors.textPrimary)
-                  fontWeight: FontWeight.w500)
-                )
+                  color: _selectedType == type ? Colors.white : AppColors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
               );
-            }).toList()),
+            }).toList(),
+          ),
           const SizedBox(height: 24),
 
           // Description
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface)
-              borderRadius: BorderRadius.circular(12))),
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.border)),
             child: Row(
               children: [
                 Icon(
-                  Icons.info_outline)
-                  color: AppColors.primary)
+                  Icons.info_outline,
+                  color: AppColors.primary,
                   size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    _selectedType.description)
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                      color: AppColors.textSecondary)))])
-            )).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
+                    _selectedType.description,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary),
+                  ),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
           const SizedBox(height: 24),
 
           // Relationship Status
           Text(
-            '현재 상태')
-            style: Theme.of(context).textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)
-            )),
+            '현재 상태',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           SegmentedButton<String>(
             segments: const [
               ButtonSegment(
-                value: 'single')
+                value: 'single',
                 label: Text('싱글'),
                 icon: Icon(Icons.person)),
               ButtonSegment(
-                value: 'dating')
+                value: 'dating',
                 label: Text('연애중'),
                 icon: Icon(Icons.favorite)),
               ButtonSegment(
-                value: 'married')
+                value: 'married',
                 label: Text('기혼'),
-                icon: Icon(Icons.family_restroom))])
+                icon: Icon(Icons.family_restroom)),
+            ],
             selected: _relationshipStatus != null ? {_relationshipStatus!} : {},
             onSelectionChanged: (Set<String> newSelection) {
               setState(() {
                 _relationshipStatus = newSelection.first;
               });
-            }),
+            },
+          ),
           const SizedBox(height: 24),
 
           // Partner Info (if required) or Soulmate Search Info
-          if (_requiresPartnerInfo() || _isSoulmateSearch(), ...[
+          if (_requiresPartnerInfo() || _isSoulmateSearch()) ...[
             Text(
-              _isSoulmateSearch() ? '소울메이트 찾기' : '상대방 정보')
-              style: Theme.of(context).textTheme.titleMedium?.copyWith()
-                fontWeight: FontWeight.bold)
-              )),
+              _isSoulmateSearch() ? '소울메이트 찾기' : '상대방 정보',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold
+              )
+            ),
             const SizedBox(height: 16),
-            if (!_isSoulmateSearch(), ...[
+            if (!_isSoulmateSearch()) ...[
               TextField(
-                controller: _partnerNameController)
+                controller: _partnerNameController,
                 decoration: InputDecoration(
-                  labelText: '상대방 이름')
+                  labelText: '상대방 이름',
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))))] else ...[
+                    borderRadius: BorderRadius.circular(12))
+                )
+              ),
+            ] else ...[
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface)
-                  borderRadius: BorderRadius.circular(12))),
-                  border: Border.all(color: AppColors.border)),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border)
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start)
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Icon(Icons.connect_without_contact, color: AppColors.primary),
                         const SizedBox(width: 8),
                         Text(
-                          '소울메이트 찾기 안내')
+                          '소울메이트 찾기 안내',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold)
-                            color: AppColors.primary))])
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '당신의 생년월일과 성별 정보를 기반으로 운명의 짝을 찾아드립니다.')
-                      style: TextStyle(color: AppColors.textSecondary))])
-                ))])
-            if (!_isSoulmateSearch(), ...[
+                      '당신의 생년월일과 성별 정보를 기반으로 운명의 짝을 찾아드립니다.',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (!_isSoulmateSearch()) ...[
               const SizedBox(height: 16),
               InkWell(
                 onTap: () async {
                   final picked = await showDatePicker(
-                    context: context)
-                    initialDate: _partnerBirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25))
+                    context: context,
+                    initialDate: _partnerBirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25)),
                     firstDate: DateTime(1950),
                     lastDate: DateTime.now());
                   if (picked != null) {
@@ -241,10 +258,11 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                 },
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: '상대방 생년월일')
+                    labelText: '상대방 생년월일',
                     prefixIcon: const Icon(Icons.calendar_today),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12))),
+                      borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Text(
                     _partnerBirthDate != null
                         ? '${_partnerBirthDate!.year}년 ${_partnerBirthDate!.month}월 ${_partnerBirthDate!.day}일'
@@ -252,55 +270,70 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                     style: TextStyle(
                       color: _partnerBirthDate != null
                           ? AppColors.textPrimary
-                          : AppColors.textSecondary)))),
+                          : AppColors.textSecondary)
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('남성'),
-                      value: 'male')
-                      groupValue: _partnerGender)
+                      value: 'male',
+                      groupValue: _partnerGender,
                       onChanged: (value) {
                         setState(() {
                           _partnerGender = value;
                         });
-                      })),
+                      }
+                    )
+                  ),
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('여성'),
-                      value: 'female')
-                      groupValue: _partnerGender)
+                      value: 'female',
+                      groupValue: _partnerGender,
                       onChanged: (value) {
                         setState(() {
                           _partnerGender = value;
                         });
-                      }))])
-              )])
-            const SizedBox(height: 24)])
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 24),
+          ],
 
           // Generate Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _canGenerate() ? _onGenerateFortune : null)
+              onPressed: _canGenerate() ? _onGenerateFortune : null,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
+              ),
               child: const Text(
-                '운세 보기')
+                '운세 보기',
                 style: TextStyle(
-                  fontSize: 16)
-                  fontWeight: FontWeight.bold)
-                ))))])
-      ));
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   bool _canGenerate() {
     if (_relationshipStatus == null) return false;
     
-    if (_requiresPartnerInfo(), {
+    if (_requiresPartnerInfo()) {
       return _partnerNameController.text.isNotEmpty &&
              _partnerBirthDate != null &&
              _partnerGender != null;
@@ -317,98 +350,113 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': profile.gender)}
+        'gender': profile.gender
       };
-      onGenerateFortune(params);
+      generateFortuneAction(params: params);
     }
   }
 
   @override
-  Widget buildFortuneResult(Fortune fortune) {
+  Widget buildFortuneResult() {
+    final fortuneData = fortune;
+    if (fortuneData == null) return const SizedBox.shrink();
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft)
-          end: Alignment.bottomRight)
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withOpacity(0.1),
-            AppColors.secondary.withOpacity(0.1)])
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.secondary.withValues(alpha: 0.1)
+          ]
         ),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3),
-          width: 1)
-        )),
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1
+        )
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start)
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 _getIconForType(_selectedType),
-                color: AppColors.primary)
+                color: AppColors.primary,
                 size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  '${_selectedType.label} 결과')
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith()
+                  '${_selectedType.label} 결과',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary)))])
+                    color: AppColors.primary
+                  )
+                )
+              )
+            ]
           ),
           const SizedBox(height: 20),
           Text(
-            fortune.content)
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith()
-              height: 1.6)
-            )),
-          if (fortune.advice != null) ...[
+            fortuneData.content,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              height: 1.6
+            )
+          ),
+          if (fortuneData.advice != null) ...[
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.surface)
-                borderRadius: BorderRadius.circular(8)),
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(8),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start)
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.tips_and_updates)
-                        color: AppColors.secondary)
+                        Icons.tips_and_updates,
+                        color: AppColors.secondary,
                         size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        '조언')
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith()
-                          fontWeight: FontWeight.bold)
-                          color: AppColors.secondary))])
+                        '조언',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.secondary)),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    fortune.advice!)
-                    style: Theme.of(context).textTheme.bodyMedium))
-                  )])
-              ))])
-          if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
+                    fortuneData.advice!,
+                    style: Theme.of(context).textTheme.bodyMedium),
+                ],
+              ),
+            ),
+          ],
+          if (fortuneData.recommendations != null && fortuneData.recommendations!.isNotEmpty) ...[
             const SizedBox(height: 20),
             Wrap(
-              spacing: 8)
-              runSpacing: 8)
-              children: fortune.luckyItems!.map((item) {
+              spacing: 8,
+              runSpacing: 8,
+              children: fortuneData.recommendations!.map((item) {
                 return Chip(
                   label: Text(item),
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   labelStyle: TextStyle(
-                    color: AppColors.primary)
-                    fontWeight: FontWeight.w500)
-                  )
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500),
                 );
-              }).toList())])
-        ])).animate()
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
   }

@@ -97,7 +97,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           _buildShareOptions(theme),
                           SizedBox(height: AppSpacing.spacing5),
                           _buildSaveOptions(theme),
-                          SizedBox(height: AppSpacing.spacing10)])))]))));
+                          SizedBox(height: AppSpacing.spacing10)]))]));
       });
   }
 
@@ -134,7 +134,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 Text(
                   '운세를 친구들과 공유해보세요!',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary))])),
+                    color: AppColors.textSecondary)]),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close),
@@ -161,7 +161,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
             child: Image.memory(
               widget.previewImage!,
               height: 200,
-              fit: BoxFit.cover))]));
+              fit: BoxFit.cover)]);
   }
 
   Widget _buildShareOptions(ThemeData theme) {
@@ -304,7 +304,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               Text(
                 label,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: color))]))));
+                  color: color)]));
   }
 }
 

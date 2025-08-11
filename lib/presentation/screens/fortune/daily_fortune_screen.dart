@@ -251,7 +251,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     decoration: BoxDecoration(
                       color: Color(int.parse(
                         fortune.luckyColor.replaceAll('#': '0xFF'))
-                      ))),
+                      )),
     shape: BoxShape.circle),
     border: Border.all(color: Colors.grey.withOpacity(0.5)))
                     ))

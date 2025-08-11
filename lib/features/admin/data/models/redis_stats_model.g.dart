@@ -18,7 +18,7 @@ _$RedisStatsModelImpl _$$RedisStatsModelImplFromJson(
           json['performance'] as Map<String, dynamic>),
       rateLimits: (json['rateLimits'] as Map<String, dynamic>).map(
         (k, e) =>
-            MapEntry(k, RateLimitInfo.fromJson(e as Map<String, dynamic>))));
+            MapEntry(k, RateLimitInfo.fromJson(e as Map<String, dynamic>)));
 
 Map<String, dynamic> _$$RedisStatsModelImplToJson(
         _$RedisStatsModelImpl instance) =>

@@ -56,7 +56,7 @@ class OnboardingStepThree extends StatelessWidget {
             padding: EdgeInsets.symmetric(
               vertical: formStyle.inputPadding.horizontal),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius))),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius)),
           child: isLoading 
               ? SizedBox(
                   height: formStyle.inputHeight * 0.4,

@@ -63,7 +63,7 @@ class OnboardingStepTwo extends StatelessWidget {
                       color: isSelected 
                           ? Theme.of(context).colorScheme.onPrimary
                           : null,
-                      fontWeight: FontWeight.w600)))));
+                      fontWeight: FontWeight.w600))));
           }),
         
         const SizedBox(height: 32),

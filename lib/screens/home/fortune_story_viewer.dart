@@ -27,11 +27,17 @@ class FortuneStoryViewer extends StatefulWidget {
 class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
   late PageController _pageController;
   int _currentPage = 0;
+  double _pageOffset = 0.0;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _pageController.addListener(() {
+      setState(() {
+        _pageOffset = _pageController.page ?? 0.0;
+      });
+    });
   }
 
   @override
@@ -77,7 +83,7 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
             ),
           ),
 
-          // 메인 콘텐츠 - PageView
+          // 메인 콘텐츠 - PageView with fade effect
           PageView.builder(
             controller: _pageController,
             scrollDirection: Axis.vertical,
@@ -138,68 +144,91 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
   }
 
   Widget _buildStoryPage(StorySegment segment, int index) {
-    // 현재 페이지 여부 확인
-    bool isCurrentPage = index == _currentPage;
+    // 페이지 오프셋 계산 (스크롤 진행도)
+    double pageOffset = _pageOffset;
+    double diff = (index - pageOffset).abs();
     
-    // Simple fade animation - only current page is visible
-    return AnimatedOpacity(
-      opacity: isCurrentPage ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeInOut,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-            // 소제목이 있으면 표시
-            if (segment.subtitle != null) ...[
-              Text(
-                segment.subtitle!,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: segment.subtitleFontSize ?? 14,
-                  fontWeight: segment.subtitleFontWeight ?? FontWeight.w300,
-                  letterSpacing: 2,
-                  height: 1.4,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-            ],
-            
-            // 이모지가 있으면 표시
-            if (segment.emoji != null) ...[
-              Text(
-                segment.emoji!,
-                style: TextStyle(fontSize: 48),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-            ],
-            
-            // 메인 텍스트
-            Text(
-              segment.text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: segment.fontSize ?? 32,
-                fontWeight: segment.isBold 
-                    ? FontWeight.w600 
-                    : (segment.fontWeight ?? FontWeight.w300),
-                  height: 1.8,
-                  letterSpacing: 0.5,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 2),
-                      blurRadius: 4,
-                      color: Colors.black.withValues(alpha: 0.3),
+    // 페이드 효과 계산
+    // 현재 페이지: opacity = 1.0
+    // 스크롤 시작하면 점점 투명해짐
+    double opacity = 1.0;
+    double scale = 1.0;
+    
+    if (diff < 1.0) {
+      // 현재 페이지이거나 전환 중인 페이지
+      if (index == pageOffset.floor()) {
+        // 현재 페이지가 위로 스크롤되면서 사라짐
+        opacity = 1.0 - (pageOffset - index);
+        scale = 1.0 - (pageOffset - index) * 0.05; // 약간의 스케일 감소
+      } else if (index == pageOffset.ceil()) {
+        // 다음 페이지가 아래에서 올라오면서 나타남
+        opacity = pageOffset - index + 1;
+        scale = 0.95 + (pageOffset - index + 1) * 0.05;
+      }
+    } else {
+      // 보이지 않는 페이지
+      opacity = 0.0;
+    }
+    
+    return Opacity(
+      opacity: opacity.clamp(0.0, 1.0),
+      child: Transform.scale(
+        scale: scale,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 소제목이 있으면 표시
+                if (segment.subtitle != null) ...[
+                  Text(
+                    segment.subtitle!,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: segment.subtitleFontSize ?? 14,
+                      fontWeight: segment.subtitleFontWeight ?? FontWeight.w300,
+                      letterSpacing: 2,
+                      height: 1.4,
                     ),
-                  ],
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                
+                // 이모지가 있으면 표시
+                if (segment.emoji != null) ...[
+                  Text(
+                    segment.emoji!,
+                    style: TextStyle(fontSize: 48),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                
+                // 메인 텍스트
+                Text(
+                  segment.text,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: segment.fontSize ?? 32,
+                    fontWeight: segment.isBold 
+                        ? FontWeight.w600 
+                        : (segment.fontWeight ?? FontWeight.w300),
+                    height: 1.8,
+                    letterSpacing: 0.5,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 2),
+                        blurRadius: 4,
+                        color: Colors.black.withValues(alpha: 0.3),
+                      ),
+                    ],
+                  ),
+                  textAlign: segment.alignment ?? TextAlign.center,
                 ),
-                textAlign: segment.alignment ?? TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

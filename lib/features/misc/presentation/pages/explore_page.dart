@@ -261,7 +261,7 @@ class ExplorePage extends ConsumerWidget {
         filteredItems.addAll(
           category.items.where((item) =>
               item.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              item.description.toLowerCase().contains(searchQuery.toLowerCase())));
+              item.description.toLowerCase().contains(searchQuery.toLowerCase()));
       });
     }
 
@@ -295,7 +295,7 @@ class ExplorePage extends ConsumerWidget {
                 fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none)))),
+                  borderSide: BorderSide.none)),
 
           // Category Tabs
           if (searchQuery.isEmpty)
@@ -328,7 +328,7 @@ class ExplorePage extends ConsumerWidget {
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : theme.colorScheme.outline.withOpacity(0.3))),
+                              : theme.colorScheme.outline.withOpacity(0.3)),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -346,7 +346,7 @@ class ExplorePage extends ConsumerWidget {
                               color: isSelected
                                   ? Colors.white
                                   : theme.colorScheme.onSurface,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]));
                 })),
           const SizedBox(height: 16),
 
@@ -360,7 +360,7 @@ class ExplorePage extends ConsumerWidget {
                     '결과: ${filteredItems.length}개',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize.value - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.7)))])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.7))]),
 
           // Fortune Items Grid
           Expanded(
@@ -382,7 +382,7 @@ class ExplorePage extends ConsumerWidget {
                               : '카테고리가 비어있습니다',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontSize: fontSize.value + 2,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7)))]))
+                            color: theme.colorScheme.onSurface.withOpacity(0.7))])
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -394,7 +394,7 @@ class ExplorePage extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final item = filteredItems[index];
                       return _FortuneItemCard(item: item, fontSize: fontSize.value);
-                    }))]));
+                    })]);
   }
 }
 
@@ -435,7 +435,7 @@ class _FortuneItemCard extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: item.gradientColors),
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(16),
                     child: Icon(
                       item.icon,
                       size: 32,
@@ -457,7 +457,7 @@ class _FortuneItemCard extends StatelessWidget {
                       color: theme.colorScheme.onSurface.withOpacity(0.6)),
                     textAlign: TextAlign.center,
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis)]))),
+                    overflow: TextOverflow.ellipsis)])),
           // Badges
           if (item.isNew)
             Positioned(
@@ -468,13 +468,13 @@ class _FortuneItemCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFEF4444), Color(0xFFEC4899)]),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Text(
                   'NEW',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: fontSize - 6,
-                    fontWeight: FontWeight.bold)))),
+                    fontWeight: FontWeight.bold)),
           if (item.isPremium)
             Positioned(
               top: 8,
@@ -484,10 +484,10 @@ class _FortuneItemCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
                 child: Icon(
                   Icons.star_rounded,
                   size: 16,
-                  color: Colors.white)))]));
+                  color: Colors.white))]);
   }
 }

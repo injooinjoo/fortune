@@ -61,7 +61,7 @@ class _LuckyStockInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)))))]
+                borderRadius: BorderRadius.circular(30),)]
     );
   }
 }
@@ -87,7 +87,7 @@ class _LuckyStockFortuneResult extends StatelessWidget {
           // Main Fortune Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(16))),
+            borderRadius: BorderRadius.circular(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -98,21 +98,21 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                       color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '주식 운세',),
-                      style: theme.textTheme.titleLarge?.copyWith()
-                        fontWeight: FontWeight.bold))]),
+                      '주식 운세',
+                      style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)])),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6)])),
           const SizedBox(height: 16),
 
           // Score Breakdown
           if (fortune.scoreBreakdown != null) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -123,9 +123,9 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '투자 지표',),
-                        style: theme.textTheme.titleLarge?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '투자 지표',
+                        style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -134,26 +134,26 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: theme.textTheme.bodyLarge))),
+                            style: theme.textTheme.bodyLarge)),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
                           child: Text(
-                            '${entry.value}점',),
-                            style: theme.textTheme.bodyLarge?.copyWith()
-                              color: _getScoreColor(entry.value),
+                            '${entry.value}점',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+            color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center))]))).toList()])),
+                            textAlign: TextAlign.center)]).toList()])),
             const SizedBox(height: 16)],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -164,9 +164,9 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '투자 포인트',),
-                        style: theme.textTheme.titleLarge?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '투자 포인트',
+                        style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -175,14 +175,14 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
                         backgroundColor: theme.colorScheme.primaryContainer);
-                    }).toList())])),
+                    }).toList()),
             const SizedBox(height: 16)],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
             GlassContainer(
               padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16))),
+              borderRadius: BorderRadius.circular(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -193,9 +193,9 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                         color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '투자 조언',),
-                        style: theme.textTheme.titleLarge?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '투자 조언',
+                        style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -210,7 +210,7 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium))]))).toList()]))]]));)
+                            style: theme.textTheme.bodyMedium)]).toList()]))]]));)
   }
 
   Color _getScoreColor(int score) {

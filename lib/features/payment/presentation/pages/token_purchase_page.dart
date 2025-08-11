@@ -172,7 +172,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200)),
     decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(16),
     border: Border.all(
             color: isSelected ? package.color : AppColors.surface);
             width: isSelected ? 2 : 1)),

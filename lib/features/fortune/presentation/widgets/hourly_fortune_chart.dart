@@ -165,7 +165,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         topTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false)),
         rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false))),
+          sideTitles: SideTitles(showTitles: false)),
       borderData: FlBorderData(
         show: true,
         border: Border.all(

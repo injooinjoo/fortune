@@ -43,7 +43,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           style: TextStyle(
             color: fortuneTheme.primaryText,
             fontSize: 18,
-            fontWeight: FontWeight.w600))),
+            fontWeight: FontWeight.w600),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,14 +71,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Colors.blue.shade50,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
                     child: Row(
                       children: [
                         Text(
                           '계정',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 20))])),
+                            fontSize: 20),
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildSettingItem(
                     icon: Icons.person_outline,
                     title: '프로필 편집',
@@ -125,14 +133,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Colors.green.shade50,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
                     child: Row(
                       children: [
                         Text(
                           '앱 설정',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 20))])),
+                            fontSize: 20),
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildSettingItem(
                     icon: Icons.dark_mode_outlined,
                     title: '다크 모드',
@@ -174,14 +188,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Colors.orange.shade50,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
+                        topRight: Radius.circular(16)),
                     child: Row(
                       children: [
                         Text(
                           '결제',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 20))])),
+                            fontSize: 20)]),
                   _buildSettingItem(
                     icon: Icons.local_offer_outlined,
                     title: '토큰 구매',
@@ -217,14 +231,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Colors.purple.shade50,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
+                        topRight: Radius.circular(16)),
                     child: Row(
                       children: [
                         Text(
                           '지원',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 20))])),
+                            fontSize: 20)]),
                   _buildSettingItem(
                     icon: Icons.help_outline,
                     title: '도움말',
@@ -261,7 +275,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             onPressed: () => Navigator.pop(context, true),
                             child: Text(
                               '로그아웃',
-                              style: TextStyle(color: theme.colorScheme.error)))]));
+                              style: TextStyle(color: theme.colorScheme.error))]);
                     
                     if (shouldLogout == true) {
                       await supabase.auth.signOut();
@@ -274,12 +288,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: BorderSide(color: theme.colorScheme.error),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8))),
+                      borderRadius: BorderRadius.circular(8),
                   child: Text(
                     '로그아웃',
                     style: TextStyle(
                       color: theme.colorScheme.error,
-                      fontWeight: FontWeight.w600))))),
+                      fontWeight: FontWeight.w600))),
             
             // 버전 정보
             const SizedBox(height: 24),
@@ -288,7 +302,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 'Fortune v1.0.0',
                 style: TextStyle(
                   color: AppColors.textSecondary,
-                  fontSize: 12))),
+                  fontSize: 12)),
             const SizedBox(height: 32)])));
   }
   
@@ -312,7 +326,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           border: Border(
             bottom: isLast ? BorderSide.none : const BorderSide(
               color: AppColors.divider,
-              width: 1))),
+              width: 1)),
         child: Row(
           children: [
             Container(
@@ -320,7 +334,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               height: 40,
               decoration: BoxDecoration(
                 color: _getIconBackgroundColor(icon),
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Icon(
                 icon,
                 color: _getIconColor(icon),
@@ -346,7 +360,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(4)),
+                            borderRadius: BorderRadius.circular(4),
                           child: const Text(
                             'PRO',
                             style: TextStyle(
@@ -363,7 +377,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             trailing ?? (onTap != null ? const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary) : const SizedBox.shrink())])));
+              color: AppColors.textSecondary) : const SizedBox.shrink()]));
   }
   
   Color _getIconBackgroundColor(IconData icon) {

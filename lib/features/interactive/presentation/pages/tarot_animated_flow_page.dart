@@ -142,7 +142,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 end: Alignment.bottomCenter,
                 colors: [
                   const Color(0xFF1a1a2e),
-                  const Color(0xFF0f0f1e)]))),
+                  const Color(0xFF0f0f1e)])),
           
           // Main content
           if (!_showCardSelection && !_showCardReveal)
@@ -166,7 +166,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             left: 10,
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.pop()))]));
+              onPressed: () => context.pop())]);
   }
 
   Widget _buildMainContent() {
@@ -197,7 +197,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                       child: Icon(
                         Icons.auto_awesome,
                         color: Colors.white,
-                        size: 60)))));
+                        size: 60))));
             }
             return Stack(
               children: [
@@ -210,7 +210,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                     scale: _heroScaleAnimation.value,
                     child: Opacity(
                       opacity: 1 - _heroController.value,
-                      child: _buildDailyFortuneCard()))),
+                      child: _buildDailyFortuneCard()),
                 
                 // Bottom content sliding down
                 Positioned(
@@ -290,14 +290,14 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
                       child: Text(
                         'DRAW',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2)))]))]))));
+                          letterSpacing: 1.2))])])));
   }
 
   Widget _buildBottomContent() {
@@ -338,7 +338,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             title,
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
-              fontSize: 12))]));
+              fontSize: 12)]);
   }
 
   Widget _buildCardReveal() {
@@ -383,8 +383,8 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
-                                fontWeight: FontWeight.bold))])));
-                  }))),
+                                fontWeight: FontWeight.bold)]));
+                  })),
             
             const SizedBox(height: 40),
             
@@ -429,12 +429,12 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 backgroundColor: Theme.of(context).primaryColor,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30))),
+                  borderRadius: BorderRadius.circular(30),
               child: const Text(
                 'View Full Reading',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold)))])));
+                  fontWeight: FontWeight.bold))]));
   }
 
   Widget _buildMetadata(IconData icon, String text) {

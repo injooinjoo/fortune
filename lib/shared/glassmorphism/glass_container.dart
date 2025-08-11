@@ -82,7 +82,7 @@ class GlassContainer extends StatelessWidget {
                 width: borderWidth),
               boxShadow: boxShadow ?? defaultShadow),
             padding: padding,
-            child: child))));
+            child: child)));
   }
 }
 

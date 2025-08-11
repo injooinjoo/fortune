@@ -136,7 +136,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             child: const Text('취소')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('연결 해제'))]));
+            child: const Text('연결 해제')]);
     
     if (shouldUnlink != true) return;
     
@@ -206,7 +206,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
               color: providerInfo.color.withOpacity(0.1),
               borderRadius: AppDimensions.borderRadiusSmall),
             child: Center(
-              child: _buildProviderIcon(providerInfo))),
+              child: _buildProviderIcon(providerInfo)),
           SizedBox(width: AppSpacing.spacing3),
           
           // Provider name and status
@@ -246,7 +246,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           else if (!isLinked)
             TextButton(
               onPressed: () => _linkProvider(provider),
-              child: const Text('연결'))]));
+              child: const Text('연결')]);
   }
   
   Widget _buildProviderIcon(SocialProviderInfo providerInfo) {
@@ -281,7 +281,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
               providerInfo.iconData as String,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold))));
+                fontWeight: FontWeight.bold)));
     }
   }
 
@@ -300,7 +300,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         Text(
           '여러 소셜 계정을 연결하여 편리하게 로그인하세요.',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6))),
+            color: theme.colorScheme.onSurface.withOpacity(0.6)),
         SizedBox(height: AppSpacing.spacing4),
         ...(_providers.keys.map((provider) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),

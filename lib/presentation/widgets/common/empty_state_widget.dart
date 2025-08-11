@@ -37,7 +37,7 @@ class EmptyStateWidget extends StatelessWidget {
               child: Icon(
                 icon,
                 size: iconSize,
-                color: colorScheme.onSurfaceVariant.withOpacity(0.6))),
+                color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
             SizedBox(height: AppSpacing.spacing6),
             Text(
               title,

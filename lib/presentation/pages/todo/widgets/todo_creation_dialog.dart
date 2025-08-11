@@ -145,7 +145,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
         color: colorScheme.surface,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
-          topRight: Radius.circular(20))),
+          topRight: Radius.circular(20)),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -164,7 +164,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                     height: 4,
                     decoration: BoxDecoration(
                       color: colorScheme.onSurfaceVariant.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(2)))),
+                      borderRadius: BorderRadius.circular(2),
                 const SizedBox(height: 20),
 
                 // Title
@@ -295,6 +295,6 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2))
-                          : Text(widget.todoToEdit != null ? '수정' : '추가'))])])))));
+                          : Text(widget.todoToEdit != null ? '수정' : '추가'))])]))));
   }
 }

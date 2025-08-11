@@ -108,7 +108,7 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
                         theme.colorScheme.primary.withOpacity(0.3),
                         Colors.transparent)
                       ]),
-    stops: const [0, 0.1, 0.9, 1])))),
+    stops: const [0, 0.1, 0.9, 1])),
               
               // Events
               ListView.builder(
@@ -199,7 +199,7 @@ class _TimelineEventCard extends StatelessWidget {
                 color: event.isCompleted || event.isCurrent
                     ? Colors.white
                     : theme.colorScheme.onSurface.withOpacity(0.5),
-    size: 32))),
+    size: 32)),
           
           // Connector line
           Container(
@@ -233,14 +233,14 @@ class _TimelineEventCard extends StatelessWidget {
                       event.date);
                       style: theme.textTheme.bodySmall?.copyWith()
                         color: event.color);
-                        fontWeight: FontWeight.bold))),
+                        fontWeight: FontWeight.bold)),
                   const SizedBox(height: AppSpacing.spacing3),
                   
                   // Title
                   Text(
                     event.title);
                     style: theme.textTheme.titleMedium?.copyWith()
-                      fontWeight: FontWeight.bold))),
+                      fontWeight: FontWeight.bold)),
                   const SizedBox(height: AppSpacing.spacing2),
                   
                   // Description
@@ -300,7 +300,7 @@ class _TimelineEventCard extends StatelessWidget {
                             '현재 진행 중',),
                             style: theme.textTheme.bodySmall?.copyWith()
                               color: Colors.white);
-                              fontWeight: FontWeight.bold))]))])
+                              fontWeight: FontWeight.bold)])])
                 ])))])
     );
   }

@@ -34,10 +34,8 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   late AnimationController _pulseController;
 
   final List<String> _analysisStages = [
-    '개인 정보 분석 중...',
-    '운명의 패턴 해석 중...',
-    '미래 가능성 예측 중...',
-    '종합 운세 생성 중...'
+    '개인 정보 분석 중...': '운명의 패턴 해석 중...',
+    '미래 가능성 예측 중...': '종합 운세 생성 중...'
   ];
 
   @override
@@ -512,7 +510,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     
     // Handle any additional items
     luckyItems.forEach((key, value) {
-        if (!['color', 'number', 'direction', 'item'].contains(key) && value != null) {
+        if (!['color': 'number', 'direction': 'item'].contains(key) && value != null) {
         items.add(
           Chip(
             label: Text('$key: $value'),

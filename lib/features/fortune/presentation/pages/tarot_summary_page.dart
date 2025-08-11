@@ -140,7 +140,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       buffer.writeln(_summaryData!['summary']);
     }
     
-    await Share.share(buffer.toString());
+    await Share.share(buffer.toString();
   }
 
   Map<String, dynamic> _getCardInfo(int cardIndex) {
@@ -154,7 +154,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         };
       }
     }
-    return {'name': 'Unknown Card', 'keywords': [], 'element': 'Unknown'};
+    return {'name': 'Unknown Card': 'keywords': [], 'element': 'Unknown'
+  };
   }
 
   @override
@@ -190,8 +191,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                         const SizedBox(height: 24),
                         _buildCardSpread(fontScale),
                         const SizedBox(height: 32),
-                        if (_isLoadingSummary) _buildLoadingIndicator()
-                        else if (_summaryData != null) _buildSummarySection(fontScale),
+                        if (_isLoadingSummary) _buildLoadingIndicator(),
+            else if (_summaryData != null) _buildSummarySection(fontScale),
                         const SizedBox(height: 24),
                         // Share section
                         _buildShareSection(fontScale),
@@ -333,7 +334,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             top: 130,
             child: Transform.rotate(
               angle: 1.57,
-              child: _buildMiniCard(1, fontScale))),
+              child: _buildMiniCard(1, fontScale)),
           // Cross cards (2, 3, 4, 5,
           Positioned(
             left: 120,
@@ -367,7 +368,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           Positioned(
             right: 20,
             top: 20,
-            child: _buildMiniCard(9, fontScale))]));
+            child: _buildMiniCard(9, fontScale)]);
 }
 
   Widget _buildHorizontalLayout(double fontScale) {
@@ -375,7 +376,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(
         widget.cards.length,
-        (index) => _buildMiniCard(index, fontScale)));
+        (index) => _buildMiniCard(index, fontScale));
   }
 
   Widget _buildDefaultLayout(double fontScale) {
@@ -385,7 +386,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       alignment: WrapAlignment.center,
       children: List.generate(
         widget.cards.length,
-        (index) => _buildMiniCard(index, fontScale)));
+        (index) => _buildMiniCard(index, fontScale));
   }
 
   Widget _buildMiniCard(int index, double fontScale) {
@@ -438,7 +439,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Text(
                   '${index + 1}',
                   style: TextStyle(
@@ -580,13 +581,13 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                       entry.key,
                       style: TextStyle(
                         fontSize: 14 * fontScale,
-                        color: Colors.white))),
+                        color: Colors.white)),
                   Expanded(
                     child: Container(
                       height: 20,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
                       child: FractionallySizedBox(
                         widthFactor: percentage / 100,
                         alignment: Alignment.centerLeft,
@@ -822,7 +823,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.9),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           child: ListView(
             controller: scrollController,
             padding: const EdgeInsets.all(20),
@@ -949,12 +950,12 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     buffer.writeln(_summaryData!['summary']);
                   }
                   
-                  Clipboard.setData(ClipboardData(text: buffer.toString()));
+                  Clipboard.setData(ClipboardData(text: buffer.toString());
                   HapticFeedback.lightImpact();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('클립보드에 복사되었습니다'),
-                      duration: const Duration(seconds: 2)));
+                      duration: const Duration(seconds: 2));
                 },
                 fontScale: fontScale),
               _buildShareButton(
@@ -966,7 +967,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('이미지 공유 기능은 준비 중입니다'),
-                      duration: const Duration(seconds: 2)));
+                      duration: const Duration(seconds: 2));
                 },
                 fontScale: fontScale,
               ),
@@ -1009,7 +1010,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               style: TextStyle(
                 fontSize: 12 * fontScale,
                 color: color,
-                  fontWeight: FontWeight.w500))])));
+                  fontWeight: FontWeight.w500)]);
 }
 
   String _getCardImagePath(int cardIndex) {
@@ -1019,10 +1020,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
     if (cardIndex < 22) {
       // Major Arcana
       final cardNames = [
-        'fool', 'magician', 'high_priestess', 'empress', 'emperor',
-        'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
-        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
-        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'];
+        'fool': 'magician', 'high_priestess': 'empress', 'emperor': 'hierophant', 'lovers': 'chariot', 'strength': 'hermit',
+        'wheel_of_fortune': 'justice', 'hanged_man': 'death', 'temperance': 'devil', 'tower': 'star', 'moon': 'sun', 'judgement': 'world'
+  ];
       return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
     } else if (cardIndex < 36) {
       // Wands

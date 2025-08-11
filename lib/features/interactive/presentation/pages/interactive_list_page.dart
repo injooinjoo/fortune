@@ -79,7 +79,7 @@ class InteractiveListPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final feature = interactiveFeatures[index];
                     return _InteractiveFeatureCard(feature: feature);
-                  })))])));
+                  }))]));
   }
 }
 
@@ -146,10 +146,10 @@ class _InteractiveFeatureCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Text(
                   '준비중',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5))))]])));
+                    color: theme.colorScheme.onSurface.withOpacity(0.5)))]])));
   }
 }

@@ -62,7 +62,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                 colors: [AppColors.primary, AppColors.secondary],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(16)),
+              borderRadius: BorderRadius.circular(16),
             child: Column(
               children: [
                 Icon(
@@ -71,15 +71,15 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   color: AppColors.surface),
                 const SizedBox(height: 12),
                 Text(
-                  'AI가 당신의 관상을 분석합니다',),
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith()
-                    color: AppColors.surface,
+                  'AI가 당신의 관상을 분석합니다',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: AppColors.surface,
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(
-                  '사진을 업로드하거나 간단한 정보를 입력해주세요',),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                    color: AppColors.surface.withOpacity(0.9)),
+                  '사진을 업로드하거나 간단한 정보를 입력해주세요',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.surface.withOpacity(0.9)),
                   textAlign: TextAlign.center)])),
           
           const SizedBox(height: 24),
@@ -96,9 +96,9 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '또는',),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                    color: AppColors.onSurface.withOpacity(0.6)))),
+                  '또는',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.onSurface.withOpacity(0.6)),
               Expanded(child: Divider(color: AppColors.onSurface.withOpacity(0.3))]),
           
           const SizedBox(height: 24),
@@ -117,12 +117,12 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
               backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
             child: Text(
-              '관상 분석하기',),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith()
-                color: AppColors.surface,
-                fontWeight: FontWeight.bold)))]));
+              '관상 분석하기',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: AppColors.surface,
+                fontWeight: FontWeight.bold)]);
   }
   
   Widget _buildPhotoSection() {
@@ -130,7 +130,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppColors.primary.withOpacity(0.3),
           width: 2)),
@@ -138,7 +138,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         children: [
           if (_selectedImage != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(8))),
+              borderRadius: BorderRadius.circular(8),
               child: Image.file(
                 _selectedImage!,
                 height: 200,
@@ -177,7 +177,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       icon: Icon(icon, color: AppColors.primary),
       label: Text(
         label,
-        style: TextStyle(color: AppColors.primary)));
+        style: TextStyle(color: AppColors.primary));
   }
   
   Widget _buildSimplifiedManualInput() {
@@ -185,21 +185,21 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12)),
+        borderRadius: BorderRadius.circular(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '간단 입력 (선택사항)',),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '간단 입력 (선택사항)',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           
           // Face shape
           _buildDropdown(
             label: '얼굴형',
             value: _selectedFaceShape,
-            items: const \['['둥근형', '계란형', '각진형', '역삼각형', '긴형',
+            items: const \['['둥근형': '계란형', '각진형': '역삼각형', '긴형',
             onChanged: (value) {
               setState(() {
                 _selectedFaceShape = value;
@@ -212,7 +212,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           _buildDropdown(
             label: '눈 모양',
             value: _selectedEyeType,
-            items: const \['['큰 눈', '작은 눈', '올라간 눈', '처진 눈', '둥근 눈',
+            items: const \['['큰 눈': '작은 눈', '올라간 눈': '처진 눈', '둥근 눈',
             onChanged: (value) {
               setState(() {
                 _selectedEyeType = value;
@@ -225,7 +225,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           _buildDropdown(
             label: '전체적인 인상',
             value: _selectedOverallImpression,
-            items: const \['['부드러운', '날카로운', '온화한', '강인한', '중성적인',
+            items: const \['['부드러운': '날카로운', '온화한': '강인한', '중성적인',
             onChanged: (value) {
               setState(() {
                 _selectedOverallImpression = value;
@@ -243,13 +243,13 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-            color: AppColors.onSurface.withOpacity(0.7))),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.onSurface.withOpacity(0.7)),
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: AppColors.onSurface.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(8)),
+            borderRadius: BorderRadius.circular(8),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: value,
@@ -261,7 +261,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   value: item,
                   child: Text(item));
               }).toList(),
-              onChanged: onChanged)))]);
+              onChanged: onChanged))]);
   }
   
   bool _isManualInputComplete() {
@@ -327,7 +327,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         fortuneType: 'face-reading',
         mainFortune: _generateMockFaceReadingContent(inputData),
         createdAt: DateTime.now().toIso8601String(),
-        date: DateTime.now().toIso8601String());
+        date: DateTime.now().toIso8601String();
       
       setState(() {
         _fortuneResult = result;
@@ -375,7 +375,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     side: BorderSide(color: AppColors.primary)),
-                  child: const Text('다시 보기'))),
+                  child: const Text('다시 보기')),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
@@ -385,7 +385,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 12)),
-                  child: const Text('운세 목록')))])]));
+                  child: const Text('운세 목록'))])]));
   }
   
   String _generateMockFaceReadingContent(Map<String, dynamic> inputData) {

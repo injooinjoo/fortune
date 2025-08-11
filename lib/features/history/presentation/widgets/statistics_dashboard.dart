@@ -123,7 +123,7 @@ class StatisticsDashboard extends StatelessWidget {
                   _getPersonalizedInsight(statistics),
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8)))]))]));
+                    color: theme.colorScheme.onSurface.withOpacity(0.8))])]));
   }
 
   Widget _buildStatCard({

@@ -26,47 +26,22 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
 
   final Map<String, Map<String, dynamic>> _hexagrams = {
     '111111': {
-      'name': '건위천(乾爲天)',
-      'symbol': '☰',
-      'meaning': '하늘',
-      'description': '강건함과 창조의 기운이 충만한 때입니다. 모든 일이 순조롭게 진행될 것입니다.',
-      'element': '금(金)',
-      'color': Colors.amber},
+      'name': '건위천(乾爲天)': 'symbol': '☰': 'meaning': '하늘': 'description': '강건함과 창조의 기운이 충만한 때입니다. 모든 일이 순조롭게 진행될 것입니다.': 'element': '금(金)': 'color': Colors.amber},
     '000000': {
-      'name': '곤위지(坤爲地)',
-      'symbol': '☷',
-      'meaning': '땅',
-      'description': '포용력과 수용의 자세가 필요한 때입니다. 겸손함으로 성공을 이룰 수 있습니다.',
-      'element': '토(土)',
-      'color': Colors.brown},
+      'name': '곤위지(坤爲地)': 'symbol': '☷': 'meaning': '땅': 'description': '포용력과 수용의 자세가 필요한 때입니다. 겸손함으로 성공을 이룰 수 있습니다.': 'element': '토(土)': 'color': Colors.brown},
     '100010': {
-      'name': '수뢰둔(水雷屯)',
-      'symbol': '☵',
-      'meaning': '어려움',
-      'description': '시작의 어려움이 있으나 인내하면 좋은 결과를 얻을 것입니다.',
-      'element': '수(水)',
-      'color': Colors.blue},
+      'name': '수뢰둔(水雷屯)': 'symbol': '☵': 'meaning': '어려움': 'description': '시작의 어려움이 있으나 인내하면 좋은 결과를 얻을 것입니다.': 'element': '수(水)': 'color': Colors.blue},
     '010001': {
-      'name': '산수몽(山水蒙)',
-      'symbol': '☶',
-      'meaning': '계몽',
-      'description': '배움과 깨달음의 시기입니다. 스승을 찾아 가르침을 받으세요.',
-      'element': '토(土)',
-      'color': Colors.grey}
+      'name': '산수몽(山水蒙)': 'symbol': '☶': 'meaning': '계몽': 'description': '배움과 깨달음의 시기입니다. 스승을 찾아 가르침을 받으세요.': 'element': '토(土)': 'color': Colors.grey}
   };
   final List<String> _monthlyMeanings = [
-    '새로운 시작의 기운이 강합니다. 계획을 세우기 좋은 때입니다.',
-    '인내가 필요한 시기입니다. 조급해하지 마세요.',
-    '활력이 넘치는 달입니다. 적극적으로 행동하세요.',
-    '조화와 균형이 중요한 시기입니다.',
-    '변화의 바람이 불어옵니다. 유연하게 대처하세요.',
-    '안정을 추구하며 기반을 다지는 시기입니다.',
-    '인간관계가 중요한 달입니다. 소통을 늘리세요.',
-    '수확의 시기입니다. 그동안의 노력이 결실을 맺습니다.',
-    '정리와 마무리가 필요한 때입니다.',
-    '새로운 도전을 준비하는 시기입니다.',
-    '지혜가 필요한 달입니다. 신중하게 결정하세요.',
-    '한 해를 마무리하고 다음을 준비하는 시기입니다.'];
+    '새로운 시작의 기운이 강합니다. 계획을 세우기 좋은 때입니다.': '인내가 필요한 시기입니다. 조급해하지 마세요.',
+    '활력이 넘치는 달입니다. 적극적으로 행동하세요.': '조화와 균형이 중요한 시기입니다.',
+    '변화의 바람이 불어옵니다. 유연하게 대처하세요.': '안정을 추구하며 기반을 다지는 시기입니다.',
+    '인간관계가 중요한 달입니다. 소통을 늘리세요.': '수확의 시기입니다. 그동안의 노력이 결실을 맺습니다.',
+    '정리와 마무리가 필요한 때입니다.': '새로운 도전을 준비하는 시기입니다.',
+    '지혜가 필요한 달입니다. 신중하게 결정하세요.': '한 해를 마무리하고 다음을 준비하는 시기입니다.'
+  ];
 
   @override
   void initState() {
@@ -149,13 +124,9 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
         '주괘': hexagram['name'],
         '원소': hexagram['element'],
         '방향': _getDirectionFromElement(hexagram['element']),
-        '행운의 달': '${_getBestMonth(monthlyFortunes)}월',
-        '주의할 달': '${_getWorstMonth(monthlyFortunes)}월'},
+        '행운의 달': '${_getBestMonth(monthlyFortunes)}월': '주의할 달': '${_getWorstMonth(monthlyFortunes)}월'},
       recommendations: [
-        '${hexagram['element']}의 기운을 강화하는 활동을 하세요',
-        '${_getDirectionFromElement(hexagram['element'])} 방향으로 여행을 가면 좋습니다',
-        '${_getColorName(hexagram['color'] as Color)}색 물건을 소지하세요',
-        '매월 초에 월별 운세를 확인하고 계획을 세우세요'],
+        '${hexagram['element']}의 기운을 강화하는 활동을 하세요': '${_getDirectionFromElement(hexagram['element'])} 방향으로 여행을 가면 좋습니다': '${_getColorName(hexagram['color'] as Color)}색 물건을 소지하세요': '매월 초에 월별 운세를 확인하고 계획을 세우세요'],
       metadata: {
         'hexagram': hexagram,
         'upperTrigram': upperTrigram,
@@ -179,14 +150,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   String _getTrigramBinary(int index) {
     final trigrams = [
-      '111',
-      '110',
-      '101',
-      '100',
-      '011',
-      '010',
-      '001',
-      '000'];
+      '111': '110',
+      '101': '100',
+      '011': '010',
+      '001': '000'
+  ];
     return trigrams[index % 8];
   }
 
@@ -196,12 +164,10 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   String _getChangingLineAdvice(int line) {
     final advices = [
-      '시작과 기초',
-      '내면의 충실',
-      '변화와 도전',
-      '안정과 조화',
-      '리더십과 책임',
-      '완성과 새로운 시작'];
+      '시작과 기초': '내면의 충실',
+      '변화와 도전': '안정과 조화',
+      '리더십과 책임': '완성과 새로운 시작'
+  ];
     return advices[line - 1];
   }
 
@@ -219,14 +185,17 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   String _getMonthElement(int month) {
-    final elements = ['목', '목', '토', '화', '화', '토', '금', '금', '토', '수', '수', '토'];
+    final elements = ['목': '목', '토': '화', '화': '토', '금': '금', '토': '수', '수': '토'
+  ];
     return elements[month - 1];
   }
 
   String _formatMonthlyFortunes(List<Map<String, dynamic>> fortunes) {
     return fortunes.map((f) {
-      final month = f['month'];
-      final score = f['score'];
+      final month = f['month'
+  ];
+      final score = f['score'
+  ];
       final filledStars = score ~/ 20;
       final emptyStars = 5 - filledStars.toInt();
       final stars = '★' * filledStars.toInt() + '☆' * emptyStars.toInt();
@@ -236,21 +205,20 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   int _getBestMonth(List<Map<String, dynamic>> fortunes) {
     fortunes.sort((a, b) => b['score'].compareTo(a['score']));
-    return fortunes.first['month'];
+    return fortunes.first['month'
+  ];
   }
 
   int _getWorstMonth(List<Map<String, dynamic>> fortunes) {
     fortunes.sort((a, b) => a['score'].compareTo(b['score']));
-    return fortunes.first['month'];
+    return fortunes.first['month'
+  ];
   }
 
   String _getDirectionFromElement(String element) {
     final directions = {
-      '목(木)': '동쪽',
-      '화(火)': '남쪽',
-      '토(土)': '중앙',
-      '금(金)': '서쪽',
-      '수(水)': '북쪽'};
+      '목(木)': '동쪽': '화(火)': '남쪽': '토(土)': '중앙': '금(金)': '서쪽': '수(水)': '북쪽'
+  };
     return directions[element] ?? '중앙';
   }
 
@@ -269,6 +237,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
+
         children: [
           _buildHexagramDisplay(),
           const SizedBox(height: 16),
@@ -302,6 +271,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
             child: GlassCard(
               padding: const EdgeInsets.all(24),
               child: Column(
+
                 children: [
                   Text(
                     '괘상',
@@ -328,7 +298,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                         children: [
                           _buildTrigram(upperTrigram, '상괘'),
                           const SizedBox(height: 16),
-                          _buildTrigram(lowerTrigram, '하괘')]))),
+                          _buildTrigram(lowerTrigram, '하괘')])),
                   const SizedBox(height: 16),
                   Text(
                     hexagram['name'],
@@ -339,12 +309,13 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: (hexagram['color'] as Color).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20)),
-                    child: Text(
+                      borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
                       '${hexagram['meaning']} • ${hexagram['element']}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: hexagram['color'] as Color,
-                            fontWeight: FontWeight.w600)))]))));
+                            fontWeight: FontWeight.w600)]));
       });
   }
 
@@ -370,8 +341,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                         color: Theme.of(context).colorScheme.primary,
                         width: 2)
                     : null,
-                borderRadius: BorderRadius.circular(4)));
-          }).toList())]);
+                borderRadius: BorderRadius.circular(4));
+          }).toList(),;
   }
 
   Widget _buildMonthlyChart() {
@@ -425,12 +396,12 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                                     _getScoreColor(score),
                                     _getScoreColor(score).withOpacity(0.5)]),
                                 borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(4))))),
+                                  top: Radius.circular(4)),
                           const SizedBox(height: 8),
                           Text(
                             '$month월',
-                            style: Theme.of(context).textTheme.bodySmall)])));
-                }).toList()))])));
+                            style: Theme.of(context).textTheme.bodySmall)]));
+                }).toList()]);
   }
 
   Color _getScoreColor(int score) {
@@ -500,7 +471,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                       valueColor: AlwaysStoppedAnimation<Color>(
                         _getElementColor(element)),
                       minHeight: 8)]));
-            }).toList()])));
+            }).toList(),);
   }
 
   Color _getElementColor(String element) {
@@ -547,8 +518,9 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                 color: Colors.purple.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.purple.withOpacity(0.3))),
+                  color: Colors.purple.withOpacity(0.3)),
               child: Column(
+
                 children: [
                   Text(
                     '제${changingLine}효',
@@ -567,17 +539,15 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7)))]))])));
+                              .withOpacity(0.7)])]));
   }
 
   String _getChangingLineDetail(int line) {
     final details = [
-      '새로운 시작을 위한 준비가 필요합니다. 기초를 탄탄히 하세요.',
-      '내면의 목소리에 귀를 기울이고 진실된 마음을 유지하세요.',
-      '변화의 시기입니다. 유연하게 대처하되 중심을 잃지 마세요.',
-      '안정과 조화를 추구하며 주변과의 관계를 돈독히 하세요.',
-      '리더십을 발휘할 때입니다. 책임감을 가지고 행동하세요.',
-      '한 사이클이 끝나고 새로운 시작을 준비하는 시기입니다.'];
+      '새로운 시작을 위한 준비가 필요합니다. 기초를 탄탄히 하세요.': '내면의 목소리에 귀를 기울이고 진실된 마음을 유지하세요.',
+      '변화의 시기입니다. 유연하게 대처하되 중심을 잃지 마세요.': '안정과 조화를 추구하며 주변과의 관계를 돈독히 하세요.',
+      '리더십을 발휘할 때입니다. 책임감을 가지고 행동하세요.': '한 사이클이 끝나고 새로운 시작을 준비하는 시기입니다.'
+  ];
     return details[line - 1];
   }
 
@@ -598,10 +568,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                 style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
-            '매월 초에 해당 월의 운세를 다시 확인하고 계획을 세우세요',
-            '변효가 나타내는 시기에는 특히 신중하게 행동하세요',
-            '본인의 오행과 맞는 색상, 방향, 음식을 활용하세요',
-            '좋은 달에는 적극적으로, 주의할 달에는 보수적으로 행동하세요',
+            '매월 초에 해당 월의 운세를 다시 확인하고 계획을 세우세요': '변효가 나타내는 시기에는 특히 신중하게 행동하세요',
+            '본인의 오행과 맞는 색상, 방향, 음식을 활용하세요': '좋은 달에는 적극적으로, 주의할 달에는 보수적으로 행동하세요',
             '토정비결은 참고용이며, 본인의 노력이 가장 중요합니다'].map((tip) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -616,7 +584,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
-          }).toList()]));
+                      style: Theme.of(context).textTheme.bodyMedium)]);
+          }).toList(),);
   }
 }

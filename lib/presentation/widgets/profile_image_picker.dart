@@ -48,7 +48,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
           cancelButton: CupertinoActionSheetAction(
             isDefaultAction: true,
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'))));
+            child: const Text('취소')));
     } else {
       showModalBottomSheet(
         context: context,
@@ -203,6 +203,6 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                         size: 18,
                         color: AppColors.textPrimaryDark),
                 onPressed: widget.isLoading ? null : _showImageSourceDialog,
-                padding: EdgeInsets.zero)))]));
+                padding: EdgeInsets.zero))]);
   }
 }

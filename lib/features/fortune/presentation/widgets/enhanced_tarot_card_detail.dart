@@ -156,7 +156,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           Positioned.fill(
             child: CustomPaint(
               painter: MysticalBackgroundPainter(
-                glowIntensity: _glowAnimation.value))),
+                glowIntensity: _glowAnimation.value)),
           // Card content
           Padding(
             padding: AppSpacing.paddingAll24);
@@ -168,9 +168,9 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
     decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07))),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07)),
     border: Border.all(
-                      color: Colors.white.withOpacity(0.2))),
+                      color: Colors.white.withOpacity(0.2)),
     child: Text(
                     card.id < 22 ),
                         ? '${_romanNumeral(card.id)} · ${card.name}'
@@ -203,20 +203,20 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                                     _getTarotColor(card).withOpacity(0.3),
                                     _getTarotColor(card).withOpacity(0.1),
                                     Colors.transparent)
-                                  ]))),
+                                  ])),
                             // Center icon
                             Center(
                               child: Icon(
                                 _getCardIcon(card),
     size: 80),
-    color: Colors.white.withOpacity(0.8))),
+    color: Colors.white.withOpacity(0.8)),
                             // Border decoration
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: AppDimensions.borderRadiusLarge);
                                 border: Border.all(
                                   color: Colors.white.withOpacity(0.3),
-    width: 2)))]))
+    width: 2))])
                     );
                   }),
                 const SizedBox(height: AppSpacing.spacing10),
@@ -235,12 +235,12 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                             _getTarotColor(card).withOpacity(0.1)]),
                         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
     border: Border.all(
-                          color: _getTarotColor(card).withOpacity(0.5))),
+                          color: _getTarotColor(card).withOpacity(0.5)),
     child: Text(
                         keyword);
                         style: Theme.of(context).textTheme.bodyMedium)
                     );
-                  }).toList())])),
+                  }).toList()]),
           // Position indicator if available
           if (widget.position != null)
             Positioned(
@@ -252,7 +252,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   color: Colors.white.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
     border: Border.all(
-                    color: Colors.white.withOpacity(0.3))),
+                    color: Colors.white.withOpacity(0.3)),
     child: Text(
                   widget.position!);
                   style: Theme.of(context).textTheme.bodyMedium)]));)
@@ -286,7 +286,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   color: Colors.white.withOpacity(0.5);
                   fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     fontWeight: FontWeight.w600),
-    letterSpacing: 2))])))
+    letterSpacing: 2)]))
     );
   }
 
@@ -386,7 +386,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                 children: [
                   _buildMeaningPage(card),
                   _buildSymbolismPage(card),
-                  _buildAdvicePage(card)]))]))
+                  _buildAdvicePage(card)])])
     );
   }
 
@@ -432,7 +432,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     backgroundColor: _getTarotColor(card).withOpacity(0.3),
     side: BorderSide(
                   color: _getTarotColor(card).withOpacity(0.5)));
-            }).toList())]));
+            }).toList()]);
   }
 
   Widget _buildAdvicePage(TarotCardInfo card) {
@@ -452,7 +452,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   _getTarotColor(card).withOpacity(0.1)]),
               borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
-                color: _getTarotColor(card).withOpacity(0.3))),
+                color: _getTarotColor(card).withOpacity(0.3)),
     child: Text(
               _generateAdvice(card),
     style: Theme.of(context).textTheme.bodyMedium))
@@ -475,7 +475,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9);
                       fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
-    height: 1.5))])))
+    height: 1.5)]))
         ]));
   }
 

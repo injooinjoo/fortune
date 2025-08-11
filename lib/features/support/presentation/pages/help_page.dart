@@ -23,7 +23,7 @@ class HelpPage extends ConsumerWidget {
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600))),
+            fontWeight: FontWeight.w600)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class HelpPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Row(
                 children: [
                   Icon(
@@ -48,7 +48,7 @@ class HelpPage extends ConsumerWidget {
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 14,
-                        height: 1.5)))])),
+                        height: 1.5))]),
             
             // FAQ Section
             _buildSection(
@@ -146,20 +146,20 @@ class HelpPage extends ConsumerWidget {
                       color: Colors.purple.shade50,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
+                        topRight: Radius.circular(16)),
                     child: Row(
                       children: [
                         Text(
                           '추가 도움이 필요하신가요?',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold))])),
+                            fontWeight: FontWeight.bold)]),
                   ListTile(
                     leading: Container(
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
                       child: Icon(
                         Icons.support_agent,
                         color: AppColors.primary,
@@ -178,7 +178,7 @@ class HelpPage extends ConsumerWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
                       child: Icon(
                         Icons.email_outlined,
                         color: AppColors.primary,
@@ -221,7 +221,7 @@ class HelpPage extends ConsumerWidget {
               color: AppColors.primary.withOpacity(0.05),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
-                topRight: Radius.circular(16))),
+                topRight: Radius.circular(16)),
             child: Row(
               children: [
                 Icon(icon, color: AppColors.primary, size: 24),
@@ -229,10 +229,10 @@ class HelpPage extends ConsumerWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold))])),
+                    fontWeight: FontWeight.bold)]),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(children: children))]));
+            child: Column(children: children)]);
   }
   
   Widget _buildFAQItem(BuildContext context, {
@@ -255,7 +255,7 @@ class HelpPage extends ConsumerWidget {
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
-                height: 1.5)))]));
+                height: 1.5))]);
   }
   
   Widget _buildHowToItem(BuildContext context, {
@@ -287,7 +287,7 @@ class HelpPage extends ConsumerWidget {
                     entry.value,
                     style: TextStyle(
                       color: AppColors.textSecondary,
-                      fontSize: 14)))])))]));
+                      fontSize: 14))]))]));
   }
   
   Widget _buildTipItem(BuildContext context, String tip, IconData icon) {
@@ -300,7 +300,7 @@ class HelpPage extends ConsumerWidget {
             height: 32,
             decoration: BoxDecoration(
               color: AppColors.secondary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
             child: Icon(
               icon,
               color: AppColors.secondary,
@@ -311,6 +311,6 @@ class HelpPage extends ConsumerWidget {
               tip,
               style: const TextStyle(
                 fontSize: 14,
-                height: 1.4)))]));
+                height: 1.4))]);
   }
 }

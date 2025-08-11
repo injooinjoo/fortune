@@ -61,7 +61,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                   end: Alignment.bottomCenter,
                   colors: [
                     widget.result.design.primaryColor.withOpacity(0.8),
-                    widget.result.design.secondaryColor.withOpacity(0.6)]))),
+                    widget.result.design.secondaryColor.withOpacity(0.6)])),
             
             // Traditional paper texture overlay
             Container(
@@ -69,7 +69,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                 color: Colors.white.withOpacity(0.4)),
               child: CustomPaint(
                 painter: _TalismanPaperTexturePainter(),
-                size: Size(widget.size, widget.size * 1.2))),
+                size: Size(widget.size, widget.size * 1.2)),
             
             // Main content
             Padding(
@@ -158,7 +158,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
             child: Icon(
               widget.result.type.icon,
               size: widget.size * 0.15,
-              color: Colors.white))])).animate(onPlay: (controller) => controller.repeat(),
+              color: Colors.white)]).animate(onPlay: (controller) => controller.repeat(),
       .rotate(duration: const Duration(milliseconds: 20000),;
   }
   
@@ -186,7 +186,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04))),
+            borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04)),
             border: Border.all(
               color: widget.result.design.primaryColor.withOpacity(0.5),
               width: 2)),
@@ -227,7 +227,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
               style: TextStyle(
                 fontSize: widget.size * 0.05,
                 color: Colors.white,
-                fontWeight: FontWeight.bold))))]);
+                fontWeight: FontWeight.bold)))]);
   }
 }
 

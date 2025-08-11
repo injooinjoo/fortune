@@ -126,8 +126,8 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
     try {
       Fortune? generatedFortune;
       
-      // Show ad loading screen (or premium loading for premium users)
-      await Navigator.push(
+      // Show ad loading screen (or premium loading for premium users),
+            await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AdLoadingScreen(
@@ -169,7 +169,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
           sections: _extractSections(generatedFortune!),
           overallScore: generatedFortune!.overallScore,
           scoreBreakdown: generatedFortune!.scoreBreakdown?.map((key, value) => 
-            MapEntry(key, value is int ? value : (value as num).toInt())),
+            MapEntry(key, value is int ? value : (value as num).toInt()),
           luckyItems: generatedFortune!.luckyItems,
           recommendations: generatedFortune!.recommendations
         );
@@ -240,7 +240,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
             // Content
             Expanded(
               child: _isLoading
-                  ? const Center(child: FortuneResultSkeleton())
+                  ? const Center(child: FortuneResultSkeleton()
                   : _error != null
                       ? _buildErrorState()
                       : _fortuneResult != null
@@ -251,10 +251,10 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                                 child: widget.resultBuilder(
                                   context, 
                                   _fortuneResult!,
-                                  _handleShare)))
+                                  _handleShare))
                           : SingleChildScrollView(
                               padding: const EdgeInsets.all(16),
-                              child: widget.inputBuilder(context, _generateFortune)))])),
+                              child: widget.inputBuilder(context, _generateFortune)]),
       bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: 1));
   }
 
@@ -289,6 +289,6 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                     _fortuneResult = null;
                   });
                 },
-                child: const Text('다시 시도'))]))));
+                child: const Text('다시 시도')]));
   }
 }

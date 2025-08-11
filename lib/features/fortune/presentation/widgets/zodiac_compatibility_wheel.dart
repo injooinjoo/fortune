@@ -162,7 +162,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                 style: TextStyle(
                   fontSize: isSelected ? 12 : 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: Colors.white))]))));
+                  color: Colors.white)]));
   }
 
   Widget _buildCenterInfo() {
@@ -196,12 +196,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             info['hanja'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8))),
+              color: Colors.white.withOpacity(0.8)),
           Text(
             info['element'],
             style: TextStyle(
               fontSize: 12,
-              color: Colors.amber))]));
+              color: Colors.amber)]);
   }
 
   Widget _buildLegend() {

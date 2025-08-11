@@ -38,8 +38,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
   late Animation<double> _fadeAnimation;
   
   final List<String> _stepTitles = [
-    '꿈 기록',
-    '상징 분석')
+    '꿈 기록': '상징 분석')
     '감정 분석')
     '현실 연결')
     '해석')
@@ -91,8 +90,8 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     
     // Consume souls if not premium
     if (!isPremium) {
-      final soulAmount = SoulRates.getSoulAmount('dream')
-      HapticUtils.heavyImpact();
+      final soulAmount = SoulRates.getSoulAmount('dream'),
+            HapticUtils.heavyImpact();
       
       // Show soul consumption animation
       SoulConsumeAnimation.show(
@@ -197,15 +196,15 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                             // Complete the flow
                             _completeAnalysis();
                           }),
-    onBack: _previousStep)])))])),
+    onBack: _previousStep)])]),
           
           // Loading overlay
-          if (analysisState.isLoading)
+          if (analysisState.isLoading),
             Container(
               color: Colors.black.withOpacity(0.7),
     child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.deepPurple)))])
+                  color: Colors.deepPurple))])
     );
   }
   
@@ -216,7 +215,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter);
           colors: [
-            Colors.deepPurple.shade900)
+            Colors.deepPurple.shade900),
             Colors.black)
           ])),
     child: Stack(
@@ -238,7 +237,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                   color: Colors.white.withOpacity(0.3 + random),
     shape: BoxShape.circle))
                   .animate(
-                    onPlay: (controller) => controller.repeat())
+                    onPlay: (controller) => controller.repeat()
                   .scale(
                     duration: Duration(seconds: 2 + index % 3),
     begin: const Offset(0.8, 0.8),
@@ -257,7 +256,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                 colors: [
                   Colors.deepPurple.withOpacity(0.2),
                   Colors.transparent)
-                ])))]));
+                ])]);
   }
   
   void _showExitConfirmDialog() {
@@ -266,10 +265,10 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey.shade900);
         title: const Text(
-          '꿈 해몽을 중단하시겠습니까?',),
+          '꿈 해몽을 중단하시겠습니까?',
           style: TextStyle(color: Colors.white)),
     content: const Text(
-          '지금까지의 분석 내용이 저장되지 않습니다.',),
+          '지금까지의 분석 내용이 저장되지 않습니다.',
           style: TextStyle(color: Colors.white70)),
     actions: [
           TextButton(
@@ -283,8 +282,8 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
               ref.read(dreamAnalysisProvider.notifier).reset();
             }),
     child: Text(
-              '나가기',),
-              style: TextStyle(color: Colors.red.shade400)))])
+              '나가기',
+              style: TextStyle(color: Colors.red.shade400))])
     );
   }
   
@@ -303,7 +302,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
             Icon(Icons.check_circle, color: Colors.green.shade400),
             const SizedBox(width: 8),
             const Text(
-              '꿈 해몽 완료',),
+              '꿈 해몽 완료',
               style: TextStyle(color: Colors.white))]),
         content: const Text(
           '당신의 꿈이 성공적으로 해석되었습니다.\n무의식이 전하는 메시지를 확인해보세요.');

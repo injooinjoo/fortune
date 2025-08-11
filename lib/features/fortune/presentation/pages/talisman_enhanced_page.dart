@@ -12,7 +12,7 @@ import 'talisman_result_page.dart';
 
 // Provider for managing talisman creation state
 final talismanCreationProvider = StateNotifierProvider<TalismanCreationNotifier, TalismanCreationState>(
-  (ref) => TalismanCreationNotifier());
+  (ref) => TalismanCreationNotifier();
 
 class TalismanCreationState {
   final int currentStep;
@@ -62,7 +62,7 @@ class TalismanCreationState {
 }
 
 class TalismanCreationNotifier extends StateNotifier<TalismanCreationState> {
-  TalismanCreationNotifier() : super(TalismanCreationState());
+  TalismanCreationNotifier() : super(TalismanCreationState();
 
   void selectType(TalismanType type) {
     state = state.copyWith(selectedType: type);
@@ -142,7 +142,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
       if (state.result != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => TalismanResultPage(result: state.result!)));
+            builder: (context) => TalismanResultPage(result: state.result!));
       }
     }
   }
@@ -190,7 +190,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
                           children: [
                             CircularProgressIndicator(),
                             SizedBox(height: 16),
-                            Text('부적 유형을 선택해주세요'))),
+                            Text('부적 유형을 선택해주세요')),
                 TalismanGenerationStep(
                   onComplete: (result) {
                     ref.read(talismanCreationProvider.notifier).setResult(result);
@@ -208,7 +208,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
         border: Border(
           bottom: BorderSide(
             color: Colors.grey[200]!,
-            width: 1))),
+            width: 1)),
       child: Row(
         children: [
           _buildProgressStep(
@@ -262,11 +262,11 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
                       size: 16,
                       color: Colors.white)
                   : Text(
-                      '$step',),
+                      '$step',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: isActive ? color : Colors.grey[400])))).animate(target: isActive ? 1 : 0).scale(
+                        color: isActive ? color : Colors.grey[400]))).animate(target: isActive ? 1 : 0).scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1.0, 1.0),
             duration: 300.ms,

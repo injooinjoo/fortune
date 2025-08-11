@@ -43,7 +43,7 @@ class FortuneHistoryChart extends StatelessWidget {
                   Text(
                     '최근 7일',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
                   if (onRefresh != null) ...[
                     SizedBox(width: AppSpacing.spacing2),
                     IconButton(
@@ -78,12 +78,12 @@ class FortuneHistoryChart extends StatelessWidget {
                             Text(
                               '아직 운세 기록이 없습니다',
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                                color: theme.colorScheme.onSurface.withOpacity(0.6)),
                             SizedBox(height: AppSpacing.spacing2),
                             Text(
                               '운세를 확인하면 점수가 기록됩니다',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.4)))]))
+                                color: theme.colorScheme.onSurface.withOpacity(0.4))])
                     : _buildChart(context, fortuneScores)),
           
           if (fortuneScores.isNotEmpty) ...[
@@ -139,7 +139,7 @@ class FortuneHistoryChart extends StatelessWidget {
                       color: theme.colorScheme.onSurface.withOpacity(0.6)));
                 }
                 return const SizedBox.shrink();
-              }))),
+              })),
         borderData: FlBorderData(show: false),
         minX: 0,
         maxX: recentScores.length - 1,
@@ -165,7 +165,7 @@ class FortuneHistoryChart extends StatelessWidget {
               }),
             belowBarData: BarAreaData(
               show: true,
-              color: theme.colorScheme.primary.withOpacity(0.1)))]));
+              color: theme.colorScheme.primary.withOpacity(0.1))]);
   }
   
   Widget _buildStatistics(BuildContext context, List<int> scores) {
@@ -208,7 +208,7 @@ class FortuneHistoryChart extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6))),
+            color: theme.colorScheme.onSurface.withOpacity(0.6)),
         Text(
           value,
           style: theme.textTheme.titleMedium?.copyWith(

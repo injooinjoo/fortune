@@ -18,38 +18,23 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
   
   final List<Map<String, dynamic>> blessingGoals = [
     {
-      'id': 'longevity',
-      'title': '수(壽) - 장수',
-      'subtitle': '건강하고 오래 사는 삶',
-      'icon': Icons.favorite,
+      'id': 'longevity': 'title': '수(壽) - 장수': 'subtitle': '건강하고 오래 사는 삶': 'icon': Icons.favorite,
       'color': Colors.green,
       'description': '무병장수하며 건강한 노년을 보내는 축복'},
     {
-      'id': 'wealth',
-      'title': '부(富) - 재물',
-      'subtitle': '풍족하고 넉넉한 삶',
-      'icon': Icons.monetization_on,
+      'id': 'wealth': 'title': '부(富) - 재물': 'subtitle': '풍족하고 넉넉한 삶': 'icon': Icons.monetization_on,
       'color': Colors.amber,
       'description': '경제적으로 풍요롭고 여유로운 삶의 축복'},
     {
-      'id': 'health',
-      'title': '강녕(康寧) - 건강',
-      'subtitle': '몸과 마음이 편안한 삶',
-      'icon': Icons.spa,
+      'id': 'health': 'title': '강녕(康寧) - 건강': 'subtitle': '몸과 마음이 편안한 삶': 'icon': Icons.spa,
       'color': Colors.blue,
       'description': '심신이 건강하고 평온한 상태를 유지하는 축복'},
     {
-      'id': 'virtue',
-      'title': '유호덕(攸好德) - 덕행',
-      'subtitle': '덕을 쌓고 베푸는 삶',
-      'icon': Icons.volunteer_activism,
+      'id': 'virtue': 'title': '유호덕(攸好德) - 덕행': 'subtitle': '덕을 쌓고 베푸는 삶': 'icon': Icons.volunteer_activism,
       'color': Colors.purple,
       'description': '선행을 쌓고 타인에게 존경받는 삶의 축복'},
     {
-      'id': 'peaceful_death',
-      'title': '고종명(考終命) - 편안한 임종',
-      'subtitle': '평화롭게 마무리하는 삶',
-      'icon': Icons.nature_people,
+      'id': 'peaceful_death': 'title': '고종명(考終命) - 편안한 임종': 'subtitle': '평화롭게 마무리하는 삶': 'icon': Icons.nature_people,
       'color': Colors.indigo,
       'description': '천수를 다하고 편안하게 생을 마감하는 축복'}];
   
@@ -152,7 +137,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             child: InkWell(
               onTap: () {
                 setState(() {
-                  _selectedGoal = blessing['id'];
+                  _selectedGoal = blessing['id'
+  ];
                 });
               },
               borderRadius: BorderRadius.circular(12),
@@ -211,8 +197,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         ],
                       ),
                     ),
-                    if (_selectedGoal == blessing['id'])
-                      Icon(
+                    if (_selectedGoal == blessing['id']),
+            Icon(
                         Icons.check_circle,
                         color: blessing['color'],
                       ),
@@ -300,7 +286,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       context: context,
       initialDate: _birthdate ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now());
+      lastDate: DateTime.now();
     if (picked != null) {
       setState(() {
         _birthdate = picked;
@@ -325,7 +311,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               colors: [
                 selectedBlessing['color'],
                 selectedBlessing['color']]),
-            borderRadius: BorderRadius.circular(16)),
+            borderRadius: BorderRadius.circular(16),
           child: Column(
             children: [
               Icon(
@@ -343,7 +329,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 selectedBlessing['subtitle'],
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[700]))])),
+                  color: Colors.grey[700])]),
         
         const SizedBox(height: 20),
         
@@ -557,7 +543,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.purple[50],
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -623,11 +609,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
   
   String _translateLuckyItem(String key) {
     final translations = {
-      'color': '색상',
-      'direction': '방향',
-      'number': '숫자',
-      'time': '시간',
-      'element': '원소'};
+      'color': '색상': 'direction': '방향': 'number': '숫자': 'time': '시간': 'element': '원소'
+  };
     return translations[key] ?? key;
   }
 }

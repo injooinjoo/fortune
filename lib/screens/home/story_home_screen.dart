@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math' as math;
 
 import '../../domain/entities/fortune.dart' as fortune_entity;
@@ -33,11 +34,46 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   List<StorySegment>? storySegments;
   bool isLoadingFortune = true;
   bool _isLoadingProfile = false; // Prevent duplicate loading
+  bool _hasViewedStoryToday = false; // 오늘 스토리를 이미 봤는지 확인
   
   @override
   void initState() {
     super.initState();
+    _checkIfAlreadyViewed();
     _initializeData();
+  }
+  
+  // 오늘 이미 스토리를 봤는지 확인
+  Future<void> _checkIfAlreadyViewed() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now();
+      final todayKey = '${today.year}-${today.month}-${today.day}';
+      final lastViewedDate = prefs.getString('last_fortune_viewed_date');
+      
+      if (lastViewedDate == todayKey) {
+        setState(() {
+          _hasViewedStoryToday = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error checking viewed status: $e');
+    }
+  }
+  
+  // 스토리 본 것을 기록
+  Future<void> _markAsViewed() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now();
+      final todayKey = '${today.year}-${today.month}-${today.day}';
+      await prefs.setString('last_fortune_viewed_date', todayKey);
+      setState(() {
+        _hasViewedStoryToday = true;
+      });
+    } catch (e) {
+      debugPrint('Error marking as viewed: $e');
+    }
   }
   
   Future<void> _initializeData() async {
@@ -128,28 +164,36 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
       final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
       
+      // 캐시된 운세와 스토리가 모두 있으면 API 호출 없이 사용
+      if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+        debugPrint('✅ Using fully cached data - no API calls needed');
+        setState(() {
+          todaysFortune = cachedFortuneData.toEntity();
+          storySegments = cachedStorySegments;
+          isLoadingFortune = false;
+        });
+        return; // API 호출 없이 종료
+      }
+      
+      // 캐시된 운세만 있고 스토리가 없으면
       if (cachedFortuneData != null) {
+        debugPrint('⚠️ Fortune cached but no story - generating story only');
         final fortuneEntity = cachedFortuneData.toEntity();
         setState(() {
           todaysFortune = fortuneEntity;
         });
         
-        // 캐시된 스토리가 있으면 사용, 없으면 생성
-        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-          debugPrint('✅ Using cached story segments: ${cachedStorySegments.length} pages');
-          setState(() {
-            storySegments = cachedStorySegments;
-            isLoadingFortune = false;
-          });
-          return;  // 캐시된 스토리가 있으면 여기서 종료
-        } else {
-          debugPrint('⚠️ No cached story segments found, generating new story');
-          await _generateStory(fortuneEntity);
-        }
-      } else {
-        // 2. API에서 가져오기
-        await _fetchFortuneFromAPI();
+        // 스토리만 생성 (API 호출 없음)
+        await _generateStory(fortuneEntity);
+        setState(() {
+          isLoadingFortune = false;
+        });
+        return;
       }
+      
+      // 캐시가 전혀 없을 때만 API 호출
+      debugPrint('❌ No cache found - fetching from API');
+      await _fetchFortuneFromAPI();
       
       setState(() {
         isLoadingFortune = false;
@@ -495,6 +539,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   
   // 완료 페이지 표시
   void _showCompletionPage() {
+    // 스토리를 봤다고 기록
+    _markAsViewed();
+    
     // Use push instead of pushReplacement to avoid page-based route issues
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -504,9 +551,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onReplay: () {
             // 다시 스토리 보기 - pop back to story screen
             Navigator.of(context).pop();
-            // Reset the story viewer
+            // Reset the story viewer state
             setState(() {
-              // This will reload the story viewer
+              _hasViewedStoryToday = false;
             });
           },
         ),
@@ -517,7 +564,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   @override
   Widget build(BuildContext context) {
     // 로딩 중
-    if (isLoadingFortune || storySegments == null) {
+    if (isLoadingFortune || storySegments == null || todaysFortune == null) {
       return Scaffold(
         backgroundColor: Colors.black,
         body: EmotionalLoadingChecklist(
@@ -525,6 +572,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             // 로딩 완료 시 자동으로 스토리 뷰어로 전환됨
           },
         ),
+      );
+    }
+    
+    // 오늘 이미 스토리를 봤다면 바로 완료 페이지 표시
+    if (_hasViewedStoryToday) {
+      return FortuneCompletionPage(
+        fortune: todaysFortune,
+        userName: userProfile?.name,
+        onReplay: () {
+          // 다시 스토리 보기
+          setState(() {
+            _hasViewedStoryToday = false;
+          });
+        },
       );
     }
     

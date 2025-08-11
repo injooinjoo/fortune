@@ -114,7 +114,7 @@ _$PackageEfficiencyImpl _$$PackageEfficiencyImplFromJson(
         Map<String, dynamic> json) =>
     _$PackageEfficiencyImpl(
       packages: (json['packages'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, PackageStats.fromJson(e as Map<String, dynamic>))),
+        (k, e) => MapEntry(k, PackageStats.fromJson(e as Map<String, dynamic>)),
       mostPopular: json['mostPopular'] as String,
       bestValue: json['bestValue'] as String);
 

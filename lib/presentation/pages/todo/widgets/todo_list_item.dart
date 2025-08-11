@@ -47,7 +47,7 @@ class TodoListItem extends StatelessWidget {
                 onPressed: () => Navigator.of(context).pop(true),
                 style: TextButton.styleFrom(
                   foregroundColor: colorScheme.error),
-                child: const Text('삭제'))]));
+                child: const Text('삭제')]);
       },
       onDismissed: (direction) => onDelete(),
       child: InkWell(
@@ -58,7 +58,7 @@ class TodoListItem extends StatelessWidget {
             border: Border(
               bottom: BorderSide(
                 color: colorScheme.outlineVariant,
-                width: 0.5))),
+                width: 0.5)),
           child: Row(
             children: [
               // Checkbox
@@ -74,7 +74,7 @@ class TodoListItem extends StatelessWidget {
                     color: isCompleted
                         ? colorScheme.primary
                         : colorScheme.onSurfaceVariant,
-                    size: 24))),
+                    size: 24)),
               const SizedBox(width: 8),
 
               // Content
@@ -149,7 +149,7 @@ class TodoListItem extends StatelessWidget {
                               color: _getDueDateColor(context, todo),
                               fontWeight: todo.isOverdue && !isCompleted
                                   ? FontWeight.bold
-                                  : null))]])]))]))));
+                                  : null))]])])]));
   }
 
   Widget _buildPriorityBadge(BuildContext context, TodoPriority priority) {
@@ -177,7 +177,7 @@ class TodoListItem extends StatelessWidget {
       margin: const EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12)),
+        borderRadius: BorderRadius.circular(12),
       child: Text(
         label,
         style: TextStyle(

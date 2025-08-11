@@ -7,10 +7,10 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum PetType {
-  general('반려동물', 'pet', '반려동물과의 교감과 건강', Icons.pets_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)]),
-  dog('반려견', 'dog', '강아지와의 특별한 하루', Icons.pets_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
-  cat('반려묘', 'cat', '고양이와의 행복한 일상', Icons.pets_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]),
-  compatibility('반려동물 궁합', 'pet-compatibility', '나와 반려동물의 궁합', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]);
+  general('반려동물': 'pet', '반려동물과의 교감과 건강', Icons.pets_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)]),
+  dog('반려견': 'dog', '강아지와의 특별한 하루', Icons.pets_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
+  cat('반려묘': 'cat', '고양이와의 행복한 일상', Icons.pets_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]),
+  compatibility('반려동물 궁합': 'pet-compatibility', '나와 반려동물의 궁합', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]);
   
   final String label;
   final String value;
@@ -91,8 +91,8 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
           _buildTypeGrid(),
           const SizedBox(height: 24),
           
-          // Pet Info Input (optional)
-          if (_selectedType == PetType.compatibility) ...[
+          // Pet Info Input (optional),
+            if (_selectedType == PetType.compatibility) ...[
             _buildPetInfoSection(),
             const SizedBox(height: 24)],
           
@@ -142,7 +142,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFE11D48))),
+              color: Color(0xFFE11D48)),
           const SizedBox(height: 8),
           Text(
             '사랑하는 반려동물과의 특별한 하루를 만들어보세요',
@@ -237,15 +237,15 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                 ]
               )
             ),
-            if (type == PetType.compatibility)
-              Positioned(
+            if (type == PetType.compatibility),
+            Positioned(
                 top: 8,
                 right: 8,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.amber,
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Text(
                     'Premium',
                     style: TextStyle(
@@ -288,7 +288,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
               hintText: '예: 코코',
               prefixIcon: Icon(Icons.pets, color: _selectedType.gradientColors[0]),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8))),
+                borderRadius: BorderRadius.circular(8),
             onChanged: (value) {
               _petName = value;
             }),
@@ -299,7 +299,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
               hintText: '예: 말티즈, 코리안숏헤어',
               prefixIcon: Icon(Icons.category, color: _selectedType.gradientColors[0]),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8))),
+                borderRadius: BorderRadius.circular(8),
             onChanged: (value) {
               _petSpecies = value;
             }
@@ -317,7 +317,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           backgroundColor: _selectedType.gradientColors[0]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -399,13 +399,13 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0]))),
-              if (fortune.score != null)
-                Container(
+                    color: _selectedType.gradientColors[0])),
+              if (fortune.score != null),
+            Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
@@ -443,7 +443,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -487,7 +487,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: _selectedType.gradientColors[0].withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

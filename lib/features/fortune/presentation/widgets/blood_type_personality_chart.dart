@@ -347,7 +347,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  height: 1.4))]))]);
+                  height: 1.4)])]);
   }
 
   Widget _buildRhInfluence(Map<String, dynamic> rhData) {

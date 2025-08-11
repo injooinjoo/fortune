@@ -8,11 +8,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 enum InvestmentType {
-  wealth('재물운', 'wealth', '금전운과 재물운을 확인해보세요', Icons.account_balance_wallet_rounded, [Color(0xFFFFD600), Color(0xFFFF6D00)]),
-  realestate('부동산', 'realestate', '부동산 투자 운세를 확인해보세요', Icons.home_rounded, [Color(0xFF0288D1), Color(0xFF0277BD)]),
-  stock('주식', 'stock', '오늘의 주식 투자 운세를 확인해보세요', Icons.trending_up_rounded, [Color(0xFF388E3C), Color(0xFF2E7D32)]),
-  crypto('암호화폐', 'crypto', '암호화폐 투자 운세를 확인해보세요', Icons.currency_bitcoin_rounded, [Color(0xFFFF9800), Color(0xFFFF6D00)]),
-  lottery('로또', 'lottery', '행운의 로또 번호를 확인해보세요', Icons.confirmation_number_rounded, [Color(0xFFFFB300), Color(0xFFF57C00)]);
+  wealth('재물운': 'wealth', '금전운과 재물운을 확인해보세요', Icons.account_balance_wallet_rounded, [Color(0xFFFFD600), Color(0xFFFF6D00)]),
+  realestate('부동산': 'realestate', '부동산 투자 운세를 확인해보세요', Icons.home_rounded, [Color(0xFF0288D1), Color(0xFF0277BD)]),
+  stock('주식': 'stock', '오늘의 주식 투자 운세를 확인해보세요', Icons.trending_up_rounded, [Color(0xFF388E3C), Color(0xFF2E7D32)]),
+  crypto('암호화폐': 'crypto', '암호화폐 투자 운세를 확인해보세요', Icons.currency_bitcoin_rounded, [Color(0xFFFF9800), Color(0xFFFF6D00)]),
+  lottery('로또': 'lottery', '행운의 로또 번호를 확인해보세요', Icons.confirmation_number_rounded, [Color(0xFFFFB300), Color(0xFFF57C00)]);
   
   final String label;
   final String value;
@@ -83,8 +83,8 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           // Generate Button
           _buildGenerateButton(),
           
-          // Fortune Result (if available)
-          if (_fortuneCache[_selectedType] != null) ...[
+          // Fortune Result (if available),
+            if (_fortuneCache[_selectedType] != null) ...[
             const SizedBox(height: 24),
             _buildFortuneResult(_fortuneCache[_selectedType]!)]]));
   }
@@ -94,8 +94,8 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '투자 유형 선택',),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          '투자 유형 선택',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         SizedBox(
@@ -116,7 +116,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                       _selectedType = type;
                     });
                   },
-                  borderRadius: BorderRadius.circular(16))),
+                  borderRadius: BorderRadius.circular(16),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     width: 100,
@@ -128,7 +128,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                         colors: isSelected
                             ? type.gradientColors
                             : [Colors.grey[200]!, Colors.grey[300]!]),
-                      borderRadius: BorderRadius.circular(16))),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
@@ -150,7 +150,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                             color: isSelected ? Colors.white : Colors.grey[600],
                             fontWeight: FontWeight.bold,
                             fontSize: 12),
-                          textAlign: TextAlign.center)]))))
+                          textAlign: TextAlign.center)])))
                 .animate(delay: (50 * index).ms)
                 .fadeIn(duration: 300.ms)
                 .slideX(begin: 0.2, end: 0);
@@ -167,7 +167,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           colors: [
             _selectedType.gradientColors[0].withOpacity(0.1),
             _selectedType.gradientColors[1].withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withOpacity(0.3),
           width: 1)),
@@ -193,7 +193,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                   _selectedType.description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondaryColor))]))]));
+                    color: AppTheme.textSecondaryColor)])]));
   }
 
   Widget _buildGenerateButton() {
@@ -204,7 +204,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           backgroundColor: _selectedType.gradientColors[0]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -214,11 +214,11 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               color: Colors.white),
             const SizedBox(width: 8),
             Text(
-              '${_selectedType.label} 보기',),
+              '${_selectedType.label} 보기',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white))])));
+                color: Colors.white)]);
   }
 
   void _onGenerateFortune() {
@@ -244,7 +244,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           colors: [
             _selectedType.gradientColors[0].withOpacity(0.1),
             _selectedType.gradientColors[1].withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(16))),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withOpacity(0.3),
           width: 1)),
@@ -260,22 +260,22 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  '${_selectedType.label} 결과',),
+                  '${_selectedType.label} 결과',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0]))),
-              if (fortune.score != null)
-                Container(
+                    color: _selectedType.gradientColors[0])),
+              if (fortune.score != null),
+            Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
                   child: Text(
-                    '${fortune.score}점',),
+                    '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold)))]),
+                      fontWeight: FontWeight.bold))]),
           const SizedBox(height: 20),
           
           // Main message
@@ -301,7 +301,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -315,7 +315,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor)))]))]]))
+                        color: AppTheme.textColor)])]]))
       .animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
@@ -326,7 +326,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '행운의 번호',),
+          '행운의 번호',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -348,8 +348,8 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18))));
-          }).toList())]
+                    fontSize: 18)));
+          }).toList()]
     );
   }
 
@@ -358,7 +358,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '주목할 종목',),
+          '주목할 종목',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -370,9 +370,9 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: AppTheme.surfaceColor,
-              borderRadius: BorderRadius.circular(8))),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: _selectedType.gradientColors[0].withOpacity(0.2))),
+                color: _selectedType.gradientColors[0].withOpacity(0.2)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -383,7 +383,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                   pick['trend'] ?? '',
                   style: TextStyle(
                     color: pick['trend'] == '상승' ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.bold))]));
+                    fontWeight: FontWeight.bold)]);
         }).toList()]
     );
   }

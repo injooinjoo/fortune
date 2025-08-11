@@ -370,7 +370,12 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               _buildDescription(),
               const SizedBox(height: 16),
               _buildRecommendations(),
-              const SizedBox(height: 32)]))));
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildOverallScore() {
@@ -392,16 +397,24 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   gradient: RadialGradient(
                     colors: [
                       scoreColor.withOpacity(0.2),
-                      scoreColor.withOpacity(0.05)]),
+                      scoreColor.withOpacity(0.05),
+                    ],
+                  ),
                   border: Border.all(
                     color: scoreColor.withOpacity(0.3),
-                    width: 3)),
+                    width: 3,
+                  ),
+                ),
                 child: Center(
                   child: Text(
                     '$score점',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: scoreColor,
-                          fontWeight: FontWeight.bold)))),
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ),
               Positioned(
                 top: -8,
                 right: -8,
@@ -428,7 +441,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                     constraints: const BoxConstraints(
                       minWidth: 32,
                       minHeight: 32),
-                    padding: EdgeInsets.zero)))]),
+                    padding: EdgeInsets.zero))]),
           const SizedBox(height: 16),
           Text(
             _getScoreMessage(score),
@@ -438,7 +451,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           Text(
             _fortune?.category ?? widget.fortuneType,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]));
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)]);
   }
 
   Widget _buildScoreBreakdown() {
@@ -480,7 +493,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                     backgroundColor: color.withOpacity(0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 6)]));
-          }).toList()]));
+          }).toList(),);
   }
 
   Widget _buildLuckyItems() {
@@ -519,7 +532,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis)]));
-            }).toList())]));
+            }).toList(),);
   }
 
   Widget _buildDescription() {
@@ -559,7 +572,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             description,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: _getFontSize(fontSize),
-                  height: 1.6))]));
+                  height: 1.6)]);
   }
 
   Widget _buildRecommendations() {
@@ -589,8 +602,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   Expanded(
                     child: Text(
                       rec,
-                      style: Theme.of(context).textTheme.bodyMedium))]));
-          }).toList()])
+                      style: Theme.of(context).textTheme.bodyMedium)]);
+          }).toList(),
     );
   }
 
@@ -618,7 +631,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     final colorScheme = Theme.of(context).colorScheme;
     final fortuneTheme = context.fortuneTheme;
 
-    switch (type.toLowerCase()) {
+    switch (type.toLowerCase() {
       case 'color':
       case '색깔':
         iconData = Icons.palette_rounded;
@@ -694,7 +707,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                       ? _buildErrorState()
                       : _fortune != null
                           ? buildFortuneResult()
-                          : _buildInitialState()),
+                          : _buildInitialState(),
             if (_fortune == null && !_isLoading && _error == null) _buildGenerateButton()])
       )
     );
@@ -729,8 +742,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                       child: Icon(
                         Icons.auto_awesome_rounded,
                         size: 64,
-                        color: Colors.white.withOpacity(0.8)));
-                  })))),
+                        color: Colors.white.withOpacity(0.8));
+                  })),
           const SizedBox(height: 16),
           GlassCard(
             padding: const EdgeInsets.all(24),
@@ -750,7 +763,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 Text(
                   '아래 버튼을 눌러 운세를 확인해보세요',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)))]))]));
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)])]));
   }
 
   Widget _buildErrorState() {

@@ -61,7 +61,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
   Widget _buildCacheStatsCard() {
     return GlassContainer(
       blur: 10,
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Padding(
         padding: const EdgeInsets.all(20)),
     child: Column(
@@ -105,7 +105,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
   Widget _buildPerformanceMetricsCard() {
     return GlassContainer(
       blur: 10,
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Padding(
         padding: const EdgeInsets.all(20)),
     child: Column(
@@ -155,7 +155,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
     
     return GlassContainer(
       blur: 10,
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Padding(
         padding: const EdgeInsets.all(20)),
     child: Column(
@@ -255,7 +255,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
   Widget _buildOptimizationActions() {
     return GlassContainer(
       blur: 10,
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Padding(
         padding: const EdgeInsets.all(20)),
     child: Column(

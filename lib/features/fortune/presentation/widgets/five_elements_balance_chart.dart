@@ -186,10 +186,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                       borderColor: Colors.purple,
                       borderWidth: 2,
                       entryRadius: 4,
-                      dataEntries: _getRadarEntries())])),
+                      dataEntries: _getRadarEntries()]),
               // 중앙 정보
               Center(
-                child: _buildCenterInfo())]));
+                child: _buildCenterInfo()]);
       });
   }
 
@@ -306,7 +306,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                         style: Theme.of(context).textTheme.bodyMedium),
                       Text(
                         '개',
-                        style: Theme.of(context).textTheme.bodyMedium)]))])));
+                        style: Theme.of(context).textTheme.bodyMedium)])]));
       }).toList());
   }
 
@@ -404,7 +404,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -414,7 +414,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
             const SizedBox(height: AppSpacing.spacing5),
             Icon(
               info['icon'],

@@ -130,7 +130,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
       begin: _scrollController.offset,
       end: targetOffset).animate(CurvedAnimation(
       parent: _animationController,
-      curve: widget.snapCurve);
+      curve: widget.snapCurve));
 
     animation.addListener(() {
       if (_scrollController.hasClients) {
@@ -171,7 +171,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
               
               return RepaintBoundary(
                 child: card);
-            }).toList()))));
+            }).toList())));
   }
 }
 
@@ -249,7 +249,7 @@ class FortuneSnapCard extends StatelessWidget {
                         shadows: [
                           Shadow(
                             color: AppColors.textPrimary.withOpacity(0.8),
-                            blurRadius: 6)]))]))),
+                            blurRadius: 6)])]),
             
             // Content Section
             Container(

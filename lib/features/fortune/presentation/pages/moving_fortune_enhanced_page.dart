@@ -61,33 +61,24 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
   List<DateTime> _auspiciousDays = [];
   
   final List<String> _movingReasons = [
-    '직장 이동',
-    '결혼',
-    '환경 개선',
-    '자녀 교육',
-    '경제적 이유',
-    '건강',
-    '가족과 함께',
-    '독립',
+    '직장 이동', '결혼',
+    '환경 개선', '자녀 교육',
+    '경제적 이유', '건강',
+    '가족과 함께', '독립',
     '기타',
   ];
   
   final List<String> _movingTypes = [
-    '아파트',
-    '빌라/연립',
-    '단독주택',
-    '오피스텔',
-    '원룸',
-    '기숙사',
-    '전원주택',
-    '기타',
+    '아파트', '빌라/연립',
+    '단독주택', '오피스텔',
+    '원룸', '기숙사',
+    '전원주택', '기타',
   ];
   
   final List<String> _urgencyLevels = [
-    '여유있게 (3개월 이상)',
-    '보통 (1-3개월)',
-    '급하게 (1개월 이내)',
-    '매우 급하게 (2주 이내)'];
+    '여유있게 (3개월 이상)', '보통 (1-3개월)',
+    '급하게 (1개월 이내)', '매우 급하게 (2주 이내)'
+  ];
 
   @override
   void initState() {
@@ -149,13 +140,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           child: TabBar(
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: BoxDecoration(
               color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             labelColor: Colors.white,
             unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
             tabs: const [
@@ -195,7 +186,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
               '상세 이사운세 확인하기',
@@ -225,7 +216,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12)))),
+                borderRadius: BorderRadius.circular(12),
           const SizedBox(height: 20),
           
           // Birth Date Selection
@@ -252,7 +243,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Row(
                 children: [
                   Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
@@ -350,7 +341,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           height: 250,
           decoration: BoxDecoration(
             border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: MapLocationPicker(
@@ -361,7 +352,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                 });
               },
               initialLocation: _currentLocation,
-              initialAddress: _currentAddress))),
+              initialAddress: _currentAddress)),
         const SizedBox(height: 20),
         
         Text(
@@ -373,7 +364,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           height: 250,
           decoration: BoxDecoration(
             border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: MapLocationPicker(
@@ -407,7 +398,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           Text(
             '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7)),
           const SizedBox(height: 16),
           
           EnhancedDatePicker(
@@ -421,7 +412,11 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             auspiciousDays: _auspiciousDays,
             holidayMap: {
               // Add Korean holidays here
-            })]));
+            }),
+          ],
+        ],
+      ),
+    );
   }
 
   void _validateAndSubmit() {
@@ -465,10 +460,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       'isAuspiciousDay': isAuspicious,
       'lunarDate': lunarInfo,
       'solarTerm': solarTerm,
-      'reason': _selectedReason ?? '기타',
-      'housingType': _selectedType ?? '아파트',
-      'urgencyLevel': _urgencyLevel ?? '보통 (1-3개월)',
-      'luckyScore': _luckyScores[_plannedDate]});
+      'reason': _selectedReason ?? '기타', 'housingType': _selectedType ?? '아파트', 'urgencyLevel': _urgencyLevel ?? '보통 (1-3개월)', 'luckyScore': _luckyScores[_plannedDate]});
   }
 
   void _showError(String message) {
@@ -515,14 +507,10 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
           '의료': 70,
           '발전성': 90},
         'transportation': additionalInfo['areaAnalysis']?['transportation'] ?? 
-            '대중교통이 편리하고 접근성이 좋습니다.',
-        'education': additionalInfo['areaAnalysis']?['education'] ?? 
-            '주변에 좋은 학군이 형성되어 있습니다.',
-        'convenience': additionalInfo['areaAnalysis']?['convenience'] ?? 
-            '생활 편의시설이 잘 갖춰져 있습니다.',
-        'medical': additionalInfo['areaAnalysis']?['medical'] ?? 
-            '의료 시설 접근성이 양호합니다.',
-        'development': additionalInfo['areaAnalysis']?['development'] ?? 
+            '대중교통이 편리하고 접근성이 좋습니다.': 'education': additionalInfo['areaAnalysis']?['education'] ?? 
+            '주변에 좋은 학군이 형성되어 있습니다.': 'convenience': additionalInfo['areaAnalysis']?['convenience'] ?? 
+            '생활 편의시설이 잘 갖춰져 있습니다.': 'medical': additionalInfo['areaAnalysis']?['medical'] ?? 
+            '의료 시설 접근성이 양호합니다.': 'development': additionalInfo['areaAnalysis']?['development'] ?? 
             '향후 발전 가능성이 높은 지역입니다.'},
       'dateAnalysis': {
         'isAuspicious': additionalInfo['isAuspiciousDay'] ?? false,

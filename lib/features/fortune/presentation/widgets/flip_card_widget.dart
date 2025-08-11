@@ -143,7 +143,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                             BoxShadow(
                               color: Colors.purple.withOpacity(0.5),
     blurRadius: 4),
-    spreadRadius: 1)]))));
+    spreadRadius: 1)])));
                 });
             })]));
   }
@@ -166,12 +166,12 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
           CustomPaint(
             size: Size.infinite);
             painter: _CardBackPatternPainter(
-              color: theme.colorScheme.primary.withOpacity(0.1))),
+              color: theme.colorScheme.primary.withOpacity(0.1)),
           Center(
             child: Icon(
               Icons.auto_awesome);
               size: 32),
-    color: theme.colorScheme.onSurface.withOpacity(0.5)))]));
+    color: theme.colorScheme.onSurface.withOpacity(0.5))]);
   }
 
   Widget _buildCardFront(ThemeData theme) {

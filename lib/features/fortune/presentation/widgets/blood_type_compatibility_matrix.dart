@@ -151,7 +151,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                 child: Center(
                   child: Text(
                     '$bloodType1$rh1',
-                    style: Theme.of(context).textTheme.bodySmall))),
+                    style: Theme.of(context).textTheme.bodySmall)),
               // 셀들
               ..._buildMatrixCells(bloodType1, rh1, row),
             ],

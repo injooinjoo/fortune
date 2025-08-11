@@ -96,7 +96,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                             },
                             child: FadeTransition(
                               opacity: _fadeAnimation,
-                              child: _buildTransactionList(history, theme, isDark))))]))),
+                              child: _buildTransactionList(history, theme, isDark))]),
       bottomNavigationBar: const FortuneBottomNavigationBar(
         currentIndex: -1));
   }
@@ -141,7 +141,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               side: BorderSide(
                 color: isSelected 
                     ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface.withOpacity(0.3))));
+                    : theme.colorScheme.onSurface.withOpacity(0.3)));
         }).toList()));
   }
 
@@ -168,7 +168,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                 dateLabel,
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontWeight: FontWeight.bold))),
+                  fontWeight: FontWeight.bold)),
             
             // Transactions for this date
             ...dateTransactions.map((transaction) => _buildTransactionItem(
@@ -217,7 +217,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   Text(
                     DateFormat('HH:mm').format(transaction.createdAt),
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6))]),
             
             // Amount and Balance
             Column(
@@ -253,7 +253,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   ? '아직 토큰 사용 내역이 없습니다'
                   : '해당하는 내역이 없습니다',
               style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                color: theme.colorScheme.onSurface.withOpacity(0.6)),
             SizedBox(height: AppSpacing.spacing2),
             Text(
               '운세를 보거나 토큰을 구매하면\n여기에 내역이 표시됩니다',
@@ -285,7 +285,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
         label = '오늘';
       } else if (transactionDate == yesterday) {
         label = '어제';
-      } else if (transactionDate.isAfter(today.subtract(const Duration(days: 7)))) {
+      } else if (transactionDate.isAfter(today.subtract(const Duration(days: 7))) {
         label = '이번 주';
       } else if (transactionDate.month == now.month && transactionDate.year == now.year) {
         label = '이번 달';

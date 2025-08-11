@@ -26,7 +26,7 @@ class AdminNavigationCard extends StatelessWidget {
     
     return InkWell(
       onTap: () => context.push(route),
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: GlassContainer(
         padding: const EdgeInsets.all(24)),
     child: Row(

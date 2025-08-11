@@ -39,7 +39,7 @@ class StatsCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: (iconColor ?? theme.colorScheme.primary)
                         .withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
                   child: Icon(
                     icon,
                     color: iconColor ?? theme.colorScheme.primary,
@@ -50,7 +50,7 @@ class StatsCard extends StatelessWidget {
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
                       color:
-                          theme.colorScheme.onSurface.withOpacity(0.7)))),
+                          theme.colorScheme.onSurface.withOpacity(0.7)),
               if (trailing != null) trailing!]),
           const SizedBox(height: 12),
           if (isLoading)

@@ -63,7 +63,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                     _buildAnalyzeButton(),
                     if (_analysisResult != null) ...[
                       const SizedBox(height: 32),
-                      _buildResultSection()]])))])));
+                      _buildResultSection()]]))]));
   }
 
   Widget _buildInstructions() {
@@ -91,7 +91,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -104,7 +104,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold))]))])).animate()
+                    fontWeight: FontWeight.bold)])])).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -170,7 +170,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 spacing: 8,
                 runSpacing: 8,
                 children: entry.value.map((keyword) => _buildKeywordChip(keyword)).toList()),
-              const SizedBox(height: 16)]))])).animate()
+              const SizedBox(height: 16)])]).animate()
       .fadeIn(duration: 600.ms, delay: 200.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -201,7 +201,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           keyword,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: isSelected ? Colors.white : AppTheme.textColor,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
   }
 
   Widget _buildAnalyzeButton() {
@@ -215,7 +215,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           backgroundColor: AppTheme.primaryColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12))),
+            borderRadius: BorderRadius.circular(12),
         child: _isAnalyzing
             ? const SizedBox(
                 height: 20,
@@ -227,7 +227,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 '태몽 해석하기',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold))));
+                  fontWeight: FontWeight.bold)));
   }
 
   Widget _buildResultSection() {
@@ -261,8 +261,8 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     side: BorderSide(color: AppTheme.primaryColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
-                  child: const Text('다시 해석하기'))),
+                      borderRadius: BorderRadius.circular(12),
+                  child: const Text('다시 해석하기')),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
@@ -273,7 +273,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                     backgroundColor: AppTheme.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)))))])])).animate()
+                      borderRadius: BorderRadius.circular(12))))])])).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }

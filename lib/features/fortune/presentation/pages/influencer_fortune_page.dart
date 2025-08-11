@@ -20,7 +20,8 @@ class InfluencerFortunePage extends ConsumerWidget {
         colors: [Color(0xFFE91E63), Color(0xFFAD1457)]),
       inputBuilder: (context, onSubmit) => _InfluencerInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => Container(
-        child: Center(child: Text('Influencer Fortune Result'))));
+        child: Center(child: Text('Influencer Fortune Result'))),
+    );
   }
 }
 
@@ -179,12 +180,14 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
       itemCount: influencers.length,
       itemBuilder: (context, index) {
         final influencer = influencers[index];
-        final isSelected = selectedInfluencer == influencer['name'];
+        final isSelected = selectedInfluencer == influencer['name'
+  ];
         
         return GestureDetector(
           onTap: () {
             setState(() {
-              selectedInfluencer = influencer['name'];
+              selectedInfluencer = influencer['name'
+  ];
             });
           },
           child: Container(
@@ -417,7 +420,8 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFE91E63))),
+              color: Color(0xFFE91E63)),
+          ),
           const SizedBox(height: 8),
           ...tips.map((tip) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -428,6 +432,14 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                 Expanded(
                   child: Text(
                     tip.toString(),
-                    style: const TextStyle(fontSize: 14)))])))]));
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ],
+      ),
+    );
   }
 }

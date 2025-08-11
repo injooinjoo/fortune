@@ -205,7 +205,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                         ? AppTheme.primaryColor
                         : AppTheme.dividerColor,
                     width: isSelected ? 2 : 1),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -220,7 +220,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                           game.label.substring(0, 2),
                           style: const TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold)))),
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     Text(
                       game.label,
@@ -257,7 +257,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16)),
+        borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -267,7 +267,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             colors: [
               _getGameColor(_selectedGame).withOpacity(0.1),
               _getGameColor(_selectedGame).withOpacity(0.05)]),
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -287,13 +287,13 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: predictionColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: Text(
                         winPrediction,
                         style: TextStyle(
                           color: predictionColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14)))
+                          fontSize: 14))
                   ]),
                 _buildScoreGauge(fortune.score)
               ]),
@@ -320,7 +320,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             value: score / 100,
             strokeWidth: 8,
             backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score))),
+            valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score)),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -329,7 +329,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: _getScoreColor(score))),
+                  color: _getScoreColor(score)),
               const Text(
                 '승률',
                 style: TextStyle(
@@ -365,7 +365,8 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
   }
 
   Widget _buildPerformanceChart(Fortune fortune) {
-    final categories = ['KDA', '팀워크', '집중력', '반응속도', '전략'];
+    final categories = ['KDA': '팀워크', '집중력': '반응속도', '전략'
+  ];
     final values = [
       fortune.score.toDouble(),
       (fortune.score - 10).clamp(0, 100).toDouble(),
@@ -382,7 +383,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               fillColor: _getGameColor(_selectedGame).withOpacity(0.3),
               borderColor: _getGameColor(_selectedGame),
               borderWidth: 2,
-              dataEntries: values.map((v) => RadarEntry(value: v)).toList())],
+              dataEntries: values.map((v) => RadarEntry(value: v)).toList()],
           radarShape: RadarShape.polygon,
           radarBorderData: BorderSide(color: AppTheme.dividerColor),
           titlePositionPercentageOffset: 0.2,
@@ -396,7 +397,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           ticksTextStyle: const TextStyle(fontSize: 10),
           tickBorderData: BorderSide(color: AppTheme.dividerColor),
           gridBorderData: BorderSide(
-            color: AppTheme.dividerColor.withOpacity(0.5)))));
+            color: AppTheme.dividerColor.withOpacity(0.5)));
   }
 
   Widget _buildRecommendationCard() {
@@ -459,7 +460,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                     labelStyle: TextStyle(
                       color: _getGameColor(_selectedGame),
                       fontWeight: FontWeight.bold))
-                ).toList())
+                ).toList()
             ]
           ]))
     );
@@ -522,18 +523,18 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                   fontSize: 12,
                   color: AppTheme.textSecondaryColor))
             ]),
-          if (isToday)
+          if (isToday),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.blue,
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: const Text(
                 '오늘',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 12,
-                  fontWeight: FontWeight.bold)))
+                  fontWeight: FontWeight.bold))
         ])
     );
   }
@@ -565,7 +566,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               child: Row(
                 children: [
                   Icon(Icons.psychology, color: AppTheme.primaryColor, size: 20),
@@ -607,7 +608,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               tip,
               style: const TextStyle(
                 fontSize: 14,
-                height: 1.4)))
+                height: 1.4))
         ])
     );
   }
@@ -617,7 +618,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8)),
+        borderRadius: BorderRadius.circular(8),
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),

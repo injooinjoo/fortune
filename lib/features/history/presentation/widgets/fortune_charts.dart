@@ -68,7 +68,7 @@ class CategoryPieChart extends StatelessWidget {
                           color: colors[index % colors.length]);
                       }).toList(),
                       sectionsSpace: 2,
-                      centerSpaceRadius: 40))),
+                      centerSpaceRadius: 40)),
                 const SizedBox(width: 16),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -86,13 +86,13 @@ class CategoryPieChart extends StatelessWidget {
                             height: 16,
                             decoration: BoxDecoration(
                               color: colors[index % colors.length],
-                              borderRadius: BorderRadius.circular(4))),
+                              borderRadius: BorderRadius.circular(4),
                           const SizedBox(width: 8),
                           Text(
                             category.key,
                             style: TextStyle(
-                              fontSize: 14 * fontScale))]));
-                  }).toList())]))]));
+                              fontSize: 14 * fontScale)]);
+                  }).toList()])]));
   }
 
   Map<String, int> _groupHistoryByCategory(List<FortuneHistory> history) {
@@ -180,14 +180,14 @@ class MonthlyTrendChart extends StatelessWidget {
                           style: TextStyle(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
                             fontSize: 12));
-                      }))),
+                      })),
                 borderData: FlBorderData(
                   show: true,
                   border: Border(
                     bottom: BorderSide(
                       color: theme.colorScheme.outline.withOpacity(0.2)),
                     left: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.2)))),
+                      color: theme.colorScheme.outline.withOpacity(0.2)),
                 minX: 0,
                 maxX: months.length - 1,
                 minY: 0,
@@ -212,7 +212,7 @@ class MonthlyTrendChart extends StatelessWidget {
                       }),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: theme.colorScheme.primary.withOpacity(0.1)))])))]));
+                      color: theme.colorScheme.primary.withOpacity(0.1))]))]));
   }
 
   Map<String, int> _groupHistoryByMonth(List<FortuneHistory> history) {

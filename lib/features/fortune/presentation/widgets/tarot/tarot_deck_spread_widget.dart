@@ -114,7 +114,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           alignment: Alignment.center,
           children: List.generate(widget.cardCount, (index) {
             return _buildFanCard(index, screenWidth);
-          }))));
+          })));
   }
 
   Widget _buildFanCard(int index, double screenWidth) {
@@ -160,7 +160,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                 isSelected: isSelected,
                 isHovered: isHovered,
                 onTap: () => _handleCardTap(index),
-                enableFlipAnimation: false))));
+                enableFlipAnimation: false)));
                   },
     );
   }

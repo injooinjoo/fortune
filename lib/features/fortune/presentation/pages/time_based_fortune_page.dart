@@ -126,7 +126,8 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         params: {
           'period': _selectedPeriod.value,
           'date': _selectedDate.toIso8601String()
-        });
+        },
+      );
 
       Logger.info('✅ [TimeBasedFortunePage] Fortune generated successfully', {
         'fortuneId': fortune.id,
@@ -188,7 +189,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       for (var i = 0; i < fortune.timeSpecificFortunes!.length; i++) {
         final timeFortune = fortune.timeSpecificFortunes![i];
         // Parse hour from time string (e.g., "09:00-12:00" -> 9)
-        final hour = int.tryParse(timeFortune.time.split(', ')[0]) ?? i;
+        final hour = int.tryParse(timeFortune.time.split(':')[0]) ?? i;
         timeScores[hour] = timeFortune.score.toDouble();
       }
     }
@@ -892,7 +893,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                       barRods: [
                         BarChartRodData(
                           toY: entry.value,
-                          color: _getScoreColor(entry.value.toInt()),
+                          color: _getScoreColor(entry.value.toInt(),
                           width: 30,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4),
@@ -925,10 +926,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               ),
             ),
             const SizedBox(height: 16),
-            _buildWeekdayItem('월요일', '새로운 시작의 에너지', 75),
-            _buildWeekdayItem('수요일', '대인관계 호전', 80),
-            _buildWeekdayItem('금요일', '재정운 상승', 85),
-            _buildWeekdayItem('일요일', '휴식과 재충전', 70),
+            _buildWeekdayItem('월요일': '새로운 시작의 에너지', 75),
+            _buildWeekdayItem('수요일': '대인관계 호전', 80),
+            _buildWeekdayItem('금요일': '재정운 상승', 85),
+            _buildWeekdayItem('일요일': '휴식과 재충전', 70),
           ],
         ),
       ),
@@ -983,9 +984,9 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               ),
             ),
             const SizedBox(height: 16),
-            _buildMonthSection('상순 (1-10일)', '안정적인 시작', 75),
-            _buildMonthSection('중순 (11-20일)', '도약의 시기', 85),
-            _buildMonthSection('하순 (21-31일)', '마무리와 정리', 70),
+            _buildMonthSection('상순 (1-10일)': '안정적인 시작', 75),
+            _buildMonthSection('중순 (11-20일)': '도약의 시기', 85),
+            _buildMonthSection('하순 (21-31일)': '마무리와 정리', 70),
           ],
         ),
       ),
@@ -1007,10 +1008,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               ),
             ),
             const SizedBox(height: 16),
-            _buildSeasonItem('봄 (3-5월)', '새로운 시작과 성장', Icons.local_florist),
-            _buildSeasonItem('여름 (6-8월)', '활발한 활동과 성취', Icons.wb_sunny),
-            _buildSeasonItem('가을 (9-11월)', '수확과 안정', Icons.eco),
-            _buildSeasonItem('겨울 (12-2월)', '휴식과 재충전', Icons.ac_unit),
+            _buildSeasonItem('봄 (3-5월)': '새로운 시작과 성장', Icons.local_florist),
+            _buildSeasonItem('여름 (6-8월)': '활발한 활동과 성취', Icons.wb_sunny),
+            _buildSeasonItem('가을 (9-11월)': '수확과 안정', Icons.eco),
+            _buildSeasonItem('겨울 (12-2월)': '휴식과 재충전', Icons.ac_unit),
           ],
         ),
       ),
@@ -1334,7 +1335,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               ],
             ),
             const SizedBox(height: 16),
-            if (_isBirthday()) ...[
+            if (_isBirthday() ...[
               _buildBirthdayFortune(),
               const SizedBox(height: 16),
             ],
@@ -1516,36 +1517,19 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     if (birthYear == null) return '용';
 
     final zodiacAnimals = [
-      '원숭이',
-      '닭',
-      '개',
-      '돼지',
-      '쥐',
-      '소',
-      '호랑이',
-      '토끼',
-      '용',
-      '뱀',
-      '말',
-      '양'
+      '원숭이': '닭',
+      '개': '돼지',
+      '쥐': '소',
+      '호랑이': '토끼',
+      '용': '뱀',
+      '말': '양'
     ];
     return zodiacAnimals[birthYear % 12];
   }
 
   String _getZodiacFortuneMessage(String zodiac) {
     final messages = {
-      '양자리': '오늘은 새로운 도전을 시작하기에 좋은 날입니다. 용기를 내세요!',
-      '황소자리': '안정과 평화가 찾아오는 날입니다. 재정 관리에 신경 쓰세요.',
-      '쌍둥이자리': '소통과 교류가 활발한 날입니다. 새로운 인연을 만날 수 있습니다.',
-      '게자리': '가족과 함께하는 시간이 행복을 가져다줄 것입니다.',
-      '사자자리': '당신의 카리스마가 빛나는 날입니다. 리더십을 발휘하세요.',
-      '처녀자리': '세심한 계획이 성공으로 이어집니다. 디테일에 신경 쓰세요.',
-      '천칭자리': '균형과 조화가 중요한 날입니다. 중재자 역할을 잘 해낼 수 있습니다.',
-      '전갈자리': '직관력이 뛰어난 날입니다. 내면의 목소리에 귀 기울이세요.',
-      '사수자리': '모험과 자유를 추구하기 좋은 날입니다. 새로운 경험을 즐기세요.',
-      '염소자리': '목표 달성에 한 걸음 더 가까워지는 날입니다. 꾸준히 노력하세요.',
-      '물병자리': '창의적인 아이디어가 샘솟는 날입니다. 혁신적인 시도를 해보세요.',
-      '물고기자리': '감성과 직관이 풍부한 날입니다. 예술적 활동이 도움이 됩니다.',
+      '양자리': '오늘은 새로운 도전을 시작하기에 좋은 날입니다. 용기를 내세요!': '황소자리': '안정과 평화가 찾아오는 날입니다. 재정 관리에 신경 쓰세요.': '쌍둥이자리': '소통과 교류가 활발한 날입니다. 새로운 인연을 만날 수 있습니다.': '게자리': '가족과 함께하는 시간이 행복을 가져다줄 것입니다.': '사자자리': '당신의 카리스마가 빛나는 날입니다. 리더십을 발휘하세요.': '처녀자리': '세심한 계획이 성공으로 이어집니다. 디테일에 신경 쓰세요.': '천칭자리': '균형과 조화가 중요한 날입니다. 중재자 역할을 잘 해낼 수 있습니다.': '전갈자리': '직관력이 뛰어난 날입니다. 내면의 목소리에 귀 기울이세요.': '사수자리': '모험과 자유를 추구하기 좋은 날입니다. 새로운 경험을 즐기세요.': '염소자리': '목표 달성에 한 걸음 더 가까워지는 날입니다. 꾸준히 노력하세요.': '물병자리': '창의적인 아이디어가 샘솟는 날입니다. 혁신적인 시도를 해보세요.': '물고기자리': '감성과 직관이 풍부한 날입니다. 예술적 활동이 도움이 됩니다.',
     };
     return messages[zodiac] ?? '오늘은 평온하고 안정적인 하루가 될 것입니다.';
   }
@@ -1562,18 +1546,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                     : '올해';
 
     final messages = {
-      '쥐': '$periodSpecific는 재빠른 판단력이 빛을 발하는 시기입니다.',
-      '소': '$periodSpecific는 꾸준한 노력이 결실을 맺는 시기입니다.',
-      '호랑이': '$periodSpecific는 용기와 도전정신이 필요한 시기입니다.',
-      '토끼': '$periodSpecific는 신중하고 조심스러운 접근이 필요합니다.',
-      '용': '$periodSpecific는 큰 성취를 이룰 수 있는 기회가 찾아옵니다.',
-      '뱀': '$periodSpecific는 지혜롭고 현명한 결정이 중요합니다.',
-      '말': '$periodSpecific는 활발한 활동과 사교가 행운을 가져옵니다.',
-      '양': '$periodSpecific는 온화하고 평화로운 분위기가 지속됩니다.',
-      '원숭이': '$periodSpecific는 재치와 유머가 좋은 결과를 가져옵니다.',
-      '닭': '$periodSpecific는 부지런함과 성실함이 인정받는 시기입니다.',
-      '개': '$periodSpecific는 충성과 신뢰가 중요한 역할을 합니다.',
-      '돼지': '$periodSpecific는 풍요와 행복이 가득한 시기입니다.',
+      '쥐': '$periodSpecific는 재빠른 판단력이 빛을 발하는 시기입니다.': '소': '$periodSpecific는 꾸준한 노력이 결실을 맺는 시기입니다.': '호랑이': '$periodSpecific는 용기와 도전정신이 필요한 시기입니다.': '토끼': '$periodSpecific는 신중하고 조심스러운 접근이 필요합니다.': '용': '$periodSpecific는 큰 성취를 이룰 수 있는 기회가 찾아옵니다.': '뱀': '$periodSpecific는 지혜롭고 현명한 결정이 중요합니다.': '말': '$periodSpecific는 활발한 활동과 사교가 행운을 가져옵니다.': '양': '$periodSpecific는 온화하고 평화로운 분위기가 지속됩니다.': '원숭이': '$periodSpecific는 재치와 유머가 좋은 결과를 가져옵니다.': '닭': '$periodSpecific는 부지런함과 성실함이 인정받는 시기입니다.': '개': '$periodSpecific는 충성과 신뢰가 중요한 역할을 합니다.': '돼지': '$periodSpecific는 풍요와 행복이 가득한 시기입니다.',
     };
     return messages[zodiac] ?? '$periodSpecific는 안정적이고 평온한 시기가 될 것입니다.';
   }

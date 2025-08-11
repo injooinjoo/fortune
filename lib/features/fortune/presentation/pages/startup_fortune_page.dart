@@ -28,7 +28,9 @@ class StartupFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -47,7 +49,10 @@ class StartupFortunePage extends ConsumerWidget {
                 hintText: '예: IT, 요식업, 교육, 온라인 쇼핑몰',
                 prefixIcon: const Icon(Icons.business_center),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)))),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             TextField(
               controller: experienceController,
@@ -56,7 +61,10 @@ class StartupFortunePage extends ConsumerWidget {
                 hintText: '예: 5년 실무 경험, 관련 자격증 보유',
                 prefixIcon: const Icon(Icons.workspace_premium),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)))),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             TextField(
               controller: motivationController,
@@ -66,7 +74,7 @@ class StartupFortunePage extends ConsumerWidget {
                 hintText: '창업을 하려는 이유를 간단히 적어주세요',
                 prefixIcon: const Icon(Icons.lightbulb),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)))),
+                  borderRadius: BorderRadius.circular(12),,
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -90,11 +98,11 @@ class StartupFortunePage extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   backgroundColor: const Color(0xFF6B46C1)),
                 child: const Text(
                   '창업 운세 확인하기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))))))));
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]);
   }
 
   Widget _buildResultSection(BuildContext context, FortuneResult result, VoidCallback onShare) {
@@ -102,6 +110,7 @@ class StartupFortunePage extends ConsumerWidget {
     
     return SingleChildScrollView(
       child: Column(
+
         children: [
           _buildSummaryCard(result.summary ?? '창업 성공을 위한 운세입니다.'),
           const SizedBox(height: 16),
@@ -140,15 +149,15 @@ class StartupFortunePage extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
           const SizedBox(height: 24)]);
-  }
 
   Widget _buildSummaryCard(String summary) {
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
@@ -158,6 +167,7 @@ class StartupFortunePage extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight)),
         child: Column(
+
           children: [
             Icon(Icons.rocket, size: 48, color: Colors.purple.shade700),
             const SizedBox(height: 16),
@@ -171,7 +181,7 @@ class StartupFortunePage extends ConsumerWidget {
             Text(
               summary,
               style: const TextStyle(fontSize: 16, height: 1.6),
-              textAlign: TextAlign.center)])));
+              textAlign: TextAlign.center)]));
   }
 
   Widget _buildMainResultCard({
@@ -182,8 +192,9 @@ class StartupFortunePage extends ConsumerWidget {
   }) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +205,8 @@ class StartupFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Icon(icon, color: color, size: 28)),
                 const SizedBox(width: 16),
                 Expanded(
@@ -202,11 +214,11 @@ class StartupFortunePage extends ConsumerWidget {
                     title,
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold))))),
+                      fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               content,
-              style: const TextStyle(fontSize: 16, height: 1.6))])));
+              style: const TextStyle(fontSize: 16, height: 1.6)]);
   }
 
   Widget _buildFundingForecast(String? forecast) {
@@ -214,8 +226,9 @@ class StartupFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,18 +239,19 @@ class StartupFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.amber.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(Icons.attach_money, color: Colors.amber, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
                   '자금 조달 전망',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold)]),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               forecast,
-              style: const TextStyle(fontSize: 16, height: 1.6))])));
+              style: const TextStyle(fontSize: 16, height: 1.6)]);
   }
 
   Widget _buildGrowthTimeline(String? timeline) {
@@ -245,8 +259,9 @@ class StartupFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,17 +272,18 @@ class StartupFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.teal.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(Icons.timeline, color: Colors.teal, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
                   '성장 타임라인',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold)]),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               timeline,
-              style: const TextStyle(fontSize: 16, height: 1.6))])));
+              style: const TextStyle(fontSize: 16, height: 1.6)]);
   }
 }

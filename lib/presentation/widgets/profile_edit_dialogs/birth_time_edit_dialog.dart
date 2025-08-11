@@ -108,7 +108,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
     period.value,
                   period.label,
                   description: period.description);
-              }))]));
+              })]);
   }
 
   Widget _buildTimeOption(String? value, String label, {String? description}) {
@@ -168,6 +168,6 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                         Text(
                           description,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary))]]))])))));
+                            color: AppColors.textSecondary))]])])));
   }
 }

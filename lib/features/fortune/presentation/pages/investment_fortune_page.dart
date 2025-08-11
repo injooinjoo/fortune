@@ -8,13 +8,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum InvestmentType {
-  
-  
-  stock('주식', 'stock': null,
-  crypto('암호화폐', 'crypto': null,
-  realEstate('부동산', 'real_estate': null,
-  lottery('복권', 'lottery', null,
-  general('종합', 'general',
+  stock('주식', 'stock', Icons.trending_up),
+  crypto('암호화폐', 'crypto', Icons.currency_bitcoin),
+  realEstate('부동산', 'real_estate', Icons.home),
+  lottery('복권', 'lottery', Icons.casino),
+  general('종합', 'general', Icons.analytics),
   sidejob('부업', 'sidejob', Icons.work);
   
   final String label;
@@ -62,7 +60,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       userId: params['userId'],
       fortuneType: _selectedType.value,
       params: {
-        'investmentType')}
+        'investmentType': _selectedType.value}
     );
 
     // Extract investment-specific data
@@ -79,7 +77,8 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null};
+        'gender': null
+      }
       generateFortune(params);
     }
   }
@@ -89,39 +88,45 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
     switch (_selectedType) {
       case InvestmentType.stock:
         return {
-          'sectors': \['['IT', '바이오', '제조업', '금융', '소비재'],
+          'sectors': ['IT', '바이오', '제조업', '금융', '소비재'],
           'scores': [85, 70, 60, 75, 80],
-          'recommendations': ['성장주 주목', '단기 매매 자제', '분산 투자 필수'};
+          'recommendations': ['성장주 주목', '단기 매매 자제', '분산 투자 필수']
+        }
       case InvestmentType.crypto:
         return {
           'coins': ['BTC', 'ETH', 'SOL', 'BNB', 'XRP'],
           'scores': [75, 80, 65, 70, 60],
-          'volatility', 'high',
-          'recommendations': ['변동성 주의', '소액 분산 투자', '장기 관점 유지'};
+          'volatility': 'high',
+          'recommendations': ['변동성 주의', '소액 분산 투자', '장기 관점 유지']
+        };
       case InvestmentType.realEstate:
         return {
           'regions': ['강남', '강북', '경기', '인천', '지방'],
           'scores': [85, 70, 75, 65, 60],
-          'trends', '안정적 상승세',
-          'recommendations': ['청약 기회 주목', '대출 규제 확인', '실거주 목적 우선'};
+          'trends': '안정적 상승세',
+          'recommendations': ['청약 기회 주목', '대출 규제 확인', '실거주 목적 우선']
+        };
       case InvestmentType.lottery:
         return {
           'luckyNumbers': [7, 14, 23, 31, 38, 42],
-          'bestTime', '오후 3-5시',
+          'bestTime': '오후 3-5시',
           'probability': 15,
-          'recommendations': ['소액만 투자', '오락 목적으로만', '과도한 기대 금물'};
+          'recommendations': ['소액만 투자', '오락 목적으로만', '과도한 기대 금물']
+        };
       case InvestmentType.sidejob:
         return {
           'opportunities': ['온라인 강의', '프리랜서', '투잡', '창업'],
           'scores': [80, 75, 70, 65],
-          'potential', 'high',
-          'recommendations': ['본업 소홀 주의', '세금 신고 필수', '계약서 작성 중요'};
+          'potential': 'high',
+          'recommendations': ['본업 소홀 주의', '세금 신고 필수', '계약서 작성 중요']
+        };
       default:
         return {
           'overallScore': 75,
-          'bestSector', '기술주',
-          'risk', 'medium',
-          'recommendations': ['분산 투자', '장기 투자', '손절선 설정'};
+          'bestSector': '기술주',
+          'risk': 'medium',
+          'recommendations': ['분산 투자', '장기 투자', '손절선 설정']
+        };
     }
   }
 
@@ -174,7 +179,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               selectedColor: AppTheme.primaryColor,
               labelStyle: TextStyle(
                 color: isSelected ? Colors.white : AppTheme.textColor,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal));
         }));
   }
 
@@ -182,7 +187,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16)),
+        borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -192,7 +197,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             colors: [
               _getInvestmentColor(_selectedType).withOpacity(0.1),
               _getInvestmentColor(_selectedType).withOpacity(0.05)]),
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -207,7 +212,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                       size: 28),
                     const SizedBox(width: 8),
                     Text(
-                      '${_selectedType.label} 운세',),
+                      '${_selectedType.label} 운세',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold))]),
@@ -215,12 +220,12 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
                   child: Text(
-                    '${fortune.score}점',),
+                    '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold)))]),
+                      fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               fortune.message,
@@ -230,7 +235,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 color: AppTheme.textColor)),
             if (_selectedType != InvestmentType.general) ...[
               const SizedBox(height: 16),
-              _buildRiskIndicator(fortune.score)]]))).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
+              _buildRiskIndicator(fortune.score)]])).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildRiskIndicator(int score) {
@@ -242,7 +247,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         Icon(Icons.warning_amber, size: 20, color: riskColor),
         const SizedBox(width: 8),
         Text(
-          '위험도: ',),
+          '위험도: ',
           style: TextStyle(
             fontSize: 14,
             color: AppTheme.textSecondaryColor)),
@@ -293,7 +298,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '섹터별 투자 운세',),
+              '섹터별 투자 운세',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -323,7 +328,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                               style: const TextStyle(fontSize: 10));
                           }
                           return const Text('');
-                        }))),
+                        })),
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   barGroups: scores.asMap().entries.map((entry) {
@@ -335,8 +340,15 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                           color: _getScoreColor(entry.value),
                           width: 25,
                           borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4)))]);
-                  }).toList())))])));
+                            top: Radius.circular(4))]);
+                  }).toList()
+                )
+              )
+            )
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildCryptoContent() {
@@ -361,7 +373,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '코인별 투자 운세',),
+              '코인별 투자 운세',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -372,7 +384,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               final score = index < scores.length ? scores[index] : 50;
               
               return _buildCoinItem(coin, score);
-            }).toList()])));
+            }).toList(),);
   }
 
   Widget _buildCoinItem(String coin, int score) {
@@ -385,13 +397,13 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             height: 50,
             decoration: BoxDecoration(
               color: Colors.orange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(25)),
+              borderRadius: BorderRadius.circular(25),
             child: Center(
               child: Text(
                 coin,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14)))),
+                  fontSize: 14)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -406,14 +418,19 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 LinearProgressIndicator(
                   value: score / 100,
                   backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score))])),
+                  valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score)]),
           const SizedBox(width: 12),
           Text(
-            '$score점',),
+            '$score점',
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
-              fontSize: 16))]));
+              fontSize: 16
+            )
+          ]
+        )
+      ]
+    );
   }
 
   Widget _buildVolatilityWarning() {
@@ -421,7 +438,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.orange.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.orange.withOpacity(0.3)),
       child: Row(
         children: [
@@ -432,16 +449,24 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '높은 변동성 주의',),
+                  '높은 변동성 주의',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16)),
                 const SizedBox(height: 4),
                 Text(
-                  '암호화폐 시장은 변동성이 매우 높습니다. 투자금 전액 손실 가능성을 항상 염두에 두세요.',),
+                  '암호화폐 시장은 변동성이 매우 높습니다. 투자금 전액 손실 가능성을 항상 염두에 두세요.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondaryColor))]))]));
+                    color: AppTheme.textSecondaryColor
+                  )
+                ]
+              )
+            )
+          ]
+        )
+      ]
+    );
   }
 
   Widget _buildRealEstateContent() {
@@ -466,7 +491,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '지역별 투자 매력도',),
+              '지역별 투자 매력도',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -477,7 +502,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               final score = index < scores.length ? scores[index] : 50;
               
               return _buildRegionItem(region, score);
-            }).toList()])));
+            }).toList(),);
   }
 
   Widget _buildRegionItem(String region, int score) {
@@ -493,7 +518,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               region,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14))),
+                fontSize: 14)),
           const SizedBox(width: 12),
           Expanded(
             child: Stack(
@@ -502,21 +527,26 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   height: 24,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 FractionallySizedBox(
                   widthFactor: score / 100,
                   child: Container(
                     height: 24,
                     decoration: BoxDecoration(
                       color: _getScoreColor(score),
-                      borderRadius: BorderRadius.circular(12))))])),
+                      borderRadius: BorderRadius.circular(12),])),
           const SizedBox(width: 12),
           Text(
-            '$score점',),
+            '$score점',
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
-              fontSize: 14))]));
+              fontSize: 14
+            )
+          ]
+        )
+      ]
+    );
   }
 
   Widget _buildMarketTrend() {
@@ -531,7 +561,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 Icon(Icons.trending_up, color: Colors.green, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '시장 동향',),
+                  '시장 동향',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold))]),
@@ -543,10 +573,16 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             Text(
-              '전반적으로 부동산 시장은 안정적인 흐름을 보이고 있으나, 지역별 편차가 존재합니다.',),
+              '전반적으로 부동산 시장은 안정적인 흐름을 보이고 있으나, 지역별 편차가 존재합니다.',
               style: TextStyle(
                 fontSize: 14,
-                color: AppTheme.textSecondaryColor))])));
+                color: AppTheme.textSecondaryColor
+              )
+            )
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildLotteryContent() {
@@ -574,11 +610,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             colors: [
               Colors.purple.withOpacity(0.1),
               Colors.blue.withOpacity(0.1)]),
-          borderRadius: BorderRadius.circular(12)),
+          borderRadius: BorderRadius.circular(12),
         child: Column(
           children: [
             const Text(
-              '오늘의 행운 번호',),
+              '오늘의 행운 번호',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold)),
@@ -601,12 +637,12 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                         offset: const Offset(0, 4))]),
                   child: Center(
                     child: Text(
-                      '$number',),
+                      '$number',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18))));
-              }).toList())])));
+                        fontSize: 18)));
+              }).toList(),);
   }
 
   Widget _buildBestTimeCard(String bestTime) {
@@ -621,7 +657,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '최적 구매 시간',),
+                  '최적 구매 시간',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
@@ -631,7 +667,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   style: TextStyle(
                     fontSize: 18,
                     color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold))])])));
+                    fontWeight: FontWeight.bold))])]));
   }
 
   Widget _buildLotteryWarning() {
@@ -639,7 +675,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12))),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.red.withOpacity(0.3)),
       child: Row(
         children: [
@@ -647,10 +683,16 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '복권은 확률이 매우 낮은 게임입니다. 오락 목적으로만 소액을 사용하세요.',),
+              '복권은 확률이 매우 낮은 게임입니다. 오락 목적으로만 소액을 사용하세요.',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.red[700])))]));
+                color: Colors.red[700]
+              )
+            )
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildSidejobContent() {
@@ -675,7 +717,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '추천 부업 기회',),
+              '추천 부업 기회',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -686,7 +728,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               final score = index < scores.length ? scores[index] : 50;
               
               return _buildOpportunityItem(opportunity, score);
-            }).toList()])));
+            }).toList(),);
   }
 
   Widget _buildOpportunityItem(String opportunity, int score) {
@@ -712,7 +754,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-          borderRadius: BorderRadius.circular(8)),
+          borderRadius: BorderRadius.circular(8),
         child: Row(
           children: [
             Icon(icon, color: AppTheme.primaryColor, size: 32),
@@ -737,10 +779,21 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                       }),
                       const SizedBox(width: 8),
                       Text(
-                        '추천도 $score%',),
+                        '추천도 $score%',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondaryColor))])]))])));
+                          color: AppTheme.textSecondaryColor
+                        )
+                      )
+                    ]
+                  )
+                ]
+              )
+            )
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildIncomeProjection() {
@@ -751,7 +804,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '예상 수익 전망',),
+              '예상 수익 전망',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -759,9 +812,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildIncomeColumn('1개월', '50-100만원',
-                _buildIncomeColumn('3개월', '200-400만원',
-                _buildIncomeColumn('6개월', '500-1000만원'])])));
+                _buildIncomeColumn('1개월': '50-100만원',
+                _buildIncomeColumn('3개월': '200-400만원',
+                _buildIncomeColumn('6개월': '500-1000만원'])]));
   }
 
   Widget _buildIncomeColumn(String period, String amount) {
@@ -799,7 +852,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '추천 포트폴리오',),
+              '추천 포트폴리오',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -846,7 +899,17 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                       titleStyle: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white))])))])));
+                        color: Colors.white
+                      )
+                    )
+                  ]
+                )
+              )
+            )
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildInvestmentTips() {
@@ -857,7 +920,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '오늘의 투자 팁',),
+              '오늘의 투자 팁',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -865,7 +928,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             _buildTipItem('분산 투자로 리스크를 줄이세요'),
             _buildTipItem('장기 투자 관점을 유지하세요'),
             _buildTipItem('감정적 판단을 피하세요'),
-            _buildTipItem('손절선을 미리 정하세요')])));
+            _buildTipItem('손절선을 미리 정하세요')]));
   }
 
   Widget _buildTipItem(String tip) {
@@ -882,7 +945,12 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           Expanded(
             child: Text(
               tip,
-              style: const TextStyle(fontSize: 14)))]));
+              style: const TextStyle(fontSize: 14)
+            )
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildMarketOverview() {
@@ -893,7 +961,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '시장 전망',),
+              '시장 전망',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
@@ -903,7 +971,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               children: [
                 _buildMarketIndicator('단기': null,
                 _buildMarketIndicator('중기': null,
-                _buildMarketIndicator('장기')])])));
+                _buildMarketIndicator('장기')])]));
   }
 
   Widget _buildMarketIndicator(String period, int score, Color color) {
@@ -921,7 +989,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             fontWeight: FontWeight.bold,
             fontSize: 14)),
         Text(
-          '$score점',),
+          '$score점',
           style: TextStyle(
             color: color,
             fontSize: 12))]);
@@ -939,7 +1007,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 Icon(Icons.tips_and_updates, color: Colors.amber, size: 24),
                 const SizedBox(width: 8),
                 const Text(
-                  '주식 투자 팁',),
+                  '주식 투자 팁',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold))]),
@@ -947,7 +1015,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             _buildTipItem('오전 장 초반 급등주는 피하세요'),
             _buildTipItem('손절선은 -3%로 설정하세요'),
             _buildTipItem('분할 매수로 평단가를 낮추세요'),
-            _buildTipItem('뉴스와 공시를 꼭 확인하세요')])));
+            _buildTipItem('뉴스와 공시를 꼭 확인하세요')]));
   }
 
   Widget _buildRecommendationCard(String title, List<String> recommendations) {
@@ -963,7 +1031,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            ...recommendations.map((rec) => _buildRecommendationItem(rec).toList()])));
+            ...recommendations.map((rec) => _buildRecommendationItem(rec)).toList()
+          ]
+        )
+      )
+    );
   }
 
   Widget _buildRecommendationItem(String recommendation) {
@@ -985,7 +1057,13 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               recommendation,
               style: const TextStyle(
                 fontSize: 14,
-                height: 1.4))]));
+                height: 1.4
+              )
+            )
+          )
+        ]
+      )
+    );
   }
 
   Color _getInvestmentColor(InvestmentType type) {

@@ -347,7 +347,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
                 Text(
                   '${_selectedCards.length} / ${widget.requiredCards} 카드 선택됨',),
                   style: theme.textTheme.bodyLarge?.copyWith()
-                    color: Colors.white70)))])),
+                    color: Colors.white70))]),
         
         // 카드 덱
         Expanded(
@@ -444,7 +444,7 @@ class _TarotCardWidget extends StatelessWidget {
                     : Icon(
                         Icons.auto_awesome,
                         color: Colors.white.withOpacity(0.3),
-    size: 40))),
+    size: 40)),
             
             // 선택 가능 표시
             if (!isSelected && !isFlipped)
@@ -454,7 +454,7 @@ class _TarotCardWidget extends StatelessWidget {
                     borderRadius: AppDimensions.borderRadiusMedium);
                     border: Border.all(
                       color: Colors.white.withOpacity(0.0),
-    width: 2))))]))
+    width: 2))])
     );
   }
 }
@@ -487,7 +487,7 @@ class _PositionedTarotCard extends StatelessWidget {
               'Fortune cached',),
               style: const TextStyle(
                 color: Colors.black),
-    fontWeight: FontWeight.bold)))),
+    fontWeight: FontWeight.bold)),
         const SizedBox(height: AppSpacing.spacing1),
         
         // 카드
@@ -518,7 +518,7 @@ class _PositionedTarotCard extends StatelessWidget {
     textAlign: TextAlign.center),
     maxLines: 2),
     overflow: TextOverflow.ellipsis)])
-              ]))),
+              ])),
         
         // 위치 이름
         const SizedBox(height: AppSpacing.spacing1),

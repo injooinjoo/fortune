@@ -201,7 +201,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                               quarterTurns: 3,
                               child: Text(
                                 type,
-                                style: Theme.of(context).textTheme.bodyMedium))));
+                                style: Theme.of(context).textTheme.bodyMedium)));
                       }).toList()]),
                   const SizedBox(height: AppSpacing.spacing2 * 1.25),
                   // 매트릭스 본체
@@ -262,9 +262,9 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                       fontWeight: isHovered
                                           ? FontWeight.bold
                                           : FontWeight.normal,
-                                      color: Colors.white))))));
+                                      color: Colors.white)))));
                         }).toList()]);
-                  }).toList()]))));
+                  }).toList()])));
       });
   }
 
@@ -350,7 +350,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           child: Center(
             child: Text(
               type,
-              style: Theme.of(context).textTheme.bodyMedium))),
+              style: Theme.of(context).textTheme.bodyMedium)),
         const SizedBox(height: AppSpacing.spacing2),
         Text(
           info['title']!,
@@ -396,7 +396,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
                             ? Colors.green
-                            : Colors.white.withOpacity(0.8))))).toList()])),
+                            : Colors.white.withOpacity(0.8)))).toList()])),
             Container(
               width: 1,
               height: AppSpacing.spacing20,
@@ -447,7 +447,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                 Expanded(
                   child: Text(
                     '인지기능: ${commonFunctions.join(', ')}',
-                    style: Theme.of(context).textTheme.bodyMedium))]))]]);
+                    style: Theme.of(context).textTheme.bodyMedium)])]]);
   }
 
   Widget _buildLegend() {

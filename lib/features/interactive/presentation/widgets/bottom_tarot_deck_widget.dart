@@ -116,7 +116,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 alignment: Alignment.bottomCenter,
                 children: List.generate(cardCount, (index) {
                   return _buildCard(index, screenWidth);
-                })))));
+                }))));
       });
   }
   
@@ -162,7 +162,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 _animateToCard(index);
               }
             },
-            child: _buildTarotCard(isCenter)))));
+            child: _buildTarotCard(isCenter))));
   }
   
   void _animateToCard(int index) {
@@ -219,13 +219,13 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   colors: [
                     const Color(0xFF1E3A5F),
                     const Color(0xFF0D1B2A),
-                    const Color(0xFF415A77)]))),
+                    const Color(0xFF415A77)])),
             
             // Card pattern
             Positioned.fill(
               child: CustomPaint(
                 painter: TarotCardBackPainter(
-                  isHighlighted: isCenter))),
+                  isHighlighted: isCenter)),
             
             // Card border
             Container(
@@ -235,7 +235,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   color: isCenter 
                       ? Colors.white.withOpacity(0.5)
                       : Colors.white.withOpacity(0.2),
-                  width: isCenter ? 2 : 1)))])));
+                  width: isCenter ? 2 : 1))]));
   }
 }
 

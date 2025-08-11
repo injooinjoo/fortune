@@ -163,7 +163,7 @@ class _TossTextFieldState extends State<TossTextField>
                   hintText: widget.hintText);
                   hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: theme.brightness == Brightness.light
                         ? AppColors.textSecondary.withOpacity(0.4)
-                        : AppColors.textSecondary.withOpacity(0.6))),
+                        : AppColors.textSecondary.withOpacity(0.6)),
     counterText: ''$1',
     contentPadding: EdgeInsets.only()),
     border: OutlineInputBorder(
@@ -294,7 +294,7 @@ class _TossTextFieldState extends State<TossTextField>
                           ? formStyles.errorBorderColor
                           : theme.brightness == Brightness.light
                               ? AppColors.textSecondary.withOpacity(0.6)
-                              : AppColors.textSecondary.withOpacity(0.4))))
+                              : AppColors.textSecondary.withOpacity(0.4)))
                   ))
                 ))
               ]))

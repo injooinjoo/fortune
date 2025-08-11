@@ -24,11 +24,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
   late Animation<double> _progressAnimation;
   
   final stages = [
-    {'name', '부정':  , 'icon': Icons.block, 'color'},
-    {'name', '분노':  , 'icon': Icons.bolt, 'color'},
-    {'name', '타협', 'icon': Icons.handshake, 'color'},
-    {'name', '우울', 'icon': Icons.water_drop, 'color'},
-    {'name', '수용', 'icon': Icons.favorite, 'color'}];
+    {'name': '부정', 'icon': Icons.block, 'color': Colors.red},
+    {'name': '분노', 'icon': Icons.bolt, 'color': Colors.orange},
+    {'name': '타협', 'icon': Icons.handshake, 'color': Colors.yellow},
+    {'name': '우울', 'icon': Icons.water_drop, 'color': Colors.blue},
+    {'name': '수용', 'icon': Icons.favorite, 'color': Colors.green}];
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
       begin: 0,
       end: widget.progress / 100).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutCubic);
+      curve: Curves.easeOutCubic));
 
     _controller.forward();
 }
@@ -55,7 +55,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
         begin: _progressAnimation.value,
         end: widget.progress / 100).animate(CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCubic);
+        curve: Curves.easeOutCubic));
       _controller.forward(from: 0);
 }
   }
@@ -81,7 +81,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
-              offset: const Offset(0, 4)]),
+              offset: const Offset(0, 4))]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -89,17 +89,17 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '치유 진행도',),
-                  style: theme.textTheme.titleLarge?.copyWith()
+                  '치유 진행도',
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold)),
                 AnimatedBuilder(
                   animation: _progressAnimation,
                   builder: (context, child) {
                     return Text(
-                      '${(_progressAnimation.value * 100).toInt()}%',),
-                      style: theme.textTheme.headlineSmall?.copyWith()
+                      '${(_progressAnimation.value * 100).toInt()}%',
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold);
+                        fontWeight: FontWeight.bold));
 })]),
             const SizedBox(height: AppSpacing.spacing6),
             
@@ -126,8 +126,8 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           colors: [
                             theme.colorScheme.primary,
                             theme.colorScheme.secondary]),
-                        borderRadius: AppDimensions.borderRadiusSmall);
-}),
+                        borderRadius: AppDimensions.borderRadiusSmall));
+                  }),
                 
                 // Stage markers
                 ...stages.asMap().entries.map((entry) {
@@ -147,28 +147,28 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isCompleted || isCurrent
-                            ? (stage['color'],
+                            ? (stage['color'] as Color)
                             : theme.colorScheme.surface,
                         border: Border.all(
                           color: isCompleted || isCurrent
-                              ? (stage['color'],
+                              ? (stage['color'] as Color)
                               : theme.colorScheme.onSurface.withOpacity(0.3),
                           width: 3),
                         boxShadow: isCurrent
                             ? [
                                 BoxShadow(
-                                  color: (stage['color'],
+                                  color: (stage['color'] as Color).withOpacity(0.5),
                                   blurRadius: 8,
                                   spreadRadius: 2)]
                             : null),
                       child: Center(
                         child: Icon(
-                          stage['icon'],
+                          stage['icon'] as IconData,
                           size: 20,
                           color: isCompleted || isCurrent
                               ? Colors.white
-                              : theme.colorScheme.onSurface.withOpacity(0.5)),;
-}).toList()]),
+                              : theme.colorScheme.onSurface.withOpacity(0.5)));
+                }).toList()]),
             
             const SizedBox(height: AppSpacing.spacing8),
             
@@ -183,11 +183,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 
                 return Expanded(
                   child: Text(
-                    stage['name'],
+                    stage['name'] as String,
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith()
+                    style: theme.textTheme.bodySmall?.copyWith(
                       color: isCompleted || isCurrent
-                          ? (stage['color'],
+                          ? (stage['color'] as Color)
                           : theme.colorScheme.onSurface.withOpacity(0.5),
                       fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal));
 }).toList(),
@@ -213,7 +213,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                     Expanded(
                       child: Text(
                         _getStageDescription(widget.currentStage),
-                        style: theme.textTheme.bodySmall)]))])),;
+                        style: theme.textTheme.bodySmall)])]),;
 }
 
   String _getStageDescription(int stage) {

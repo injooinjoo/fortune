@@ -89,7 +89,7 @@ class _SajuLoadingWidgetState extends State<SajuLoadingWidget>
                     child: Text(
                       '☯',
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: theme.colorScheme.onPrimary)))));
+                        color: theme.colorScheme.onPrimary))));
             }),
           SizedBox(height: AppSpacing.spacing6),
           
@@ -104,11 +104,11 @@ class _SajuLoadingWidgetState extends State<SajuLoadingWidget>
                 color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusMedium,
                 border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.3))),
+                  color: theme.colorScheme.primary.withOpacity(0.3)),
               child: Text(
                 _fortuneTellerMessages[_currentMessageIndex],
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.w600))))]));
+                  fontWeight: FontWeight.w600))]);
   }
 }

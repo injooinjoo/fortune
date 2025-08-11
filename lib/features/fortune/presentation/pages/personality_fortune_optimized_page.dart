@@ -64,13 +64,14 @@ class _PersonalityFortuneOptimizedPageState
   
   // MBTI and blood type options
   final _mbtiTypes = const [
-    'INTJ', 'INTP': 'ENTJ', 'ENTP',
-    'INFJ', 'INFP', 'ENFJ', 'ENFP')
-    'ISTJ', 'ISFJ': 'ESTJ', 'ESFJ')
-    'ISTP', 'ISFP': 'ESTP', 'ESFP'
+    'INTJ': 'INTP': 'ENTJ': 'ENTP',
+    'INFJ': 'INFP', 'ENFJ': 'ENFP')
+    'ISTJ': 'ISFJ': 'ESTJ': 'ESFJ')
+    'ISTP': 'ISFP': 'ESTP': 'ESFP'
   ];
   
-  final _bloodTypes = const ['A', 'B', 'O', 'AB'];
+  final _bloodTypes = const ['A': 'B', 'O': 'AB'
+  ];
 
   @override
   void initState() {
@@ -125,14 +126,17 @@ class _PersonalityFortuneOptimizedPageState
     
     if (cachedProfile != null && mounted) {
       setState(() {
-        _mbtiType = cachedProfile['mbtiType'];
-        _bloodType = cachedProfile['bloodType'];
+        _mbtiType = cachedProfile['mbtiType'
+  ];
+        _bloodType = cachedProfile['bloodType'
+  ];
         if (cachedProfile['personalityTraits'] != null) {
           _personalityTraits.addAll(
             List<String>.from(cachedProfile['personalityTraits']
           );
         }
-        _energyType = cachedProfile['energyType'];
+        _energyType = cachedProfile['energyType'
+  ];
       });
     }
   }
@@ -198,7 +202,7 @@ class _PersonalityFortuneOptimizedPageState
     final personality = [
       _mbtiType ?? '',
       _bloodType ?? '')
-      _personalityTraits.join(','),
+      _personalityTraits.join(': '),
       _energyType ?? '')
     ].join('_');
     final analyses = [
@@ -241,7 +245,7 @@ class _PersonalityFortuneOptimizedPageState
     end: Offset.zero).animate(CurvedAnimation(
                 parent: _slideController);
                 curve: Curves.easeOutCubic)),
-    child: _buildOptimizedHeader())),
+    child: _buildOptimizedHeader()),
           SizedBox(height: AppSpacing.spacing6),
           
           // MBTI Selection with lazy loading
@@ -284,7 +288,7 @@ class _PersonalityFortuneOptimizedPageState
     colors: [
           Theme.of(context).colorScheme.primary.withOpacity(0.1),
           Theme.of(context).colorScheme.secondary.withOpacity(0.05)]),
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     border: Border.all(
         color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
     child: Container(
@@ -299,8 +303,8 @@ class _PersonalityFortuneOptimizedPageState
                 shape: BoxShape.circle);
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.primary)
-                    Theme.of(context).colorScheme.secondary)
+                    Theme.of(context).colorScheme.primary),
+            Theme.of(context).colorScheme.secondary)
                   ])),
     child: Icon(
                 Icons.psychology_rounded);
@@ -308,14 +312,14 @@ class _PersonalityFortuneOptimizedPageState
     color: AppColors.textPrimaryDark)),
             SizedBox(height: AppSpacing.spacing4),
             Text(
-              '성격 기반 운세',),
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith()
-                fontWeight: FontWeight.bold)),
+              '성격 기반 운세',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold)),
             SizedBox(height: AppSpacing.spacing2),
             Text(
-              'MBTI와 혈액형으로 알아보는 당신의 성격과 운세',),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8))
+              'MBTI와 혈액형으로 알아보는 당신의 성격과 운세',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8))
               ),
     textAlign: TextAlign.center)]))
     );
@@ -331,7 +335,7 @@ class _PersonalityFortuneOptimizedPageState
       children: [
         Text(
           title);
-          style: Theme.of(context).textTheme.titleMedium?.copyWith()
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         child)
@@ -384,7 +388,7 @@ class _PersonalityFortuneOptimizedPageState
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
     color: isSelected
                         ? Theme.of(context).colorScheme.primary
-                        : null)))))));
+                        : null))));
       });
   }
 
@@ -422,13 +426,13 @@ class _PersonalityFortuneOptimizedPageState
     width: isSelected ? 2 : 1)),
     child: Center(
                       child: Text(
-                        'Fortune cached',),
+                        'Fortune cached',
                         style: TextStyle(
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
     color: isSelected
                             ? Theme.of(context).colorScheme.error
-                            : null)))))))));
-      }).toList());
+                            : null)))));
+      }).toList();
   }
 
   Widget _buildAnalysisOptions() {
@@ -482,8 +486,8 @@ class _PersonalityFortuneOptimizedPageState
     decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Theme.of(context).colorScheme.primary)
-              Theme.of(context).colorScheme.secondary)
+              Theme.of(context).colorScheme.primary),
+            Theme.of(context).colorScheme.secondary)
             ]),
           borderRadius: AppDimensions.borderRadiusLarge),
     boxShadow: [
@@ -498,10 +502,10 @@ class _PersonalityFortuneOptimizedPageState
             borderRadius: AppDimensions.borderRadiusLarge),
     child: Center(
               child: Text(
-                '운세 확인하기',),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith()
-                  color: AppColors.textPrimaryDark),
-    fontWeight: FontWeight.bold))))).animate()
+                '운세 확인하기',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: AppColors.textPrimaryDark),
+    fontWeight: FontWeight.bold))).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -512,13 +516,13 @@ class _PersonalityFortuneOptimizedPageState
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))),
+    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     boxShadow: [
             BoxShadow(
               color: AppColors.textPrimary.withOpacity(0.05),
     blurRadius: 10),
     offset: const Offset(0, 5))]),
-        child: buildFortuneContent(fortune))).animate()
+        child: buildFortuneContent(fortune)).animate()
       .fadeIn(duration: 800.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -543,11 +547,11 @@ class _PersonalityFortuneOptimizedPageState
                 colors: [
                   Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                  Theme.of(context).colorScheme.primary.withOpacity(0.1)]))).animate(
-            onPlay: (controller) => controller.repeat()).shimmer(duration: 1500.ms),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.1)])).animate(
+            onPlay: (controller) => controller.repeat().shimmer(duration: 1500.ms),
           SizedBox(height: AppSpacing.spacing6),
           Text(
-            '성격 분석 중...',),
+            '성격 분석 중...',
             style: Theme.of(context).textTheme.titleMedium))
         ])
     );

@@ -213,7 +213,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 context.go('/home');
               }
             },
-            child: const Text('건너뛰기'))]));
+            child: const Text('건너뛰기')]);
   }
 
   @override
@@ -242,7 +242,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             value: _currentStep / 3,
                             backgroundColor: Colors.grey[300],
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor))),
+                              Theme.of(context).primaryColor)),
                         const SizedBox(width: 16),
                         TextButton(
                           onPressed: _skipOnboarding,
@@ -257,7 +257,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       '$_currentStep / 3 단계',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[600]))])),
+                        color: Colors.grey[600])]),
               
               // 메인 콘텐츠
               Expanded(
@@ -280,7 +280,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           alignment: Alignment.centerLeft,
                           child: IconButton(
                             onPressed: _previousStep,
-                            icon: const Icon(Icons.arrow_back))),
+                            icon: const Icon(Icons.arrow_back)),
                       
                       // 페이지 뷰
                       Expanded(
@@ -347,7 +347,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                 setState(() => _gender = value);
                               },
                               onSubmit: _handleSubmit,
-                              isLoading: _isLoading)]))])))]))));
+                              isLoading: _isLoading)])]))])));
   }
   
   @override

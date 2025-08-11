@@ -299,12 +299,12 @@ class _UserInfoCardState extends State<UserInfoCard> {
                     Text(
                       item.label,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
                     SizedBox(height: AppSpacing.xxxSmall),
                     Text(
                       item.value,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600))]))]))));
+                        fontWeight: FontWeight.w600)])])));
   }
   
   String _calculateAge(String? birthDate) {

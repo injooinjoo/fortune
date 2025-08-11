@@ -180,7 +180,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                   curve: Interval(
                     0.0,
                     0.6,
-                    curve: Curves.easeOut))),
+                    curve: Curves.easeOut)),
                 child: Transform.translate(
                   offset: Offset(
                     math.cos(particle.angle) * particle.distance * _particleController.value,
@@ -198,7 +198,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                           spreadRadius: 1)
                       ]))).animate(onPlay: (controller) => controller.repeat())
                   .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withOpacity(0.3))
-                  .fadeOut(delay: particle.delay, duration: 400.ms)))),
+                  .fadeOut(delay: particle.delay, duration: 400.ms)),
             
             // Main soul animation
             Positioned(
@@ -238,7 +238,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                         return Transform.translate(
                           offset: Offset(0, math.sin(value * math.pi * 2) * 5),
                           child: child);
-                      }))))]
+                      })))]
         );
       });
   }

@@ -118,7 +118,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
             onPressed: () {
               if (_person1Controller.text.isEmpty || _person2Controller.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('두 사람의 이름을 모두 입력해주세요')));
+                  const SnackBar(content: Text('두 사람의 이름을 모두 입력해주세요'));
                 return;
               }
               
@@ -138,13 +138,13 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
     backgroundColor: theme.colorScheme.primary),
     child: Text(
               '궁합 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold)))));
+                fontWeight: FontWeight.bold)));
   }
 
   Widget _buildPersonSection(
@@ -175,7 +175,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
             hintText: '이름을 입력하세요',
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))),
+              borderRadius: BorderRadius.circular(12),
         ),
         const SizedBox(height: 16),
         
@@ -186,7 +186,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
             labelText: '별자리',
             prefixIcon: const Icon(Icons.stars),
     border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))),
+              borderRadius: BorderRadius.circular(12),
     items: _zodiacSigns.map((sign) {
             return DropdownMenuItem(
               value: sign,
@@ -273,7 +273,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                   _getScoreColor(overallScore).withOpacity(0.6)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
     child: Column(
               children: [
                 Row(
@@ -296,20 +296,20 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                 Text(
                   '종합 궁합 점수',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9))),
+                    color: Colors.white.withOpacity(0.9)),
                 const SizedBox(height: 8),
                 Text(
                   'Fortune cached',
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
-    fontSize: 64 + _getFontSizeOffset(fontSize))),
+    fontSize: 64 + _getFontSizeOffset(fontSize)),
                 const SizedBox(height: 8),
                 Text(
                   _getScoreDescription(overallScore),
     style: theme.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w600))]))),
+                    fontWeight: FontWeight.w600)]),
         const SizedBox(height: 24),
         
         // Category Scores
@@ -330,7 +330,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                 const SizedBox(height: 12),
                 _buildScoreItem(context, '라이프스타일', lifestyleScore, Icons.home),
                 const SizedBox(height: 12),
-                _buildScoreItem(context, '미래 전망', futureScore, Icons.trending_up)]))),
+                _buildScoreItem(context, '미래 전망', futureScore, Icons.trending_up)])),
         const SizedBox(height: 20),
         
         // Main Fortune Content
@@ -354,7 +354,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                     widget.result.mainFortune!,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       height: 1.6,
-                      fontSize: 16 + _getFontSizeOffset(fontSize)))]))),
+                      fontSize: 16 + _getFontSizeOffset(fontSize)]),
           const SizedBox(height: 20)],
         
         // Insights
@@ -388,7 +388,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                           child: Text(
                             insight.toString(),
     style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: 14 + _getFontSizeOffset(fontSize))))])))
+                              fontSize: 14 + _getFontSizeOffset(fontSize))]),
           const SizedBox(height: 20)],
         
         // Recommendations
@@ -416,12 +416,12 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                         color: Colors.orange.withOpacity(0.1),
     borderRadius: BorderRadius.circular(8),
     border: Border.all(
-                          color: Colors.orange.withOpacity(0.3))),
+                          color: Colors.orange.withOpacity(0.3)),
     child: Text(
                         recommendation.toString(),
     style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 14 + _getFontSizeOffset(fontSize))))))
-                ]))),
+                          fontSize: 14 + _getFontSizeOffset(fontSize)))
+                ])),
           const SizedBox(height: 20)],
         
         // Lucky Activities
@@ -451,12 +451,12 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                           colors: [
                             theme.colorScheme.primary.withOpacity(0.8),
                             theme.colorScheme.secondary.withOpacity(0.8)]),
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
     child: Text(
                         activity.toString(),
     style: const TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.w600))).toList())]))),
+                          fontWeight: FontWeight.w600)).toList()])),
           const SizedBox(height: 20)],
         
         // Share Button
@@ -468,7 +468,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
     style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]
+                borderRadius: BorderRadius.circular(25),)]
     );
   }
   

@@ -58,7 +58,9 @@
       "Bash(curl:*)",
       "Bash(unzip:*)",
       "Bash(supabase functions deploy:*)",
-      "Bash(supabase link:*)"
+      "Bash(supabase link:*)",
+      "Bash(supabase db:*)",
+      "Bash(do echo \"- $f.dart\")"
     ],
     "deny": []
   },

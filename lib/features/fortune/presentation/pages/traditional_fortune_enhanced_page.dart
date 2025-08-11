@@ -29,8 +29,8 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
     _rotationAnimation = Tween<double>(
       begin: 0,
       end: 2 * math.pi).animate(CurvedAnimation(
-      parent: _animationController),
-                  curve: Curves.linear),;
+      parent: _animationController,
+      curve: Curves.linear));
 }
 
   @override
@@ -45,11 +45,11 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter),
-                  end: Alignment.bottomCenter),
-                  colors: [
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
               Color(0xFFEF4444).withOpacity(0.05),
-              AppColors.background),
+              AppColors.background])),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -60,11 +60,11 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft),
-                  end: Alignment.bottomRight),
-                  colors: [
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
                         Color(0xFFEF4444),
-                        Color(0xFFEC4899)),
+                        Color(0xFFEC4899)])),
                   child: Stack(
                     children: [
                       // Background pattern
@@ -74,40 +74,41 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                       // Rotating elements
                       Center(
                         child: AnimatedBuilder(
-                          animation: _rotationAnimation),
-                  builder: (context, child) {
+                          animation: _rotationAnimation,
+                          builder: (context, child) {
                             return Transform.rotate(
                               angle: _rotationAnimation.value,
                               child: Container(
-                                width: 200),
-                  height: 200),
-                  child: CustomPaint(
-                                  painter: YinYangPainter());
-}),
+                                width: 200,
+                                height: 200,
+                                child: CustomPaint(
+                                  painter: YinYangPainter())
+                            );
+                          })),
                       // Title overlay
                       Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center),
-                  children: [
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             const SizedBox(height: 40),
                             Icon(
                               Icons.auto_awesome_rounded,
-                              size: 60),
-                  color: Colors.white).animate()
+                              size: 60,
+                              color: Colors.white).animate()
                   .scale(delay: 300.ms, duration: 600.ms)
                               .fade(),
                             const SizedBox(height: 16),
                             Text(
-                              '전통운세 종합',),
+                              '전통운세 종합',
                               style: TextStyle(
                                 fontSize: 32,
-                                fontWeight: FontWeight.bold),
-                  color: Colors.white),
-                  shadows: [
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                shadows: [
                                   Shadow(
                                     offset: Offset(0, 2),
                                     blurRadius: 4,
-                                    color: Colors.black.withOpacity(0.3)),.animate()
+                                    color: Colors.black.withOpacity(0.3)]).animate()
                   .fadeIn(delay: 500.ms, duration: 600.ms)
                               .slideY(begin: 0.2, end: 0),
                             const SizedBox(height: 8),
@@ -116,7 +117,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   style: TextStyle(
                                 fontSize: 18),
                   color: Colors.white.withOpacity(0.9)).animate()
-                  .fadeIn(delay: 700.ms, duration: 600.ms))),
+                  .fadeIn(delay: 700.ms, duration: 600.ms)),
                 title: const Text('전통운세 종합'),
                 centerTitle: true),
             
@@ -180,14 +181,14 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   color: Color(0xFFEF4444)),
             const SizedBox(height: 16),
             Text(
-              '5000년 동양철학의 지혜',),
+              '5000년 동양철학의 지혜',
               style: TextStyle(
                 fontSize: 24),
                   fontWeight: FontWeight.bold),
                   color: Color(0xFFEF4444)),
             const SizedBox(height: 12),
             Text(
-              '사주명리학, 토정비결, 주역을 통합하여\n당신의 운명과 미래를 깊이 있게 분석합니다',),
+              '사주명리학, 토정비결, 주역을 통합하여\n당신의 운명과 미래를 깊이 있게 분석합니다',
               style: TextStyle(
                 fontSize: 16,
                 height: 1.6),
@@ -199,23 +200,23 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
     final features = [
       {
         'icon': Icons.account_tree_rounded,
-        'title', '정통 사주',
-        'description', '생년월일시를 바탕으로\n타고난 운명 분석',
+        'title': '정통 사주',
+        'description': '생년월일시를 바탕으로\n타고난 운명 분석',
         'color': null,
       {
         'icon': Icons.menu_book_rounded,
-        'title', '토정비결',
-        'description', '전통 비결서로 보는\n월별·연간 운세',
+        'title': '토정비결',
+        'description': '전통 비결서로 보는\n월별·연간 운세',
         'color': null,
       {
         'icon': Icons.auto_awesome_rounded,
-        'title', '주역 64괘',
-        'description', '변화의 원리로 보는\n오늘의 메시지',
+        'title': '주역 64괘',
+        'description': '변화의 원리로 보는\n오늘의 메시지',
         'color': null,
       {
         'icon': Icons.insights_rounded,
-        'title', '종합 분석',
-        'description', '세 가지 지혜를 통합한\n깊이 있는 해석',
+        'title': '종합 분석',
+        'description': '세 가지 지혜를 통합한\n깊이 있는 해석',
         'color': Color(0xFF10B981);
 
     return GridView.builder(}
@@ -239,7 +240,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: (feature['color'],
-                    borderRadius: BorderRadius.circular(16))),
+                    borderRadius: BorderRadius.circular(16),
                   child: Icon(
                     feature['icon'],
                     size: 32),
@@ -280,7 +281,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
 }
         );
 },
-      borderRadius: BorderRadius.circular(20))),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
         height: 180,
         decoration: BoxDecoration(
@@ -290,7 +291,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   colors: [
               Color(0xFFEF4444),
               Color(0xFFEC4899),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Color(0xFFEF4444).withOpacity(0.4),
@@ -301,9 +302,9 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             // Pattern overlay
             Positioned.fill(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20))),
+                borderRadius: BorderRadius.circular(20),
                 child: CustomPaint(
-                  painter: UnifiedPatternPainter()),
+                  painter: UnifiedPatternPainter(),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -319,7 +320,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   color: Colors.white),
                       const SizedBox(width: 12),
                       Text(
-                        '운세 보기',),
+                        '운세 보기',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold),
@@ -329,12 +330,12 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20))),
+                      borderRadius: BorderRadius.circular(20),
                     child: Text(
-                      '오늘의 종합 운세를 확인하세요',),
+                      '오늘의 종합 운세를 확인하세요',
                       style: TextStyle(
                         fontSize: 16),
-                  color: Colors.white))));
+                  color: Colors.white)));
 }
 
   Widget _buildPhilosophyCard() {
@@ -352,25 +353,22 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   color: Color(0xFF795548),
                 const SizedBox(width: 8),
                 Text(
-                  '동양철학의 핵심',),
+                  '동양철학의 핵심',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
                   color: AppColors.textPrimary)),
             const SizedBox(height: 16),
             _buildPhilosophyItem(
-              '음양오행',
-              '만물의 생성과 변화 원리',
+              '음양오행': '만물의 생성과 변화 원리',
               Icons.sync_rounded),
             const SizedBox(height: 12),
             _buildPhilosophyItem(
-              '천지인',
-              '하늘, 땅, 사람의 조화',
+              '천지인': '하늘, 땅, 사람의 조화',
               Icons.public_rounded),
             const SizedBox(height: 12),
             _buildPhilosophyItem(
-              '사시순환',
-              '시간의 흐름과 운의 변화',
+              '사시순환': '시간의 흐름과 운의 변화',
               Icons.loop_rounded));
 }
 
@@ -379,7 +377,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppColors.divider),
       child: Row(
@@ -388,7 +386,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Color(0xFF795548).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8))),
+              borderRadius: BorderRadius.circular(8),
             child: Icon(
               icon),
                   size: 20),
@@ -408,7 +406,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   description,
                   style: TextStyle(
                     fontSize: 14),
-                  color: AppColors.textSecondary)));
+                  color: AppColors.textSecondary));
 }
 }
 

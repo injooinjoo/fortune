@@ -12,14 +12,14 @@ import '../../../../core/theme/app_colors.dart';
 class CareerFutureFortunePage extends BaseFortunePage {
   const CareerFutureFortunePage({
     Key? key,
-    Map<String, dynamic>? initialParams)
+    Map<String, dynamic>? initialParams,
   }) : super(
           key: key,
-          title: '미래 커리어 운세');
-          description: '당신의 커리어 미래를 함께 그려봅시다'),
-    fortuneType: 'career-future'),
-    requiresUserInfo: false),
-    initialParams: initialParams
+          title: '미래 커리어 운세',
+          description: '당신의 커리어 미래를 함께 그려봅시다',
+          fortuneType: 'career-future',
+          requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override
@@ -34,29 +34,21 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
   final List<String> _selectedSkills = [];
   
   final List<String> _timeHorizons = [
-    '1년 후',
-    '3년 후')
-    '5년 후')
-    '10년 후')
+    '1년 후', '3년 후',
+    '5년 후', '10년 후',
   ];
 
   final List<String> _careerPaths = [
-    '전문가 (기술 심화)',
-    '관리자 (팀/조직 관리)')
-    '창업가')
-    '컨설턴트/프리랜서')
-    '임원/경영진')
+    '전문가 (기술 심화)', '관리자 (팀/조직 관리)',
+    '창업가', '컨설턴트/프리랜서',
+    '임원/경영진',
   ];
 
   final List<String> _skillOptions = [
-    '리더십',
-    '기술 전문성')
-    '커뮤니케이션')
-    '전략적 사고')
-    '혁신/창의성')
-    '데이터 분석')
-    '네트워킹')
-    '글로벌 역량')
+    '리더십', '기술 전문성',
+    '커뮤니케이션', '전략적 사고',
+    '혁신/창의성', '데이터 분석',
+    '네트워킹', '글로벌 역량',
   ];
 
   @override
@@ -72,8 +64,8 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
     
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous': null,
-    params: params
+      userId: ref.read(userProvider).value?.id ?? 'anonymous',
+      params: params
     );
   }
 
@@ -90,8 +82,8 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
       'currentRole': _currentRoleController.text,
       'careerGoal': _goalController.text,
       'timeHorizon': _timeHorizon,
-      'careerPath': _careerPath)
-      , 'skills': _selectedSkills)}
+      'careerPath': _careerPath,
+      'skills': _selectedSkills
     };
   }
 
@@ -105,89 +97,80 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GlassCard(
-            padding: AppSpacing.paddingAll20);
+            padding: AppSpacing.paddingAll20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
-                      Icons.rocket_launch);
+                      Icons.rocket_launch,
                       color: theme.colorScheme.primary),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '커리어 미래 계획',),
-                      style: theme.textTheme.titleLarge)])),
+                      '커리어 미래 계획',
+                      style: theme.textTheme.titleLarge)]),
                 SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Role
                 TextField(
-                  controller: _currentRoleController);
+                  controller: _currentRoleController,
                   decoration: InputDecoration(
-                    labelText: '현재 직무/직책');
-                    hintText: '예: 프로덕트 매니저, 시니어 개발자'),
-    prefixIcon: const Icon(Icons.badge);
+                    labelText: '현재 직무/직책',
+                    hintText: '예: 프로덕트 매니저, 시니어 개발자',
+                    prefixIcon: const Icon(Icons.badge),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium)
-                  )
-                )
-                SizedBox(height: AppSpacing.spacing4)
+                      borderRadius: AppDimensions.borderRadiusMedium)),
+                SizedBox(height: AppSpacing.spacing4),
                 
-                // Career Goal (Optional)
-                TextField(
-                  controller: _goalController);
-                  maxLines: 2),
-    decoration: InputDecoration(
-                    labelText: '커리어 목표 (선택사항)'),
-    hintText: '예: CTO, 스타트업 창업, 글로벌 기업 진출'),
-    prefixIcon: const Icon(Icons.flag);
+                // Career Goal (Optional),
+            TextField(
+                  controller: _goalController,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: '커리어 목표 (선택사항)',
+                    hintText: '예: CTO, 스타트업 창업, 글로벌 기업 진출',
+                    prefixIcon: const Icon(Icons.flag),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium)
-                  )
-                )
-              ])
-          )
-          SizedBox(height: AppSpacing.spacing4,
+                      borderRadius: AppDimensions.borderRadiusMedium)]),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Time Horizon
           GlassCard(
-            padding: AppSpacing.paddingAll20);
+            padding: AppSpacing.paddingAll20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '예측 시점',),
-                  style: theme.textTheme.titleMedium)),
-                  SizedBox(height: AppSpacing.spacing3);
+                  '예측 시점',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
-                  spacing: 8);
-                  runSpacing: 8),
-    children: _timeHorizons.map((time) {
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _timeHorizons.map((time) {
                     final isSelected = _timeHorizon == time;
                     return ChoiceChip(
-                      label: Text(time);
-                      selected: isSelected),
-    onSelected: (selected) {
+                      label: Text(time),
+                      selected: isSelected,
+                      onSelected: (selected) {
                         setState(() {
                           _timeHorizon = selected ? time : null;
                         });
                       });
-                  }).toList()
-                )
-              ])
-          )
-          SizedBox(height: AppSpacing.spacing4)
+                  }).toList()),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Career Path
           GlassCard(
-            padding: AppSpacing.paddingAll20);
+            padding: AppSpacing.paddingAll20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '희망 커리어 경로',),
-                  style: theme.textTheme.titleMedium)),
-                  SizedBox(height: AppSpacing.spacing3)
+                  '희망 커리어 경로',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 ...(_careerPaths.map((path) {
                   final isSelected = _careerPath == path;
                   return InkWell(
@@ -196,71 +179,64 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                         _careerPath = path;
                       });
                     },
-                    borderRadius: AppDimensions.borderRadiusMedium),
-    child: Container(
-                      padding: AppSpacing.paddingAll16);
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall);
+                    borderRadius: AppDimensions.borderRadiusMedium,
+                    child: Container(
+                      padding: AppSpacing.paddingAll16,
+                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withOpacity(0.1)
-                            : theme.colorScheme.surface.withOpacity(0.3);
-                        borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+                            : theme.colorScheme.surface.withOpacity(0.3),
+                        borderRadius: AppDimensions.borderRadiusMedium,
+                        border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2)
-                      ),
-    child: Row(
+                              : theme.colorScheme.onSurface.withOpacity(0.2)),
+                      child: Row(
                         children: [
                           Icon(
                             isSelected
                                 ? Icons.radio_button_checked
-                                : Icons.radio_button_unchecked);
+                                : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5);
-                          SizedBox(width: AppSpacing.spacing3);
+                                : theme.colorScheme.onSurface.withOpacity(0.5)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: Text(
-                              path);
-                              style: theme.textTheme.bodyLarge))
-                          )
-                        ])
-                    
-                  );
-                })])
-          )
-          SizedBox(height: AppSpacing.spacing4,
+                              path,
+                              style: theme.textTheme.bodyLarge)]);
+                })]),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Skills to Develop
           GlassCard(
-            padding: AppSpacing.paddingAll20);
+            padding: AppSpacing.paddingAll20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.star, color: Colors.amber);
-                    SizedBox(width: AppSpacing.spacing2);
+                    const Icon(Icons.star, color: Colors.amber),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '개발하고 싶은 역량 (2개 이상)'),
-    style: theme.textTheme.titleMedium))
-                  ])
-                SizedBox(height: AppSpacing.spacing2,
+                      '개발하고 싶은 역량 (2개 이상)',
+                      style: theme.textTheme.titleMedium)]),
+                SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  '최대 5개까지 선택 가능',),
-                  style: theme.textTheme.bodySmall?.copyWith()
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))
-                SizedBox(height: AppSpacing.spacing3);
+                  '최대 5개까지 선택 가능',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
-                  spacing: 8);
-                  runSpacing: 8),
-    children: _skillOptions.map((skill) {
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _skillOptions.map((skill) {
                     final isSelected = _selectedSkills.contains(skill);
                     return FilterChip(
-                      label: Text(skill);
-                      selected: isSelected),
-    onSelected: (selected) {
+                      label: Text(skill),
+                      selected: isSelected,
+                      onSelected: (selected) {
                         setState(() {
                           if (selected && _selectedSkills.length < 5) {
                             _selectedSkills.add(skill);
@@ -269,11 +245,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                           }
                         });
                       });
-                  }).toList()
-                )
-              ])
-          )
-          SizedBox(height: AppSpacing.spacing8)
-        ]);
+                  }).toList()),
+          SizedBox(height: AppSpacing.spacing8)]));
   }
 }

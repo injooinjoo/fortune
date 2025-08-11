@@ -41,8 +41,8 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(dreamChatProvider.notifier).startChat();
       
-      // Check if we should auto-generate (coming from ad screen)
-      final autoGenerate = widget.initialParams?['autoGenerate'] as bool? ?? false;
+      // Check if we should auto-generate (coming from ad screen),
+            final autoGenerate = widget.initialParams?['autoGenerate'] as bool? ?? false;
       if (autoGenerate && !_hasConsumedSoul) {
         _consumeSoulIfNeeded();
       }
@@ -177,7 +177,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
           ),
           
           // Loading overlay
-          if (chatState.isAnalyzing)
+          if (chatState.isAnalyzing),
             Container(
               color: Colors.black.withOpacity(0.5),
               child: const Center(

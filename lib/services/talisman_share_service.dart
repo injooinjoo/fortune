@@ -35,7 +35,7 @@ class TalismanShareService {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white.withOpacity(0.8))),
+            color: Colors.white.withOpacity(0.8)),
         textDirection: TextDirection.ltr);
       textPainter.layout();
       
@@ -52,7 +52,7 @@ class TalismanShareService {
           text: DateTime.now().toString().split(' '),
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.6))),
+            color: Colors.white.withOpacity(0.6)),
         textDirection: TextDirection.ltr);
       datePainter.layout();
       

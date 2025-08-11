@@ -18,11 +18,14 @@ class PersonalityFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF667EEA), Color(0xFF764BA2)]),
+        colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+      ),
       inputBuilder: (context, onSubmit) => _PersonalityInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _PersonalityFortuneResult(
         result: result,
-        onShare: onShare));
+        onShare: onShare,
+      ),
+    );
   }
 }
 
@@ -44,10 +47,11 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
   String? _selectedEnergyType;
   
   final List<String> _mbtiTypes = [
-    'INTJ', 'INTP': 'ENTJ', 'ENTP',
+    'INTJ', 'INTP', 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-    'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+    'ISTP', 'ISFP', 'ESTP', 'ESFP',
+  ];
   
   final List<String> _bloodTypes = ['A', 'B', 'O', 'AB'];
   
@@ -55,13 +59,15 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
     '외향적', '내향적', '감성적', '이성적',
     '계획적', '즉흥적', '리더형', '팔로워형',
     '창의적', '현실적', '낙천적', '신중한',
-    '독립적', '협동적', '완벽주의', '유연한'];
+    '독립적', '협동적', '완벽주의', '유연한',
+  ];
   
   final List<String> _energyTypes = [
     '아침형 인간',
     '저녁형 인간',
     '중간형',
-    '불규칙형'];
+    '불규칙형',
+  ];
 
   @override
   void dispose() {
@@ -79,8 +85,11 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF667EEA))),
-          child: child!);
+              primary: const Color(0xFF667EEA),
+            ),
+          ),
+          child: child!,
+        );
       }
     );
     if (picked != null && picked != _birthDate) {
@@ -99,17 +108,20 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '당신의 성격을 분석하여\n숨겨진 잠재력과 운명을 알려드립니다.',),
-            style: theme.textTheme.bodyLarge?.copyWith()
+            '당신의 성격을 분석하여\n숨겨진 잠재력과 운명을 알려드립니다.',
+            style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withOpacity(0.8),
-              height: 1.5),
+              height: 1.5,
+            ),
+          ),
           const SizedBox(height: 24),
-          
           // Name Input
           Text(
-            '이름',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '이름',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController,
@@ -117,45 +129,58 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12))),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)))),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
-          
           // Birth Date Selection
           Text(
-            '생년월일',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '생년월일',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           InkWell(
             onTap: _selectDate,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12)),
+                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
                         ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                         : '생년월일을 선택하세요',
-                    style: theme.textTheme.bodyLarge?.copyWith()
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
+                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
-          
           // MBTI Selection
           Text(
-            'MBTI 유형',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            'MBTI 유형',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           Container(
             height: 120,
@@ -165,7 +190,8 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                 crossAxisCount: 4,
                 childAspectRatio: 2.5,
                 crossAxisSpacing: 8,
-                mainAxisSpacing: 8),
+                mainAxisSpacing: 8,
+              ),
               itemCount: _mbtiTypes.length,
               itemBuilder: (context, index) {
                 final mbti = _mbtiTypes[index];
@@ -184,8 +210,10 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                       border: Border.all(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.outline.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(8)),
+                            : theme.colorScheme.outline.withOpacity(0.3),
+                        ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     child: Center(
                       child: Text(
                         mbti,
@@ -194,15 +222,23 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                               ? theme.colorScheme.primary
                               : theme.colorScheme.onSurface,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 12)))));
-              })),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 20),
-          
           // Blood Type Selection
           Text(
-            '혈액형',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '혈액형',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           Row(
             children: _bloodTypes.map((type) {
@@ -219,15 +255,20 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                   },
                   selectedColor: theme.colorScheme.primary.withOpacity(0.2),
                   labelStyle: TextStyle(
-                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface)));
-            }).toList()),
+                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
           const SizedBox(height: 20),
-          
           // Personality Traits Selection
           Text(
-            '성격 특성 (최대 5개)',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '성격 특성 (최대 5개)',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -245,21 +286,26 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                       _selectedTraits.remove(trait);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('최대 5개까지 선택 가능합니다'));
+                        const SnackBar(content: Text('최대 5개까지 선택 가능합니다')),
+                      );
                     }
                   });
                 },
                 selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface));
-            }).toList()),
+                  color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface,
+                ),
+              );
+            }).toList(),
+          ),
           const SizedBox(height: 20),
-          
           // Energy Type Selection
           Text(
-            '생활 패턴',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '생활 패턴',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           Column(
             children: _energyTypes.map((type) {
@@ -274,10 +320,11 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                   });
                 },
                 activeColor: theme.colorScheme.primary,
-                contentPadding: EdgeInsets.zero);
-            }).toList()),
+                contentPadding: EdgeInsets.zero,
+              );
+            }).toList(),
+          ),
           const SizedBox(height: 32),
-          
           // Submit Button
           SizedBox(
             width: double.infinity,
@@ -285,12 +332,14 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
               onPressed: () {
                 if (_nameController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('이름을 입력해주세요'));
+                    const SnackBar(content: Text('이름을 입력해주세요')),
+                  );
                   return;
                 }
                 if (_birthDate == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('생년월일을 선택해주세요'));
+                    const SnackBar(content: Text('생년월일을 선택해주세요')),
+                  );
                   return;
                 }
                 
@@ -300,18 +349,27 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                   'mbti': _selectedMbti ?? 'INFP',
                   'bloodType': _selectedBloodType ?? 'O',
                   'traits': _selectedTraits.isEmpty ? ['낙천적'] : _selectedTraits,
-                  'energyType': _selectedEnergyType ?? '중간형'});
+                  'energyType': _selectedEnergyType ?? '중간형',
+                });
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-                backgroundColor: theme.colorScheme.primary),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: Text(
-                '성격 분석 시작하기',),
-                style: theme.textTheme.titleMedium?.copyWith()
+                '성격 분석 시작하기',
+                style: theme.textTheme.titleMedium?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold))))]));
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -353,9 +411,8 @@ class _PersonalityFortuneResult extends ConsumerWidget {
       children: [
         // Overall Personality Score Card
         GlassContainer(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
+          padding: const EdgeInsets.all(20),
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -364,30 +421,38 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFF667EEA), Color(0xFF764BA2)]),
-                        borderRadius: BorderRadius.circular(12)),
+                          colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Icon(
                         Icons.psychology,
                         color: Colors.white,
-                        size: 28)),
+                        size: 28,
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '성격 분석 점수',),
-                            style: theme.textTheme.titleMedium?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '성격 분석 점수',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               Text(
-                                '$personalityScore점',),
-                                style: theme.textTheme.headlineSmall?.copyWith()
+                                '$personalityScore점',
+                                style: theme.textTheme.headlineSmall?.copyWith(
                                   color: _getScoreColor(personalityScore),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 24 + fontSize)),
+                                  fontSize: 24 + fontSize,
+                                ),
+                              ),
                               const SizedBox(width: 8),
                               if (personalityType.isNotEmpty)
                                 Container(
@@ -396,28 +461,45 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                     vertical: 4),
                                   decoration: BoxDecoration(
                                     color: theme.colorScheme.primary.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12)),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                   child: Text(
                                     personalityType,
                                     style: TextStyle(
                                       color: theme.colorScheme.primary,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12 + fontSize)))])]))]),
+                                      fontSize: 12 + fontSize,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 if (result.summary != null) ...[
                   const SizedBox(height: 16),
                   Text(
                     result.summary!,
-                    style: theme.textTheme.bodyLarge?.copyWith()
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       height: 1.6,
-                      fontSize: 14 + fontSize))]]))),
+                      fontSize: 14 + fontSize,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
-        
         // Personality Traits Radar Chart
         if (personalityTraits.isNotEmpty) ...[
           GlassContainer(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
+            padding: const EdgeInsets.all(20),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -428,20 +510,30 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '성격 특성 분석',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '성격 특성 분석',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 250,
-                    child: _buildRadarChart(personalityTraits, theme))]))),
-          const SizedBox(height: 20)],
+                    child: _buildRadarChart(personalityTraits, theme),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Strengths and Weaknesses
         Row(
           children: [
-            if (strengths.isNotEmpty),
-                  Expanded(
+            if (strengths.isNotEmpty)
+              Expanded(
                 child: GlassContainer(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -456,9 +548,13 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                               size: 20),
                             const SizedBox(width: 8),
                             Text(
-                              '강점',),
-                              style: theme.textTheme.titleSmall?.copyWith()
-                                fontWeight: FontWeight.bold))]),
+                              '강점',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 12),
                         ...strengths.map((strength) => Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -476,8 +572,19 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                               Expanded(
                                 child: Text(
                                   strength,
-                                  style: theme.textTheme.bodyMedium?.copyWith()
-                                    fontSize: 12 + fontSize)))])).toList()])))),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontSize: 12 + fontSize,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )).toList(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             if (strengths.isNotEmpty && weaknesses.isNotEmpty)
               const SizedBox(width: 12),
             if (weaknesses.isNotEmpty)
@@ -496,9 +603,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                               size: 20),
                             const SizedBox(width: 8),
                             Text(
-                              '약점',),
-                              style: theme.textTheme.titleSmall?.copyWith()
-                                fontWeight: FontWeight.bold))]),
+                              '약점',
+                              style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold))]),
                         const SizedBox(height: 12),
                         ...weaknesses.map((weakness) => Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -516,10 +623,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                               Expanded(
                                 child: Text(
                                   weakness,
-                                  style: theme.textTheme.bodyMedium?.copyWith()
-                                    fontSize: 12 + fontSize)))])).toList()]))))]),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 12 + fontSize)]).toList()])))]),
         const SizedBox(height: 20),
-        
         // Compatible Personality Types
         if (compatibleTypes.isNotEmpty) ...[
           GlassContainer(
@@ -536,9 +642,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '잘 맞는 성격 유형',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '잘 맞는 성격 유형',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -549,15 +655,15 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         vertical: 8),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20))),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity(0.3))),
+                          color: theme.colorScheme.primary.withOpacity(0.3)),
                       child: Text(
                         type['type'] ?? '',
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w500,
-                          fontSize: 12 + fontSize))).toList())]))),
+                          fontSize: 12 + fontSize)).toList()])),
           const SizedBox(height: 20)],
         
         // Career Suggestions
@@ -576,9 +682,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '추천 직업',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '추천 직업',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...careerSuggestions.map((career) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -586,9 +692,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(8))),
+                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.2))),
+                          color: theme.colorScheme.outline.withOpacity(0.2)),
                       child: Row(
                         children: [
                           Icon(
@@ -602,15 +708,15 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                               children: [
                                 Text(
                                   career['title'] ?? '',
-                                  style: theme.textTheme.bodyLarge?.copyWith()
-                                    fontWeight: FontWeight.w600,
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
                                     fontSize: 14 + fontSize)),
-                                if (career['description'] != null)
-                                  Text(
+                                if (career['description'] != null),
+            Text(
                                     career['description'],
-                                    style: theme.textTheme.bodySmall?.copyWith()
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                      fontSize: 11 + fontSize))]))]))).toList()]))),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      fontSize: 11 + fontSize)])])).toList()])),
           const SizedBox(height: 20)],
         
         // Recommendations
@@ -629,9 +735,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '성격 개발 조언',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '성격 개발 조언',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...(result.recommendations ?? []).map((tip) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -649,9 +755,9 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             tip,
-                            style: theme.textTheme.bodyLarge?.copyWith()
-                              height: 1.5,
-                              fontSize: 14 + fontSize)))])).toList()]))),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.5,
+                              fontSize: 14 + fontSize)]).toList()])),
           const SizedBox(height: 20)],
         
         // Share Button
@@ -663,7 +769,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]
+                borderRadius: BorderRadius.circular(25),)]
     );
   }
   
@@ -688,7 +794,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
         fillColor: theme.colorScheme.primary.withOpacity(0.3),
         borderColor: theme.colorScheme.primary,
         borderWidth: 2,
-        dataEntries: values.map((v) => RadarEntry(value: v).toList()));
+        dataEntries: values.map((v) => RadarEntry(value: v).toList());
     
     return RadarChart(
       RadarChartData(
@@ -715,7 +821,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
           fontSize: 12),
         ticksTextStyle: TextStyle(
           color: theme.colorScheme.onSurface.withOpacity(0.5),
-          fontSize: 10)));
+          fontSize: 10));
   }
   
   Color _getScoreColor(int score) {

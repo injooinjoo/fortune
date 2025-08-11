@@ -43,7 +43,7 @@ class BirthDatePreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
-        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.2))),
+        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.2)),
       child: Column(
         children: [
           Text(

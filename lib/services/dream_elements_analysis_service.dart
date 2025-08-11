@@ -3,7 +3,7 @@ import 'dart:math' as math;
 class DreamElementsAnalysisService {
   // 꿈 요소 카테고리
   static const List<String> elementCategories = [
-    '동물': '사람': '장소', '행동', '사물', '자연', '색상', '감정'
+    '동물', '사람', '장소', '행동', '사물', '자연', '색상', '감정'
   ];
 
   // 꿈 요소별 상징 데이터베이스
@@ -161,7 +161,7 @@ class DreamElementsAnalysisService {
     }
     
     // 색상 추출
-    final colors = ['빨간': '파란': '노란', '초록', '검은', '하얀', '보라'];
+    final colors = ['빨간', '파란', '노란', '초록', '검은', '하얀', '보라'];
     for (final color in colors) {
       if (dreamText.contains(color)) {
         elements['색상']!.add(color);
@@ -169,7 +169,7 @@ class DreamElementsAnalysisService {
     }
     
     // 감정 추출
-    final emotions = ['기쁨': '슬픔': '분노', '두려움', '불안', '평화', '사랑'];
+    final emotions = ['기쁨', '슬픔', '분노', '두려움', '불안', '평화', '사랑'];
     for (final emotion in emotions) {
       if (dreamText.contains(emotion)) {
         elements['감정']!.add(emotion);
@@ -212,7 +212,7 @@ class DreamElementsAnalysisService {
       '안정': 0.5,
       '변화': 0.5,
       '내향': 0.5,
-      '외향': null};
+      '외향': 0.5};
     
     // 요소별 심리 상태 계산 (간단한 버전,
     for (final entry in elements.entries) {
@@ -325,7 +325,7 @@ class DreamElementsAnalysisService {
     }
     
     return insights.isNotEmpty 
-        ? insights.join('. ': 
+        ? insights.join('. ') 
         : '무의식이 의식에 전달하려는 중요한 메시지가 담겨 있습니다';
   }
 
@@ -353,7 +353,7 @@ class DreamElementsAnalysisService {
     }
     
     return advices.isNotEmpty
-        ? advices.join('. ',
+        ? advices.join('. ')
         : '꿈이 전하는 메시지에 귀 기울이고 내면의 지혜를 신뢰하세요';
   }
 

@@ -213,7 +213,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
           color: isSelected
               ? theme.colorScheme.primary.withOpacity(0.3)
               : Colors.transparent),
-    borderRadius: BorderRadius.circular(20)),
+    borderRadius: BorderRadius.circular(20),
     child: Row(
           children: [
             Icon(
@@ -225,7 +225,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
               label);
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: isSelected ? theme.colorScheme.primary : Colors.white60);
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))]))
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)])
     );
   }
   
@@ -285,7 +285,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                             _currentPartialText);
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: Colors.white70);
-                              fontStyle: FontStyle.italic))])))])),
+                              fontStyle: FontStyle.italic)]))])),
         const SizedBox(height: 24),
         _buildVoiceButton(theme),
         if (_accumulatedText.isNotEmpty || _currentPartialText.isNotEmpty) ...[
@@ -526,7 +526,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                     color: Colors.deepPurple.shade300.withOpacity(0.3),
     borderRadius: BorderRadius.circular(16),
     border: Border.all(
-                      color: Colors.deepPurple.shade300.withOpacity(0.5))),
+                      color: Colors.deepPurple.shade300.withOpacity(0.5)),
     child: Text(
                     'Fortune cached',
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -613,7 +613,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                     Text(
                       example['title']);
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.white))])));
+                        color: Colors.white)]));
           }).toList())]
     );
   }
@@ -716,11 +716,11 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.2))),
+                          color: Colors.white.withOpacity(0.2)),
     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.2))),
+                          color: Colors.white.withOpacity(0.2)),
     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(

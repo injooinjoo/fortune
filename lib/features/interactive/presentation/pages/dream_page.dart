@@ -220,13 +220,14 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(16)),
-          child: TabBar(
+            borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: TabBar(
             controller: _tabController,
             indicator: BoxDecoration(
               gradient: LinearGradient(
                 colors: [theme.colorScheme.primary, theme.colorScheme.secondary]),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorPadding: const EdgeInsets.all(4),
             tabs: const [
@@ -263,7 +264,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               '오늘 밤 꾼 꿈을 기록해보세요',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: fontSize,
-                color: theme.colorScheme.onSurface.withOpacity(0.6)))]));
+                color: theme.colorScheme.onSurface.withOpacity(0.6))]);
     }
 
     return ListView.builder(
@@ -286,7 +287,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
         child: GlassContainer(
           padding: const EdgeInsets.all(20),
           borderRadius: BorderRadius.circular(20),
-          child: Column(
+                  ),
+                  child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -305,8 +307,9 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: _getLuckColor(entry.luckScore).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12)),
-                      child: Text(
+                        borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
                         '${entry.luckScore}점',
                         style: TextStyle(
                           color: _getLuckColor(entry.luckScore),
@@ -332,7 +335,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: fontSize - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
                   const SizedBox(width: 16),
                   if (entry.tags.isNotEmpty) ...[
                     Icon(
@@ -344,7 +347,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                       entry.tags.take(3).join(', '),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: fontSize - 2,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)))]])]))));
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)))]])])));
   }
 
   Widget _buildDreamInterpretation(ThemeData theme, double fontSize) {
@@ -379,7 +382,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               icon: const Icon(Icons.psychology_rounded),
               label: const Text('꿈 해몽 바로가기'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)))])));
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12))]));
   }
 
   Widget _buildWritingView(ThemeData theme, double fontSize) {
@@ -392,7 +395,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
           GlassContainer(
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(16),
-            child: Column(
+                  ),
+                  child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -419,8 +423,9 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: theme.colorScheme.outline.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(12)),
-                    child: Row(
+                      borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
                       children: [
                         Icon(
                           Icons.calendar_today_rounded,
@@ -430,14 +435,14 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                         Text(
                           '${_selectedDate.year}년 ${_selectedDate.month}월 ${_selectedDate.day}일',
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontSize: fontSize))])))])),
+                            fontSize: fontSize)]))])),
           const SizedBox(height: 16),
-
           // Title Input
           GlassContainer(
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(16),
-            child: Column(
+                  ),
+                  child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -454,18 +459,18 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3))),
+                        color: theme.colorScheme.outline.withOpacity(0.3)),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3)))))])),
+                        color: theme.colorScheme.outline.withOpacity(0.3)))]),
           const SizedBox(height: 16),
-
           // Content Input
           GlassContainer(
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(16),
-            child: Column(
+                  ),
+                  child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -483,18 +488,18 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3))),
+                        color: theme.colorScheme.outline.withOpacity(0.3)),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3)))))])),
+                        color: theme.colorScheme.outline.withOpacity(0.3)))]),
           const SizedBox(height: 16),
-
           // Tags Selection
           GlassContainer(
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(16),
-            child: Column(
+                  ),
+                  child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -522,9 +527,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                       },
                       selectedColor: theme.colorScheme.primary.withOpacity(0.2),
                       checkmarkColor: theme.colorScheme.primary);
-                  }).toList())])),
+                  }).toList()]),
           const SizedBox(height: 24),
-
           // Action Buttons
           Row(
             children: [
@@ -538,7 +542,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                       _selectedTags.clear();
                     });
                   },
-                  child: const Text('취소'))),
+                  child: const Text('취소')),
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
@@ -577,8 +581,9 @@ class DreamDetailSheet extends ConsumerWidget {
       height: MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       child: Column(
+
         children: [
           // Handle
           Container(
@@ -587,7 +592,7 @@ class DreamDetailSheet extends ConsumerWidget {
             margin: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
               color: theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(2))),
+              borderRadius: BorderRadius.circular(2),
           
           // Content
           Expanded(
@@ -607,14 +612,14 @@ class DreamDetailSheet extends ConsumerWidget {
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize.value - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
                   const SizedBox(height: 20),
-
                   // Content
                   GlassContainer(
                     padding: const EdgeInsets.all(16),
                     borderRadius: BorderRadius.circular(16),
-                    child: Column(
+                  ),
+                  child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -627,15 +632,15 @@ class DreamDetailSheet extends ConsumerWidget {
                           entry.content,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontSize: fontSize.value,
-                            height: 1.6))])),
+                            height: 1.6)]),
                   const SizedBox(height: 16),
-
                   // Tags
                   if (entry.tags.isNotEmpty) ...[
                     GlassContainer(
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
-                      child: Column(
+                  ),
+                  child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -651,7 +656,7 @@ class DreamDetailSheet extends ConsumerWidget {
                               return Chip(
                                 label: Text(tag),
                                 backgroundColor: theme.colorScheme.primaryContainer);
-                            }).toList())])),
+                            }).toList()]),
                     const SizedBox(height: 16)],
 
                   // Analysis
@@ -682,7 +687,6 @@ class DreamDetailSheet extends ConsumerWidget {
                                     fontSize: fontSize.value + 2,
                                     fontWeight: FontWeight.bold))]),
                             const SizedBox(height: 16),
-                            
                             // Dream Type and Score
                             Row(
                               children: [
@@ -690,27 +694,28 @@ class DreamDetailSheet extends ConsumerWidget {
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: theme.colorScheme.primary.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12)),
-                                  child: Text(
+                                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
                                     analysis.dreamType,
                                     style: TextStyle(
                                       color: theme.colorScheme.primary,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: fontSize.value - 2))),
+                                      fontSize: fontSize.value - 2)),
                                 const SizedBox(width: 12),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: _getLuckColor(analysis.overallLuck).withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12)),
-                                  child: Text(
+                                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
                                     '운세 ${analysis.overallLuck}점',
                                     style: TextStyle(
                                       color: _getLuckColor(analysis.overallLuck),
                                       fontWeight: FontWeight.bold,
                                       fontSize: fontSize.value - 2)))]),
                             const SizedBox(height: 16),
-                            
                             // Interpretation
                             Text(
                               analysis.interpretation,
@@ -718,7 +723,6 @@ class DreamDetailSheet extends ConsumerWidget {
                                 fontSize: fontSize.value,
                                 height: 1.6)),
                             const SizedBox(height: 16),
-                            
                             // Symbols
                             Text(
                               '주요 상징',
@@ -735,7 +739,6 @@ class DreamDetailSheet extends ConsumerWidget {
                                   backgroundColor: theme.colorScheme.secondaryContainer);
                               }).toList()),
                             const SizedBox(height: 16),
-                            
                             // Advice
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -743,7 +746,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                 color: theme.colorScheme.tertiaryContainer.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: theme.colorScheme.tertiary.withOpacity(0.3))),
+                                  color: theme.colorScheme.tertiary.withOpacity(0.3)),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -756,10 +759,10 @@ class DreamDetailSheet extends ConsumerWidget {
                                     child: Text(
                                       analysis.advice,
                                       style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontSize: fontSize.value - 1)))]))]));
+                                        fontSize: fontSize.value - 1))])]));
                     },
                     loading: () => const LoadingStateWidget(),
-                    error: (_, __) => const SizedBox.shrink())]))),
+                    error: (_, __) => const SizedBox.shrink()]),
           
           // Actions
           Padding(
@@ -773,7 +776,7 @@ class DreamDetailSheet extends ConsumerWidget {
                       Toast.show(context, message: '공유 기능은 준비 중입니다', type: ToastType.info);
                     },
                     icon: const Icon(Icons.share_rounded),
-                    label: const Text('공유하기'))),
+                    label: const Text('공유하기')),
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
@@ -785,7 +788,7 @@ class DreamDetailSheet extends ConsumerWidget {
                     icon: const Icon(Icons.delete_rounded),
                     label: const Text('삭제'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: theme.colorScheme.error)))]))]));
+                      foregroundColor: theme.colorScheme.error))])]));
   }
 
   Color _getLuckColor(int score) {

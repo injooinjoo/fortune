@@ -48,16 +48,16 @@ class _RunningInputFormState extends State<_RunningInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 런닝 운세를 확인하고\n최고의 컨디션으로 달려보세요!',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 런닝 운세를 확인하고\n최고의 컨디션으로 달려보세요!',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5),
         const SizedBox(height: 24),
         
         // Running Time
         Text(
-          '러닝 시간대',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '러닝 시간대',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTimeSelection(theme),
@@ -65,8 +65,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
         // Distance
         Text(
-          '목표 거리',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '목표 거리',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDistanceSelection(theme),
@@ -74,8 +74,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
         // Terrain
         Text(
-          '러닝 코스',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '러닝 코스',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTerrainSelection(theme),
@@ -83,8 +83,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
 
         // Goal
         Text(
-          '러닝 목표',),
-          style: theme.textTheme.titleMedium?.copyWith()
+          '러닝 목표',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildGoalSelection(theme),
@@ -106,26 +106,26 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               backgroundColor: const Color(0xFF3B82F6),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(16),
               elevation: 0),
             child: const Text(
-              '런닝 운세 보기',),
+              '런닝 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold)))]
     );
   }
 
   Widget _buildTimeSelection(ThemeData theme) {
     final times = [
-      {'\1': '\2', 'name', '아침': 'icon'},
-      {'\1': '\2', 'name', '오후': 'icon'},
-      {'id', 'evening', 'name', '저녁', 'icon'},
-      {'id', 'night', 'name', '밤', 'icon'}];
+      {'id': 'name', '아침': 'icon'},
+      {'id': 'name', '오후': 'icon'},
+      {'id': 'evening', 'name': '저녁', 'icon'},
+      {'id': 'night', 'name': '밤', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
@@ -135,7 +135,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
       itemCount: times.length,
       itemBuilder: (context, index) {
         final time = times[index];
-        final isSelected = _runningType == time['id'];
+        final isSelected = _runningType == time['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -155,7 +156,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -168,21 +169,22 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                   time['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       }
     );
   }
 
   Widget _buildDistanceSelection(ThemeData theme) {
     final distances = [
-      {'\1': '\2', 'name', '5km'},
-      {'\1': '\2', 'name', '10km'},
-      {'id', '21k', 'name', '하프'},
-      {'id', '42k', 'name', '풀코스'}];
+      {'id': 'name', '5km'},
+      {'id': 'name', '10km'},
+      {'id': '21k', 'name': '하프'},
+      {'id': '42k', 'name': '풀코스'}];
 
     return Row(
       children: distances.map((distance) {
-        final isSelected = _distance == distance['id'];
+        final isSelected = _distance == distance['id'
+  ];
         return Expanded(
           child: GestureDetector(
             onTap: () {
@@ -203,26 +205,26 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                   color: isSelected
                       ? Colors.transparent
                       : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Center(
                 child: Text(
                   distance['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
-      }).toList());
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
+      }).toList();
   }
 
   Widget _buildTerrainSelection(ThemeData theme) {
     final terrains = [
-      {'\1': '\2', 'name', '도로': 'icon'},
-      {'\1': '\2', 'name', '트랙': 'icon'},
-      {'id', 'trail', 'name', '트레일', 'icon'},
-      {'id', 'treadmill', 'name', '트레드밀', 'icon'}];
+      {'id': 'name', '도로': 'icon'},
+      {'id': 'name', '트랙': 'icon'},
+      {'id': 'trail', 'name': '트레일', 'icon'},
+      {'id': 'treadmill', 'name': '트레드밀', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
@@ -232,7 +234,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
       itemCount: terrains.length,
       itemBuilder: (context, index) {
         final terrain = terrains[index];
-        final isSelected = _terrain == terrain['id'];
+        final isSelected = _terrain == terrain['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -252,7 +255,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -265,21 +268,21 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                   terrain['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       }
     );
   }
 
   Widget _buildGoalSelection(ThemeData theme) {
     final goals = [
-      {'\1': '\2', 'name', '건강': 'icon'},
-      {'\1': '\2', 'name', '다이어트': 'icon'},
-      {'id', 'speed', 'name', '속도향상', 'icon'},
-      {'id', 'marathon', 'name', '대회준비', 'icon'}];
+      {'id': 'name', '건강': 'icon'},
+      {'id': 'name', '다이어트': 'icon'},
+      {'id': 'speed', 'name': '속도향상', 'icon'},
+      {'id': 'marathon', 'name': '대회준비', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
@@ -289,7 +292,8 @@ class _RunningInputFormState extends State<_RunningInputForm> {
       itemCount: goals.length,
       itemBuilder: (context, index) {
         final goal = goals[index];
-        final isSelected = _goal == goal['id'];
+        final isSelected = _goal == goal['id'
+  ];
 
         return GestureDetector(
           onTap: () {
@@ -309,7 +313,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -322,7 +326,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                   goal['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
       }
     );
   }
@@ -343,9 +347,9 @@ class _RunningFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFF3B82F6),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +361,7 @@ class _RunningFortuneResult extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)]),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: const Icon(
                         Icons.directions_run,
                         color: Colors.white,
@@ -368,18 +372,18 @@ class _RunningFortuneResult extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 런닝 운세',),
-                            style: theme.textTheme.titleLarge?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '오늘의 런닝 운세',
+                            style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6)])]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)]))),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6)])),
         const SizedBox(height: 16),
 
         // Best Running Time
@@ -436,7 +440,7 @@ class _RunningFortuneResult extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,7 +451,7 @@ class _RunningFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
                 child: Icon(
                   icon,
                   color: Colors.white,
@@ -455,12 +459,12 @@ class _RunningFortuneResult extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith()
-                  fontWeight: FontWeight.bold))]),
+                style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              height: 1.5)]));
+            style: theme.textTheme.bodyMedium?.copyWith(
+            height: 1.5)]));
   }
 }

@@ -66,7 +66,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
               _buildActions(),
               if (!widget.isSuccess) ...[
                 const SizedBox(height: 16),
-                _buildRetryInfo()]]))));
+                _buildRetryInfo()]])));
   }
 
   Widget _buildIcon() {
@@ -135,7 +135,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         color: AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3))),
+          color: AppColors.primary.withOpacity(0.3)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -165,7 +165,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8)),
+        borderRadius: BorderRadius.circular(8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -183,7 +183,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             child: Icon(
               Icons.copy,
               size: 16,
-              color: AppColors.textSecondary))]));
+              color: AppColors.textSecondary)]);
   }
 
   Widget _buildActions() {
@@ -242,7 +242,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.info.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12)),
+        borderRadius: BorderRadius.circular(12),
       child: Row(
         children: [
           Icon(
@@ -254,7 +254,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             child: Text(
               helpText,
               style: AppTextStyles.caption.copyWith(
-                color: AppColors.info)))]));
+                color: AppColors.info))]);
   }
 
   void _copyTransactionId() {

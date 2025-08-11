@@ -164,7 +164,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                           vertical: AppSpacing.spacing3)),
                       maxLines: null,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _sendMessage())),
+                      onSubmitted: (_) => _sendMessage()),
                   
                   // Send button
                   _buildSendButton(theme)])),

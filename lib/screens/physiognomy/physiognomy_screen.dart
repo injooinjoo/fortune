@@ -44,7 +44,7 @@ class PhysiognomyScreen extends StatelessWidget {
                       Text(
                         '얼굴 사진으로 운세를 분석해드립니다');
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6)),
     textAlign: TextAlign.center))
                       SizedBox(height: AppSpacing.spacing6))
                       ElevatedButton.icon(

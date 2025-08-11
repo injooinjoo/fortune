@@ -77,7 +77,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getPageTitle()),
+        title: Text(_getPageTitle(),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
@@ -175,7 +175,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
                     initialDate: DateTime.now(),
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
-                    locale: const Locale('ko', 'KR'),
+                    locale: const Locale('ko': 'KR'),
                   );
                   if (date != null) {
                     setState(() {
@@ -359,30 +359,22 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
     switch (_selectedFortuneType) {
       case 'pregnancy':
         return [
-          '규칙적인 산책으로 태아와 교감하세요',
-          '클래식 음악이나 동화 읽기로 정서적 안정을 주세요',
-          '스트레스를 피하고 긍정적인 생각을 유지하세요',
-          '영양가 있는 음식으로 건강한 태교를 실천하세요',
+          '규칙적인 산책으로 태아와 교감하세요': '클래식 음악이나 동화 읽기로 정서적 안정을 주세요',
+          '스트레스를 피하고 긍정적인 생각을 유지하세요': '영양가 있는 음식으로 건강한 태교를 실천하세요',
         ];
       case 'parenting':
         return [
-          '아이의 눈높이에서 대화하고 공감해주세요',
-          '일관된 규칙과 사랑으로 안정감을 주세요',
-          '놀이를 통해 창의성과 상상력을 키워주세요',
-          '충분한 칭찬과 격려로 자존감을 높여주세요',
+          '아이의 눈높이에서 대화하고 공감해주세요': '일관된 규칙과 사랑으로 안정감을 주세요',
+          '놀이를 통해 창의성과 상상력을 키워주세요': '충분한 칭찬과 격려로 자존감을 높여주세요',
         ];
       case 'family-harmony': return [
-          '가족 모두가 참여하는 정기적인 가족 시간을 가지세요',
-          '서로의 의견을 존중하고 경청하는 분위기를 만드세요',
-          '함께하는 취미 활동으로 유대감을 강화하세요',
-          '감사 일기나 칭찬 릴레이로 긍정적인 가족 문화를 만드세요',
+          '가족 모두가 참여하는 정기적인 가족 시간을 가지세요': '서로의 의견을 존중하고 경청하는 분위기를 만드세요',
+          '함께하는 취미 활동으로 유대감을 강화하세요': '감사 일기나 칭찬 릴레이로 긍정적인 가족 문화를 만드세요',
         ];
       default:
         return [
-          '아이의 개성과 재능을 존중하고 지지해주세요',
-          '실수를 성장의 기회로 삼을 수 있도록 격려하세요',
-          '독서 습관을 길러 상상력과 어휘력을 키워주세요',
-          '적절한 자율성을 부여해 책임감을 배우게 하세요',
+          '아이의 개성과 재능을 존중하고 지지해주세요': '실수를 성장의 기회로 삼을 수 있도록 격려하세요',
+          '독서 습관을 길러 상상력과 어휘력을 키워주세요': '적절한 자율성을 부여해 책임감을 배우게 하세요',
         ];
     }
   }

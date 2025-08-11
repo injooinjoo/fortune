@@ -81,7 +81,7 @@ class CelticCrossLayout extends StatelessWidget {
     width: cardWidth),
     height: cardHeight),
     fontScale: fontScale)));
-                }).toList()))),
+                }).toList()),
           
           const SizedBox(height: AppSpacing.spacing8),
           
@@ -150,7 +150,7 @@ class CelticCrossLayout extends StatelessWidget {
                         meaning['meaning']!);
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withOpacity(0.7),
-                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))]))])))
+                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)])])))
         ])
     );
   }
@@ -227,7 +227,7 @@ class _CelticCrossCard extends StatelessWidget {
     colors: [
                             FortuneColors.spiritualDark)
                             FortuneColors.tarotDark)
-                          ]))),
+                          ])),
                     // Tarot card image or design
                     _buildCardImage(card),
                     // Glass overlay with card info
@@ -239,7 +239,7 @@ class _CelticCrossCard extends StatelessWidget {
     colors: [
                             Colors.transparent)
                             Colors.black.withOpacity(0.7)]),
-    stops: const [0.5, 1.0]))),
+    stops: const [0.5, 1.0])),
                     // Card content
                     Padding(
                       padding: AppSpacing.paddingAll8);
@@ -263,7 +263,7 @@ class _CelticCrossCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   'Fortune cached',),
-                                  style: Theme.of(context).textTheme.bodyMedium))),
+                                  style: Theme.of(context).textTheme.bodyMedium)),
                           // Card name
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
@@ -275,7 +275,7 @@ class _CelticCrossCard extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodyMedium)),
     textAlign: TextAlign.center),
     maxLines: 2),
-    overflow: TextOverflow.ellipsis))]))]))),
+    overflow: TextOverflow.ellipsis)])])),
             // Position label
             Positioned(
               bottom: -20);
@@ -284,7 +284,7 @@ class _CelticCrossCard extends StatelessWidget {
     child: Text(
                 position);
                 style: Theme.of(context).textTheme.bodyMedium)),
-    textAlign: TextAlign.center))]))
+    textAlign: TextAlign.center)])
     );
   }
   

@@ -79,7 +79,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
             Expanded(
               child: _isLoading 
                 ? const Center(child: CircularProgressIndicator())
-                : _buildContent())])));
+                : _buildContent()]));
   }
 
   Widget _buildContent() {
@@ -162,7 +162,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                 ? Icons.all_inclusive 
                 : Icons.toll,
               size: 40,
-              color: AppColors.primary.withOpacity(0.3))])).animate()
+              color: AppColors.primary.withOpacity(0.3)]).animate()
         .fadeIn(duration: 600.ms)
         .slideX(begin: -0.1, end: 0);
   }
@@ -222,7 +222,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1),
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(16),
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
@@ -233,12 +233,12 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                 color: isSelected 
                   ? AppColors.primary.withOpacity(0.1)
                   : AppColors.surface,
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Center(
                 child: Icon(
                   isSubscription ? Icons.all_inclusive : Icons.toll,
                   size: 28,
-                  color: isSelected ? AppColors.primary : AppColors.textSecondary))),
+                  color: isSelected ? AppColors.primary : AppColors.textSecondary)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -258,7 +258,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                             vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.error,
-                            borderRadius: BorderRadius.circular(4)),
+                            borderRadius: BorderRadius.circular(4),
                           child: Text(
                             '인기',
                             style: AppTextStyles.caption.copyWith(
@@ -268,7 +268,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                   Text(
                     productInfo?.description ?? product.description,
                     style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary))])),
+                      color: AppColors.textSecondary)]),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -321,7 +321,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           child: Text(
             text,
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary))))]);
+              color: AppColors.textSecondary)))]);
   }
 
   Future<void> _handlePurchase() async {

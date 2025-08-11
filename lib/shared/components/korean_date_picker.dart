@@ -102,7 +102,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             child: Text(
               widget.label!,
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600))),
+                fontWeight: FontWeight.w600)),
         
         GestureDetector(
           onTap: () {
@@ -132,13 +132,13 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                         Text(
                           '만 $age세',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6)))])),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6))]),
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
                   duration: AppAnimations.durationShort,
                   child: Icon(
                     Icons.expand_more_rounded,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)))]))),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6))]),
 
         AnimatedContainer(
           duration: AppAnimations.durationMedium,
@@ -213,9 +213,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                               '나이: $age세',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w600))])).animate().fadeIn().scale(
+                                fontWeight: FontWeight.w600)]).animate().fadeIn().scale(
                         begin: const Offset(0.8, 0.8),
-                        end: const Offset(1, 1))]])))))]
+                        end: const Offset(1, 1))]]))))]
     );
   }
 
@@ -233,7 +233,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6))),
+            color: theme.colorScheme.onSurface.withOpacity(0.6)),
         SizedBox(height: AppSpacing.spacing1),
         Container(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
@@ -241,7 +241,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             color: theme.colorScheme.surface,
             borderRadius: AppDimensions.borderRadiusSmall,
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.2))),
+              color: theme.colorScheme.outline.withOpacity(0.2)),
           child: DropdownButton<int>(
             value: value,
             isExpanded: true,
@@ -318,7 +318,7 @@ class BirthDatePreview extends StatelessWidget {
                 '만 $age세',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.w600))),
+                  fontWeight: FontWeight.w600)),
             if (onTap != null) ...[
               SizedBox(height: AppSpacing.spacing3),
               Text(

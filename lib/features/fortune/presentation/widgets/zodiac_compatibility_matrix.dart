@@ -106,7 +106,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               fontWeight: FontWeight.bold,
                               color: _hoveredCol == col
                                   ? Colors.amber
-                                  : Colors.white.withOpacity(0.8))))));
+                                  : Colors.white.withOpacity(0.8)))));
                   })]),
               const SizedBox(height: 10),
               // 매트릭스 본체
@@ -124,7 +124,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           fontWeight: FontWeight.bold,
                           color: _hoveredRow == row
                               ? Colors.amber
-                              : Colors.white.withOpacity(0.8)))),
+                              : Colors.white.withOpacity(0.8)),
                     // 궁합 셀들
                     ...List.generate(12, (col) {
                       final zodiac2 = ZodiacCompatibilityService.zodiacAnimals[col];
@@ -174,7 +174,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                     fontWeight: isHovered
                                         ? FontWeight.bold
                                         : FontWeight.normal,
-                                    color: Colors.white)))))));
+                                    color: Colors.white))))));
                     })]);
               })]));
       });
@@ -221,7 +221,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: _getCompatibilityColor(compatibility)))])),
+                        color: _getCompatibilityColor(compatibility))]),
               _buildZodiacInfo(widget.selectedZodiac2!)]),
           const SizedBox(height: 20),
           Container(
@@ -303,7 +303,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.6))),
+            color: Colors.white.withOpacity(0.6)),
         const SizedBox(height: 2),
         Text(
           value,

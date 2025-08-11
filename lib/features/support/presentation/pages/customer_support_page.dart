@@ -28,7 +28,7 @@ class CustomerSupportPage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       _buildFAQSection(context),
                       const SizedBox(height: 16),
-                      _buildQuickActions(context)])))]))));
+                      _buildQuickActions(context)]))]));
   }
 
   Widget _buildContactCard(BuildContext context) {
@@ -59,7 +59,7 @@ class CustomerSupportPage extends ConsumerWidget {
             '09:00 - 18:00  운영',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8))),
+              color: Colors.white.withOpacity(0.8)),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -101,7 +101,7 @@ class CustomerSupportPage extends ConsumerWidget {
               label,
               style: TextStyle(
                 color: color,
-                fontWeight: FontWeight.w600))])));
+                fontWeight: FontWeight.w600)]));
   }
 
   Widget _buildFAQSection(BuildContext context) {
@@ -170,7 +170,7 @@ class CustomerSupportPage extends ConsumerWidget {
                   question,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.w500)))])),
+                    fontWeight: FontWeight.w500))]),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -178,7 +178,7 @@ class CustomerSupportPage extends ConsumerWidget {
               answer,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.8),
-                height: 1.5)))]));
+                height: 1.5))]);
   }
 
   Widget _buildQuickActions(BuildContext context) {
@@ -300,7 +300,7 @@ class CustomerSupportPage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'))]));
+            child: const Text('확인')]);
   }
 
   void _reportBug(BuildContext context) {

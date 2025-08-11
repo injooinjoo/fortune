@@ -314,7 +314,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     // 제목 - Remove Expanded widget
                     Text(
                       widget.fortuneTitle,
-                      style: Theme.of(context).textTheme.bodyMedium)]))),
+                      style: Theme.of(context).textTheme.bodyMedium)])),
             
             // 하단 프리미엄 업그레이드 영역 (무료 사용자만,
             if (!widget.isPremium)
@@ -362,6 +362,6 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                               const SizedBox(width: AppSpacing.spacing2),
                               Text(
                                 '프리미엄으로 업그레이드',
-                                style: Theme.of(context).textTheme.bodyMedium)])))])))])));
+                                style: Theme.of(context).textTheme.bodyMedium)]))]))])));
   }
 }

@@ -85,7 +85,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     _buildActionButton(),
                     if (_adviceResult != null) ...[
                       const SizedBox(height: 32),
-                      _buildResultSection()]])))])));
+                      _buildResultSection()]]))]));
   }
 
   Widget _buildInstructions() {
@@ -113,7 +113,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -126,7 +126,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold))]))])).animate()
+                    fontWeight: FontWeight.bold)])])).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -229,7 +229,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                       child: const Icon(
                         Icons.spa,
                         color: Colors.white,
-                        size: 30))]))));
+                        size: 30)]));
         })).animate()
       .fadeIn(duration: 600.ms, delay: 200.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
@@ -252,7 +252,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               backgroundColor: AppTheme.primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
             child: _isSpinning
                 ? const SizedBox(
                     height: 20,
@@ -264,7 +264,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     _hasWorry ? '염주 돌리기' : '먼저 걱정을 적어주세요',
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold))))]);
+                      fontWeight: FontWeight.bold)))]);
   }
 
   Widget _buildResultSection() {
@@ -298,8 +298,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     side: BorderSide(color: AppTheme.primaryColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
-                  child: const Text('다른 걱정 상담'))),
+                      borderRadius: BorderRadius.circular(12),
+                  child: const Text('다른 걱정 상담')),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
@@ -310,7 +310,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     backgroundColor: AppTheme.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)))))])])).animate()
+                      borderRadius: BorderRadius.circular(12))))])])).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }

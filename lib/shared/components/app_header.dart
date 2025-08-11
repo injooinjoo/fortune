@@ -224,7 +224,7 @@ class _FontSizeSelector extends StatelessWidget {
             label: '가',
             size: FontSize.large,
             isSelected: currentSize == FontSize.large,
-            onTap: () => onSizeChanged?.call(FontSize.large))]));
+            onTap: () => onSizeChanged?.call(FontSize.large)]);
   }
 }
 
@@ -272,6 +272,6 @@ class _SizeButton extends StatelessWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color))));
+            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color)));
   }
 }

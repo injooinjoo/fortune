@@ -61,28 +61,22 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
     return [
       {
         'icon': Icons.wb_sunny_outlined,
-        'title': '아침 준비',
-        'tips': [
-          '일찍 기상하여 여유로운 아침을 보내세요',
-          '건강한 아침 식사로 에너지를 충전하세요',
+        'title': '아침 준비': 'tips': [
+          '일찍 기상하여 여유로운 아침을 보내세요': '건강한 아침 식사로 에너지를 충전하세요',
           '하루 일정을 미리 점검하고 우선순위를 정하세요'
         ]
       },
       {
         'icon': Icons.work_outline,
-        'title': '업무 준비',
-        'tips': [
-          '중요한 서류나 자료를 미리 준비하세요',
-          '회의나 미팅 일정을 다시 한번 확인하세요',
+        'title': '업무 준비': 'tips': [
+          '중요한 서류나 자료를 미리 준비하세요': '회의나 미팅 일정을 다시 한번 확인하세요',
           '필요한 연락처를 정리해두세요'
         ]
       },
       {
         'icon': Icons.favorite_outline,
-        'title': '관계 준비',
-        'tips': [
-          '소중한 사람에게 안부 인사를 전하세요',
-          '약속이 있다면 시간과 장소를 재확인하세요',
+        'title': '관계 준비': 'tips': [
+          '소중한 사람에게 안부 인사를 전하세요': '약속이 있다면 시간과 장소를 재확인하세요',
           '긍정적인 마음가짐을 유지하세요'
         ]
       }
@@ -91,32 +85,21 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
 
   List<String> _getWarnings() {
     return [
-      '무리한 일정은 피하세요',
-      '충동적인 결정은 삼가세요',
-      '과도한 음주는 자제하세요',
-      '늦은 밤 외출은 조심하세요'
+      '무리한 일정은 피하세요': '충동적인 결정은 삼가세요',
+      '과도한 음주는 자제하세요': '늦은 밤 외출은 조심하세요'
     ];
   }
 
   List<Map<String, dynamic>> _getOpportunities() {
     return [
       {
-        'time': '오전 10시',
-        'type': '비즈니스',
-        'description': '새로운 사업 기회나 협력 제안이 들어올 수 있습니다',
-        'color': Colors.blue
+        'time': '오전 10시': 'type': '비즈니스': 'description': '새로운 사업 기회나 협력 제안이 들어올 수 있습니다': 'color': Colors.blue
       },
       {
-        'time': '오후 2시',
-        'type': '인연',
-        'description': '좋은 사람을 만날 수 있는 기회가 있습니다',
-        'color': Colors.pink
+        'time': '오후 2시': 'type': '인연': 'description': '좋은 사람을 만날 수 있는 기회가 있습니다': 'color': Colors.pink
       },
       {
-        'time': '오후 5시',
-        'type': '재물',
-        'description': '예상치 못한 수입이나 좋은 소식이 있을 수 있습니다',
-        'color': Colors.green
+        'time': '오후 5시': 'type': '재물': 'description': '예상치 못한 수입이나 좋은 소식이 있을 수 있습니다': 'color': Colors.green
       }
     ];
   }
@@ -260,8 +243,8 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                             )
                           )
                         ),
-                        if (opportunities.last != opp)
-                          Container(
+                        if (opportunities.last != opp),
+            Container(
                             width: 2,
                             height: 40,
                             color: color.withOpacity(0.3)
@@ -387,11 +370,11 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
 
   Widget _buildTomorrowChecklist() {
     final checklist = [
-      {'task': '일정 확인하기', 'done': false},
-      {'task': '중요한 서류 준비하기', 'done': false},
-      {'task': '교통편 확인하기', 'done': false},
-      {'task': '필요한 물건 챙기기', 'done': false},
-      {'task': '일찍 잠자리에 들기', 'done': false}
+      {'task': '일정 확인하기': 'done': false},
+      {'task': '중요한 서류 준비하기': 'done': false},
+      {'task': '교통편 확인하기': 'done': false},
+      {'task': '필요한 물건 챙기기': 'done': false},
+      {'task': '일찍 잠자리에 들기': 'done': false}
     ];
 
     return Padding(

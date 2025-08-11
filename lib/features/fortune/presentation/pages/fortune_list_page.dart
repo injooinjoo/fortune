@@ -155,7 +155,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   }
 
   GlobalKey _getThumbnailKey(String categoryRoute) {
-    return _thumbnailKeys.putIfAbsent(categoryRoute, () => GlobalKey());
+    return _thumbnailKeys.putIfAbsent(categoryRoute, () => GlobalKey();
   }
 
   void _showAnimatedThumbnail(BuildContext context, GlobalKey cardKey, String imagePath, VoidCallback onDismiss) {
@@ -167,8 +167,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     
-    // Calculate the height for the top portion (60% of screen to overlap with bottom sheet)
-    final topPortionHeight = screenHeight * 0.6;
+    // Calculate the height for the top portion (60% of screen to overlap with bottom sheet),
+            final topPortionHeight = screenHeight * 0.6;
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
@@ -198,7 +198,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                     BoxShadow(
                       color: Colors.black.withOpacity(0.3 * (1 - progress * 0.5)),
                       blurRadius: 20 + (10 * progress),
-                      offset: Offset(0, 10 * (1 - progress))),
+                      offset: Offset(0, 10 * (1 - progress)),
                   ],
                 ),
                 child: ClipRRect(
@@ -628,23 +628,23 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (selectedCategory != FortuneCategoryType.all)
-                        TextButton(
+                      if (selectedCategory != FortuneCategoryType.all),
+            TextButton(
                           onPressed: () {
                             ref.read(_selectedCategoryProvider.notifier).state = FortuneCategoryType.all;
                           },
-                          child: const Text('전체 보기'))
-                      else
+                          child: const Text('전체 보기')),
+            else
                         const SizedBox.shrink(),
-                      _buildViewModeToggle(context, ref)])]))),
+                      _buildViewModeToggle(context, ref)])])),
           // Banner Ad for non-premium users
-          if (Environment.enableAds && !(ref.watch(userProfileProvider).value?.isPremiumActive ?? false))
+          if (Environment.enableAds && !(ref.watch(userProfileProvider).value?.isPremiumActive ?? false)),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: CommonAdPlacements.listBottomAd())),
+                child: CommonAdPlacements.listBottomAd()),
           // Show loading indicator when recommendations are loading for the first time
-          if (isLoadingRecommendations && !recommendationsReady && selectedCategory == FortuneCategoryType.all)
+          if (isLoadingRecommendations && !recommendationsReady && selectedCategory == FortuneCategoryType.all),
             SliverToBoxAdapter(
               child: Container(
                 height: 200,
@@ -658,7 +658,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       Text(
                         '맞춤 운세를 준비하고 있어요...',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant))])))),
+                          color: theme.colorScheme.onSurfaceVariant)]),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
@@ -781,7 +781,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                             opacity: animation,
                                             child: child);
                                         },
-                                        transitionDuration: const Duration(milliseconds: 300)));
+                                        transitionDuration: const Duration(milliseconds: 300));
                                   // });
                               // }
                               }
@@ -843,18 +843,18 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                             opacity: animation,
                                             child: child);
                                         },
-                                        transitionDuration: const Duration(milliseconds: 300)));
+                                        transitionDuration: const Duration(milliseconds: 300));
                                   }
                                 }
                               }),
-                      if (!isLastItem && viewMode == ViewMode.list) 
-                        Divider(
+                      if (!isLastItem && viewMode == ViewMode.list),
+            Divider(
                           height: 1,
                           thickness: 0.5,
                           color: theme.colorScheme.onSurface.withOpacity(0.08))]);
                 },
-                childCount: filteredCategories.length))),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 16))]));
+                childCount: filteredCategories.length)),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 16)]);
   }
 
   // Search bar removed as per request
@@ -863,7 +863,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
   //   return GlassContainer(
   //     padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 4),
-  //     borderRadius: BorderRadius.circular(16))),
+  //     borderRadius: BorderRadius.circular(16),
   //     blur: 10,
   //     child: TextField(
   //       onChanged: (value) {
@@ -905,13 +905,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.2))),
+              color: theme.colorScheme.outline.withOpacity(0.2)),
           child: Icon(
             viewMode == ViewMode.trend 
                 ? Icons.grid_view_rounded 
                 : Icons.view_list_rounded,
             size: 20,
-            color: theme.colorScheme.onSurface))));
+            color: theme.colorScheme.onSurface)));
   }
 
   Widget _buildCategoryFilter(BuildContext context, WidgetRef ref) {
@@ -946,7 +946,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3))),
+                      : theme.colorScheme.outline.withOpacity(0.3)),
               child: Row(
                 children: [
                   Icon(
@@ -962,7 +962,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       color: isSelected
                           ? Colors.white
                           : theme.colorScheme.onSurface,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
         }));
   }
 

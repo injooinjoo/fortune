@@ -180,7 +180,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       child: Icon(
                         Icons.water_drop,
                         size: 80,
-                        color: Colors.white.withOpacity(0.1))),
+                        color: Colors.white.withOpacity(0.1)),
                   
                   // Content
                   Padding(
@@ -220,7 +220,6 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       ],
                     ),
                   ),
-                ],
                   
                   // Selected indicator
                   if (widget.isSelected)
@@ -236,8 +235,13 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         child: Icon(
                           Icons.check,
                           size: 14,
-                          color: color)))]))));
-        })
-      );
+                          color: color)),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

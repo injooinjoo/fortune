@@ -46,34 +46,25 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
   final List<String> _selectedInterests = [];
   
   final List<String> _lifeGoals = [
-    '자아실현',
-    '경제적 성공',
-    '가족 행복',
-    '사회적 인정',
-    '내면의 평화',
-    '창의적 표현',
-    '타인 봉사',
-    '지식 추구'];
+    '자아실현', '경제적 성공',
+    '가족 행복', '사회적 인정',
+    '내면의 평화', '창의적 표현',
+    '타인 봉사', '지식 추구'
+  ];
   
   final List<String> _currentIssues = [
-    '진로 고민',
-    '인간관계',
-    '자존감',
-    '스트레스',
-    '목표 상실',
-    '의사결정',
-    '감정 조절',
-    '삶의 의미'];
+    '진로 고민', '인간관계',
+    '자존감', '스트레스',
+    '목표 상실', '의사결정',
+    '감정 조절', '삶의 의미'
+  ];
   
   final List<String> _psychologicalInterests = [
-    '성격 분석',
-    '무의식 탐구',
-    '대인 관계',
-    '감정 이해',
-    '행동 패턴',
-    '사고 방식',
-    '가치관',
-    '잠재력'];
+    '성격 분석', '무의식 탐구',
+    '대인 관계', '감정 이해',
+    '행동 패턴', '사고 방식',
+    '가치관', '잠재력'
+  ];
 
   @override
   void dispose() {
@@ -91,8 +82,11 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF8B5CF6))),
-          child: child!);
+              primary: const Color(0xFF8B5CF6),
+            ),
+          ),
+          child: child!,
+        );
       }
     );
     if (picked != null && picked != _birthDate) {
@@ -110,8 +104,11 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF8B5CF6))),
-          child: child!);
+              primary: const Color(0xFF8B5CF6),
+            ),
+          ),
+          child: child!,
+        );
       }
     );
     if (picked != null && picked != _birthTime) {
@@ -130,17 +127,17 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '사주팔자와 심리학을 융합하여\n당신의 깊은 내면을 분석합니다.',),
-            style: theme.textTheme.bodyLarge?.copyWith()
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
+            '사주팔자와 심리학을 융합하여\n당신의 깊은 내면을 분석합니다.',
+            style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
               height: 1.5),
           const SizedBox(height: 24),
           
           // Name Input
           Text(
-            '이름',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '이름',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController,
@@ -148,18 +145,18 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12))),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)))),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
           const SizedBox(height: 20),
           
           // Gender Selection
           Text(
-            '성별',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '성별',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -189,9 +186,9 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
           
           // Birth Date Selection
           Text(
-            '생년월일',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '생년월일',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
             onTap: _selectDate,
@@ -199,7 +196,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
               padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
               decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Row(
                 children: [
                   Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7),
@@ -208,10 +205,10 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     _birthDate != null
                         ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                         : '생년월일을 선택하세요',
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      color: _birthDate != null 
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
+                          : theme.colorScheme.onSurface.withOpacity(0.5)]),
           const SizedBox(height: 12),
           CheckboxListTile(
             title: const Text('음력'),
@@ -226,9 +223,9 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
           
           // Birth Time Selection
           Text(
-            '출생 시간',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '출생 시간',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
             onTap: _selectTime,
@@ -236,7 +233,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
               padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 16),
               decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Row(
                 children: [
                   Icon(Icons.access_time, color: theme.colorScheme.primary.withOpacity(0.7),
@@ -245,17 +242,17 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     _birthTime != null
                         ? '${_birthTime!.hour.toString().padLeft(2, '0')}시 ${_birthTime!.minute.toString().padLeft(2, '0')}분'
                         : '출생 시간을 선택하세요 (선택사항)',
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      color: _birthTime != null 
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            color: _birthTime != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5)))]))),
+                          : theme.colorScheme.onSurface.withOpacity(0.5)]),
           const SizedBox(height: 20),
           
           // Life Goal Selection
           Text(
-            '현재 삶의 목표',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '현재 삶의 목표',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -273,14 +270,14 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                 selectedColor: theme.colorScheme.primary.withOpacity(0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
-            }).toList()),
+            }).toList(),
           const SizedBox(height: 20),
           
           // Current Issue Selection
           Text(
-            '현재 고민거리',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '현재 고민거리',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -298,14 +295,14 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                 selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface));
-            }).toList()),
+            }).toList(),
           const SizedBox(height: 20),
           
           // Psychological Interests
           Text(
-            '관심 있는 심리 분야 (최대 3개)',),
-            style: theme.textTheme.titleMedium?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '관심 있는 심리 분야 (최대 3개)',
+            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -330,7 +327,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                 selectedColor: Colors.purple.withOpacity(0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? Colors.purple : theme.colorScheme.onSurface));
-            }).toList()),
+            }).toList(),
           const SizedBox(height: 32),
           
           // Submit Button
@@ -362,20 +359,18 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                       ? '${_birthTime!.hour}:${_birthTime!.minute}' 
                       : null,
                   'isLunar': _isLunar,
-                  'lifeGoal': _selectedLifeGoal ?? '자아실현',
-                  'currentIssue': _selectedCurrentIssue ?? '진로 고민',
-                  'interests': _selectedInterests.isEmpty ? ['성격 분석']});
+                  'lifeGoal': _selectedLifeGoal ?? '자아실현': 'currentIssue': _selectedCurrentIssue ?? '진로 고민': 'interests': _selectedInterests.isEmpty ? ['성격 분석']});
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 backgroundColor: theme.colorScheme.primary),
               child: Text(
-                '사주 심리 분석 시작하기',),
-                style: theme.textTheme.titleMedium?.copyWith()
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold))))]));
+                '사주 심리 분석 시작하기',
+                style: theme.textTheme.titleMedium?.copyWith(
+            color: Colors.white,
+                  fontWeight: FontWeight.bold))]);
   }
 }
 
@@ -406,11 +401,11 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
     
     // Extract saju psychology data from result
     final psychologyScore = result.overallScore ?? 75;
-    final sajuElements = result.additionalInfo?['sajuElements'] ?? {};
-    final psychologicalProfile = result.additionalInfo?['psychologicalProfile'] ?? {};
+    final sajuElements = result.additionalInfo?['sajuElements'] ?? {}
+    final psychologicalProfile = result.additionalInfo?['psychologicalProfile'] ?? {}
     final unconsciousPatterns = result.additionalInfo?['unconsciousPatterns'] ?? [];
     final lifeThemes = result.additionalInfo?['lifeThemes'] ?? [];
-    final growthPotential = result.additionalInfo?['growthPotential'] ?? {};
+    final growthPotential = result.additionalInfo?['growthPotential'] ?? {}
     final recommendations = result.recommendations ?? [];
 
     return Column(
@@ -430,7 +425,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(0xFF8B5CF6), Color(0xFFEC4899)]),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: Icon(
                         Icons.psychology_alt,
                         color: Colors.white,
@@ -441,30 +436,30 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '사주 심리 종합 점수',),
-                            style: theme.textTheme.titleMedium?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '사주 심리 종합 점수',
+                            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               Text(
-                                '$psychologyScore점',),
-                                style: theme.textTheme.headlineSmall?.copyWith()
-                                  color: _getScoreColor(psychologyScore),
+                                '$psychologyScore점',
+                                style: theme.textTheme.headlineSmall?.copyWith(
+            color: _getScoreColor(psychologyScore),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 24 + fontSize)),
                               const SizedBox(width: 8),
                               Text(
                                 _getScoreMessage(psychologyScore),
-                                style: theme.textTheme.bodyMedium?.copyWith()
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7)))])]))]),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7))])]))]),
                 if (result.summary != null) ...[
                   const SizedBox(height: 16),
                   Text(
                     result.summary!,
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      height: 1.6,
-                      fontSize: 14 + fontSize))]]))),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6,
+                      fontSize: 14 + fontSize))]])),
         const SizedBox(height: 20),
         
         // Saju Elements Analysis
@@ -483,9 +478,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '사주 오행 분석',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '사주 오행 분석',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 200,
@@ -504,14 +499,14 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                             shape: BoxShape.circle)),
                         const SizedBox(width: 8),
                         Text(
-                          '${entry.key}: ',),
-                          style: theme.textTheme.bodyMedium?.copyWith()
-                            fontWeight: FontWeight.bold)),
+                          '${entry.key}: ',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
                         Expanded(
                           child: Text(
                             entry.value['meaning'] ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              fontSize: 12 + fontSize)))])).toList()]))),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 12 + fontSize)]).toList()])),
           const SizedBox(height: 20)],
         
         // Psychological Profile
@@ -530,9 +525,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '심리 프로필',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '심리 프로필',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...psychologicalProfile.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -541,15 +536,15 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                       children: [
                         Text(
                           entry.key,
-                          style: theme.textTheme.bodyLarge?.copyWith()
-                            fontWeight: FontWeight.w600,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
                             color: theme.colorScheme.primary)),
                         const SizedBox(height: 4),
                         Text(
                           entry.value,
-                          style: theme.textTheme.bodyMedium?.copyWith()
-                            height: 1.5,
-                            fontSize: 13 + fontSize))])).toList()]))),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+            height: 1.5,
+                            fontSize: 13 + fontSize)]).toList()])),
           const SizedBox(height: 20)],
         
         // Unconscious Patterns
@@ -568,9 +563,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '무의식 패턴',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '무의식 패턴',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...unconsciousPatterns.map((pattern) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -578,9 +573,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(12))),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.2))),
+                          color: theme.colorScheme.outline.withOpacity(0.2)),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -595,16 +590,16 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                               children: [
                                 Text(
                                   pattern['title'] ?? '',
-                                  style: theme.textTheme.bodyLarge?.copyWith()
-                                    fontWeight: FontWeight.w600,
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
                                     fontSize: 14 + fontSize)),
                                 if (pattern['description'] != null) ...[
                                   const SizedBox(height: 4),
                                   Text(
                                     pattern['description'],
-                                    style: theme.textTheme.bodyMedium?.copyWith()
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                      fontSize: 12 + fontSize))]]))]))).toList()]))),
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      fontSize: 12 + fontSize))]])]).toList()])),
           const SizedBox(height: 20)],
         
         // Life Themes
@@ -623,9 +618,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '인생 주제',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '인생 주제',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...lifeThemes.asMap().entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -640,18 +635,18 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                             shape: BoxShape.circle),
                           child: Center(
                             child: Text(
-                              '${entry.key + 1}',),
+                              '${entry.key + 1}',
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12)))),
+                                fontSize: 12)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             entry.value,
-                            style: theme.textTheme.bodyLarge?.copyWith()
-                              height: 1.5,
-                              fontSize: 14 + fontSize)))])).toList()]))),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.5,
+                              fontSize: 14 + fontSize)]).toList()])),
           const SizedBox(height: 20)],
         
         // Growth Potential
@@ -670,13 +665,13 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '성장 잠재력',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '성장 잠재력',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 200,
-                    child: _buildGrowthChart(growthPotential, theme))]))),
+                    child: _buildGrowthChart(growthPotential, theme)]),
           const SizedBox(height: 20)],
         
         // Recommendations
@@ -695,9 +690,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
-                        '심리 발달 조언',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold))]),
+                        '심리 발달 조언',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...recommendations.map((tip) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -715,9 +710,9 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             tip,
-                            style: theme.textTheme.bodyLarge?.copyWith()
-                              height: 1.5,
-                              fontSize: 14 + fontSize)))])).toList()]))),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.5,
+                              fontSize: 14 + fontSize)]).toList()])),
           const SizedBox(height: 20)],
         
         // Share Button
@@ -729,13 +724,14 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25)))))]);
+                borderRadius: BorderRadius.circular(25),)]);
   }
   
   Widget _buildElementsChart(Map<String, dynamic> elements, ThemeData theme) {
     final List<RadarDataSet> dataSets = [];
     final List<RadarChartTitle> titles = [];
-    final elementNames = \['['목(木)', '화(火)', '토(土)', '금(金)': '수(水)'];
+    final elementNames = \['['목(木)': '화(火)', '토(土)': '금(金)': '수(水)'
+  ];
     
     for (int i = 0; i < elementNames.length; i++) {
       titles.add(
@@ -754,7 +750,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
         fillColor: theme.colorScheme.primary.withOpacity(0.3),
         borderColor: theme.colorScheme.primary,
         borderWidth: 2,
-        dataEntries: values.map((v) => RadarEntry(value: v).toList()));
+        dataEntries: values.map((v) => RadarEntry(value: v).toList());
     
     return RadarChart(
       RadarChartData(
@@ -782,7 +778,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
           fontWeight: FontWeight.bold),
         ticksTextStyle: TextStyle(
           color: theme.colorScheme.onSurface.withOpacity(0.5),
-          fontSize: 10)));
+          fontSize: 10));
   }
   
   Widget _buildGrowthChart(Map<String, dynamic> growth, ThemeData theme) {
@@ -798,7 +794,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
               toY: (score as num).toDouble(),
               color: _getGrowthColor(score),
               width: 20,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4))]));
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)]);
       index++;
     });
     
@@ -824,7 +820,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
               interval: 20,
               getTitlesWidget: (value, meta) {
                 return Text(
-                  '${value.toInt()}%',),
+                  '${value.toInt()}%',
                   style: const TextStyle(fontSize: 10));
               })),
           bottomTitles: AxisTitles(
@@ -845,8 +841,8 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false)),
           topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false))),
-        borderData: FlBorderData(show: false)));
+            sideTitles: SideTitles(showTitles: false)),
+        borderData: FlBorderData(show: false));
   }
   
   Color _getScoreColor(int score) {

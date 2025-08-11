@@ -37,15 +37,13 @@ final exLoverStepProvider = StateNotifierProvider<ExLoverStepNotifier, int>((ref
 
 // 데이터 모델
 class ExLoverFortuneData {
-  // Step,
-    '1: 기본 정보'
+  // Step 1: 기본 정보
   String name = '';
   DateTime? birthDate;
   String? gender;
   String? mbti;
   
-  // Step,
-    '2: 관계 정보'
+  // Step 2: 관계 정보
   String? relationshipDuration;
   String? breakupReason;
   String? timeSinceBreakup;
@@ -56,8 +54,7 @@ class ExLoverFortuneData {
   String? currentStatus;
   bool readyForNewRelationship = false;
   
-  // Step,
-    '3: 추가 분석'
+  // Step 3: 추가 분석
   List<File> uploadedImages = [];
   String? instagramLink;
   String? detailedStory;
@@ -110,13 +107,13 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _fadeController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut));
     
     _scaleAnimation = Tween<double>(
       begin: 0.95,
       end: 1.0).animate(CurvedAnimation(
       parent: _scaleController,
-      curve: Curves.easeOutBack);
+      curve: Curves.easeOutBack));
     
     // Start animations
     _fadeController.forward();
@@ -238,7 +235,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         'detailedStory': data.detailedStory,
         'savedAt': null};
       
-      await prefs.setString('ex_lover_fortune_progress': jsonEncode(saveData),;
+      await prefs.setString('ex_lover_fortune_progress', jsonEncode(saveData));
     } catch (e) {
       print('Fortune cached');
     }
@@ -264,10 +261,11 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          '헤어진 애인 운세',),
-          style: theme.textTheme.headlineSmall?.copyWith()
+          '헤어진 애인 운세',
+          style: theme.textTheme.headlineSmall?.copyWith(
             color: Colors.white,
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
@@ -280,7 +278,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             } else {
               context.pop();
             }
-          })),
+          },
+        ),
+      ),
       body: AnimatedBuilder(
         animation: _fadeAnimation,
         builder: (context, child) {
@@ -291,7 +291,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: _getGradientColors(ref.watch(exLoverDataProvider).currentFeeling))),
+                  colors: _getGradientColors(ref.watch(exLoverDataProvider).currentFeeling),
+                ),
+              ),
               child: SafeArea(
                 child: Column(
                   children: [
@@ -315,19 +317,29 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           _saveProgress(); // Auto-save progress
                         },
                         children: [
-                          _buildAnimatedStep(_buildStep1BasicInfo(),
-                          _buildAnimatedStep(_buildStep2RelationshipInfo(),
-                          _buildAnimatedStep(_buildStep3AdditionalAnalysis(),
-                          _buildAnimatedStep(_buildStep4Confirmation()]))]))));
-        }));
+                          _buildAnimatedStep(_buildStep1BasicInfo()),
+                          _buildAnimatedStep(_buildStep2RelationshipInfo()),
+                          _buildAnimatedStep(_buildStep3AdditionalAnalysis()),
+                          _buildAnimatedStep(_buildStep4Confirmation()),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
   
   Widget _buildProgressIndicator(int currentStep) {
     final theme = Theme.of(context);
-    final steps = \['['기본 정보', '관계 정보', '추가 분석', '확인'];
+    final steps = ['기본 정보', '관계 정보', '추가 분석', '확인'];
     
     return Padding(
-      padding: const EdgeInsets.all(16.0,
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           Row(
@@ -345,15 +357,26 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           color: isActive 
                             ? Colors.white 
                             : Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(2)))),
-                    if (index < 3) const SizedBox(width: 8)]))
-            })),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    if (index < 3) const SizedBox(width: 8),
+                  ],
+                ),
+              );
+            }),
+          ),
           const SizedBox(height: 12),
           Text(
             steps[currentStep],
-            style: theme.textTheme.bodyLarge?.copyWith()
+            style: theme.textTheme.bodyLarge?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.bold))]));
+              fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildStep1BasicInfo() {
@@ -366,18 +389,20 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         children: [
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '기본 정보를 입력해주세요',),
-                  style: theme.textTheme.headlineSmall)),
+                  '기본 정보를 입력해주세요',
+                  style: theme.textTheme.headlineSmall),
                 const SizedBox(height: 8),
                 Text(
-                  '정확한 운세 분석을 위해 필요합니다',),
-                  style: theme.textTheme.bodyMedium?.copyWith()
-                    color: theme.colorScheme.onSurface.withOpacity(0.7))),
+                  '정확한 운세 분석을 위해 필요합니다',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 
                 // Name Input
@@ -388,16 +413,18 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     hintText: '이름을 입력하세요',
                     prefixIcon: const Icon(Icons.person),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  ),
                   onChanged: (value) {
                     ref.read(exLoverDataProvider.notifier).update((state) {
                       state.name = value;
                       return state;
                     });
                     _saveProgress();
-                  }),
+                  },
+                ),
                 const SizedBox(height: 16),
                 
                 // Birth Date Picker
@@ -420,9 +447,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       labelText: '생년월일',
                       prefixIcon: const Icon(Icons.calendar_today),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    ),
                     child: Text(
                       data.birthDate != null
                           ? '${data.birthDate!.year}년 ${data.birthDate!.month}월 ${data.birthDate!.day}일'
@@ -430,7 +458,11 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       style: TextStyle(
                         color: data.birthDate != null
                             ? theme.colorScheme.onSurface
-                            : theme.colorScheme.onSurface.withOpacity(0.6))))),
+                            : theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 
                 // Gender Selection
@@ -438,8 +470,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '성별',),
-                      style: theme.textTheme.bodyLarge)),
+                      '성별',
+                      style: theme.textTheme.bodyLarge),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -461,15 +493,23 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                                   color: data.gender == 'male'
                                       ? theme.colorScheme.primary
                                       : Colors.transparent,
-                                  width: 2),
-                                borderRadius: BorderRadius.circular(12)),
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               child: Center(
                                 child: Text(
-                                  '남성',),
+                                  '남성',
                                   style: TextStyle(
                                     fontWeight: data.gender == 'male' 
                                         ? FontWeight.bold 
-                                        : FontWeight.normal)))))),
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: GestureDetector(
@@ -489,15 +529,27 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                                   color: data.gender == 'female'
                                       ? theme.colorScheme.primary
                                       : Colors.transparent,
-                                  width: 2),
-                                borderRadius: BorderRadius.circular(12)),
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               child: Center(
                                 child: Text(
-                                  '여성',),
+                                  '여성',
                                   style: TextStyle(
                                     fontWeight: data.gender == 'female' 
                                         ? FontWeight.bold 
-                                        : FontWeight.normal))))))])]),
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 
                 // MBTI Selection (Optional)
@@ -507,24 +559,28 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     labelText: 'MBTI (선택)',
                     prefixIcon: const Icon(Icons.psychology),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     filled: true,
                     fillColor: theme.colorScheme.surface.withOpacity(0.5)),
                   items: [
-                    const DropdownMenuItem(value: null, child: Text('선택 안함'),
+                    const DropdownMenuItem(value: null, child: Text('선택 안함')),
                     ...[
-                      'INTJ', 'INTP': 'ENTJ', 'ENTP',
+                      'INTJ', 'INTP', 'ENTJ', 'ENTP',
                       'INFJ', 'INFP', 'ENFJ', 'ENFP',
                       'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
                       'ISTP', 'ISFP', 'ESTP', 'ESFP'].map((mbti) => DropdownMenuItem(
                       value: mbti,
-                      child: Text(mbti))],
+                      child: Text(mbti))).toList()],
                   onChanged: (value) {
                     ref.read(exLoverDataProvider.notifier).update((state) {
                       state.mbti = value;
                       return state;
                     });
-                  })])),
+                  },
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 24),
           
           // Next Button
@@ -543,10 +599,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
               child: const Text(
-                '다음',),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))]));
+                '다음',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))]);
   }
   
   Widget _buildStep2RelationshipInfo() {
@@ -554,42 +610,47 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     final data = ref.watch(exLoverDataProvider);
     
     final durations = {
-      'short', '6개월 미만',
-      'medium', '6개월-1년',
-      'long', '1-3년',
-      'verylong', '3년 이상'};
+      'short': '6개월 미만',
+      'medium': '6개월-1년',
+      'long': '1-3년',
+      'verylong': '3년 이상'
+  };
     
     final breakupReasons = {
-      'distance', '물리적/정서적 거리',
-      'values', '가치관 차이',
-      'timing', '시기가 맞지 않음',
-      'cheating', '신뢰 문제',
-      'family', '가족 반대',
-      'growth', '서로 다른 성장',
-      'communication', '소통 부재',
-      'other', '기타'};
+      'distance': '물리적/정서적 거리',
+      'values': '가치관 차이',
+      'timing': '시기가 맞지 않음',
+      'cheating': '신뢰 문제',
+      'family': '가족 반대',
+      'growth': '서로 다른 성장',
+      'communication': '소통 부재',
+      'other': '기타'
+  };
     
     final timePeriods = {
-      'recent', '1개월 미만',
-      'short', '1-3개월',
-      'medium', '3-6개월',
-      'long', '6개월-1년',
-      'verylong', '1년 이상'};
+      'recent': '1개월 미만',
+      'short': '1-3개월',
+      'medium': '3-6개월',
+      'long': '6개월-1년',
+      'verylong': '1년 이상'
+  };
     
     final feelings = {
-      'miss', '그리움',
-      'anger', '분노/원망',
-      'sadness', '슬픔',
-      'relief', '안도감',
-      'indifferent', '무덤덤',
-      'grateful', '감사함',
-      'confused', '혼란스러움'};
+      'miss': '그리움',
+      'anger': '분노/원망',
+      'sadness': '슬픔',
+      'relief': '안도감',
+      'indifferent': '무덤덤',
+      'grateful': '감사함',
+      'confused': '혼란스러움'
+  };
     
     final currentStatuses = {
-      'single', '싱글',
-      'dating', '새로운 사람과 연애 중',
-      'healing', '치유 중',
-      'confused', '혼란스러운 상태'};
+      'single': '싱글',
+      'dating': '새로운 사람과 연애 중',
+      'healing': '치유 중',
+      'confused': '혼란스러운 상태'
+  };
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -598,7 +659,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           // 관계 기간
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -607,14 +668,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     Icon(Icons.favorite, color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '관계 정보',),
+                      '관계 정보',
                       style: theme.textTheme.headlineSmall)])),
                 const SizedBox(height: 16),
                 
                 // 교제 기간
                 Text(
-                  '교제 기간',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
+                  '교제 기간',
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Wrap(
@@ -635,14 +696,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         }
                       },
                       selectedColor: theme.colorScheme.primary.withOpacity(0.2));
-                  }).toList()),
+                  }).toList(),
                 const SizedBox(height: 16),
                 
                 // 이별 이유
                 Text(
-                  '이별 이유',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  '이별 이유',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -662,14 +723,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         }
                       },
                       selectedColor: theme.colorScheme.primary.withOpacity(0.2));
-                  }).toList()),
+                  }).toList(),
                 const SizedBox(height: 16),
                 
                 // 이별 후 시간
                 Text(
-                  '이별 후 시간',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  '이별 후 시간',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -689,13 +750,13 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         }
                       },
                       selectedColor: theme.colorScheme.primary.withOpacity(0.2));
-                  }).toList())])),
+                  }).toList()),
           const SizedBox(height: 16),
           
           // 현재 감정
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -704,15 +765,15 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     Icon(Icons.mood, color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '현재 상태',),
+                      '현재 상태',
                       style: theme.textTheme.headlineSmall)])),
                 const SizedBox(height: 16),
                 
                 // 현재 감정
                 Text(
-                  '전 애인에 대한 현재 감정',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  '전 애인에 대한 현재 감정',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -732,7 +793,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         }
                       },
                       selectedColor: _getFeelingColor(entry.key).withOpacity(0.2));
-                  }).toList()),
+                  }).toList(),
                 const SizedBox(height: 16),
                 
                 // 연락 여부
@@ -740,8 +801,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   children: [
                     Expanded(
                       child: Text(
-                        '아직 연락하고 있나요?',),
-                        style: theme.textTheme.bodyLarge))),
+                        '아직 연락하고 있나요?',
+                        style: theme.textTheme.bodyLarge)),
                     Switch(
                       value: data.stillInContact,
                       onChanged: (value) {
@@ -757,8 +818,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   children: [
                     Expanded(
                       child: Text(
-                        '아직 미련이 남아있나요?',),
-                        style: theme.textTheme.bodyLarge))),
+                        '아직 미련이 남아있나요?',
+                        style: theme.textTheme.bodyLarge)),
                     Switch(
                       value: data.hasUnresolvedFeelings,
                       onChanged: (value) {
@@ -771,9 +832,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 
                 // 현재 상태
                 Text(
-                  '현재 연애 상태',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  '현재 연애 상태',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -793,7 +854,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         }
                       },
                       selectedColor: theme.colorScheme.primary.withOpacity(0.2));
-                  }).toList())])),
+                  }).toList()),
           const SizedBox(height: 24),
           
           // Next Button
@@ -812,10 +873,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
               child: const Text(
-                '다음',),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))]));
+                '다음',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))]);
   }
   
   Widget _buildStep3AdditionalAnalysis() {
@@ -828,18 +889,18 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         children: [
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '추가 분석 옵션',),
-                  style: theme.textTheme.headlineSmall)),
+                  '추가 분석 옵션',
+                  style: theme.textTheme.headlineSmall),
                 const SizedBox(height: 8),
                 Text(
-                  '더 깊이 있는 분석을 원하시면 선택해주세요',),
-                  style: theme.textTheme.bodyMedium?.copyWith()
-                    color: theme.colorScheme.onSurface.withOpacity(0.7))),
+                  '더 깊이 있는 분석을 원하시면 선택해주세요',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 const SizedBox(height: 24),
                 
                 // 이미지 분석
@@ -886,7 +947,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     https://instagram.com/...',
                       prefixIcon: const Icon(Icons.link),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       filled: true,
                       fillColor: theme.colorScheme.surface.withOpacity(0.5),
                       errorText: _validateInstagramLink(data.instagramLink)),
@@ -927,17 +988,17 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           return Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              '$currentLength / $maxLength',),
-                              style: theme.textTheme.bodySmall?.copyWith()
-                                color: currentLength > maxLength! * 0.9
+                              '$currentLength / $maxLength',
+                              style: theme.textTheme.bodySmall?.copyWith(
+            color: currentLength > maxLength! * 0.9
                                     ? theme.colorScheme.error
-                                    : theme.colorScheme.onSurface.withOpacity(0.6))));
+                                    : theme.colorScheme.onSurface.withOpacity(0.6)));
                         },
                         decoration: InputDecoration(
                           labelText: '사연을 자세히 적어주세요',
                           hintText: '어떤 관계였는지, 왜 헤어졌는지, 현재 마음은 어떤지 자유롭게 작성해주세요',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
                           filled: true,
                           fillColor: theme.colorScheme.surface.withOpacity(0.5)),
                         onChanged: (value) {
@@ -964,11 +1025,11 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
                     side: const BorderSide(color: Colors.white)),
                   child: const Text(
-                    '건너뛰기',),
-                    style: TextStyle(fontSize: 16, color: Colors.white)))),
+                    '건너뛰기',
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
@@ -982,10 +1043,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
+                      borderRadius: BorderRadius.circular(12),
                   child: const Text(
-                    '다음',),
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))])]));
+                    '다음',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)))])]));
   }
   
   Widget _buildStep4Confirmation() {
@@ -999,13 +1060,13 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         children: [
           GlassContainer(
             padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '운세 분석 확인',),
-                  style: theme.textTheme.headlineSmall)),
+                  '운세 분석 확인',
+                  style: theme.textTheme.headlineSmall),
                 const SizedBox(height: 24),
                 
                 // 기본 정보 요약
@@ -1023,9 +1084,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 
                 // 추가 분석 요약
                 Text(
-                  '선택한 분석',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  '선택한 분석',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 
                 _buildAnalysisSummary('기본 분석'),
@@ -1043,14 +1104,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '총 필요 영혼',),
-                        style: theme.textTheme.bodyLarge?.copyWith()
-                          fontWeight: FontWeight.bold)),
+                        '총 필요 영혼',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                       Row(
                         children: [
                           Icon(
@@ -1059,10 +1120,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                             size: 20),
                           const SizedBox(width: 4),
                           Text(
-                            '$totalSouls',),
-                            style: theme.textTheme.headlineSmall?.copyWith()
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold))])]))])),
+                            '$totalSouls',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+            color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold))])])]),
           const SizedBox(height: 24),
           
           // 분석 시작 버튼
@@ -1073,14 +1134,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 backgroundColor: theme.colorScheme.primary),
               child: Text(
-                '운세 분석 시작 ($totalSouls 영혼)',),
+                '운세 분석 시작 ($totalSouls 영혼)',
                 style: const TextStyle(
                   fontSize: 16, 
                   fontWeight: FontWeight.bold,
-                  color: Colors.white))))]));
+                  color: Colors.white))]);
   }
   
   Widget _buildAnalysisOption({
@@ -1094,7 +1155,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     
     return InkWell(
       onTap: () => onChanged(!isSelected),
-      borderRadius: BorderRadius.circular(12))),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -1103,7 +1164,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               ? theme.colorScheme.primary 
               : theme.colorScheme.onSurface.withOpacity(0.3),
             width: isSelected ? 2 : 1),
-          borderRadius: BorderRadius.circular(12))),
+          borderRadius: BorderRadius.circular(12),
           color: isSelected 
             ? theme.colorScheme.primary.withOpacity(0.1) 
             : null),
@@ -1121,12 +1182,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 children: [
                   Text(
                     title,
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      fontWeight: FontWeight.bold)),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                   Text(
                     description,
-                    style: theme.textTheme.bodySmall?.copyWith()
-                      color: theme.colorScheme.onSurface.withOpacity(0.7)))])),
+                    style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7)]),
             Column(
               children: [
                 Checkbox(
@@ -1140,10 +1201,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       color: theme.colorScheme.primary),
                     const SizedBox(width: 4),
                     Text(
-                      '+$soulCost',),
-                      style: theme.textTheme.bodySmall?.copyWith()
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary))])])])));
+                      '+$soulCost',
+                      style: theme.textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary))])])]));
   }
   
   Widget _buildImageUploadSection() {
@@ -1154,7 +1215,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '사진 업로드 (최대 3장)',),
+          '사진 업로드 (최대 3장)',
           style: theme.textTheme.bodyMedium)),
         const SizedBox(height: 8),
         SizedBox(
@@ -1167,7 +1228,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 child: Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8))),
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.file(
                         image,
                         width: 100,
@@ -1191,9 +1252,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           child: const Icon(
                             Icons.close,
                             size: 16,
-                            color: Colors.white))))])),
-              if (data.uploadedImages.length < 3)
-                GestureDetector(
+                            color: Colors.white))]),
+              if (data.uploadedImages.length < 3),
+            GestureDetector(
                   onTap: _isUploadingImage ? null : _pickImage,
                   child: Container(
                     width: 100,
@@ -1203,13 +1264,13 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         color: theme.colorScheme.onSurface.withOpacity(0.3),
                         width: 2,
                         style: BorderStyle.solid),
-                      borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(8),
                     child: _isUploadingImage
                         ? Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                theme.colorScheme.primary))),
+                                theme.colorScheme.primary)),
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -1218,9 +1279,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                                 color: theme.colorScheme.onSurface.withOpacity(0.6)),
                               const SizedBox(height: 4),
                               Text(
-                                '사진 추가',),
-                                style: theme.textTheme.bodySmall?.copyWith()
-                                  color: theme.colorScheme.onSurface.withOpacity(0.6)))])))]))]);
+                                '사진 추가',
+                                style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6)])]))]);
   }
   
   Widget _buildSummaryItem(String label, String value) {
@@ -1233,12 +1294,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         children: [
           Text(
             label,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              color: theme.colorScheme.onSurface.withOpacity(0.7))),
+            style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7)),
           Text(
             value,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              fontWeight: FontWeight.bold))]));
+            style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold)]);
   }
   
   Widget _buildAnalysisSummary(String name, int souls, bool isIncluded) {
@@ -1256,7 +1317,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Expanded(
             child: Text(
               name,
-              style: theme.textTheme.bodyMedium))),
+              style: theme.textTheme.bodyMedium)),
           Row(
             children: [
               Icon(
@@ -1265,9 +1326,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 color: theme.colorScheme.primary),
               const SizedBox(width: 4),
               Text(
-                '$souls',),
-                style: theme.textTheme.bodyMedium?.copyWith()
-                  fontWeight: FontWeight.bold,
+                '$souls',
+                style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary))])]));
   }
   
@@ -1275,22 +1336,22 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     final data = ref.read(exLoverDataProvider);
     
     if (data.name.isEmpty) {
-      _showValidationError('이름을 입력해주세요', '상대방의 이름은 운세 분석에 중요한 정보입니다.');
+      _showValidationError('이름을 입력해주세요': '상대방의 이름은 운세 분석에 중요한 정보입니다.');
       return false;
     }
     
     if (data.name.length < 2) {
-      _showValidationError('올바른 이름을 입력해주세요', '이름은 2글자 이상이어야 합니다.');
+      _showValidationError('올바른 이름을 입력해주세요': '이름은 2글자 이상이어야 합니다.');
       return false;
     }
     
     if (data.birthDate == null) {
-      _showValidationError('생년월일을 선택해주세요', '정확한 운세 분석을 위해 필요합니다.');
+      _showValidationError('생년월일을 선택해주세요': '정확한 운세 분석을 위해 필요합니다.');
       return false;
     }
     
     if (data.gender == null) {
-      _showValidationError('성별을 선택해주세요', '맞춤형 조언을 위해 필요합니다.');
+      _showValidationError('성별을 선택해주세요': '맞춤형 조언을 위해 필요합니다.');
       return false;
     }
     
@@ -1306,7 +1367,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         return AlertDialog(
           backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
+            borderRadius: BorderRadius.circular(16),
           title: Row(
             children: [
               Icon(Icons.info_outline, color: theme.colorScheme.primary),
@@ -1327,27 +1388,27 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     final data = ref.read(exLoverDataProvider);
     
     if (data.relationshipDuration == null) {
-      _showValidationError('교제 기간을 선택해주세요', '관계의 깊이를 이해하는데 필요합니다.');
+      _showValidationError('교제 기간을 선택해주세요': '관계의 깊이를 이해하는데 필요합니다.');
       return false;
     }
     
     if (data.breakupReason == null) {
-      _showValidationError('이별 이유를 선택해주세요', '상황을 정확히 분석하기 위해 필요합니다.');
+      _showValidationError('이별 이유를 선택해주세요': '상황을 정확히 분석하기 위해 필요합니다.');
       return false;
     }
     
     if (data.timeSinceBreakup == null) {
-      _showValidationError('이별 후 시간을 선택해주세요', '치유 단계를 파악하는데 중요합니다.');
+      _showValidationError('이별 후 시간을 선택해주세요': '치유 단계를 파악하는데 중요합니다.');
       return false;
     }
     
     if (data.currentFeeling == null) {
-      _showValidationError('현재 감정을 선택해주세요', '맞춤형 조언을 위해 필요합니다.');
+      _showValidationError('현재 감정을 선택해주세요': '맞춤형 조언을 위해 필요합니다.');
       return false;
     }
     
     if (data.currentStatus == null) {
-      _showValidationError('현재 연애 상태를 선택해주세요', '적절한 조언을 위해 필요합니다.');
+      _showValidationError('현재 연애 상태를 선택해주세요': '적절한 조언을 위해 필요합니다.');
       return false;
     }
     
@@ -1359,8 +1420,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       return '인스타그램 아이디나 링크를 입력해주세요';
     }
     
-    // Check if it's a username (starts with @)
-    if (value.startsWith('@'), {
+    // Check if it's a username (starts with @),
+            if (value.startsWith('@'), {
       final username = value.substring(1);
       if (username.isEmpty) {
         return '올바른 아이디를 입력해주세요';
@@ -1503,7 +1564,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             ListTile(
               leading: const Icon(Icons.close),
               title: const Text('취소'),
-              onTap: () => Navigator.pop(context))])));
+              onTap: () => Navigator.pop(context)]);
     
     if (source == null) return;
     
@@ -1534,7 +1595,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('이미지가 추가되었습니다'),
-              duration: Duration(seconds: 1)));
+              duration: Duration(seconds: 1));
         }
       }
     } catch (e) {
@@ -1559,10 +1620,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     
     // 로딩 다이얼로그 표시 with comforting messages
     final loadingMessages = [
-      '당신의 마음을 읽고 있어요...',
-      '깊은 감정을 분석하고 있어요...',
-      '최선의 조언을 준비하고 있어요...',
-      '당신을 위한 메시지를 만들고 있어요...'];
+      '당신의 마음을 읽고 있어요...': '깊은 감정을 분석하고 있어요...',
+      '최선의 조언을 준비하고 있어요...': '당신을 위한 메시지를 만들고 있어요...'
+  ];
     
     int messageIndex = 0;
     
@@ -1584,7 +1644,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             return Center(
               child: GlassContainer(
                 padding: const EdgeInsets.all(32),
-                borderRadius: BorderRadius.circular(20))),
+                borderRadius: BorderRadius.circular(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1597,15 +1657,15 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       child: Text(
                         loadingMessages[messageIndex],
                         key: ValueKey(messageIndex),
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith()
-                          color: Colors.white,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: Colors.white,
                           fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center)),
                     const SizedBox(height: 8),
                     Text(
-                      '잠시만 기다려주세요',),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                        color: Colors.white.withOpacity(0.8)))])));
+                      '잠시만 기다려주세요',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.white.withOpacity(0.8)]);
           });
       }
     );
@@ -1670,7 +1730,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           context,
           MaterialPageRoute(
             builder: (context) => ExLoverFortuneResultPage(
-              fortuneData: fortune.toJson())));
+              fortuneData: fortune.toJson());
       }
       
     } catch (e) {
@@ -1688,19 +1748,19 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         _showErrorRecoveryDialog(
           title: '네트워크 오류',
           message: errorMessage,
-          retryAction: () => _startFortuneTelling());
+          retryAction: () => _startFortuneTelling();
       } else if (errorDetails.contains('timeout'), {
         errorMessage = '요청 시간이 초과되었습니다. 다시 시도해주세요.';
         _showErrorRecoveryDialog(
           title: '시간 초과',
           message: errorMessage,
-          retryAction: () => _startFortuneTelling());
+          retryAction: () => _startFortuneTelling();
       } else {
         _showErrorRecoveryDialog(
           title: '오류 발생',
           message: errorMessage,
           details: errorDetails,
-          retryAction: () => _startFortuneTelling());
+          retryAction: () => _startFortuneTelling();
       }
     }
   }
@@ -1717,7 +1777,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20)),
+            borderRadius: BorderRadius.circular(20),
           title: Row(
             children: [
               Icon(
@@ -1739,26 +1799,26 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.errorContainer.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
                   child: Text(
                     details,
-                    style: theme.textTheme.bodySmall?.copyWith()
-                      color: theme.colorScheme.onErrorContainer),
+                    style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onErrorContainer),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis))]]),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('닫기')),
-            if (retryAction != null)
-              ElevatedButton(
+            if (retryAction != null),
+            ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                   retryAction();
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 child: const Text('다시 시도'))]);
       }
     );
@@ -1773,7 +1833,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         return AlertDialog(
           backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20)),
+            borderRadius: BorderRadius.circular(20),
           title: Row(
             children: [
               Icon(Icons.favorite, color: theme.colorScheme.primary),
@@ -1783,14 +1843,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '운세를 보기 위해서는 영혼이 필요합니다.',),
+                '운세를 보기 위해서는 영혼이 필요합니다.',
                 style: theme.textTheme.bodyLarge)),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1800,10 +1860,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      '영혼: ${_calculateTotalSouls()}개',),
-                      style: theme.textTheme.bodyLarge?.copyWith()
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary))]))]),
+                      '영혼: ${_calculateTotalSouls()}개',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary)])]),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -1816,7 +1876,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
               child: const Text('영혼 충전하기'))]);
       }
     );

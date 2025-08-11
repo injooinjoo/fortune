@@ -105,9 +105,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
         {'title': '창의성', 'description': '독창적인 아이디어가 풍부합니다', 'score': 90},
         {'title': '인간관계', 'description': '사람들과 쉽게 친해집니다', 'score': 80}],
       'pastLife': fortune.additionalInfo?['pastLife'] ?? {
-        'role': '조선시대 선비',
-        'description': '학문을 사랑하고 정의를 추구했던 선비였습니다',
-        'karma': '현생에서도 지식을 추구하고 올바른 길을 걷게 됩니다'}};
+        'role': '조선시대 선비', 'description': '학문을 사랑하고 정의를 추구했던 선비였습니다', 'karma': '현생에서도 지식을 추구하고 올바른 길을 걷게 됩니다'}};
 
     _fortune = fortune;
     _animationController.forward();
@@ -180,7 +178,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                 '${pillar['stem']}${pillar['branch']}',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white54))]))]);
+                  color: Colors.white54)])]);
   }
   
   Widget _buildEmptyPillar(String title) {
@@ -211,7 +209,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                 '시간 미입력',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white54))]))]);
+                  color: Colors.white54)])]);
   }
   
   Widget _buildTenGodsAnalysis() {
@@ -243,7 +241,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                       '$position간',
                       style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 14))),
+                        fontSize: 14)),
                   const SizedBox(width: 12),
                   Wrap(
                     spacing: 8,
@@ -336,7 +334,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                     colors: [
                       Colors.orange.shade400,
                       Colors.orange.shade600]),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: const Icon(
                   Icons.analytics_rounded,
                   color: Colors.white,
@@ -367,14 +365,14 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                     borderColor: Theme.of(context).colorScheme.primary,
                     borderWidth: 2,
                     dataEntries: elements.values
-                        .map((value) => RadarEntry(value: value.toDouble()))
-                        .toList())],
+                        .map((value) => RadarEntry(value: value.toDouble())
+                        .toList()],
                 getTitle: (index, angle) {
                   final titles = elements.keys.toList();
                   return RadarChartTitle(
                     text: titles[index],
                     angle: 0);
-                }))).animate().fadeIn(delay: 200.ms).scale(
+                })).animate().fadeIn(delay: 200.ms).scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1, 1)),
           const SizedBox(height: 20),
@@ -399,8 +397,8 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                     '${entry.value}%',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: color))]));
-          }).toList()]));
+                      color: color)]);
+          }).toList(),);
   }
 
   Widget _buildTalentAnalysis() {
@@ -420,7 +418,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                     colors: [
                       Colors.purple.shade400,
                       Colors.purple.shade600]),
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 child: const Icon(
                   Icons.star_rounded,
                   color: Colors.white,
@@ -459,28 +457,28 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                               colors: [
                                 Theme.of(context).colorScheme.primary,
                                 Theme.of(context).colorScheme.secondary]),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
                           child: Text(
                             '${talent['score']}점',
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12)))]),
+                              fontSize: 12))]),
                     const SizedBox(height: 8),
                     Text(
                       talent['description'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: talent['score'],
                       backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         Theme.of(context).colorScheme.primary),
-                      minHeight: 6)]))).animate()
-                  .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
+                      minHeight: 6)])).animate()
+                  .fadeIn(delay: Duration(milliseconds: 300 + (index * 100))
                   .slideX(begin: 0.1, end: 0);
-          }).toList()]));
+          }).toList(),);
   }
 
   Widget _buildPastLifeSection() {
@@ -518,12 +516,12 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
               color: Colors.indigo.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.indigo.withOpacity(0.3))),
+                color: Colors.indigo.withOpacity(0.3)),
             child: Text(
               pastLife['role'],
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.indigo.shade700))),
+                color: Colors.indigo.shade700)),
           const SizedBox(height: 16),
           Text(
             pastLife['description'],
@@ -534,7 +532,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(16)),
+              borderRadius: BorderRadius.circular(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

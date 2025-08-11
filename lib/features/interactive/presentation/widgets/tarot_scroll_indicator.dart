@@ -86,7 +86,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
-                      fontWeight: FontWeight.w500))))]));
+                      fontWeight: FontWeight.w500))]);
       });
   }
 
@@ -119,7 +119,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 size: const Size(30, 30),
                 painter: ArrowPainter(
                   color: Colors.white,
-                  strokeWidth: 3)))])));
+                  strokeWidth: 3))]));
   }
 }
 
@@ -215,7 +215,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                     BoxShadow(
                       color: Theme.of(context).primaryColor.withOpacity(0.3),
                       blurRadius: 8,
-                      spreadRadius: 2)])))));
+                      spreadRadius: 2)]))));
       });
   }
 }

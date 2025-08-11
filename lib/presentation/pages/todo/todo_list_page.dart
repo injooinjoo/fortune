@@ -81,7 +81,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: TodoStatsCard())),
+                child: TodoStatsCard()),
 
             // Filter Chips
             if (filter.status != null ||
@@ -117,14 +117,14 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                             ref.read(todoFilterProvider.notifier).update(
                                   (state) => state.copyWith(searchQuery: () => null));
                             ref.read(todosProvider.notifier).loadTodos(refresh: true);
-                          })]))),
+                          })])),
 
             // Error State
             if (todosState.failure != null && todosState.todos.isEmpty)
               SliverFillRemaining(
                 child: CustomErrorWidget(
                   message: '할 일을 불러올 수 없습니다',
-                  onRetry: () => ref.read(todosProvider.notifier).loadTodos(refresh: true))),
+                  onRetry: () => ref.read(todosProvider.notifier).loadTodos(refresh: true)),
 
             // Empty State
             if (todosState.todos.isEmpty && !todosState.isLoading && todosState.failure == null)
@@ -154,7 +154,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                     onDelete: () => ref.read(todosProvider.notifier).deleteTodo(todo.id),
                     onTap: () => _showTodoDetails(todo));
                 },
-                childCount: todosState.todos.length + (todosState.hasMore ? 1 : 0)))])),
+                childCount: todosState.todos.length + (todosState.hasMore ? 1 : 0))]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateTodoDialog,
         icon: const Icon(Icons.add),
@@ -196,7 +196,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                 Navigator.of(context).pop();
               }
             },
-            child: const Text('검색'))]));
+            child: const Text('검색')]);
   }
 
   void _showFilterOptions() {

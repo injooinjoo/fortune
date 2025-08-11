@@ -45,7 +45,7 @@ class AdminStats {
       daily: DailyStat.fromJson(json['daily']),
       monthly: DailyStat.fromJson(json['monthly']),
       byPackage: (json['byPackage'] as Map<String, dynamic>? ?? {}).map(
-        (key, value) => MapEntry(key, PackageStat.fromJson(value))),
+        (key, value) => MapEntry(key, PackageStat.fromJson(value)),
       timeline: (json['timeline'] as List? ?? [])
           .map((e) => TimelineStat.fromJson(e))
           .toList(),
@@ -188,7 +188,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                           onPressed: () => ref.invalidate(adminStatsProvider),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            child: Text('다시 시도')))])),
+                            child: Text('다시 시도'))]),
                 data: (stats) => Column(
                   children: [
                     // Tab Bar
@@ -221,7 +221,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                                       style: TextStyle(
                                         fontSize: 14 * fontScale,
                                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                        color: isSelected ? theme.colorScheme.primary : null)))))));
+                                        color: isSelected ? theme.colorScheme.primary : null))))));
                         })),
                     // Tab Content
                     Expanded(
@@ -231,7 +231,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                           _OverviewTab(stats: stats, fontScale: fontScale),
                           _UsageTrendTab(stats: stats, fontScale: fontScale),
                           _PackageAnalysisTab(stats: stats, fontScale: fontScale),
-                          _TopUsersTab(stats: stats, fontScale: fontScale)]))])))])));
+                          _TopUsersTab(stats: stats, fontScale: fontScale)])]))])));
   }
 }
 
@@ -400,7 +400,7 @@ class _SummaryCard extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: 12 * fontScale,
-                  color: theme.colorScheme.onSurface.withOpacity(0.7))),
+                  color: theme.colorScheme.onSurface.withOpacity(0.7)),
               Icon(icon, size: 20, color: color)]),
           Text(
             value,
@@ -412,7 +412,7 @@ class _SummaryCard extends StatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: 10 * fontScale,
-              color: theme.colorScheme.onSurface.withOpacity(0.5)))]));
+              color: theme.colorScheme.onSurface.withOpacity(0.5))]);
   }
 }
 
@@ -496,7 +496,7 @@ class _UsageTrendTab extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10 * fontScale,
                               color: theme.colorScheme.onSurface.withOpacity(0.7)));
-                        }))),
+                        })),
                   borderData: FlBorderData(show: false),
                   minX: 0,
                   maxX: (stats.timeline.length - 1).toDouble(),
@@ -520,7 +520,7 @@ class _UsageTrendTab extends StatelessWidget {
                             theme.colorScheme.primary.withOpacity(0.1),
                             theme.colorScheme.secondary.withOpacity(0.1)],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)))])))),
+                          end: Alignment.bottomCenter))]),
           const SizedBox(height: 24),
           
           // Daily Stats
@@ -566,7 +566,7 @@ class _UsageTrendTab extends StatelessWidget {
                                 label: '비용',
                                 value: NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(stat.cost),
                                 color: Colors.green,
-                                fontScale: fontScale)])]))])));
+                                fontScale: fontScale)])])]));
           }).toList()]));
   }
 }
@@ -594,7 +594,7 @@ class _StatItem extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 10 * fontScale,
-            color: theme.colorScheme.onSurface.withOpacity(0.7))),
+            color: theme.colorScheme.onSurface.withOpacity(0.7)),
         Text(
           value,
           style: TextStyle(
@@ -651,7 +651,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
                           child: Text(
                             '${stat.savingsPercent.toStringAsFixed(1)}% 절감',
                             style: TextStyle(
@@ -704,7 +704,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                       0.0,
                       (sum, entry) => sum + (entry.value.avgCostPerRequest * 
                           entry.value.requestCount * 
-                          entry.value.savingsPercent / 100))),
+                          entry.value.savingsPercent / 100)),
                   style: TextStyle(
                     fontSize: 24 * fontScale,
                     fontWeight: FontWeight.bold,
@@ -714,7 +714,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                   '배치 처리로 절약한 비용',
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: theme.colorScheme.onSurface.withOpacity(0.7)))]))]));
+                    color: theme.colorScheme.onSurface.withOpacity(0.7))])]));
   }
 }
 
@@ -739,7 +739,7 @@ class _PackageStat extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 10 * fontScale,
-            color: theme.colorScheme.onSurface.withOpacity(0.7))),
+            color: theme.colorScheme.onSurface.withOpacity(0.7)),
         const SizedBox(height: 4),
         Text(
           value,
@@ -783,7 +783,7 @@ class _TopUsersTab extends StatelessWidget {
             '토큰 사용량 기준 상위 ${stats.topUsers.length}명',
             style: TextStyle(
               fontSize: 14 * fontScale,
-              color: theme.colorScheme.onSurface.withOpacity(0.7))),
+              color: theme.colorScheme.onSurface.withOpacity(0.7)),
           const SizedBox(height: 16),
           
           ...stats.topUsers.asMap().entries.map((entry) {
@@ -809,7 +809,7 @@ class _TopUsersTab extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: color)))),
+                            color: color)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -825,7 +825,7 @@ class _TopUsersTab extends StatelessWidget {
                             '${NumberFormat('#,###').format(user.requestCount)}회 요청',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7)))])),
+                              color: theme.colorScheme.onSurface.withOpacity(0.7))]),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [

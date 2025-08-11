@@ -1,35 +1,60 @@
-// import '../../../features/fortune/presentation/pages/tojeong_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/traditional_saju_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/physiognomy_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/physiognomy_enhanced_page.dart';
-// import '../../../features/fortune/presentation/pages/physiognomy_input_page.dart';
-// import '../../../features/fortune/presentation/pages/physiognomy_result_page.dart';
-// import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/saju_psychology_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/traditional_fortune_enhanced_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/traditional_fortune_result_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/face_reading_fortune_page.dart' as fortune_pages;
-// import '../../../features/fortune/presentation/pages/face_reading_unified_page.dart' as fortune_pages;
+import 'package:go_router/go_router.dart';
+import '../../../features/fortune/presentation/pages/tojeong_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/traditional_saju_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/physiognomy_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/saju_psychology_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart';
+import '../../../features/fortune/presentation/pages/traditional_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/face_reading_fortune_page.dart';
 
 final traditionalFortuneRoutes = [
-  // TEMPORARILY DISABLED - All routes commented out for debugging
-  // // Traditional Fortune Unified
-  // GoRoute(
-  //   path: 'traditional',
-  //   name: 'fortune-traditional',
-  //   builder: (context, state) => const fortune_pages.TraditionalFortuneUnifiedPage()),
+  // Traditional Fortune Unified
+  GoRoute(
+    path: '/traditional',
+    name: 'fortune-traditional',
+    builder: (context, state) => const TraditionalFortuneUnifiedPage()),
   
-  // // Tojeong Fortune
-  // GoRoute(
-  //   path: 'tojeong',
-  //   name: 'fortune-tojeong',
-  //   builder: (context, state) => const fortune_pages.TojeongFortunePage()),
+  // Tojeong Fortune
+  GoRoute(
+    path: '/tojeong',
+    name: 'fortune-tojeong',
+    builder: (context, state) => const TojeongFortunePage()),
   
-  // // Physiognomy Fortune
-  // GoRoute(
-  //   path: 'physiognomy',
-  //   name: 'fortune-physiognomy',
-  //   builder: (context, state) => const fortune_pages.PhysiognomyFortunePage()),
+  // Traditional Saju
+  GoRoute(
+    path: '/traditional-saju',
+    name: 'fortune-traditional-saju',
+    builder: (context, state) => const TraditionalSajuFortunePage()),
+  
+  // Palmistry
+  GoRoute(
+    path: '/palmistry',
+    name: 'fortune-palmistry',
+    builder: (context, state) => const PalmistryFortunePage()),
+  
+  // Physiognomy Fortune
+  GoRoute(
+    path: '/physiognomy',
+    name: 'fortune-physiognomy',
+    builder: (context, state) => const PhysiognomyFortunePage()),
+  
+  // Salpuli
+  GoRoute(
+    path: '/salpuli',
+    name: 'fortune-salpuli',
+    builder: (context, state) => const SalpuliFortunePage()),
+  
+  // Saju Psychology
+  GoRoute(
+    path: '/saju-psychology',
+    name: 'fortune-saju-psychology',
+    builder: (context, state) => const SajuPsychologyFortunePage()),
+  
+  // Face Reading
+  GoRoute(
+    path: '/face-reading',
+    name: 'fortune-face-reading',
+    builder: (context, state) => const FaceReadingFortunePage()),
 ];

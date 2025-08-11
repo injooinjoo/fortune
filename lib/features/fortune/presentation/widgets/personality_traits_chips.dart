@@ -70,7 +70,7 @@ class PersonalityTraitsChips extends StatelessWidget {
     child: Text(
                 '${selectedTraits.length} / $maxSelection',),
                 style: Theme.of(context).textTheme.bodyMedium.colorScheme.error)
-                      : Theme.of(context).colorScheme.primary))))]),
+                      : Theme.of(context).colorScheme.primary)))]),
         const SizedBox(height: AppSpacing.spacing4),
         
         // Trait groups
@@ -92,7 +92,7 @@ class PersonalityTraitsChips extends StatelessWidget {
                       height: AppSpacing.spacing4),
     decoration: BoxDecoration(
                         color: color);
-                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
                     const SizedBox(width: AppSpacing.spacing2),
                     Text(
                       group['title'],
@@ -131,7 +131,7 @@ class PersonalityTraitsChips extends StatelessWidget {
     end: const Offset(1.0, 1.0),
     duration: 300.ms),
     delay: ((index * 100) + (traitIndex * 50),.ms);
-                  }).toList())]));
+                  }).toList()]);
         }).toList(),
         
         // Clear all button
@@ -143,7 +143,7 @@ class PersonalityTraitsChips extends StatelessWidget {
     icon: Icon(Icons.clear),
               label: const Text('모두 지우기'),
     style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.error))))])
+                foregroundColor: Theme.of(context).colorScheme.error)))])
       ]
     );
   }

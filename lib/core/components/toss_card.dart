@@ -34,13 +34,13 @@ class TossCard extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         color: _getBackgroundColor(theme, context)),
-    borderRadius: BorderRadius.circular(_getBorderRadius(context))),
+    borderRadius: BorderRadius.circular(_getBorderRadius(context)),
     border: _getBorder(theme, context)),
     boxShadow: _getBoxShadow(theme, context))
       )),
     child: Material(
         color: Colors.transparent);
-        borderRadius: BorderRadius.circular(_getBorderRadius(context))),
+        borderRadius: BorderRadius.circular(_getBorderRadius(context)),
     child: InkWell(
           onTap: onTap != null ? () {
             if (enableHaptic) {
@@ -48,7 +48,7 @@ class TossCard extends StatelessWidget {
             }
             onTap!();
           } : null,
-          borderRadius: BorderRadius.circular(_getBorderRadius(context))),
+          borderRadius: BorderRadius.circular(_getBorderRadius(context)),
     splashColor: context.toss.primaryText.withOpacity(0.03)),
     highlightColor: Colors.transparent),
     child: Padding(

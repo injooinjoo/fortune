@@ -34,52 +34,53 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
   String? _preferredCourse;
   
   final Map<String, String> _skillLevels = {
-    'beginner', '초급 (100타 이상)',
-    'intermediate', '중급 (90-100타)',
-    'advanced', '상급 (80-90타)',
-    'expert', '고급 (80타 미만)',
-    'pro', '프로/준프로'};
+    'beginner': '초급 (100타 이상)',
+    'intermediate': '중급 (90-100타)',
+    'advanced': '상급 (80-90타)',
+    'expert': '고급 (80타 미만)',
+    'pro': '프로/준프로'
+  };
   
   final Map<String, String> _frequencies = {
-    'rarely', '월 1회 미만',
-    'monthly', '월 1-2회',
-    'biweekly', '월 3-4회',
-    'weekly', '주 1-2회',
-    'often', '주 3회 이상'};
+    'rarely': '월 1회 미만',
+    'monthly': '월 1-2회',
+    'biweekly': '월 3-4회',
+    'weekly': '주 1-2회',
+    'often': '주 3회 이상'
+  };
   
   final Map<String, String> _timePreferences = {
-    'earlymorning', '새벽 (5-7시)',
-    'morning', '오전 (7-11시)',
-    'afternoon', '오후 (11-15시)',
-    'lateafternoon', '늦은 오후 (15-18시)',
-    'flexible', '시간 무관'};
+    'earlymorning': '새벽 (5-7시)',
+    'morning': '오전 (7-11시)',
+    'afternoon': '오후 (11-15시)',
+    'lateafternoon': '늦은 오후 (15-18시)',
+    'flexible': '시간 무관'
+  };
   
   final Map<String, String> _goals = {
-    'score', '스코어 개선',
-    'fun', '즐거운 라운딩',
-    'social', '친목 도모',
-    'exercise', '운동과 건강',
-    'competition', '대회 준비'};
+    'score': '스코어 개선',
+    'fun': '즐거운 라운딩',
+    'social': '친목 도모',
+    'exercise': '운동과 건강',
+    'competition': '대회 준비'
+  };
   
   final List<String> _weaknessOptions = [
-    '드라이버 정확도',
-    '아이언 샷',
-    '어프로치',
-    '퍼팅',
-    '벙커샷',
-    '러프 탈출',
-    '멘탈 관리',
-    '코스 매니지먼트',
-    '거리 측정',
-    '바람 읽기'];
+    '드라이버 정확도': '아이언 샷',
+    '어프로치': '퍼팅',
+    '벙커샷': '러프 탈출',
+    '멘탈 관리': '코스 매니지먼트',
+    '거리 측정': '바람 읽기'
+  ];
   
   final Map<String, String> _courseTypes = {
-    'mountain', '산악 코스',
-    'seaside', '해안 코스',
-    'lakeside', '호수 코스',
-    'parkland', '파크랜드',
-    'links', '링크스',
-    'any', '상관없음'};
+    'mountain': '산악 코스',
+    'seaside': '해안 코스',
+    'lakeside': '호수 코스',
+    'parkland': '파크랜드',
+    'links': '링크스',
+    'any': '상관없음'
+  };
 
   // User info form state
   final _nameController = TextEditingController();
@@ -149,7 +150,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '기본 정보',),
+            '기본 정보',
             style: theme.textTheme.headlineSmall)),
           const SizedBox(height: 16),
           
@@ -161,7 +162,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12)))),
+                borderRadius: BorderRadius.circular(12),,
           const SizedBox(height: 16),
           
           // Birth Date Picker
@@ -171,7 +172,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 context: context,
                 initialDate: _birthDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now());
+                lastDate: DateTime.now();
               if (date != null) {
                 setState(() => _birthDate = date);
               }
@@ -181,7 +182,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 labelText: '생년월일',
                 prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
               child: Text(
                 _birthDate != null
                     ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
@@ -189,7 +190,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6))))),
+                      : theme.colorScheme.onSurface.withOpacity(0.6)),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -197,7 +198,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '성별',),
+                '성별',
                 style: theme.textTheme.bodyLarge)),
               const SizedBox(height: 8),
               Row(
@@ -240,7 +241,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   Icon(Icons.golf_course, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    '골프 정보',),
+                    '골프 정보',
                     style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
@@ -251,7 +252,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   labelText: '실력 수준',
                   prefixIcon: const Icon(Icons.trending_up),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 items: _skillLevels.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -267,7 +268,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   labelText: '라운딩 빈도',
                   prefixIcon: const Icon(Icons.calendar_month),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 items: _frequencies.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -283,13 +284,13 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   labelText: '선호 시간대',
                   prefixIcon: const Icon(Icons.access_time),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 items: _timePreferences.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
                     child: Text(entry.value);
                 }).toList(),
-                onChanged: (value) => setState(() => _preferredTime = value))])),
+                onChanged: (value) => setState(() => _preferredTime = value)]),
         const SizedBox(height: 16),
         
         // Goals and Weaknesses
@@ -303,7 +304,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   Icon(Icons.flag, color: theme.colorScheme.secondary),
                   const SizedBox(width: 8),
                   Text(
-                    '목표 및 개선점',),
+                    '목표 및 개선점',
                     style: theme.textTheme.headlineSmall)])),
               const SizedBox(height: 16),
               
@@ -314,7 +315,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   labelText: '라운딩 목표',
                   prefixIcon: const Icon(Icons.sports_score),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 items: _goals.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -328,7 +329,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '개선이 필요한 부분 (복수 선택 가능)',),
+                    '개선이 필요한 부분 (복수 선택 가능)',
                     style: theme.textTheme.bodyLarge)),
                   const SizedBox(height: 8),
                   Wrap(
@@ -354,8 +355,8 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                           side: BorderSide(
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.3))));
-                    }).toList())]),
+                                : theme.colorScheme.onSurface.withOpacity(0.3)));
+                    }).toList(),,
               const SizedBox(height: 16),
               
               // Tournament
@@ -373,13 +374,13 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   labelText: '선호 코스 유형',
                   prefixIcon: const Icon(Icons.landscape),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                 items: _courseTypes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
                     child: Text(entry.value));
                 }).toList(),
-                onChanged: (value) => setState(() => _preferredCourse = value))]))]
+                onChanged: (value) => setState(() => _preferredCourse = value)])]
     );
   }
 
@@ -393,7 +394,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge))),
+            style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
           onChanged: onChanged)]);
@@ -430,7 +431,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 예상 스코어',),
+                  '오늘의 예상 스코어',
                   style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 24),
             
@@ -452,19 +453,19 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   children: [
                     Text(
                       scorePrediction.toString(),
-                      style: theme.textTheme.displayLarge?.copyWith()
-                        fontWeight: FontWeight.bold,
-                        color: _getScoreColor(scorePrediction))),
+                      style: theme.textTheme.displayLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+                        color: _getScoreColor(scorePrediction)),
                     Text(
                       _getScoreMessage(scorePrediction),
-                      style: theme.textTheme.bodyMedium)]))).animate(),
+                      style: theme.textTheme.bodyMedium)])).animate(),
                 .scale(duration: 600.ms,
                 .then(,
                 .shimmer(duration: 1000.ms),
             
             const SizedBox(height: 16),
             Text(
-              '오늘은 평소보다 ${_getScoreDifference(scorePrediction)} 예상됩니다!',),
+              '오늘은 평소보다 ${_getScoreDifference(scorePrediction)} 예상됩니다!',
               style: theme.textTheme.bodyLarge),
               textAlign: TextAlign.center)]),
       );
@@ -486,7 +487,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 Icon(Icons.flag, color: Colors.green),
                 const SizedBox(width: 8),
                 Text(
-                  '행운의 홀',),
+                  '행운의 홀',
                   style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Row(
@@ -501,16 +502,16 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                     border: Border.all(color: Colors.green, width: 2)),
                   child: Center(
                     child: Text(
-                      '${hole}H',),
-                      style: theme.textTheme.headlineSmall?.copyWith()
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold)))).animate(,
+                      '${hole}H',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+            color: Colors.green,
+                        fontWeight: FontWeight.bold))).animate(,
                     .fadeIn(delay: (luckyHoles.indexOf(hole) * 100).ms,
                     .scale();
-              }).toList()),
+              }).toList(),
             const SizedBox(height: 16),
             Text(
-              '이 홀에서 특히 좋은 성과가 예상됩니다!',),
+              '이 홀에서 특히 좋은 성과가 예상됩니다!',
               style: theme.textTheme.bodyMedium),
               textAlign: TextAlign.center)]),
       );
@@ -531,12 +532,12 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 Icon(Icons.sports_golf, color: theme.colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
-                  '오늘의 행운 클럽',),
+                  '오늘의 행운 클럽',
                   style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
-            _buildClubItem('드라이버', '평소보다 10야드 더 나갑니다!',
-            _buildClubItem('7번 아이언', '정확도가 크게 향상됩니다',
-            _buildClubItem('퍼터', '오늘은 퍼팅 감각이 최고조!']),
+            _buildClubItem('드라이버': '평소보다 10야드 더 나갑니다!',
+            _buildClubItem('7번 아이언': '정확도가 크게 향상됩니다',
+            _buildClubItem('퍼터': '오늘은 퍼팅 감각이 최고조!']),
       );
   }
 
@@ -551,7 +552,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
             child: Icon(icon, size: 24, color: theme.colorScheme.primary)),
           const SizedBox(width: 12),
           Expanded(
@@ -560,12 +561,12 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
               children: [
                 Text(
                   club,
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.bold)),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
                 Text(
                   description,
-                  style: theme.textTheme.bodyMedium?.copyWith()
-                    color: theme.colorScheme.onSurface.withOpacity(0.7)))]))],
+                  style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7)])],
       );
   }
 
@@ -584,13 +585,13 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 Icon(Icons.map, color: Colors.blue),
                 const SizedBox(width: 8),
                 Text(
-                  '코스 공략법',),
+                  '코스 공략법',
                   style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
-            _buildStrategyItem('전반 9홀', '공격적으로 플레이하세요',
-            _buildStrategyItem('후반 9홀', '안정적인 플레이 권장',
-            _buildStrategyItem('파3 홀', '핀 왼쪽이 유리합니다',
-            _buildStrategyItem('파5 홀', '투온 도전 추천!']),
+            _buildStrategyItem('전반 9홀': '공격적으로 플레이하세요',
+            _buildStrategyItem('후반 9홀': '안정적인 플레이 권장',
+            _buildStrategyItem('파3 홀': '핀 왼쪽이 유리합니다',
+            _buildStrategyItem('파5 홀': '투온 도전 추천!']),
       );
   }
 
@@ -615,7 +616,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   TextSpan(
                     text: '$title: ',
                     style: const TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: strategy)])))],
+                  TextSpan(text: strategy)]))],
       );
   }
 
@@ -634,15 +635,15 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 Icon(Icons.wb_sunny, color: Colors.orange),
                 const SizedBox(width: 8),
                 Text(
-                  '날씨 운세',),
+                  '날씨 운세',
                   style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildWeatherItem('바람', '순풍 예상',
-                _buildWeatherItem('기온', '쾌적함': null,
-                _buildWeatherItem('습도', '적당함'])]),
+                _buildWeatherItem('바람': '순풍 예상',
+                _buildWeatherItem('기온': '쾌적함': null,
+                _buildWeatherItem('습도': '적당함'])]),
       );
   }
 
@@ -663,7 +664,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
           style: theme.textTheme.bodySmall)),
         Text(
           value,
-          style: theme.textTheme.bodyMedium?.copyWith()
+          style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: color))]
     );
@@ -684,7 +685,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 Icon(Icons.psychology, color: Colors.purple),
                 const SizedBox(width: 8),
                 Text(
-                  '멘탈 관리 팁',),
+                  '멘탈 관리 팁',
                   style: theme.textTheme.headlineSmall)])),
             const SizedBox(height: 16),
             Container(
@@ -694,18 +695,18 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   colors: [
                     Colors.purple.withOpacity(0.1),
                     Colors.blue.withOpacity(0.1)]),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Column(
                 children: [
                   Text(
-                    '"오늘은 실수해도 괜찮다"',),
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      fontStyle: FontStyle.italic,
+                    '"오늘은 실수해도 괜찮다"',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center),
                   const SizedBox(height: 8),
                   Text(
-                    '편안한 마음으로 플레이하면 오히려 좋은 결과가 나옵니다.',),
+                    '편안한 마음으로 플레이하면 오히려 좋은 결과가 나옵니다.',
                     style: theme.textTheme.bodyMedium),
                     textAlign: TextAlign.center)]))]),
       );

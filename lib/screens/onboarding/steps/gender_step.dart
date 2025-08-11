@@ -105,7 +105,7 @@ class _GenderStepState extends State<GenderStep> {
                       duration: 600.ms).scale(
                       begin: Offset(0.8, 0.8),
                       end: Offset(1, 1),
-                      curve: Curves.easeOutBack)])]))]));
+                      curve: Curves.easeOutBack)])])]);
   }
 
   Widget _buildGenderButton({
@@ -136,6 +136,6 @@ class _GenderStepState extends State<GenderStep> {
               label,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.secondaryText))])));
+                color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.secondaryText)]));
   }
 }

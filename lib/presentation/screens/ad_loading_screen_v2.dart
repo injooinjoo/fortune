@@ -381,7 +381,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                               duration: 1.5.seconds,
                               color: Colors.white.withOpacity(0.3),
                             );
-                        }))]))),
+                        })]),
             
             // Skip button (top right,
             Positioned(
@@ -407,7 +407,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                     Text(
                       '광고 없이 바로 운세를 확인하고 싶으신가요?',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white60))),
+                        color: Colors.white60)),
                       textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.spacing4),
                     ElevatedButton(
@@ -417,7 +417,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         minimumSize: const Size(double.infinity, 56),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.spacing7))),
+                          borderRadius: BorderRadius.circular(AppSpacing.spacing7)),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

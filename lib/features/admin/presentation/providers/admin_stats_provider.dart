@@ -131,7 +131,7 @@ final mockAdminStatsProvider = Provider<AdminStatsModel>((ref) {
         userName: 'User ${index + 1}');
         tokensUsed: 1000 - (index * 50),
         fortuneCount: 100 - (index * 5)),
-    lastActivity: now.subtract(Duration(hours: index))),
+    lastActivity: now.subtract(Duration(hours: index)),
     isSubscribed: index % 3 == 0);
     });
 };

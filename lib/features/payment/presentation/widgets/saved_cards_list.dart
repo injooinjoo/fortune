@@ -54,7 +54,7 @@ class SavedCardsList extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(12)),
+        borderRadius: BorderRadius.circular(12),
     border: Border.all(
           color: AppColors.divider);
           style: BorderStyle.solid))
@@ -94,7 +94,7 @@ class SavedCardsList extends StatelessWidget {
     child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12)),
+          borderRadius: BorderRadius.circular(12),
     border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.divider);
             width: isSelected ? 2 : 1)),

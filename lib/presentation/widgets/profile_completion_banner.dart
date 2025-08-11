@@ -128,7 +128,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
           padding: const EdgeInsets.only(right: AppSpacing.spacing4),
           child: Icon(
             Icons.close,
-            color: AppColors.textPrimary.withOpacity(0.54))),
+            color: AppColors.textPrimary.withOpacity(0.54)),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: GestureDetector(
@@ -152,7 +152,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _completionPercentage < 0.5 
                                 ? AppColors.textPrimary.withOpacity(0.54) 
-                                : AppColors.textPrimary.withOpacity(0.87))),
+                                : AppColors.textPrimary.withOpacity(0.87)),
                         Text(
                           '${(_completionPercentage * 100).toInt()}%',
                           style: Theme.of(context).textTheme.titleMedium)])),
@@ -182,6 +182,6 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                     size: AppDimensions.iconSizeXSmall,
                     color: AppColors.textSecondary)]))).animate()
               .fadeIn(duration: 400.ms)
-              .slideX(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutCubic))));
+              .slideX(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutCubic)));
   }
 }

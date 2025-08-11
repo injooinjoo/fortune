@@ -158,7 +158,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     '더 나은 서비스를 만들어가겠습니다',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7)))]))])),
+                                      color: theme.colorScheme.onSurface.withOpacity(0.7))])])),
                       const SizedBox(height: 24),
                       
                       // Category Selection
@@ -200,7 +200,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                      color: isSelected ? theme.colorScheme.primary : null))]))
+                                      color: isSelected ? theme.colorScheme.primary : null)])
                           );
                         }).toList()),
                       const SizedBox(height: 24),
@@ -240,7 +240,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: _getRatingColor(_rating)))])),
+                                color: _getRatingColor(_rating))]),
                       const SizedBox(height: 24),
                       
                       // Message
@@ -285,7 +285,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '답변이 필요한 경우 이메일을 남겨주세요',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
-                          color: theme.colorScheme.onSurface.withOpacity(0.7))),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7)),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -335,8 +335,8 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     style: TextStyle(
                                       fontSize: 18 * fontScale,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white))))),
-                      const SizedBox(height: 24)]))))])));
+                                      color: Colors.white))),
+                      const SizedBox(height: 24)]))]));
   }
 
   String _getRatingText(int rating) {

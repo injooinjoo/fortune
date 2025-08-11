@@ -114,6 +114,6 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.titleMedium)])))));
+                  style: Theme.of(context).textTheme.titleMedium)]))));
   }
 }

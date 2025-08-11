@@ -176,6 +176,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
       body: MysticalBackground(
         child: SafeArea(
           child: Column(
+
             children: [
               AppHeader(
                 title: '타로 리딩',
@@ -192,6 +193,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16),
                   child: Column(
+
                     children: [
                       // Introduction or current card section
                       if (_currentCardIndex == 0 && !_cardRevealed[0])
@@ -200,15 +202,22 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                         _buildCurrentCardSection(fontScale),
                       
                       const SizedBox(height: 24),
-                      
                       // Interpretation bubbles
                       ..._buildInterpretationHistory(fontScale),
                       
                       const SizedBox(height: 80), // Space for bottom button
-                    ]))),
+                    ],
+                  ),
+                ),
+              ),
               
               // Action button
-              _buildActionButton(fontScale)]))));
+              _buildActionButton(fontScale),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildProgressIndicator() {
@@ -223,7 +232,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           Container(
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(3))),
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
           // Progress with gradient and glow
           FractionallySizedBox(
             widthFactor: progress,
@@ -238,7 +249,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   BoxShadow(
                     color: const Color(0xFF9333EA).withOpacity(0.5),
                     blurRadius: 8,
-                    spreadRadius: 1)]))),
+                    spreadRadius: 1),
+                ],
+              ),
+            ),
+          ),
           // Shimmer effect
           AnimatedBuilder(
             animation: _fadeController,
@@ -253,8 +268,15 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                         Colors.white.withOpacity(0.3 * _fadeController.value),
                         Colors.white.withOpacity(0)],
                       stops: const [0.0, 0.5, 1.0]),
-                    borderRadius: BorderRadius.circular(3))));
-            })]));
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildIntroduction(double fontScale) {
@@ -263,6 +285,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
       child: SlideTransition(
         position: _slideAnimation,
         child: Column(
+
           children: [
             // Enhanced mystical icon with animation
             TweenAnimationBuilder<double>(
@@ -285,7 +308,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                               Colors.purple.withOpacity(0),
                               const Color(0xFF9333EA).withOpacity(0.3),
                               Colors.indigo.withOpacity(0.3),
-                              Colors.purple.withOpacity(0)])))),
+                              Colors.purple.withOpacity(0)],
+                          ),
+                        ),
+                      ),
+                    ),
                     // Center icon
                     Icon(
                       Icons.auto_awesome,
@@ -294,7 +321,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       shadows: [
                         Shadow(
                           color: const Color(0xFF9333EA),
-                          blurRadius: 20)])]);
+                          blurRadius: 20),
+                      ],
+                    ),
+                  ],
+                );
               }),
             const SizedBox(height: 24),
             Text(
@@ -324,6 +355,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 color: Colors.white.withOpacity(0.1),
                 width: 1),
               child: Column(
+
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -345,7 +377,14 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       color: Colors.white,
                       height: 1.5,
                       letterSpacing: 0.5),
-                    textAlign: TextAlign.center)]))])));
+                    textAlign: TextAlign.center),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildCurrentCardSection(double fontScale) {
@@ -391,7 +430,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       style: TextStyle(
                         fontSize: 12 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white)))),
+                        color: Colors.white)),
                 const SizedBox(width: 12),
                 Text(
                   positionName,
@@ -399,9 +438,12 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                     fontSize: 16 * fontScale,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    letterSpacing: 0.5))]))),
+                    letterSpacing: 0.5),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 24),
-        
         // Card reveal area
         SizedBox(
           height: 300,
@@ -411,7 +453,10 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               isRevealed: _cardRevealed[_currentCardIndex],
               onTap: !_cardRevealed[_currentCardIndex] ? _revealNextCard : null,
               width: 180,
-              height: 280))),
+              height: 280,
+            ),
+          ),
+        ),
         
         // Current interpretation
         if (_showInterpretation && _currentCardIndex < _interpretations.length) FadeTransition(
@@ -421,7 +466,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               child: TarotInterpretationBubble(
                 interpretation: _interpretations[_currentCardIndex],
                 isCurrentCard: true,
-                fontScale: fontScale)))]);
+                fontScale: fontScale),
+            ),
+          ),
+      ],
+    );
   }
 
   List<Widget> _buildInterpretationHistory(double fontScale) {
@@ -477,13 +526,23 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white))]))])),
+                                color: Colors.white),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 8),
                 // Interpretation
                 TarotInterpretationBubble(
                   interpretation: _interpretations[i],
                   isCurrentCard: false,
-                  fontScale: fontScale)])));
+                  fontScale: fontScale),
+              ],
+            ),
+          ),
+        );
       }
     }
     
@@ -535,7 +594,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               backgroundColor: Colors.purple,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -545,7 +606,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   margin: const EdgeInsets.only(right: 8),
                     child: const CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
                 if (onPressed != null) Icon(
                     _currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
                         ? Icons.auto_awesome
@@ -556,7 +619,13 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   buttonText,
                   style: TextStyle(
                     fontSize: 16 * fontScale,
-                    fontWeight: FontWeight.bold))])))));
+                    fontWeight: FontWeight.bold),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   String _getCardImagePath(int cardIndex) {
@@ -566,10 +635,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     if (cardIndex < 22) {
       // Major Arcana
       final cardNames = [
-        'fool', 'magician', 'high_priestess', 'empress', 'emperor',
-        'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
-        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
-        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'];
+        'fool', 'magician', 'high_priestess', 'empress', 'emperor', 'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
+        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance', 'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
+      ];
       return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
     } else if (cardIndex < 36) {
       // Wands

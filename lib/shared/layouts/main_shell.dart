@@ -147,6 +147,6 @@ class _MainShellState extends ConsumerState<MainShell>
     child: SlideTransition(
               position: _slideAnimation,
               child: FortuneBottomNavigationBar(
-                currentIndex: selectedIndex)))]));
+                currentIndex: selectedIndex))]);
   }
 }

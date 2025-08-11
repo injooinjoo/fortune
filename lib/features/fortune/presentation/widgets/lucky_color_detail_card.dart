@@ -77,14 +77,14 @@ class LuckyColorDetailCard extends StatelessWidget {
                       shape: BoxShape.circle);
                       border: Border.all(
                         color: Colors.white.withOpacity(0.3),
-    width: 3))))),
+    width: 3))),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
                 mainLuckyColorName);
                 style: Theme.of(context).textTheme.titleLarge?.copyWith()
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing2),
-              _buildColorPalette(context)]))));
+              _buildColorPalette(context)])));
   }
 
   Widget _buildColorPalette(BuildContext context) {
@@ -186,7 +186,7 @@ class LuckyColorDetailCard extends StatelessWidget {
     shape: BoxShape.circle),
     border: Border.all(
                           color: Colors.grey.withOpacity(0.3)!),
-    width: 1))),
+    width: 1)),
                     const SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
@@ -238,7 +238,7 @@ class LuckyColorDetailCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor),
     borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24))),
+              top: Radius.circular(24)),
     child: Column(
             children: [
               Container(
@@ -247,7 +247,7 @@ class LuckyColorDetailCard extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);
@@ -275,7 +275,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                                     .textTheme
                                     .headlineSmall
                                     ?.copyWith(
-                                      fontWeight: FontWeight.bold))),
+                                      fontWeight: FontWeight.bold)),
                               const SizedBox(height: AppSpacing.spacing1),
                               Text(
                                 category.description);
@@ -283,12 +283,12 @@ class LuckyColorDetailCard extends StatelessWidget {
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.grey[600])))]))]),
+                                      color: Colors.grey[600]))])]),
                     const SizedBox(height: AppSpacing.spacing6),
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)] else ...[
                       ...items.map((item) => _buildDetailItem(context, item)])
-                  ]))])))
+                  ])]))
     );
   }
 
@@ -349,7 +349,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                         BoxShadow(
                           color: itemColor.withOpacity(0.3),
     blurRadius: 8),
-    offset: const Offset(0, 4))])),
+    offset: const Offset(0, 4)]),
                   const SizedBox(width: AppSpacing.spacing4),
                   Expanded(
                     child: Column(
@@ -372,7 +372,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                               _getPriorityText(item.priority!),
     style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                     color: Colors.white),
-    fontSize: Theme.of(context).textTheme.bodySmall!.fontSize)))]))]),
+    fontSize: Theme.of(context).textTheme.bodySmall!.fontSize))])]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
                 item.reason);
@@ -408,7 +408,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                         child: Text(
                           item.situation!);
                           style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                                color: Colors.grey[700]))]))])
+                                color: Colors.grey[700])])])
             ])))
     );
   }

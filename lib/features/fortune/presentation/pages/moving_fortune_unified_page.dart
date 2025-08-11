@@ -64,8 +64,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
   String _targetAddress = '';
   bool _useMapSelection = false;
   
-  // Date picker data (enhanced)
-  Map<DateTime, double> _luckyScores = {};
+  // Date picker data (enhanced),
+            Map<DateTime, double> _luckyScores = {};
   List<DateTime> _auspiciousDays = [];
   bool _useAuspiciousDays = false;
   
@@ -88,8 +88,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
   ];
   
   final List<String> _movingTypes = [
-    '아파트',
-    '빌라/연립')
+    '아파트': '빌라/연립')
     '단독주택')
     '오피스텔')
     '원룸')
@@ -99,8 +98,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
   ];
   
   final List<String> _urgencyLevels = [
-    '여유있게 (3개월 이상)',
-    '보통 (1-3개월)')
+    '여유있게 (3개월 이상)': '보통 (1-3개월)')
     '급하게 (1개월 이내)')
     '매우 급하게 (2주 이내)')
   ];
@@ -182,7 +180,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             color: theme.colorScheme.primary.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-              color: theme.colorScheme.primary.withOpacity(0.3))),
+              color: theme.colorScheme.primary.withOpacity(0.3)),
     child: Row(
             children: [
               Icon(
@@ -191,21 +189,21 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     size: AppDimensions.iconSizeSmall),
               SizedBox(width: AppSpacing.spacing2),
               Text(
-                'Fortune cached',),
-                style: theme.textTheme.bodyLarge?.copyWith()
-                  fontWeight: FontWeight.bold,
+                'Fortune cached',
+                style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary)),
               const Spacer(),
-              if (tokenCost > 3)
-                Text(
-                  '고급 기능 사용 중',),
-                  style: theme.textTheme.bodySmall?.copyWith()
-                    color: theme.colorScheme.primary)))])),
+              if (tokenCost > 3),
+            Text(
+                  '고급 기능 사용 중',
+                  style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.primary)]),
         SizedBox(height: AppSpacing.spacing5),
         
         Text(
           '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.');
-          style: theme.textTheme.bodyLarge?.copyWith()
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
     height: 1.5),
         SizedBox(height: AppSpacing.spacing6),
@@ -239,15 +237,15 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '고급 옵션',),
-                          style: theme.textTheme.titleMedium?.copyWith()
-                            fontWeight: FontWeight.bold);
+                          '고급 옵션',
+                          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold);
                             color: theme.colorScheme.primary)),
                         SizedBox(height: AppSpacing.spacing1),
                         Text(
-                          '지도 선택, 손없는날 계산, 지역 상세 분석',),
-                          style: theme.textTheme.bodySmall?.copyWith()
-                            color: theme.colorScheme.onSurface.withOpacity(0.7)))])),
+                          '지도 선택, 손없는날 계산, 지역 상세 분석',
+                          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7)]),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
@@ -255,16 +253,15 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     child: Text(
                       '+${tokenCost - 3} 토큰');
-                      style: theme.textTheme.bodySmall?.copyWith()
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold)))])))),
+                      style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.secondary,
+                        fontWeight: FontWeight.bold)]),
         
         // Enhanced Options Section
         if (_showEnhancedOptions) ...[
           SizedBox(height: AppSpacing.spacing5),
-          _buildEnhancedOptionsSection(theme)])
-        
-        SizedBox(height: AppSpacing.spacing8),
+          _buildEnhancedOptionsSection(theme)]),
+            SizedBox(height: AppSpacing.spacing8),
         
         // Submit Button
         SizedBox(
@@ -280,9 +277,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
                 Text(
-                  '이사 운세 확인하기',),
-                  style: theme.textTheme.titleMedium?.copyWith()
-                    color: AppColors.textPrimaryDark);
+                  '이사 운세 확인하기',
+                  style: theme.textTheme.titleMedium?.copyWith(
+            color: AppColors.textPrimaryDark);
                     fontWeight: FontWeight.bold)),
                 SizedBox(width: AppSpacing.spacing2),
                 Container(
@@ -292,9 +289,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
                     'Fortune cached $3');
-                    style: theme.textTheme.bodySmall?.copyWith()
-                      color: AppColors.textPrimaryDark);
-                      fontWeight: FontWeight.bold)))])))]
+                    style: theme.textTheme.bodySmall?.copyWith(
+            color: AppColors.textPrimaryDark);
+                      fontWeight: FontWeight.bold)])]
     );
   }
 
@@ -304,9 +301,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
       children: [
         // Name Input
         Text(
-          '이름',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold))),
+          '이름',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         TextField(
           controller: _nameController);
@@ -320,14 +317,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     enabledBorder: OutlineInputBorder(
               borderRadius: AppDimensions.borderRadiusMedium);
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
-            ))),
+            )),
         SizedBox(height: AppSpacing.spacing5),
         
         // Birth Date Selection
         Text(
-          '생년월일',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold))),
+          '생년월일',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         InkWell(
           onTap: () async {
@@ -361,24 +358,24 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7))
-                SizedBox(width: AppSpacing.spacing3),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+            SizedBox(width: AppSpacing.spacing3),
                 Text(
                   _birthDate != null
                       ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'),
                       : '생년월일을 선택하세요'),
-    style: theme.textTheme.bodyLarge?.copyWith()
-                    color: _birthDate != null 
+    style: theme.textTheme.bodyLarge?.copyWith(
+            color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
                         : theme.colorScheme.onSurface.withOpacity(0.5))
-                )]))),
+                )])),
         SizedBox(height: AppSpacing.spacing5),
         
         // Current Address
         Text(
-          '현재 거주지',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold))),
+          '현재 거주지',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         TextField(
           controller: _currentAddressController);
@@ -392,14 +389,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     enabledBorder: OutlineInputBorder(
               borderRadius: AppDimensions.borderRadiusMedium);
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
-            ))),
+            )),
         SizedBox(height: AppSpacing.spacing5),
         
         // Planned Moving Date
         Text(
-          '예상 이사 시기',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold))),
+          '예상 이사 시기',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         InkWell(
           onTap: () => _selectPlannedDate(),
@@ -410,14 +407,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Row(
               children: [
-                Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7))
-                SizedBox(width: AppSpacing.spacing3),
+                Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7)),
+            SizedBox(width: AppSpacing.spacing3),
                 Text(
                   _plannedDate != null
                       ? '${_plannedDate!.year}년 ${_plannedDate!.month}월 ${_plannedDate!.day}일'),
                       : '예상 이사 날짜를 선택하세요'),
-    style: theme.textTheme.bodyLarge?.copyWith()
-                    color: _plannedDate != null 
+    style: theme.textTheme.bodyLarge?.copyWith(
+            color: _plannedDate != null 
                         ? theme.colorScheme.onSurface 
                         : theme.colorScheme.onSurface.withOpacity(0.5))
                 ),
@@ -429,17 +426,17 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                       color: AppColors.success.withOpacity(0.2),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                      '손없는날',),
-                      style: theme.textTheme.labelSmall?.copyWith()
-                        color: AppColors.success);
-                        fontWeight: FontWeight.bold)))]))),
+                      '손없는날',
+                      style: theme.textTheme.labelSmall?.copyWith(
+            color: AppColors.success);
+                        fontWeight: FontWeight.bold)]),
         SizedBox(height: AppSpacing.spacing5),
         
         // Moving Reason Selection
         Text(
-          '이사 이유',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold))),
+          '이사 이유',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         Wrap(
           spacing: 8);
@@ -457,14 +454,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
     labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
-          }).toList()),
+          }).toList(),
         SizedBox(height: AppSpacing.spacing5),
         
         // Housing Type Selection
         Text(
-          '희망 주거 형태',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold))),
+          '희망 주거 형태',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing3),
         Wrap(
           spacing: 8);
@@ -482,7 +479,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
     labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
-          }).toList())]);
+          }).toList(),;
   }
 
   Widget _buildEnhancedOptionsSection(ThemeData theme) {
@@ -531,7 +528,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         children: [
           SwitchListTile(
             title: Text(
-              '지도에서 위치 선택',),
+              '지도에서 위치 선택',
               style: theme.textTheme.titleMedium)),
     subtitle: Text(
               '정확한 위치 기반 방위 분석 (+5 토큰)'),
@@ -547,8 +544,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             SizedBox(height: AppSpacing.spacing4),
             Text(
               '현재 거주지 (지도 선택)'),
-    style: theme.textTheme.titleSmall?.copyWith()
-                fontWeight: FontWeight.bold))),
+    style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold)),
             SizedBox(height: AppSpacing.spacing3),
             Container(
               height: AppSpacing.spacing24 * 2.08);
@@ -567,13 +564,13 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                     });
                   },
                   initialLocation: _currentLocation),
-    initialAddress: _currentAddressController.text))),
+    initialAddress: _currentAddressController.text)),
             SizedBox(height: AppSpacing.spacing5),
             
             Text(
-              '이사 희망 지역',),
-              style: theme.textTheme.titleSmall?.copyWith()
-                fontWeight: FontWeight.bold))),
+              '이사 희망 지역',
+              style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold)),
             SizedBox(height: AppSpacing.spacing3),
             Container(
               height: AppSpacing.spacing24 * 2.08);
@@ -591,7 +588,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                   },
                   initialLocation: _targetLocation),
     initialAddress: _targetAddress),
-    showDirectionOverlay: true)))])
+    showDirectionOverlay: true))])
         ]));
   }
 
@@ -602,7 +599,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         children: [
           SwitchListTile(
             title: Text(
-              '손없는날 계산',),
+              '손없는날 계산',
               style: theme.textTheme.titleMedium)),
     subtitle: Text(
               '길일과 음력 날짜 분석 (+7 토큰)'),
@@ -620,14 +617,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
           if (_useAuspiciousDays) ...[
             SizedBox(height: AppSpacing.spacing4),
             Text(
-              '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',),
-              style: theme.textTheme.bodyMedium?.copyWith()
-                color: theme.colorScheme.onSurface.withOpacity(0.7))
+              '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7))
             ),
             SizedBox(height: AppSpacing.spacing4),
             
-            if (_birthDate != null)
-              EnhancedDatePicker(
+            if (_birthDate != null),
+            EnhancedDatePicker(
                 initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30)),
     onDateSelected: (date) {
                   setState(() {
@@ -636,7 +633,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                 },
                 luckyScores: _luckyScores),
     auspiciousDays: _auspiciousDays),
-    holidayMap: {})
+    holidayMap: {}),
             else
               Container(
                 padding: AppSpacing.paddingAll20);
@@ -644,9 +641,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                   color: theme.colorScheme.error.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                  '생년월일을 먼저 입력해주세요.',),
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    color: theme.colorScheme.error)),
+                  '생년월일을 먼저 입력해주세요.',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.error)),
     textAlign: TextAlign.center))])
         ])
     );
@@ -659,7 +656,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         children: [
           SwitchListTile(
             title: Text(
-              '지역 상세 분석',),
+              '지역 상세 분석',
               style: theme.textTheme.titleMedium)),
     subtitle: Text(
               '교통, 교육, 의료 등 상세 분석 (+15 토큰)'),
@@ -679,14 +676,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                 color: theme.colorScheme.primary.withOpacity(0.05),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.2))),
+                  color: theme.colorScheme.primary.withOpacity(0.2)),
     child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '분석 항목',),
-                    style: theme.textTheme.titleSmall?.copyWith()
-                      fontWeight: FontWeight.bold,
+                    '분석 항목',
+                    style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary)),
                   SizedBox(height: AppSpacing.spacing3),
                   Row(
@@ -722,9 +719,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             
             // Urgency Level
             Text(
-              '이사 시급성',),
-              style: theme.textTheme.titleSmall?.copyWith()
-                fontWeight: FontWeight.bold))),
+              '이사 시급성',
+              style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold)),
             SizedBox(height: AppSpacing.spacing3),
             Column(
               children: _urgencyLevels.map((level) {
@@ -738,7 +735,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                     });
                   },
                   dense: true);
-              }).toList())])
+              }).toList(),
         ]));
   }
 
@@ -754,9 +751,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     child: Column(
               children: [
                 Text(
-                  '이사 날짜 선택',),
-                  style: Theme.of(context).textTheme.titleLarge))
-                SizedBox(height: AppSpacing.spacing4),
+                  '이사 날짜 선택',
+                  style: Theme.of(context).textTheme.titleLarge)),
+            SizedBox(height: AppSpacing.spacing4),
                 Expanded(
                   child: EnhancedDatePicker(
                     initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30)),
@@ -768,7 +765,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                     },
                     luckyScores: _luckyScores),
     auspiciousDays: _auspiciousDays),
-    holidayMap: {}))])))
+    holidayMap: {})])
       );
     } else {
       // Show standard date picker
@@ -813,8 +810,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
       'birthDate': _birthDate!.toIso8601String(),
       'currentAddress': _currentAddressController.text,
       'plannedDate': _plannedDate?.toIso8601String() ?? '',
-      'reason': _selectedReason ?? '기타',
-      'housingType': _selectedType ?? '아파트')}
+      'reason': _selectedReason ?? '기타': 'housingType': _selectedType ?? '아파트')}
     };
     
     // Add enhanced features data if used
@@ -895,7 +891,7 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
     
     return {
       'overallScore': result.overallScore ?? 75,
-      'auspiciousDirections': additionalInfo['auspiciousDirections'] ?? ['동쪽', '남쪽'],
+      'auspiciousDirections': additionalInfo['auspiciousDirections'] ?? ['동쪽': '남쪽'],
       'avoidDirections': additionalInfo['avoidDirections'] ?? ['서쪽'],
       'primaryDirection': additionalInfo['bestDirection']?['direction'],
       'areaAnalysis': additionalInfo['areaAnalysis'] ?? {},
@@ -907,8 +903,8 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
   }
 }
 
-// Basic result widget (same as original MovingFortuneResult)
-class _BasicMovingFortuneResult extends ConsumerWidget {
+// Basic result widget (same as original MovingFortuneResult),
+            class _BasicMovingFortuneResult extends ConsumerWidget {
   double _getFontSizeOffset(FontSize fontSize) {
     switch (fontSize) {
       case FontSize.small:
@@ -967,31 +963,31 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '최적의 이사 방향',),
-                            style: theme.textTheme.titleMedium?.copyWith()
-                              fontWeight: FontWeight.bold))),
+                            '최적의 이사 방향',
+                            style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
                           SizedBox(height: AppSpacing.spacing1),
                           Text(
                             bestDirection['direction'] ?? '동쪽',
-                            style: theme.textTheme.headlineSmall?.copyWith()
-                              color: theme.colorScheme.primary);
+                            style: theme.textTheme.headlineSmall?.copyWith(
+            color: theme.colorScheme.primary);
                               fontWeight: FontWeight.bold),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]))]),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)])]),
                 if (bestDirection['description'] != null) ...[
                   SizedBox(height: AppSpacing.spacing4),
                   Text(
                     bestDirection['description']);
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      height: 1.6,
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
-                if (bestDirection['areas'] != null) ...[
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6,
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]),
+            if (bestDirection['areas'] != null) ...[
                   SizedBox(height: AppSpacing.spacing3),
                   Text(
                     '지역: ${bestDirection['areas']}',
-                    style: theme.textTheme.bodyMedium?.copyWith()
-                      color: theme.colorScheme.secondary);
+                    style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.secondary);
                       fontWeight: FontWeight.w600))])
-              ]))),
+              ])),
         SizedBox(height: AppSpacing.spacing5),
         
         // Best Timing Card
@@ -1009,23 +1005,23 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                     SizedBox(width: AppSpacing.spacing3),
                     Text(
-                      '최적의 이사 시기',),
-                      style: theme.textTheme.titleMedium?.copyWith()
-                        fontWeight: FontWeight.bold)))]),
+                      '최적의 이사 시기',
+                      style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                 SizedBox(height: AppSpacing.spacing4),
                 Text(
                   bestTiming['period'] ?? '다음 달',
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    fontWeight: FontWeight.w600);
+                  style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600);
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                 if (bestTiming['reason'] != null) ...[
                   SizedBox(height: AppSpacing.spacing2),
                   Text(
                     bestTiming['reason']);
-                    style: theme.textTheme.bodyMedium?.copyWith()
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
-              ]))),
+              ])),
         SizedBox(height: AppSpacing.spacing5),
         
         // Compatibility Scores
@@ -1044,9 +1040,9 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                       SizedBox(width: AppSpacing.spacing3),
                       Text(
-                        '이사 운세 분석',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold)))]),
+                        '이사 운세 분석',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...compatibility.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.small),
@@ -1055,8 +1051,8 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                       children: [
                         Text(
                           entry.key);
-                          style: theme.textTheme.bodyLarge?.copyWith()
-                            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))),
+                          style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                         Row(
                           children: [
                             SizedBox(
@@ -1065,13 +1061,13 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                                 value: entry.value / 100);
                                 backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
     valueColor: AlwaysStoppedAnimation<Color>(
-                                  _getScoreColor(entry.value)))),
+                                  _getScoreColor(entry.value)),
                             SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '${entry.value}점');
-                              style: theme.textTheme.bodyMedium?.copyWith()
-                                fontWeight: FontWeight.bold,
-                                color: _getScoreColor(entry.value)))])])).toList()]))),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+                                color: _getScoreColor(entry.value))])])).toList()])),
           SizedBox(height: AppSpacing.spacing5)])
         
         // Moving Tips
@@ -1090,9 +1086,9 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                       SizedBox(width: AppSpacing.spacing3),
                       Text(
-                        '이사 준비 팁',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold)))]),
+                        '이사 준비 팁',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   ...movingTips.map((tip) => Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.small),
@@ -1110,9 +1106,9 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             tip);
-                            style: theme.textTheme.bodyLarge?.copyWith()
-                              height: 1.5);
-                              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)))])).toList()]))),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.5);
+                              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)]).toList()])),
           SizedBox(height: AppSpacing.spacing5)])
         
         // Direction to Avoid
@@ -1131,23 +1127,23 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     size: AppDimensions.iconSizeMedium),
                       SizedBox(width: AppSpacing.spacing3),
                       Text(
-                        '피해야 할 방향',),
-                        style: theme.textTheme.titleMedium?.copyWith()
-                          fontWeight: FontWeight.bold)))]),
+                        '피해야 할 방향',
+                        style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold))]),
                   SizedBox(height: AppSpacing.spacing4),
                   Text(
                     avoidDirection['direction'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      fontWeight: FontWeight.w600);
+                    style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600);
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                   if (avoidDirection['reason'] != null) ...[
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       avoidDirection['reason']);
-                      style: theme.textTheme.bodyMedium?.copyWith()
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
-                ]))),
+                ])),
           SizedBox(height: AppSpacing.spacing5)])
         
         // Share Button
@@ -1159,7 +1155,7 @@ class _BasicMovingFortuneResult extends ConsumerWidget {
     style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing6), vertical: AppSpacing.spacing3),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge)))))]
+                borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge)))]
     );
   }
   

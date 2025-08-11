@@ -228,7 +228,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   color: Colors.orange.shade50,
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16))),
+                                    topRight: Radius.circular(16)),
                                 child: Row(
                                   children: [
                                     Icon(
@@ -241,7 +241,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       style: theme.textTheme.titleLarge?.copyWith(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 20,
-                                        color: Colors.orange.shade700))])),
+                                        color: Colors.orange.shade700)]),
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
@@ -261,8 +261,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             vertical: 4),
                                           decoration: BoxDecoration(
                                             color: Colors.green.shade100,
-                                            borderRadius: BorderRadius.circular(20)),
-                                          child: const Text(
+                                            borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
                                             '활성화됨',
                                             style: TextStyle(
                                               color: Colors.green,
@@ -339,7 +340,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               '계정: ${profile.email}',
                                               style: TextStyle(
                                                 color: Colors.blue.shade700,
-                                                fontSize: 14)))]))]))])))]);
+                                                fontSize: 14))])])]))]);
                 }
                 return const SizedBox.shrink();
               }),
@@ -387,7 +388,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       color: AppColors.primary.withOpacity(0.05),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
+                        topRight: Radius.circular(16)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -416,7 +417,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             style: TextStyle(
                               color: AppColors.primary,
                               fontSize: 14,
-                              fontWeight: FontWeight.w600)))])),
+                              fontWeight: FontWeight.w600))]),
 
                   // Statistics Items
                   _buildInsightItem(
@@ -480,7 +481,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           subtitle: '친구를 초대하고 함께 운세를 확인해보세요.',
                           onTap: () async {
                             await _inviteFriend();
-                          })])])))),
+                          })])])),
 
             // 내 도구 섹션
             const SizedBox(height: 24),
@@ -497,14 +498,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         color: Colors.purple.shade50,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16))),
+                          topRight: Radius.circular(16)),
                       child: Row(
                         children: [
                           Text(
                             '내 도구',
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w700,
-                              fontSize: 20))])),
+                              fontSize: 20)]),
                   _buildToolItem(
                     context,
                     icon: Icons.school_outlined,
@@ -534,7 +535,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     onTap: () async {
                       await _shareWithFriends();
                     },
-                    isLast: true)]))),
+                    isLast: true)])),
 
             // 계정 설정 버튼
             const SizedBox(height: 32),
@@ -548,12 +549,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(color: AppColors.divider),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8))),
+                      borderRadius: BorderRadius.circular(8),
+                  ),
                   child: const Text(
                     '계정 설정',
                     style: TextStyle(
                       color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600))))),
+                      fontWeight: FontWeight.w600))),
 
             const SizedBox(height: 32)])));
   }
@@ -650,7 +652,7 @@ https://fortune.app''';
           border: Border(
             bottom: isLast ? BorderSide.none : const BorderSide(
               color: AppColors.divider,
-              width: 1))),
+              width: 1)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -662,8 +664,9 @@ https://fortune.app''';
                     height: 40,
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8)),
-                    child: Icon(
+                      borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
                       icon,
                       size: 22,
                       color: AppColors.primary)),
@@ -703,20 +706,23 @@ https://fortune.app''';
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      child: Container(
+                  ),
+                  child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12)),
-        child: Row(
+          borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
           children: [
             Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
                 color: Colors.blue.shade100,
-                borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: Colors.blue.shade700)),
+                borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: Colors.blue.shade700)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -733,7 +739,7 @@ https://fortune.app''';
                     subtitle,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary))])),
+                      color: AppColors.textSecondary)]),
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
@@ -759,7 +765,7 @@ https://fortune.app''';
           border: Border(
             bottom: isLast ? BorderSide.none : const BorderSide(
               color: AppColors.divider,
-              width: 1))),
+              width: 1)),
         child: Row(
           children: [
             Container(
@@ -767,8 +773,9 @@ https://fortune.app''';
               height: 44,
               decoration: BoxDecoration(
                 color: Colors.purple.shade100,
-                borderRadius: BorderRadius.circular(10)),
-              child: Icon(
+                borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
                 icon,
                 color: Colors.purple.shade700,
                 size: 24)),
@@ -791,8 +798,9 @@ https://fortune.app''';
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: Colors.blue,
-                            borderRadius: BorderRadius.circular(4)),
-                          child: const Text(
+                            borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
                             'NEW',
                             style: TextStyle(
                               color: Colors.white,

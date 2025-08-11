@@ -84,7 +84,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                                 const SizedBox(height: 16),
                                 ElevatedButton(
                                   onPressed: () => ref.read(tokenUsageProvider.notifier).fetchTokenUsageStats(),
-                                  child: const Text('다시 시도'))])))]))))]))));
+                                  child: const Text('다시 시도')]))]))]));
   }
 
   Widget _buildPeriodSelector(BuildContext context, WidgetRef ref, String selectedPeriod) {
@@ -109,7 +109,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             label: '90일',
             value: '90d',
             isSelected: selectedPeriod == '90d',
-            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('90d'))]));
+            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('90d')]);
   }
 
   Widget _buildSummaryCards(TokenUsageSummary summary) {
@@ -158,7 +158,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             toY: entry.value.tokensUsed.toDouble(),
             color: theme.colorScheme.primary,
             width: 8,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(4))),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           BarChartRodData(
             toY: entry.value.tokensPurchased.toDouble(),
             color: Colors.green,
@@ -199,12 +199,12 @@ class TokenUsageStatsPage extends ConsumerWidget {
             rightTitles: const AxisTitles(
               sideTitles: SideTitles(showTitles: false)),
             topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false))),
+              sideTitles: SideTitles(showTitles: false)),
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
             horizontalInterval: 1000),
-          borderData: FlBorderData(show: false))));
+          borderData: FlBorderData(show: false)));
   }
 
   Widget _buildUsageByType(BuildContext context, List<TokenUsageByType> usageByType) {
@@ -235,7 +235,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       Text(
                         type.fortuneCategory,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5)))])),
+                          color: theme.colorScheme.onSurface.withOpacity(0.5))]),
                 Text(
                   '${NumberFormat('#,###').format(type.tokensUsed)} 토큰',
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -246,11 +246,11 @@ class TokenUsageStatsPage extends ConsumerWidget {
                   height: 20,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
                   child: Center(
                     child: Text(
                       '${type.percentage.toStringAsFixed(1)}%',
-                      style: theme.textTheme.bodySmall)))]))).toList()]));
+                      style: theme.textTheme.bodySmall))])).toList()]));
   }
 
   Widget _buildPackageEfficiency(BuildContext context, PackageEfficiency efficiency) {
@@ -361,21 +361,21 @@ class TokenUsageStatsPage extends ConsumerWidget {
                         Text(
                           user.email,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.5)))])),
-                  DataCell(Text(NumberFormat('#,###').format(user.tokensUsed))),
-                  DataCell(Text(NumberFormat('#,###').format(user.tokensPurchased))),
-                  DataCell(Text(user.fortuneCount.toString())),
+                            color: theme.colorScheme.onSurface.withOpacity(0.5))]),
+                  DataCell(Text(NumberFormat('#,###').format(user.tokensUsed)),
+                  DataCell(Text(NumberFormat('#,###').format(user.tokensPurchased)),
+                  DataCell(Text(user.fortuneCount.toString()),
                   DataCell(
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: user.isUnlimited ? Colors.purple.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: Text(
                         user.isUnlimited ? '무제한' : '일반',
                         style: TextStyle(
                           color: user.isUnlimited ? Colors.purple : Colors.blue,
-                          fontSize: 12))))])).toList()))]));
+                          fontSize: 12))]).toList())]);
   }
 }
 
@@ -402,12 +402,12 @@ class _PeriodButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(8)),
+          borderRadius: BorderRadius.circular(8),
         child: Text(
           label,
           style: TextStyle(
             color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
   }
 }
 
@@ -433,7 +433,7 @@ class _InfoCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.1))),
+          color: theme.colorScheme.primary.withOpacity(0.1)),
       child: Column(
         children: [
           Icon(icon, color: iconColor, size: 32),
@@ -446,6 +446,6 @@ class _InfoCard extends StatelessWidget {
           Text(
             value,
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold))]));
+              fontWeight: FontWeight.bold)]);
   }
 }

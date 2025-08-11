@@ -84,7 +84,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Icon(
                     _getItemIcon(widget.mainLuckyItem),
     size: 60),
-    color: Colors.white))),
+    color: Colors.white)),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
                 widget.mainLuckyItem);
@@ -111,7 +111,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                       '오늘의 핵심 아이템',),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith()
                             color: Colors.purple[700]),
-    fontWeight: FontWeight.w600)]))])))
+    fontWeight: FontWeight.w600)])]))
     );
   }
 
@@ -314,7 +314,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor),
     borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24))),
+              top: Radius.circular(24)),
     child: Column(
             children: [
               Container(
@@ -323,7 +323,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);
@@ -334,7 +334,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)] else ...[
                       _buildItemsGrid(context, items)])
-                  ]))])))
+                  ])]))
     );
   }
 
@@ -378,7 +378,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 Text(
                   category.description);
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                        color: Colors.grey[600]))]))])
+                        color: Colors.grey[600])])])
     );
   }
 
@@ -460,7 +460,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                         child: Icon(
                           _getItemIcon(item.value),
     size: 32),
-    color: Colors.purple))),
+    color: Colors.purple)),
                     const SizedBox(width: AppSpacing.spacing4),
                     Expanded(
                       child: Column(
@@ -482,7 +482,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                           color: Colors.purple),
     fontWeight: FontWeight.bold),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                               Expanded(
                                 child: Text(
                                   item.value);
@@ -503,7 +503,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                     _getPriorityText(item.priority!),
     style: Theme.of(context).textTheme.bodySmall?.copyWith()
                                           color: Colors.white),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                               if (item.timeRange != null) ...[
                                 if (item.priority != null) const SizedBox(width: AppSpacing.spacing2),
                                 Icon(
@@ -527,7 +527,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith()
                         color: Colors.grey[700])),
                   maxLines: 2),
-    overflow: TextOverflow.ellipsis)]))))
+    overflow: TextOverflow.ellipsis)])))
     );
   }
 
@@ -557,7 +557,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Icon(
                     _getItemIcon(item.value),
     size: 48),
-    color: Colors.purple))),
+    color: Colors.purple)),
               const SizedBox(height: AppSpacing.spacing5),
               Text(
                 item.value);
@@ -623,7 +623,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                         child: Text(
                           item.situation!);
                           style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                                color: Colors.amber[900]))]))])
+                                color: Colors.amber[900])])])
               const SizedBox(height: AppSpacing.spacing6),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -631,7 +631,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.spacing8);
                     vertical: AppSpacing.spacing3)),
-    child: const Text('닫기'))])))
+    child: const Text('닫기')]))
     );
   }
 

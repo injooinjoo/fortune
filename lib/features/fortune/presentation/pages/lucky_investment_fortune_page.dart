@@ -21,7 +21,8 @@ class LuckyInvestmentFortunePage extends ConsumerWidget {
         end: Alignment.bottomRight,
         colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
       inputBuilder: (context, onSubmit) => _InvestmentInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _InvestmentFortuneResult(result: result);
+      resultBuilder: (context, result, onShare) => _InvestmentFortuneResult(result: result),
+    );
   }
 }
 
@@ -48,44 +49,54 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '오늘의 투자 운세를 확인하고\n현명한 투자 결정을 내리세요!',),
-          style: theme.textTheme.bodyLarge?.copyWith()
+          '오늘의 투자 운세를 확인하고\n현명한 투자 결정을 내리세요!',
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5),
+            height: 1.5,
+          ),
+        ),
         const SizedBox(height: 24),
         
         // Investment Type
         Text(
-          '투자 종류',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '투자 종류',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildInvestmentType(theme),
         const SizedBox(height: 24),
 
         // Risk Tolerance
         Text(
-          '위험 감수 성향',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '위험 감수 성향',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildRiskTolerance(theme),
         const SizedBox(height: 24),
 
         // Investment Goal
         Text(
-          '투자 목표',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '투자 목표',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildInvestmentGoal(theme),
         const SizedBox(height: 24),
 
         // Time Horizon
         Text(
-          '투자 기간',),
-          style: theme.textTheme.titleMedium?.copyWith()
-            fontWeight: FontWeight.bold)),
+          '투자 기간',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         _buildTimeHorizon(theme),
         const SizedBox(height: 32),
@@ -100,38 +111,47 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 'investmentType': _investmentType,
                 'riskTolerance': _riskTolerance,
                 'investmentGoal': _investmentGoal,
-                'timeHorizon': null});
+                'timeHorizon': _timeHorizon,
+              });
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFF59E0B),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
-              elevation: 0),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 0,
+            ),
             child: const Text(
-              '투자 운세 보기',),
+              '투자 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildInvestmentType(ThemeData theme) {
     final types = [
-      {'\1': '\2', 'name', '주식': 'icon'},
-      {'\1': '\2', 'name', '암호화폐': 'icon'},
-      {'id', 'real_estate', 'name', '부동산', 'icon'},
-      {'id', 'bonds', 'name', '채권', 'icon'}];
+      {'id': 'stocks', 'name': '주식', 'icon': Icons.show_chart},
+      {'id': 'crypto', 'name': '암호화폐', 'icon': Icons.currency_bitcoin},
+      {'id': 'real_estate', 'name': '부동산', 'icon': Icons.home},
+      {'id': 'bonds', 'name': '채권', 'icon': Icons.account_balance},
+    ];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-      ,
+      ),
       itemCount: types.length,
       itemBuilder: (context, index) {
         final type = types[index];
@@ -149,37 +169,47 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                    ,
+                    )
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
-                width: 2),
-              borderRadius: BorderRadius.circular(12)),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  type['icon'],
+                  type['icon'] as IconData,
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20),
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  type['name'],
+                  type['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       }
     );
   }
 
   Widget _buildRiskTolerance(ThemeData theme) {
     final levels = [
-      {'\1': '\2', 'name', '안정형'},
-      {'\1': '\2', 'name', '중립형'},
-      {'id', 'aggressive', 'name', '공격형'},
-      {'id', 'very_aggressive', 'name', '초공격형'}];
+      {'id': 'conservative', 'name': '안정형'},
+      {'id': 'moderate', 'name': '중립형'},
+      {'id': 'aggressive', 'name': '공격형'},
+      {'id': 'very_aggressive', 'name': '초공격형'},
+    ];
 
     return Row(
       children: levels.map((level) {
@@ -199,38 +229,47 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                      ,
+                      )
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                      : theme.colorScheme.outline.withOpacity(0.3),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Center(
                 child: Text(
-                  level['name'],
+                  level['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
-      }).toList();
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildInvestmentGoal(ThemeData theme) {
     final goals = [
-      {'\1': '\2', 'name', '성장': 'icon'},
-      {'\1': '\2', 'name', '수익': 'icon'},
-      {'id', 'preservation', 'name', '보존', 'icon'},
-      {'id', 'speculation', 'name', '투기', 'icon'}];
+      {'id': 'growth', 'name': '성장', 'icon': Icons.trending_up},
+      {'id': 'income', 'name': '수익', 'icon': Icons.attach_money},
+      {'id': 'preservation', 'name': '보존', 'icon': Icons.lock},
+      {'id': 'speculation', 'name': '투기', 'icon': Icons.casino}];
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 2.5,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-      ,
+      ),
       itemCount: goals.length,
       itemBuilder: (context, index) {
         final goal = goals[index];
@@ -248,37 +287,47 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                    ,
+                    )
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
-                width: 2),
-              borderRadius: BorderRadius.circular(12)),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  goal['icon'],
+                  goal['icon'] as IconData,
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20),
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  goal['name'],
+                  goal['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
-      }
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildTimeHorizon(ThemeData theme) {
     final horizons = [
-      {'\1': '\2', 'name', '단기\n(1년 이내)'},
-      {'\1': '\2', 'name', '중기\n(1-5년)'},
-      {'\1': '\2', 'name', '장기\n(5-10년)'},
-      {'\1': '\2', 'name', '초장기\n(10년+)'}];
+      {'id': 'short', 'name': '단기\n(1년 이내)'},
+      {'id': 'medium', 'name': '중기\n(1-5년)'},
+      {'id': 'long', 'name': '장기\n(5-10년)'},
+      {'id': 'verylong', 'name': '초장기\n(10년+)'},
+    ];
 
     return Row(
       children: horizons.map((horizon) {
@@ -298,22 +347,31 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                      ,
+                      )
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12)),
+                      : theme.colorScheme.outline.withOpacity(0.3),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Center(
                 child: Text(
-                  horizon['name'],
+                  horizon['name'] as String,
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 12),
-                  textAlign: TextAlign.center)))));
-      }).toList();
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }
 
@@ -332,9 +390,9 @@ class _InvestmentFortuneResult extends StatelessWidget {
         // Main Fortune Card
         ShimmerGlass(
           shimmerColor: const Color(0xFFF59E0B),
-          borderRadius: BorderRadius.circular(20))),
+          borderRadius: BorderRadius.circular(20),
           child: GlassContainer(
-            borderRadius: BorderRadius.circular(20))),
+            borderRadius: BorderRadius.circular(20),
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,30 +403,49 @@ class _InvestmentFortuneResult extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
-                        borderRadius: BorderRadius.circular(12)),
+                          colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: const Icon(
                         Icons.trending_up,
                         color: Colors.white,
-                        size: 24)),
+                        size: 24,
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '오늘의 투자 운세',),
-                            style: theme.textTheme.titleLarge?.copyWith()
-                              fontWeight: FontWeight.bold)),
+                            '오늘의 투자 운세',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           Text(
                             result.date ?? '',
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith()
-                    height: 1.6)]))),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 16),
 
         // Market Timing
@@ -400,9 +477,12 @@ class _InvestmentFortuneResult extends StatelessWidget {
             title: '리스크 관리',
             icon: Icons.warning_amber,
             gradient: const LinearGradient(
-              colors: [Color(0xFFEF4444), Color(0xFFDC2626)]),
-            content: result.details!['riskManagement']),
-          const SizedBox(height: 16)],
+              colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+            ),
+            content: result.details!['riskManagement'],
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Investment Strategy
         if (result.details?['strategy'] != null) ...[
@@ -411,8 +491,12 @@ class _InvestmentFortuneResult extends StatelessWidget {
             title: '투자 전략',
             icon: Icons.lightbulb_outline,
             gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)]),
-            content: result.details!['strategy'])]]
+              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
+            ),
+            content: result.details!['strategy'],
+          ),
+        ],
+      ],
     );
   }
 
@@ -421,11 +505,12 @@ class _InvestmentFortuneResult extends StatelessWidget {
     required String title,
     required IconData icon,
     required Gradient gradient,
-    required String content}) {
+    required String content,
+  }) {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      borderRadius: BorderRadius.circular(16))),
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,21 +521,32 @@ class _InvestmentFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20)),
+                  size: 20,
+                ),
+              ),
               const SizedBox(width: 12),
               Text(
                 title,
-                style: theme.textTheme.titleMedium?.copyWith()
-                  fontWeight: FontWeight.bold))]),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Text(
             content,
-            style: theme.textTheme.bodyMedium?.copyWith()
-              height: 1.5)],
-      );
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

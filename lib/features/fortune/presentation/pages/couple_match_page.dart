@@ -51,21 +51,24 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     'logical': '논리적',
     'emotional': '감성적',
     'planned': '계획적',
-    'spontaneous': '즉흥적'};
+    'spontaneous': '즉흥적'
+  };
   
   final List<String> _loveLanguageOptions = [
     '말로 하는 애정표현',
     '스킨십과 포옹',
     '선물 주고받기',
     '함께하는 시간',
-    '배려와 봉사'];
+    '배려와 봉사'
+  ];
   
   final Map<String, String> _durations = {
     'new': '1개월 미만',
     'short': '1-6개월',
     'medium': '6개월-1년',
     'long': '1-3년',
-    'verylong': '3년 이상'};
+    'verylong': '3년 이상'
+  };
   
   final Map<String, String> _meetingTypes = {
     'friend': '친구에서 연인으로',
@@ -73,7 +76,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     'app': '데이팅 앱',
     'work': '직장/학교',
     'hobby': '취미/동호회',
-    'chance': '우연한 만남'};
+    'chance': '우연한 만남'
+  };
   
   final List<String> _challengeOptions = [
     '의사소통 부족',
@@ -83,13 +87,15 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     '미래 계획 차이',
     '가족 문제',
     '경제적 문제',
-    '신뢰 문제'];
+    '신뢰 문제'
+  ];
   
   final Map<String, String> _futureGoals = {
     'marriage': '결혼을 목표로',
     'growth': '함께 성장하기',
     'enjoy': '현재를 즐기기',
-    'uncertain': '아직 불확실'};
+    'uncertain': '아직 불확실'
+  };
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
@@ -174,11 +180,13 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.pink.withOpacity(0.3),
-                  Colors.red.withOpacity(0.3)]),),
+                  Colors.red.withOpacity(0.3)])),
             child: const Icon(
               Icons.favorite,
               color: Colors.red,
-              size: 40)),
+              size: 40),
+          ),
+        ),
         const SizedBox(height: 16),
         
         // Partner Info
@@ -213,14 +221,14 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '우리의 관계',),
-                style: theme.textTheme.headlineSmall)),
+                '우리의 관계',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               
               // Duration
               Text(
-                '교제 기간',),
-                style: theme.textTheme.bodyLarge?.copyWith()
+                '교제 기간',
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -245,8 +253,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               
               // Meeting Type
               Text(
-                '만남의 계기',),
-                style: theme.textTheme.bodyLarge?.copyWith()
+                '만남의 계기',
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -261,7 +269,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         _meetingType = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(20))),
+                    borderRadius: BorderRadius.circular(20),
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
@@ -270,14 +278,16 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3))));
-                }).toList()),
+                            : theme.colorScheme.onSurface.withOpacity(0.3)),
+                    ),
+                  );
+                }).toList(),
               const SizedBox(height: 16),
               
               // Challenge Areas
               Text(
-                '개선하고 싶은 부분 (선택)',),
-                style: theme.textTheme.bodyLarge?.copyWith()
+                '개선하고 싶은 부분 (선택)',
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -296,7 +306,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         }
                       });
                     },
-                    borderRadius: BorderRadius.circular(20))),
+                    borderRadius: BorderRadius.circular(20),
                     child: Chip(
                       label: Text(area),
                       backgroundColor: isSelected
@@ -305,14 +315,16 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                       side: BorderSide(
                         color: isSelected
                             ? Colors.orange
-                            : theme.colorScheme.onSurface.withOpacity(0.3))));
-                }).toList()),
+                            : theme.colorScheme.onSurface.withOpacity(0.3)),
+                    ),
+                  );
+                }).toList(),
               const SizedBox(height: 16),
               
               // Future Goal
               Text(
-                '관계의 목표',),
-                style: theme.textTheme.bodyLarge?.copyWith()
+                '관계의 목표',
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...(_futureGoals.entries.map((entry) {
@@ -326,12 +338,12 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         _futureGoal = entry.key;
                       });
                     },
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
                         horizontal: 16),
-                      borderRadius: BorderRadius.circular(12))),
+                      borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.5)
@@ -349,8 +361,18 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                             }),
                           Text(
                             entry.value,
-                            style: theme.textTheme.bodyLarge)]))));)
-              }).toList()]))]);
+                            style: theme.textTheme.bodyLarge),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList()),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildPersonCard({
@@ -380,7 +402,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: theme.textTheme.headlineSmall)])),
+                style: theme.textTheme.headlineSmall),
+            ],
+          ),
           const SizedBox(height: 16),
           
           // Name
@@ -401,44 +425,54 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               Expanded(
                 child: InkWell(
                   onTap: () => onGenderChanged('male'),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   child: GlassContainer(
                     padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: gender == 'male'
                         ? color.withOpacity(0.5)
                         : Colors.transparent,
-                    borderWidth: gender == 'male': null,
+                    borderWidth: gender == 'male' ? 2 : 0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.male,
-                          color: gender == 'male')),
+                          color: gender == 'male' ? color : null),
                         const SizedBox(width: 8),
-                        Text('남성')])))),
+                        Text('남성'),
+                      ],
+                    ),
+                  ),
+                ),
               const SizedBox(width: 12),
               Expanded(
                 child: InkWell(
                   onTap: () => onGenderChanged('female'),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   child: GlassContainer(
                     padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(12))),
+                    borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: gender == 'female'
                         ? color.withOpacity(0.5)
                         : Colors.transparent,
-                    borderWidth: gender == 'female': null,
+                    borderWidth: gender == 'female' ? 2 : 0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.female,
-                          color: gender == 'female')),
+                          color: gender == 'female' ? color : null),
                         const SizedBox(width: 8),
-                        Text('여성')]))))]),
+                        Text('여성'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           const SizedBox(height: 16),
           
           // Birth Date
@@ -464,14 +498,15 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               child: Text(
                 birthDate != null
                     ? '${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일'
-                    : '생년월일을 선택하세요'))),
+                    : '생년월일을 선택하세요'),
+            ),
           const SizedBox(height: 16),
           
           // Personality
           Text(
-            '성격 유형',),
-            style: theme.textTheme.bodyLarge?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '성격 유형',
+            style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
             value: personality,
@@ -491,9 +526,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
           
           // Love Languages
           Text(
-            '사랑의 언어 (2개 이상)',),
-            style: theme.textTheme.bodyLarge?.copyWith()
-              fontWeight: FontWeight.bold)),
+            '사랑의 언어 (2개 이상)',
+            style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -503,7 +538,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               
               return InkWell(
                 onTap: () => onLoveLanguageToggle(language),
-                borderRadius: BorderRadius.circular(20))),
+                borderRadius: BorderRadius.circular(20),
                 child: Chip(
                   label: Text(language),
                   backgroundColor: isSelected
@@ -516,8 +551,12 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   deleteIcon: isSelected
                       ? const Icon(Icons.check_circle, size: 18)
                       : null,
-                  onDeleted: isSelected ? () {} : null));
-            }).toList())]));
+                  onDeleted: isSelected ? () {} : null),
+                );
+            }).toList()),
+          ],
+        ),
+      );
   }
 
   @override
@@ -544,8 +583,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
         child: Column(
           children: [
             Text(
-              '전체 궁합도',),
-              style: theme.textTheme.headlineSmall)),
+              '전체 궁합도',
+              style: theme.textTheme.headlineSmall),
             const SizedBox(height: 24),
             Stack(
               alignment: Alignment.center,
@@ -557,18 +596,24 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     painter: HeartProgressPainter(
                       progress: score / 100,
                       progressColor: Colors.red,
-                      backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1)))),
+                      backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1)),
+                  ),
+                ),
                 Column(
                   children: [
                     Text(
-                      '$score%',),
-                      style: theme.textTheme.displayLarge?.copyWith()
-                        fontWeight: FontWeight.bold,
+                      '$score%',
+                      style: theme.textTheme.displayLarge?.copyWith(
+            fontWeight: FontWeight.bold,
                         color: Colors.red)),
                     Text(
-                      '찰떡궁합',),
-                      style: theme.textTheme.bodyLarge?.copyWith()
-                        color: Colors.red))])]),
+                      '찰떡궁합',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.red)),
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
@@ -577,11 +622,16 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   colors: [
                     Colors.pink.withOpacity(0.1),
                     Colors.red.withOpacity(0.1)]),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Text(
-                '${_myName ?? "당신"}님과 ${_partnerName ?? "연인"}님은 서로를 깊이 이해하고 보완하는 환상의 커플입니다. 특히 감정적 교감과 가치관의 일치도가 높아 오래도록 행복한 관계를 유지할 수 있습니다.',),
-                style: theme.textTheme.bodyLarge),
-                textAlign: TextAlign.center))])));
+                '${_myName ?? "당신"}님과 ${_partnerName ?? "연인"}님은 서로를 깊이 이해하고 보완하는 환상의 커플입니다. 특히 감정적 교감과 가치관의 일치도가 높아 오래도록 행복한 관계를 유지할 수 있습니다.',
+                style: theme.textTheme.bodyLarge,
+                textAlign: TextAlign.center),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLoveStyleAnalysis() {
@@ -601,8 +651,10 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '사랑 표현 스타일',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '사랑 표현 스타일',
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             _buildLoveStyleComparison(),
             const SizedBox(height: 16),
@@ -615,13 +667,20 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '💡 맞춤 조언',),
-                    style: theme.textTheme.bodyLarge?.copyWith()
-                      fontWeight: FontWeight.bold)),
+                    '💡 맞춤 조언',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
-                    '${_myName ?? "당신"}님은 ${_myLoveLanguages.isNotEmpty ? _myLoveLanguages.first : "말로 하는 애정표현"}을 중요시하고, ${_partnerName ?? "연인"}님은 ${_partnerLoveLanguages.isNotEmpty ? _partnerLoveLanguages.first : "함께하는 시간"}을 가장 중요하게 생각합니다. 서로의 사랑 표현 방식을 이해하고 맞춰가면 더욱 깊은 사랑을 나눌 수 있습니다.',),
-                    style: theme.textTheme.bodyMedium)]))])));)
+                    '${_myName ?? "당신"}님은 ${_myLoveLanguages.isNotEmpty ? _myLoveLanguages.first : "말로 하는 애정표현"}을 중요시하고, ${_partnerName ?? "연인"}님은 ${_partnerLoveLanguages.isNotEmpty ? _partnerLoveLanguages.first : "함께하는 시간"}을 가장 중요하게 생각합니다. 서로의 사랑 표현 방식을 이해하고 맞춰가면 더욱 깊은 사랑을 나눌 수 있습니다.',
+                    style: theme.textTheme.bodyMedium),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLoveStyleComparison() {
@@ -639,8 +698,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
             children: [
               Text(
                 language,
-                style: theme.textTheme.bodyMedium?.copyWith()
-                  fontWeight: FontWeight.bold)),
+                style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Row(
                 children: [
@@ -651,7 +710,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                           height: 20,
                           decoration: BoxDecoration(
                             color: theme.colorScheme.onSurface.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10))),
+                            borderRadius: BorderRadius.circular(10)),
+                          ),
                         FractionallySizedBox(
                           widthFactor: myScore / 100,
                           child: Container(
@@ -661,14 +721,19 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                                 colors: [
                                   theme.colorScheme.primary,
                                   theme.colorScheme.primary.withOpacity(0.7)]),
-                              borderRadius: BorderRadius.circular(10))))])),
+                              borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Container(
                     width: 40,
                     alignment: Alignment.center,
                     child: Text(
-                      'vs',),
-                      style: theme.textTheme.bodySmall))),
+                      'vs',
+                      style: theme.textTheme.bodySmall)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Stack(
@@ -677,7 +742,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                           height: 20,
                           decoration: BoxDecoration(
                             color: theme.colorScheme.onSurface.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10))),
+                            borderRadius: BorderRadius.circular(10)),
+                          ),
                         FractionallySizedBox(
                           widthFactor: partnerScore / 100,
                           child: Container(
@@ -687,8 +753,18 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                                 colors: [
                                   theme.colorScheme.secondary,
                                   theme.colorScheme.secondary.withOpacity(0.7)]),
-                              borderRadius: BorderRadius.circular(10))))]))])]));
-      }).toList());
+                              borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      }).toList();
   }
 
   Widget _buildCommunicationGuide() {
@@ -696,21 +772,21 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     final tips = [
       {
-        'icon': Icons.chat_bubble_outline,
-        'title', '대화 시작하기',
-        'tip', '하루의 끝에 서로의 하루를 공유하는 시간을 가지세요.'},
+        'icon': Icons.chat_bubble_outline as IconData,
+        'title': '대화 시작하기',
+        'tip': '하루의 끝에 서로의 하루를 공유하는 시간을 가지세요.'},
       {
-        'icon': Icons.hearing,
-        'title', '경청하기',
-        'tip', '상대방의 말을 끊지 말고 끝까지 들어주세요.'},
+        'icon': Icons.hearing as IconData,
+        'title': '경청하기',
+        'tip': '상대방의 말을 끊지 말고 끝까지 들어주세요.'},
       {
-        'icon': Icons.emoji_emotions,
-        'title', '감정 표현하기',
-        'tip', '"나는 ~할 때 ~한 기분이 들어"라고 표현해보세요.'},
+        'icon': Icons.emoji_emotions as IconData,
+        'title': '감정 표현하기',
+        'tip': '"나는 ~할 때 ~한 기분이 들어"라고 표현해보세요.'},
       {
-        'icon': Icons.handshake,
-        'title', '타협하기',
-        'tip', '서로 양보할 수 있는 지점을 찾아 합의하세요.'}];
+        'icon': Icons.handshake as IconData,
+        'title': '타협하기',
+        'tip': '서로 양보할 수 있는 지점을 찾아 합의하세요.'}];
     
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -726,8 +802,10 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '소통 가이드',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '소통 가이드',
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             ...tips.map((tip) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -740,23 +818,34 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                       color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8)),
                     child: Icon(
-                      tip['icon'],
+                      tip['icon'] as IconData,
                       size: 20,
-                      color: theme.colorScheme.primary)),
+                      color: theme.colorScheme.primary),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          tip['title'],
-                          style: theme.textTheme.bodyLarge?.copyWith()
+                          tip['title'] as String,
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
-                          tip['tip'],
-                          style: theme.textTheme.bodyMedium?.copyWith()
-                            color: theme.colorScheme.onSurface.withOpacity(0.8)))]))])).toList()])));
+                          tip['tip'] as String,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.8))),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildConflictResolution() {
@@ -776,13 +865,15 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '갈등 해결법',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '갈등 해결법',
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             if (_challengeAreas.isNotEmpty) ...[
               Text(
-                '선택하신 개선 영역별 조언',),
-                style: theme.textTheme.bodyLarge?.copyWith()
+                '선택하신 개선 영역별 조언',
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               ..._challengeAreas.map((area) => Padding(
@@ -791,9 +882,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.orange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8))),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.orange.withOpacity(0.3))),
+                      color: Colors.orange.withOpacity(0.3)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -806,13 +897,20 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                           const SizedBox(width: 8),
                           Text(
                             area,
-                            style: theme.textTheme.bodyMedium?.copyWith()
-                              fontWeight: FontWeight.bold))]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         _getConflictAdvice(area),
-                        style: theme.textTheme.bodySmall?.copyWith()
-                          color: theme.colorScheme.onSurface.withOpacity(0.8)))]))).toList()] else ...[
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.8))),
+                    ],
+                  ),
+                ),
+              )).toList(),
+            ] else ...[
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -826,20 +924,29 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        '큰 갈등 요소가 없는 건강한 관계입니다!',),
-                        style: theme.textTheme.bodyLarge))]))]])));)
+                        '큰 갈등 요소가 없는 건강한 관계입니다!',
+                        style: theme.textTheme.bodyLarge)),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 
   String _getConflictAdvice(String area) {
     final advices = {
-      '의사소통 부족', '매일 10분씩 서로의 하루를 나누는 시간을 가져보세요.',
-      '시간 부족', '바쁜 일상 속에서도 주 1회는 데이트 시간을 확보하세요.',
-      '가치관 차이', '서로의 가치관을 존중하면서 공통점을 찾아보세요.',
-      '표현 방식 차이', '상대방이 좋아하는 표현 방식을 배우고 실천해보세요.',
-      '미래 계획 차이', '단계별로 목표를 설정하고 함께 계획을 세워보세요.',
-      '가족 문제', '서로의 가족을 이해하고 경계를 설정하세요.',
-      '경제적 문제', '솔직한 재정 상황 공유와 공동의 재정 목표를 세우세요.',
-      '신뢰 문제', '작은 약속부터 지키며 신뢰를 쌓아가세요.'};
+      '의사소통 부족': '매일 10분씩 서로의 하루를 나누는 시간을 가져보세요.',
+      '시간 부족': '바쁜 일상 속에서도 주 1회는 데이트 시간을 확보하세요.',
+      '가치관 차이': '서로의 가치관을 존중하면서 공통점을 찾아보세요.',
+      '표현 방식 차이': '상대방이 좋아하는 표현 방식을 배우고 실천해보세요.',
+      '미래 계획 차이': '단계별로 목표를 설정하고 함께 계획을 세워보세요.',
+      '가족 문제': '서로의 가족을 이해하고 경계를 설정하세요.',
+      '경제적 문제': '솔직한 재정 상황 공유와 공동의 재정 목표를 세우세요.',
+      '신뢰 문제': '작은 약속부터 지키며 신뢰를 쌓아가세요.'
+  };
     return advices[area] ?? '서로를 이해하고 소통하는 시간을 가져보세요.';
   }
 
@@ -848,25 +955,25 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     final stages = [
       {
-        'stage', '현재',
-        'focus', '서로를 깊이 이해하기',
-        'activities': \['['깊은 대화 나누기', '취미 공유하기', '추억 만들기'},
+        'stage': '현재',
+        'focus': '서로를 깊이 이해하기',
+        'activities': ['깊은 대화 나누기', '취미 공유하기', '추억 만들기']},
       {
-        'stage', '3개월 후',
-        'focus', '신뢰 관계 강화',
-        'activities': \['['미래 계획 공유', '갈등 해결 연습', '가족 소개'},
+        'stage': '3개월 후',
+        'focus': '신뢰 관계 강화',
+        'activities': ['미래 계획 공유', '갈등 해결 연습', '가족 소개']},
       {
-        'stage', '6개월 후',
-        'focus', '더 깊은 유대감',
-        'activities': \['['여행 계획', '공동 목표 설정', '일상 공유'},
+        'stage': '6개월 후',
+        'focus': '더 깊은 유대감',
+        'activities': ['여행 계획', '공동 목표 설정', '일상 공유']},
       {
-        'stage', '1년 후',
-        'focus', '장기적 관계 구축',
-        'activities': ['결혼 논의', '재정 계획', '삶의 비전 공유'}];
+        'stage': '1년 후',
+        'focus': '장기적 관계 구축',
+        'activities': ['결혼 논의', '재정 계획', '삶의 비전 공유']}];
     
     return Padding(
-      padding: const EdgeInsets.all(16)
-      child: GlassContainer(
+      padding: const EdgeInsets.all(16),
+            child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -878,8 +985,10 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '관계 성장 로드맵',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '관계 성장 로드맵',
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             ...stages.map((stage) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -891,9 +1000,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     colors: [
                       theme.colorScheme.primary.withOpacity(0.05),
                       theme.colorScheme.secondary.withOpacity(0.05)]),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.2))),
+                    color: theme.colorScheme.primary.withOpacity(0.2)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -903,7 +1012,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
-                          topRight: Radius.circular(11))),
+                          topRight: Radius.circular(11)),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -912,15 +1022,18 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                             color: theme.colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
-                            stage['stage'],
-                            style: theme.textTheme.bodyLarge?.copyWith()
+                            stage['stage'] as String,
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.primary)),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              stage['focus'],
-                              style: theme.textTheme.bodyMedium))]))),
+                              stage['focus'] as String,
+                              style: theme.textTheme.bodyMedium)),
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Wrap(
@@ -932,30 +1045,41 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                             vertical: 6),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surface.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(16))),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.colorScheme.onSurface.withOpacity(0.1))),
+                              color: theme.colorScheme.onSurface.withOpacity(0.1)),
                           child: Text(
                             activity as String,
-                            style: theme.textTheme.bodySmall)).toList()))]))).toList()])));)
+                            style: theme.textTheme.bodySmall)),
+                        )).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDateIdeas() {
     final theme = Theme.of(context);
     
     final dateIdeas = [
-      {'\1': '\2', 'emoji', '🌟': 'type', '로맨틱'},
-      {'\1': '\2', 'emoji', '👨‍🍳': 'type', '체험'},
-      {'idea', '피크닉', 'emoji', '🧺', 'type', '야외'},
-      {'idea', '영화 마라톤', 'emoji', '🎬', 'type', '실내'},
-      {'idea', '스파 데이트', 'emoji', '💆', 'type', '힐링'},
-      {'idea', '보드게임 카페', 'emoji', '🎲', 'type', '재미'}];
+      {'idea': '별 보기', 'emoji': '🌟', 'type': '로맨틱'},
+      {'idea': '요리 클래스', 'emoji': '👨‍🍳', 'type': '체험'},
+      {'idea': '피크닉', 'emoji': '🧺', 'type': '야외'},
+      {'idea': '영화 마라톤', 'emoji': '🎬', 'type': '실내'},
+      {'idea': '스파 데이트', 'emoji': '💆', 'type': '힐링'},
+      {'idea': '보드게임 카페', 'emoji': '🎲', 'type': '재미'}];
     
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       child: GlassContainer(
-        padding: const EdgeInsets.all(20)
-        child: Column(
+        padding: const EdgeInsets.all(20),
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -965,8 +1089,10 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '이번 주 데이트 아이디어',),
-                  style: theme.textTheme.headlineSmall)])),
+                  '이번 주 데이트 아이디어',
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -982,13 +1108,13 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     colors: [
                       Colors.pink.withOpacity(0.1),
                       Colors.red.withOpacity(0.1)]),
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.pink.withOpacity(0.3))),
+                    color: Colors.pink.withOpacity(0.3)),
                 child: Row(
                   children: [
                     Text(
-                      idea['emoji'],
+                      idea['emoji'] as String,
                       style: const TextStyle(fontSize: 20)),
                     const SizedBox(width: 8),
                     Expanded(
@@ -997,13 +1123,24 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            idea['idea'],
-                            style: theme.textTheme.bodyMedium?.copyWith()
+                            idea['idea'] as String,
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold)),
                           Text(
-                            idea['type'],
-                            style: theme.textTheme.bodySmall?.copyWith()
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)))]))])).toList())])));
+                            idea['type'] as String,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )).toList(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -1032,7 +1169,7 @@ class HeartProgressPainter extends CustomPainter {
 
     // Draw progress heart
     canvas.save();
-    canvas.clipPath(_getHeartPath(center, scale),;
+    canvas.clipPath(_getHeartPath(center, scale));
     
     paint.color = progressColor;
     canvas.drawRect(

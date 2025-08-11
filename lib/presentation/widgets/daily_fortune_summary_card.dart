@@ -78,7 +78,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-                          overflow: TextOverflow.ellipsis))])),
+                          overflow: TextOverflow.ellipsis)]),
                 SizedBox(width: AppSpacing.spacing2),
                 Row(
                   children: [
@@ -114,7 +114,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                                     '$refreshCount/$maxRefreshCount',
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w600))]))))),
+                                      fontWeight: FontWeight.w600)])),
                       SizedBox(width: AppSpacing.spacing2)],
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -176,7 +176,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: scoreColor.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusLarge,
-                border: Border.all(color: scoreColor.withOpacity(0.3))),
+                border: Border.all(color: scoreColor.withOpacity(0.3)),
               child: Row(
                 children: [
                   Icon(
@@ -188,7 +188,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                     '$score점',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: scoreColor,
-                      fontWeight: FontWeight.bold))])),
+                      fontWeight: FontWeight.bold)]),
             SizedBox(width: AppSpacing.spacing2),
             Container(
               padding: EdgeInsets.symmetric(
@@ -229,7 +229,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
               '#$keyword',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w500)))).toList())]);
+                fontWeight: FontWeight.w500))).toList())]);
   }
 
   Widget _buildEmptyState(BuildContext context) {
@@ -249,7 +249,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
             child: Text(
               '오늘의 운세를 확인해보세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.fortuneTheme.subtitleText))),
+                color: context.fortuneTheme.subtitleText)),
           Icon(
             Icons.arrow_forward_ios,
             color: context.fortuneTheme.subtitleText,

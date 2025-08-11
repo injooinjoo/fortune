@@ -176,7 +176,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 hintText: '부적에 새겨질 이름을 입력하세요',
                 prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '이름을 입력해주세요';
@@ -198,7 +198,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 prefixIcon: const Icon(Icons.calendar_today_outlined),
                 suffixIcon: const Icon(Icons.arrow_drop_down),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '생년월일을 선택해주세요';
@@ -224,7 +224,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                   padding: EdgeInsets.only(bottom: 60),
                   child: Icon(Icons.edit_note)),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                 counterText: '${_personalWishController.text.length}/50')).animate()
               .fadeIn(duration: 400.ms, delay: 1000.ms)
               .slideX(begin: -0.1, end: 0),
@@ -256,8 +256,8 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))),
-                    child: const Text('이전'))),
+                        borderRadius: BorderRadius.circular(12),
+                    child: const Text('이전')),
                 const SizedBox(width: 16),
                 Expanded(
                   flex: 2,
@@ -266,7 +266,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))),
+                        borderRadius: BorderRadius.circular(12),
                     child: const Text('다음')))]).animate()
               .fadeIn(duration: 400.ms, delay: 1200.ms),
             
@@ -330,7 +330,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                               color: Colors.white,
                               size: 20)
                           : null));
-                }).toList())])),
+                }).toList()]),
         const SizedBox(height: 12),
         // Secondary color
         GlassContainer(
@@ -378,7 +378,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                               color: Colors.white,
                               size: 20)
                           : null));
-                }).toList())]))]).animate()
+                }).toList()])]).animate()
         .fadeIn(duration: 400.ms, delay: 1100.ms);
   }
   
@@ -412,7 +412,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
               entry.value,
               style: TextStyle(
                 color: isSelected ? Colors.white : AppColors.textPrimary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
       }).toList()).animate()
         .fadeIn(duration: 400.ms, delay: 1200.ms);
   }

@@ -149,7 +149,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       _buildCareer(theme, elementColor, explanation),
                       SizedBox(height: AppSpacing.spacing6),
                       _buildLuckyItems(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing10)]).animate().fadeIn(duration: 400.ms, delay: 100.ms)))]));
+                      SizedBox(height: AppSpacing.spacing10),
+                    ],
+                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+                ),
+              ),
+            ],
+          ),
+        );
       });
   }
 
@@ -162,19 +169,22 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
       height: 4,
       decoration: BoxDecoration(
         color: AppColors.textSecondary,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall)));
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
+      ),
+    );
   }
 
   Widget _buildHeader(ThemeData theme, Color elementColor, Map<String, dynamic> explanation, int percentage) {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-      gradient: LinearGradient(
+        gradient: LinearGradient(
           colors: [
             elementColor.withOpacity(0.1),
             elementColor.withOpacity(0.05)],
           begin: Alignment.topCenter,
-          end: Alignment.bottomCenter)),
+          end: Alignment.bottomCenter),
+      ),
       child: Column(
                 children: [
           Row(
@@ -192,8 +202,9 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         BoxShadow(
                           color: elementColor.withOpacity(0.3),
                           blurRadius: 12,
-                          offset: const Offset(0, 4))
-                      ]),
+                          offset: const Offset(0, 4)),
+                      ],
+                    ),
                     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -203,7 +214,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         Text(
                           explanation['name'],
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppColors.textPrimaryDark))])).animate()
+                            color: AppColors.textPrimaryDark)),
+                      ],
+                    ),
+                  ).animate()
                     .scale(
                       begin: const Offset(0.8, 0.8),
                       end: const Offset(1, 1),
@@ -216,7 +230,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         Text(
                           '오행 (五行)',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        ),
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
                         explanation['basicMeaning'],
@@ -227,23 +242,34 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         '비율: $percentage%',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: elementColor,
-                          fontWeight: FontWeight.w600))])]),
+                          fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                ],
+              ),
               IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.of(context).pop(),
                 style: IconButton.styleFrom(
                   backgroundColor: theme.colorScheme.surface,
-                  shape: const CircleBorder()))])]));
+                  shape: const CircleBorder()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBasicInfo(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
     return Container(
       padding: AppSpacing.paddingAll16,
-        decoration: BoxDecoration(
-      color: elementColor.withOpacity(0.05),
+      decoration: BoxDecoration(
+        color: elementColor.withOpacity(0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-      color: elementColor.withOpacity(0.2))),
+          color: elementColor.withOpacity(0.2)),
+      ),
       child: Column(
         children: [
           Row(
@@ -274,11 +300,11 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                         Text(
                           label,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6)),
           Text(
             value,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600))]));
+                            fontWeight: FontWeight.w600)]);
   }
 
   Widget _buildCharacteristics(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
@@ -318,7 +344,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 child: Text(
                   characteristic,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    height: 1.5)))])))]);
+                    height: 1.5))]))]);
   }
 
   Widget _buildPersonality(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
@@ -422,7 +448,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-      color: statusColor.withOpacity(0.3))),
+      color: statusColor.withOpacity(0.3)),
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -442,7 +468,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               Text(
                 advice,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.6))]))]);
+                  height: 1.6)])]);
   }
 
   Widget _buildCompatibility(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
@@ -486,7 +512,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 end: Alignment.centerRight),
       borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-      color: otherColor.withOpacity(0.2))),
+      color: otherColor.withOpacity(0.2)),
       child: Row(
               children: [
                 Container(
@@ -499,7 +525,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     child: Icon(
                       _getElementIcon(otherElement),
                       color: otherColor,
-                      size: AppDimensions.iconSizeSmall))),
+                      size: AppDimensions.iconSizeSmall)),
                 SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
@@ -535,7 +561,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       Text(
                         relation,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.8)))]))]));
+                          color: theme.colorScheme.onSurface.withOpacity(0.8))])]));
         })]);
   }
 
@@ -568,7 +594,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             color: AppColors.error.withOpacity(0.05),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: AppColors.error.withOpacity(0.2))),
+              color: AppColors.error.withOpacity(0.2)),
           child: Column(
             children: healthTips.map((tip) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
@@ -584,7 +610,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     child: Text(
                       tip,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4)))]))).toList()))]);
+                        height: 1.4))])).toList()))]);
   }
 
   Widget _buildCareer(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
@@ -616,7 +642,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             color: AppColors.primary.withOpacity(0.05),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.2))),
+              color: AppColors.primary.withOpacity(0.2)),
           child: Column(
             children: careers.map((career) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
@@ -632,7 +658,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     child: Text(
                       career,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4)))]))).toList()))]);
+                        height: 1.4))])).toList()))]);
   }
 
   Widget _buildLuckyItems(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
@@ -669,7 +695,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: Colors.amber.withOpacity(0.3))),
+              color: Colors.amber.withOpacity(0.3)),
           child: Column(
             children: luckyItems.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
@@ -685,6 +711,6 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     child: Text(
                       item,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4)))]))).toList()))]);
+                        height: 1.4))])).toList()))]);
   }
 }

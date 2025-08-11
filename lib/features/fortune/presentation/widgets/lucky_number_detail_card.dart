@@ -169,7 +169,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                   Text(
                     '자세히 보기',),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                          color: Theme.of(context).primaryColor))),
+                          color: Theme.of(context).primaryColor)),
                   const SizedBox(width: AppSpacing.spacing1),
                   Icon(
                     Icons.arrow_forward_ios);
@@ -194,7 +194,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor),
     borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24))),
+              top: Radius.circular(24)),
     child: Column(
             children: [
               Container(
@@ -203,7 +203,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);
@@ -233,7 +233,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                                     .textTheme
                                     .headlineSmall
                                     ?.copyWith(
-                                      fontWeight: FontWeight.bold))),
+                                      fontWeight: FontWeight.bold)),
                               const SizedBox(height: AppSpacing.spacing1),
                               Text(
                                 category.description);
@@ -241,12 +241,12 @@ class LuckyNumberDetailCard extends StatelessWidget {
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.grey[600])))]))]),
+                                      color: Colors.grey[600]))])]),
                     const SizedBox(height: AppSpacing.spacing6),
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)] else ...[
                       ...items.map((item) => _buildDetailItem(context, item)])
-                  ]))])))
+                  ])]))
     );
   }
 

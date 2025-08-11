@@ -382,7 +382,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -403,7 +403,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   height: 48,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
                   child: const Center(
                     child: Icon(
                       Icons.all_inclusive,

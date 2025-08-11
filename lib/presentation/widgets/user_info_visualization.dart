@@ -251,12 +251,12 @@ class UserInfoVisualization extends StatelessWidget {
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6))),
+              color: theme.colorScheme.onSurface.withOpacity(0.6)),
           Text(
             value,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: itemColor))])).animate()
+              color: itemColor)]).animate()
       .fadeIn(delay: const Duration(milliseconds: 100))
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
   }

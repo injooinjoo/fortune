@@ -40,7 +40,7 @@ class PolicyPage extends ConsumerWidget {
                         color: Colors.purple,
                         onTap: () => context.push('/policy/terms')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 32),
-                      _buildInfoSection()])))]))));
+                      _buildInfoSection()]))]));
   }
 
   Widget _buildPolicyCard({
@@ -68,7 +68,7 @@ class PolicyPage extends ConsumerWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
               child: Icon(
                 icon,
                 color: color,
@@ -89,7 +89,7 @@ class PolicyPage extends ConsumerWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.8)))])),
+                      color: Colors.white.withOpacity(0.8))]),
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: Colors.white.withOpacity(0.5),

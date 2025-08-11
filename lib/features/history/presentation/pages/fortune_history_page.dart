@@ -137,7 +137,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 error: (error, stack) => Center(
                   child: Text(
                     '운세 기록을 불러올 수 없습니다',
-                    style: TextStyle(fontSize: 16 * fontScale)))))])),
+                    style: TextStyle(fontSize: 16 * fontScale)))]),
       bottomNavigationBar: const FortuneBottomNavigationBar(
         currentIndex: 3));
   }
@@ -162,7 +162,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             '운세를 보고 나면 여기에 기록됩니다',
             style: TextStyle(
               fontSize: 14 * fontScale,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]));
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))]);
   }
 
   List<FortuneHistory> _filterHistory(List<FortuneHistory> history) {
@@ -274,7 +274,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -345,7 +345,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               _selectedDateRange != null
                   ? '${DateFormat('yyyy.MM.dd').format(_selectedDateRange!.start)} - ${DateFormat('yyyy.MM.dd').format(_selectedDateRange!.end)}'
                   : '기간 선택',
-              style: TextStyle(fontSize: 14 * fontScale))),
+              style: TextStyle(fontSize: 14 * fontScale)),
           const SizedBox(height: 20),
           
           // Apply Button
@@ -355,7 +355,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               onPressed: () => Navigator.pop(context),
               child: Text(
                 '적용',
-                style: TextStyle(fontSize: 16 * fontScale))))]));
+                style: TextStyle(fontSize: 16 * fontScale))]);
   }
 
   Widget _buildFilterChip(String value, String label, double fontScale) {

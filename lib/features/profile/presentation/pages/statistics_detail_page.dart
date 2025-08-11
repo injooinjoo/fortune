@@ -171,7 +171,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               const SizedBox(height: 16),
               Text(
                 '통계를 불러올 수 없습니다',
-                style: TextStyle(fontSize: 16 * fontScale))])),
+                style: TextStyle(fontSize: 16 * fontScale)]),
         data: (stats) => TabBarView(
           controller: _tabController,
           children: [
@@ -270,7 +270,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   '프로필을 완성하면 더 정확한 운세를 받을 수 있어요',
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: AppColors.textSecondary))])),
+                    color: AppColors.textSecondary)]),
           
           // Token Statistics
           const SizedBox(height: 24),
@@ -283,7 +283,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   Colors.orange.withOpacity(0.1)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.amber.withOpacity(0.2))),
+                color: Colors.amber.withOpacity(0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -393,7 +393,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                     _buildAchievementBadge('일주일 연속', true, fontScale),
                     _buildAchievementBadge('운세 마스터', false, fontScale),
                     _buildAchievementBadge('공유왕', true, fontScale),
-                    _buildAchievementBadge('100일 달성', false, fontScale)])]))]));
+                    _buildAchievementBadge('100일 달성', false, fontScale)])])]);
   }
   
   Widget _buildActivityTab(UserStatistics stats, double fontScale) {
@@ -464,7 +464,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                 style: TextStyle(
                                   fontSize: 10 * fontScale,
                                   color: AppColors.textSecondary));
-                            }))),
+                            })),
                       borderData: FlBorderData(show: false),
                       barGroups: stats.weeklyActivity
                           .asMap()
@@ -482,8 +482,8 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                       end: Alignment.bottomCenter),
                                     width: 24,
                                     borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(8)))]))
-                          .toList())))])),
+                                      top: Radius.circular(8))])
+                          .toList())]),
           
           // Fortune Type Distribution
           const SizedBox(height: 24),
@@ -535,7 +535,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                             backgroundColor: AppColors.divider,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               _getCategoryColor(entry.key)),
-                            minHeight: 6))]));
+                            minHeight: 6)]);
                 })])),
           
           // Most Used Fortunes
@@ -584,21 +584,21 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: index < 3 ? Colors.white : AppColors.textSecondary)))),
+                                color: index < 3 ? Colors.white : AppColors.textSecondary)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             fortune.key,
                             style: TextStyle(
                               fontSize: 14 * fontScale,
-                              fontWeight: index == 0 ? FontWeight.w600 : FontWeight.normal))),
+                              fontWeight: index == 0 ? FontWeight.w600 : FontWeight.normal)),
                         Text(
                           '${fortune.value}회',
                           style: TextStyle(
                             fontSize: 14 * fontScale,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.primary))]));
-                })]))]));
+                            color: AppColors.primary)]);
+                })])]);
   }
   
   Widget _buildPerformanceTab(UserStatistics stats, double fontScale) {
@@ -633,7 +633,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
                       child: Text(
                         '평균 ${stats.averageFortuneScore.toStringAsFixed(1)}점',
                         style: TextStyle(
@@ -684,7 +684,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                 style: TextStyle(
                                   fontSize: 10 * fontScale,
                                   color: AppColors.textSecondary));
-                            }))),
+                            })),
                       borderData: FlBorderData(show: false),
                       minX: 0,
                       maxX: 29,
@@ -713,7 +713,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                 AppColors.primary.withOpacity(0.3),
                                 AppColors.primary.withOpacity(0.1)],
                               begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter)))])))])),
+                              end: Alignment.bottomCenter))]))])),
           
           // Performance Metrics
           const SizedBox(height: 24),
@@ -768,7 +768,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   AppColors.primary.withOpacity(0.05)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.2))),
+                color: AppColors.primary.withOpacity(0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -791,7 +791,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   fontScale),
                 _buildInsightItem(
                   '매일 아침 운세를 확인하는 습관이 하루를 계획적으로 보내는데 도움이 되고 있어요.',
-                  fontScale)]))]));
+                  fontScale)])]);
   }
   
   Widget _buildSummaryCard({
@@ -819,7 +819,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(8),
                 child: Icon(icon, color: color, size: 20)),
               const SizedBox(width: 8),
               Expanded(
@@ -834,7 +834,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             style: TextStyle(
               fontSize: 20 * fontScale,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary))]));
+              color: AppColors.textPrimary)]);
   }
   
   Widget _buildAchievementBadge(String name, bool isUnlocked, double fontScale) {
@@ -858,7 +858,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             style: TextStyle(
               fontSize: 12 * fontScale,
               color: isUnlocked ? Colors.amber[800] : AppColors.textSecondary,
-              fontWeight: isUnlocked ? FontWeight.w600 : FontWeight.normal))]));
+              fontWeight: isUnlocked ? FontWeight.w600 : FontWeight.normal)]);
   }
   
   Widget _buildPeriodChip(String label, int days, double fontScale) {
@@ -882,7 +882,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           style: TextStyle(
             fontSize: 14 * fontScale,
             color: isSelected ? Colors.white : AppColors.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal))));
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal)));
   }
   
   Widget _buildMetricCard({
@@ -927,7 +927,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             subtitle,
             style: TextStyle(
               fontSize: 11 * fontScale,
-              color: AppColors.textSecondary))]));
+              color: AppColors.textSecondary)]);
   }
   
   Widget _buildInsightItem(String text, double fontScale) {
@@ -942,7 +942,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             height: 6,
             decoration: BoxDecoration(
               color: AppColors.primary,
-              borderRadius: BorderRadius.circular(3))),
+              borderRadius: BorderRadius.circular(3),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -950,7 +950,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               style: TextStyle(
                 fontSize: 14 * fontScale,
                 color: AppColors.textPrimary,
-                height: 1.5)))]));
+                height: 1.5))]);
   }
   
   Color _getCategoryColor(String category) {

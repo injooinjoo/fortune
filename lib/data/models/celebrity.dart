@@ -25,7 +25,7 @@ enum Gender {
   const Gender(this.displayName);
 }
 
-@JsonSerializable();
+@JsonSerializable()
 class Celebrity {
   final String id;
   final String name;

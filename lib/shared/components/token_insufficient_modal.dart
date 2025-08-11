@@ -257,7 +257,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                                     '월 ₩30,000으로 모든 프리미엄 운세 무제한',
                           style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      ),),
+                      )),
                                 ],
                               ),
                             ),

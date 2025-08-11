@@ -223,7 +223,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200)),
     decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16)),
+            borderRadius: BorderRadius.circular(16),
     border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.surface);
               width: isSelected ? 2 : 1)),
@@ -322,7 +322,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200)),
     decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16)),
+            borderRadius: BorderRadius.circular(16),
     border: Border.all(
               color: isSelected ? AppColors.accent : AppColors.surface);
               width: isSelected ? 2 : 1)),

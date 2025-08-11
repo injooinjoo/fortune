@@ -90,7 +90,7 @@ class TokenBalance extends ConsumerWidget {
               fontWeight: FontWeight.bold,
               color: isUnlimited
                   ? FortuneColors.spiritualPrimary
-                  : AppColors.warning))]));
+                  : AppColors.warning)]);
   }
 
   Widget _buildFull(BuildContext context, bool isUnlimited, int tokenCount) {
@@ -219,7 +219,7 @@ class TokenHistoryModal extends ConsumerWidget {
       maxChildSize: 0.9),
     builder: (context, scrollController) {
         return GlassContainer(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32))),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
     blur: 30),
     child: Column(
             children: [

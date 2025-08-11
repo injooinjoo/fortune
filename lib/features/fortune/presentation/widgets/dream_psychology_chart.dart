@@ -13,7 +13,8 @@ class DreamPsychologyChart extends StatefulWidget {
   const DreamPsychologyChart({
     Key? key,
     required this.psychologicalState,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true,
+  }) : super(key: key);
 
   @override
   State<DreamPsychologyChart> createState() => _DreamPsychologyChartState();
@@ -29,10 +30,12 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     super.initState();
     _animationController = AnimationController(
       duration: AppAnimations.durationSkeleton,
-      vsync: this);
+      vsync: this,
+    );
     _animation = CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeInOut);
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -66,7 +69,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       children: [
         Icon(
           Icons.psychology,
-          color: Colors.deepPurple);
+          color: Colors.deepPurple),
           size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
@@ -81,7 +84,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125);
+          height: AppSpacing.spacing24 * 3.125),
           padding: AppSpacing.paddingAll20),
     child: Stack(
             children: [
@@ -119,7 +122,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     dataEntries: _getRadarEntries())]),
                 swapAnimationDuration: const Duration(milliseconds: 400)),
               Center(
-                child: _buildCenterInfo())]));
+                child: _buildCenterInfo()]);
       }
     );
   }
@@ -174,7 +177,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
               color: stateColor.withOpacity(0.5),
     width: 1)),
     child: Text(
-            stateText);
+            stateText),
             style: Theme.of(context).textTheme.bodyMedium))
       ]
     );
@@ -209,9 +212,10 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
           color: Colors.white.withOpacity(0.1),
     width: 1)),
     child: Column(
-        children: [
+
+      children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween);
+            mainAxisAlignment: MainAxisAlignment.spaceBetween),
             children: [
               Text(
                 '$left $leftPercent%');
@@ -222,12 +226,12 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             ]),
           const SizedBox(height: AppSpacing.spacing2),
           ClipRRect(
-            borderRadius: AppDimensions.borderRadiusSmall);
+            borderRadius: AppDimensions.borderRadiusSmall),
             child: LinearProgressIndicator(
-              value: leftValue / total);
+              value: leftValue / total),
               backgroundColor: rightColor.withOpacity(0.3),
     valueColor: AlwaysStoppedAnimation<Color>(leftColor),
-    minHeight: 8))]));
+    minHeight: 8)]);
   }
 
   Widget _buildInsightSection() {
@@ -239,7 +243,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
           Row(
             children: [
               Icon(
-                Icons.lightbulb_outline);
+                Icons.lightbulb_outline),
                 color: Colors.amber),
     size: 20),
               const SizedBox(width: AppSpacing.spacing2),
@@ -304,7 +308,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
               ),
               Expanded(
                 child: Text(
-                  rec);
+                  rec),
                   style: Theme.of(context).textTheme.bodyMedium)])).toList()])
     );
   }
