@@ -61,7 +61,9 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
         const SizedBox(height: AppSpacing.spacing5),
         _buildBalanceIndicators(),
         const SizedBox(height: AppSpacing.spacing4),
-        _buildInsightSection()]);
+        _buildInsightSection(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -69,13 +71,13 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       children: [
         Icon(
           Icons.psychology,
-          color: Colors.deepPurple),
+          color: Colors.deepPurple,
           size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
-          '심리 상태 분석',),
-          style: Theme.of(context).textTheme.bodyMedium))
-      ]
+          '심리 상태 분석',
+          style: Theme.of(context).textTheme.bodyMedium),
+      ],
     );
   }
 
@@ -84,9 +86,9 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125),
-          padding: AppSpacing.paddingAll20),
-    child: Stack(
+          height: AppSpacing.spacing24 * 3.125,
+          padding: AppSpacing.paddingAll20,
+          child: Stack(
             children: [
               CustomPaint(
                 size: Size.infinite,
@@ -113,22 +115,29 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                       text: titles[index],
                       angle: 0);
                   },
-    dataSets: [
+                  dataSets: [
                     RadarDataSet(
                       fillColor: Colors.deepPurple.withOpacity(0.3),
-                      borderColor: Colors.deepPurple),
-    borderWidth: 2),
-    entryRadius: 4),
-    dataEntries: _getRadarEntries())]),
-                swapAnimationDuration: const Duration(milliseconds: 400)),
+                      borderColor: Colors.deepPurple,
+                      borderWidth: 2,
+                      entryRadius: 4,
+                      dataEntries: _getRadarEntries()),
+                  ],
+                  swapAnimationDuration: const Duration(milliseconds: 400),
+                ),
+              ),
               Center(
-                child: _buildCenterInfo()]);
-      }
+                child: _buildCenterInfo(),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   List<RadarEntry> _getRadarEntries() {
-    final states = \['['의식', '무의식', '긍정', '부정', '안정', '변화', '내향', '외향'];
+    final states = ['의식', '무의식', '긍정', '부정', '안정', '변화', '내향', '외향'];
     
     return states.map((state) {
       final value = (widget.psychologicalState[state] ?? 0.5) * _animation.value;
@@ -165,34 +174,37 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '전반적 상태',),
-          style: Theme.of(context).textTheme.bodyMedium))
+          '전반적 상태',
+          style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: AppSpacing.spacing1),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
-    decoration: BoxDecoration(
+          decoration: BoxDecoration(
             color: stateColor.withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(
               color: stateColor.withOpacity(0.5),
-    width: 1)),
-    child: Text(
-            stateText),
-            style: Theme.of(context).textTheme.bodyMedium))
-      ]
+              width: 1),
+          ),
+          child: Text(
+            stateText,
+            style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
     );
   }
 
   Widget _buildBalanceIndicators() {
     return Column(
       children: [
-        _buildBalanceBar('의식', '무의식',
+        _buildBalanceBar('의식', '무의식', Colors.blue, Colors.purple),
         const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('긍정', '부정': Colors.green, Colors.red),
+        _buildBalanceBar('긍정', '부정', Colors.green, Colors.red),
         const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('안정', '변화': Colors.teal, Colors.orange),
+        _buildBalanceBar('안정', '변화', Colors.teal, Colors.orange),
         const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('내향', '외향': Colors.indigo, Colors.amber)]
+        _buildBalanceBar('내향', '외향', Colors.indigo, Colors.amber),
+      ],
     );
   }
 
@@ -207,31 +219,36 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(
           color: Colors.white.withOpacity(0.1),
-    width: 1)),
-    child: Column(
-
-      children: [
+          width: 1),
+      ),
+      child: Column(
+        children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween),
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '$left $leftPercent%');
-                style: Theme.of(context).textTheme.bodyMedium))
+                '$left $leftPercent%',
+                style: Theme.of(context).textTheme.bodyMedium),
               Text(
-                '$right $rightPercent%');
-                style: Theme.of(context).textTheme.bodyMedium))
-            ]),
+                '$right $rightPercent%',
+                style: Theme.of(context).textTheme.bodyMedium),
+            ],
+          ),
           const SizedBox(height: AppSpacing.spacing2),
           ClipRRect(
-            borderRadius: AppDimensions.borderRadiusSmall),
+            borderRadius: AppDimensions.borderRadiusSmall,
             child: LinearProgressIndicator(
-              value: leftValue / total),
+              value: leftValue / total,
               backgroundColor: rightColor.withOpacity(0.3),
-    valueColor: AlwaysStoppedAnimation<Color>(leftColor),
-    minHeight: 8)]);
+              valueColor: AlwaysStoppedAnimation<Color>(leftColor),
+              minHeight: 8),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildInsightSection() {
@@ -243,21 +260,26 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
           Row(
             children: [
               Icon(
-                Icons.lightbulb_outline),
-                color: Colors.amber),
-    size: 20),
+                Icons.lightbulb_outline,
+                color: Colors.amber,
+                size: 20),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
-                '심리학적 통찰',),
-                style: Theme.of(context).textTheme.bodyMedium))
-            ]),
+                '심리학적 통찰',
+                style: Theme.of(context).textTheme.bodyMedium),
+            ],
+          ),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             _generateInsight(),
-    style: Theme.of(context).textTheme.bodyMedium)),
-    height: 1.5),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              height: 1.5),
+          ),
           const SizedBox(height: AppSpacing.spacing3),
-          _buildRecommendations()]));
+          _buildRecommendations(),
+        ],
+      ),
+    );
   }
 
   String _generateInsight() {
@@ -283,7 +305,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     }
     
     return insights.isNotEmpty 
-        ? insights.join('. ': 
+        ? insights.join('. ')
         : '전반적으로 균형잡힌 심리 상태를 보이고 있습니다.';
   }
 
@@ -294,22 +316,27 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '추천 활동',),
-          style: Theme.of(context).textTheme.bodyMedium))
+          '추천 활동',
+          style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: AppSpacing.spacing2),
         ...recommendations.map((rec) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.spacing1),
-    child: Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '• ');
-                style: TextStyle(color: Colors.amber))
+                '• ',
+                style: TextStyle(color: Colors.amber),
               ),
               Expanded(
                 child: Text(
-                  rec),
-                  style: Theme.of(context).textTheme.bodyMedium)])).toList()])
+                  rec,
+                  style: Theme.of(context).textTheme.bodyMedium),
+              ),
+            ],
+          ),
+        )).toList(),
+      ],
     );
   }
 
@@ -349,12 +376,10 @@ class _RadarBackgroundPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2 - 40;
     
-    final paint = Paint(,
+    final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-     
-   
-    ..color = Colors.white.withOpacity(0.1);
+      ..color = Colors.white.withOpacity(0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

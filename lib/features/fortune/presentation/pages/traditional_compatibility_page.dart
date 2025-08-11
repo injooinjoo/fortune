@@ -286,13 +286,13 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         color: isSelected
                             ? theme.colorScheme.secondary
                             : theme.colorScheme.onSurface.withOpacity(0.3))));
-                }).toList()
-            ]
-          )
-        )
-      ]
+                }).toList()),
+            ],
+          ),
+        ),
+      ],
     );
-}
+  }
 
   Widget _buildPersonInfoCard({
     required String title,

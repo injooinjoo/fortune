@@ -73,14 +73,17 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getPageTitle(),
+        title: Text(_getPageTitle()),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
             onPressed: () {
               // Show help dialog
               _showHelpDialog(context);
-            })]),
+            },
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -92,9 +95,9 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 _buildPetInfoForm(),
                 const SizedBox(height: 16),
                 buildFortuneResult(),
-                _buildPetCareTips()
-              ]
-            )
+                _buildPetCareTips(),
+              ],
+            ),
           ),
           Positioned(
             bottom: 0,

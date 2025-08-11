@@ -206,7 +206,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                     LineChartBarData(
                       spots: List.generate(24, (index) {
                         final data = hourlyData['$index'] as Map<String, dynamic>;
-                        return FlSpot(index.toDouble(), (data['score'] as int).toDouble();
+                        return FlSpot(index.toDouble(), (data['score'] as int).toDouble());
                       }),
                       isCurved: true,
                       gradient: LinearGradient(
@@ -307,7 +307,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8)),
                   child: Text(
                     '$_selectedHour:00',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(

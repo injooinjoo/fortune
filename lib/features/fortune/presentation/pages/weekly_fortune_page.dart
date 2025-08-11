@@ -48,8 +48,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
 
   Map<String, dynamic> _generateDailyScores() {
     final scores = <String, dynamic>{};
-    final days = ['월': '화', '수': '목', '금': '토', '일'
-  ];
+    final days = ['월', '화', '수', '목', '금', '토', '일'];
     
     for (int i = 0; i < 7; i++) {
       scores[days[i]] = {
@@ -63,9 +62,9 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
 
   String _getDayHighlight(int dayIndex) {
     final highlights = [
-      '새로운 시작의 기회': '협력과 소통의 날',
-      '성찰과 휴식의 시간': '도전과 성장의 기회',
-      '행운이 가듍한 날': '인연과 만남의 시간',
+      '새로운 시작의 기회', '협력과 소통의 날',
+      '성찰과 휴식의 시간', '도전과 성장의 기회',
+      '행운이 가듍한 날', '인연과 만남의 시간',
       '가족과 함께하는 날',
     ];
     return highlights[dayIndex];
@@ -73,9 +72,9 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
 
   String _getDayWarning(int dayIndex) {
     final warnings = [
-      '서두르지 말고 신중하게': '오해가 생기지 않도록 주의',
-      '건강 관리에 신경쓰세요': '충동적인 결정은 피하세요',
-      '과도한 지출을 조심하세요': '늦은 귀가는 삼가세요',
+      '서두르지 말고 신중하게', '오해가 생기지 않도록 주의',
+      '건강 관리에 신경쓰세요', '충동적인 결정은 피하세요',
+      '과도한 지출을 조심하세요', '늦은 귀가는 삼가세요',
       '충분한 휴식을 취하세요',
     ];
     return warnings[dayIndex];
@@ -84,15 +83,15 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
   List<Map<String, dynamic>> _getWeekHighlights() {
     return [
       {
-        'day': '월요일': 'type': '시작': 'description': '새로운 프로젝트나 계획을 시작하기 좋은 날': 'icon': Icons.rocket_launch,
+        'day': '월요일', 'type': '시작', 'description': '새로운 프로젝트나 계획을 시작하기 좋은 날', 'icon': Icons.rocket_launch,
         'color': Colors.orange,
       },
       {
-        'day': '수요일': 'type': '전환점': 'description': '주간 목표를 재점검하고 방향을 조정하는 시기': 'icon': Icons.change_circle,
+        'day': '수요일', 'type': '전환점', 'description': '주간 목표를 재점검하고 방향을 조정하는 시기', 'icon': Icons.change_circle,
         'color': Colors.blue,
       },
       {
-        'day': '금요일': 'type': '최고조': 'description': '이번 주 가장 운이 좋은 날, 중요한 일을 처리하세요': 'icon': Icons.star,
+        'day': '금요일', 'type': '최고조', 'description': '이번 주 가장 운이 좋은 날, 중요한 일을 처리하세요', 'icon': Icons.star,
         'color': Colors.amber,
       },
     ];
@@ -118,7 +117,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
         _buildWeekHighlights(),
         _buildCategoryTrendsChart(),
         const SizedBox(height: 32),
-      ]
+      ],
     );
   }
 
@@ -129,8 +128,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
     final dailyScores = fortune.metadata?['dailyScores'] as Map<String, dynamic>?;
     if (dailyScores == null) return const SizedBox.shrink();
 
-    final days = ['월': '화', '수': '목', '금': '토', '일'
-  ];
+    final days = ['월', '화', '수', '목', '금', '토', '일'];
     final scores = days.map((day) {
       final dayData = dailyScores[day] as Map<String, dynamic>;
       return (dayData['score'] as int).toDouble();
@@ -195,7 +193,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               color: isSelected 
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6))
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                           );
                         })),
                     leftTitles: AxisTitles(
@@ -205,12 +203,15 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10));
-                        })),
+                            style: const TextStyle(fontSize: 10)),
+                        }),
+                      ),
+                    ),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
                       color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                  ),
                   barGroups: List.generate(7, (index) {
                     final isSelected = index == _selectedDayIndex;
                     return BarChartGroupData(
@@ -231,13 +232,22 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                           width: 22,
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8))]);
-                  }))]);
+                            topRight: Radius.circular(8)),
+                        ),
+                      ],
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDaySelector() {
-    final days = ['월': '화', '수': '목', '금': '토', '일'
-  ];
+    final days = ['월', '화', '수', '목', '금', '토', '일'];
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -288,7 +298,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                           color: isSelected
                             ? Colors.white
                             : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                       const SizedBox(height: 4),
                       Text(
                         '${date.day}',
@@ -297,8 +307,16 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                           color: isSelected
                             ? Colors.white
                             : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold)]));
-          }));
+                          fontWeight: FontWeight.bold),
+                      ],
+                    ),
+                  ),
+                );
+            },
+          ),
+        ),
+      );
+  }
   }
 
   Widget _buildSelectedDayDetail() {
@@ -308,8 +326,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
     final dailyScores = fortune.metadata?['dailyScores'] as Map<String, dynamic>?;
     if (dailyScores == null) return const SizedBox.shrink();
 
-    final days = ['월': '화', '수': '목', '금': '토', '일'
-  ];
+    final days = ['월', '화', '수', '목', '금', '토', '일'];
     final selectedDay = days[_selectedDayIndex];
     final dayData = dailyScores[selectedDay] as Map<String, dynamic>;
     final selectedDate = _startOfWeek.add(Duration(days: _selectedDayIndex));
@@ -328,23 +345,29 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
                     '${selectedDate.month}월 ${selectedDate.day}일 ${selectedDay}요일',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold),
+                  ),
                 const Spacer(),
                 Text(
                   '${dayData['score']}점',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: _getScoreColor(dayData['score']),
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
                 children: [
                   Icon(
@@ -358,17 +381,26 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         Text(
                           '오늘의 포인트',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.primary)),
+                            color: Theme.of(context).colorScheme.primary),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           dayData['highlight'],
-                          style: Theme.of(context).textTheme.bodyMedium)])]),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.error.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
                 children: [
                   Icon(
@@ -382,21 +414,22 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         Text(
                           '주의사항',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.error)),
+                            color: Theme.of(context).colorScheme.error),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           dayData['warning'],
-                          style: Theme.of(context).textTheme.bodyMedium
-                        )
-                      ]
-                    )
-                  )
-                ]
-              )
-            )
-          ]
-        )
-      )
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -431,9 +464,11 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       decoration: BoxDecoration(
                         color: color.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Icon(
                         highlight['icon'],
-                        color: color)),
+                        color: color),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -444,41 +479,43 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                               Text(
                                 highlight['day'],
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold)),
+                                  fontWeight: FontWeight.bold),
+                              ),
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: color.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(12),
+                                ),
                                 child: Text(
                                   highlight['type'],
                                   style: TextStyle(
                                     color: color,
                                     fontSize: 12,
-                                    fontWeight: FontWeight.bold
-                                  )
-                                )
-                              )
-                            ]
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 4),
                           Text(
                             highlight['description'],
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)
-                            )
-                          )
-                        ]
-                      )
-                    )
-                  ]
-                )
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
-            }).toList()
-          ]
-        )
-      )
+            }).toList(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -517,11 +554,14 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       height: 12,
                       decoration: BoxDecoration(
                         color: entry.value,
-                        shape: BoxShape.circle)),
+                        shape: BoxShape.circle),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       entry.key,
-                      style: const TextStyle(fontSize: 12))]);
+                      style: const TextStyle(fontSize: 12)),
+                  ],
+                );
               }).toList(),
             const SizedBox(height: 20),
             SizedBox(
@@ -536,12 +576,13 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
-                        strokeWidth: 1);
+                        strokeWidth: 1,
+                      );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
-                        strokeWidth: 1
+                        strokeWidth: 1,
                       );
                     }),
                   titlesData: FlTitlesData(
@@ -554,12 +595,12 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          final days = ['월': '화', '수': '목', '금': '토', '일'
-  ];
+                          final days = ['월', '화', '수', '목', '금', '토', '일'];
                           if (value.toInt() >= 0 && value.toInt() < days.length) {
                             return Text(
                               days[value.toInt()],
-                              style: const TextStyle(fontSize: 10));
+                              style: const TextStyle(fontSize: 10),
+                            );
                           }
                           return const SizedBox.shrink();
                         })),
@@ -570,12 +611,15 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10));
-                        })),
+                            style: const TextStyle(fontSize: 10)),
+                        }),
+                      ),
+                    ),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
                       color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                  ),
                   minX: 0,
                   maxX: 6,
                   minY: 50,
@@ -597,16 +641,19 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                             radius: 3,
                             color: color,
                             strokeWidth: 1,
-                            strokeColor: Colors.white);
-                        }),
-                      belowBarData: BarAreaData(show: false));
-                  }).toList()
-                )
-              )
-            )
-          ]
-        )
-      )
+                            strokeColor: Colors.white,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(show: false),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

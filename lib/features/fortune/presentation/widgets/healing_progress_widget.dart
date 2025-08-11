@@ -28,7 +28,8 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
     {'name': '분노', 'icon': Icons.bolt, 'color': Colors.orange},
     {'name': '타협', 'icon': Icons.handshake, 'color': Colors.yellow},
     {'name': '우울', 'icon': Icons.water_drop, 'color': Colors.blue},
-    {'name': '수용', 'icon': Icons.favorite, 'color': Colors.green}];
+    {'name': '수용', 'icon': Icons.favorite, 'color': Colors.green},
+  ];
 
   @override
   void initState() {

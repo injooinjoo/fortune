@@ -844,7 +844,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '추천 부업 기회',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             ...opportunities.asMap().entries.map((entry) {
               final index = entry.key;
@@ -852,13 +854,18 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               final score = index < scores.length ? scores[index] : 50;
               
               return _buildOpportunityItem(opportunity, score);
-            }).toList(),);
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildOpportunityItem(String opportunity, int score) {
     IconData icon;
     switch (opportunity) {
-      case '온라인 강의': icon = Icons.school;
+      case '온라인 강의': 
+        icon = Icons.school;
         break;
       case '프리랜서':
         icon = Icons.laptop_mac;
@@ -866,10 +873,11 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       case '투잡':
         icon = Icons.work_outline;
         break;
-      case , '창업': icon = Icons.business;
+      case '창업': 
+        icon = Icons.business;
         break;
       default:
-        icon = Icons.work;}
+        icon = Icons.work;
     }
     
     return Padding(
@@ -879,6 +887,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         decoration: BoxDecoration(
           color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
           borderRadius: BorderRadius.circular(8),
+        ),
         child: Row(
           children: [
             Icon(icon, color: AppTheme.primaryColor, size: 32),
@@ -891,7 +900,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                     opportunity,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16)),
+                      fontSize: 16,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -899,24 +910,25 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                         return Icon(
                           index < (score ~/ 20) ? Icons.star : Icons.star_border,
                           color: Colors.amber,
-                          size: 16);
+                          size: 16,
+                        );
                       }),
                       const SizedBox(width: 8),
                       Text(
                         '추천도 $score%',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondaryColor
-                        )
-                      )
-                    ]
-                  )
-                ]
-              )
-            )
-          )
-        ]
-      )
+                          color: AppTheme.textSecondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -931,14 +943,22 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '예상 수익 전망',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildIncomeColumn('1개월': '50-100만원',
-                _buildIncomeColumn('3개월': '200-400만원',
-                _buildIncomeColumn('6개월': '500-1000만원'])]));
+                _buildIncomeColumn('1개월', '50-100만원'),
+                _buildIncomeColumn('3개월', '200-400만원'),
+                _buildIncomeColumn('6개월', '500-1000만원'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildIncomeColumn(String period, String amount) {

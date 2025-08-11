@@ -65,20 +65,31 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
         '3주 후': 90,
         '4주 후': 95},
       'singleAdvice': fortune.additionalInfo?['singleAdvice'] ?? {
-        'summary': '새로운 만남의 기회가 찾아올 시기입니다': 'details': fortune.content,
-        'luckySpots': ['카페': '서점', '운동 시설'],
-        'luckyDays': ['금요일': '일요일']},
+        'summary': '새로운 만남의 기회가 찾아올 시기입니다',
+        'details': fortune.content,
+        'luckySpots': ['카페', '서점', '운동 시설'],
+        'luckyDays': ['금요일', '일요일']},
       'coupleAdvice': fortune.additionalInfo?['coupleAdvice'] ?? {
-        'summary': '서로를 더 깊이 이해하게 되는 시기': 'details': '연인과의 관계가 한 단계 더 발전할 수 있는 시기입니다. 진솔한 대화를 통해 서로를 더 잘 알아가세요.': 'activities': ['함께 요리하기': '여행 계획 세우기', '운동 함께하기'],
+        'summary': '서로를 더 깊이 이해하게 되는 시기',
+        'details': '연인과의 관계가 한 단계 더 발전할 수 있는 시기입니다. 진솔한 대화를 통해 서로를 더 잘 알아가세요.',
+        'activities': ['함께 요리하기', '여행 계획 세우기', '운동 함께하기'],
         'caution': '사소한 일로 다투지 않도록 주의하세요'},
       'reunionAdvice': fortune.additionalInfo?['reunionAdvice'] ?? {
-        'summary': '과거를 정리하고 새 출발을 준비할 때': 'details': '지난 관계에서 배운 교훈을 바탕으로 더 나은 사랑을 만날 준비를 하세요.': 'healing': '자신을 먼저 사랑하는 시간을 가지세요': 'newStart': '3주 후부터 새로운 인연이 시작될 수 있습니다'},
+        'summary': '과거를 정리하고 새 출발을 준비할 때',
+        'details': '지난 관계에서 배운 교훈을 바탕으로 더 나은 사랑을 만날 준비를 하세요.',
+        'healing': '자신을 먼저 사랑하는 시간을 가지세요',
+        'newStart': '3주 후부터 새로운 인연이 시작될 수 있습니다'},
       'actionMissions': fortune.additionalInfo?['actionMissions'] ?? [
-        '하루에 한 번 자신에게 칭찬하기': '좋아하는 사람에게 먼저 연락하기',
-        '새로운 취미 활동 시작하기': '감사 일기 쓰기',
+        '하루에 한 번 자신에게 칭찬하기',
+        '좋아하는 사람에게 먼저 연락하기',
+        '새로운 취미 활동 시작하기',
+        '감사 일기 쓰기',
         '운동으로 자신감 키우기'],
       'luckyBooster': fortune.luckyItems ?? {
-        '향수': '플로럴 계열': '색상': '핑크, 레드': '액세서리': '하트 모양 펜던트': '꽃': '장미, 튤립'},
+        '향수': '플로럴 계열',
+        '색상': '핑크, 레드',
+        '액세서리': '하트 모양 펜던트',
+        '꽃': '장미, 튤립'},
       'psychologicalAdvice': fortune.additionalInfo?['psychologicalAdvice'] ?? 
         '사랑은 자신을 먼저 사랑하는 것에서 시작됩니다. 자존감을 높이고 긍정적인 에너지를 발산하세요.'
   };
@@ -94,7 +105,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator()
+          ? const Center(child: CircularProgressIndicator())
           : currentFortune == null
               ? _buildInitialView()
               : _buildFortuneResultView(),
@@ -160,7 +171,8 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
         _buildLuckyBooster(),
         const SizedBox(height: 24),
         _buildPsychologicalAdvice(),
-        const SizedBox(height: 32)]
+        const SizedBox(height: 32),
+      ],
     );
   }
 
@@ -181,12 +193,15 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                 gradient: RadialGradient(
                   colors: [
                     Colors.pink.shade300,
-                    Colors.pink.shade500]),
+                    Colors.pink.shade500,
+                  ],
                 boxShadow: [
                   BoxShadow(
                     color: Colors.pink.withOpacity(0.3),
                     blurRadius: 30,
-                    spreadRadius: 10)]),
+                    spreadRadius: 10),
+                ],
+              ),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -203,7 +218,9 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                         fontWeight: FontWeight.bold),
                     ),
                   ],
-                ),)),
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
             Text(
               '연애 지수',
@@ -241,11 +258,11 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.purple.shade400, Colors.purple.shade600]),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12)),
                   child: const material.Icon(
                     Icons.trending_up_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24),
                 const SizedBox(width: 12),
                 Text(
                   '월간 연애운 흐름',
@@ -358,7 +375,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.pink.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12)),
               child: Text(
                 advice['summary'],
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -400,7 +417,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.red.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12)),
               child: Text(
                 advice['summary'],
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -462,7 +479,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.purple.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12)),
               child: Text(
                 advice['summary'],
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -517,7 +534,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
           runSpacing: 8,
           children: items.map((item) {
             return Chip(
-              label: Text(item.toString(),
+              label: Text(item.toString()),
               backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.primary),
@@ -537,7 +554,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -583,11 +600,11 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.green.shade400, Colors.green.shade600]),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12)),
                   child: const material.Icon(
                     Icons.task_alt_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24),
                 const SizedBox(width: 12),
                 Text(
                   '행운을 부르는 액션 미션',
@@ -637,13 +654,13 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                               color: _missionChecks[index]
                                   ? Colors.green
                                   : Colors.grey.shade400,
-                              width: 2)),
+                              width: 2),
                           child: _missionChecks[index]
                               ? const material.Icon(
                                   Icons.check_rounded,
                                   color: Colors.white,
                                   size: 16)
-                              : null),
+                              : null,
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -692,11 +709,11 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Colors.amber.shade400, Colors.amber.shade600]),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12)),
                     child: const material.Icon(
                       Icons.auto_awesome_rounded,
                       color: Colors.white,
-                      size: 24)),
+                      size: 24),
                   const SizedBox(width: 12),
                   Text(
                     '행운 부스터',
@@ -789,7 +806,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
               child: const material.Icon(
                 Icons.psychology_rounded,
                 color: Colors.white,
-                size: 32)),
+                size: 32),
             const SizedBox(height: 16),
             Text(
               '심리 조언',

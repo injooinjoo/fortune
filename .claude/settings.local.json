@@ -67,5 +67,12 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "figma-dev-mode-mcp-server"
-  ]
+  ],
+  "mcpServers": {
+    "framer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-framer"],
+      "env": {}
+    }
+  }
 }

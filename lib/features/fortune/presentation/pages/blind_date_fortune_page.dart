@@ -316,8 +316,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   Icon(
@@ -470,8 +470,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   Icon(
@@ -620,8 +620,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   Icon(
@@ -737,7 +737,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       ),
                     ),
                   );
-                }).toList()
+                }).toList(),
               ),
               const SizedBox(height: 16),
               // First Blind Date

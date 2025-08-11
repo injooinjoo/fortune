@@ -46,8 +46,10 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
   String? _selectedUrgency;
   
   final List<String> _urgencyLevels = [
-    '매우 급함 (1개월 이내)': '급함 (2개월 이내)',
-    '보통 (3개월 이내)': '여유 있음 (6개월 이내)',
+    '매우 급함 (1개월 이내)',
+    '급함 (2개월 이내)',
+    '보통 (3개월 이내)',
+    '여유 있음 (6개월 이내)',
     '매우 여유 있음 (1년 이내)'
   ];
 
@@ -109,9 +111,13 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         // Birth Date Selection
         Text(
@@ -128,8 +134,8 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
               borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
+            ),
+            child: Row(
               children: [
                 Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
                 const SizedBox(width: 12),
@@ -140,7 +146,12 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5)]),
+                        : theme.colorScheme.onSurface.withOpacity(0.5)),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         // From Address
         Text(
@@ -158,9 +169,13 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         // To Address
         Text(
@@ -178,9 +193,13 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         // Urgency Selection
         Text(
@@ -205,8 +224,8 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
               activeColor: theme.colorScheme.primary,
               contentPadding: EdgeInsets.zero);
           }).toList(),
-          ),
-          const SizedBox(height: 20),
+        ),
+        const SizedBox(height: 20),
         // Date Range Selection
         Text(
           '이사 가능 기간',
@@ -224,7 +243,8 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                     context: context,
                     initialDate: _selectedStartDate ?? DateTime.now(),
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365));
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                  );
                   if (picked != null) {
                     setState(() {
                       _selectedStartDate = picked;
@@ -245,7 +265,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                         ? '${_selectedStartDate!.month}/${_selectedStartDate!.day}'
                         : '시작일',
                     style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center)),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text('~')),
@@ -254,9 +278,10 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                 onTap: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: _selectedEndDate ?? (_selectedStartDate ?? DateTime.now(),
+                    initialDate: _selectedEndDate ?? (_selectedStartDate ?? DateTime.now()),
                     firstDate: _selectedStartDate ?? DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365));
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                  );
                   if (picked != null) {
                     setState(() {
                       _selectedEndDate = picked;
@@ -274,7 +299,13 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                         ? '${_selectedEndDate!.month}/${_selectedEndDate!.day}'
                         : '종료일',
                     style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center)))]),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 32),
         // Submit Button
         SizedBox(
@@ -307,14 +338,18 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                 'birthDate': _birthDate!.toIso8601String(),
                 'fromAddress': _fromAddressController.text,
                 'toAddress': _toAddressController.text,
-                'urgency': _selectedUrgency ?? '보통 (3개월 이내)': 'startDate': _selectedStartDate?.toIso8601String(),
-                'endDate': _selectedEndDate?.toIso8601String()});
+                'urgency': _selectedUrgency ?? '보통 (3개월 이내)',
+                'startDate': _selectedStartDate?.toIso8601String(),
+                'endDate': _selectedEndDate?.toIso8601String(),
+              });
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-              backgroundColor: theme.colorScheme.primary),
+              ),
+              backgroundColor: theme.colorScheme.primary,
+            ),
             child: Text(
               '최적의 이사 날짜 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
@@ -424,11 +459,12 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
+                      ),
+                      child: Icon(
                         Icons.star,
                         color: theme.colorScheme.primary,
-                        size: 28)),
+                        size: 28),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -438,8 +474,8 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                             '최고의 이사 날짜',
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-          ),
-        ),
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             bestDate['date'] ?? '날짜 미정',
@@ -447,6 +483,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 20 + _getFontSizeOffset(fontSize)),
+                          ),
                         ],
                       ),
                     ),
@@ -458,7 +495,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                     bestDate['reason'],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       height: 1.6,
-                      fontSize: 14 + _getFontSizeOffset(fontSize))],
+                      fontSize: 14 + _getFontSizeOffset(fontSize)),
+                  ),
+                ],
                 if (bestDate['score'] != null) ...[
                   const SizedBox(height: 12),
                   Row(
@@ -466,19 +505,21 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                       Text(
                         '적합도:',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600),
+                      ),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           color: _getScoreColor(bestDate['score']).withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
+                        ),
+                        child: Text(
                           '${bestDate['score']}점',
                           style: TextStyle(
                             color: _getScoreColor(bestDate['score']),
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
@@ -538,10 +579,14 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                               day.day.toString(),
                               style: TextStyle(
                                 color: _getScoreColor(score),
-                                fontWeight: FontWeight.bold)));
+                                fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        );
                       }
                       return null;
-                    }),
+                    },
+                  ),
                   calendarStyle: CalendarStyle(
                     outsideDaysVisible: false,
                     weekendTextStyle: TextStyle(color: theme.colorScheme.error),
@@ -550,14 +595,18 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                       shape: BoxShape.circle),
                     todayDecoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.5),
-                      shape: BoxShape.circle)),
+                      shape: BoxShape.circle),
+                  ),
                   headerStyle: HeaderStyle(
                     formatButtonVisible: true,
                     titleCentered: true,
                     formatButtonShowsNext: false,
                     formatButtonDecoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 // Legend
                 Row(
@@ -592,7 +641,10 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                       Text(
                         '추천 날짜들',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...goodDates.map((date) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -608,8 +660,10 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                             date['date'] ?? '',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 14 + _getFontSizeOffset(fontSize)),
-                        if (date['score'] != null),
-            Text(
+                          ),
+                        ),
+                        if (date['score'] != null) 
+                          Text(
                             '${date['score']}점',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.blue,
@@ -643,7 +697,10 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                       Text(
                         '피해야 할 날짜',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...avoidDates.map((date) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -663,8 +720,9 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                                 date['date'] ?? '',
                                 style: theme.textTheme.bodyLarge?.copyWith(
                                   fontSize: 14 + _getFontSizeOffset(fontSize)),
-                              if (date['reason'] != null),
-            Text(
+                              ),
+                              if (date['reason'] != null)
+                                Text(
                                   date['reason'],
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurface.withOpacity(0.7)),
@@ -707,7 +765,8 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
           height: 16,
           decoration: BoxDecoration(
             color: color.withOpacity(0.3),
-            shape: BoxShape.circle)),
+            shape: BoxShape.circle),
+        ),
         const SizedBox(width: 4),
         Text(
           label,

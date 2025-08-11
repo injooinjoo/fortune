@@ -488,8 +488,9 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   String _formatPrice(int price) {
     return price.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'))
-      (Match m) => '${m[1]},');
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
   }
 }
 
@@ -512,5 +513,6 @@ class TokenPackage {
     this.originalPrice,
     this.badge,
     required this.color,
-    this.isSubscription = false});
+    this.isSubscription = false,
+  });
 }

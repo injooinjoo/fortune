@@ -45,16 +45,16 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
       vsync: this);
     
     _fadeAnimation = Tween<double>(
-      begin: 0.0),
-    end: 1.0).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeIn),;
+      begin: 0.0,
+      end: 1.0).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn));
     
     _slideAnimation = Tween<double>(
-      begin: 30.0),
-    end: 0.0).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeOutBack),;
+      begin: 30.0,
+      end: 0.0).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack));
     
     _animationController.forward();
     
@@ -69,7 +69,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
   }
 
   Future<void> _checkCachedFortune() async {
-    final cachedFortune = await ref.read(fortuneProvider.notifier,
+    final cachedFortune = await ref.read(fortuneProvider.notifier)
         .getCachedFortune(widget.fortuneType.key);
     
     if (cachedFortune != null) {
@@ -97,7 +97,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
       }
 
       // Generate fortune
-      final result = await ref.read(fortuneProvider.notifier,
+      final result = await ref.read(fortuneProvider.notifier)
           .generateFortune(widget.fortuneType.key);
       
       setState(() {
@@ -127,30 +127,33 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('토큰 부족'),
-    content: Text(
-          '이 운세를 보려면 ${metadata.tokenCost}개의 토큰이 필요합니다.\n'),
+        content: Text(
+          '이 운세를 보려면 ${metadata.tokenCost}개의 토큰이 필요합니다.\n'
           '현재 보유 토큰이 부족합니다.'),
-    actions: [
+        actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-    child: const Text('취소')),
+            child: const Text('취소')),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               context.push('/token-purchase');
-            }),
-    child: const Text('토큰 구매')]);
+            },
+            child: const Text('토큰 구매')),
+        ],
+      ),
+    );
   }
 
   void _showExplanation() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true);
-      backgroundColor: Colors.transparent),
-    builder: (context) => FortuneExplanationBottomSheet(
-        fortuneType: widget.fortuneType.key);
-        title: metadata.title),
-    description: metadata.description)
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FortuneExplanationBottomSheet(
+        fortuneType: widget.fortuneType.key,
+        title: metadata.title,
+        description: metadata.description),
     );
   }
 
@@ -162,42 +165,47 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent);
-        elevation: 0),
-    title: Text(
-          metadata.title);
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          metadata.title,
           style: const TextStyle(fontWeight: FontWeight.bold)),
-    actions: [
+        actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-    onPressed: _showExplanation)]),
+            onPressed: _showExplanation),
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft);
-            end: Alignment.bottomRight),
-    colors: [
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
               metadata.primaryColor.withOpacity(0.1),
               metadata.secondaryColor.withOpacity(0.05),
-              theme.scaffoldBackgroundColor)
-            ])),
-    child: SafeArea(
+              theme.scaffoldBackgroundColor,
+            ],
+          ),
+        ),,
+        child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-    child: Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header Card
                 FadeTransition(
-                  opacity: _fadeAnimation);
+                  opacity: _fadeAnimation,
                   child: Transform.translate(
                     offset: Offset(0, _slideAnimation.value),
-    child: _buildHeaderCard()),
+                    child: _buildHeaderCard()),
+                ),
                 
                 const SizedBox(height: 24),
                 
                 // Result or Generate Button
-                if (_fortuneResult != null),
+                if (_fortuneResult != null)
             FadeTransition(
                     opacity: _fadeAnimation);
                     child: Transform.translate(
