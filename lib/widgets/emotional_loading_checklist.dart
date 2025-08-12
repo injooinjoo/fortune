@@ -143,17 +143,6 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
                     .fadeIn(duration: 1.seconds)
                     .slideY(begin: -0.2, end: 0),
                   
-                  const SizedBox(height: 8),
-                  
-                  Text(
-                    '준비하고 있어요',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.6),
-                    ),
-                  ).animate()
-                    .fadeIn(delay: 300.ms, duration: 800.ms),
                 ],
               ),
             ),
@@ -198,18 +187,22 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
                             final isActive = index == _currentStep;
                             final isPending = index > _currentStep;
                             
-                            // 위치에 따른 투명도 계산
+                            // 위치에 따른 투명도 계산 - 현재 위 2개까지만 보이도록
                             double opacity = 1.0;
-                            if (index < _currentStep - 1) {
-                              opacity = 0.1; // 완료된 이전 항목들은 매우 흐리게
+                            if (index < _currentStep - 2) {
+                              opacity = 0.0; // 현재 위 2개보다 이전 항목들은 완전히 숨김
+                            } else if (index == _currentStep - 2) {
+                              opacity = 0.1; // 현재 위 2번째 항목은 매우 흐리게
                             } else if (index == _currentStep - 1) {
                               opacity = 0.3; // 바로 이전 항목은 약간 흐리게
                             } else if (index == _currentStep) {
                               opacity = 1.0; // 현재 항목은 완전 불투명
                             } else if (index == _currentStep + 1) {
                               opacity = 0.5; // 다음 항목은 반투명
+                            } else if (index == _currentStep + 2) {
+                              opacity = 0.2; // 그 다음 항목은 흐리게
                             } else {
-                              opacity = 0.2; // 나머지는 흐리게
+                              opacity = 0.0; // 현재 아래 2개보다 뒤 항목들은 완전히 숨김
                             }
                             
                             return Container(

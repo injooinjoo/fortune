@@ -35,7 +35,9 @@ class SoulEarnAnimation {
         onComplete: () {
           _currentOverlay?.remove();
           _currentOverlay = null;
-        }));
+        },
+      ),
+    );
 
     // Insert overlay
     Overlay.of(context).insert(_currentOverlay!);
@@ -60,7 +62,8 @@ class _SoulEarnAnimationWidget extends StatefulWidget {
     required this.soulAmount,
     required this.startPosition,
     required this.endPosition,
-    required this.onComplete});
+    required this.onComplete,
+  });
 
   @override
   State<_SoulEarnAnimationWidget> createState() => _SoulEarnAnimationWidgetState();
@@ -83,12 +86,14 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
     // Main animation controller
     _mainController = AnimationController(
       duration: AppAnimations.durationSkeleton,
-      vsync: this);
+      vsync: this,
+    );
     
     // Particle animation controller
     _particleController = AnimationController(
       duration: AppAnimations.durationLong * 2,
-      vsync: this);
+      vsync: this,
+    );
     
     // Scale animation - starts big, then normal, then small
     _scaleAnimation = TweenSequence<double>([
@@ -180,7 +185,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                   curve: Interval(
                     0.0,
                     0.6,
-                    curve: Curves.easeOut)),
+                    curve: Curves.easeOut))),
                 child: Transform.translate(
                   offset: Offset(
                     math.cos(particle.angle) * particle.distance * _particleController.value,
@@ -196,7 +201,12 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                           color: Colors.amber.withOpacity(0.4),
                           blurRadius: 4,
                           spreadRadius: 1)
-                      ]))).animate(onPlay: (controller) => controller.repeat())
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ).animate(onPlay: (controller) => controller.repeat())
                   .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withOpacity(0.3))
                   .fadeOut(delay: particle.delay, duration: 400.ms)),
             
@@ -231,14 +241,23 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                             color: Colors.amber,
                             fontWeight: FontWeight.bold)).animate()
                           .fadeIn(delay: 200.ms, duration: 300.ms)
-                          .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms)])).animate()
+                          .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms),
+                      ],
+                    ),
+                  ).animate()
                     .custom(
                       duration: 1000.ms,
                       builder: (context, value, child) {
                         return Transform.translate(
                           offset: Offset(0, math.sin(value * math.pi * 2) * 5),
-                          child: child);
-                      })))]
+                          child: child,
+                        );
+                      },
+                    ),
+                ),
+              ),
+            ),
+          ],
         );
       });
   }

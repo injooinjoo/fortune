@@ -307,12 +307,16 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Text(
                     '$_selectedHour:00',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -320,15 +324,18 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                     children: [
                       Text(
                         selectedData['event'],
-                        style: Theme.of(context).textTheme.titleMedium),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       Text(
                         '점수: ${selectedData['score']}점',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: _getScoreColor(selectedData['score'])),
-                    ]
-                  )
-                )
-              ]
+                          color: _getScoreColor(selectedData['score']),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Container(
@@ -336,12 +343,14 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
                 children: [
                   Icon(
                     Icons.tips_and_updates_rounded,
                     color: Theme.of(context).colorScheme.secondary,
-                    size: 20),
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -369,7 +378,9 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            Theme.of(context).colorScheme.secondary.withOpacity(0.1)]),
+            Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -380,39 +391,61 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.error,
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
                       Icon(
                         Icons.circle,
                         size: 8,
-                        color: Colors.white),
+                        color: Colors.white,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         'LIVE',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.bold)]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '현재 시간 운세',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: _buildTimeCard(
-                    '지금': '$currentHour:00 - $nextHour:00',
+                    '지금',
+                    '$currentHour:00 - $nextHour:00',
                     Icons.access_time_filled,
-                    Theme.of(context).colorScheme.primary)),
+                    Theme.of(context).colorScheme.primary,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildTimeCard(
-                    '다음 시간': '$nextHour:00 - ${(nextHour + 1) % 24}:00',
+                    '다음 시간',
+                    '$nextHour:00 - ${(nextHour + 1) % 24}:00',
                     Icons.update_rounded,
-                    Theme.of(context).colorScheme.secondary))])]))
+                    Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -423,7 +456,9 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3)),
+          color: color.withOpacity(0.3),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -436,11 +471,18 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                 style: TextStyle(
                   color: color,
                   fontSize: 12,
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 4),
           Text(
             time,
-            style: Theme.of(context).textTheme.bodyMedium)])
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
     );
   }
 

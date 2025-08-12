@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/providers.dart';
 import '../widgets/fortune_content_card.dart';
-import 'base_fortune_page.dart';
 
-class CelebrityCompatibilityPage extends StatefulWidget {
+class CelebrityCompatibilityPage extends ConsumerStatefulWidget {
   const CelebrityCompatibilityPage({super.key});
 
   @override
-  State<CelebrityCompatibilityPage> createState() => _CelebrityCompatibilityPageState();
+  ConsumerState<CelebrityCompatibilityPage> createState() => _CelebrityCompatibilityPageState();
 }
 
-class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage> {
+class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibilityPage> {
   String selectedCategory = 'all';
   String? selectedCelebrity;
   
@@ -73,22 +74,30 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
+    final userProfile = ref.watch(userProfileProvider);
 
-    return BaseFortunePage(
-      title: '연예인 궁합',
-      fortuneType: 'celebrity-match',
-      headerColor: const Color(0xFFFF4081),
-      onGenerateFortune: selectedCelebrity != null 
-          ? () => _generateFortune(context)
-          : null,
-    child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCategorySelector(),
-          const SizedBox(height: 20),
-          _buildCelebrityGrid(),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('연예인 궁합'),
+        backgroundColor: const Color(0xFFFF4081),
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCategorySelector(),
+            const SizedBox(height: 20),
+            Expanded(child: _buildCelebrityGrid()),
+            if (selectedCelebrity != null)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: () => _generateFortune(context),
+                  child: const Text('운세 보기'),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -112,8 +121,11 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
           _buildCategoryTab('all', '전체', Icons.star),
           _buildCategoryTab('singer', '가수', Icons.music_note),
           _buildCategoryTab('actor', '배우', Icons.movie),
-          _buildCategoryTab('sports': '스포츠': Icons.sports),
-          _buildCategoryTab('entertainer': '방송인': Icons.tv)])).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
+          _buildCategoryTab('sports', '스포츠', Icons.sports),
+          _buildCategoryTab('entertainer', '방송인', Icons.tv),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
   }
 
   Widget _buildCategoryTab(String category, String label, IconData icon) {
@@ -129,24 +141,32 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFF4081) : Colors.transparent),
-    borderRadius: BorderRadius.circular(25),
-    child: Row(
-            mainAxisAlignment: MainAxisAlignment.center);
+            color: isSelected ? const Color(0xFFFF4081) : Colors.transparent,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                icon);
-                size: 16),
-    color: isSelected ? Colors.white : AppColors.textSecondary),
+                icon,
+                size: 16,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+              ),
               if (MediaQuery.of(context).size.width > 360) ...[
                 const SizedBox(width: 4),
                 Text(
-                  label);
+                  label,
                   style: TextStyle(
                     fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
-    color: isSelected ? Colors.white : AppColors.textSecondary))])
-            ]))
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -156,134 +176,156 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2);
-        childAspectRatio: 1.2),
-    crossAxisSpacing: 12),
-    mainAxisSpacing: 12),
-    itemCount: celebrities.length),
-    itemBuilder: (context, index) {
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: celebrities.length,
+      itemBuilder: (context, index) {
         final celebrity = celebrities[index];
-        final isSelected = selectedCelebrity == celebrity['name'
-  ];
+        final isSelected = selectedCelebrity == celebrity['name'];
         
         return GestureDetector(
           onTap: () {
             setState(() {
-              selectedCelebrity = celebrity['name'
-  ];
+              selectedCelebrity = celebrity['name'];
             });
           },
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft);
-                end: Alignment.bottomRight),
-    colors: isSelected
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isSelected
                     ? [const Color(0xFFFF4081), const Color(0xFFFF80AB)]
-                    : [AppColors.surface, AppColors.surface]),
-    borderRadius: BorderRadius.circular(16),
-    border: Border.all(
+                    : [AppColors.surface, AppColors.surface],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFFF4081) 
-                    : AppColors.divider),
-    width: isSelected ? 2 : 1),
-    boxShadow: isSelected
+                    : AppColors.divider,
+                width: isSelected ? 2 : 1,
+              ),
+              boxShadow: isSelected
                   ? [
                       BoxShadow(
                         color: const Color(0xFFFF4081).withOpacity(0.3),
-    blurRadius: 20),
-    offset: const Offset(0, 4))]
-                  : []),
-    child: Padding(
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : [],
+            ),
+            child: Padding(
               padding: const EdgeInsets.all(12),
-    child: Column(
-                mainAxisAlignment: MainAxisAlignment.center);
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     width: 50,
-                    height: 50),
-    decoration: BoxDecoration(
-                      shape: BoxShape.circle);
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.2)
-                          : const Color(0xFFFF4081).withOpacity(0.1)),
-    child: Icon(
-                      _getCategoryIcon(celebrity['category'],
-    size: 24,
-                      color: isSelected ? Colors.white : const Color(0xFFFF4081)),
+                          : const Color(0xFFFF4081).withOpacity(0.1),
+                    ),
+                    child: Icon(
+                      _getCategoryIcon(celebrity['category'] ?? ''),
+                      size: 24,
+                      color: isSelected ? Colors.white : const Color(0xFFFF4081),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
-                    celebrity['name']!);
+                    celebrity['name']!,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold);
-                      color: isSelected ? Colors.white : AppColors.textPrimary),
-    textAlign: TextAlign.center),
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   Text(
-                    celebrity['category']!);
+                    celebrity['category']!,
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.8)
-                          : AppColors.textSecondary)),
+                          : AppColors.textSecondary,
+                    ),
+                  ),
                   Text(
-                    celebrity['birth']!);
+                    celebrity['birth']!,
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.7)
-                          : AppColors.textTertiary)]).animate()
-              .fadeIn(delay: (50 * index).ms, duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
-        );
-      });
+                          : AppColors.textLight,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ).animate()
+            .fadeIn(delay: (50 * index).ms, duration: 600.ms)
+            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
+      },
+    );
   }
 
   IconData _getCategoryIcon(String category) {
-    if (category.contains('가수') || category.contains('아이돌') || category.contains('솔로'), {
+    if (category.contains('가수') || category.contains('아이돌') || category.contains('솔로')) {
       return Icons.music_note;
-    } else if (category.contains('배우'), {
-      return Icons.movie_star;
-    } else if (category.contains('축구') || category.contains('야구') || category.contains('스포츠'), {
+    } else if (category.contains('배우')) {
+      return Icons.movie;
+    } else if (category.contains('축구') || category.contains('야구') || category.contains('스포츠')) {
       return Icons.sports_soccer;
-    } else if (category.contains('방송'), {
+    } else if (category.contains('방송')) {
       return Icons.tv;
-    } else if (category.contains('기업'), {
+    } else if (category.contains('기업')) {
       return Icons.business;
     }
     return Icons.star;
   }
 
   Future<void> _generateFortune(BuildContext context) async {
-    final authProvider = context.read<AuthProvider>();
-    final fortuneProvider = context.read<FortuneProvider>();
-    final userProfile = authProvider.userProfile;
+    final userProfile = ref.read(userProfileProvider);
+    final authState = ref.read(authStateProvider);
+    final fortuneProvider = ref.read(fortuneServiceProvider);
 
     final celebrity = celebrityData[selectedCategory]
         ?.firstWhere((c) => c['name'] == selectedCelebrity);
 
     final requestData = {
       'fortuneType': 'celebrity-match',
-      'userId': authProvider.userId,
-      'name': userProfile?.name ?? '사용자': 'birthDate': userProfile?.birthDate ?? DateTime.now().toIso8601String(),
+      'userId': authState.value?.session?.user.id ?? '',
+      'name': userProfile.value?.name ?? '사용자',
+      'birthDate': userProfile.value?.birthDate ?? DateTime.now().toIso8601String(),
       'celebrityName': selectedCelebrity,
       'celebrityBirth': celebrity?['birth'],
-      'celebrityCategory': celebrity?['category']}
+      'celebrityCategory': celebrity?['category'],
+    };
 
     try {
-      final result = await fortuneProvider.generateFortune(
+      final result = await fortuneProvider.getFortune(
         fortuneType: 'celebrity-match',
-        requestData: requestData
+        userId: authState.value?.session?.user.id ?? '',
+        params: requestData
       );
 
       if (result != null && mounted) {
-        _showFortuneResult(context, result);
+        _showFortuneResult(context, result.metadata ?? {});
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('발생했습니다: $e'));
+          SnackBar(content: Text('발생했습니다: $e')),
+        );
       }
     }
   }
@@ -291,87 +333,112 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   void _showFortuneResult(BuildContext context, Map<String, dynamic> result) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true);
-      backgroundColor: Colors.transparent),
-    builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9);
-        minChildSize: 0.5),
-    maxChildSize: 0.95),
-    builder: (context, scrollController) => Container(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: AppColors.background);
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+            color: AppColors.background,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-    child: ListView(
-            controller: scrollController);
+          child: ListView(
+            controller: scrollController,
             padding: const EdgeInsets.all(20),
-    children: [
+            children: [
               Center(
                 child: Container(
                   width: 40,
-                  height: 4),
-    decoration: BoxDecoration(
-                    color: AppColors.divider);
-                    borderRadius: BorderRadius.circular(2),,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               Text(
-                'Fortune cached $3');
+                '연예인 궁합 결과',
                 style: const TextStyle(
-                  fontSize: 24);
-                  fontWeight: FontWeight.bold),
-    textAlign: TextAlign.center),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 20),
               _buildCompatibilityScore(result['compatibilityScore']),
               const SizedBox(height: 20),
-              _buildResultSection('종합 궁합': result['overallCompatibility']),
-              _buildResultSection('성격 궁합': result['personalityMatch'],
-              _buildResultSection('취향 궁합': result['tasteMatch']),
-              _buildResultSection('대화 궁합': result['conversationMatch'],
-              _buildResultSection('활동 궁합': result['activityMatch']),
-              if (\1)
+              _buildResultSection('종합 궁합', result['overallCompatibility']),
+              _buildResultSection('성격 궁합', result['personalityMatch']),
+              _buildResultSection('취향 궁합', result['tasteMatch']),
+              _buildResultSection('대화 궁합', result['conversationMatch']),
+              _buildResultSection('활동 궁합', result['activityMatch']),
+              if (result['relationship'] != null)
                 _buildRelationshipSection(result['relationship']),
-              if (result['advice'] != null) _buildAdviceSection(result['advice']])))
+              if (result['advice'] != null) 
+                _buildAdviceSection(result['advice']),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCompatibilityScore(dynamic score) {
-    final scoreValue = score is int ? score : int.tryParse(score.toString(), ?? 75;
+    final scoreValue = score is int ? score : int.tryParse(score.toString()) ?? 75;
     
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft);
-          end: Alignment.bottomRight),
-    colors: [
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
             const Color(0xFFFF4081).withOpacity(0.1),
-            const Color(0xFFFF80AB).withOpacity(0.1)]),
+            const Color(0xFFFF80AB).withOpacity(0.1),
+          ],
+        ),
         borderRadius: BorderRadius.circular(20),
-    child: Column(
+      ),
+      child: Column(
         children: [
           Stack(
-            alignment: Alignment.center);
+            alignment: Alignment.center,
             children: [
               SizedBox(
                 width: 120,
-                height: 120),
-    child: CircularProgressIndicator(
-                  value: scoreValue / 100);
-                  strokeWidth: 12),
-    backgroundColor: Colors.grey.withOpacity(0.2),
-    valueColor: AlwaysStoppedAnimation<Color>(
-                    _getScoreColor(scoreValue)),
+                height: 120,
+                child: CircularProgressIndicator(
+                  value: scoreValue / 100,
+                  strokeWidth: 12,
+                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _getScoreColor(scoreValue),
+                  ),
+                ),
+              ),
               Text(
-                '$scoreValue%');
+                '$scoreValue%',
                 style: TextStyle(
-                  fontSize: 36);
-                  fontWeight: FontWeight.bold),
-    color: _getScoreColor(scoreValue))]),
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: _getScoreColor(scoreValue),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Text(
             _getScoreMessage(scoreValue),
-    style: const TextStyle(
-              fontSize: 16);
-              fontWeight: FontWeight.w500))])
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -391,11 +458,32 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
 
   Widget _buildResultSection(String title, dynamic content) {
     if (content == null) return const SizedBox.shrink();
-            return FortuneContentCard(
-      title: title,
-      content: content.toString(),
-    gradientColors: const [Color(0xFFFF4081), Color(0xFFFF80AB)]),
-    delay: 0
+    return Card(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: const [Color(0xFFFF4081), Color(0xFFFF80AB)].map((c) => c.withOpacity(0.1)).toList(),
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              content.toString(),
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -403,27 +491,31 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-        color: AppColors.surface);
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xFFFF4081).withOpacity(0.3))
+        border: Border.all(color: const Color(0xFFFF4081).withOpacity(0.3)),
       ),
-    child: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '관계 발전 가능성 💑');
+            '관계 발전 가능성 💑',
             style: TextStyle(
-              fontSize: 18);
-              fontWeight: FontWeight.bold),
-    color: Color(0xFFFF4081)),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFF4081),
+            ),
+          ),
           const SizedBox(height: 12),
-          if (\1)
-            _buildRelationshipItem('친구': relationship['friendship']),
-          if (\1)
-            _buildRelationshipItem('연인': relationship['romance']),
-          if (\1)
-            _buildRelationshipItem('비즈니스': relationship['business'])])
+          if (relationship['friendship'] != null)
+            _buildRelationshipItem('친구', relationship['friendship']),
+          if (relationship['romance'] != null)
+            _buildRelationshipItem('연인', relationship['romance']),
+          if (relationship['business'] != null)
+            _buildRelationshipItem('비즈니스', relationship['business']),
+        ],
+      ),
     );
   }
 
@@ -434,48 +526,65 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$type: ');
+            '$type: ',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              color: Color(0xFFFF4081)),
+              color: Color(0xFFFF4081),
+            ),
+          ),
           Expanded(
             child: Text(
-              description);
-              style: const TextStyle(fontSize: 14)]);
+              description,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildAdviceSection(List<dynamic> advice) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
+      decoration: BoxDecoration(
         color: const Color(0xFFFF4081).withOpacity(0.05),
-    borderRadius: BorderRadius.circular(16),
-    child: Column(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '관계 개선 팁 💡');
+            '관계 개선 팁 💡',
             style: TextStyle(
-              fontSize: 18);
-              fontWeight: FontWeight.bold),
-    color: Color(0xFFFF4081)),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFF4081),
+            ),
+          ),
           const SizedBox(height: 8),
           ...advice.map((tip) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
-                  Icons.favorite);
-                  size: 16),
-    color: Color(0xFFFF4081)),
+                  Icons.favorite,
+                  size: 16,
+                  color: Color(0xFFFF4081),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     tip.toString(),
-    style: const TextStyle(fontSize: 14)])
-        ])
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ],
+      ),
     );
   }
 }

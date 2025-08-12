@@ -18,7 +18,8 @@ class InvestmentFortuneResultPage extends ConsumerStatefulWidget {
   const InvestmentFortuneResultPage({
     Key? key,
     required this.fortune,
-    required this.investmentData}) : super(key: key);
+    required this.investmentData,
+  }) : super(key: key);
 
   @override
   ConsumerState<InvestmentFortuneResultPage> createState() => _InvestmentFortuneResultPageState();
@@ -38,20 +39,24 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this
+      vsync: this,
     );
     
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0).animate(CurvedAnimation(
+      end: 1.0,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut));
+      curve: Curves.easeInOut,
+    ));
     
     _slideAnimation = Tween<double>(
       begin: 50.0,
-      end: 0.0).animate(CurvedAnimation(
+      end: 0.0,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutCubic));
+      curve: Curves.easeOutCubic,
+    ));
     
     _animationController.forward();
   }
@@ -82,7 +87,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 '투자 운세 결과',
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -90,26 +97,41 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                     end: Alignment.bottomRight,
                     colors: [
                       theme.colorScheme.primary,
-                      theme.colorScheme.primary.withOpacity(0.8)])),
+                      theme.colorScheme.primary.withOpacity(0.8),
+                    ],
+                  ),
+                ),
                 child: Stack(
                   children: [
                     // Background pattern
                     Positioned.fill(
                       child: CustomPaint(
-                        painter: InvestmentPatternPainter()),
+                        painter: InvestmentPatternPainter(),
+                      ),
+                    ),
                     // Center icon
                     Center(
                       child: Icon(
                         Icons.auto_graph_rounded,
                         size: 80,
-                        color: Colors.white.withOpacity(0.3)]),
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
               onPressed: () => context.pop(),
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.share_rounded, color: Colors.white),
-                onPressed: _shareFortune)]),
+                onPressed: _shareFortune,
+              ),
+            ],
+          ),
           
           // Overall Score
           SliverToBoxAdapter(
@@ -120,8 +142,12 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   offset: Offset(0, _slideAnimation.value),
                   child: Opacity(
                     opacity: _fadeAnimation.value,
-                    child: _buildOverallScore(fortuneData));
-              })),
+                    child: _buildOverallScore(fortuneData)
+                  )
+                );
+              }
+            )
+          ),
           
           // Tab Bar
           SliverPersistentHeader(
@@ -136,7 +162,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   Tab(text: '종합 분석'),
                   Tab(text: '섹터별 운세'),
                   Tab(text: '투자 타이밍'),
-                  Tab(text: '행운 정보')])),
+                  Tab(text: '행운 정보')
+                ]
+              )
+            )
+          ),
           
           // Tab Content
           SliverFillRemaining(
@@ -146,7 +176,13 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 _buildOverallAnalysis(fortuneData),
                 _buildSectorAnalysis(fortuneData),
                 _buildTimingAnalysis(fortuneData),
-                _buildLuckyInfo(fortuneData)])])]);
+                _buildLuckyInfo(fortuneData)
+              ]
+            )
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildOverallScore(Map<String, dynamic> fortuneData) {
@@ -169,7 +205,6 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           color: scoreColor.withOpacity(0.5),
           width: 2)),
       child: Column(
-
         children: [
           Text(
             '오늘의 투자 운세 점수',
@@ -185,7 +220,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   value: score / 100,
                   strokeWidth: 12,
                   backgroundColor: Colors.grey.withOpacity(0.2),
-                  valueColor: AlwaysStoppedAnimation<Color>(scoreColor)),
+                  valueColor: AlwaysStoppedAnimation<Color>(scoreColor)
+                ),
+              ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -200,12 +237,21 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                     style: TextStyle(
                       fontSize: 16,
                       color: scoreColor,
-                      fontWeight: FontWeight.w600))])]),
+                      fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ],
+          ),
           const SizedBox(height: 24),
           Text(
             fortuneData['summary'] ?? '오늘은 투자에 좋은 날입니다.',
             style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center)]))
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    )
       .animate()
       .fadeIn(duration: 600.ms, delay: 200.ms)
       .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0));
@@ -241,7 +287,10 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             _buildPortfolioChart(analysis?['portfolio']),
           
           if (widget.investmentData.wantRiskAnalysis)
-            _buildRiskAnalysis(analysis?['riskAnalysis']]));
+            _buildRiskAnalysis(analysis?['riskAnalysis']),
+        ],
+      ),
+    );
   }
 
   Widget _buildAnalysisSection(String title, String content, IconData icon, Color color) {
@@ -264,11 +313,17 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: color))]),
+                  color: color))
+            ],
+          ),
           const SizedBox(height: 12),
           Text(
             content,
-            style: Theme.of(context).textTheme.bodyMedium)]))
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    )
       .animate()
       .fadeIn(duration: 500.ms)
       .slideX(begin: 0.1, end: 0);
@@ -302,14 +357,17 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: PieChart(
+            borderRadius: BorderRadius.circular(16)
+          ),
+          child: PieChart(
             PieChartData(
               sections: sectorData,
               centerSpaceRadius: 60,
               sectionsSpace: 2,
-              startDegreeOffset: -90))]
+              startDegreeOffset: -90)
+          )
+        )
+      ]
     );
   }
 
@@ -325,7 +383,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
-        ...risks.map((risk) => _buildRiskItem(risk)).toList()]);
+        ...risks.map((risk) => _buildRiskItem(risk)).toList()
+      ],
+    );
   }
 
   Widget _buildRiskItem(dynamic risk) {
@@ -362,7 +422,13 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                     fontWeight: FontWeight.bold)),
                 Text(
                   risk['description'] ?? '',
-                  style: Theme.of(context).textTheme.bodySmall)]));
+                  style: Theme.of(context).textTheme.bodySmall)
+              ]
+            )
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildSectorAnalysis(Map<String, dynamic> fortuneData) {
@@ -413,19 +479,25 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                       fontWeight: FontWeight.bold)),
                   Text(
                     '점수: $score점',
-                    style: Theme.of(context).textTheme.bodySmall)])),
+                    style: Theme.of(context).textTheme.bodySmall)
+                ]
+              )
+            ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: _getRecommendationColor(recommendation),
                 borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
+              ),
+              child: Text(
                 recommendation,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold))
+            )
+          ]
+        ),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -437,11 +509,13 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   value: score / 100,
                   backgroundColor: Colors.grey.withOpacity(0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(sector.gradientColors[0]),
-                  minHeight: 8),
+                  minHeight: 8,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   analysis,
-                  style: Theme.of(context).textTheme.bodyMedium)),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
                 if (sectorFortune['tips'] != null) ...[
                   const SizedBox(height: 12),
                   Text(
@@ -451,7 +525,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   const SizedBox(height: 4),
                   Text(
                     sectorFortune['tips'],
-                    style: Theme.of(context).textTheme.bodySmall)]]))
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ]
+      ),
+    )
       .animate()
       .fadeIn(duration: 500.ms, delay: (100 * index).ms)
       .slideY(begin: 0.1, end: 0);
@@ -473,7 +555,10 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             _buildTimingSection('이번 달 타이밍', timing['month'], Icons.calendar_month),
             const SizedBox(height: 24)],
           
-          _buildLuckyDaysCalendar(timing['luckyDays'])]);
+          _buildLuckyDaysCalendar(timing['luckyDays'])
+        ]
+      )
+    );
   }
 
   Widget _buildTimingSection(String title, dynamic timingData, IconData icon) {
@@ -516,7 +601,10 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   isBuy ? '매수' : '매도',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold))
+              )
+            ]
+          ),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -531,11 +619,16 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   filled ? Icons.star_rounded : Icons.star_outline_rounded,
                   size: 16,
                   color: color);
-              })]),
+              })
+            ]
+          ),
           const SizedBox(height: 8),
           Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium)]));
+            style: Theme.of(context).textTheme.bodyMedium)
+        ]
+      )
+    );
   }
 
   Widget _buildLuckyDaysCalendar(List<dynamic>? luckyDays) {
@@ -552,14 +645,17 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-
+          ),
+          child: Column(
             children: [
               // Calendar grid here
               Text(
-                '길일: ${luckyDays?.join(': ') ?? '15일, 23일, 28일'}',
-                style: Theme.of(context).textTheme.bodyMedium)]))])
+                '길일: ${luckyDays?.join(', ') ?? '15일, 23일, 28일'}',
+                style: Theme.of(context).textTheme.bodyMedium)
+            ]
+          )
+        )
+      ]
     );
   }
 
@@ -582,7 +678,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           
           if (widget.investmentData.specificQuestion?.isNotEmpty ?? false) ...[
             const SizedBox(height: 24),
-            _buildSpecificAnswer(fortuneData['specificAnswer'])]]);
+            _buildSpecificAnswer(fortuneData['specificAnswer'])
+          ]
+        ]
+      )
+    );
   }
 
   Widget _buildLuckyNumbers(dynamic numbersData) {
@@ -619,7 +719,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   Text(
                     '로또 추천 번호',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold))
+                ]
+              ),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 12,
@@ -638,11 +740,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
+                        ),
                       ),
                     ),
-                  ),
-                }).toList()),
-        
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         // General lucky numbers
         Container(
@@ -650,8 +756,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
+          ),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -660,16 +766,19 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(
-                luckyNumbers.join(': '),
+                luckyNumbers.join(', '),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold)])]
+                  fontWeight: FontWeight.bold))
+            ]
+          )
+        )
+      ]
     );
   }
 
   Widget _buildLuckyColors(dynamic colorsData) {
-    final colors = colorsData as List<dynamic>? ?? ['red', 'gold': 'green'
-  ];
+    final colors = colorsData as List<dynamic>? ?? ['red', 'gold', 'green'];
     final colorMap = {
       'red': const Color(0xFFDC2626),
       'gold': const Color(0xFFFACC15),
@@ -695,20 +804,24 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
+                ),
+                child: Center(
                   child: Text(
                     _getColorLabel(colorName),
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold)));
-          }).toList()]
+                      fontWeight: FontWeight.bold))
+                )
+              )
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
   Widget _buildLuckyDirections(dynamic directionsData) {
-    final directions = directionsData as List<dynamic>? ?? ['동쪽': '남동쪽'
-  ];
+    final directions = directionsData as List<dynamic>? ?? ['동쪽', '남동쪽'];
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -723,8 +836,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
+          ),
+          child: Row(
             children: [
               const Icon(Icons.explore_rounded, size: 48, color: Color(0xFF2563EB)),
               const SizedBox(width: 16),
@@ -733,12 +846,20 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      directions.join(': '),
+                      directions.join(', '),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold)),
                     Text(
                       '이 방향으로 투자 기회를 찾아보세요',
-                      style: Theme.of(context).textTheme.bodySmall)]))])]);
+                      style: Theme.of(context).textTheme.bodySmall)
+                  ]
+                )
+              )
+            ]
+          )
+        )
+      ]
+    );
   }
 
   Widget _buildSpecificAnswer(dynamic answer) {
@@ -767,11 +888,17 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 child: Text(
                   widget.investmentData.specificQuestion!,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold))
+              )
+            ]
+          ),
           const SizedBox(height: 12),
           Text(
             answer ?? '당신의 직감을 믿고 신중하게 결정하세요.',
-            style: Theme.of(context).textTheme.bodyMedium)]));
+            style: Theme.of(context).textTheme.bodyMedium)
+        ]
+      )
+    );
   }
 
   // Helper methods
@@ -797,7 +924,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       case '매도':
         return const Color(0xFFDC2626);
       case '관망': 
-        return const Color(0xFF6B7280),
+        return const Color(0xFF6B7280);
       default:
         return const Color(0xFF3B82F6);
     }
@@ -805,15 +932,20 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
 
   String _getColorLabel(String colorName) {
     final labels = {
-      'red': '빨강': 'gold': '금색': 'green': '초록': 'blue': '파랑': 'purple': '보라'
-  };
+      'red': '빨강',
+      'gold': '금색',
+      'green': '초록',
+      'blue': '파랑',
+      'purple': '보라'
+    };
     return labels[colorName] ?? colorName;
   }
 
   void _shareFortune() {
     // Implement share functionality
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다.'));
+      const SnackBar(content: Text('공유 기능은 준비 중입니다.'))
+    );
   }
 }
 
@@ -824,9 +956,7 @@ class InvestmentPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-     
-   
-    ..color = Colors.white.withOpacity(0.1);
+      ..color = Colors.white.withOpacity(0.1);
 
     // Draw grid pattern
     const spacing = 30.0;
