@@ -15,6 +15,8 @@ import '../../services/weather_service.dart';
 import '../../widgets/emotional_loading_checklist.dart';
 import 'fortune_story_viewer.dart';
 import 'fortune_completion_page.dart';
+import 'preview_screen.dart';
+import '../../presentation/providers/navigation_visibility_provider.dart';
 
 /// 새로운 스토리 중심 홈 화면
 class StoryHomeScreen extends ConsumerStatefulWidget {
@@ -32,15 +34,45 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   fortune_entity.Fortune? todaysFortune;
   WeatherInfo? currentWeather;
   List<StorySegment>? storySegments;
+  Map<String, dynamic>? sajuAnalysisData; // 사주 분석 데이터 저장
   bool isLoadingFortune = true;
   bool _isLoadingProfile = false; // Prevent duplicate loading
   bool _hasViewedStoryToday = false; // 오늘 스토리를 이미 봤는지 확인
+  bool _isReallyLoggedIn = false; // 실제 로그인 여부 (익명 아닌)
+  bool _showPreviewScreen = false; // 프리뷰 화면 표시 여부
   
   @override
   void initState() {
     super.initState();
     _checkIfAlreadyViewed();
     _initializeData();
+    
+    // 인증 상태 변화 리스너 추가
+    supabase.auth.onAuthStateChange.listen((data) {
+      debugPrint('🔐 [StoryHomeScreen] Auth state changed: ${data.event}');
+      debugPrint('🔐 [StoryHomeScreen] Session exists: ${data.session != null}');
+      debugPrint('🔐 [StoryHomeScreen] Current _showPreviewScreen: $_showPreviewScreen');
+      
+      if (data.event == AuthChangeEvent.signedIn && data.session != null) {
+        debugPrint('🔐 [StoryHomeScreen] User signed in, updating login status');
+        _checkRealLoginStatus();
+        
+        // PreviewScreen에서 로그인한 경우 자동으로 스토리 표시
+        if (_showPreviewScreen) {
+          debugPrint('🔐 [StoryHomeScreen] Hiding PreviewScreen and loading story');
+          setState(() {
+            _showPreviewScreen = false;
+            isLoadingFortune = true;
+          });
+          _initializeData();
+        }
+      } else if (data.event == AuthChangeEvent.signedOut) {
+        debugPrint('🔐 [StoryHomeScreen] User signed out');
+        setState(() {
+          _isReallyLoggedIn = false;
+        });
+      }
+    });
   }
   
   // 오늘 이미 스토리를 봤는지 확인
@@ -76,15 +108,156 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
   }
   
-  Future<void> _initializeData() async {
-    // Load user profile first and wait for it to complete
-    await _loadUserProfile();
-    debugPrint('User profile loaded, name: ${userProfile?.name}');
-    // Then load weather and fortune (but fortune needs profile, so can't be parallel)
-    await _loadWeatherInfo();
-    await _loadTodaysFortune();
+  // 실제 로그인 여부 체크 (익명 인증이 아닌)
+  void _checkRealLoginStatus() {
+    final user = supabase.auth.currentUser;
+    if (user != null) {
+      // 익명 사용자가 아닌 경우 (이메일이나 OAuth 제공자가 있는 경우)
+      final isAnonymous = user.isAnonymous;
+      final hasEmail = user.email != null && user.email!.isNotEmpty;
+      final hasProvider = user.appMetadata['providers']?.isNotEmpty == true;
+      
+      // 온보딩만 진행한 사용자 vs 실제 로그인한 사용자 구분
+      final isRealLogin = !isAnonymous && (hasEmail || hasProvider);
+      
+      setState(() {
+        _isReallyLoggedIn = isRealLogin;
+      });
+      
+      debugPrint('🔐 Login status - isAnonymous: $isAnonymous, hasEmail: $hasEmail, hasProvider: $hasProvider, _isReallyLoggedIn: $_isReallyLoggedIn');
+      debugPrint('🔐 User ID: ${user.id}, Email: ${user.email}');
+      debugPrint('🔐 App metadata: ${user.appMetadata}');
+      debugPrint('🔐 User metadata: ${user.userMetadata}');
+    } else {
+      setState(() {
+        _isReallyLoggedIn = false;
+      });
+      debugPrint('🔐 No user session, not logged in');
+    }
   }
   
+  Future<void> _initializeData() async {
+    try {
+      debugPrint('🚀 Starting data initialization');
+      
+      // 실제 로그인 여부 체크 (익명이 아닌)
+      _checkRealLoginStatus();
+      
+      // 로그인된 사용자는 PreviewScreen을 절대 보면 안 됨
+      if (_isReallyLoggedIn) {
+        debugPrint('🔐 Logged in user detected - ensuring no PreviewScreen');
+        setState(() {
+          _showPreviewScreen = false;
+        });
+      }
+      
+      // 사용자가 로그인하지 않은 경우 익명 인증
+      if (supabase.auth.currentUser == null) {
+        debugPrint('🔐 No user session, signing in anonymously...');
+        try {
+          await supabase.auth.signInAnonymously();
+          debugPrint('✅ Anonymous session created: ${supabase.auth.currentUser?.id}');
+        } catch (e) {
+          debugPrint('⚠️ Anonymous sign-in failed: $e');
+          // 익명 인증 실패해도 계속 진행 (Edge Function이 공개 API일 수도 있음)
+        }
+      } else {
+        debugPrint('✅ User already authenticated: ${supabase.auth.currentUser?.id}');
+      }
+      
+      // Load user profile first and wait for it to complete
+      await _loadUserProfile();
+      debugPrint('✅ User profile loaded, name: ${userProfile?.name}');
+      
+      // Then load weather and fortune (but fortune needs profile, so can't be parallel)
+      await _loadWeatherInfo();
+      debugPrint('✅ Weather loaded');
+      
+      await _loadTodaysFortune();
+      debugPrint('✅ Fortune and story loaded');
+      debugPrint('📈 Fortune: ${todaysFortune != null}');
+      debugPrint('📈 Story segments: ${storySegments?.length ?? 0}');
+      
+      // 확실히 로딩 상태를 false로 설정
+      if (mounted) {
+        setState(() {
+          isLoadingFortune = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error in _initializeData: $e');
+      debugPrint('📝 Stack trace: $stackTrace');
+      
+      // 에러를 사용자에게 표시
+      if (mounted) {
+        setState(() {
+          isLoadingFortune = false;
+        });
+        
+        // 에러 다이얼로그 표시
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('오류 발생'),
+            content: Text('운세를 불러오는 중 문제가 발생했습니다.\n\n$e'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // 다시 시도
+                  _initializeData();
+                },
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+  
+  /// 기존 사용자의 사주 계산 (백그라운드 실행)
+  Future<void> _calculateSajuForExistingUser(String userId, String birthDate, String birthTime) async {
+    try {
+      debugPrint('🔮 기존 사용자 사주 계산 시작: $userId');
+      
+      final sajuResponse = await supabase.functions.invoke(
+        'calculate-saju',
+        body: {
+          'birthDate': birthDate.split('T')[0],
+          'birthTime': birthTime,
+          'isLunar': false,
+          'timezone': 'Asia/Seoul'
+        },
+      ).timeout(
+        const Duration(seconds: 45),
+        onTimeout: () {
+          debugPrint('⏱️ 기존 사용자 사주 계산 시간 초과');
+          throw Exception('사주 계산 시간 초과 (45초)');
+        },
+      );
+      
+      debugPrint('✅ 기존 사용자 사주 계산 완료: ${sajuResponse.status}');
+      if (sajuResponse.status == 200) {
+        final sajuData = sajuResponse.data;
+        if (sajuData['success'] == true) {
+          debugPrint('✅ 기존 사용자 사주 데이터 저장 성공');
+          // 사주 계산 플래그 업데이트
+          await supabase.from('user_profiles').update({
+            'saju_calculated': true,
+            'updated_at': DateTime.now().toIso8601String()
+          }).eq('id', userId);
+          debugPrint('✅ 기존 사용자 사주 계산 플래그 업데이트 완료');
+        } else {
+          debugPrint('⚠️ 기존 사용자 사주 계산 응답 오류: ${sajuData['error']}');
+        }
+      }
+    } catch (e) {
+      debugPrint('⚠️ 기존 사용자 사주 계산 오류 (백그라운드): $e');
+      // 백그라운드 작업이므로 UI에 오류 표시하지 않음
+    }
+  }
+
   Future<void> _loadUserProfile() async {
     // Prevent duplicate loading
     if (_isLoadingProfile) {
@@ -105,6 +278,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         
         if (response != null) {
           debugPrint('✅ User profile loaded: name=${response['name']}');
+          
+          // Check if Saju calculation is needed
+          final sajuCalculated = response['saju_calculated'] ?? false;
+          final birthDate = response['birth_date'];
+          final birthTime = response['birth_time'];
+          
           setState(() {
             userProfile = UserProfile(
               id: response['id'],
@@ -135,6 +314,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   : DateTime.now()
             );
           });
+          
+          // Auto-calculate Saju if not done yet and user has birth info
+          if (!sajuCalculated && birthDate != null && birthTime != null) {
+            debugPrint('🔮 사주 미계산 감지: 자동 계산 시작');
+            _calculateSajuForExistingUser(userId, birthDate, birthTime);
+          }
         }
       }
     } catch (e) {
@@ -158,11 +343,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _loadTodaysFortune() async {
     try {
       final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return;
+      if (userId == null) {
+        debugPrint('❌ No user ID found for fortune loading');
+        return;
+      }
+      
+      debugPrint('🎯 Loading today\'s fortune for user: $userId');
       
       // 1. 캐시에서 운세와 스토리 확인
       final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
       final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+      
+      debugPrint('📦 Cache check - fortune: ${cachedFortuneData != null}, story: ${cachedStorySegments != null && cachedStorySegments.isNotEmpty}');
       
       // 캐시된 운세와 스토리가 모두 있으면 API 호출 없이 사용
       if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
@@ -191,23 +383,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         return;
       }
       
-      // 캐시가 전혀 없을 때만 API 호출
+      // 캐시가 전히 없을 때만 API 호출
       debugPrint('❌ No cache found - fetching from API');
       await _fetchFortuneFromAPI();
-      
-      setState(() {
-        isLoadingFortune = false;
-      });
     } catch (e) {
-      debugPrint('Error loading fortune: $e');
-      setState(() {
-        isLoadingFortune = false;
-      });
+      debugPrint('❌ Error loading fortune: $e');
+      // 에러를 다시 throw하여 상위에서 처리하도록 함
+      rethrow;
     }
   }
   
   Future<void> _fetchFortuneFromAPI() async {
     try {
+      debugPrint('📡 Calling Fortune API...');
       final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
       final today = DateTime.now();
       
@@ -216,8 +404,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       
       final fortuneState = ref.read(dailyFortuneProvider);
       
+      debugPrint('📡 API response - hasData: ${fortuneState.fortune != null}, isLoading: ${fortuneState.isLoading}, hasError: ${fortuneState.error != null}');
+      
       if (fortuneState.fortune != null && !fortuneState.isLoading) {
         final fortune = fortuneState.fortune!;
+        debugPrint('✅ Fortune API success - score: ${fortune.overallScore}, content length: ${fortune.content?.length ?? 0}');
+        
         setState(() {
           todaysFortune = fortune;
         });
@@ -230,12 +422,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             {'userId': userId},
             FortuneModel.fromEntity(fortune)
           );
+          debugPrint('💾 Fortune cached successfully');
         }
         
         await _generateStory(fortune);
+      } else if (fortuneState.error != null) {
+        debugPrint('❌ Fortune API error: ${fortuneState.error}');
       }
     } catch (e) {
-      debugPrint('Error fetching fortune from API: $e');
+      debugPrint('❌ Error fetching fortune from API: $e');
     }
   }
   
@@ -265,6 +460,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     
     if (storyState.segments != null) {
       generatedSegments = storyState.segments;
+      // 사주 분석 데이터도 가져오기
+      if (storyState.sajuAnalysis != null) {
+        setState(() {
+          sajuAnalysisData = storyState.sajuAnalysis;
+        });
+      }
     } else {
       // GPT 실패시 기본 스토리 생성
       generatedSegments = _createDetailedStorySegments(userName, fortune);
@@ -542,12 +743,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // 스토리를 봤다고 기록
     _markAsViewed();
     
+    // 네비게이션 바 표시 (FortuneCompletionPage에서도 설정하지만 안전장치)
+    ref.read(navigationVisibilityProvider.notifier).show();
+    
     // Use push instead of pushReplacement to avoid page-based route issues
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FortuneCompletionPage(
           fortune: todaysFortune,
           userName: userProfile?.name,
+          userProfile: userProfile,
+          sajuAnalysis: sajuAnalysisData,
           onReplay: () {
             // 다시 스토리 보기 - pop back to story screen
             Navigator.of(context).pop();
@@ -563,13 +769,64 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   
   @override
   Widget build(BuildContext context) {
-    // 로딩 중
-    if (isLoadingFortune || storySegments == null || todaysFortune == null) {
+    debugPrint('🎨 Building StoryHomeScreen - isLoading: $isLoadingFortune, segments: ${storySegments?.length}, fortune: ${todaysFortune != null}, _isReallyLoggedIn: $_isReallyLoggedIn, _showPreviewScreen: $_showPreviewScreen');
+    
+    // 프리뷰 화면 표시 (로그인되지 않은 사용자만)
+    if (_showPreviewScreen && !_isReallyLoggedIn) {
+      return PreviewScreen(
+        onLoginSuccess: () {
+          // OAuth 로그인의 경우 auth state listener에서 처리됨
+          // 여기서는 로딩 상태만 표시
+          debugPrint('🔐 Login initiated from PreviewScreen');
+          setState(() {
+            isLoadingFortune = true;
+          });
+        },
+        onContinueWithoutLogin: () {
+          // 로그인 없이 보기
+          setState(() {
+            _showPreviewScreen = false;
+          });
+        },
+      );
+    }
+    
+    // 로딩 중 조건
+    // - 로그인된 사용자: isLoadingFortune이 true일 때만 로딩 화면
+    // - 미로그인 사용자: 운세 데이터가 없거나 로딩 중일 때 로딩 화면
+    bool shouldShowLoading = _isReallyLoggedIn 
+        ? isLoadingFortune 
+        : (isLoadingFortune || storySegments == null || todaysFortune == null);
+    
+    debugPrint('📊 Render state check - isLoading: $isLoadingFortune, _isReallyLoggedIn: $_isReallyLoggedIn, shouldShowLoading: $shouldShowLoading');
+    debugPrint('📊 Data state - fortune: ${todaysFortune != null}, segments: ${storySegments?.length ?? 0}, _hasViewedStoryToday: $_hasViewedStoryToday, _showPreviewScreen: $_showPreviewScreen');
+    
+    if (shouldShowLoading) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: EmotionalLoadingChecklist(
+          isLoggedIn: _isReallyLoggedIn,
           onComplete: () {
-            // 로딩 완료 시 자동으로 스토리 뷰어로 전환됨
+            debugPrint('🔔 EmotionalLoadingChecklist onComplete called for logged in user');
+            debugPrint('📈 Current state - isLoading: $isLoadingFortune, segments: ${storySegments?.length}, fortune: ${todaysFortune != null}');
+            // 로그인된 사용자는 운세 데이터가 있으면 바로 스토리로, 없으면 기본 운세로
+            // 현재 로딩이 끝났다는 것은 이미 운세 데이터 처리가 완료되었다는 의미
+            // 로딩 완료 시 자동으로 화면이 업데이트되므로 별도 처리 불필요
+          },
+          onPreviewComplete: () {
+            debugPrint('🔔 EmotionalLoadingChecklist onPreviewComplete called');
+            debugPrint('🔔 Current login status: _isReallyLoggedIn = $_isReallyLoggedIn');
+            
+            // 로그인된 사용자는 절대 PreviewScreen을 보면 안 됨
+            if (!_isReallyLoggedIn) {
+              debugPrint('🔔 Guest user - showing PreviewScreen');
+              setState(() {
+                _showPreviewScreen = true;
+              });
+            } else {
+              debugPrint('🔔 Logged in user - skipping PreviewScreen');
+              // 로그인된 사용자는 바로 운세 로딩 완료로 처리
+            }
           },
         ),
       );
@@ -577,9 +834,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     
     // 오늘 이미 스토리를 봤다면 바로 완료 페이지 표시
     if (_hasViewedStoryToday) {
+      // 네비게이션 바 표시
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(navigationVisibilityProvider.notifier).show();
+      });
+      
       return FortuneCompletionPage(
         fortune: todaysFortune,
         userName: userProfile?.name,
+        userProfile: userProfile,
+        sajuAnalysis: sajuAnalysisData,
         onReplay: () {
           // 다시 스토리 보기
           setState(() {
@@ -589,18 +853,37 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
     }
     
-    // 스토리 뷰어
-    return FortuneStoryViewer(
-      segments: storySegments!,
-      userName: userProfile?.name,
-      onComplete: () {
-        // 완료 화면으로 이동
-        _showCompletionPage();
-      },
-      onSkip: () {
-        // 건너뛰기 시에도 완료 화면으로
-        _showCompletionPage();
-      },
-    );
+    // 스토리 뷰어 또는 기본 화면
+    if (storySegments != null && storySegments!.isNotEmpty) {
+      return FortuneStoryViewer(
+        segments: storySegments!,
+        userName: userProfile?.name,
+        onComplete: () {
+          // 완료 화면으로 이동
+          _showCompletionPage();
+        },
+        onSkip: () {
+          // 건너뛰기 시에도 완료 화면으로
+          _showCompletionPage();
+        },
+      );
+    } else {
+      // 운세 데이터가 없는 경우 기본 완료 화면 표시
+      // 네비게이션 바 표시
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(navigationVisibilityProvider.notifier).show();
+      });
+      
+      return FortuneCompletionPage(
+        fortune: todaysFortune,
+        userName: userProfile?.name,
+        userProfile: userProfile,
+        sajuAnalysis: sajuAnalysisData,
+        onReplay: () {
+          // 다시 시도
+          _initializeData();
+        },
+      );
+    }
   }
 }

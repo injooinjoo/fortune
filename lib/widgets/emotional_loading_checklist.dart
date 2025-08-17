@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../presentation/providers/navigation_visibility_provider.dart';
 
 /// 감성적인 로딩 체크리스트 위젯 (Monarch 스타일 - 롤링 애니메이션)
-class EmotionalLoadingChecklist extends StatefulWidget {
+class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
   final VoidCallback? onComplete;
+  final VoidCallback? onPreviewComplete; // 미로그인 사용자용
+  final bool isLoggedIn; // 실제 로그인 여부
   
   const EmotionalLoadingChecklist({
     super.key,
     this.onComplete,
+    this.onPreviewComplete,
+    this.isLoggedIn = true,
   });
 
   @override
-  State<EmotionalLoadingChecklist> createState() => _EmotionalLoadingChecklistState();
+  ConsumerState<EmotionalLoadingChecklist> createState() => _EmotionalLoadingChecklistState();
 }
 
-class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist> 
+class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChecklist> 
     with TickerProviderStateMixin {
   late AnimationController _scrollController;
   late AnimationController _fadeController;
@@ -34,6 +41,12 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
   @override
   void initState() {
     super.initState();
+    
+    // 네비게이션 바 숨기기
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navigationVisibilityProvider.notifier).hide();
+    });
+    
     _scrollController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -87,8 +100,15 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
     
     // 모든 단계 완료
     await Future.delayed(const Duration(milliseconds: 800));
-    if (mounted && widget.onComplete != null) {
-      widget.onComplete!();
+    debugPrint('✅ Loading animation completed normally');
+    if (mounted) {
+      if (widget.isLoggedIn) {
+        // 로그인된 사용자는 바로 운세 보기
+        widget.onComplete?.call();
+      } else {
+        // 미로그인 사용자는 프리뷰 화면
+        widget.onPreviewComplete?.call();
+      }
     }
   }
   
@@ -99,6 +119,14 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
     for (var controller in _checkControllers) {
       controller.dispose();
     }
+    
+    // 네비게이션 바 복원 (안전장치)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(navigationVisibilityProvider.notifier).show();
+      }
+    });
+    
     super.dispose();
   }
   
@@ -126,26 +154,8 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
       child: SafeArea(
         child: Column(
           children: [
-            // 상단 타이틀
-            Padding(
-              padding: const EdgeInsets.only(top: 60, bottom: 20),
-              child: Column(
-                children: [
-                  Text(
-                    '오늘의 운세',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w200,
-                      color: isDark ? Colors.white : Colors.black87,
-                      letterSpacing: 2,
-                    ),
-                  ).animate()
-                    .fadeIn(duration: 1.seconds)
-                    .slideY(begin: -0.2, end: 0),
-                  
-                ],
-              ),
-            ),
+            // 상단 패딩만 유지 (타이틀 제거)
+            const SizedBox(height: 80),
             
             // 롤링 체크리스트 영역
             Expanded(
@@ -278,24 +288,6 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
                 ],
               ),
             ),
-            
-            // 하단 로딩 인디케이터
-            Padding(
-              padding: const EdgeInsets.only(bottom: 60),
-              child: SizedBox(
-                width: 32,
-                height: 32,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    isDark 
-                      ? Colors.white.withValues(alpha: 0.3)
-                      : Colors.black.withValues(alpha: 0.2),
-                  ),
-                ),
-              ).animate(onPlay: (controller) => controller.repeat())
-                .rotate(duration: 2.seconds),
-            ),
           ],
         ),
       ),
@@ -345,19 +337,7 @@ class _EmotionalLoadingChecklistState extends State<EmotionalLoadingChecklist>
                         size: isActive ? 18 : 16,
                         color: const Color(0xFF52C41A),
                       )
-                    : isActive
-                      ? SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              (isDark ? Colors.white : Colors.black87)
-                                .withValues(alpha: 0.5),
-                            ),
-                          ),
-                        )
-                      : null,
+                    : null,
                 );
               },
             ),

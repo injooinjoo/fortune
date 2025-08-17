@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math' as math;
+
+import '../../presentation/providers/navigation_visibility_provider.dart';
 
 /// 운세 스토리를 페이지별로 보여주는 뷰어
-class FortuneStoryViewer extends StatefulWidget {
+class FortuneStoryViewer extends ConsumerStatefulWidget {
   final List<StorySegment> segments;
   final String? userName;
   final VoidCallback? onComplete;
@@ -21,10 +26,10 @@ class FortuneStoryViewer extends StatefulWidget {
   });
 
   @override
-  State<FortuneStoryViewer> createState() => _FortuneStoryViewerState();
+  ConsumerState<FortuneStoryViewer> createState() => _FortuneStoryViewerState();
 }
 
-class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
+class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
   late PageController _pageController;
   int _currentPage = 0;
   double _pageOffset = 0.0;
@@ -38,11 +43,23 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
         _pageOffset = _pageController.page ?? 0.0;
       });
     });
+    
+    // 네비게이션 바 숨기기
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navigationVisibilityProvider.notifier).hide();
+    });
+    
+    // 시스템 UI (상태바, 네비게이션 바) 숨기기
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    
+    // 시스템 UI 복원
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    
     super.dispose();
   }
 
@@ -55,6 +72,12 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
     if (page == widget.segments.length - 1) {
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
+          // 시스템 UI 복원
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          
+          // 네비게이션 바 다시 표시
+          ref.read(navigationVisibilityProvider.notifier).show();
+          
           widget.onComplete?.call();
         }
       });
@@ -63,8 +86,10 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           // 배경 그라데이션
@@ -73,11 +98,17 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF1a1a2e),  // 진한 남색
-                  Color(0xFF16213e),  // 더 진한 남색
-                  Color(0xFF0f1624),  // 거의 검정
-                ],
+                colors: isDark 
+                  ? [
+                      Color(0xFF1a1a2e),  // 진한 남색
+                      Color(0xFF16213e),  // 더 진한 남색
+                      Color(0xFF0f1624),  // 거의 검정
+                    ]
+                  : [
+                      Colors.white,        // 흰색
+                      Color(0xFFF8F9FA),   // 연한 회색
+                      Color(0xFFF1F3F4),   // 더 연한 회색
+                    ],
                 stops: [0.0, 0.5, 1.0],
               ),
             ),
@@ -100,11 +131,21 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
               top: MediaQuery.of(context).padding.top + 16,
               right: 20,
               child: TextButton(
-                onPressed: widget.onSkip,
+                onPressed: () {
+                  // 시스템 UI 복원
+                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                  
+                  // 네비게이션 바 다시 표시
+                  ref.read(navigationVisibilityProvider.notifier).show();
+                  
+                  widget.onSkip?.call();
+                },
                 child: Text(
                   '건너뛰기',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: isDark 
+                      ? Colors.white.withValues(alpha: 0.5)
+                      : Colors.black.withValues(alpha: 0.5),
                     fontSize: 14,
                   ),
                 ),
@@ -128,7 +169,9 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
               right: 0,
               child: Icon(
                 Icons.swipe_up,
-                color: Colors.white.withValues(alpha: 0.3),
+                color: isDark 
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.3),
                 size: 24,
               ).animate(
                 onPlay: (controller) => controller.repeat(reverse: true),
@@ -144,26 +187,52 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
   }
 
   Widget _buildStoryPage(StorySegment segment, int index) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     // 페이지 오프셋 계산 (스크롤 진행도)
     double pageOffset = _pageOffset;
     double diff = (index - pageOffset).abs();
     
-    // 페이드 효과 계산
-    // 현재 페이지: opacity = 1.0
-    // 스크롤 시작하면 점점 투명해짐
+    // 페이드 효과 계산 - 더 극적으로!
     double opacity = 1.0;
     double scale = 1.0;
+    double translateY = 0.0;
     
     if (diff < 1.0) {
       // 현재 페이지이거나 전환 중인 페이지
       if (index == pageOffset.floor()) {
         // 현재 페이지가 위로 스크롤되면서 사라짐
-        opacity = 1.0 - (pageOffset - index);
-        scale = 1.0 - (pageOffset - index) * 0.05; // 약간의 스케일 감소
+        double progress = pageOffset - index;
+        
+        // 아주 조금만 스크롤해도 빠르게 사라지도록
+        if (progress > 0.05) {  // 5%만 스크롤해도
+          opacity = math.max(0.0, 1.0 - (progress * 5));  // 5배 빠르게 페이드 아웃
+          if (progress > 0.2) {  // 20% 이상 스크롤하면
+            opacity = 0.0;  // 완전히 사라짐
+          }
+        } else {
+          opacity = 1.0;
+        }
+        
+        // 위로 살짝 이동하며 사라짐
+        translateY = -progress * 50;
+        scale = 1.0 - (progress * 0.1);
+        
       } else if (index == pageOffset.ceil()) {
         // 다음 페이지가 아래에서 올라오면서 나타남
-        opacity = pageOffset - index + 1;
-        scale = 0.95 + (pageOffset - index + 1) * 0.05;
+        double progress = pageOffset - index + 1;
+        
+        // 중앙에 가까워질 때만 나타나도록
+        if (progress < 0.7) {  // 70% 전까지는 안 보임
+          opacity = 0.0;
+        } else {
+          // 70% 이후부터 급격히 나타남
+          opacity = (progress - 0.7) / 0.3;  // 0.7~1.0 구간에서 0~1로 변화
+        }
+        
+        // 아래에서 위로 올라오는 효과
+        translateY = (1.0 - progress) * 30;
+        scale = 0.9 + (progress * 0.1);
       }
     } else {
       // 보이지 않는 페이지
@@ -172,8 +241,11 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
     
     return Opacity(
       opacity: opacity.clamp(0.0, 1.0),
-      child: Transform.scale(
-        scale: scale,
+      child: Transform(
+        transform: Matrix4.identity()
+          ..translate(0.0, translateY, 0.0)
+          ..scale(scale),
+        alignment: Alignment.center,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -185,7 +257,9 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
                   Text(
                     segment.subtitle!,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: isDark 
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : Colors.black.withValues(alpha: 0.5),
                       fontSize: segment.subtitleFontSize ?? 14,
                       fontWeight: segment.subtitleFontWeight ?? FontWeight.w300,
                       letterSpacing: 2,
@@ -210,20 +284,28 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
                 Text(
                   segment.text,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : Colors.black87,
                     fontSize: segment.fontSize ?? 32,
                     fontWeight: segment.isBold 
                         ? FontWeight.w600 
                         : (segment.fontWeight ?? FontWeight.w300),
                     height: 1.8,
                     letterSpacing: 0.5,
-                    shadows: [
-                      Shadow(
-                        offset: Offset(0, 2),
-                        blurRadius: 4,
-                        color: Colors.black.withValues(alpha: 0.3),
-                      ),
-                    ],
+                    shadows: isDark 
+                      ? [
+                          Shadow(
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                            color: Colors.black.withValues(alpha: 0.3),
+                          ),
+                        ]
+                      : [
+                          Shadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 2,
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
+                        ],
                   ),
                   textAlign: segment.alignment ?? TextAlign.center,
                 ),
@@ -236,6 +318,8 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
   }
 
   Widget _buildProgressIndicator() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
@@ -248,8 +332,12 @@ class _FortuneStoryViewerState extends State<FortuneStoryViewer> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
             color: index == _currentPage
-                ? Colors.white.withValues(alpha: 0.8)
-                : Colors.white.withValues(alpha: 0.3),
+                ? isDark 
+                  ? Colors.white.withValues(alpha: 0.8)
+                  : Colors.black.withValues(alpha: 0.8)
+                : isDark 
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.3),
           ),
         ),
       ),
