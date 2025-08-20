@@ -24,38 +24,43 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       'title': '비즈니스/업무',
       'icon': Icons.business_center,
       'color': Colors.blue,
-      'description': '중요한 미팅, 프레젠테이션, 면접'},
+      'description': '중요한 미팅, 프레젠테이션, 면접',
+    },
     {
       'id': 'date',
       'title': '데이트/만남',
       'icon': Icons.favorite,
       'color': Colors.pink,
-      'description': '연인과의 데이트, 소개팅'},
+      'description': '연인과의 데이트, 소개팅',
+    },
     {
       'id': 'party',
       'title': '파티/모임',
       'icon': Icons.celebration,
       'color': Colors.purple,
-      'description': '친구 모임, 파티, 경조사'},
+      'description': '친구 모임, 파티, 경조사',
+    },
     {
       'id': 'casual',
       'title': '일상/캐주얼',
       'icon': Icons.wb_sunny,
       'color': Colors.orange,
-      'description': '평상시, 쇼핑, 산책'},
+      'description': '평상시, 쇼핑, 산책',
+    },
     {
       'id': 'sports',
       'title': '운동/활동',
       'icon': Icons.sports,
       'color': Colors.green,
-      'description': '운동, 야외활동, 레저'},
+      'description': '운동, 야외활동, 레저',
+    },
     {
       'id': 'formal',
       'title': '격식/행사',
       'icon': Icons.stars,
       'color': Colors.indigo,
-      'description': '결혼식, 공식 행사, 시상식'
-    }
+      'description': '결혼식, 공식 행사, 시상식',
+    },
   ];
   
   final List<Map<String, dynamic>> styleTypes = [
@@ -64,7 +69,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
     {'id': 'casual', 'label': '캐주얼', 'icon': Icons.star},
     {'id': 'romantic', 'label': '로맨틱', 'icon': Icons.star},
     {'id': 'sporty', 'label': '스포티', 'icon': Icons.star},
-    {'id': 'unique', 'label': '유니크', 'icon': Icons.star}
+    {'id': 'unique', 'label': '유니크', 'icon': Icons.star},
   ];
   
   @override
@@ -108,9 +113,11 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFFF6B9D), Color(0xFFC44569)]),
+        colors: [Color(0xFFFF6B9D), Color(0xFFC44569)],
+      ),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result));
+      resultBuilder: (context, result, onShare) => _buildResult(context, result),
+    );
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
@@ -122,14 +129,19 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             '오늘의 럭키 스타일링',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           const Text(
             '날짜와 상황에 맞는 행운의 의상을 추천해드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey)),
+              color: Colors.grey,
+            ),
+          ),
           const SizedBox(height: 24),
+          
           // Date selection
           InkWell(
             onTap: () => _selectDate(context),
@@ -138,7 +150,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!)),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
               child: Row(
                 children: [
                   const Icon(Icons.calendar_today, color: Colors.grey),
@@ -151,22 +164,36 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                           '날짜 선택',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey)),
+                            color: Colors.grey,
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',
                           style: const TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.w500)]),
-                  const Icon(Icons.arrow_drop_down, color: Colors.grey)])),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                ],
+              ),
+            ),
+          ),
           
           const SizedBox(height: 20),
+          
           // Occasion selection
           const Text(
             '어떤 상황인가요?',
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           GridView.builder(
             shrinkWrap: true,
@@ -175,7 +202,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               crossAxisCount: 3,
               childAspectRatio: 1.0,
               crossAxisSpacing: 12,
-              mainAxisSpacing: 12),
+              mainAxisSpacing: 12,
+            ),
             itemCount: occasions.length,
             itemBuilder: (context, index) {
               final occasion = occasions[index];
@@ -188,8 +216,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   });
                 },
                 borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: AnimatedContainer(
+                child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
@@ -200,7 +227,9 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       color: isSelected
                           ? occasion['color']
                           : Colors.grey[300]!,
-                      width: isSelected ? 2 : 1)),
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -208,8 +237,9 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         occasion['icon'],
                         size: 32,
                         color: isSelected
-                            ? occasion['color']
-                            : Colors.grey[600]),
+                            ? Colors.white
+                            : Colors.grey[600],
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         occasion['title'],
@@ -217,10 +247,17 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                           fontSize: 12,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected
-                              ? occasion['color']
-                              : Colors.grey[700]),
-                        textAlign: TextAlign.center)])))
-            }),
+                              ? Colors.white
+                              : Colors.grey[700],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           
           if (_occasion != null) ...[
             const SizedBox(height: 12),
@@ -229,28 +266,39 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+              ),
+              child: Row(
                 children: [
                   Icon(
                     Icons.info_outline,
                     size: 16,
-                    color: Colors.grey[600]),
+                    color: Colors.grey[600],
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       occasions.firstWhere((o) => o['id'] == _occasion)['description'],
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600])])])],
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           
           const SizedBox(height: 20),
+          
           // Personal style
           const Text(
             '평소 스타일',
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -264,9 +312,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(
                       style['icon'],
                       size: 16,
-                      color: isSelected ? Colors.white : Colors.grey[600]),
+                      color: isSelected ? Colors.white : Colors.grey[600],
+                    ),
                     const SizedBox(width: 4),
-                    Text(style['label'])]),
+                    Text(style['label']),
+                  ],
+                ),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
@@ -275,10 +326,14 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                 },
                 selectedColor: Colors.pink,
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : null));
-            }).toList()),
+                  color: isSelected ? Colors.white : null,
+                ),
+              );
+            }).toList(),
+          ),
           
           const SizedBox(height: 24),
+          
           // Submit button
           SizedBox(
             width: double.infinity,
@@ -289,14 +344,16 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         'date': _selectedDate!.toIso8601String(),
                         'occasion': _occasion,
                         'personal_style': _personalStyle,
-                        'zodiac_sign': _zodiacSign})
+                        'zodiac_sign': _zodiacSign,
+                      })
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Row(
+                ),
+              ),
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.checkroom, size: 20),
@@ -305,14 +362,25 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     '행운의 스타일 확인하기',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold)]))]));\n  }
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)));
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
@@ -333,11 +401,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               gradient: LinearGradient(
                 colors: [
                   _getColorFromName(data['lucky_color']),
-                  _getColorFromName(data['lucky_color']).withValues(alpha: 0.5)]),
+                  _getColorFromName(data['lucky_color']).withValues(alpha: 0.5),
+                ],
+              ),
               borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-
+            ),
+            child: Column(
               children: [
                 Container(
                   width: 80,
@@ -349,28 +418,43 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       BoxShadow(
                         color: _getColorFromName(data['lucky_color']).withValues(alpha: 0.3),
                         blurRadius: 20,
-                        offset: const Offset(0, 10)]),
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 16),
                 const Text(
                   '오늘의 행운의 색',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey)),
+                    color: Colors.grey,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   data['lucky_color'] ?? '분석 중',
                   style: const TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 if (data['color_meaning'] != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     data['color_meaning'],
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600]),
-                    textAlign: TextAlign.center)]])),
-          const SizedBox(height: 20)],
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Main outfit recommendation
         if (result.mainFortune != null) ...[
@@ -379,7 +463,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -391,14 +476,24 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       '추천 스타일링',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6)]),       
-          const SizedBox(height: 20)],
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Specific Items
         if (data['recommended_items'] != null && data['recommended_items'] is List) ...[
@@ -407,7 +502,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -419,7 +515,11 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       '아이템별 추천',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 ...(data['recommended_items'] as List).map((item) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -431,11 +531,14 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         height: 32,
                         decoration: BoxDecoration(
                           color: Colors.pink[50],
-                          shape: BoxShape.circle),
+                          shape: BoxShape.circle,
+                        ),
                         child: Icon(
                           _getItemIcon(item['type'] ?? ''),
                           size: 18,
-                          color: Colors.pink)),
+                          color: Colors.pink,
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -445,14 +548,28 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                               item['type'] ?? '',
                               style: const TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold)),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             if (item['description'] != null)
                               Text(
                                 item['description'],
                                 style: const TextStyle(
                                   fontSize: 13,
-                                  color: Colors.grey)])])]),   
-          const SizedBox(height: 20)],
+                                  color: Colors.grey,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )).toList(),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Lucky Accessories
         if (result.luckyItems != null && result.luckyItems!['accessories'] != null) ...[
@@ -462,10 +579,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               gradient: LinearGradient(
                 colors: [
                   Colors.purple[50]!,
-                  Colors.pink[50]!]),
+                  Colors.pink[50]!,
+                ],
+              ),
               borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
@@ -476,14 +595,24 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       '행운의 액세서리',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   result.luckyItems!['accessories'],
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6)]),   
-          const SizedBox(height: 20)],
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Styling Tips
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
@@ -492,8 +621,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             decoration: BoxDecoration(
               color: Colors.amber[50],
               borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
@@ -504,7 +633,11 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       '스타일링 팁',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 ...result.recommendations!.map((tip) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -514,23 +647,33 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       const Icon(
                         Icons.star,
                         size: 16,
-                        color: Colors.amber),
+                        color: Colors.amber,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           tip,
-                          style: const TextStyle(fontSize: 14)]))]))]),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                )).toList(),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Avoid Items
         if (data['avoid_items'] != null) ...[
-          const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.red[50],
               borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
@@ -541,13 +684,23 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       '피해야 할 스타일',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   data['avoid_items'],
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6)]))],
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -565,7 +718,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       '검정': Colors.black,
       '회색': Colors.grey,
       '갈색': Colors.brown,
-      '네이비': Colors.indigo};
+      '네이비': Colors.indigo,
+    };
     return colorMap[colorName] ?? Colors.grey;
   }
   
@@ -577,7 +731,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       '신발': Icons.sports_handball,
       '가방': Icons.shopping_bag,
       '액세서리': Icons.diamond,
-      '모자': Icons.accessible};
+      '모자': Icons.accessible,
+    };
     return iconMap[itemType] ?? Icons.checkroom;
   }
 }

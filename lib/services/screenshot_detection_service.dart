@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';  // AGP 8.x compatibility issue
 import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/logger.dart';
 import 'native_platform_service.dart';
@@ -360,17 +360,25 @@ class ScreenshotDetectionService {
   /// Save to gallery
   Future<void> _saveToGallery(Uint8List image, BuildContext context) async {
     try {
-      final result = await ImageGallerySaver.saveImage(
-        image,
-        quality: 100,
-        name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
+      // Temporarily disabled due to AGP 8.x compatibility issue
+      // final result = await ImageGallerySaver.saveImage(
+      //   image,
+      //   quality: 100,
+      //   name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
+      
+      // Temporary workaround: Save to app's document directory
+      final directory = await getApplicationDocumentsDirectory();
+      final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
+      final imageFile = File(imagePath);
+      await imageFile.writeAsBytes(image);
+      final result = {'isSuccess': true};  // Mock success result
       
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               result['isSuccess'] == true 
-                ? '이미지가 갤러리에 저장되었습니다'
+                ? '이미지가 저장되었습니다'
                 : '저장 중 오류가 발생했습니다'),
             backgroundColor: result['isSuccess'] == true ? AppColors.success : AppColors.error));
       }
@@ -430,12 +438,19 @@ class ScreenshotDetectionService {
       
       if (image == null) return false;
       
-      final result = await ImageGallerySaver.saveImage(
-        image,
-        quality: 100,
-        name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
+      // Temporarily disabled due to AGP 8.x compatibility issue
+      // final result = await ImageGallerySaver.saveImage(
+      //   image,
+      //   quality: 100,
+      //   name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
+      // return result['isSuccess'] ?? false;
       
-      return result['isSuccess'] ?? false;
+      // Temporary workaround: Save to app's document directory
+      final directory = await getApplicationDocumentsDirectory();
+      final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
+      final imageFile = File(imagePath);
+      await imageFile.writeAsBytes(image);
+      return true;
     } catch (e) {
       Logger.error('Failed to save fortune to gallery', e);
       return false;

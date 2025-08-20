@@ -30,35 +30,46 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkAuthStatus() async {
+    print('🚀 SplashScreen: Starting auth check...');
     await Future.delayed(const Duration(seconds: 2));
 
-    if (!mounted) return;
+    if (!mounted) {
+      print('⚠️ SplashScreen: Widget not mounted, returning');
+      return;
+    }
 
     final supabase = Supabase.instance.client;
     final session = supabase.auth.currentSession;
+    print('🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
 
     if (session != null) {
       try {
+        print('👤 SplashScreen: Checking user profile for user ${session.user.id}');
         final profileResponse = await supabase
             .from('user_profiles')
             .select()
             .eq('id', session.user.id)
             .maybeSingle();
 
+        print('📋 SplashScreen: Profile response - $profileResponse');
+
         if (profileResponse == null ||
             profileResponse['onboarding_completed'] != true ||
             profileResponse['name'] == null ||
             profileResponse['birth_date'] == null ||
             profileResponse['gender'] == null) {
+          print('➡️ SplashScreen: Redirecting to onboarding');
           context.go('/onboarding');
         } else {
+          print('➡️ SplashScreen: Redirecting to home');
           context.go('/home');
         }
       } catch (e) {
-        debugPrint('Error checking profile: $e');
+        print('❌ SplashScreen: Error checking profile: $e');
         context.go('/onboarding');
       }
     } else {
+      print('➡️ SplashScreen: No session, redirecting to landing');
       context.go('/');
     }
   }

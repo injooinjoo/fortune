@@ -16,7 +16,8 @@ class TarotDeckSelectionPage extends ConsumerStatefulWidget {
   const TarotDeckSelectionPage({
     Key? key,
     this.spreadType,
-    this.initialQuestion}) : super(key: key);
+    this.initialQuestion,
+  }) : super(key: key);
 
   @override
   ConsumerState<TarotDeckSelectionPage> createState() => _TarotDeckSelectionPageState();
@@ -71,7 +72,9 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         'fortune-tarot',
         queryParameters: {
           if (widget.spreadType != null) 'spreadType': widget.spreadType!,
-          if (widget.initialQuestion != null) 'question': widget.initialQuestion!});
+          if (widget.initialQuestion != null) 'question': widget.initialQuestion!,
+        },
+      );
     }
   }
 
@@ -98,7 +101,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   AppHeader(
                     title: '타로 덱 선택',
                     showBackButton: true,
-                    backgroundColor: Colors.transparent),
+                    backgroundColor: Colors.transparent,
+                  ),
                   Expanded(
                     child: FadeTransition(
                       opacity: _fadeAnimation,
@@ -167,8 +171,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   ),
                 ),
               ),
-            ],
-          ),
+              ],
+              ),
               // Floating Action Button
               if (_tempSelectedDeckId != null) Positioned(
                 bottom: 20,
@@ -294,8 +298,10 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           deck,
           isSelected: deck.id == (_tempSelectedDeckId ?? currentDeckId),
           isMostUsed: deck.id == mostUsedDeckId,
-          fontScale: fontScale);
-      });
+          fontScale: fontScale,
+        );
+      },
+    );
   }
 
   Widget _buildDeckCard(
@@ -303,8 +309,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
     {
     required bool isSelected,
     required bool isMostUsed,
-    required double fontScale}
-  ) {
+    required double fontScale,
+  }) {
     final isHovered = _hoveredDeckId == deck.id;
 
     return MouseRegion(
@@ -337,7 +343,9 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     // 덱 프리뷰 이미지
                     Expanded(
                       child: Center(
-                        child: _buildDeckPreview(deck)),
+                        child: _buildDeckPreview(deck),
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     
                     // 덱 이름
@@ -391,7 +399,10 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     child: Icon(
                       Icons.check,
                       color: Colors.white,
-                      size: 16)),
+                      size: 16,
+                    ),
+                    ),
+                ),
               
               // 가장 많이 사용한 덱 표시
               if (isMostUsed && !isSelected) Positioned(
@@ -402,6 +413,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     decoration: BoxDecoration(
                       color: Colors.orange.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Text(
                       '자주 사용',
                       style: TextStyle(
@@ -433,8 +445,12 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
             child: _buildPreviewCard(deck, 1)),
           Transform.rotate(
             angle: 0.2,
-            child: _buildPreviewCard(deck, 2))] else ...[
-          _buildPreviewCard(deck, 0)]]);
+            child: _buildPreviewCard(deck, 2)),
+        ] else ...[
+          _buildPreviewCard(deck, 0),
+        ],
+      ],
+    );
   }
 
   Widget _buildPreviewCard(TarotDeck deck, int index) {
@@ -464,8 +480,13 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                 child: Icon(
                   Icons.style,
                   color: Colors.white.withOpacity(0.5),
-                  size: 30));
-          }));
+                  size: 30),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildTag(String text, Color color, double fontScale) {
@@ -482,6 +503,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         style: TextStyle(
           fontSize: 10 * fontScale,
           color: Colors.white,
-          fontWeight: FontWeight.w500));
+          fontWeight: FontWeight.w500),
+      ),
+    );
   }
 }

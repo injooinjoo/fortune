@@ -121,7 +121,7 @@ class CacheService {
     try {
       await _settingsBox.put(key, value);
     } catch (e) {
-      Logger.error('setting: $key', e);
+      Logger.error('Failed to set setting: $key', e);
     }
   }
 
@@ -129,7 +129,7 @@ class CacheService {
     try {
       return _settingsBox.get(key, defaultValue: defaultValue) as T?;
     } catch (e) {
-      Logger.error('setting: $key', e);
+      Logger.error('Failed to get setting: $key', e);
       return defaultValue;
     }
   }
@@ -138,7 +138,7 @@ class CacheService {
     try {
       await _settingsBox.delete(key);
     } catch (e) {
-      Logger.error('setting: $key', e);
+      Logger.error('Failed to remove setting: $key', e);
     }
   }
 
@@ -256,6 +256,7 @@ class CacheService {
       'cacheSize': cacheSize,
       'cacheSizeMB': (cacheSize / (1024 * 1024)).toStringAsFixed(2),
       'oldestEntryDate': oldestEntry?.createdAt.toIso8601String(),
-      'isOffline': null};
+      'isOffline': isOffline,
+    };
   }
 }

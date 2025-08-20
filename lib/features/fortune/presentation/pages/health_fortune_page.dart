@@ -15,11 +15,14 @@ class HealthFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF4CAF50), Color(0xFF388E3C)]),
+        colors: [Color(0xFF4CAF50), Color(0xFF388E3C)],
+      ),
       inputBuilder: (context, onSubmit) => _HealthInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _HealthFortuneResult(
         result: result,
-        onShare: onShare));
+        onShare: onShare,
+      ),
+    );
   }
 }
 
@@ -39,14 +42,18 @@ class _HealthInputForm extends StatelessWidget {
           '오늘의 건강 운세를 확인해보세요!\n신체 부위별 컨디션과 건강 관리법을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5)),
+            height: 1.5,
+          ),
+        ),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
             Icons.favorite,
             size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3)),
+            color: theme.colorScheme.primary.withOpacity(0.3),
+          ),
+        ),
         
         const SizedBox(height: 32),
         
@@ -58,7 +65,13 @@ class _HealthInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30))))];
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -68,7 +81,8 @@ class _HealthFortuneResult extends StatelessWidget {
 
   const _HealthFortuneResult({
     required this.result,
-    required this.onShare});
+    required this.onShare,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -91,17 +105,27 @@ class _HealthFortuneResult extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.favorite,
-                      color: theme.colorScheme.primary),
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       '건강운',
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6)]),
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
 
           // Score Breakdown
@@ -116,12 +140,17 @@ class _HealthFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.analytics,
-                        color: theme.colorScheme.primary),
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '상세 분석',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -130,20 +159,33 @@ class _HealthFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: theme.textTheme.bodyLarge)),
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Text(
                             '${entry.value}점',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
-                              fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center)])).toList()])),
-            const SizedBox(height: 16)],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
@@ -157,12 +199,17 @@ class _HealthFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.stars,
-                        color: theme.colorScheme.primary),
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '행운 아이템',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -170,9 +217,15 @@ class _HealthFortuneResult extends StatelessWidget {
                     children: fortune.luckyItems!.entries.map((entry) {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
-                        backgroundColor: theme.colorScheme.primaryContainer);
-                    }).toList()),
-            const SizedBox(height: 16)],
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
@@ -186,12 +239,17 @@ class _HealthFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.tips_and_updates,
-                        color: theme.colorScheme.primary),
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '조언',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold))]),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -201,13 +259,26 @@ class _HealthFortuneResult extends StatelessWidget {
                         Icon(
                           Icons.check_circle,
                           size: 20,
-                          color: theme.colorScheme.primary),
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium)])).toList()])),
-            const SizedBox(height: 16)]])));
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ],
+      ),
+    );
   }
 
   Color _getScoreColor(int score) {

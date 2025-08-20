@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import '../domain/entities/fortune.dart';
+import 'partner_recommendation_model.dart';
 
 part 'fortune_model.g.dart';
 
@@ -103,6 +104,9 @@ class DailyFortuneModel extends HiveObject {
   
   @HiveField(11)
   final FortuneElementsModel elements;
+  
+  @HiveField(12)
+  final PartnerRecommendationsModel? partnerRecommendations;
 
   DailyFortuneModel({
     required this.score,
@@ -116,7 +120,8 @@ class DailyFortuneModel extends HiveObject {
     required this.caution,
     required this.bestTime,
     required this.compatibility,
-    required this.elements});
+    required this.elements,
+    this.partnerRecommendations});
 
   factory DailyFortuneModel.fromJson(Map<String, dynamic> json) => 
       _$DailyFortuneModelFromJson(json);

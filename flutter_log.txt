@@ -1,0 +1,354 @@
+Launching lib/main.dart on iPhone 16 Pro in debug mode...
+Running Xcode build...                                          
+Xcode build done.                                           19.7s
+Syncing files to device iPhone 16 Pro...                        
+[ERROR:flutter/shell/platform/darwin/ios/framework/Source/FlutterDartVMServicePublisher.mm(129)] Could not register as server for FlutterDartVMServicePublisher, permission denied. Check your 'Local Network' permissions for this app in the Privacy section of the system Settings.
+[ERROR:flutter/shell/platform/darwin/ios/framework/Source/FlutterDartVMServicePublisher.mm(129)] Could not register as server for FlutterDartVMServicePublisher, permission denied. Check your 'Local Network' permissions for this app in the Privacy section of the system Settings.
+flutter: supabase.supabase_flutter: INFO: ***** Supabase init completed *****
+flutter: [Fortune] \^[[34m[INFO]\^[[0m Analytics are disabled via feature <…>
+flutter: [Fortune] \^[[34m[INFO]\^[[0m Ads are disabled via feature <…>
+flutter: GoRouter: INFO: Full paths for routes:
+flutter: ├─/ (LandingPage)
+flutter: ├─/splash (SplashScreen)
+flutter: ├─/signup (SignupScreen)
+flutter: ├─/auth/callback (CallbackPage)
+flutter: ├─/onboarding (OnboardingPage)
+flutter: ├─/onboarding/toss-style (OnboardingPage)
+flutter: ├─ (ShellRoute)
+flutter: │ ├─/home (HomeScreen)
+flutter: │ ├─/profile (ProfileScreen)
+flutter: │ │ └─/profile/edit (ProfileEditPage)
+flutter: │ ├─/premium (PremiumScreen)
+flutter: │ ├─/trend (TrendPage)
+flutter: │ ├─/fortune (FortuneListPage)
+flutter: │ ├─/saju (SajuPage)
+flutter: │ ├─/zodiac (ZodiacFortunePage)
+flutter: │ ├─/zodiac-animal (ZodiacAnimalFortunePage)
+flutter: │ ├─/blood-type (BloodTypeFortunePage)
+flutter: │ ├─/mbti (MbtiFortunePage)
+flutter: │ ├─/wealth (WealthFortunePage)
+flutter: │ ├─/health (HealthFortunePage)
+flutter: │ ├─/destiny (DestinyFortunePage)
+flutter: │ ├─/past-life (PastLifeFortunePage)
+flutter: │ ├─/wish (WishFortunePage)
+flutter: │ ├─/timeline (TimelineFortunePage)
+flutter: │ ├─/network-report (NetworkReportFortunePage)
+flutter: │ ├─/inspiration (DailyInspirationPage)
+flutter: │ ├─/history (FortuneHistoryPage)
+flutter: │ ├─/love (LoveFortunePage)
+flutter: │ ├─/compatibility (CompatibilityPage)
+flutter: │ ├─/marriage (MarriageFortunePage)
+flutter: │ ├─/traditional-compatibility (TraditionalCompatibilityPage)
+flutter: │ ├─/couple-match (CoupleMatchPage)
+flutter: │ ├─/ex-lover (ExLoverFortunePage)
+flutter: │ ├─/ex-lover-enhanced (ExLoverFortuneEnhancedPage)
+flutter: │ ├─/blind-date (BlindDateFortunePage)
+flutter: │ ├─/chemistry (ChemistryPage)
+flutter: │ ├─/celebrity-match (CelebrityMatchPage)
+flutter: │ ├─/celebrity-compatibility (CelebrityCompatibilityPage)
+flutter: │ ├─/pet-compatibility (PetCompatibilityPage)
+flutter: │ ├─/avoid-people (AvoidPeopleFortunePage)
+flutter: │ ├─/career (CareerFortunePage)
+flutter: │ ├─/career-seeker (CareerSeekerFortunePage)
+flutter: │ ├─/business (BusinessFortunePage)
+flutter: │ ├─/startup (StartupFortunePage)
+flutter: │ ├─/employment (EmploymentFortunePage)
+flutter: │ ├─/talent (TalentFortunePage)
+flutter: │ ├─/investment (InvestmentFortuneUnifiedPage)
+flutter: │ ├─/investment-enhanced (InvestmentFortuneEnhancedPage)
+flutter: │ ├─/lucky-investment (LuckyInvestmentFortunePage)
+flutter: │ ├─/lucky-stock (LuckyStockFortunePage)
+flutter: │ ├─/lucky-crypto (LuckyCryptoFortunePage)
+flutter: │ ├─/lucky-lottery (LuckyLotteryFortunePage)
+flutter: │ ├─/lucky-realestate (LuckyRealEstateFortunePage)
+flutter: │ ├─/lucky-exam (LuckyExamFortunePage)
+flutter: │ ├─/career-change (CareerChangeFortunePage)
+flutter: │ ├─/career-crisis (CareerCrisisFortunePage)
+flutter: │ ├─/career-future (CareerFutureFortunePage)
+flutter: │ ├─/freelance (FreelanceFortunePage)
+flutter: │ ├─/startup-career (StartupCareerFortunePage)
+flutter: │ ├─/lucky-items (LuckyItemsUnifiedPage)
+flutter: │ ├─/lucky-color (LuckyColorFortunePage)
+flutter: │ ├─/lucky-number (LuckyNumberFortunePage)
+flutter: │ ├─/lucky-food (LuckyFoodFortunePage)
+flutter: │ ├─/lucky-place (LuckyPlaceFortunePage)
+flutter: │ ├─/lucky-outfit (LuckyOutfitFortunePage)
+flutter: │ ├─/lucky-series (LuckySeriesFortunePage)
+flutter: │ ├─/birthstone (BirthstoneFortunePage)
+flutter: │ ├─/talisman (TalismanFortunePage)
+flutter: │ ├─/five-blessings (FiveBlessingsFortunePage)
+flutter: │ ├─/traditional (TraditionalFortuneUnifiedPage)
+flutter: │ ├─/tojeong (TojeongFortunePage)
+flutter: │ ├─/traditional-saju (TraditionalSajuFortunePage)
+flutter: │ ├─/palmistry (PalmistryFortunePage)
+flutter: │ ├─/physiognomy (PhysiognomyFortunePage)
+flutter: │ ├─/salpuli (SalpuliFortunePage)
+flutter: │ ├─/saju-psychology (SajuPsychologyFortunePage)
+flutter: │ ├─/face-reading (FaceReadingFortunePage)
+flutter: │ ├─/health-sports (HealthSportsUnifiedPage)
+flutter: │ ├─/enhanced-sports (EnhancedSportsFortunePage)
+flutter: │ ├─/sports (SportsFortunePage)
+flutter: │ ├─/biorhythm (BiorhythmFortunePage)
+flutter: │ ├─/pet (PetFortuneUnifiedPage)
+flutter: │ ├─/moving (MovingFortunePage)
+flutter: │ ├─/moving-date (MovingDateFortunePage)
+flutter: │ ├─/lucky-golf
+flutter: │ ├─/lucky-baseball
+flutter: │ ├─/lucky-tennis
+flutter: │ ├─/lucky-running
+flutter: │ ├─/lucky-cycling
+flutter: │ ├─/lucky-swim
+flutter: │ ├─/lucky-fishing
+flutter: │ ├─/lucky-hiking
+flutter: │ ├─/lucky-yoga
+flutter: │ ├─/lucky-fitness
+flutter: │ ├─/personality (PersonalityFortuneUnifiedPage)
+flutter: │ ├─/personality-fortune (PersonalityFortunePage)
+flutter: │ ├─/birth-season (BirthSeasonFortunePage)
+flutter: │ ├─/birthdate (BirthdateFortunePage)
+flutter: │ ├─/celebrity (CelebrityFortuneEnhancedPage)
+flutter: │ ├─/same-birthday-celebrity (SameBirthdayCelebrityFortunePage)
+flutter: │ ├─/lifestyle (LifestyleFortunePage)
+flutter: │ ├─/time (TimeBasedFortunePage)
+flutter: │ ├─/time-based
+flutter: │ ├─/hourly (HourlyFortunePage)
+flutter: │ ├─/daily (DailyFortunePage)
+flutter: │ ├─/today (TodayFortunePage)
+flutter: │ ├─/tomorrow (TomorrowFortunePage)
+flutter: │ ├─/weekly (WeeklyFortunePage)
+flutter: │ ├─/monthly (MonthlyFortunePage)
+flutter: │ ├─/yearly (TimeBasedFortunePage)
+flutter: │ ├─/new-year (TimeBasedFortunePage)
+flutter: │ ├─/dream (DreamFortuneChatPage)
+flutter: │ ├─/dream-chat (DreamFortuneChatPage)
+flutter: │ ├─/family (FamilyFortuneUnifiedPage)
+flutter: │ ├─/children (ChildrenFortunePage)
+flutter: │ ├─/parenting (ChildrenFortunePage)
+flutter: │ ├─/pregnancy (ChildrenFortunePage)
+flutter: │ ├─/family-harmony (ChildrenFortunePage)
+flutter: │ ├─/best-practices (FortuneBestPracticesPage)
+flutter: │ ├─/lucky-job (LuckyJobFortunePage)
+flutter: │ ├─/lucky-sidejob (LuckySideJobFortunePage)
+flutter: │ ├─/esports (EsportsFortunePage)
+flutter: │ ├─/influencer (InfluencerFortunePage)
+flutter: │ ├─/politician (PoliticianFortunePage)
+flutter: │ ├─/sports-player (SportsPlayerFortunePage)
+flutter: │ ├─/physiognomy
+flutter: │ ├─/dream-fortune (DreamFortunePage)
+flutter: │ ├─/crypto (CryptoFortunePage)
+flutter: │ ├─/lottery (LotteryFortunePage)
+flutter: │ ├─/relationship (RelationshipFortunePage)
+flutter: │ ├─/ai-comprehensive (AiComprehensiveFortunePage)
+flutter: │ ├─/batch (BatchFortunePage)
+flutter: │ ├─/dynamic (DynamicFortunePage)
+flutter: │ ├─/snap-scroll (FortuneSnapScrollPage)
+flutter: │ ├─/tarot (TarotMainPage)
+flutter: │ ├─/tarot-deck (TarotDeckSelectionPage)
+flutter: │ ├─/tarot-enhanced (TarotEnhancedPage)
+flutter: │ ├─/tarot-storytelling (TarotStorytellingPage)
+flutter: │ ├─/tarot-summary (TarotSummaryPage)
+flutter: │ └─/interactive (InteractiveListPage)
+flutter: │   ├─/interactive/fortune-cookie (FortuneCookiePage)
+flutter: │   ├─/interactive/dream (DreamInterpretationPage)
+flutter: │   ├─/interactive/psychology-test (PsychologyTestPage)
+flutter: │   ├─/interactive/tarot (TarotChatPage)
+flutter: │   │ ├─/interactive/tarot/storytelling (TarotStorytellingPage)
+flutter: │   │ ├─/interactive/tarot/summary (TarotSummaryPage)
+flutter: │   │ ├─/interactive/tarot/deck-selection (TarotDeckSelectionPage)
+flutter: │   │ └─/interactive/tarot/animated-flow (TarotAnimatedFlowPage)
+flutter: │   ├─/interactive/face-reading (FaceReadingPage)
+flutter: │   ├─/interactive/taemong (TaemongPage)
+flutter: │   ├─/interactive/worry-bead (WorryBeadPage)
+flutter: │   └─/interactive/dream-journal (DreamPage)
+flutter: ├─/settings (SettingsScreen)
+flutter: │ ├─/settings/social-accounts (SocialAccountsScreen)
+flutter: │ ├─/settings/phone-management (PhoneManagementScreen)
+flutter: │ └─/settings/notifications (NotificationSettingsPage)
+flutter: ├─/subscription (SubscriptionPage)
+flutter: ├─/token-purchase (TokenPurchasePageV2)
+flutter: ├─/help (HelpPage)
+flutter: ├─/privacy-policy (PrivacyPolicyPage)
+flutter: └─/terms-of-service (TermsOfServicePage)
+flutter: known full paths for route names:
+flutter:   landing => /
+flutter:   splash => /splash
+flutter:   signup => /signup
+flutter:   auth-callback => /auth/callback
+flutter:   onboarding => /onboarding
+flutter:   onboarding-toss-style => /onboarding/toss-style
+flutter:   home => /home
+flutter:   profile => /profile
+flutter:   profile-edit => /profile/edit
+flutter:   premium => /premium
+flutter:   trend => /trend
+flutter:   fortune => /fortune
+flutter:   fortune-saju => /saju
+flutter:   fortune-zodiac => /zodiac
+flutter:   fortune-zodiac-animal => /zodiac-animal
+flutter:   fortune-blood-type => /blood-type
+flutter:   fortune-mbti => /mbti
+flutter:   fortune-wealth => /wealth
+flutter:   fortune-health => /health
+flutter:   fortune-destiny => /destiny
+flutter:   fortune-past-life => /past-life
+flutter:   fortune-wish => /wish
+flutter:   fortune-timeline => /timeline
+flutter:   fortune-network-report => /network-report
+flutter:   fortune-inspiration => /inspiration
+flutter:   fortune-history => /history
+flutter:   fortune-love => /love
+flutter:   fortune-compatibility => /compatibility
+flutter:   fortune-marriage => /marriage
+flutter:   fortune-traditional-compatibility => /traditional-compatibility
+flutter:   fortune-couple-match => /couple-match
+flutter:   fortune-ex-lover => /ex-lover
+flutter:   fortune-ex-lover-enhanced => /ex-lover-enhanced
+flutter:   fortune-blind-date => /blind-date
+flutter:   fortune-chemistry => /chemistry
+flutter:   fortune-celebrity-match => /celebrity-match
+flutter:   fortune-celebrity-compatibility => /celebrity-compatibility
+flutter:   fortune-pet-compatibility => /pet-compatibility
+flutter:   fortune-avoid-people => /avoid-people
+flutter:   fortune-career => /career
+flutter:   fortune-career-seeker => /career-seeker
+flutter:   fortune-business => /business
+flutter:   fortune-startup => /startup
+flutter:   fortune-employment => /employment
+flutter:   fortune-talent => /talent
+flutter:   fortune-investment => /investment
+flutter:   fortune-investment-enhanced => /investment-enhanced
+flutter:   fortune-lucky-investment => /lucky-investment
+flutter:   fortune-lucky-stock => /lucky-stock
+flutter:   fortune-lucky-crypto => /lucky-crypto
+flutter:   fortune-lucky-lottery => /lucky-lottery
+flutter:   fortune-lucky-realestate => /lucky-realestate
+flutter:   fortune-lucky-exam => /lucky-exam
+flutter:   fortune-career-change => /career-change
+flutter:   fortune-career-crisis => /career-crisis
+flutter:   fortune-career-future => /career-future
+flutter:   fortune-freelance => /freelance
+flutter:   fortune-startup-career => /startup-career
+flutter:   fortune-lucky-items => /lucky-items
+flutter:   fortune-lucky-color => /lucky-color
+flutter:   fortune-lucky-number => /lucky-number
+flutter:   fortune-lucky-food => /lucky-food
+flutter:   fortune-lucky-place => /lucky-place
+flutter:   fortune-lucky-outfit => /lucky-outfit
+flutter:   fortune-lucky-series => /lucky-series
+flutter:   fortune-birthstone => /birthstone
+flutter:   fortune-talisman => /talisman
+flutter:   fortune-five-blessings => /five-blessings
+flutter:   fortune-traditional => /traditional
+flutter:   fortune-tojeong => /tojeong
+flutter:   fortune-traditional-saju => /traditional-saju
+flutter:   fortune-palmistry => /palmistry
+flutter:   fortune-physiognomy => /physiognomy
+flutter:   fortune-salpuli => /salpuli
+flutter:   fortune-saju-psychology => /saju-psychology
+flutter:   fortune-face-reading => /face-reading
+flutter:   fortune-health-sports => /health-sports
+flutter:   fortune-enhanced-sports => /enhanced-sports
+flutter:   fortune-sports => /sports
+flutter:   fortune-biorhythm => /biorhythm
+flutter:   fortune-pet => /pet
+flutter:   fortune-moving => /moving
+flutter:   fortune-moving-date => /moving-date
+flutter:   fortune-lucky-golf => /lucky-golf
+flutter:   fortune-lucky-baseball => /lucky-baseball
+flutter:   fortune-lucky-tennis => /lucky-tennis
+flutter:   fortune-lucky-running => /lucky-running
+flutter:   fortune-lucky-cycling => /lucky-cycling
+flutter:   fortune-lucky-swim => /lucky-swim
+flutter:   fortune-lucky-fishing => /lucky-fishing
+flutter:   fortune-lucky-hiking => /lucky-hiking
+flutter:   fortune-lucky-yoga => /lucky-yoga
+flutter:   fortune-lucky-fitness => /lucky-fitness
+flutter:   fortune-personality => /personality
+flutter:   fortune-personality-fortune => /personality-fortune
+flutter:   fortune-birth-season => /birth-season
+flutter:   fortune-birthdate => /birthdate
+flutter:   fortune-celebrity => /celebrity
+flutter:   fortune-same-birthday-celebrity => /same-birthday-celebrity
+flutter:   fortune-lifestyle => /lifestyle
+flutter:   fortune-time => /time
+flutter:   fortune-time-based => /time-based
+flutter:   fortune-hourly => /hourly
+flutter:   fortune-daily => /daily
+flutter:   fortune-today => /today
+flutter:   fortune-tomorrow => /tomorrow
+flutter:   fortune-weekly => /weekly
+flutter:   fortune-monthly => /monthly
+flutter:   fortune-yearly => /yearly
+flutter:   fortune-new-year => /new-year
+flutter:   fortune-dream => /dream
+flutter:   fortune-dream-chat => /dream-chat
+flutter:   fortune-family => /family
+flutter:   fortune-children => /children
+flutter:   fortune-parenting => /parenting
+flutter:   fortune-pregnancy => /pregnancy
+flutter:   fortune-family-harmony => /family-harmony
+flutter:   fortune-best-practices => /best-practices
+flutter:   fortune-lucky-job => /lucky-job
+flutter:   fortune-lucky-sidejob => /lucky-sidejob
+flutter:   fortune-esports => /esports
+flutter:   fortune-influencer => /influencer
+flutter:   fortune-politician => /politician
+flutter:   fortune-sports-player => /sports-player
+flutter:   physiognomy => /physiognomy
+flutter:   fortune-dream-fortune => /dream-fortune
+flutter:   fortune-crypto => /crypto
+flutter:   fortune-lottery => /lottery
+flutter:   fortune-relationship => /relationship
+flutter:   fortune-ai-comprehensive => /ai-comprehensive
+flutter:   fortune-batch => /batch
+flutter:   fortune-dynamic => /dynamic
+flutter:   fortune-snap-scroll => /snap-scroll
+flutter:   fortune-tarot => /tarot
+flutter:   fortune-tarot-deck => /tarot-deck
+flutter:   fortune-tarot-enhanced => /tarot-enhanced
+flutter:   fortune-tarot-storytelling => /tarot-storytelling
+flutter:   fortune-tarot-summary => /tarot-summary
+flutter:   interactive => /interactive
+flutter:   interactive-fortune-cookie => /interactive/fortune-cookie
+flutter:   interactive-dream => /interactive/dream
+flutter:   interactive-psychology-test => /interactive/psychology-test
+flutter:   interactive-tarot => /interactive/tarot
+flutter:   tarot-storytelling => /interactive/tarot/storytelling
+flutter:   tarot-summary => /interactive/tarot/summary
+flutter:   interactive-tarot-deck-selection => /interactive/tarot/deck-selection
+flutter:   tarot-animated-flow => /interactive/tarot/animated-flow
+flutter:   interactive-face-reading => /interactive/face-reading
+flutter:   interactive-taemong => /interactive/taemong
+flutter:   interactive-worry-bead => /interactive/worry-bead
+flutter:   interactive-dream-journal => /interactive/dream-journal
+flutter:   settings => /settings
+flutter:   social-accounts => /settings/social-accounts
+flutter:   phone-management => /settings/phone-management
+flutter:   notification-settings => /settings/notifications
+flutter:   subscription => /subscription
+flutter:   token-purchase => /token-purchase
+flutter:   help => /help
+flutter:   privacy-policy => /privacy-policy
+flutter:   terms-of-service => /terms-of-service
+flutter:
+flutter: GoRouter: INFO: setting initial location /splash
+Syncing files to device iPhone 16 Pro...                            94ms
+
+Flutter run key commands.
+r Hot reload. 🔥🔥🔥
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+A Dart VM Service on iPhone 16 Pro is available at: http://127.0.0.1:61569/pEtjSeSdU4A=/
+flutter: GoRouter: INFO: Using MaterialApp configuration
+flutter: 🚀 SplashScreen: Starting auth check...
+The Flutter DevTools debugger and profiler on iPhone 16 Pro is available at: http://127.0.0.1:9100?uri=http://127.0.0.1:61569/pEtjSeSdU4A=/
+flutter: 🔐 SplashScreen: Session status - Not authenticated
+flutter: ➡️ SplashScreen: No session, redirecting to landing
+flutter: GoRouter: INFO: going to /
+flutter: No session found, staying on landing page
+flutter: changed: AuthChangeEvent.initialSession
+flutter: GoRouter: INFO: going to /onboarding

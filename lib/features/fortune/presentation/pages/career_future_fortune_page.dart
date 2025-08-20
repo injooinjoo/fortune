@@ -105,11 +105,15 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                   children: [
                     Icon(
                       Icons.rocket_launch,
-                      color: theme.colorScheme.primary),
+                      color: theme.colorScheme.primary,
+                    ),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '커리어 미래 계획',
-                      style: theme.textTheme.titleLarge)]),
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ],
+                ),
                 SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Role
@@ -120,11 +124,14 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     hintText: '예: 프로덕트 매니저, 시니어 개발자',
                     prefixIcon: const Icon(Icons.badge),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium)),
+                      borderRadius: AppDimensions.borderRadiusMedium,
+                    ),
+                  ),
+                ),
                 SizedBox(height: AppSpacing.spacing4),
                 
-                // Career Goal (Optional),
-            TextField(
+                // Career Goal (Optional)
+                TextField(
                   controller: _goalController,
                   maxLines: 2,
                   decoration: InputDecoration(
@@ -132,7 +139,13 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     hintText: '예: CTO, 스타트업 창업, 글로벌 기업 진출',
                     prefixIcon: const Icon(Icons.flag),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium)]),
+                      borderRadius: AppDimensions.borderRadiusMedium,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Time Horizon
@@ -157,8 +170,13 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                         setState(() {
                           _timeHorizon = selected ? time : null;
                         });
-                      });
-                  }).toList()),
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Career Path
@@ -191,7 +209,9 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2)),
+                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                        ),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -200,13 +220,23 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                                 : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5)),
+                                : theme.colorScheme.onSurface.withOpacity(0.5),
+                          ),
                           SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: Text(
                               path,
-                              style: theme.textTheme.bodyLarge)]);
-                })]),
+                              style: theme.textTheme.bodyLarge,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList()),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Skills to Develop
@@ -221,12 +251,17 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '개발하고 싶은 역량 (2개 이상)',
-                      style: theme.textTheme.titleMedium)]),
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ],
+                ),
                 SizedBox(height: AppSpacing.spacing2),
                 Text(
                   '최대 5개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8,
@@ -244,8 +279,16 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                             _selectedSkills.remove(skill);
                           }
                         });
-                      });
-                  }).toList()),
-          SizedBox(height: AppSpacing.spacing8)]));
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.spacing8),
+        ],
+      ),
+    );
   }
 }

@@ -116,7 +116,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
     
     return AnimatedSlide(
       offset: _isDismissed ? const Offset(1, 0) : Offset.zero,
-    duration: AppAnimations.durationMedium,
+      duration: AppAnimations.durationMedium,
       curve: Curves.easeOutCubic,
       child: Dismissible(
         key: const Key('profile_completion_banner'),
@@ -129,6 +129,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
           child: Icon(
             Icons.close,
             color: AppColors.textPrimary.withOpacity(0.54)),
+        ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: GestureDetector(
@@ -152,11 +153,17 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _completionPercentage < 0.5 
                                 ? AppColors.textPrimary.withOpacity(0.54) 
-                                : AppColors.textPrimary.withOpacity(0.87)),
+                                : AppColors.textPrimary.withOpacity(0.87),
+                          ),
+                        ),
                         Text(
                           '${(_completionPercentage * 100).toInt()}%',
-                          style: Theme.of(context).textTheme.titleMedium)])),
-                  SizedBox(width: AppSpacing.spacing4),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.spacing4),
                   
                   // Text Content
                   Expanded(
@@ -165,23 +172,38 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                       children: [
                         Text(
                           '프로필을 완성해주세요',
-                          style: Theme.of(context).textTheme.titleMedium),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                         SizedBox(height: AppSpacing.spacing1),
                         Text(
                           _missingFields.isEmpty 
                               ? '더 정확한 운세를 위해 프로필을 확인해주세요'
                               : '정보: ${_missingFields.take(2).join(', ')}${_missingFields.length > 2 ? ' 외 ${_missingFields.length - 2}개' : ''}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textPrimary),
+                            color: AppColors.textPrimary,
+                          ),
                           maxLines: 2,
-                          overflow: TextOverflow.ellipsis)])),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
                   
                   // Arrow Icon
                   Icon(
                     Icons.arrow_forward_ios,
                     size: AppDimensions.iconSizeXSmall,
-                    color: AppColors.textSecondary)]))).animate()
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutCubic)));
+                    color: AppColors.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .slideX(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutCubic),
+      ),
+    );
   }
 }

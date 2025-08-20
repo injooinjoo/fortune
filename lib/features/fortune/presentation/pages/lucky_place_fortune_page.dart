@@ -154,17 +154,22 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
               Icon(
                 info['icon'],
                 size: 18,
-                color: isSelected ? Colors.white : null),
+                color: isSelected ? Colors.white : null,
+              ),
               const SizedBox(width: 4),
-              Text(environment)]),
+              Text(environment),
+            ],
+          ),
           selected: isSelected,
           onSelected: (selected) {
             setState(() {
               _selectedEnvironment = selected ? environment : null;
             });
           },
-          selectedColor: info['color'] as Color);
-      }).toList();
+          selectedColor: info['color'] as Color,
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildActivitySelector() {
@@ -183,17 +188,22 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
               Icon(
                 info['icon'],
                 size: 18,
-                color: isSelected ? Colors.white : null),
+                color: isSelected ? Colors.white : null,
+              ),
               const SizedBox(width: 4),
-              Text(activity)]),
+              Text(activity),
+            ],
+          ),
           selected: isSelected,
           onSelected: (selected) {
             setState(() {
               _selectedActivity = selected ? activity : null;
             });
           },
-          selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.8));
-      }).toList();
+          selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -371,22 +381,32 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               gradient: RadialGradient(
                 colors: [
                   (primaryCategoryInfo['color'] as Color).withOpacity(0.3),
-                  (primaryCategoryInfo['color'] as Color).withOpacity(0.6)]),
+                  (primaryCategoryInfo['color'] as Color).withOpacity(0.6),
+                ],
+              ),
               boxShadow: [
                 BoxShadow(
                   color: (primaryCategoryInfo['color'] as Color).withOpacity(0.5),
                   blurRadius: 30,
-                  spreadRadius: 10)]),
+                  spreadRadius: 10,
+                ),
+              ],
+            ),
             child: Center(
               child: Icon(
                 primaryCategoryInfo['icon'],
                 size: 64,
-                color: Colors.white)),
+                color: Colors.white,
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
           Text(
             mainPlace,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -442,7 +462,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                      width: 2)),
+                      width: 2,
+                    ),
+                  ),
                   child: AnimatedBuilder(
                     animation: _compassController,
                     builder: (context, child) {
@@ -451,8 +473,13 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                         child: CustomPaint(
                           painter: CompassPainter(
                             direction: luckyDirection,
-                            color: Theme.of(context).colorScheme.primary));
-                    })),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -460,24 +487,33 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                       luckyDirection,
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary)),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       '약 ${luckyDistance}m',
-                      style: Theme.of(context).textTheme.bodyMedium)])]),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.info_outline,
                     size: 20,
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

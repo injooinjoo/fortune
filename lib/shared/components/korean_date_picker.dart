@@ -3,8 +3,6 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
-import '../../core/theme/app_theme.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 class KoreanDatePicker extends StatefulWidget {
@@ -102,7 +100,10 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             child: Text(
               widget.label!,
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600)),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         
         GestureDetector(
           onTap: () {
@@ -127,18 +128,31 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                       Text(
                         '$selectedYear년 $selectedMonth월 $selectedDay일',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       if (widget.showAge && age >= 0)
                         Text(
                           '만 $age세',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6))]),
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
                   duration: AppAnimations.durationShort,
                   child: Icon(
                     Icons.expand_more_rounded,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))]),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
 
         AnimatedContainer(
           duration: AppAnimations.durationMedium,
@@ -167,7 +181,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                                 _updateDate();
                               });
                             },
-                            suffix: '년')),
+                            suffix: '년',
+                          ),
+                        ),
                         SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: _buildDropdown(
@@ -180,7 +196,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                                 _updateDate();
                               });
                             },
-                            suffix: '월')),
+                            suffix: '월',
+                          ),
+                        ),
                         SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: _buildDropdown(
@@ -193,7 +211,11 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                                 _updateDate();
                               });
                             },
-                            suffix: '일'))]),
+                            suffix: '일',
+                          ),
+                        ),
+                      ],
+                    ),
                     if (widget.showAge && age >= 0) ...[
                       SizedBox(height: AppSpacing.spacing4),
                       Container(
@@ -213,9 +235,23 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                               '나이: $age세',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w600)]).animate().fadeIn().scale(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ).animate().fadeIn().scale(
                         begin: const Offset(0.8, 0.8),
-                        end: const Offset(1, 1))]]))))]
+                        end: const Offset(1, 1),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -233,7 +269,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+        ),
         SizedBox(height: AppSpacing.spacing1),
         Container(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
@@ -241,7 +279,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             color: theme.colorScheme.surface,
             borderRadius: AppDimensions.borderRadiusSmall,
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.2)),
+              color: theme.colorScheme.outline.withOpacity(0.2),
+            ),
+          ),
           child: DropdownButton<int>(
             value: value,
             isExpanded: true,
@@ -252,9 +292,14 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                 value: item,
                 child: Text(
                   '$item$suffix',
-                  style: theme.textTheme.bodyMedium));
+                  style: theme.textTheme.bodyMedium,
+                ),
+              );
             }).toList(),
-            onChanged: onChanged))]
+            onChanged: onChanged,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -307,7 +352,9 @@ class BirthDatePreview extends StatelessWidget {
             Text(
               '${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일',
               style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: AppSpacing.spacing2),
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
@@ -318,14 +365,25 @@ class BirthDatePreview extends StatelessWidget {
                 '만 $age세',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.w600)),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
             if (onTap != null) ...[
               SizedBox(height: AppSpacing.spacing3),
               Text(
                 '탭하여 변경',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5)))]]))).animate().fadeIn().scale(
+                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    ).animate().fadeIn().scale(
       begin: const Offset(0.9, 0.9),
-      end: const Offset(1, 1));
+      end: const Offset(1, 1),
+    );
   }
 }

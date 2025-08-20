@@ -17,13 +17,17 @@ class HelpPage extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop()),
+          onPressed: () => context.pop(),
+        ),
         title: const Text(
           '도움말',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600)),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,12 +39,14 @@ class HelpPage extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
                     color: AppColors.primary,
-                    size: 24),
+                    size: 24,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -48,7 +54,13 @@ class HelpPage extends ConsumerWidget {
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 14,
-                        height: 1.5))]),
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             
             // FAQ Section
             _buildSection(
@@ -71,7 +83,10 @@ class HelpPage extends ConsumerWidget {
                 _buildFAQItem(
                   context,
                   question: '내 정보는 안전한가요?',
-                  answer: '네, 모든 개인정보는 암호화되어 안전하게 보관됩니다. 운세 제공 목적 외에는 사용되지 않으며, 제3자에게 제공되지 않습니다.')]),
+                  answer: '네, 모든 개인정보는 암호화되어 안전하게 보관됩니다. 운세 제공 목적 외에는 사용되지 않으며, 제3자에게 제공되지 않습니다.',
+                ),
+              ],
+            ),
             
             // How to Use Section
             _buildSection(
@@ -102,7 +117,11 @@ class HelpPage extends ConsumerWidget {
                     '설정 > 소셜 계정 연동으로 이동하세요',
                     '연동하고 싶은 소셜 서비스를 선택하세요',
                     '해당 서비스에 로그인하세요',
-                    '연동이 완료되면 해당 계정으로도 로그인할 수 있습니다'])]),
+                    '연동이 완료되면 해당 계정으로도 로그인할 수 있습니다',
+                  ],
+                ),
+              ],
+            ),
             
             // Tips Section
             _buildSection(
@@ -125,7 +144,10 @@ class HelpPage extends ConsumerWidget {
                 _buildTipItem(
                   context,
                   '알림을 설정하면 매일 운세를 받아볼 수 있어요',
-                  Icons.notifications)]),
+                  Icons.notifications,
+                ),
+              ],
+            ),
             
             // Contact Section
             Container(
@@ -137,7 +159,10 @@ class HelpPage extends ConsumerWidget {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.04),
                     blurRadius: 10,
-                    offset: const Offset(0, 2))]),
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
                 children: [
                   Container(
@@ -146,13 +171,20 @@ class HelpPage extends ConsumerWidget {
                       color: Colors.purple.shade50,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16)),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
                     child: Row(
                       children: [
                         Text(
                           '추가 도움이 필요하신가요?',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold)]),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   ListTile(
                     leading: Container(
                       width: 40,
@@ -160,17 +192,22 @@ class HelpPage extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Icon(
                         Icons.support_agent,
                         color: AppColors.primary,
-                        size: 22)),
+                        size: 22,
+                      ),
+                    ),
                     title: const Text('고객센터'),
                     subtitle: const Text('1:1 문의하기'),
                     trailing: const Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: AppColors.textSecondary),
-                    onTap: () => context.push('/support')),
+                      color: AppColors.textSecondary,
+                    ),
+                    onTap: () => context.push('/support'),
+                  ),
                   const Divider(height: 1),
                   ListTile(
                     leading: Container(
@@ -179,27 +216,40 @@ class HelpPage extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Icon(
                         Icons.email_outlined,
                         color: AppColors.primary,
-                        size: 22)),
+                        size: 22,
+                      ),
+                    ),
                     title: const Text('이메일 문의'),
                     subtitle: const Text('support@fortune-app.com'),
                     trailing: const Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: AppColors.textSecondary),
+                      color: AppColors.textSecondary,
+                    ),
                     onTap: () {
                       // TODO: Open email client
-                    })])),
+                    },
+                  ),
+                ],
+              ),
+            ),
             
-            const SizedBox(height: 32)])));
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
   }
   
   Widget _buildSection(BuildContext context, {
     required String title,
     required IconData icon,
-    required List<Widget> children}) {
+    required List<Widget> children,
+  }) {
     final theme = Theme.of(context);
     
     return Container(
@@ -211,7 +261,10 @@ class HelpPage extends ConsumerWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
-            offset: const Offset(0, 2))]),
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -221,7 +274,9 @@ class HelpPage extends ConsumerWidget {
               color: AppColors.primary.withOpacity(0.05),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
-                topRight: Radius.circular(16)),
+                topRight: Radius.circular(16),
+              ),
+            ),
             child: Row(
               children: [
                 Icon(icon, color: AppColors.primary, size: 24),
@@ -229,15 +284,25 @@ class HelpPage extends ConsumerWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold)]),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(children: children)]);
+            child: Column(children: children),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildFAQItem(BuildContext context, {
     required String question,
-    required String answer}) {
+    required String answer,
+  }) {
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
@@ -246,7 +311,9 @@ class HelpPage extends ConsumerWidget {
           question,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 16)),
+            fontSize: 16,
+          ),
+        ),
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
@@ -255,12 +322,19 @@ class HelpPage extends ConsumerWidget {
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
-                height: 1.5))]);
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildHowToItem(BuildContext context, {
     required String title,
-    required List<String> steps}) {
+    required List<String> steps,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -270,7 +344,9 @@ class HelpPage extends ConsumerWidget {
             title,
             style: const TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 16)),
+              fontSize: 16,
+            ),
+          ),
           const SizedBox(height: 8),
           ...steps.asMap().entries.map((entry) => Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 4),
@@ -281,13 +357,24 @@ class HelpPage extends ConsumerWidget {
                   '${entry.key + 1}. ',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontWeight: FontWeight.w600)),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 Expanded(
                   child: Text(
                     entry.value,
                     style: TextStyle(
                       color: AppColors.textSecondary,
-                      fontSize: 14))]))]));
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ],
+      ),
+    );
   }
   
   Widget _buildTipItem(BuildContext context, String tip, IconData icon) {
@@ -301,16 +388,25 @@ class HelpPage extends ConsumerWidget {
             decoration: BoxDecoration(
               color: AppColors.secondary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
+            ),
             child: Icon(
               icon,
               color: AppColors.secondary,
-              size: 18)),
+              size: 18,
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               tip,
               style: const TextStyle(
                 fontSize: 14,
-                height: 1.4))]);
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

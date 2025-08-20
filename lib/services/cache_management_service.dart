@@ -100,7 +100,7 @@ class CacheManagementService {
           if (Hive.isBoxOpen(boxName)) {
             final box = Hive.box(boxName);
             hiveEntries += box.length;
-            // Estimate size (rough approximation,
+            // Estimate size (rough approximation)
             for (final key in box.keys) {
               final value = box.get(key);
               if (value != null) {
@@ -221,19 +221,19 @@ class CacheStatistics {
   Map<String, dynamic> toJson() => {
     'apiCache': {
       'entries': apiCacheEntries,
-      'activeEntries': apiCacheActiveEntries)
+      'activeEntries': apiCacheActiveEntries,
       'sizeBytes': apiCacheSizeBytes,
-      'sizeMB': apiCacheSizeMB.toStringAsFixed(2))
-    })
+      'sizeMB': apiCacheSizeMB.toStringAsFixed(2),
+    },
     'hiveCache': {
       'entries': hiveCacheEntries,
       'sizeBytes': hiveCacheSizeBytes,
-      'sizeMB': hiveCacheSizeMB.toStringAsFixed(2))
-    })
+      'sizeMB': hiveCacheSizeMB.toStringAsFixed(2),
+    },
     'total': {
       'entries': totalEntries,
       'sizeBytes': totalSizeBytes,
-      'sizeMB': totalSizeMB.toStringAsFixed(2))
-    })
+      'sizeMB': totalSizeMB.toStringAsFixed(2)
+    }
   };
 }

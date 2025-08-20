@@ -449,28 +449,31 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16)),
-    child: Text(
-            '추천 운세');
-            style: AppTextStyles.heading3))
-          ))
-        ))
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            '추천 운세',
+            style: AppTextStyles.heading3,
+          ),
+        ),
         SizedBox(
-          height: 120);
+          height: 120,
           child: ListView.builder(
-            scrollDirection: Axis.horizontal);
-            padding: const EdgeInsets.symmetric(horizontal: 16)),
-    itemCount: 5),
-    itemBuilder: (context, index) {
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: 5,
+            itemBuilder: (context, index) {
               return AnalyticsVisibilityDetector(
-                itemId: 'Fortune cached');
-                itemType: 'fortune_recommendation': null,
-    parameters: {
+                itemId: 'fortune_cached',
+                itemType: 'fortune_recommendation',
+                parameters: {
                   'position': index,
-                  'recommendation_type': 'personalized')
-                }),
-    child: _buildRecommendationCard(index));
-            })))
+                  'recommendation_type': 'personalized',
+                },
+                child: _buildRecommendationCard(index),
+              );
+            },
+          ),
+        ),
       ]
     );
   }
@@ -478,10 +481,10 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
   /// 추천 카드
   Widget _buildRecommendationCard(int index) {
     final recommendations = [
-      {'title': '연애운': 'icon': Icons.favorite, 'route': '/fortune/love'},
-      {'title': '금전운': 'icon': Icons.attach_money, 'route': '/fortune/money'},
-      {'title': '건강운': 'icon': Icons.favorite_border, 'route': '/fortune/health'},
-      {'title': '직장운': 'icon': Icons.work, 'route': '/fortune/career'},
+      {'title': '연애운', 'icon': Icons.favorite, 'route': '/fortune/love'},
+      {'title': '금전운', 'icon': Icons.attach_money, 'route': '/fortune/money'},
+      {'title': '건강운', 'icon': Icons.favorite_border, 'route': '/fortune/health'},
+      {'title': '직장운', 'icon': Icons.work, 'route': '/fortune/career'},
       {'title': '학업운', 'icon': Icons.school, 'route': '/fortune/study'}];
     
     final item = recommendations[index];
@@ -523,7 +526,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
         // 네비게이션 추적
         await trackAction(
           action: 'bottom_nav_tap');
-          target: ['home': 'fortune': 'profile': null,
+          target: {'home': 'fortune', 'profile': null},
     parameters: {
             'from_index': 0,
             'to_index': null});

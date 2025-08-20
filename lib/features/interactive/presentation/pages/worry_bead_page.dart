@@ -52,7 +52,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       begin: 1.0,
       end: 1.1).animate(CurvedAnimation(
       parent: _pulseController,
-      curve: Curves.easeInOut));
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
@@ -85,7 +86,16 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     _buildActionButton(),
                     if (_adviceResult != null) ...[
                       const SizedBox(height: 32),
-                      _buildResultSection()]]))]));
+                      _buildResultSection(),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInstructions() {
@@ -100,20 +110,24 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Text(
             '걱정을 내려놓으세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '마음속 걱정을 적고 염주를 돌리면\n'
             '마음의 평안과 함께 조언을 드립니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -126,7 +140,15 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold)])])).animate()
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -139,7 +161,9 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Text(
             '무엇이 걱정되시나요?',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _worryController,
@@ -164,7 +188,11 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               setState(() {
                 _hasWorry = value.trim().isNotEmpty;
               });
-            })])).animate()
+            },
+        ),
+      ],
+    ),
+    ).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -187,7 +215,10 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   gradient: RadialGradient(
                     colors: [
                       AppTheme.primaryColor.withOpacity(0.3),
-                      AppTheme.primaryColor.withOpacity(0.1)])),
+                      AppTheme.primaryColor.withOpacity(0.1),
+                    ],
+                  ),
+                ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -207,7 +238,12 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                             boxShadow: [
                               BoxShadow(
                                 color: AppTheme.primaryColor.withOpacity(0.5),
-                                blurRadius: 4)])));
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     }),
                     // 중앙 장식
                     Container(
@@ -220,17 +256,31 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                           end: Alignment.bottomRight,
                           colors: [
                             AppTheme.primaryColor,
-                            AppTheme.primaryColor.withOpacity(0.7)]),
+                            AppTheme.primaryColor.withOpacity(0.7),
+                          ],
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: AppTheme.primaryColor.withOpacity(0.5),
                             blurRadius: 20,
-                            spreadRadius: 5)]),
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
                       child: const Icon(
                         Icons.spa,
                         color: Colors.white,
-                        size: 30)]));
-        })).animate()
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms, delay: 200.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
   }
@@ -242,7 +292,9 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Text(
             '염주를 ${_spinCount}번 돌렸습니다...',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.primaryColor)),
+              color: AppTheme.primaryColor,
+            ),
+          ),
         const SizedBox(height: 8),
         SizedBox(
           width: double.infinity,
@@ -253,18 +305,28 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             child: _isSpinning
                 ? const SizedBox(
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
                       color: Colors.white,
-                      strokeWidth: 2))
+                      strokeWidth: 2,
+                    ),
+                  )
                 : Text(
                     _hasWorry ? '염주 돌리기' : '먼저 걱정을 적어주세요',
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold)))]);
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildResultSection() {
@@ -277,17 +339,24 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               const Icon(
                 Icons.lightbulb_outline,
                 color: AppTheme.primaryColor,
-                size: 24),
+                size: 24,
+              ),
               const SizedBox(width: 8),
               Text(
                 '마음의 조언',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Text(
             _adviceResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6)),
+              height: 1.6,
+            ),
+          ),
           const SizedBox(height: 24),
           Row(
             children: [
@@ -299,7 +368,11 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     side: BorderSide(color: AppTheme.primaryColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                  child: const Text('다른 걱정 상담')),
+                    ),
+                  ),
+                  child: const Text('다른 걱정 상담'),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
@@ -310,7 +383,16 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     backgroundColor: AppTheme.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))))])])).animate()
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -402,7 +484,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('조언을 받는데 실패했습니다. 다시 시도해주세요.')));
+          const SnackBar(content: Text('조언을 받는데 실패했습니다. 다시 시도해주세요.')),
+        );
       }
     }
   }
@@ -421,7 +504,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     HapticUtils.lightImpact();
     // TODO: 공유 기능 구현
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다')));
+      const SnackBar(content: Text('공유 기능은 준비 중입니다')),
+    );
   }
 
   void _showInsufficientTokensModal() {
@@ -431,6 +515,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       backgroundColor: Colors.transparent,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: _requiredTokens,
-        fortuneType: 'worry_bead'));
+        fortuneType: 'worry_bead',
+      ),
+    );
   }
 }

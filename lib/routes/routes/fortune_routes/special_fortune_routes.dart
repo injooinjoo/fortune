@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/fortune_metadata.dart';
 import '../../../features/fortune/presentation/pages/dream_fortune_chat_page.dart';
 import '../../../features/fortune/presentation/pages/dream_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/family_fortune_unified_page.dart';
@@ -182,7 +183,7 @@ final specialFortuneRoutes = [
   GoRoute(
     path: '/dynamic',
     name: 'fortune-dynamic',
-    builder: (context, state) => const DynamicFortunePage(fortuneType: 'dynamic')),
+    builder: (context, state) => const DynamicFortunePage(fortuneType: FortuneType.daily)),
   
   // Fortune Snap Scroll
   GoRoute(

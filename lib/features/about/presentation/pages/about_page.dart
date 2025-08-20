@@ -51,7 +51,16 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                       const SizedBox(height: 32),
                       _buildTeamSection(),
                       const SizedBox(height: 32),
-                      _buildVersionInfo()]))]));
+                      _buildVersionInfo(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildHeroSection() {

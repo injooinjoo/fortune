@@ -6,7 +6,7 @@ class ServerException implements Exception {
   ServerException({
     required this.message,
     this.code,
-    this.data)
+    this.data,
   });
 
   @override
@@ -117,7 +117,7 @@ class PaymentException implements Exception {
   PaymentException({
     required this.message,
     this.code,
-    this.details)
+    this.details,
   });
 
   @override

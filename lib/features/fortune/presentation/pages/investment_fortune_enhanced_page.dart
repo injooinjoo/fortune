@@ -66,7 +66,7 @@ class InvestmentFortuneData {
   
   // Step 2: 관심 섹터
   List<InvestmentSector> selectedSectors = [];
-  Map<InvestmentSector, double> sectorPriorities = {}
+  Map<InvestmentSector, double> sectorPriorities = {};
   
   // Step 3: 상세 분석
   bool wantPortfolioReview = false;
@@ -232,9 +232,9 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   
   Widget _buildStepIndicator(int currentStep) {
     final steps = [
-      '투자 프로필': '관심 섹터',
-      '상세 분석': '운세 보기'
-  ];
+      '투자 프로필', '관심 섹터',
+      '상세 분석', '운세 보기'
+    ];
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -248,13 +248,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               children: [
                 Row(
                   children: [
-                    if (index > 0),
-                  Expanded(
+                    if (index > 0)
+                      Expanded(
                         child: Container(
                           height: 2,
                           color: isCompleted
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor)),
+                              : Theme.of(context).dividerColor),
+                      ),
                     Container(
                       width: 32,
                       height: 32,
@@ -262,7 +263,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         shape: BoxShape.circle,
                         color: isActive || isCompleted
                             ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.surfaceContainerHighest),
+                            : Theme.of(context).colorScheme.surfaceContainerHighest,
+                      ),
                       child: Center(
                         child: isCompleted
                             ? const Icon(Icons.check, size: 16, color: Colors.white)
@@ -270,14 +272,20 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                                 '${index + 1}',
                                 style: TextStyle(
                                   color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.bold)),
-                    if (index < steps.length - 1),
-            Expanded(
+                                  fontWeight: FontWeight.bold),
+                              ),
+                      ),
+                    ),
+                    if (index < steps.length - 1)
+                      Expanded(
                         child: Container(
                           height: 2,
                           color: isCompleted
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor))]),
+                              : Theme.of(context).dividerColor),
+                      ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 Text(
                   steps[index],
@@ -285,8 +293,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             color: isActive
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal)]);
-        }));
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
   }
   
   Widget _buildBottomNavigation(BuildContext context, int currentStep) {
@@ -301,19 +315,25 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
-            offset: const Offset(0, -5))]),
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          if (currentStep > 0),
-                  Expanded(
+          if (currentStep > 0)
+            Expanded(
               child: OutlinedButton(
                 onPressed: () {
                   ref.read(investmentStepProvider.notifier).previousStep();
                   _pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut);
+                    curve: Curves.easeOut,
+                  );
                 },
-                child: const Text('이전')),
+                child: const Text('이전'),
+              ),
+            ),
           if (currentStep > 0) const SizedBox(width: 16),
           Expanded(
             flex: currentStep == 0 ? 1 : 2,
@@ -332,35 +352,37 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     }
                   : null,
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16)),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
               child: Text(
                 currentStep == 3 ? '운세 보기' : '다음',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))]);
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   bool _validateStep(int step, InvestmentFortuneData data) {
     switch (step) {
-      case,
-    0:
+      case 0:
         return data.riskTolerance != null &&
                data.investmentExperience != null &&
                data.investmentGoal != null;
-      case,
-    1:
+      case 1:
         return data.selectedSectors.isNotEmpty;
-      case,
-    2:
+      case 2:
         return true; // Step 3 is optional
-      case,
-    3:
-        return true; // Ready to generate,
+      case 3:
+        return true; // Ready to generate
     default:
         return false;
     }
   }
   
-  // Step,
-    '1: 투자 프로필'
+  // Step 1: 투자 프로필
   Widget _buildStep1() {
     final data = ref.watch(investmentDataProvider);
     
@@ -376,12 +398,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               Text(
                 '투자 성향을 알려주세요',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               Text(
                 '맞춤형 투자 운세를 위해 필요합니다',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ),
               const SizedBox(height: 32),
               
               // Risk tolerance
@@ -405,26 +429,32 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               // Investment horizon
               _buildSectionTitle('투자 기간'),
               const SizedBox(height: 12),
-              _buildHorizonSelector(data)])));
+              _buildHorizonSelector(data),
+            ],
+          ),
+        ),
+      ),
+    );
   }
   
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold));
+            fontWeight: FontWeight.bold),
+    );
   }
   
   Widget _buildRiskToleranceSelector(InvestmentFortuneData data) {
     final options = [
-      {'id': 'label', '안정형': 'description': '원금 보존 중시'},
+      {'value': 'conservative', 'label': '안정형', 'description': '원금 보존 중시'},
       {'value': 'moderate', 'label': '중립형', 'description': '균형잡힌 수익과 안정'},
-      {'value': 'aggressive', 'label': '공격형', 'description': '높은 수익 추구'}];
+      {'value': 'aggressive', 'label': '공격형', 'description': '높은 수익 추구'},
+    ];
     
     return Column(
       children: options.map((option) {
-        final isSelected = data.riskTolerance == option['value'
-  ];
+        final isSelected = data.riskTolerance == option['value'];
         
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -443,58 +473,74 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   color: isSelected
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).dividerColor,
-                  width: isSelected ? 2 : 1),
+                  width: isSelected ? 2 : 1,
+                ),
                 borderRadius: BorderRadius.circular(12),
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                    : null),
+                    : null,
+              ),
               child: Row(
                 children: [
                   Radio<String>(
-                    value: option['value'],
+                    value: option['value'] as String,
                     groupValue: data.riskTolerance,
                     onChanged: (value) {
                       ref.read(investmentDataProvider.notifier).update((state) {
                         state.riskTolerance = value;
                         return state;
                       });
-                    }),
+                    },
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          option['label'],
+                          option['label'] as String? ?? '',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold),
+                        ),
                         Text(
-                          option['description'],
+                          option['description'] as String? ?? '',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant)])])));
-      }).toList();
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
   
   Widget _buildExperienceSelector(InvestmentFortuneData data) {
     final options = [
-      {'id': 'label', '초보자': 'description': '1년 미만'},
+      {'value': 'beginner', 'label': '초보자', 'description': '1년 미만'},
       {'value': 'intermediate', 'label': '중급자', 'description': '1-5년'},
-      {'value': 'expert', 'label': '전문가', 'description': '5년 이상'}];
+      {'value': 'expert', 'label': '전문가', 'description': '5년 이상'},
+    ];
     
     return Wrap(
       spacing: 12,
       runSpacing: 12,
       children: options.map((option) {
-        final isSelected = data.investmentExperience == option['value'
-  ];
+        final isSelected = data.investmentExperience == option['value'];
         
         return ChoiceChip(
           label: Column(
             children: [
-              Text(option['label'],
+              Text(option['label'] as String? ?? ''),
               Text(
-                option['description'],
-                style: Theme.of(context).textTheme.bodySmall)])),
+                option['description'] as String? ?? '',
+                style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
           selected: isSelected,
           onSelected: (selected) {
             if (selected) {
@@ -503,16 +549,19 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 return state;
               });
             }
-          });
-      }).toList();
+          },
+        );
+      }).toList(),
+    );
   }
   
   Widget _buildGoalSelector(InvestmentFortuneData data) {
     final options = [
-      {'id': 'label', '자산 증식': 'icon'},
-      {'id': 'label', '안정적 수익': 'icon'},
-      {'value': 'speculation', 'label': '단기 수익', 'icon'},
-      {'value': 'retirement', 'label': '노후 준비', 'icon'}];
+      {'value': 'wealth', 'label': '자산 증식', 'icon': Icons.trending_up},
+      {'value': 'stability', 'label': '안정적 수익', 'icon': Icons.shield},
+      {'value': 'speculation', 'label': '단기 수익', 'icon': Icons.flash_on},
+      {'value': 'retirement', 'label': '노후 준비', 'icon': Icons.home},
+    ];
     
     return GridView.count(
       shrinkWrap: true,
@@ -522,8 +571,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       crossAxisSpacing: 12,
       childAspectRatio: 1.5,
       children: options.map((option) {
-        final isSelected = data.investmentGoal == option['value'
-  ];
+        final isSelected = data.investmentGoal == option['value'];
         
         return InkWell(
           onTap: () {
@@ -539,31 +587,43 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   ? LinearGradient(
                       colors: [
                         Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.8)]),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                      ],
+                    )
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : Theme.of(context).dividerColor),
+                    : Theme.of(context).dividerColor,
+              ),
               borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  option['icon'],
+                  option['icon'] as IconData? ?? Icons.help,
                   size: 32,
                   color: isSelected
                       ? Colors.white
-                      : Theme.of(context).colorScheme.onSurfaceVariant),
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(height: 8),
                 Text(
-                  option['label'],
+                  option['label'] as String? ?? '',
                   style: TextStyle(
                     color: isSelected
                         ? Colors.white
                         : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]);
-      }).toList();
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
   
   Widget _buildHorizonSelector(InvestmentFortuneData data) {
@@ -572,16 +632,16 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       {'months': 6, 'label': '6개월'},
       {'months': 12, 'label': '1년'},
       {'months': 36, 'label': '3년'},
-      {'months': 60, 'label': '5년 이상'}];
+      {'months': 60, 'label': '5년 이상'},
+    ];
     
     return Wrap(
       spacing: 12,
       children: horizons.map((horizon) {
-        final isSelected = data.investmentHorizon == horizon['months'
-  ];
+        final isSelected = data.investmentHorizon == horizon['months'];
         
         return ChoiceChip(
-          label: Text(horizon['label'],
+          label: Text(horizon['label'] as String? ?? ''),
           selected: isSelected,
           onSelected: (selected) {
             if (selected) {
@@ -590,12 +650,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 return state;
               });
             }
-          });
-      }).toList();
+          },
+        );
+      }).toList(),
+    );
   }
   
-  // Step,
-    '2: 관심 섹터 선택'
+  // Step 2: 관심 섹터 선택
   Widget _buildStep2() {
     final data = ref.watch(investmentDataProvider);
     
@@ -607,12 +668,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           Text(
             '관심 있는 투자 섹터를 선택하세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           Text(
             '최대 5개까지 선택 가능합니다',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
           const SizedBox(height: 24),
           
           // Sector grid
@@ -629,17 +692,23 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               
               return _buildSectorCard(sector, isSelected, canSelect);
             }).toList(),
+          ),
           
           if (data.selectedSectors.isNotEmpty) ...[
             const SizedBox(height: 32),
             Text(
               '우선순위 설정',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             ...data.selectedSectors.map((sector) {
               return _buildPrioritySlider(sector, data);
-            }).toList()]]));
+            }).toList(),
+          ],
+        ],
+      ),
+    );
   }
   
   Widget _buildSectorCard(InvestmentSector sector, bool isSelected, bool canSelect) {
@@ -666,7 +735,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               ? LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: sector.gradientColors),
+                  colors: sector.gradientColors,
+                )
               : null,
           color: !isSelected
               ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -676,14 +746,18 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             color: isSelected
                 ? Colors.transparent
                 : Theme.of(context).dividerColor,
-            width: 2),
+            width: 2,
+          ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
                     color: sector.gradientColors[0].withOpacity(0.4),
                     blurRadius: 12,
-                    offset: const Offset(0, 4))]
-              : []),
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
+        ),
         child: Stack(
           children: [
             Padding(
@@ -723,9 +797,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                               : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)),
                     textAlign: TextAlign.center,
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis)])),
-            if (isSelected),
-            Positioned(
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Positioned(
                 top: 8,
                 right: 8,
                 child: Container(
@@ -733,13 +811,21 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   height: 24,
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    shape: BoxShape.circle),
+                    shape: BoxShape.circle,
+                  ),
                   child: Icon(
                     Icons.check,
                     size: 16,
-                    color: sector.gradientColors[0])]).animate(,
-      .fadeIn(duration: 300.ms, delay: (InvestmentSector.values.indexOf(sector) * 50).ms,
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0);
+                    color: sector.gradientColors[0],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ).animate()
+      .fadeIn(duration: 300.ms, delay: (InvestmentSector.values.indexOf(sector) * 50).ms)
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
   }
   
   Widget _buildPrioritySlider(InvestmentSector sector, InvestmentFortuneData data) {
@@ -756,20 +842,26 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               const SizedBox(width: 8),
               Text(
                 sector.label,
-                style: Theme.of(context).textTheme.titleSmall)),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const Spacer(),
               Text(
                 '${priority.round()}%',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-                  color: sector.gradientColors[0]))]),
+                  fontWeight: FontWeight.bold,
+                  color: sector.gradientColors[0],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: sector.gradientColors[0],
               inactiveTrackColor: sector.gradientColors[0].withOpacity(0.3),
               thumbColor: sector.gradientColors[0],
-              overlayColor: sector.gradientColors[0].withOpacity(0.3)),
+              overlayColor: sector.gradientColors[0].withOpacity(0.3),
+            ),
             child: Slider(
               value: priority,
               min: 0,
@@ -780,11 +872,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   state.sectorPriorities[sector] = value;
                   return state;
                 });
-              })]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
-  // Step,
-    '3: 상세 분석 옵션'
+  // Step 3: 상세 분석 옵션
   Widget _buildStep3() {
     final data = ref.watch(investmentDataProvider);
     
@@ -796,17 +892,22 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           Text(
             '추가 분석 옵션',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '더 정확한 운세를 위해 선택하세요',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: 32),
           
           // Analysis options
           _buildAnalysisOption(
-            '포트폴리오 검토': '현재 투자 포트폴리오 분석',
+            '포트폴리오 검토',
+            '현재 투자 포트폴리오 분석',
             Icons.pie_chart_rounded,
             data.wantPortfolioReview,
             (value) {
@@ -814,11 +915,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 state.wantPortfolioReview = value;
                 return state;
               });
-            }),
+            },
+          ),
           const SizedBox(height: 16),
           
           _buildAnalysisOption(
-            '시장 타이밍 분석': '매수/매도 적기 분석',
+            '시장 타이밍 분석',
+            '매수/매도 적기 분석',
             Icons.access_time_rounded,
             data.wantMarketTiming,
             (value) {
@@ -826,11 +929,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 state.wantMarketTiming = value;
                 return state;
               });
-            }),
+            },
+          ),
           const SizedBox(height: 16),
           
           _buildAnalysisOption(
-            '행운의 숫자': '로또 번호 및 행운의 숫자',
+            '행운의 숫자',
+            '로또 번호 및 행운의 숫자',
             Icons.casino_rounded,
             data.wantLuckyNumbers,
             (value) {
@@ -838,11 +943,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 state.wantLuckyNumbers = value;
                 return state;
               });
-            }),
+            },
+          ),
           const SizedBox(height: 16),
           
           _buildAnalysisOption(
-            '위험 관리 분석': '투자 위험 요소 점검',
+            '위험 관리 분석',
+            '투자 위험 요소 점검',
             Icons.warning_rounded,
             data.wantRiskAnalysis,
             (value) {
@@ -850,28 +957,37 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 state.wantRiskAnalysis = value;
                 return state;
               });
-            }),
+            },
+          ),
           const SizedBox(height: 32),
           
           // Specific question
           Text(
             '궁금한 점이 있으신가요?',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           TextField(
             decoration: InputDecoration(
               hintText: '예: 올해 부동산 투자가 좋을까요?',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-              prefixIcon: const Icon(Icons.help_outline_rounded)),
+              ),
+              prefixIcon: const Icon(Icons.help_outline_rounded),
+            ),
             maxLines: 3,
             onChanged: (value) {
               ref.read(investmentDataProvider.notifier).update((state) {
                 state.specificQuestion = value;
                 return state;
               });
-            })]));
+            },
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildAnalysisOption(
@@ -890,11 +1006,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             color: value
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).dividerColor,
-            width: value ? 2 : 1),
+            width: value ? 2 : 1,
+          ),
           borderRadius: BorderRadius.circular(12),
           color: value
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1,
-              : null),
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              : null,
+        ),
         child: Row(
           children: [
             Icon(
@@ -902,7 +1020,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               size: 32,
               color: value
                   ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurfaceVariant),
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -911,18 +1030,29 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Text(
                     description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant)]),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Switch(
               value: value,
-              onChanged: onChanged)]));
+              onChanged: onChanged,
+            ),
+          ],
+        ),
+      ),
+    );
   }
   
-  // Step,
-    '4: 최종 확인'
+  // Step 4: 최종 확인
   Widget _buildStep4() {
     final data = ref.watch(investmentDataProvider);
     
@@ -934,35 +1064,44 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           Text(
             '투자 운세 준비 완료!',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '입력하신 정보를 확인해주세요',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: 32),
           
           // Summary
-          _buildSummaryCard('투자 프로필': [}
-            '성향: ${_getRiskToleranceLabel(data.riskTolerance)}': '경험: ${_getExperienceLabel(data.investmentExperience)}',
-            '목표: ${_getGoalLabel(data.investmentGoal)}': '기간: ${_getHorizonLabel(data.investmentHorizon)}']),
+          _buildSummaryCard('투자 프로필', [
+            '성향: ${_getRiskToleranceLabel(data.riskTolerance)}',
+            '경험: ${_getExperienceLabel(data.investmentExperience)}',
+            '목표: ${_getGoalLabel(data.investmentGoal)}',
+            '기간: ${_getHorizonLabel(data.investmentHorizon)}',
+          ]),
           const SizedBox(height: 16),
           
-          _buildSummaryCard('관심 섹터': [
+          _buildSummaryCard('관심 섹터', [
             ...data.selectedSectors.map((sector) {
               final priority = data.sectorPriorities[sector] ?? 50.0;
               return '${sector.label} (${priority.round()}%)';
-            }).toList(),,
+            }).toList(),
+          ]),
           const SizedBox(height: 16),
           
-          if (_hasAnyAnalysisOption(data),
-            _buildSummaryCard('추가 분석': [
+          if (_hasAnyAnalysisOption(data))
+            _buildSummaryCard('추가 분석', [
               if (data.wantPortfolioReview) '포트폴리오 검토',
               if (data.wantMarketTiming) '시장 타이밍 분석',
               if (data.wantLuckyNumbers) '행운의 숫자',
               if (data.wantRiskAnalysis) '위험 관리 분석',
               if (data.specificQuestion?.isNotEmpty ?? false)
-                '질문: ${data.specificQuestion}']),
+                '질문: ${data.specificQuestion}',
+            ]),
           
           const SizedBox(height: 32),
           
@@ -978,13 +1117,22 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   end: Alignment.bottomRight,
                   colors: [
                     Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary])),
+                    Theme.of(context).colorScheme.secondary,
+                  ],
+                ),
+              ),
               child: const Icon(
                 Icons.auto_graph_rounded,
                 size: 80,
-                color: Colors.white)).animate(onPlay: (controller) => controller.repeat(),
-            .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.5),
-            .rotate(duration: 20000.ms)]));
+                color: Colors.white,
+              ),
+            ).animate(onPlay: (controller) => controller.repeat())
+              .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.5))
+              .rotate(duration: 20000.ms),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildSummaryCard(String title, List<String> items) {
@@ -993,13 +1141,16 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           ...items.map((item) => Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -1010,7 +1161,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     Expanded(
                       child: Text(
                         item,
-                        style: Theme.of(context).textTheme.bodySmall)]).toList()]));)
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              )).toList(),
+        ],
+      ),
+    );
   }
   
   // Helper methods
@@ -1019,9 +1178,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       case 'conservative': return '안정형';
       case 'moderate':
         return '중립형';
-      case , 'aggressive': return '공격형';
+      case 'aggressive':
+        return '공격형';
       default:
-        return '미선택';}
+        return '미선택';
     }
   }
   
@@ -1030,9 +1190,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       case 'beginner': return '초보자';
       case 'intermediate':
         return '중급자';
-      case , 'expert': return '전문가';
+      case 'expert':
+        return '전문가';
       default:
-        return '미선택';}
+        return '미선택';
     }
   }
   
@@ -1043,9 +1204,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         return '안정적 수익';
       case 'speculation':
         return '단기 수익';
-      case , 'retirement': return '노후 준비';
+      case 'retirement':
+        return '노후 준비';
       default:
-        return '미선택';}
+        return '미선택';
     }
   }
   
@@ -1080,6 +1242,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1087,8 +1250,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               const SizedBox(height: 16),
               Text(
                 '투자 운세를 분석하고 있습니다...',
-                style: Theme.of(context).textTheme.bodyMedium)])));),
-            try {
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    
+    try {
       // Prepare parameters
       final params = {
         'userId': data.userId,
@@ -1101,12 +1271,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         'investmentGoal': data.investmentGoal,
         'investmentHorizon': data.investmentHorizon,
         'selectedSectors': data.selectedSectors.map((s) => s.name).toList(),
-        'sectorPriorities': data.sectorPriorities.map((k, v) => MapEntry(k.name, v),
+        'sectorPriorities': data.sectorPriorities.map((k, v) => MapEntry(k.name, v)),
         'wantPortfolioReview': data.wantPortfolioReview,
         'wantMarketTiming': data.wantMarketTiming,
         'wantLuckyNumbers': data.wantLuckyNumbers,
         'wantRiskAnalysis': data.wantRiskAnalysis,
-        'specificQuestion': null}
+        'specificQuestion': data.specificQuestion,
+      };
       
       // Generate fortune
       final fortuneService = ref.read(fortuneServiceProvider);
@@ -1123,7 +1294,9 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           '/fortune/investment-enhanced/result',
           extra: {
             'fortune': fortune,
-            'investmentData': null});
+            'investmentData': data,
+          },
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -1132,8 +1305,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         // Show error
         Toast.show(
           context,
-          message: '발생했습니다: $e',
-          type: ToastType.error
+          message: '운세 생성 중 오류가 발생했습니다: $e',
+          type: ToastType.error,
         );
       }
     }

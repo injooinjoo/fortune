@@ -195,8 +195,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
             Text(
               _isSoulmateSearch() ? '소울메이트 찾기' : '상대방 정보',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold
-              )
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             if (!_isSoulmateSearch()) ...[
@@ -206,8 +206,9 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                   labelText: '상대방 이름',
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12))
-                )
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ] else ...[
               Container(
@@ -215,7 +216,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border)
+                  border: Border.all(color: AppColors.border),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +229,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                           '소울메이트 찾기 안내',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary),
+                            color: AppColors.primary,
+                          ),
                         ),
                       ],
                     ),
@@ -249,7 +251,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                     context: context,
                     initialDate: _partnerBirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25)),
                     firstDate: DateTime(1950),
-                    lastDate: DateTime.now());
+                    lastDate: DateTime.now(),
+                  );
                   if (picked != null) {
                     setState(() {
                       _partnerBirthDate = picked;
@@ -262,6 +265,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                     prefixIcon: const Icon(Icons.calendar_today),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Text(
                     _partnerBirthDate != null
@@ -270,7 +274,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                     style: TextStyle(
                       color: _partnerBirthDate != null
                           ? AppColors.textPrimary
-                          : AppColors.textSecondary)
+                          : AppColors.textSecondary,
+                    ),
                   ),
                 ),
               ),
@@ -286,8 +291,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                         setState(() {
                           _partnerGender = value;
                         });
-                      }
-                    )
+                      },
+                    ),
                   ),
                   Expanded(
                     child: RadioListTile<String>(
@@ -304,8 +309,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                 ],
               ),
             ],
-            const SizedBox(height: 24),
           ],
+          const SizedBox(height: 24),
 
           // Generate Button
           SizedBox(
@@ -316,12 +321,14 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text(
                 '운세 보기',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -403,8 +410,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           Text(
             fortuneData.content,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6
-            )
+              height: 1.6,
+            ),
           ),
           if (fortuneData.advice != null) ...[
             const SizedBox(height: 20),
@@ -413,6 +420,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -433,7 +441,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
                   const SizedBox(height: 8),
                   Text(
                     fortuneData.advice!,
-                    style: Theme.of(context).textTheme.bodyMedium),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),

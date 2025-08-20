@@ -130,12 +130,14 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop(),
+        ),
         title: const Text(
           '운세 활용법',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600)),
+            fontWeight: FontWeight.w600),
+        ),
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
@@ -144,7 +146,10 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           indicatorWeight: 3,
           tabs: const [
             Tab(text: '기본 가이드'),
-            Tab(text: '전문가 팁')])),
+            Tab(text: '전문가 팁'),
+          ],
+        ),
+      ),
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -168,6 +173,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: AppColors.primary.withOpacity(0.2)),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -178,28 +184,39 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                             decoration: BoxDecoration(
                               color: AppColors.primary.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
+                            ),
                             child: const Icon(
                               Icons.auto_awesome,
                               color: AppColors.primary,
-                              size: 24)),
+                              size: 24),
+                          ),
                           const SizedBox(width: 12),
                           Text(
                             '운세를 200% 활용하는 방법',
                             style: TextStyle(
                               fontSize: 18 * fontScale,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary))]),
+                              color: AppColors.textPrimary)),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textSecondary,
-                          height: 1.5)]),
+                          height: 1.5),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 24),
                 
                 // 카테고리별 가이드
-                ..._categories.map((category) => _buildCategorySection(category, fontScale)).toList()])),
+                ..._categories.map((category) => _buildCategorySection(category, fontScale)).toList(),
+              ],
+            ),
+          ),
           
           // 전문가 팁 탭
           SingleChildScrollView(
@@ -210,25 +227,38 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                   title: '운세 전문가의 조언',
                   content: '30년 경력 역술가가 전하는 운세 활용 노하우',
                   tips: [
-                    '운세는 미래를 결정짓는 것이 아닌, 가능성을 제시하는 것입니다.': '나쁜 운세일 때는 더욱 신중하게, 좋은 운세일 때는 적극적으로 행동하세요.',
-                    '운세에 지나치게 의존하지 말고, 참고 자료로 활용하세요.': '매일 같은 시간에 운세를 확인하면 일관된 해석이 가능합니다.'],
+                    '운세는 미래를 결정짓는 것이 아닌, 가능성을 제시하는 것입니다.',
+                    '나쁜 운세일 때는 더욱 신중하게, 좋은 운세일 때는 적극적으로 행동하세요.',
+                    '운세에 지나치게 의존하지 말고, 참고 자료로 활용하세요.',
+                    '매일 같은 시간에 운세를 확인하면 일관된 해석이 가능합니다.'],
                   fontScale: fontScale),
                 const SizedBox(height: 16),
                 _buildExpertTipCard(
                   title: '심리학자의 관점',
                   content: '운세를 통한 자기 성찰과 동기부여',
                   tips: [
-                    '운세는 자기 암시 효과를 통해 실제로 긍정적인 변화를 만들 수 있습니다.': '운세 해석 과정에서 자신의 현재 상태를 객관적으로 돌아볼 수 있습니다.',
-                    '목표 설정과 계획 수립에 운세를 활용하면 동기부여가 됩니다.': '운세 일기를 작성하여 자신의 성장 과정을 기록해보세요.'],
+                    '운세는 자기 암시 효과를 통해 실제로 긍정적인 변화를 만들 수 있습니다.',
+                    '운세 해석 과정에서 자신의 현재 상태를 객관적으로 돌아볼 수 있습니다.',
+                    '목표 설정과 계획 수립에 운세를 활용하면 동기부여가 됩니다.',
+                    '운세 일기를 작성하여 자신의 성장 과정을 기록해보세요.'],
                   fontScale: fontScale),
                 const SizedBox(height: 16),
                 _buildExpertTipCard(
                   title: '데이터 분석가의 팁',
                   content: '통계로 본 운세 활용법',
                   tips: [
-                    '3개월 이상 운세를 기록하면 자신만의 패턴을 발견할 수 있습니다.': '운세 점수와 실제 결과를 비교하여 정확도를 측정해보세요.',
-                    '여러 종류의 운세를 종합적으로 분석하면 더 정확한 예측이 가능합니다.': '계절별, 월별 운세 변화를 관찰하여 장기 계획을 세우세요.'],
-                  fontScale: fontScale)])]);
+                    '3개월 이상 운세를 기록하면 자신만의 패턴을 발견할 수 있습니다.',
+                    '운세 점수와 실제 결과를 비교하여 정확도를 측정해보세요.',
+                    '여러 종류의 운세를 종합적으로 분석하면 더 정확한 예측이 가능합니다.',
+                    '계절별, 월별 운세 변화를 관찰하여 장기 계획을 세우세요.',
+                  ],
+                  fontScale: fontScale),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildCategorySection(_PracticeCategory category, double fontScale) {
@@ -258,27 +288,37 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             decoration: BoxDecoration(
               color: category.color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
+            ),
             child: Icon(
               category.icon,
               color: category.color,
-              size: 24)),
+              size: 24),
+          ),
           title: Text(
             category.title,
             style: TextStyle(
               fontSize: 16 * fontScale,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary)),
+              color: AppColors.textPrimary),
+          ),
           trailing: AnimatedRotation(
             turns: isExpanded ? 0.5 : 0,
             duration: const Duration(milliseconds: 200),
             child: Icon(
               Icons.expand_more,
-              color: AppColors.textSecondary)),
+              color: AppColors.textSecondary),
+          ),
           children: [
             Container(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
-                children: category.items.map((item) => _buildPracticeItem(item, fontScale)).toList()]);
+                children: category.items.map((item) => _buildPracticeItem(item, fontScale)).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildPracticeItem(_PracticeItem item, double fontScale) {
@@ -298,14 +338,19 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             style: TextStyle(
               fontSize: 15 * fontScale,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary)),
+              color: AppColors.textPrimary),
+          ),
           const SizedBox(height: 8),
           Text(
             item.content,
             style: TextStyle(
               fontSize: 14 * fontScale,
               color: AppColors.textSecondary,
-              height: 1.5)]);
+              height: 1.5),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildExpertTipCard({
@@ -336,10 +381,12 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
+                ),
                 child: const Icon(
                   Icons.verified_user,
                   color: AppColors.primary,
-                  size: 20)),
+                  size: 20),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -350,13 +397,20 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                       style: TextStyle(
                         fontSize: 16 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary)),
+                        color: AppColors.textPrimary),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       content,
                       style: TextStyle(
                         fontSize: 13 * fontScale,
-                        color: AppColors.textSecondary)])]),
+                        color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           ...tips.map((tip) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -370,6 +424,8 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                       decoration: BoxDecoration(
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -377,7 +433,9 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         style: TextStyle(
                           fontSize: 14 * fontScale,
                           color: AppColors.textPrimary,
-                          height: 1.5)),
+                          height: 1.5),
+                      ),
+                    ),
                   ],
                 ),
               )),

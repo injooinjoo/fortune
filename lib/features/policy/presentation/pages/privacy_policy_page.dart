@@ -87,7 +87,19 @@ class PrivacyPolicyPage extends ConsumerWidget {
                           '시행일: 2025년 1월 1일',
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.6),
-                            fontSize: 14)]))])));
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildSection(String title, String content) {
@@ -101,13 +113,19 @@ class PrivacyPolicyPage extends ConsumerWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: Colors.white),
+          ),
           const SizedBox(height: 12),
           Text(
             content,
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withOpacity(0.8),
-              height: 1.6)]);
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

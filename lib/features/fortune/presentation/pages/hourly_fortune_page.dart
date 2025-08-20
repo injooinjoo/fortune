@@ -10,13 +10,16 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class HourlyFortunePage extends BaseFortunePage {
-  const HourlyFortunePage({Key? key})
-      : super(
+  const HourlyFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '시간대별 운세',
           description: '24시간 시간대별 상세 운세를 확인하세요',
           fortuneType: 'hourly',
-          requiresUserInfo: false
+          requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override
@@ -31,19 +34,31 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final fortuneService = ref.read(fortuneServiceProvider);
+    final userId = ref.read(userProvider).value?.id ?? 'anonymous';
     
-    return await fortuneService.getFortune(
-      fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+    // Use getTimeFortune with hourly period for time-based fortune
+    return await fortuneService.getTimeFortune(
+      userId: userId,
+      fortuneType: 'time_based',
+      params: {
+        'period': 'hourly',
+        'date': _selectedDate.toIso8601String(),
+        'enableNotifications': _enableNotifications,
+        ...params,
+      }
     );
   }
 
   @override
   Future<Map<String, dynamic>?> getFortuneParams() async {
+    // Get any passed parameters from navigation (from bottom sheet)
+    final passedParams = widget.initialParams?['fortuneParams'] as Map<String, dynamic>? ?? {};
+    
+    // Merge with hourly-specific parameters
     return {
       'date': _selectedDate.toIso8601String(),
-      'enableNotifications': _enableNotifications
+      'enableNotifications': _enableNotifications,
+      ...passedParams, // Include user info from bottom sheet
     };
   }
 
@@ -70,7 +85,8 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                     context: context,
                     initialDate: _selectedDate,
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 7));
+                    lastDate: DateTime.now().add(const Duration(days: 7)),
+                  );
                   if (date != null) {
                     setState(() {
                       _selectedDate = date;
@@ -163,15 +179,17 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
 
   @override
   Widget buildFortuneResult() {
-    // Add hourly-specific sections to the base result
-    return Column(
-      children: [
-        super.buildFortuneResult(),
-        _build24HourTimeline(),
-        if (_selectedHour != null) _buildHourlyDetail(),
-        _buildLuckyHours(),
-        _buildActivityRecommendations()
-      ]
+    // Add hourly-specific sections to the base result with SingleChildScrollView
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          super.buildFortuneResult(),
+          _build24HourTimeline(),
+          if (_selectedHour != null) _buildHourlyDetail(),
+          _buildLuckyHours(),
+          _buildActivityRecommendations()
+        ]
+      ),
     );
   }
 
@@ -342,7 +360,9 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
       'focus': 85,
       'social': 60,
       'luck': 90,
-      'description': '이 시간대는 집중력이 높아 중요한 업무를 처리하기에 좋습니다. 창의적인 아이디어가 떠오를 수 있으니 메모를 준비하세요.': 'activity': '중요한 회의나 프레젠테이션': 'avoid': '충동적인 결정'
+      'description': '이 시간대는 집중력이 높아 중요한 업무를 처리하기에 좋습니다. 창의적인 아이디어가 떠오를 수 있으니 메모를 준비하세요.',
+      'activity': '중요한 회의나 프레젠테이션',
+      'avoid': '충동적인 결정',
     };
     
     return Padding(
@@ -361,19 +381,21 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Text(
                     '${_selectedHour!.toString().padLeft(2, '0')}:00',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold
-                    )
-                  )),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '시간대 상세 운세',
-                  style: theme.textTheme.headlineSmall
-                )
-              ]
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             // Energy meters
@@ -491,10 +513,10 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     final theme = Theme.of(context);
     
     final luckyHours = [
-      {'time': '09:00-10:00': 'activity': '중요한 결정': 'score': 95},
-      {'time': '14:00-15:00': 'activity': '창의적 작업': 'score': 88},
-      {'time': '19:00-20:00': 'activity': '사교 활동': 'score': 92},
-      {'time': '22:00-23:00': 'activity': '명상/휴식': 'score': 85}
+      {'time': '09:00-10:00', 'activity': '중요한 결정', 'score': 95},
+      {'time': '14:00-15:00', 'activity': '창의적 작업', 'score': 88},
+      {'time': '19:00-20:00', 'activity': '사교 활동', 'score': 92},
+      {'time': '22:00-23:00', 'activity': '명상/휴식', 'score': 85}
     ];
     
     return Padding(
@@ -542,13 +564,15 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Text(
                         hour['time'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold
                         )
-                      )),
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -568,9 +592,10 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold
                         )
-                      ))
+                      )
+                    )
                   ]
-                  )
+                )
                 )
               )
             ).toList()
@@ -592,23 +617,23 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     
     final timeSlots = [
       {
-        'period': '새벽 (00:00-06:00)': 'icon': Icons.nightlight_round,
-        'activities': ['깊은 수면': '명상', '일기 쓰기'],
+        'period': '새벽 (00:00-06:00)', 'icon': Icons.nightlight_round,
+        'activities': ['깊은 수면', '명상', '일기 쓰기'],
         'color': Colors.indigo
       },
       {
-        'period': '아침 (06:00-12:00)': 'icon': Icons.wb_sunny,
-        'activities': ['운동': '중요한 업무', '학습'],
+        'period': '아침 (06:00-12:00)', 'icon': Icons.wb_sunny,
+        'activities': ['운동', '중요한 업무', '학습'],
         'color': Colors.orange
       },
       {
-        'period': '오후 (12:00-18:00)': 'icon': Icons.wb_twilight,
-        'activities': ['미팅': '창의적 작업', '네트워킹'],
+        'period': '오후 (12:00-18:00)', 'icon': Icons.wb_twilight,
+        'activities': ['미팅', '창의적 작업', '네트워킹'],
         'color': Colors.amber
       },
       {
-        'period': '저녁 (18:00-24:00)': 'icon': Icons.nights_stay,
-        'activities': ['가족 시간': '취미 활동', '휴식'],
+        'period': '저녁 (18:00-24:00)', 'icon': Icons.nights_stay,
+        'activities': ['가족 시간', '취미 활동', '휴식'],
         'color': Colors.purple
       }
     ];

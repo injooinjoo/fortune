@@ -329,19 +329,25 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                           const SizedBox(height: 8),
                           TweenAnimationBuilder<double>(
                             tween: Tween(begin: 0, end: (category['score'],
-                            duration: Duration(milliseconds: 800 + (index * 200),
+                            duration: Duration(milliseconds: 800 + (index * 200)),
                             curve: Curves.easeOutCubic,
                             builder: (context, value, child) {
                               return LinearProgressIndicator(
-                                value: value);
+                                value: value,
                                 backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(category['score']),
-                                minHeight: 6
+                                ),
+                                minHeight: 6,
                               );
-                            })))).animate()
-          .fadeIn(duration: 600.ms, delay: Duration(milliseconds: 100 * index),
-          .slideX(begin: 0.2, end: 0);
+                            },
+                          )
+                          .animate()
+                          .fadeIn(
+                            duration: 600.ms, 
+                            delay: Duration(milliseconds: 100 * index),
+                          )
+                          .slideX(begin: 0.2, end: 0);
       }).toList()
     );
   }

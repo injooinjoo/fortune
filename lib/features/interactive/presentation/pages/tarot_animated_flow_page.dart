@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/tarot_deck_fan_widget.dart';
-import '../widgets/tarot_card_selection_animation.dart';
-import '../widgets/tarot_scroll_indicator.dart';
-import '../../../fortune/presentation/widgets/tarot_card_reveal_widget.dart';
-import 'dart:math' as math;
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class TarotAnimatedFlowPage extends StatefulWidget {
-  final String? heroTag;
-  
   const TarotAnimatedFlowPage({
-    Key? key,
-    this.heroTag}) : super(key: key);
+    super.key,
+  });
 
   @override
   State<TarotAnimatedFlowPage> createState() => _TarotAnimatedFlowPageState();
@@ -20,325 +16,298 @@ class TarotAnimatedFlowPage extends StatefulWidget {
 
 class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     with TickerProviderStateMixin {
-  late AnimationController _heroController;
-  late AnimationController _contentController;
-  late Animation<double> _heroScaleAnimation;
-  late Animation<double> _heroPositionAnimation;
-  late Animation<double> _contentSlideAnimation;
-  late Animation<double> _fadeAnimation;
-  
-  final ScrollController _scrollController = ScrollController();
-  
-  // State
-  bool _showDeckFan = false;
-  bool _showScrollIndicator = false;
+  PageController? _pageController;
+  int _currentPage = 0;
   int? _selectedCardIndex;
-  bool _showCardSelection = false;
-  bool _showCardReveal = false;
-  
-  // Tarot data
-  final List<Map<String, String>> _majorArcana = [
-    {'name': 'The Fool', 'image': 'assets/images/tarot/fool.png', 'planet': 'Uranus'},
-    {'name': 'The Magician', 'image': 'assets/images/tarot/magician.png', 'planet': 'Mercury'},
-    {'name': 'The High Priestess', 'image': 'assets/images/tarot/priestess.png', 'planet': 'Moon'},
-    // Add more cards as needed
+
+  late AnimationController _heroController;
+  late Animation<double> _heroAnimation;
+
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+
+  final List<Map<String, dynamic>> _majorArcana = [
+    {
+      'name': 'The Fool',
+      'number': 0,
+      'image': 'assets/images/tarot/fool.png',
+      'meaning': 'New beginnings, innocence, spontaneity',
+      'planet': 'Uranus',
+      'element': 'Air',
+    },
+    {
+      'name': 'The Magician',
+      'number': 1,
+      'image': 'assets/images/tarot/magician.png',
+      'meaning': 'Power, skill, concentration',
+      'planet': 'Mercury',
+      'element': 'Air',
+    },
+    {
+      'name': 'The High Priestess',
+      'number': 2,
+      'image': 'assets/images/tarot/high_priestess.png',
+      'meaning': 'Intuition, higher powers, mystery',
+      'planet': 'Moon',
+      'element': 'Water',
+    },
   ];
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     
-    // Hero animation controller
     _heroController = AnimationController(
       duration: const Duration(milliseconds: 1000),
-      vsync: this);
-    
-    // Content animation controller
-    _contentController = AnimationController(
+      vsync: this,
+    );
+    _heroAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _heroController,
+      curve: Curves.easeInOut,
+    ));
+
+    _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this);
-    
-    // Set up animations
-    _heroScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 2.0).animate(CurvedAnimation(
-      parent: _heroController,
-      curve: Curves.easeInOut));
-    
-    _heroPositionAnimation = Tween<double>(
-      begin: 0.0,
-      end: -300.0).animate(CurvedAnimation(
-      parent: _heroController,
-      curve: Curves.easeInOut));
-    
-    _contentSlideAnimation = Tween<double>(
-      begin: 0.0,
-      end: 200.0).animate(CurvedAnimation(
-      parent: _contentController,
-      curve: Curves.easeOut));
-    
+      vsync: this,
+    );
     _fadeAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0).animate(CurvedAnimation(
-      parent: _contentController,
-      curve: Curves.easeOut));
-    
-    // Add status listener
-    _heroController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          _showDeckFan = true;
-          _showScrollIndicator = true;
-        });
-      }
-    });
-    
-    // Start hero animation after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startHeroAnimation();
-    });
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    ));
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    ));
   }
 
   @override
   void dispose() {
+    _pageController?.dispose();
     _heroController.dispose();
-    _contentController.dispose();
-    _scrollController.dispose();
+    _fadeController.dispose();
+    _scaleController.dispose();
     super.dispose();
-  }
-
-  void _startHeroAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    _heroController.forward();
-    _contentController.forward();
-  }
-
-  void _onCardTap(int index) {
-    HapticFeedback.lightImpact();
-    setState(() {
-      _selectedCardIndex = index;
-      _showCardSelection = true;
-      _showScrollIndicator = false;
-    });
-  }
-
-  void _onSelectionAnimationComplete() {
-    setState(() {
-      _showCardReveal = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentPage = index;
+          });
+        },
         children: [
-          // Background gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF1a1a2e),
-                  const Color(0xFF0f0f1e)])),
-          
-          // Main content
-          if (!_showCardSelection && !_showCardReveal)
-            _buildMainContent(),
-          
-          // Card selection animation
-          if (_showCardSelection && !_showCardReveal)
-            TarotCardSelectionAnimation(
-              selectedIndex: _selectedCardIndex!,
-              totalCards: _majorArcana.length,
-              cardImagePath: _majorArcana[_selectedCardIndex!]['image'] ?? 'assets/images/tarot/back.png',
-              onAnimationComplete: _onSelectionAnimationComplete),
-          
-          // Card reveal
-          if (_showCardReveal)
-            _buildCardReveal(),
-          
-          // Back button
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: 10,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.pop())]);
+          _buildWelcomePage(),
+          _buildCardSelectionPage(),
+          if (_selectedCardIndex != null) _buildCardReveal(),
+        ],
+      ),
+    );
   }
 
-  Widget _buildMainContent() {
-    return Stack(
-      children: [
-        // Hero card animation
-        AnimatedBuilder(
-          animation: Listenable.merge([_heroController, _contentController]),
-          builder: (context, child) {
-            // Check if we should show the hero
-            if (widget.heroTag != null && _heroController.value < 0.1) {
-              return Center(
-                child: Hero(
-                  tag: widget.heroTag!,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.85,
-                    height: 280,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFFFFA726),
-                          Color(0xFFFF7043),
-                          Color(0xFFE64A19)])),
-                    child: const Center(
-                      child: Icon(
-                        Icons.auto_awesome,
-                        color: Colors.white,
-                        size: 60))));
-            }
-            return Stack(
-              children: [
-                // Daily fortune card (hero);
-                Positioned(
-                  top: MediaQuery.of(context).size.height * 0.15 + _heroPositionAnimation.value,
-                  left: 0,
-                  right: 0,
-                  child: Transform.scale(
-                    scale: _heroScaleAnimation.value,
-                    child: Opacity(
-                      opacity: 1 - _heroController.value,
-                      child: _buildDailyFortuneCard()),
-                
-                // Bottom content sliding down
-                Positioned(
-                  bottom: -_contentSlideAnimation.value,
-                  left: 0,
-                  right: 0,
-                  child: Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: _buildBottomContent()))]);
-          }),
-        
-        // Deck fan (appears after hero animation)
-        if (_showDeckFan)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.35,
-            left: 0,
-            right: 0,
-            child: TarotDeckFanWidget(
-              cardCount: _majorArcana.length,
-              onCardTap: _onCardTap,
-              scrollController: _scrollController,
-              selectedIndex: _selectedCardIndex)),
-        
-        // Scroll indicator
-        TarotScrollIndicator(
-          isVisible: _showScrollIndicator,
-          text: 'Scroll to explore • Tap to select')]);
-  }
-
-  Widget _buildDailyFortuneCard() {
-    return Center(
-      child: Hero(
-        tag: widget.heroTag ?? 'daily-fortune',
-        child: Container(
-          width: 180,
-          height: 250,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.orange.shade400,
-                Colors.orange.shade600]),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.orange.withOpacity(0.3),
-                blurRadius: 20,
-                spreadRadius: 5)]),
-          child: Stack(
-            children: [
-              // Card illustration
-              Positioned(
-                top: 20,
-                left: 0,
-                right: 0,
-                child: Image.asset(
-                  'assets/images/fortune_cards/daily_fortune.png',
-                  height: 120,
-                  fit: BoxFit.contain)),
-              
-              // Text
-              Positioned(
-                bottom: 40,
-                left: 0,
-                right: 0,
-                child: Column(
-                  children: [
-                    Text(
-                      'Daily fortune',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      child: Text(
-                        'DRAW',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2))])])));
-  }
-
-  Widget _buildBottomContent() {
+  Widget _buildWelcomePage() {
     return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Text(
-            'Tarot Reading',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 16)),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildReadingOption('Love', Colors.pink, Icons.favorite),
-              _buildReadingOption('Career', Colors.green, Icons.work),
-              _buildReadingOption('Choice', Colors.blue, Icons.help_outline)])]));
-  }
-
-  Widget _buildReadingOption(String title, Color color, IconData icon) {
-    return Container(
-      width: 80,
-      height: 80,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 2)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 30),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 12)]);
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.purple.withValues(alpha: 0.8),
+            Colors.black,
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Hero text
+            Text(
+              'Mystical Tarot',
+              style: AppTypography.displayLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    color: Colors.purple.withValues(alpha: 0.5),
+                    blurRadius: 20,
+                  ),
+                ],
+              ),
+            ).animate()
+              .fadeIn(duration: 1000.ms)
+              .scale(begin: const Offset(0.5, 0.5)),
+            
+            const SizedBox(height: 40),
+            
+            // Subtitle
+            Text(
+              'Discover your destiny through\nthe ancient wisdom of tarot',
+              textAlign: TextAlign.center,
+              style: AppTypography.bodyLarge?.copyWith(
+                color: Colors.white.withValues(alpha: 0.8),
+                height: 1.6,
+              ),
+            ).animate(delay: 500.ms)
+              .fadeIn(duration: 800.ms)
+              .slideY(begin: 0.3, end: 0),
+            
+            const SizedBox(height: 60),
+            
+            // Start button
+            ElevatedButton(
+              onPressed: () {
+                _pageController?.nextPage(
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeInOut,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple.withValues(alpha: 0.8),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                elevation: 10,
+                shadowColor: Colors.purple.withValues(alpha: 0.5),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.auto_awesome, size: 24),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Begin Your Journey',
+                    style: AppTypography.labelLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ).animate(delay: 1000.ms)
+              .fadeIn(duration: 600.ms)
+              .scale(begin: const Offset(0.8, 0.8)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardSelectionPage() {
+    return Container(
+      color: Colors.black,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Text(
+                    'Choose Your Card',
+                    style: AppTypography.displayMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Trust your intuition and select the card that calls to you',
+                    textAlign: TextAlign.center,
+                    style: AppTypography.bodyMedium?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Cards grid
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: GridView.builder(
+                  itemCount: _majorArcana.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => _selectCard(index),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.purple.withValues(alpha: 0.5),
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.purple.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome,
+                              size: 60,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Card ${index + 1}',
+                              style: AppTypography.titleMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate(delay: (200 * index).ms)
+                      .fadeIn(duration: 600.ms)
+                      .scale(begin: const Offset(0.8, 0.8));
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildCardReveal() {
@@ -358,9 +327,12 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
                     blurRadius: 30,
-                    spreadRadius: 10)]),
+                    spreadRadius: 10,
+                  ),
+                ],
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.asset(
@@ -376,15 +348,25 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                             const Icon(
                               Icons.auto_awesome,
                               size: 80,
-                              color: Colors.white),
+                              color: Colors.white,
+                            ),
                             const SizedBox(height: 20),
                             Text(
                               cardData['name'] ?? 'Unknown',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
-                                fontWeight: FontWeight.bold)]));
-                  })),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
             
             const SizedBox(height: 40),
             
@@ -395,7 +377,9 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 color: Colors.white,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 2)),
+                letterSpacing: 2,
+              ),
+            ),
             
             const SizedBox(height: 16),
             
@@ -403,9 +387,11 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               '"Go forward and do whatever\nyour heart tells you"',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontSize: 16,
-                fontStyle: FontStyle.italic)),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
             
             const SizedBox(height: 40),
             
@@ -415,7 +401,9 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               children: [
                 _buildMetadata(Icons.stars, 'Major Arcana'),
                 const SizedBox(width: 40),
-                _buildMetadata(Icons.public, cardData['planet'] ?? '')]),
+                _buildMetadata(Icons.public, cardData['planet'] ?? ''),
+              ],
+            ),
             
             const SizedBox(height: 60),
             
@@ -430,22 +418,50 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
+                ),
+              ),
               child: const Text(
                 'View Full Reading',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold))]));
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMetadata(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.6), size: 20),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 8),
         Text(
           text,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
-            fontSize: 14))]);
+            color: Colors.white.withValues(alpha: 0.6),
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _selectCard(int index) {
+    setState(() {
+      _selectedCardIndex = index;
+    });
+    
+    _heroController.forward();
+    
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _pageController?.nextPage(
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 }

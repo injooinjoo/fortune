@@ -118,7 +118,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
     
     final commonData = {
       'bestTime': _getBestTimeForSport(_selectedType),
-      'condition': fortune.score >= 80 ? '최상' : fortune.score >= 60 ? '양호' : '주의': 'weather': _getKoreanWeatherCondition(weatherCondition),
+      'condition': fortune.score >= 80 ? '최상' : fortune.score >= 60 ? '양호' : '주의',
+      'weather': _getKoreanWeatherCondition(weatherCondition),
       'temperature': temperature,
       'windSpeed': windSpeed,
       'tips': _getSportTips(_selectedType, _weatherData),
@@ -131,28 +132,40 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
           ...commonData,
           'expectedScore': 85,
           'bestHoles': [3, 7, 15],
-          'windDirection': '북서풍': 'course': '그린 컨디션 양호',
+          'windDirection': '북서풍',
+          'course': '그린 컨디션 양호',
         };
       case SportType.tennis:
         return {
           ...commonData,
           'winRate': 75,
-          'strongShot': '포핸드': 'strategy': '공격적 플레이': 'stamina': 85,
+          'strongShot': '포핸드',
+          'strategy': '공격적 플레이',
+          'stamina': 85,
         };
       case SportType.swimming:
         return {
           ...commonData,
-          'poolCondition': '최적': 'bestStroke': '자유형': 'distance': '1000m': 'waterTemp': '26°C',
+          'poolCondition': '최적',
+          'bestStroke': '자유형',
+          'distance': '1000m',
+          'waterTemp': '26°C',
         };
       case SportType.running:
         return {
           ...commonData,
-          'pace': '5:30/km': 'distance': '10km': 'route': '평지 추천': 'hydration': '필수',
+          'pace': '5:30/km',
+          'distance': '10km',
+          'route': '평지 추천',
+          'hydration': '필수',
         };
       case SportType.fitness:
         return {
           ...commonData,
-          'focusArea': '상체': 'intensity': '고강도': 'restTime': '60초': 'supplement': '프로틴',
+          'focusArea': '상체',
+          'intensity': '고강도',
+          'restTime': '60초',
+          'supplement': '프로틴',
         };
       default:
         return commonData;
@@ -212,28 +225,22 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
   List<String> _getBaseSportTips(SportType sport) {
     switch (sport) {
       case SportType.golf:
-        return ['스윙 템포 유지': '그린 읽기 신중히', '바람 방향 체크'
-  ];
+        return ['스윙 템포 유지', '그린 읽기 신중히', '바람 방향 체크'];
       case SportType.tennis:
-        return ['서브 정확도 중점': '발 움직임 활발히', '상대 약점 공략'
-  ];
+        return ['서브 정확도 중점', '발 움직임 활발히', '상대 약점 공략'];
       case SportType.swimming:
-        return ['호흡 리듬 유지': '스트레칭 충분히', '페이스 조절'
-  ];
+        return ['호흡 리듬 유지', '스트레칭 충분히', '페이스 조절'];
       case SportType.running:
-        return ['워밍업 필수': '수분 섭취', '무릎 보호'
-  ];
+        return ['워밍업 필수', '수분 섭취', '무릎 보호'];
       case SportType.fitness:
-        return ['폼 정확히': '호흡 신경쓰기', '무리하지 않기'
-  ];
+        return ['폼 정확히', '호흡 신경쓰기', '무리하지 않기'];
       default:
-        return ['준비운동 철저히': '안전 우선', '즐기면서 하기'
-  ];
+        return ['준비운동 철저히', '안전 우선', '즐기면서 하기'];
     }
   }
   
   String _getKoreanWeatherCondition(String condition) {
-    switch (condition.toLowerCase() {
+    switch (condition.toLowerCase()) {
       case 'clear': return '맑음';
       case 'clouds':
         return '흐림';
@@ -348,8 +355,10 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                     color: isSelected
                         ? AppTheme.primaryColor
                         : AppTheme.dividerColor,
-                    width: isSelected ? 2 : 1),
+                    width: isSelected ? 2 : 1,
+                  ),
                   borderRadius: BorderRadius.circular(12),
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -401,8 +410,11 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             end: Alignment.bottomRight,
             colors: [
               _getSportColor(_selectedType).withOpacity(0.1),
-              _getSportColor(_selectedType).withOpacity(0.05)]),
+              _getSportColor(_selectedType).withOpacity(0.05),
+            ],
+          ),
           borderRadius: BorderRadius.circular(16),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -434,6 +446,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                               decoration: BoxDecoration(
                                 color: conditionColor.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(12),
+                              ),
                               child: Text(
                                 '컨디션: $condition',
                                 style: TextStyle(
@@ -454,6 +467,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                       decoration: BoxDecoration(
                         color: _getScoreColor(fortune.score),
                         borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Text(
                         '${fortune.score}점',
                         style: const TextStyle(
@@ -600,13 +614,14 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 decoration: BoxDecoration(
                   color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
                   borderRadius: BorderRadius.circular(8),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildWeatherDetail(Icons.air, '바람': '${windSpeed.round()}m/s'),
-                    _buildWeatherDetail(Icons.water_drop, '습도': '${humidity.round()}%'),
+                    _buildWeatherDetail(Icons.air, '바람', '${windSpeed.round()}m/s'),
+                    _buildWeatherDetail(Icons.water_drop, '습도', '${humidity.round()}%'),
                     if (_weatherData!.temperature > 25)
-                      _buildWeatherDetail(Icons.wb_sunny, '체감': '${_weatherData!.feelsLike.round()}°'),
+                      _buildWeatherDetail(Icons.wb_sunny, '체감', '${_weatherData!.feelsLike.round()}°'),
                   ],
                 ),
               ),
@@ -618,6 +633,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 decoration: BoxDecoration(
                   color: _getWeatherAdviceColor(),
                   borderRadius: BorderRadius.circular(8),
+                ),
                 child: Row(
                   children: [
                     Icon(Icons.info_outline, size: 16, color: Colors.white),
@@ -713,8 +729,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
   }
 
   Widget _buildPerformanceChart(Fortune fortune) {
-    final categories = ['체력': '집중력', '유연성': '근력', '지구력'
-  ];
+    final categories = ['체력', '집중력', '유연성', '근력', '지구력'];
     final scores = [
       fortune.score + 5,
       fortune.score - 5,
@@ -745,8 +760,9 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                       borderColor: AppTheme.primaryColor,
                       borderWidth: 2,
                       dataEntries: scores
-                          .map((score) => RadarEntry(value: score.toDouble())
+                          .map((score) => RadarEntry(value: score.toDouble()))
                           .toList(),
+                    ),
                   ],
                   radarShape: RadarShape.polygon,
                   radarBorderData: BorderSide(color: AppTheme.dividerColor),
@@ -852,7 +868,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
               children: [
                 Expanded(
                   child: _buildInfoBox(
-                    '예상 스코어': '$expectedScore타',
+                    '예상 스코어',
+                    '$expectedScore타',
                     Icons.flag,
                     Colors.green,
                   ),
@@ -925,7 +942,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
               children: [
                 Expanded(
                   child: _buildInfoBox(
-                    '승률 예측': '$winRate%',
+                    '승률 예측',
+                    '$winRate%',
                     Icons.emoji_events,
                     Colors.amber,
                   ),
@@ -933,7 +951,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildInfoBox(
-                    '체력': '$stamina%',
+                    '체력',
+                    '$stamina%',
                     Icons.battery_charging_full,
                     Colors.green,
                   ),
@@ -1189,10 +1208,10 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             ),
           ),
           const SizedBox(height: 8),
-          _buildWorkoutItem('벤치프레스': '4세트 x 12회'),
-          _buildWorkoutItem('덤벨 플라이': '3세트 x 15회'),
-          _buildWorkoutItem('푸시업': '3세트 x 20회'),
-          _buildWorkoutItem('케이블 크로스오버': '3세트 x 15회'),
+          _buildWorkoutItem('벤치프레스', '4세트 x 12회'),
+          _buildWorkoutItem('덤벨 플라이', '3세트 x 15회'),
+          _buildWorkoutItem('푸시업', '3세트 x 20회'),
+          _buildWorkoutItem('케이블 크로스오버', '3세트 x 15회'),
         ],
       ),
     );
@@ -1229,6 +1248,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         children: [
           Icon(icon, color: color, size: 24),
@@ -1332,12 +1352,13 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16)),
-              if (isToday),
-            Container(
+              if (isToday)
+                Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Text(
                     '오늘',
                     style: TextStyle(
@@ -1376,6 +1397,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
               decoration: BoxDecoration(
                 color: Colors.green.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(4),
+              ),
               child: const Text(
                 '홈경기',
                 style: TextStyle(

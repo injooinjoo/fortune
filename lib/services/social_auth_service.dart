@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/logger.dart';
@@ -17,70 +19,150 @@ class SocialAuthService {
   
   SocialAuthService(this._supabase);
 
-  // Google Sign In - Supabase OAuth 방식 사용
-  Future<AuthResponse?> signInWithGoogle() async {
+  // Google Sign In - Supabase 표준 OAuth 사용
+  Future<AuthResponse?> signInWithGoogle({BuildContext? context}) async {
     try {
-      print('🟡 [SocialAuthService] signInWithGoogle() started');
-      Logger.info('=== GOOGLE OAUTH PROCESS STARTED ===');
+      print('🟡 [SocialAuthService] signInWithGoogle() started with Supabase OAuth');
+      Logger.info('=== GOOGLE OAUTH SUPABASE PROCESS STARTED ===');
       
       // Debug: Log the Supabase URL being used
       final supabaseUrl = Environment.supabaseUrl;
-      print('Fortune cached');
-      Logger.info('Supabase initialized successfully');
+      Logger.info('Using Supabase URL for OAuth: ${supabaseUrl.substring(0, 30)}...');
       
       // Verify the URL is correct
       if (supabaseUrl.contains('your-project')) {
-        Logger.error('Fortune cached');
+        Logger.error('Supabase URL is not properly configured');
         throw Exception('Supabase URL is not properly configured');
       }
       
-      // Debug: Log platform and redirect URL
-      final isWeb = kIsWeb;
-      final isIOS = !kIsWeb && Platform.isIOS;
-      final isAndroid = !kIsWeb && Platform.isAndroid;
-      print('Fortune cached');
-      Logger.info('Supabase initialized successfully');
+      print('🟡 [SocialAuthService] Starting Supabase OAuth for Google...');
+      Logger.info('Starting Supabase OAuth for Google');
       
-      // Supabase OAuth 리다이렉트 방식 사용
-      // 웹에서는 현재 URL을 기준으로 리다이렉트
-      final redirectUrl = kIsWeb 
-        ? '${Uri.base.origin}/auth/callback'
-        : 'io.supabase.flutter://login-callback/';
-      print('Redirect URL: $redirectUrl');
-      Logger.info('Redirect URL: $redirectUrl');
-      
-      // Debug: Log OAuth provider settings
-      print('Provider: ${OAuthProvider.google}');
-      Logger.info('Provider: ${OAuthProvider.google}');
-      Logger.info('Scopes: email');
-      
-      // Log before calling signInWithOAuth
-      print('🟡 [SocialAuthService] Calling Supabase signInWithOAuth...');
-      Logger.info('Calling Supabase signInWithOAuth...');
-      
-      await _supabase.auth.signInWithOAuth(
+      // Use Supabase standard OAuth
+      final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: redirectUrl,
-        scopes: 'email',
-        queryParams: {
-          'access_type': 'offline',
-          'prompt': 'consent'}
+        redirectTo: kIsWeb 
+          ? '${Uri.base.origin}/auth/callback'
+          : 'com.beyond.fortune://auth-callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
       );
       
-      print('🟡 [SocialAuthService] OAuth redirect initiated successfully');
-      Logger.info('=== GOOGLE OAUTH REDIRECT INITIATED ===');
-      Logger.info('Check browser/webview for Google login page');
-      Logger.info('Supabase initialized successfully');
+      if (!response) {
+        Logger.warning('Google OAuth initiation failed');
+        throw Exception('Google OAuth sign in failed to start');
+      }
       
-      // 리다이렉트 방식이므로 응답을 기다리지 않고 null 반환
-      // 실제 인증 완료는 auth callback에서 처리됨
+      Logger.info('Google OAuth initiated successfully - redirecting to browser');
+      print('🟡 [SocialAuthService] OAuth redirect initiated');
+      
+      Logger.securityCheckpoint('Google OAuth flow initiated');
+      
+      // OAuth는 브라우저에서 처리되며, 완료 후 앱으로 돌아올 때 
+      // Supabase가 자동으로 세션을 처리합니다.
+      // 따라서 여기서는 null을 반환하고, 
+      // 실제 인증 완료는 deep link 콜백에서 처리됩니다.
+      Logger.info('=== GOOGLE OAUTH SUPABASE INITIATED ===');
       return null;
+      
     } catch (error, stackTrace) {
-      print('Fortune cached');
-      Logger.error('=== GOOGLE OAUTH FAILED ===', error, stackTrace);
-      Logger.error('type: ${error.runtimeType}');
-      Logger.error('Fortune cached');
+      Logger.error('=== GOOGLE OAUTH SUPABASE FAILED ===', error, stackTrace);
+      Logger.error('Error type: ${error.runtimeType}');
       rethrow;
+    }
+  }
+  
+  
+  // Exchange authorization code for Supabase session
+  Future<AuthResponse?> _exchangeCodeForSession(String authData, String redirectUrl) async {
+    try {
+      Logger.info('Exchanging auth data for session: ${authData.substring(0, 50)}...');
+      
+      // PRIORITY 1: Check for fragment with access_token first (most common case for OAuth)
+      if (authData.contains('#access_token') || (authData.contains('://') && authData.contains('#'))) {
+        Logger.info('Processing callback URL with fragment');
+        final uri = Uri.parse(authData);
+        
+        // Handle fragment-based OAuth response (implicit flow)
+        if (uri.fragment.isNotEmpty) {
+          Logger.info('Fragment found: ${uri.fragment.substring(0, 50)}...');
+          
+          // Parse the fragment to extract tokens
+          final fragment = uri.fragment;
+          final fragmentParams = <String, String>{};
+          
+          for (final param in fragment.split('&')) {
+            final keyValue = param.split('=');
+            if (keyValue.length == 2) {
+              fragmentParams[keyValue[0]] = Uri.decodeComponent(keyValue[1]);
+            }
+          }
+          
+          final accessToken = fragmentParams['access_token'];
+          final refreshToken = fragmentParams['refresh_token'];
+          
+          Logger.info('Fragment tokens - access: ${accessToken != null}, refresh: ${refreshToken != null}');
+          
+          if (accessToken != null) {
+            // Use the direct session setting approach that works with Supabase
+            try {
+              // Create session URL format that Supabase expects
+              final sessionUrl = Uri.parse('$redirectUrl#access_token=$accessToken' + 
+                (refreshToken != null ? '&refresh_token=$refreshToken' : '') +
+                '&token_type=bearer&type=recovery');
+              
+              Logger.info('Attempting getSessionFromUrl with formatted URL');
+              final sessionResponse = await _supabase.auth.getSessionFromUrl(sessionUrl);
+              
+              if (sessionResponse.session != null) {
+                Logger.info('✅ Session created successfully via getSessionFromUrl');
+                return AuthResponse(session: sessionResponse.session, user: sessionResponse.session?.user);
+              }
+            } catch (sessionUrlError) {
+              Logger.warning('getSessionFromUrl failed: $sessionUrlError');
+            }
+            
+            // Fallback: Try recoverSession (standard approach)
+            try {
+              final response = await _supabase.auth.recoverSession(accessToken);
+              if (response.session != null) {
+                Logger.info('✅ Session recovered via recoverSession');
+                return AuthResponse(session: response.session, user: response.session?.user);
+              }
+            } catch (recoverError) {
+              Logger.warning('recoverSession failed: $recoverError');
+            }
+          }
+        }
+      }
+      
+      // PRIORITY 2: Handle authorization code flow
+      if (authData.startsWith('http') || authData.contains('://')) {
+        Logger.info('Processing standard OAuth callback URL');
+        final uri = Uri.parse(authData);
+        
+        final code = uri.queryParameters['code'];
+        if (code != null) {
+          Logger.info('Found authorization code, processing with getSessionFromUrl');
+          final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
+          return AuthResponse(session: sessionResponse.session, user: sessionResponse.session?.user);
+        }
+      }
+      
+      // PRIORITY 3: If authData is just the code
+      if (!authData.contains('://') && !authData.contains('#')) {
+        Logger.info('Processing raw authorization code');
+        final callbackUrl = '$redirectUrl?code=$authData';
+        final uri = Uri.parse(callbackUrl);
+        final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
+        return AuthResponse(session: sessionResponse.session, user: sessionResponse.session?.user);
+      }
+      
+      Logger.warning('No valid auth data format found');
+      return null;
+      
+    } catch (error) {
+      Logger.error('Failed to exchange code for session', error);
+      return null;
     }
   }
   
@@ -461,7 +543,7 @@ class SocialAuthService {
       
       // Kakao 로그아웃
       try {
-        await UserApi.instance.logout();
+        await kakao.UserApi.instance.logout();
       } catch (e) {
         // 카카오 로그아웃 실패 무시
       }
@@ -506,7 +588,7 @@ class SocialAuthService {
   // Kakao 계정 연결 해제
   Future<void> disconnectKakao() async {
     try {
-      await UserApi.instance.unlink();
+      await kakao.UserApi.instance.unlink();
     } catch (e) {
       Logger.error('Failed to disconnect Kakao', e);
     }

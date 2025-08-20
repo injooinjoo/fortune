@@ -94,7 +94,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
       params: params
     );
-}
+  }
 
   @override
   Future<Map<String, dynamic>?> getFortuneParams() async {
@@ -105,7 +105,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
         _relationshipType == null) {
       Toast.warning(context, '모든 필수 정보를 입력해주세요.');
       return null;
-}
+    }
 
     return {
       'person1': {
@@ -126,7 +126,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
       'relationshipDuration': _relationshipDuration,
       'concernAreas': _concernAreas
     };
-}
+  }
 
   @override
   Widget buildInputForm() {
@@ -321,8 +321,8 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               const SizedBox(width: 8),
               Text(
                 title,
-                style: theme.textTheme.headlineSmall)
-            ]
+                style: theme.textTheme.headlineSmall),
+            ],
           ),
           const SizedBox(height: 16),
           
@@ -362,7 +362,10 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         const SizedBox(width: 8),
                         Text('남성')
                       ]
-                    ))),
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: InkWell(
@@ -385,9 +388,12 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         const SizedBox(width: 8),
                         Text('여성')
                       ]
-                    ))))
-              ]
-            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           
           // Birth Date
@@ -444,11 +450,12 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 value: entry.key,
                 child: Text(entry.value));
             }).toList(),
-            onChanged: onBirthTimeChanged),
-        ]
-      )
+            onChanged: onBirthTimeChanged,
+          ),
+        ],
+      ),
     );
-}
+  }
 
   @override
   Widget buildFortuneResult() {
@@ -460,10 +467,10 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
         _buildElementalHarmony(),
         _buildRelationshipDynamics(),
         _buildFutureOutlook(),
-        _buildAdviceForSuccess()
-      ]
+        _buildAdviceForSuccess(),
+      ],
     );
-}
+  }
 
   Widget _buildCompatibilityScore() {
     final theme = Theme.of(context);
@@ -490,21 +497,25 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     strokeWidth: 20,
                     backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      _getScoreColor(overallScore))),
+                      _getScoreColor(overallScore)),
+                  ),
+                ),
                 Column(
                   children: [
                     Text(
                       '$overallScore',
                       style: theme.textTheme.displayLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: _getScoreColor(overallScore))),
-                    Text(
-                      '천생연분',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.primary)))
-                  ]
-                )
-              ]
+                        color: _getScoreColor(overallScore)),
+                  ),
+                  Text(
+                    '천생연분',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.primary),
+                  ),
+                ],
+              ),
+            ],
             ),
             const SizedBox(height: 24),
             Container(
@@ -513,15 +524,19 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 gradient: LinearGradient(
                   colors: [
                     theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1)]),
-                borderRadius: BorderRadius.circular(12)),
+                    theme.colorScheme.secondary.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Text(
                 '두 분은 서로를 보완하는 환상적인 궁합입니다. 특히 정서적 교감과 가치관의 일치도가 높아 장기적인 관계 발전이 기대됩니다.',
                 style: theme.textTheme.bodyLarge,
-                textAlign: TextAlign.center))
-          ]
-        )
-      )
+                textAlign: TextAlign.center),
+            ),
+          ],
+        ),
+      ),
     );
 }
 
@@ -549,8 +564,9 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 const SizedBox(width: 8),
                 Text(
                   '사주 분석',
-                  style: theme.textTheme.headlineSmall))
-            ],
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             _buildSajuComparison('천간', '갑목(甲木)', '을목(乙木)', '상생관계', Colors.green),
             const SizedBox(height: 12),
@@ -558,12 +574,12 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
             const SizedBox(height: 12),
             _buildSajuComparison('일주', '갑자(甲子)', '을축(乙丑)', '천을합', Colors.purple),
             const SizedBox(height: 12),
-            _buildSajuComparison('대운', '상승기', '안정기', '조화로움', Colors.blue)
-          ]
-        )
-      )
+            _buildSajuComparison('대운', '상승기', '안정기', '조화로움', Colors.blue),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildSajuComparison(String category, String person1, String person2, String relation, Color color) {
     final theme = Theme.of(context);
@@ -575,6 +591,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: theme.colorScheme.onSurface.withOpacity(0.1)),
+      ),
       child: Row(
         children: [
           SizedBox(
@@ -582,7 +599,9 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
             child: Text(
               category,
               style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold),
+            ),
+          ),
           Expanded(
             child: Row(
               children: [
@@ -590,7 +609,8 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   child: Text(
                     person1,
                     style: theme.textTheme.bodySmall,
-                    textAlign: TextAlign.center)),
+                    textAlign: TextAlign.center),
+                ),
                 Icon(
                   Icons.compare_arrows,
                   size: 16,
@@ -599,30 +619,33 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   child: Text(
                     person2,
                     style: theme.textTheme.bodySmall,
-                    textAlign: TextAlign.center))
-              ]
-            )
+                    textAlign: TextAlign.center),
+                ),
+              ],
+            ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: color.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
+            ),
             child: Text(
               relation,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: color,
-                fontWeight: FontWeight.bold))
-        ]
-      )
+                fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
 }
 
   Widget _buildElementalHarmony() {
     final theme = Theme.of(context);
     
-    final elements = ['목(木)': '화(火)', '토(土)': '금(金)', '수(水)'
-  ];
+    final elements = ['목(木)', '화(火)', '토(土)', '금(金)', '수(水)'];
     final person1Values = [70, 85, 60, 40, 90];
     final person2Values = [80, 60, 75, 85, 50];
     
@@ -641,8 +664,9 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 const SizedBox(width: 8),
                 Text(
                   '오행 조화',
-                  style: theme.textTheme.headlineSmall)]
-            ],
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               height: 250,
@@ -665,13 +689,14 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     RadarDataSet(
                       fillColor: theme.colorScheme.primary.withOpacity(0.2),
                       borderColor: theme.colorScheme.primary,
-                      dataEntries: person1Values.map((v) => RadarEntry(value: v.toDouble()).toList(),
+                      dataEntries: person1Values.map((v) => RadarEntry(value: v.toDouble())).toList(),
                       borderWidth: 2),
                     RadarDataSet(
                       fillColor: theme.colorScheme.secondary.withOpacity(0.2),
                       borderColor: theme.colorScheme.secondary,
-                      dataEntries: person2Values.map((v) => RadarEntry(value: v.toDouble()).toList(),
-                      borderWidth: 2)],
+                      dataEntries: person2Values.map((v) => RadarEntry(value: v.toDouble())).toList(),
+                      borderWidth: 2),
+                  ],
                   getTitle: (index, angle) {
                     return RadarChartTitle(
                       text: elements[index],
@@ -687,8 +712,8 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               children: [
                 _buildLegendItem(_person1Name ?? '첫 번째 사람', theme.colorScheme.primary),
                 const SizedBox(width: 24),
-                _buildLegendItem(_person2Name ?? '두 번째 사람', theme.colorScheme.secondary)
-              ]
+                _buildLegendItem(_person2Name ?? '두 번째 사람', theme.colorScheme.secondary),
+              ],
             ),
             const SizedBox(height: 16),
             Container(
@@ -696,14 +721,16 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(8),
+              ),
               child: Text(
                 '목(木)과 수(水)의 조화가 뛰어나 서로의 성장을 돕는 관계입니다. 화(火) 기운의 균형을 맿추면 더욱 완벽한 조화를 이룰 수 있습니다.',
-                style: theme.textTheme.bodyMedium))
-          ]
-        )
-      )
+                style: theme.textTheme.bodyMedium),
+            ),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildLegendItem(String label, Color color) {
     final theme = Theme.of(context);
@@ -717,33 +744,33 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
         const SizedBox(width: 8),
         Text(
           label,
-          style: theme.textTheme.bodySmall))
-      ]
+          style: theme.textTheme.bodySmall),
+      ],
     );
-}
+  }
 
   Widget _buildRelationshipDynamics() {
     final theme = Theme.of(context);
     
     final dynamics = [
       {
-        'aspect': '정서적 괐감': 'score': 90,
+        'aspect': '정서적 괐감', 'score': 90,
         'description': '깊은 이해와 공감으로 연결된 관계',
       },
       {
-        'aspect': '의사소통': 'score': 85,
+        'aspect': '의사소통', 'score': 85,
         'description': '솔직하고 열린 대화가 가능',
       },
       {
-        'aspect': '가치관 일치': 'score': 88,
+        'aspect': '가치관 일치', 'score': 88,
         'description': '인생의 중요한 가치를 공유',
       },
       {
-        'aspect': '생활 리듬': 'score': 75,
+        'aspect': '생활 리듬', 'score': 75,
         'description': '약간의 조율이 필요하지만 맿출 수 있음',
       },
       {
-        'aspect': '미래 비전': 'score': 82,
+        'aspect': '미래 비전', 'score': 82,
         'description': '함께 그리는 미래가 조화로움'
       }
     ];
@@ -763,8 +790,9 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 const SizedBox(width: 8),
                 Text(
                   '관계 역학',
-                  style: theme.textTheme.headlineSmall)]
-            ],
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             ...dynamics.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -778,6 +806,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                           item['aspect'] as String,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold)),
+                      ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -785,41 +814,45 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         decoration: BoxDecoration(
                           color: _getScoreColor(item['score'] as int),
                           borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Text(
                           '${item['score']}%',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: _getScoreColor(item['score'] as int),
-                            fontWeight: FontWeight.bold))
-                    ]
+                            fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item['description'] as String,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                  ),
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: (item['score'] as int) / 100,
                     backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      _getScoreColor(item['score'] as int))
-                ]
-              )
-            )).toList()
-          ]
-        )
-      )
+                      _getScoreColor(item['score'] as int)),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildFutureOutlook() {
     final theme = Theme.of(context);
     
     final milestones = [
-      {'period': '3개월': 'event': '깊은 신뢰 형성': 'advice': '서로의 개인 시간 존중하기'},
-      {'period': '6개월': 'event': '안정적인 관계 확립': 'advice': '미래 계획 공유하기'},
-      {'period': '1년': 'event': '중요한 결정의 시기': 'advice': '가족과의 만남 준비'},
-      {'period': '2년': 'event': '더 깊은 결합': 'advice': '공동의 목표 설정'}
+      {'period': '3개월', 'event': '깊은 신뢰 형성', 'advice': '서로의 개인 시간 존중하기'},
+      {'period': '6개월', 'event': '안정적인 관계 확립', 'advice': '미래 계획 공유하기'},
+      {'period': '1년', 'event': '중요한 결정의 시기', 'advice': '가족과의 만남 준비'},
+      {'period': '2년', 'event': '더 깊은 결합', 'advice': '공동의 목표 설정'}
     ];
     
     return Padding(
@@ -833,12 +866,15 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               children: [
                 Icon(
                   Icons.auto_awesome_rounded,
-                  color: theme.colorScheme.primary),
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '미래 전망',
-                  style: theme.textTheme.headlineSmall)]
-            ],
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ...milestones.map((milestone) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -853,12 +889,14 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
+                    ),
                     child: Text(
                       milestone['period'] as String,
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary),
-                      textAlign: TextAlign.center)),
+                      textAlign: TextAlign.center),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -872,27 +910,31 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         Text(
                           milestone['advice'] as String,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7))
-                      ]
-                    )
-                  )
-                ]
-              )
-            )).toList()
-          ]
-        )
-      )
+                            color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildAdviceForSuccess() {
     final theme = Theme.of(context);
     
     final adviceCategories = [
       {
-        'title': 'DO - 관계 발전을 위한 행동': 'items': [
-          '서로의 개성과 차이점을 존중하고 받아들이기': '정기적인 데이트와 특별한 추억 만들기',
-          '감사와 애정 표현을 아끼지 않기': '함께 성장할 수 있는 공동의 목표 세우기',
+        'title': 'DO - 관계 발전을 위한 행동', 
+        'items': [
+          '서로의 개성과 차이점을 존중하고 받아들이기',
+          '정기적인 데이트와 특별한 추억 만들기',
+          '감사와 애정 표현을 아끼지 않기',
+          '함께 성장할 수 있는 공동의 목표 세우기',
         ],
         'icon': Icons.thumb_up,
         'color': Colors.green,
@@ -900,8 +942,10 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
       {
         'title': "DON'T - 피해야 할 행동",
         'items': [
-          '과거의 상처나 실수를 반복해서 언급하지 않기': '상대방을 다른 사람과 비교하지 않기',
-          '중요한 결정을 혼자서 내리지 않기': '감정적일 때 충동적인 말이나 행동 피하기',
+          '과거의 상처나 실수를 반복해서 언급하지 않기',
+          '상대방을 다른 사람과 비교하지 않기',
+          '중요한 결정을 혼자서 내리지 않기',
+          '감정적일 때 충동적인 말이나 행동 피하기',
         ],
         'icon': Icons.thumb_down,
         'color': Colors.red
@@ -919,12 +963,15 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               children: [
                 Icon(
                   Icons.tips_and_updates_rounded,
-                  color: theme.colorScheme.primary),
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '성공적인 관계를 위한 조언',
-                  style: theme.textTheme.headlineSmall)]
-            ],
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ...adviceCategories.map((category) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -933,6 +980,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   border: Border.all(
                     color: (category['color'] as Color?) ?? theme.colorScheme.primary),
                   borderRadius: BorderRadius.circular(12),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -943,6 +991,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
                           topRight: Radius.circular(11)),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -954,9 +1003,9 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                             category['title'] as String,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: (category['color'] as Color?) ?? theme.colorScheme.primary))
-                        ]
-                      )
+                              color: (category['color'] as Color?) ?? theme.colorScheme.primary)),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(12),
@@ -974,19 +1023,19 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                               Expanded(
                                 child: Text(
                                   item as String,
-                                  style: theme.textTheme.bodyMedium))
-                            ]
-                          )
-                        )).toList()
-                      )
-                    )
-                  ]
-                )
-              )
-            )).toList()
-          ]
-        )
-      )
+                                  style: theme.textTheme.bodyMedium)),
+                            ],
+                          ),
+                        )).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )),
+          ],
+        ),
+      ),
     );
-}
+  }
 }

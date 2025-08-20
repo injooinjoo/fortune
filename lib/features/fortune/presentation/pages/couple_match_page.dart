@@ -180,7 +180,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.pink.withOpacity(0.3),
-                  Colors.red.withOpacity(0.3)])),
+                  Colors.red.withOpacity(0.3)],
+              ),
+            ),
             child: const Icon(
               Icons.favorite,
               color: Colors.red,
@@ -282,6 +284,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     ),
                   );
                 }).toList(),
+              ),
               const SizedBox(height: 16),
               
               // Challenge Areas
@@ -319,13 +322,15 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     ),
                   );
                 }).toList(),
+              ),
               const SizedBox(height: 16),
               
               // Future Goal
               Text(
                 '관계의 목표',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               ...(_futureGoals.entries.map((entry) {
                 final isSelected = _futureGoal == entry.key;
@@ -446,6 +451,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     ),
                   ),
                 ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: InkWell(
@@ -473,6 +479,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 ),
               ),
             ],
+          ),
           const SizedBox(height: 16),
           
           // Birth Date
@@ -500,13 +507,15 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     ? '${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일'
                     : '생년월일을 선택하세요'),
             ),
+          ),
           const SizedBox(height: 16),
           
           // Personality
           Text(
             '성격 유형',
             style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
             value: personality,
@@ -528,7 +537,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
           Text(
             '사랑의 언어 (2개 이상)',
             style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -553,8 +563,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                       : null,
                   onDeleted: isSelected ? () {} : null),
                 );
-            }).toList()),
-          ],
+            }).toList(),
+          ),
+        ],
         ),
       );
   }
@@ -569,7 +580,9 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
         _buildCommunicationGuide(),
         _buildConflictResolution(),
         _buildGrowthRoadmap(),
-        _buildDateIdeas()]);
+        _buildDateIdeas(),
+      ],
+    );
   }
 
   Widget _buildOverallCompatibility() {
@@ -623,6 +636,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     Colors.pink.withOpacity(0.1),
                     Colors.red.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Text(
                 '${_myName ?? "당신"}님과 ${_partnerName ?? "연인"}님은 서로를 깊이 이해하고 보완하는 환상의 커플입니다. 특히 감정적 교감과 가치관의 일치도가 높아 오래도록 행복한 관계를 유지할 수 있습니다.',
                 style: theme.textTheme.bodyLarge,
@@ -764,7 +778,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
             ],
           ),
         );
-      }).toList();
+      }).toList(),
+    );
   }
 
   Widget _buildCommunicationGuide() {
@@ -885,6 +900,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: Colors.orange.withOpacity(0.3)),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -909,7 +925,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     ],
                   ),
                 ),
-              )).toList(),
+              )),
             ] else ...[
               Container(
                 padding: const EdgeInsets.all(16),
@@ -1003,6 +1019,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: theme.colorScheme.primary.withOpacity(0.2)),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1048,10 +1065,11 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: theme.colorScheme.onSurface.withOpacity(0.1)),
+                          ),
                           child: Text(
                             activity as String,
                             style: theme.textTheme.bodySmall)),
-                        )).toList(),
+                        ).toList(),
                       ),
                     ),
                   ],
@@ -1079,7 +1097,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       child: GlassContainer(
         padding: const EdgeInsets.all(20),
-            child: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -1111,6 +1129,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: Colors.pink.withOpacity(0.3)),
+                ),
                 child: Row(
                   children: [
                     Text(
@@ -1136,8 +1155,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   ],
                 ),
               )).toList(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

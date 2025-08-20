@@ -69,7 +69,8 @@ extension RouteNavigationVisibility on String {
       '/fortune',
       '/todo',
       '/physiognomy',
-      '/profile'];
+      '/profile',
+      '/trend'];
 
     // Check if current route exactly matches or starts with a main route
     for (final mainRoute in mainRoutes) {
@@ -116,7 +117,8 @@ extension RouteNavigationVisibility on String {
       '/fortune',
       '/todo',
       '/physiognomy',
-      '/profile'];
+      '/profile',
+      '/trend'];
 
     // Check if this is exactly a main route
     if (mainRoutes.contains(this)) {

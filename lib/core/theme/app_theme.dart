@@ -200,7 +200,7 @@ class AppTheme {
   }
 }
 
-/// Custom page transition builder with fast animations
+/// Custom page transition builder with fast animations (80ms)
 class _FastPageTransitionBuilder extends PageTransitionsBuilder {
   const _FastPageTransitionBuilder();
 
@@ -225,4 +225,7 @@ class _FastPageTransitionBuilder extends PageTransitionsBuilder {
       child: child,
     );
   }
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 80);
 }

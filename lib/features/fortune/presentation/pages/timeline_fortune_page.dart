@@ -47,6 +47,7 @@ class _TimelineInputForm extends StatelessWidget {
             Icons.timeline,
             size: 120,
             color: theme.colorScheme.primary.withOpacity(0.3)),
+        ),
         
         const SizedBox(height: 32),
         
@@ -58,7 +59,13 @@ class _TimelineInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),)]);
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

@@ -88,7 +88,8 @@ class FortuneCard extends StatelessWidget {
                   if (emoji != null)
                     Text(
                       emoji!,
-                      style: Theme.of(context).textTheme.displaySmall)
+                      style: Theme.of(context).textTheme.displaySmall,
+                    )
                   else
                     Container(
                       width: 50,
@@ -101,7 +102,9 @@ class FortuneCard extends StatelessWidget {
                         size: AppDimensions.iconSizeLarge,
                         color: adjustedGradient != null 
                             ? (isDarkMode ? AppColors.textPrimaryDark : (iconColor ?? theme.colorScheme.primary))
-                            : (iconColor ?? theme.colorScheme.primary)),
+                            : (iconColor ?? theme.colorScheme.primary),
+                      ),
+                    ),
                   SizedBox(height: AppSpacing.spacing4),
                   Text(
                     title,
@@ -142,6 +145,15 @@ class FortuneCard extends StatelessWidget {
                           color: adjustedGradient != null 
                               ? (isDarkMode ? AppColors.textPrimaryDark : theme.textTheme.bodyMedium?.color)
                               : theme.textTheme.bodyMedium?.color,
-                          fontWeight: FontWeight.w600)))]])))));
+                          fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

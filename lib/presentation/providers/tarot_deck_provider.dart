@@ -186,7 +186,7 @@ class TarotDeckStatsNotifier extends StateNotifier<Map<String, int>> {
       try {
         final Map<String, dynamic> decoded = Map<String, dynamic>.from(
           Uri.splitQueryString(statsJson));
-        state = decoded.map((key, value) => MapEntry(key, int.parse(value.toString()));
+        state = decoded.map((key, value) => MapEntry(key, int.parse(value.toString())));
       } catch (_) {
         state = {};
       }

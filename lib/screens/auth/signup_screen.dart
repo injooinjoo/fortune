@@ -83,6 +83,7 @@ class _SignupScreenState extends State<SignupScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => context.go('/')),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: AppSpacing.paddingAll24,
@@ -189,6 +190,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     AppColors.textPrimaryDark)))
                             : const Text('회원가입')),
+                    ),
                     SizedBox(height: AppSpacing.spacing4),
                     TextButton(
                       onPressed: () => context.go('/'),

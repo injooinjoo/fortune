@@ -40,10 +40,13 @@ class StatsCard extends StatelessWidget {
                     color: (iconColor ?? theme.colorScheme.primary)
                         .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Icon(
                     icon,
                     color: iconColor ?? theme.colorScheme.primary,
-                    size: 24)),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12)],
               Expanded(
                 child: Text(
@@ -51,7 +54,11 @@ class StatsCard extends StatelessWidget {
                   style: theme.textTheme.bodyMedium?.copyWith(
                       color:
                           theme.colorScheme.onSurface.withOpacity(0.7)),
-              if (trailing != null) trailing!]),
+                ),
+              ),
+              if (trailing != null) trailing!,
+            ],
+          ),
           const SizedBox(height: 12),
           if (isLoading)
             const SizedBox(

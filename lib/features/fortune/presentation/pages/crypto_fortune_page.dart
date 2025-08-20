@@ -4,6 +4,8 @@ import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../services/external_api_service.dart';
+import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../presentation/providers/auth_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -33,7 +35,13 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     // Get crypto market data
     _marketData = await ExternalApiService.getCryptoMarketData();
     
-    final fortune = await super.generateFortune(params);
+    // Generate fortune using the fortune service
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getFortune(
+      fortuneType: widget.fortuneType,
+      userId: ref.read(userProvider).value?.id ?? 'anonymous',
+      params: params
+    );
     
     // Extract crypto-specific data from fortune
     _extractCryptoData(fortune);
@@ -111,7 +119,8 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16)),
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -120,8 +129,11 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
             end: Alignment.bottomRight,
             colors: [
               sentimentColor.withOpacity(0.2),
-              sentimentColor.withOpacity(0.05)]),
-          borderRadius: BorderRadius.circular(16)),
+              sentimentColor.withOpacity(0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -132,7 +144,9 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                   '오늘의 시장 기운',
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppTheme.textSecondaryColor)),
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -143,7 +157,9 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: sentimentColor)),
+                        color: sentimentColor,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -158,7 +174,8 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                     value: fortune.score / 100,
                     strokeWidth: 10,
                     backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(sentimentColor)),
+                    valueColor: AlwaysStoppedAnimation<Color>(sentimentColor),
+                  ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -167,12 +184,16 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: sentimentColor)),
+                          color: sentimentColor,
+                        ),
+                      ),
                       const Text(
                         '투자지수',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondaryColor)),
+                          color: AppTheme.textSecondaryColor,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -201,7 +222,9 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                   '암호화폐 운세 분석',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -209,7 +232,9 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
               fortune.message,
               style: const TextStyle(
                 fontSize: 16,
-                height: 1.5)),
+                height: 1.5,
+              ),
+            ),
             const SizedBox(height: 20),
             _buildTimingIndicator(),
           ],
@@ -229,7 +254,9 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
           '시간대별 투자 운세',
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         SizedBox(
           height: 150,
@@ -244,16 +271,23 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                       if (value.toInt() < times.length) {
                         return Text(
                           times[value.toInt()],
-                          style: const TextStyle(fontSize: 10));
+                          style: const TextStyle(fontSize: 10),
+                        );
                       }
                       return const Text('');
-                    })),
+                    },
+                  ),
+                ),
                 leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
+                  sideTitles: SideTitles(showTitles: false),
+                ),
                 topTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
+                  sideTitles: SideTitles(showTitles: false),
+                ),
                 rightTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false))),
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+              ),
               borderData: FlBorderData(show: false),
               lineBarsData: [
                 LineChartBarData(
@@ -269,11 +303,15 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                         radius: 4,
                         color: AppTheme.primaryColor,
                         strokeWidth: 2,
-                        strokeColor: Colors.white);
-                    }),
+                        strokeColor: Colors.white,
+                      );
+                    },
+                  ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: AppTheme.primaryColor.withOpacity(0.2))),
+                    color: AppTheme.primaryColor.withOpacity(0.2),
+                  ),
+                ),
               ],
             ),
           ),
@@ -319,14 +357,18 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: strategyColor)),
+                      color: strategyColor,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     _getStrategyDescription(),
                     style: const TextStyle(
                       fontSize: 14,
-                      height: 1.4),
-                    textAlign: TextAlign.center),
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
@@ -343,15 +385,17 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
         return '변동성이 있는 시기입니다. 여러 번에 나누어 매수하세요.';
       case '관망':
         return '시장을 지켜보며 기회를 엿보세요. 성급한 결정은 피하세요.';
-      case , '현금 보유': return '위험이 높은 시기입니다. 현금을 보유하고 다음 기회를 기다리세요.';
+      case '현금 보유': 
+        return '위험이 높은 시기입니다. 현금을 보유하고 다음 기회를 기다리세요.';
       default:
-        return '';}
+        return '';
     }
   }
 
   Widget _buildMarketAnalysisCard() {
-    if (_marketData == null) return const SizedBox.shrink(),
-            final fearGreedIndex = _marketData!['fearGreedIndex'] ?? 50;
+    if (_marketData == null) return const SizedBox.shrink();
+    
+    final fearGreedIndex = _marketData!['fearGreedIndex'] ?? 50;
     final indexColor = fearGreedIndex > 70 ? Colors.red :
                        fearGreedIndex > 50 ? Colors.orange :
                        fearGreedIndex > 30 ? Colors.yellow :
@@ -370,47 +414,67 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 const Text(
                   '시장 분석',
                   style: TextStyle(
-                    fontSize: 18);
-                    fontWeight: FontWeight.bold))]),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             // Fear & Greed Index
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '공포 & 탐욕 지수');
+                  '공포 & 탐욕 지수',
                   style: TextStyle(
-                    fontSize: 14);
-                    fontWeight: FontWeight.bold)),
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
                       child: LinearProgressIndicator(
-                        value: fearGreedIndex / 100);
+                        value: fearGreedIndex / 100,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(indexColor),
-    minHeight: 20)),
+                        minHeight: 20,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Text(
-                      'Fortune cached',
+                      '$fearGreedIndex',
                       style: TextStyle(
-                        fontSize: 20);
-                        fontWeight: FontWeight.bold),
-    color: indexColor))]),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: indexColor,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 4),
                 Text(
                   _getFearGreedText(fearGreedIndex),
-    style: TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: indexColor),
-    fontWeight: FontWeight.bold))]),
+                    color: indexColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             // Major coins
             if (_marketData!['bitcoin'] != null) ...[
-              _buildCoinInfo('Bitcoin': _marketData!['bitcoin'],
+              _buildCoinInfo('Bitcoin', _marketData!['bitcoin']),
               const SizedBox(height: 12),
-              _buildCoinInfo('Ethereum': _marketData!['ethereum'])]]))
+              _buildCoinInfo('Ethereum', _marketData!['ethereum']),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -431,32 +495,45 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       decoration: BoxDecoration(
         color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
-    child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween);
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                coin);
+                coin,
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 '${(data['price'] / 1000000).toStringAsFixed(1)}M KRW',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textSecondaryColor))]),
+                  color: AppTheme.textSecondaryColor,
+                ),
+              ),
+            ],
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(
+            decoration: BoxDecoration(
               color: changeColor.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(12),
-    child: Text(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
               '${change > 0 ? '+' : ''}${change.toStringAsFixed(1)}%',
               style: TextStyle(
-                color: changeColor);
-                fontWeight: FontWeight.bold),
-    fontSize: 12))])
+                color: changeColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -465,7 +542,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       color: Colors.red.withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(20),
-    child: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -475,24 +552,29 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 const Text(
                   '리스크 관리',
                   style: TextStyle(
-                    fontSize: 18);
-                    fontWeight: FontWeight.bold))]),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
-            _buildRiskItem('변동성': _riskAnalysis['volatility'] ?? 'medium',
+            _buildRiskItem('변동성', _riskAnalysis['volatility'] ?? 'medium'),
             const SizedBox(height: 12),
-            _buildRiskItem('리스크 수준': _riskAnalysis['riskLevel'] ?? 'conservative',
+            _buildRiskItem('리스크 수준', _riskAnalysis['riskLevel'] ?? 'conservative'),
             const SizedBox(height: 12),
-            _buildRiskItem('손절선': _riskAnalysis['stopLoss'] ?? '5%',
+            _buildRiskItem('손절선', _riskAnalysis['stopLoss'] ?? '5%'),
             const SizedBox(height: 12),
-            _buildRiskItem('목표 수익': _riskAnalysis['takeProfit'] ?? '10%',
+            _buildRiskItem('목표 수익', _riskAnalysis['takeProfit'] ?? '10%'),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.red.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(8),
-    border: Border.all(color: Colors.red)),
-    child: Row(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red),
+              ),
+              child: Row(
                 children: [
                   Icon(Icons.warning, color: Colors.red, size: 20),
                   const SizedBox(width: 8),
@@ -501,7 +583,16 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                       '투자는 항상 리스크가 있습니다. 여유 자금으로 투자하세요.',
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold)])]))
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -510,26 +601,34 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label);
+          label,
           style: const TextStyle(
-            fontSize: 14);
-            color: AppTheme.textSecondaryColor)),
+            fontSize: 14,
+            color: AppTheme.textSecondaryColor,
+          ),
+        ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-    decoration: BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.red.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(12),
-    child: Text(
-            value);
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            value,
             style: const TextStyle(
-              fontSize: 14);
-              fontWeight: FontWeight.bold))]
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildCoinRecommendationCard() {
-    if (_recommendedCoins.isEmpty) return const SizedBox.shrink(),
-            return Card(
+    if (_recommendedCoins.isEmpty) return const SizedBox.shrink();
+    
+    return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -542,33 +641,49 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                 const Text(
                   '추천 코인',
                   style: TextStyle(
-                    fontSize: 18);
-                    fontWeight: FontWeight.bold))]),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Wrap(
-              spacing: 12);
-              runSpacing: 12),
-    children: _recommendedCoins.map((coin) => 
+              spacing: 12,
+              runSpacing: 12,
+              children: _recommendedCoins.map((coin) => 
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16) vertical: 8),
-    decoration: BoxDecoration(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
                         AppTheme.primaryColor.withOpacity(0.8),
-                        AppTheme.primaryColor.withOpacity(0.6)]),
+                        AppTheme.primaryColor.withOpacity(0.6),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(20),
-    boxShadow: [
+                    boxShadow: [
                       BoxShadow(
                         color: AppTheme.primaryColor.withOpacity(0.3),
-    blurRadius: 8),
-    offset: const Offset(0, 2))]),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Text(
-                    coin);
+                    coin,
                     style: const TextStyle(
-                      color: Colors.white);
-                      fontWeight: FontWeight.bold),
-    fontSize: 16))
-              ).toList()]))
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ).toList(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

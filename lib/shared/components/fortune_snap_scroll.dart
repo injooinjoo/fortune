@@ -10,6 +10,7 @@ import 'package:fortune/core/theme/app_animations.dart';
 
 /// A specialized snap scroll view for fortune cards with image headers
 /// Each card's image top snaps to the viewport top when scrolling
+/// Includes fade in/out effects during scroll transitions
 class FortuneSnapScrollView extends StatefulWidget {
   final List<FortuneSnapCard> cards;
   final double imageHeight;
@@ -18,6 +19,9 @@ class FortuneSnapScrollView extends StatefulWidget {
   final double velocityThreshold;
   final double snapDistance;
   final Color? backgroundColor;
+  final bool enableFadeEffect;
+  final double fadeStartOffset;
+  final double fadeEndOffset;
 
   const FortuneSnapScrollView({
     Key? key,
@@ -27,7 +31,10 @@ class FortuneSnapScrollView extends StatefulWidget {
     this.snapCurve = Curves.easeOutCubic,
     this.velocityThreshold = 100,
     this.snapDistance = 50,
-    this.backgroundColor}) : super(key: key);
+    this.backgroundColor,
+    this.enableFadeEffect = true,
+    this.fadeStartOffset = 0.3,
+    this.fadeEndOffset = 0.7}) : super(key: key);
 
   @override
   State<FortuneSnapScrollView> createState() => _FortuneSnapScrollViewState();
@@ -145,6 +152,67 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
     });
   }
 
+  double _calculateCardOpacity(int index) {
+    if (!widget.enableFadeEffect) return 1.0;
+    
+    final scrollOffset = _scrollController.hasClients ? _scrollController.offset : 0;
+    final cardOffset = _getCardOffset(index);
+    final cardHeight = widget.cards[index].totalHeight;
+    
+    // Calculate card's position relative to viewport
+    final cardTop = cardOffset - scrollOffset;
+    final cardBottom = cardTop + cardHeight;
+    final viewportHeight = MediaQuery.of(context).size.height;
+    
+    // 더 민감한 페이드 임계값 설정
+    // 상단 20% 지점에서 페이드 아웃 시작
+    final fadeOutThreshold = viewportHeight * 0.2;
+    // 하단 80% 지점에서 페이드 인 시작
+    final fadeInThreshold = viewportHeight * 0.8;
+    
+    // Card is completely below viewport
+    if (cardTop > viewportHeight) {
+      return 0.0;
+    }
+    
+    // Card is completely above viewport
+    if (cardBottom < 0) {
+      return 0.0;
+    }
+    
+    // Card is entering from bottom (fade in - 더 일찍 시작)
+    if (cardTop > fadeInThreshold) {
+      final fadeInProgress = 1.0 - ((cardTop - fadeInThreshold) / (viewportHeight - fadeInThreshold));
+      return Curves.fastOutSlowIn.transform(fadeInProgress.clamp(0.0, 1.0));
+    }
+    
+    // Card is exiting from top (fade out - 더 일찍 시작)
+    if (cardBottom < fadeOutThreshold) {
+      final fadeOutProgress = cardBottom / fadeOutThreshold;
+      return Curves.fastOutSlowIn.transform(fadeOutProgress.clamp(0.0, 1.0));
+    }
+    
+    // Card가 화면 중앙 영역을 벗어나기 시작하면 페이드 처리
+    final centerPoint = viewportHeight / 2;
+    
+    // 위로 스크롤 중 (카드가 위로 올라감)
+    if (cardTop < fadeOutThreshold && cardBottom > centerPoint) {
+      // 카드 상단이 임계점을 넘으면 페이드 아웃 시작
+      final fadeProgress = (cardTop - fadeOutThreshold).abs() / (centerPoint - fadeOutThreshold);
+      return Curves.easeInOut.transform((1.0 - fadeProgress).clamp(0.0, 1.0));
+    }
+    
+    // 아래로 스크롤 중 (카드가 아래로 내려감)
+    if (cardBottom > fadeInThreshold && cardTop < centerPoint) {
+      // 카드 하단이 임계점을 넘으면 페이드 아웃 시작
+      final fadeProgress = (cardBottom - fadeInThreshold) / (viewportHeight - fadeInThreshold);
+      return Curves.easeInOut.transform((1.0 - fadeProgress).clamp(0.0, 1.0));
+    }
+    
+    // Card is in the safe zone - fully visible
+    return 1.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
@@ -170,8 +238,25 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
               final card = entry.value;
               
               return RepaintBoundary(
-                child: card);
-            }).toList())));
+                child: widget.enableFadeEffect
+                    ? AnimatedBuilder(
+                        animation: _scrollController,
+                        builder: (context, child) {
+                          final opacity = _calculateCardOpacity(index);
+                          return AnimatedOpacity(
+                            opacity: opacity,
+                            duration: const Duration(milliseconds: 50),
+                            child: card,
+                          );
+                        },
+                      )
+                    : card,
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -215,7 +300,9 @@ class FortuneSnapCard extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(imagePath),
-                  fit: BoxFit.cover)),
+                  fit: BoxFit.cover,
+                ),
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -224,8 +311,11 @@ class FortuneSnapCard extends StatelessWidget {
                     colors: [
                       Colors.transparent,
                       AppColors.textPrimary.withOpacity(0.3),
-                      AppColors.textPrimary.withOpacity(0.7)],
-                    stops: const [0.5, 0.8, 1.0])),
+                      AppColors.textPrimary.withOpacity(0.7),
+                    ],
+                    stops: const [0.5, 0.8, 1.0],
+                  ),
+                ),
                 padding: EdgeInsets.all(contentPadding),
                 alignment: Alignment.bottomLeft,
                 child: Column(
@@ -249,12 +339,25 @@ class FortuneSnapCard extends StatelessWidget {
                         shadows: [
                           Shadow(
                             color: AppColors.textPrimary.withOpacity(0.8),
-                            blurRadius: 6)])]),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             
             // Content Section
             Container(
               padding: EdgeInsets.all(contentPadding),
-              child: content)])));
+              child: content,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

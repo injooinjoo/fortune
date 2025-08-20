@@ -148,7 +148,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           const SizedBox(height: 24),
           _buildCategorySelector(),
           const SizedBox(height: 24),
-          _buildGenerateButton()]));
+          _buildGenerateButton()
+        ],
+      ),
+    );
   }
 
   @override
@@ -177,7 +180,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           const SizedBox(height: 16),
           _buildMbtiCompatibility(),
           const SizedBox(height: 16),
-          _buildEnhancedCompatibilityMatrix()]));
+          _buildEnhancedCompatibilityMatrix()
+        ],
+      ),
+    );
   }
 
   Widget _buildMbtiSelector() {
@@ -192,16 +198,23 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.purple.shade400, Colors.purple.shade600]),
-                borderRadius: BorderRadius.circular(12)),
+                  colors: [Colors.purple.shade400, Colors.purple.shade600],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: const Icon(
                 Icons.psychology_rounded,
                 color: Colors.white,
-                size: 24))),
+                size: 24,
+              ),
+            ),
             const SizedBox(width: 12),
             Text(
               'MBTI 유형 선택',
-              style: theme.textTheme.headlineSmall)])]),
+              style: theme.textTheme.headlineSmall,
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
         GridView.count(
           shrinkWrap: true,
@@ -248,8 +261,14 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       fontWeight: FontWeight.bold,
                       color: isSelected
                           ? Colors.white
-                          : theme.colorScheme.onSurface))));
-          }).toList());
+                          : theme.colorScheme.onSurface)),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
   }
 
   Widget _buildCategorySelector() {
@@ -264,16 +283,23 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.blue.shade400, Colors.blue.shade600]),
-                borderRadius: BorderRadius.circular(12)),
+                  colors: [Colors.blue.shade400, Colors.blue.shade600],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: const Icon(
                 Icons.category_rounded,
                 color: Colors.white,
-                size: 24))),
+                size: 24,
+              ),
+            ),
             const SizedBox(width: 12),
             Text(
               '운세 카테고리 선택',
-              style: theme.textTheme.headlineSmall)])]),
+              style: theme.textTheme.headlineSmall,
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
         Text(
           '여러 개 선택 가능',
@@ -304,8 +330,12 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               side: BorderSide(
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.outline.withOpacity(0.3)));
-          }).toList());
+                    : theme.colorScheme.outline.withOpacity(0.3)),
+            );
+          }).toList(),
+        ),
+      ],
+    );
   }
 
   Widget _buildGenerateButton() {
@@ -324,6 +354,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                     theme.colorScheme.primary.withOpacity(0.8)])
               : null,
           borderRadius: BorderRadius.circular(16),
+        ),
         child: Center(
           child: Text(
             'MBTI 운세 보기',
@@ -331,7 +362,11 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               color: canGenerate
                   ? Colors.white
                   : theme.colorScheme.onSurface.withOpacity(0.5),
-              fontWeight: FontWeight.bold))));
+              fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
   }
 
 
@@ -351,16 +386,23 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.indigo.shade400, Colors.indigo.shade600]),
-                    borderRadius: BorderRadius.circular(12)),
+                      colors: [Colors.indigo.shade400, Colors.indigo.shade600],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.insights_rounded,
                     color: Colors.white,
-                    size: 24))),
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'MBTI 인사이트',
-                  style: theme.textTheme.headlineSmall)])]),
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...(_selectedCategories.map((category) {
               return Padding(
@@ -383,8 +425,16 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                     const SizedBox(height: 8),
                     Text(
                       _getMbtiCategoryInsight(_selectedMbti!, category),
-                      style: theme.textTheme.bodyMedium)]));
-            }).toList())]));
+                      style: theme.textTheme.bodyMedium)
+                  ],
+                ),
+              );
+            }).toList())
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildMbtiStrengthsWeaknesses() {
     final theme = Theme.of(context);
@@ -414,7 +464,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       Text(
                         '강점',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))])],
+                          fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   ..._getMbtiStrengths(_selectedMbti!).map((strength) {
                     return Padding(
@@ -429,8 +481,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                           Expanded(
                             child: Text(
                               strength,
-                              style: theme.textTheme.bodySmall))]));
-                  }).toList()])))))),
+                              style: theme.textTheme.bodySmall)),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: glass.GlassCard(
@@ -453,7 +512,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       Text(
                         '약점',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))])],
+                          fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   ..._getMbtiWeaknesses(_selectedMbti!).map((weakness) {
                     return Padding(
@@ -468,8 +529,18 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                           Expanded(
                             child: Text(
                               weakness,
-                              style: theme.textTheme.bodySmall))]));
-                  }).toList()]))))]))]);
+                              style: theme.textTheme.bodySmall)),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildMbtiCompatibility() {
@@ -498,7 +569,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 const SizedBox(width: 12),
                 Text(
                   '궁합이 좋은 MBTI',
-                  style: theme.textTheme.headlineSmall)])],
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
@@ -586,7 +659,13 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 child: _buildInsightChip(
                   '주의할 점',
                   fortuneData['cautionArea'],
-                  Colors.orange))])]));
+                  Colors.orange),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildInsightChip(String label, String value, Color color) {
@@ -612,7 +691,11 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             value,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withOpacity(0.8)))]]));
+              color: Colors.white.withOpacity(0.8)),
+          ),
+        ],
+      ),
+    );
   }
 
   // MBTI Helper Methods

@@ -25,7 +25,8 @@ class BirthTimeEditDialog extends StatefulWidget {
   const BirthTimeEditDialog({
     super.key,
     this.initialTime,
-    required this.onSave});
+    required this.onSave,
+  });
 
   @override
   State<BirthTimeEditDialog> createState() => _BirthTimeEditDialogState();
@@ -66,10 +67,11 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-            content: Text('오류가 발생했습니다: ${e.toString()}'
-),
-            backgroundColor: AppColors.error));
+          SnackBar(
+            content: Text('오류가 발생했습니다: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -85,7 +87,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
       isLoading: _isLoading,
       onSave: _handleSave,
       content: Column(
-      mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
         children: [
                         Text(
                           '정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
@@ -98,17 +100,23 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: timePeriods.length + 1,
-        itemBuilder: (context, index) {
+              itemBuilder: (context, index) {
                 if (index == 0) {
                   return _buildTimeOption(null, '선택 안함');
                 }
                 
                 final period = timePeriods[index - 1];
                 return _buildTimeOption(
-    period.value,
+                  period.value,
                   period.label,
-                  description: period.description);
-              })]);
+                  description: period.description,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTimeOption(String? value, String label, {String? description}) {
@@ -119,7 +127,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-      onTap: () {
+          onTap: () {
             setState(() {
               _selectedTime = value;
             });
@@ -130,12 +138,14 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
               horizontal: AppSpacing.spacing4,
               vertical: AppSpacing.spacing3),
             decoration: BoxDecoration(
-                    border: Border.all(
+              border: Border.all(
                 color: isSelected ? AppColors.primary : AppColors.divider,
-                width: isSelected ? 2 : 1),
-      borderRadius: AppDimensions.borderRadiusSmall,
-              color: isSelected ? AppColors.primary.withOpacity(0.1) : null),
-      child: Row(
+                width: isSelected ? 2 : 1,
+              ),
+              borderRadius: AppDimensions.borderRadiusSmall,
+              color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
+            ),
+            child: Row(
               children: [
                 Container(
                   width: 20,
@@ -144,7 +154,9 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                      width: 1)),
+                      width: 1,
+                    ),
+                  ),
                   child: isSelected
                       ? Center(
                           child: Container(
@@ -152,8 +164,12 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                             height: 12,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.primary)))
-                      : null),
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
                 SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
@@ -168,6 +184,17 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                         Text(
                           description,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary))]])])));
+                            color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

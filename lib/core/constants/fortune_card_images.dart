@@ -113,29 +113,106 @@ class FortuneCardImages {
   /// Category-based gradient overlays for better text visibility
   static Map<String, List<Color>> categoryGradients = {
     'love': [
-      Color(0x99EC4899).withOpacity(0.7),
-      Color(0x99F472B6).withOpacity(0.4)],
+      Color(0x99EC4899).withValues(alpha: 0.7),
+      Color(0x99F472B6).withValues(alpha: 0.4)],
     'career': [
-      Color(0x996366F1).withOpacity(0.7),
-      Color(0x998B5CF6).withOpacity(0.4)],
+      Color(0x996366F1).withValues(alpha: 0.7),
+      Color(0x998B5CF6).withValues(alpha: 0.4)],
     'money': [
-      Color(0x9910B981).withOpacity(0.7),
-      Color(0x9984CC16).withOpacity(0.4)],
+      Color(0x9910B981).withValues(alpha: 0.7),
+      Color(0x9984CC16).withValues(alpha: 0.4)],
     'health': [
-      Color(0x99F59E0B).withOpacity(0.7),
-      Color(0x99FBBF24).withOpacity(0.4)],
+      Color(0x99F59E0B).withValues(alpha: 0.7),
+      Color(0x99FBBF24).withValues(alpha: 0.4)],
     'traditional': [
-      Color(0x99DC2626).withOpacity(0.7),
-      Color(0x99EF4444).withOpacity(0.4)],
+      Color(0x99DC2626).withValues(alpha: 0.7),
+      Color(0x99EF4444).withValues(alpha: 0.4)],
     'lifestyle': [
-      Color(0x993B82F6).withOpacity(0.7),
-      Color(0x9960A5FA).withOpacity(0.4)],
+      Color(0x993B82F6).withValues(alpha: 0.7),
+      Color(0x9960A5FA).withValues(alpha: 0.4)],
     'interactive': [
-      Color(0x998B5CF6).withOpacity(0.7),
-      Color(0x99A78BFA).withOpacity(0.4)],
+      Color(0x998B5CF6).withValues(alpha: 0.7),
+      Color(0x99A78BFA).withValues(alpha: 0.4)],
     'default': [
-      Color(0x99475569).withOpacity(0.7),
-      Color(0x9964748B).withOpacity(0.4)]};
+      Color(0x99475569).withValues(alpha: 0.7),
+      Color(0x9964748B).withValues(alpha: 0.4)]};
+
+  /// Modern gradient backgrounds for fortune types (inspired by trend page design)
+  static Map<String, List<Color>> modernGradients = {
+    // Love & Relationship
+    'love': [Color(0xFFEC4899), Color(0xFFDB2777)],
+    'chemistry': [Color(0xFFBE185D), Color(0xFF9333EA)],
+    'marriage': [Color(0xFFEC4899), Color(0xFFBE185D)],
+    'breakup': [Color(0xFF6B7280), Color(0xFF374151)],
+    'crush': [Color(0xFFEC4899), Color(0xFFF472B6)],
+    'relationship': [Color(0xFFDC2626), Color(0xFFB91C1C)],
+    'compatibility': [Color(0xFFBE185D), Color(0xFF9333EA)],
+    'ex-lover': [Color(0xFF6B7280), Color(0xFF374151)],
+
+    // Career & Money
+    'career': [Color(0xFF2563EB), Color(0xFF1D4ED8)],
+    'career_seeker': [Color(0xFF03A9F4), Color(0xFF0288D1)],
+    'career_change': [Color(0xFF2563EB), Color(0xFF1E40AF)],
+    'career_future': [Color(0xFF3B82F6), Color(0xFF2563EB)],
+    'career_freelance': [Color(0xFF0EA5E9), Color(0xFF0284C7)],
+    'career_startup': [Color(0xFF059669), Color(0xFF047857)],
+    'career_crisis': [Color(0xFFDC2626), Color(0xFFB91C1C)],
+    'job': [Color(0xFF3B82F6), Color(0xFF2563EB)],
+    'business': [Color(0xFF059669), Color(0xFF047857)],
+    'study': [Color(0xFF0EA5E9), Color(0xFF0284C7)],
+    'money': [Color(0xFFF59E0B), Color(0xFFD97706)],
+    'investment': [Color(0xFF16A34A), Color(0xFF15803D)],
+
+    // Traditional
+    'saju': [Color(0xFFEF4444), Color(0xFFDC2626)],
+    'zodiac': [Color(0xFF7C3AED), Color(0xFF6D28D9)],
+    'constellation': [Color(0xFF6366F1), Color(0xFF4F46E5)],
+    'tarot': [Color(0xFF9333EA), Color(0xFF7C3AED)],
+    'dream': [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+    'traditional': [Color(0xFFEF4444), Color(0xFFEC4899)],
+    'physiognomy': [Color(0xFFEF4444), Color(0xFFDC2626)],
+    'face-reading': [Color(0xFFEF4444), Color(0xFFDC2626)],
+    'talisman': [Color(0xFFF59E0B), Color(0xFFD97706)],
+
+    // Daily & Personal
+    'daily': [Color(0xFF7C3AED), Color(0xFF3B82F6)],
+    'time': [Color(0xFF7C3AED), Color(0xFF3B82F6)],
+    'health': [Color(0xFF10B981), Color(0xFF059669)],
+    'health_sports': [Color(0xFF10B981), Color(0xFF059669)],
+    'sports': [Color(0xFFEA580C), Color(0xFFDC2626)],
+    'enhanced_sports': [Color(0xFFEA580C), Color(0xFFDC2626)],
+    'travel': [Color(0xFF06B6D4), Color(0xFF0891B2)],
+    'moving': [Color(0xFF6366F1), Color(0xFF4F46E5)],
+    'naming': [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+    'personality': [Color(0xFF6366F1), Color(0xFF3B82F6)],
+    'talent': [Color(0xFFFFB300), Color(0xFFFF8F00)],
+
+    // Interactive & Fun
+    'biorhythm': [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+    'color': [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+    'pet': [Color(0xFFE11D48), Color(0xFFBE123C)],
+    'lottery': [Color(0xFFF59E0B), Color(0xFFEA580C)],
+    'lucky_items': [Color(0xFF7C3AED), Color(0xFF3B82F6)],
+    'fortune-cookie': [Color(0xFF9333EA), Color(0xFF7C3AED)],
+    'wish': [Color(0xFFFF4081), Color(0xFFF50057)],
+
+    // Family
+    'family': [Color(0xFF3B82F6), Color(0xFF2563EB)],
+
+    // Celebrity
+    'celebrity': [Color(0xFFFF1744), Color(0xFFE91E63)],
+
+    // History
+    'history': [Color(0xFF795548), Color(0xFF5D4037)],
+
+    // Default fallback
+    'default': [Color(0xFF6366F1), Color(0xFF8B5CF6)]
+  };
+
+  /// Get gradient colors for a fortune type
+  static List<Color> getGradientColors(String fortuneType) {
+    return modernGradients[fortuneType] ?? modernGradients['default']!;
+  }
 
   /// Instagram-style text overlays
   static const Map<String, String> instagramCaptions = {

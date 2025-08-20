@@ -12,6 +12,8 @@ import 'firebase_options_secure.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/config/environment.dart';
 import 'core/config/feature_flags.dart';
@@ -30,11 +32,17 @@ import 'services/token_monitor_service.dart';
 import 'services/screenshot_detection_service.dart';
 import 'services/ad_service.dart';
 import 'services/analytics_service.dart';
+import 'services/remote_config_service.dart';
+import 'presentation/providers/font_size_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.dotenv.load(fileName: ".env");
   await initializeDateFormatting('ko_KR', null);
+  
+  // Initialize Hive
+  await Hive.initFlutter();
+  Logger.info('Hive initialized successfully');
   
   // Initialize Firebase
   try {
@@ -65,14 +73,23 @@ void main() async {
   // Initialize Analytics
   await AnalyticsService.instance.initialize();
   
+  // Initialize Remote Config for A/B Testing
+  await RemoteConfigService().initialize();
+  
   // Initialize Ad Service
   if (!kIsWeb) {
     await AdService.instance.initialize();
   }
   
+  // Initialize SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  
   runApp(
-    const ProviderScope(
-      child: MyApp()));
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

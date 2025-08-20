@@ -63,7 +63,16 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                     _buildAnalyzeButton(),
                     if (_analysisResult != null) ...[
                       const SizedBox(height: 32),
-                      _buildResultSection()]]))]));
+                      _buildResultSection(),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInstructions() {
@@ -73,40 +82,55 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           const Icon(
             Icons.nights_stay,
             size: 48,
-            color: AppTheme.primaryColor),
+            color: AppTheme.primaryColor,
+          ),
           const SizedBox(height: 16),
           Text(
             '태몽의 의미를 해석해드립니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '임신 중 꾼 특별한 꿈을 입력하면\n'
             '아기의 미래와 성향을 예측해드립니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center),
+              color: AppTheme.textSecondaryColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(
                   Icons.toll,
                   size: 16,
-                  color: AppTheme.primaryColor),
+                  color: AppTheme.primaryColor,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold)])])).animate()
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+      .slideY(begin: 0.1, end: 0.0);
   }
 
   Widget _buildDreamInput() {
@@ -139,7 +163,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               fillColor: AppTheme.surfaceColor),
             style: Theme.of(context).textTheme.bodyLarge)])).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
-      .slideY(begin: 0.1, end: 0);
+      .slideY(begin: 0.1, end: 0.0);
   }
 
   Widget _buildKeywordSelection() {
@@ -150,12 +174,16 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           Text(
             '꿈에 나온 상징 선택 (선택사항)',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             '꿈에 나온 주요 상징을 선택하면 더 정확한 해석이 가능합니다',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.textSecondaryColor)),
+              color: AppTheme.textSecondaryColor,
+            ),
+          ),
           const SizedBox(height: 16),
           ..._keywordCategories.entries.map((entry) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,15 +192,24 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 entry.key,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: AppTheme.primaryColor,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: entry.value.map((keyword) => _buildKeywordChip(keyword)).toList()),
-              const SizedBox(height: 16)])]).animate()
+                children: entry.value.map((keyword) => _buildKeywordChip(keyword)).toList(),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ).toList(),
+      ],
+    ),
+  ).animate()
       .fadeIn(duration: 600.ms, delay: 200.ms)
-      .slideY(begin: 0.1, end: 0);
+      .slideY(begin: 0.1, end: 0.0);
   }
 
   Widget _buildKeywordChip(String keyword) {
@@ -196,12 +233,18 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           color: isSelected ? AppTheme.primaryColor : AppTheme.surfaceColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : AppTheme.borderColor)),
+            color: isSelected ? AppTheme.primaryColor : AppTheme.borderColor,
+          ),
+        ),
         child: Text(
           keyword,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: isSelected ? Colors.white : AppTheme.textColor,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildAnalyzeButton() {
@@ -216,18 +259,26 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+          ),
+        ),
         child: _isAnalyzing
             ? const SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
                   color: Colors.white,
-                  strokeWidth: 2))
+                  strokeWidth: 2,
+                ),
+              )
             : const Text(
                 '태몽 해석하기',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold)));
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+      ),
+    );
   }
 
   Widget _buildResultSection() {
@@ -240,17 +291,24 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               const Icon(
                 Icons.auto_awesome,
                 color: AppTheme.primaryColor,
-                size: 24),
+                size: 24,
+              ),
               const SizedBox(width: 8),
               Text(
                 '태몽 해석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6)),
+              height: 1.6,
+            ),
+          ),
           const SizedBox(height: 24),
           Row(
             children: [
@@ -262,7 +320,11 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                     side: BorderSide(color: AppTheme.primaryColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                  child: const Text('다시 해석하기')),
+                    ),
+                  ),
+                  child: const Text('다시 해석하기'),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
@@ -273,9 +335,18 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                     backgroundColor: AppTheme.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))))])])).animate()
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+      .slideY(begin: 0.1, end: 0.0);
   }
 
   Future<void> _analyzeDream() async {
@@ -388,6 +459,8 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
       backgroundColor: Colors.transparent,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: _requiredTokens,
-        fortuneType: 'taemong'));
+        fortuneType: 'taemong',
+      ),
+    );
   }
 }

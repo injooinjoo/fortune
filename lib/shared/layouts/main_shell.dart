@@ -126,6 +126,9 @@ class _MainShellState extends ConsumerState<MainShell>
     }
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           // Main content with animated padding
@@ -137,16 +140,24 @@ class _MainShellState extends ConsumerState<MainShell>
                 return Padding(
                   padding: EdgeInsets.only(bottom: 0),
                   child: widget.child);
-              })),
+              },
+            ),
+          ),
           // Navigation bar
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            height: _navBarHeight + bottomPadding, // Add explicit height,
-    child: SlideTransition(
+            height: _navBarHeight + bottomPadding, // Add explicit height
+            child: SlideTransition(
               position: _slideAnimation,
               child: FortuneBottomNavigationBar(
-                currentIndex: selectedIndex))]);
+                currentIndex: selectedIndex,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -8,7 +8,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/widgets/ads/cross_platform_ad_widget.dart';
-import '../../presentation/widgets/ads/common_ad_placements.dart';
+// import '../../presentation/widgets/ads/common_ad_placements.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -49,7 +49,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.linear);
+      curve: Curves.linear));
 
     _startCountdown();
     _controller.forward();
@@ -148,10 +148,17 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                   ),
                   const SizedBox(height: 16),
                   
-                  // 실제 광고 배너
-                  CommonAdPlacements().betweenContentAd(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    backgroundColor: Colors.transparent,
+                  // 실제 광고 배너 (플레이스홀더)
+                  Container(
+                    height: 50,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text('광고 영역', style: TextStyle(color: Colors.grey)),
+                    ),
                   ),
                 ],
               ),

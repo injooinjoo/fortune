@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../presentation/screens/ad_loading_screen.dart';
+import '../../../../presentation/providers/token_provider.dart';
 
 // Fortune item model
 class FortuneItem {
@@ -26,7 +28,8 @@ class FortuneItem {
     required this.gradientColors,
     required this.category,
     this.isPremium = false,
-    this.isNew = false});
+    this.isNew = false,
+  });
 }
 
 // Fortune categories
@@ -44,7 +47,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.today_rounded,
         route: '/fortune/today',
         gradientColors: const [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-        category: 'daily'),
+        category: 'daily',
+      ),
       FortuneItem(
         id: 'tomorrow',
         name: '내일의 운세',
@@ -52,16 +56,20 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.event_rounded,
         route: '/fortune/tomorrow',
         gradientColors: const [Color(0xFF3B82F6), Color(0xFF06B6D4)],
-        category: 'daily'),
+        category: 'daily',
+      ),
       FortuneItem(
         id: 'hourly',
         name: '시간대별 운세',
         description: '시간대별 상세 운세',
         icon: Icons.access_time_rounded,
-        route: '/fortune/hourly',
+        route: '/hourly',
         gradientColors: const [Color(0xFF06B6D4), Color(0xFF10B981)],
         category: 'daily',
-        isNew: true)]),
+        isNew: true,
+      ),
+    ],
+  ),
   'love': FortuneCategory(
     id: 'love',
     label: '연애·인연',
@@ -75,7 +83,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.favorite_rounded,
         route: '/fortune/love',
         gradientColors: const [Color(0xFFEC4899), Color(0xFFDB2777)],
-        category: 'love'),
+        category: 'love',
+      ),
       FortuneItem(
         id: 'marriage',
         name: '결혼운',
@@ -84,7 +93,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/marriage',
         gradientColors: const [Color(0xFFDB2777), Color(0xFFBE185D)],
         category: 'love',
-        isPremium: true),
+        isPremium: true,
+      ),
       FortuneItem(
         id: 'compatibility',
         name: '궁합',
@@ -92,7 +102,10 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.people_rounded,
         route: '/fortune/compatibility',
         gradientColors: const [Color(0xFFBE185D), Color(0xFF9333EA)],
-        category: 'love')]),
+        category: 'love',
+      ),
+    ],
+  ),
   'career': FortuneCategory(
     id: 'career',
     label: '취업·사업',
@@ -106,7 +119,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.work_rounded,
         route: '/fortune/career',
         gradientColors: const [Color(0xFF2563EB), Color(0xFF1D4ED8)],
-        category: 'career'),
+        category: 'career',
+      ),
       FortuneItem(
         id: 'business',
         name: '사업운',
@@ -115,7 +129,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/business',
         gradientColors: const [Color(0xFF0891B2), Color(0xFF0E7490)],
         category: 'career',
-        isPremium: true),
+        isPremium: true,
+      ),
       FortuneItem(
         id: 'employment',
         name: '취업운',
@@ -124,7 +139,10 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/employment',
         gradientColors: const [Color(0xFF00ACC1), Color(0xFF0097A7)],
         category: 'career',
-        isNew: true)]),
+        isNew: true,
+      ),
+    ],
+  ),
   'money': FortuneCategory(
     id: 'money',
     label: '재물·투자',
@@ -138,7 +156,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.attach_money_rounded,
         route: '/fortune/wealth',
         gradientColors: const [Color(0xFF16A34A), Color(0xFF15803D)],
-        category: 'money'),
+        category: 'money',
+      ),
       FortuneItem(
         id: 'investment',
         name: '투자 운세',
@@ -147,7 +166,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/lucky-investment',
         gradientColors: const [Color(0xFFF59E0B), Color(0xFFD97706)],
         category: 'money',
-        isPremium: true),
+        isPremium: true,
+      ),
       FortuneItem(
         id: 'lottery',
         name: '로또 운세',
@@ -156,7 +176,10 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/lucky-lottery',
         gradientColors: const [Color(0xFFFFB300), Color(0xFFF57C00)],
         category: 'money',
-        isNew: true)]),
+        isNew: true,
+      ),
+    ],
+  ),
   'traditional': FortuneCategory(
     id: 'traditional',
     label: '전통·사주',
@@ -171,7 +194,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/saju',
         gradientColors: const [Color(0xFFEF4444), Color(0xFFEC4899)],
         category: 'traditional',
-        isPremium: true),
+        isPremium: true,
+      ),
       FortuneItem(
         id: 'tojeong',
         name: '토정비결',
@@ -179,7 +203,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.book_rounded,
         route: '/fortune/tojeong',
         gradientColors: const [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-        category: 'traditional'),
+        category: 'traditional',
+      ),
       FortuneItem(
         id: 'past-life',
         name: '전생',
@@ -188,7 +213,10 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/fortune/past-life',
         gradientColors: const [Color(0xFF6A1B9A), Color(0xFF4A148C)],
         category: 'traditional',
-        isPremium: true)]),
+        isPremium: true,
+      ),
+    ],
+  ),
   'interactive': FortuneCategory(
     id: 'interactive',
     label: '인터랙티브',
@@ -203,7 +231,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/interactive/tarot',
         gradientColors: const [Color(0xFF9333EA), Color(0xFF7C3AED)],
         category: 'interactive',
-        isPremium: true),
+        isPremium: true,
+      ),
       FortuneItem(
         id: 'dream',
         name: '꿈 해몽',
@@ -211,7 +240,8 @@ final Map<String, FortuneCategory> fortuneCategories = {
         icon: Icons.bedtime_rounded,
         route: '/interactive/dream-interpretation',
         gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
-        category: 'interactive'),
+        category: 'interactive',
+      ),
       FortuneItem(
         id: 'fortune-cookie',
         name: '포춘 쿠키',
@@ -220,7 +250,11 @@ final Map<String, FortuneCategory> fortuneCategories = {
         route: '/interactive/fortune-cookie',
         gradientColors: const [Color(0xFF9333EA), Color(0xFF7C3AED)],
         category: 'interactive',
-        isNew: true)])};
+        isNew: true,
+      ),
+    ],
+  ),
+};
 
 class FortuneCategory {
   final String id;
@@ -234,7 +268,8 @@ class FortuneCategory {
     required this.label,
     required this.icon,
     required this.color,
-    required this.items});
+    required this.items,
+  });
 }
 
 // Providers
@@ -257,20 +292,21 @@ class ExplorePage extends ConsumerWidget {
       filteredItems = fortuneCategories[selectedCategory]?.items ?? [];
     } else {
       // Search across all categories
-      fortuneCategories.values.forEach((category) {
+      for (final category in fortuneCategories.values) {
         filteredItems.addAll(
           category.items.where((item) =>
               item.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
               item.description.toLowerCase().contains(searchQuery.toLowerCase()),
           ),
         );
-      });
+      }
     }
 
     return Scaffold(
       appBar: AppHeader(
         title: '운세 탐색',
-        showBackButton: true),
+        showBackButton: true,
+      ),
       body: Column(
         children: [
           // Search Bar
@@ -285,16 +321,18 @@ class ExplorePage extends ConsumerWidget {
                 hintText: '운세 검색...',
                 prefixIcon: Icon(
                   Icons.search_rounded,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
                 suffixIcon: searchQuery.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear_rounded),
                         onPressed: () {
                           ref.read(searchQueryProvider.notifier).state = '';
-                        })
+                        },
+                      )
                     : null,
                 filled: true,
-                fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -327,14 +365,18 @@ class ExplorePage extends ConsumerWidget {
                       decoration: BoxDecoration(
                         gradient: isSelected
                             ? LinearGradient(
-                                colors: [category.color, category.color.withOpacity(0.8)])
+                                colors: [
+                                  category.color,
+                                  category.color.withValues(alpha: 0.8),
+                                ],
+                              )
                             : null,
                         color: isSelected ? null : theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : theme.colorScheme.outline.withOpacity(0.3),
+                              : theme.colorScheme.outline.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -345,7 +387,8 @@ class ExplorePage extends ConsumerWidget {
                             size: 20,
                             color: isSelected
                                 ? Colors.white
-                                : theme.colorScheme.onSurface),
+                                : theme.colorScheme.onSurface,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             category.label,
@@ -376,7 +419,7 @@ class ExplorePage extends ConsumerWidget {
                     '결과: ${filteredItems.length}개',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize.value - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -395,7 +438,7 @@ class ExplorePage extends ConsumerWidget {
                               ? Icons.search_off_rounded
                               : Icons.category_rounded,
                           size: 80,
-                          color: theme.colorScheme.onSurface.withOpacity(0.3),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -404,7 +447,7 @@ class ExplorePage extends ConsumerWidget {
                               : '카테고리가 비어있습니다',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontSize: fontSize.value + 2,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -416,29 +459,71 @@ class ExplorePage extends ConsumerWidget {
                       crossAxisCount: 2,
                       childAspectRatio: 1.1,
                       mainAxisSpacing: 12,
-                      crossAxisSpacing: 12),
+                      crossAxisSpacing: 12,
+                    ),
                     itemCount: filteredItems.length,
                     itemBuilder: (context, index) {
                       final item = filteredItems[index];
                       return _FortuneItemCard(item: item, fontSize: fontSize.value);
-                    })]);
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class _FortuneItemCard extends StatelessWidget {
+class _FortuneItemCard extends ConsumerWidget {
   final FortuneItem item;
   final double fontSize;
 
   const _FortuneItemCard({
     required this.item,
-    required this.fontSize});
+    required this.fontSize,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () => context.push(item.route),
+      onTap: () {
+        // Special handling for hourly fortune to show ads
+        if (item.id == 'hourly') {
+          final isPremium = ref.read(tokenProvider).hasUnlimitedAccess;
+          
+          // Navigate to AdLoadingScreen which will then navigate to hourly fortune
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
+                fortuneType: item.id,
+                fortuneTitle: item.name,
+                fortuneRoute: item.route,
+                isPremium: isPremium,
+                onComplete: () {
+                  // This won't be called since we're using fortuneRoute
+                },
+                onSkip: () {
+                  // Navigate to premium page or handle skip
+                  context.push('/subscription');
+                },
+              ),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                // Use a fade transition for smoother navigation
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              transitionDuration: const Duration(milliseconds: 80),
+            ),
+          );
+        } else {
+          // Direct navigation for other fortune types
+          context.push(item.route);
+        }
+      },
       child: Stack(
         children: [
           GlassContainer(
@@ -448,7 +533,7 @@ class _FortuneItemCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: item.gradientColors
-                  .map((color) => color.withOpacity(0.1))
+                  .map((color) => color.withValues(alpha: 0.1))
                   .toList(),
             ),
             child: Container(
@@ -477,19 +562,27 @@ class _FortuneItemCard extends StatelessWidget {
                     item.name,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: fontSize,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     item.description,
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: fontSize - 4,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis)])),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
           // Badges
           if (item.isNew)
             Positioned(
@@ -499,14 +592,20 @@ class _FortuneItemCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFEF4444), Color(0xFFEC4899)]),
+                    colors: [Color(0xFFEF4444), Color(0xFFEC4899)],
+                  ),
                   borderRadius: BorderRadius.circular(12),
+                ),
                 child: Text(
                   'NEW',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: fontSize - 6,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           if (item.isPremium)
             Positioned(
               top: 8,
@@ -515,11 +614,19 @@ class _FortuneItemCard extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+                    colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                  ),
                   borderRadius: BorderRadius.circular(8),
+                ),
                 child: Icon(
                   Icons.star_rounded,
                   size: 16,
-                  color: Colors.white))]);
+                  color: Colors.white,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

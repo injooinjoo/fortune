@@ -34,21 +34,30 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
   final List<String> _selectedConcerns = [];
   
   final List<String> _motivations = [
-    '독립성과 자유': '더 큰 임팩트',
-    '지분/수익 가능성': '빠른 성장과 학습',
-    '열정 프로젝트': '혁신과 도전',
+    '독립성과 자유',
+    '더 큰 임팩트',
+    '지분/수익 가능성',
+    '빠른 성장과 학습',
+    '열정 프로젝트',
+    '혁신과 도전',
   ];
 
   final List<String> _readinessLevels = [
-    '정보 수집 중': '진지하게 고려 중',
-    '구체적 계획 수립 중': '준비 완료',
+    '정보 수집 중',
+    '진지하게 고려 중',
+    '구체적 계획 수립 중',
+    '준비 완료',
   ];
 
   final List<String> _concernOptions = [
-    '재정적 불안정': '워라밸 우려',
-    '스킬 부족': '네트워크 부족',
-    '경험 부족': '실패 리스크',
-    '가족 반대': '타이밍 불확실',
+    '재정적 불안정',
+    '워라밸 우려',
+    '스킬 부족',
+    '네트워크 부족',
+    '경험 부족',
+    '실패 리스크',
+    '가족 반대',
+    '타이밍 불확실',
   ];
 
   @override
@@ -130,8 +139,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                 ),
                 SizedBox(height: AppSpacing.spacing4),
                 
-                // Startup Interest (Optional),
-            TextField(
+                // Startup Interest (Optional)
+                TextField(
                   controller: _startupInterestController,
                   decoration: InputDecoration(
                     labelText: '관심 있는 스타트업 분야 (선택사항)',
@@ -155,7 +164,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               children: [
                 Text(
                   '스타트업 전직 동기',
-                  style: theme.textTheme.titleMedium),
+                  style: theme.textTheme.titleMedium,
+                ),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8,
@@ -169,8 +179,13 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                         setState(() {
                           _motivation = selected ? motivation : null;
                         });
-                      });
-                  }).toList()),
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Readiness Level
@@ -181,7 +196,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               children: [
                 Text(
                   '준비 상태',
-                  style: theme.textTheme.titleMedium),
+                  style: theme.textTheme.titleMedium,
+                ),
                 SizedBox(height: AppSpacing.spacing3),
                 ...(_readinessLevels.map((level) {
                   final isSelected = _readiness == level;
@@ -203,7 +219,9 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2)),
+                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                        ),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -212,14 +230,21 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                                 : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5)),
+                                : theme.colorScheme.onSurface.withOpacity(0.5),
+                          ),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             level,
-                            style: theme.textTheme.bodyLarge)])))
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
                   );
-                }))
-              ])),
+                })),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Concerns
@@ -234,12 +259,16 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '주요 고민/우려사항 (2개 이상)',
-                      style: theme.textTheme.titleMedium)]),
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ],
+                ),
                 SizedBox(height: AppSpacing.spacing2),
                 Text(
                   '최대 4개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
                 ),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
@@ -258,9 +287,16 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                             _selectedConcerns.remove(concern);
                           }
                         });
-                      });
-                  }).toList()),
-          SizedBox(height: AppSpacing.spacing8)])
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.spacing8),
+        ],
+      ),
     );
   }
 }

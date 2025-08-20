@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter/material.dart' show VoidCallback;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../core/config/environment.dart';
 import '../core/utils/logger.dart';
@@ -205,6 +206,43 @@ class AdService {
       await _interstitialAd!.show();
     } else {
       Logger.warning('Interstitial ad not ready');
+    }
+  }
+
+  /// Show an interstitial ad with callback when completed
+  Future<void> showInterstitialAdWithCallback({
+    VoidCallback? onAdCompleted,
+    VoidCallback? onAdFailed,
+  }) async {
+    if (_isInterstitialAdReady && _interstitialAd != null) {
+      // Set up callback for when ad is completed
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _isInterstitialAdReady = false;
+          Logger.info('Interstitial ad dismissed');
+          // Execute callback when ad is completed
+          onAdCompleted?.call();
+          // Load next interstitial ad
+          loadInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _isInterstitialAdReady = false;
+          Logger.error('Interstitial ad failed to show', error);
+          // Execute failure callback
+          onAdFailed?.call();
+        },
+        onAdShowedFullScreenContent: (ad) {
+          Logger.info('Interstitial ad showed');
+        },
+      );
+      
+      await _interstitialAd!.show();
+    } else {
+      Logger.warning('Interstitial ad not ready - executing callback immediately');
+      // If ad is not ready, execute the callback immediately
+      onAdCompleted?.call();
     }
   }
 

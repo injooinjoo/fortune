@@ -35,9 +35,9 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      final todosState = ref.read(todosProvider);
+      final todosState = ref.read(todoListProvider);
       if (!todosState.isLoading && todosState.hasMore) {
-        ref.read(todosProvider.notifier).loadTodos();
+        ref.read(todoListProvider.notifier).loadTodos();
       }
     }
   }
@@ -47,12 +47,13 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const TodoCreationDialog());
+      builder: (context) => const TodoCreationDialog(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final todosState = ref.watch(todosProvider);
+    final todosState = ref.watch(todoListProvider);
     final filter = ref.watch(todoFilterProvider);
 
     return Scaffold(
@@ -63,17 +64,19 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // Show search dialog
               _showSearchDialog();
-            }),
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
-              // Show filter options
               _showFilterOptions();
-            })]),
+            },
+          ),
+        ],
+      ),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(todosProvider.notifier).loadTodos(refresh: true),
+        onRefresh: () => ref.read(todoListProvider.notifier).loadTodos(refresh: true),
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
@@ -81,7 +84,9 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: TodoStatsCard()),
+                child: TodoStatsCard(),
+              ),
+            ),
 
             // Filter Chips
             if (filter.status != null ||
@@ -99,32 +104,44 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                           label: _getStatusLabel(filter.status!),
                           onDeleted: () {
                             ref.read(todoFilterProvider.notifier).update(
-                                  (state) => state.copyWith(status: () => null));
-                            ref.read(todosProvider.notifier).loadTodos(refresh: true);
-                          }),
+                              (state) => state.copyWith(status: () => null),
+                            );
+                            ref.read(todoListProvider.notifier).loadTodos(refresh: true);
+                          },
+                        ),
                       if (filter.priority != null)
                         TodoFilterChip(
                           label: _getPriorityLabel(filter.priority!),
                           onDeleted: () {
                             ref.read(todoFilterProvider.notifier).update(
-                                  (state) => state.copyWith(priority: () => null));
-                            ref.read(todosProvider.notifier).loadTodos(refresh: true);
-                          }),
+                              (state) => state.copyWith(priority: () => null),
+                            );
+                            ref.read(todoListProvider.notifier).loadTodos(refresh: true);
+                          },
+                        ),
                       if (filter.searchQuery != null)
                         TodoFilterChip(
                           label: '검색: ${filter.searchQuery}',
                           onDeleted: () {
                             ref.read(todoFilterProvider.notifier).update(
-                                  (state) => state.copyWith(searchQuery: () => null));
-                            ref.read(todosProvider.notifier).loadTodos(refresh: true);
-                          })])),
+                              (state) => state.copyWith(searchQuery: () => null),
+                            );
+                            ref.read(todoListProvider.notifier).loadTodos(refresh: true);
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ),
 
             // Error State
             if (todosState.failure != null && todosState.todos.isEmpty)
               SliverFillRemaining(
                 child: CustomErrorWidget(
                   message: '할 일을 불러올 수 없습니다',
-                  onRetry: () => ref.read(todosProvider.notifier).loadTodos(refresh: true)),
+                  onRetry: () => ref.read(todoListProvider.notifier).loadTodos(refresh: true),
+                ),
+              ),
 
             // Empty State
             if (todosState.todos.isEmpty && !todosState.isLoading && todosState.failure == null)
@@ -132,7 +149,9 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                 child: EmptyStateWidget(
                   icon: Icons.check_circle_outline,
                   title: '할 일이 없습니다',
-                  subtitle: '새로운 할 일을 추가해보세요')),
+                  subtitle: '새로운 할 일을 추가해보세요',
+                ),
+              ),
 
             // Todo List
             SliverList(
@@ -142,7 +161,8 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                     return todosState.hasMore
                         ? const Padding(
                             padding: EdgeInsets.all(16),
-                            child: Center(child: CircularProgressIndicator()))
+                            child: Center(child: CircularProgressIndicator()),
+                          )
                         : const SizedBox.shrink();
                   }
 
@@ -150,15 +170,23 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                   return TodoListItem(
                     key: ValueKey(todo.id),
                     todo: todo,
-                    onToggle: () => ref.read(todosProvider.notifier).toggleTodoStatus(todo.id),
-                    onDelete: () => ref.read(todosProvider.notifier).deleteTodo(todo.id),
-                    onTap: () => _showTodoDetails(todo));
+                    onToggle: () => ref.read(todoListProvider.notifier).toggleTodoStatus(todo.id),
+                    onDelete: () => ref.read(todoListProvider.notifier).deleteTodo(todo.id),
+                    onTap: () => _showTodoDetails(todo),
+                  );
                 },
-                childCount: todosState.todos.length + (todosState.hasMore ? 1 : 0))]),
+                childCount: todosState.todos.length + (todosState.hasMore ? 1 : 0),
+              ),
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateTodoDialog,
         icon: const Icon(Icons.add),
-        label: const Text('새 할 일')));
+        label: const Text('새 할 일'),
+      ),
+    );
   }
 
   void _showSearchDialog() {
@@ -172,31 +200,40 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
           controller: textController,
           decoration: const InputDecoration(
             hintText: '검색어를 입력하세요',
-            prefixIcon: Icon(Icons.search)),
+            prefixIcon: Icon(Icons.search),
+          ),
           autofocus: true,
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
               ref.read(todoFilterProvider.notifier).update(
-                    (state) => state.copyWith(searchQuery: value.trim()));
-              ref.read(todosProvider.notifier).loadTodos(refresh: true);
+                (state) => state.copyWith(searchQuery: () => value.trim()),
+              );
+              ref.read(todoListProvider.notifier).loadTodos(refresh: true);
               Navigator.of(context).pop();
             }
-          }),
+          },
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소')),
+            child: const Text('취소'),
+          ),
           TextButton(
             onPressed: () {
               final query = textController.text.trim();
               if (query.isNotEmpty) {
                 ref.read(todoFilterProvider.notifier).update(
-                      (state) => state.copyWith(searchQuery: query));
-                ref.read(todosProvider.notifier).loadTodos(refresh: true);
+                  (state) => state.copyWith(searchQuery: () => query),
+                );
+                ref.read(todoListProvider.notifier).loadTodos(refresh: true);
                 Navigator.of(context).pop();
               }
             },
-            child: const Text('검색')]);
+            child: const Text('검색'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showFilterOptions() {
@@ -210,7 +247,8 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
           children: [
             const Text(
               '필터 옵션',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             const Text('상태'),
             const SizedBox(height: 8),
@@ -222,20 +260,27 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                   selected: ref.watch(todoFilterProvider).status == null,
                   onSelected: (selected) {
                     ref.read(todoFilterProvider.notifier).update(
-                          (state) => state.copyWith(status: null));
-                    ref.read(todosProvider.notifier).loadTodos(refresh: true);
+                      (state) => state.copyWith(status: () => null),
+                    );
+                    ref.read(todoListProvider.notifier).loadTodos(refresh: true);
                     Navigator.of(context).pop();
-                  }),
+                  },
+                ),
                 ...TodoStatus.values.map((status) => FilterChip(
-                      label: Text(_getStatusLabel(status)),
-                      selected: ref.watch(todoFilterProvider).status == status,
-                      onSelected: (selected) {
-                        ref.read(todoFilterProvider.notifier).update(
-                              (state) => state.copyWith(
-                                status: selected ? status : null));
-                        ref.read(todosProvider.notifier).loadTodos(refresh: true);
-                        Navigator.of(context).pop();
-                      }))]),
+                  label: Text(_getStatusLabel(status)),
+                  selected: ref.watch(todoFilterProvider).status == status,
+                  onSelected: (selected) {
+                    ref.read(todoFilterProvider.notifier).update(
+                      (state) => state.copyWith(
+                        status: () => selected ? status : null,
+                      ),
+                    );
+                    ref.read(todoListProvider.notifier).loadTodos(refresh: true);
+                    Navigator.of(context).pop();
+                  },
+                )),
+              ],
+            ),
             const SizedBox(height: 16),
             const Text('우선순위'),
             const SizedBox(height: 8),
@@ -247,25 +292,36 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                   selected: ref.watch(todoFilterProvider).priority == null,
                   onSelected: (selected) {
                     ref.read(todoFilterProvider.notifier).update(
-                          (state) => state.copyWith(priority: null));
-                    ref.read(todosProvider.notifier).loadTodos(refresh: true);
+                      (state) => state.copyWith(priority: () => null),
+                    );
+                    ref.read(todoListProvider.notifier).loadTodos(refresh: true);
                     Navigator.of(context).pop();
-                  }),
+                  },
+                ),
                 ...TodoPriority.values.map((priority) => FilterChip(
-                      label: Text(_getPriorityLabel(priority)),
-                      selected: ref.watch(todoFilterProvider).priority == priority,
-                      onSelected: (selected) {
-                        ref.read(todoFilterProvider.notifier).update(
-                              (state) => state.copyWith(
-                                priority: selected ? priority : null));
-                        ref.read(todosProvider.notifier).loadTodos(refresh: true);
-                        Navigator.of(context).pop();
-                      }))])])));
+                  label: Text(_getPriorityLabel(priority)),
+                  selected: ref.watch(todoFilterProvider).priority == priority,
+                  onSelected: (selected) {
+                    ref.read(todoFilterProvider.notifier).update(
+                      (state) => state.copyWith(
+                        priority: () => selected ? priority : null,
+                      ),
+                    );
+                    ref.read(todoListProvider.notifier).loadTodos(refresh: true);
+                    Navigator.of(context).pop();
+                  },
+                )),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showTodoDetails(Todo todo) {
     // Navigate to todo detail page or show dialog
-    Logger.debug('Deleting todo: ${todo.id}');
+    Logger.debug('Showing todo details: ${todo.id}');
   }
 
   String _getStatusLabel(TodoStatus status) {

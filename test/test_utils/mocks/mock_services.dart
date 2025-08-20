@@ -68,8 +68,8 @@ class MockServiceFactory {
     when(() => service.currentUser).thenReturn(currentUser);
     when(() => service.authStateChanges).thenAnswer(
       (_) => Stream.value(AuthState(
-        event: currentUser != null ? AuthChangeEvent.signedIn : AuthChangeEvent.signedOut,
-        session: null,
+        currentUser != null ? AuthChangeEvent.signedIn : AuthChangeEvent.signedOut,
+        null,
       )),
     );
     
@@ -147,7 +147,8 @@ class MockServiceFactory {
     when(() => response.data).thenReturn(data);
     when(() => response.statusCode).thenReturn(statusCode);
     when(() => response.statusMessage).thenReturn(statusMessage);
-    when(() => response.headers).thenReturn(dio.Headers.fromMap(headers ?? {}));
+    when(() => response.headers).thenReturn(dio.Headers.fromMap(
+      headers?.map((k, v) => MapEntry(k, [v.toString()])) ?? {}));
     when(() => response.requestOptions).thenReturn(requestOptions);
     
     return response;

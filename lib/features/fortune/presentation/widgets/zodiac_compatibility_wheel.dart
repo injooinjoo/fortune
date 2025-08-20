@@ -12,7 +12,8 @@ class ZodiacCompatibilityWheel extends StatefulWidget {
     Key? key,
     required this.selectedZodiac,
     required this.onZodiacSelected,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true,
+  }) : super(key: key);
 
   @override
   State<ZodiacCompatibilityWheel> createState() => _ZodiacCompatibilityWheelState();
@@ -65,7 +66,9 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         const SizedBox(height: 20),
         _buildWheel(),
         const SizedBox(height: 20),
-        _buildLegend()]);
+        _buildLegend(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -82,7 +85,9 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white))]);
+            color: Colors.white)),
+      ],
+    );
   }
 
   Widget _buildWheel() {
@@ -117,8 +122,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                     child: _buildZodiacIcon(zodiac, index)));
               }),
               // 중앙 정보
-              _buildCenterInfo()]));
-      });
+              _buildCenterInfo(),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildZodiacIcon(String zodiac, int index) {
@@ -162,7 +171,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                 style: TextStyle(
                   fontSize: isSelected ? 12 : 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: Colors.white)]));
+                  color: Colors.white)),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCenterInfo() {
@@ -197,11 +211,15 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withOpacity(0.8)),
+          ),
           Text(
             info['element'],
             style: TextStyle(
               fontSize: 12,
-              color: Colors.amber)]);
+              color: Colors.amber)),
+        ],
+      ),
+    );
   }
 
   Widget _buildLegend() {
@@ -223,7 +241,10 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           const SizedBox(width: 20),
           _buildLegendItem('육해', Colors.red, '주의 필요'),
           const SizedBox(width: 20),
-          _buildLegendItem('보통', Colors.grey, '노력 필요')]));
+          _buildLegendItem('보통', Colors.grey, '노력 필요'),
+        ],
+      ),
+    );
   }
 
   Widget _buildLegendItem(String label, Color color, String description) {
@@ -249,7 +270,11 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
               description,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.6),
-                fontSize: 10))])]);
+                fontSize: 10)),
+          ],
+        ),
+      ],
+    );
   }
 
   Color _getCompatibilityColor(double compatibility) {
@@ -284,7 +309,8 @@ class _ZodiacRelationshipPainter extends CustomPainter {
 
   _ZodiacRelationshipPainter({
     required this.selectedZodiac,
-    required this.animationValue});
+    required this.animationValue,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {

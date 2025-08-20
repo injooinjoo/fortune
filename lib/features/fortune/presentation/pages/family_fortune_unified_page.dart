@@ -7,10 +7,10 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum FamilyType {
-  children('자녀 운세': 'children', '우리 아이의 운세와 성장', Icons.child_care_rounded, [Color(0xFFFBBF24), Color(0xFFF59E0B)]),
-  parenting('육아 운세': 'parenting', '오늘의 육아 조언', Icons.family_restroom_rounded, [Color(0xFF10B981), Color(0xFF059669)]),
-  pregnancy('태교 운세': 'pregnancy', '예비 엄마를 위한 태교 가이드', Icons.pregnant_woman_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
-  harmony('가족 화합': 'family-harmony', '가족 간의 조화와 행복', Icons.home_rounded, [Color(0xFF6366F1), Color(0xFF4F46E5)]);
+  children('자녀 운세', 'children', '우리 아이의 운세와 성장', Icons.child_care_rounded, [Color(0xFFFBBF24), Color(0xFFF59E0B)]),
+  parenting('육아 운세', 'parenting', '오늘의 육아 조언', Icons.family_restroom_rounded, [Color(0xFF10B981), Color(0xFF059669)]),
+  pregnancy('태교 운세', 'pregnancy', '예비 엄마를 위한 태교 가이드', Icons.pregnant_woman_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
+  harmony('가족 화합', 'family-harmony', '가족 간의 조화와 행복', Icons.home_rounded, [Color(0xFF6366F1), Color(0xFF4F46E5)]);
   
   final String label;
   final String value;
@@ -250,7 +250,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                 ],
               ),
             ),
-            if (type.isPremium),
+            if (type.isPremium)
             Positioned(
                 top: 8,
                 right: 8,
@@ -308,7 +308,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
               ),
             ],
           ),
-          if (_familyMembers.isEmpty),
+          if (_familyMembers.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
@@ -321,7 +321,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                 ),
               ),
             ),
-            else
+          if (_familyMembers.isNotEmpty)
             ..._familyMembers.map((member) => _buildFamilyMemberCard(member)).toList(),
         ],
       ),
@@ -394,8 +394,8 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
             DropdownButtonFormField<String>(
               value: relation,
               decoration: const InputDecoration(labelText: '관계'),
-              items: ['자녀': '배우자', '부모': '형제자매']
-                  .map((r) => DropdownMenuItem(value: r, child: Text(r))
+              items: ['자녀', '배우자', '부모', '형제자매']
+                  .map((r) => DropdownMenuItem(value: r, child: Text(r)))
                   .toList(),
               onChanged: (value) => relation = value ?? '자녀',
             ),
@@ -534,7 +534,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                   ),
                 ),
               ),
-              if (fortune.score != null),
+              if (fortune.score != null)
             Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(

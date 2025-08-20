@@ -21,7 +21,8 @@ _$AdminStatsModelImpl _$$AdminStatsModelImplFromJson(
           .toList(),
       tokenUsageStats: (json['tokenUsageStats'] as List<dynamic>)
           .map((e) => TokenUsageModel.fromJson(e as Map<String, dynamic>))
-          .toList());
+          .toList(),
+    );
 
 Map<String, dynamic> _$$AdminStatsModelImplToJson(
         _$AdminStatsModelImpl instance) =>
@@ -34,7 +35,8 @@ Map<String, dynamic> _$$AdminStatsModelImplToJson(
       'totalRevenue': instance.totalRevenue,
       'fortuneTypeStats': instance.fortuneTypeStats,
       'dailyStats': instance.dailyStats,
-      'tokenUsageStats': instance.tokenUsageStats};
+      'tokenUsageStats': instance.tokenUsageStats,
+    };
 
 _$DailyStatModelImpl _$$DailyStatModelImplFromJson(Map<String, dynamic> json) =>
     _$DailyStatModelImpl(
@@ -42,7 +44,8 @@ _$DailyStatModelImpl _$$DailyStatModelImplFromJson(Map<String, dynamic> json) =>
       fortunes: (json['fortunes'] as num).toInt(),
       users: (json['users'] as num).toInt(),
       tokens: (json['tokens'] as num).toInt(),
-      revenue: (json['revenue'] as num).toInt());
+      revenue: (json['revenue'] as num).toInt(),
+    );
 
 Map<String, dynamic> _$$DailyStatModelImplToJson(
         _$DailyStatModelImpl instance) =>
@@ -51,7 +54,8 @@ Map<String, dynamic> _$$DailyStatModelImplToJson(
       'fortunes': instance.fortunes,
       'users': instance.users,
       'tokens': instance.tokens,
-      'revenue': instance.revenue};
+      'revenue': instance.revenue,
+    };
 
 _$TokenUsageModelImpl _$$TokenUsageModelImplFromJson(
         Map<String, dynamic> json) =>
@@ -61,7 +65,8 @@ _$TokenUsageModelImpl _$$TokenUsageModelImplFromJson(
       tokensUsed: (json['tokensUsed'] as num).toInt(),
       fortuneCount: (json['fortuneCount'] as num).toInt(),
       lastActivity: DateTime.parse(json['lastActivity'] as String),
-      isSubscribed: json['isSubscribed'] as bool);
+      isSubscribed: json['isSubscribed'] as bool,
+    );
 
 Map<String, dynamic> _$$TokenUsageModelImplToJson(
         _$TokenUsageModelImpl instance) =>
@@ -71,4 +76,5 @@ Map<String, dynamic> _$$TokenUsageModelImplToJson(
       'tokensUsed': instance.tokensUsed,
       'fortuneCount': instance.fortuneCount,
       'lastActivity': instance.lastActivity.toIso8601String(),
-      'isSubscribed': instance.isSubscribed};
+      'isSubscribed': instance.isSubscribed,
+    };

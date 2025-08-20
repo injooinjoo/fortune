@@ -13,7 +13,8 @@ class FortuneHistorySummaryWidget extends StatefulWidget {
   
   const FortuneHistorySummaryWidget({
     super.key,
-    required this.userId});
+    required this.userId,
+  });
 
   @override
   State<FortuneHistorySummaryWidget> createState() => _FortuneHistorySummaryWidgetState();
@@ -64,7 +65,8 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                   .toList() ??
               [];
           recentFortunes = {
-            'data': response as List<dynamic>? ?? []};
+            'data': response as List<dynamic>? ?? [],
+          };
           isLoading = false;
         });
       }
@@ -84,7 +86,9 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
       return Center(
         child: Text(
           '아직 운세 기록이 없습니다',
-          style: Theme.of(context).textTheme.bodyMedium));
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      );
     }
     
     final spots = recentScores.asMap().entries.map((entry) {
@@ -95,7 +99,8 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
       height: 120,
       padding: EdgeInsets.only(
         top: AppSpacing.spacing3,
-        right: AppSpacing.spacing4),
+        right: AppSpacing.spacing4,
+      ),
       child: LineChart(
         LineChartData(
           gridData: const FlGridData(show: false),
@@ -119,11 +124,19 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                     radius: 4,
                     color: Theme.of(context).colorScheme.primary,
                     strokeWidth: 2,
-                    strokeColor: Theme.of(context).colorScheme.surface);
-                }),
+                    strokeColor: Theme.of(context).colorScheme.surface,
+                  );
+                },
+              ),
               belowBarData: BarAreaData(
                 show: true,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1))]));
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -138,7 +151,9 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: fortuneTheme.dividerColor.withOpacity(0.1),
-          width: 1)),
+          width: 1,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -148,20 +163,28 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               Text(
                 '나의 운세 히스토리',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               IconButton(
                 onPressed: _loadData,
                 icon: Icon(
                   Icons.refresh,
                   color: theme.colorScheme.primary,
-                  size: AppDimensions.iconSizeSmall))]),
+                  size: AppDimensions.iconSizeSmall,
+                ),
+              ),
+            ],
+          ),
           
           SizedBox(height: AppSpacing.spacing4),
           
           if (isLoading)
             Center(
               child: CircularProgressIndicator(
-                color: theme.colorScheme.primary))
+                color: theme.colorScheme.primary,
+              ),
+            )
           else if (error != null)
             Center(
               child: Column(
@@ -169,16 +192,22 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                   Icon(
                     Icons.error_outline,
                     color: theme.colorScheme.error,
-                    size: 48),
+                    size: 48,
+                  ),
                   SizedBox(height: AppSpacing.spacing2),
                   Text(
                     '데이터를 불러올 수 없습니다',
-                    style: theme.textTheme.bodyMedium)]))
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            )
           else ...[
             // Chart
             Text(
               '최근 7일 운세 점수',
-              style: theme.textTheme.titleMedium),
+              style: theme.textTheme.titleMedium,
+            ),
             SizedBox(height: AppSpacing.spacing3),
             _buildChart(context),
             
@@ -187,7 +216,8 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
             // Recent fortunes
             Text(
               '최근 운세',
-              style: theme.textTheme.titleMedium),
+              style: theme.textTheme.titleMedium,
+            ),
             SizedBox(height: AppSpacing.spacing3),
             
             if (recentFortunes != null && recentFortunes!['data'].isNotEmpty)
@@ -195,13 +225,22 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 children: [
                   ...(recentFortunes!['data'] as List).map((fortune) {
                     return _buildFortuneItem(context, fortune);
-                  }).toList()])
+                  }).toList(),
+                ],
+              )
             else
               Center(
                 child: Text(
                   '아직 확인한 운세가 없습니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)))]]));
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ),
+          ],
+        ],
+      ),
+    );
   }
   
   Widget _buildFortuneItem(BuildContext context, Map<String, dynamic> fortune) {
@@ -216,7 +255,9 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
           color: fortuneTheme.dividerColor.withOpacity(0.1),
-          width: 1)),
+          width: 1,
+        ),
+      ),
       child: Row(
         children: [
           Container(
@@ -224,13 +265,18 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
             height: 48,
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: AppDimensions.borderRadiusSmall),
+              borderRadius: AppDimensions.borderRadiusSmall,
+            ),
             child: Center(
               child: Text(
                 '${fortune['score'] ?? 0}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
           SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
@@ -238,13 +284,22 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               children: [
                 Text(
                   fortune['type'] ?? '운세',
-                  style: theme.textTheme.titleSmall),
+                  style: theme.textTheme.titleSmall,
+                ),
                 SizedBox(height: AppSpacing.spacing1),
                 Text(
                   fortune['title'] ?? '',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  ),
                   maxLines: 2,
-                  overflow: TextOverflow.ellipsis)])]);
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -136,13 +136,16 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         gradient: LinearGradient(
                           colors: [
                             theme.colorScheme.primary.withOpacity(0.1),
-                            theme.colorScheme.secondary.withOpacity(0.1)]),
+                            theme.colorScheme.secondary.withOpacity(0.1),
+                          ],
+                        ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.favorite,
                               size: 48,
-                              color: theme.colorScheme.primary),
+                              color: theme.colorScheme.primary,
+                            ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Column(
@@ -165,8 +168,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
+                        ),
                         ),
                       const SizedBox(height: 24),
                       
@@ -217,6 +221,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                   ),
                                 ],
                               ),
+                            ),
                           );
                         }).toList()),
                       const SizedBox(height: 24),
@@ -367,7 +372,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white))
+                                      color: Colors.white,
+                                    ),
+                                  )
                                 : Text(
                                     '의견 보내기',
                                     style: TextStyle(
@@ -376,10 +383,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ),
+                        ),
+                      ),
                       const SizedBox(height: 24),
                     ],
                   ),

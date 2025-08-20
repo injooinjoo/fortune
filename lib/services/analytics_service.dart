@@ -350,4 +350,189 @@ class AnalyticsService {
       Logger.error('Failed to reset analytics', e);
     }
   }
+
+  // ============ A/B Testing Analytics Events ============
+
+  /// Log A/B test variant exposure
+  Future<void> logABTestExposure({
+    required String experimentId,
+    required String variantId,
+    String? variantName,
+    String? userId,
+    Map<String, dynamic>? additionalParams,
+  }) async {
+    await logEvent('ab_test_exposure', parameters: {
+      'experiment_id': experimentId,
+      'variant_id': variantId,
+      if (variantName != null) 'variant_name': variantName,
+      if (userId != null) 'user_id': userId,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      ...?additionalParams,
+    });
+  }
+
+  /// Log A/B test conversion event
+  Future<void> logABTestConversion({
+    required String experimentId,
+    required String variantId,
+    String? conversionType,
+    double? conversionValue,
+    String? userId,
+    Map<String, dynamic>? additionalParams,
+  }) async {
+    await logEvent('ab_test_conversion', parameters: {
+      'experiment_id': experimentId,
+      'variant_id': variantId,
+      'conversion_type': conversionType ?? 'default',
+      if (conversionValue != null) 'conversion_value': conversionValue,
+      if (userId != null) 'user_id': userId,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      ...?additionalParams,
+    });
+  }
+
+  /// Log A/B test metric event
+  Future<void> logABTestMetric({
+    required String experimentId,
+    required String variantId,
+    required String metricName,
+    required dynamic metricValue,
+    String? userId,
+    Map<String, dynamic>? additionalParams,
+  }) async {
+    await logEvent('ab_test_metric', parameters: {
+      'experiment_id': experimentId,
+      'variant_id': variantId,
+      'metric_name': metricName,
+      'metric_value': metricValue,
+      if (userId != null) 'user_id': userId,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      ...?additionalParams,
+    });
+  }
+
+  /// Log payment UI A/B test events
+  Future<void> logPaymentUITestEvent({
+    required String variantId,
+    required String action,
+    String? packageId,
+    double? price,
+    Map<String, dynamic>? uiParameters,
+  }) async {
+    await logEvent('payment_ui_test', parameters: {
+      'variant_id': variantId,
+      'action': action, // 'view', 'click', 'purchase'
+      if (packageId != null) 'package_id': packageId,
+      if (price != null) 'price': price,
+      if (uiParameters != null) ...uiParameters,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  /// Log onboarding A/B test events
+  Future<void> logOnboardingTestEvent({
+    required String variantId,
+    required String step,
+    required String action,
+    bool? skipped,
+    int? timeSpentSeconds,
+  }) async {
+    await logEvent('onboarding_test', parameters: {
+      'variant_id': variantId,
+      'step': step,
+      'action': action, // 'start', 'complete', 'skip', 'abandon'
+      if (skipped != null) 'skipped': skipped,
+      if (timeSpentSeconds != null) 'time_spent_seconds': timeSpentSeconds,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  /// Log fortune card UI A/B test events
+  Future<void> logFortuneCardUITestEvent({
+    required String variantId,
+    required String fortuneType,
+    required String action,
+    String? cardStyle,
+    bool? animationEnabled,
+  }) async {
+    await logEvent('fortune_card_ui_test', parameters: {
+      'variant_id': variantId,
+      'fortune_type': fortuneType,
+      'action': action, // 'view', 'interact', 'share', 'save'
+      if (cardStyle != null) 'card_style': cardStyle,
+      if (animationEnabled != null) 'animation_enabled': animationEnabled,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  /// Log token pricing A/B test events
+  Future<void> logTokenPricingTestEvent({
+    required String variantId,
+    required String action,
+    String? packageId,
+    int? tokenAmount,
+    double? price,
+    double? bonusRate,
+  }) async {
+    await logEvent('token_pricing_test', parameters: {
+      'variant_id': variantId,
+      'action': action, // 'view', 'select', 'purchase'
+      if (packageId != null) 'package_id': packageId,
+      if (tokenAmount != null) 'token_amount': tokenAmount,
+      if (price != null) 'price': price,
+      if (bonusRate != null) 'bonus_rate': bonusRate,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  /// Set user property for A/B test segment
+  Future<void> setABTestUserProperty({
+    required String experimentId,
+    required String variantId,
+  }) async {
+    if (!_isInitialized || _analytics == null) return;
+
+    try {
+      await _analytics!.setUserProperty(
+        name: 'ab_${experimentId}',
+        value: variantId,
+      );
+      
+      Logger.info('Set A/B test user property: $experimentId = $variantId');
+    } catch (e) {
+      Logger.error('Failed to set A/B test user property', e);
+    }
+  }
+
+  /// Log experiment started event
+  Future<void> logExperimentStarted({
+    required String experimentId,
+    required String experimentName,
+    required int variantCount,
+    double? trafficAllocation,
+  }) async {
+    await logEvent('experiment_started', parameters: {
+      'experiment_id': experimentId,
+      'experiment_name': experimentName,
+      'variant_count': variantCount,
+      if (trafficAllocation != null) 'traffic_allocation': trafficAllocation,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  /// Log experiment ended event
+  Future<void> logExperimentEnded({
+    required String experimentId,
+    required String winningVariant,
+    double? uplift,
+    int? totalParticipants,
+  }) async {
+    await logEvent('experiment_ended', parameters: {
+      'experiment_id': experimentId,
+      'winning_variant': winningVariant,
+      if (uplift != null) 'uplift_percentage': uplift,
+      if (totalParticipants != null) 'total_participants': totalParticipants,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
 }

@@ -44,6 +44,7 @@ class BirthDatePreview extends StatelessWidget {
         color: Theme.of(context).primaryColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
         border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.2)),
+      ),
       child: Column(
         children: [
           Text(
@@ -59,6 +60,10 @@ class BirthDatePreview extends StatelessWidget {
               selectedTimePeriod.label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).primaryColor.withOpacity(0.8)),
-              textAlign: TextAlign.center)]]));
+              textAlign: TextAlign.center),
+          ],
+        ],
+      ),
+    );
   }
 }

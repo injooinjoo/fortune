@@ -23,7 +23,8 @@ class PaymentResultPage extends StatefulWidget {
     this.amount,
     this.transactionId,
     this.tokenAmount,
-    this.errorCode});
+    this.errorCode,
+  });
 
   @override
   State<PaymentResultPage> createState() => _PaymentResultPageState();
@@ -58,15 +59,23 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
               _buildMessage(),
               if (widget.isSuccess && widget.tokenAmount != null) ...[
                 const SizedBox(height: 24),
-                _buildTokenInfo()],
+                _buildTokenInfo(),
+              ],
               if (widget.transactionId != null) ...[
                 const SizedBox(height: 16),
-                _buildTransactionId()],
+                _buildTransactionId(),
+              ],
               const SizedBox(height: 48),
               _buildActions(),
               if (!widget.isSuccess) ...[
                 const SizedBox(height: 16),
-                _buildRetryInfo()]])));
+                _buildRetryInfo(),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildIcon() {
@@ -77,11 +86,14 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         height: 120,
         decoration: BoxDecoration(
           color: AppColors.success.withOpacity(0.1),
-          shape: BoxShape.circle),
+          shape: BoxShape.circle,
+        ),
         child: Icon(
           Icons.check_circle,
           size: 80,
-          color: AppColors.success)).animate()
+          color: AppColors.success,
+        ),
+      ).animate()
         .scale(duration: const Duration(milliseconds: 500))
         .fadeIn();
     } else {
@@ -91,11 +103,14 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         height: 120,
         decoration: BoxDecoration(
           color: AppColors.error.withOpacity(0.1),
-          shape: BoxShape.circle),
+          shape: BoxShape.circle,
+        ),
         child: Icon(
           Icons.error_outline,
           size: 80,
-          color: AppColors.error)).animate()
+          color: AppColors.error,
+        ),
+      ).animate()
         .shake(duration: const Duration(milliseconds: 500))
         .fadeIn();
     }
@@ -106,7 +121,9 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       widget.isSuccess ? '결제 완료!' : '결제 실패',
       style: AppTextStyles.headlineLarge.copyWith(
         fontWeight: FontWeight.bold,
-        color: widget.isSuccess ? AppColors.success : AppColors.error));
+        color: widget.isSuccess ? AppColors.success : AppColors.error,
+      ),
+    );
   }
 
   Widget _buildMessage() {
@@ -124,8 +141,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Text(
       displayMessage,
       style: AppTextStyles.bodyLarge.copyWith(
-        color: AppColors.textSecondary),
-      textAlign: TextAlign.center);
+        color: AppColors.textSecondary,
+      ),
+      textAlign: TextAlign.center,
+    );
   }
 
   Widget _buildTokenInfo() {
@@ -135,14 +154,17 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         color: AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3)),
+          color: AppColors.primary.withOpacity(0.3),
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.account_balance_wallet,
             color: AppColors.primary,
-            size: 32),
+            size: 32,
+          ),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,12 +172,21 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
               Text(
                 '충전된 토큰',
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary)),
+                  color: AppColors.primary,
+                ),
+              ),
               Text(
                 '${widget.tokenAmount}개',
                 style: AppTextStyles.headlineMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary))])])).animate()
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(delay: const Duration(milliseconds: 300))
       .slideY(begin: 0.2, end: 0);
   }
@@ -166,24 +197,34 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             '거래번호: ',
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary)),
+              color: AppColors.textSecondary,
+            ),
+          ),
           Text(
             widget.transactionId!,
             style: AppTextStyles.caption.copyWith(
-              fontFamily: 'monospace')),
+              fontFamily: 'monospace',
+            ),
+          ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: _copyTransactionId,
             child: Icon(
               Icons.copy,
               size: 16,
-              color: AppColors.textSecondary)]);
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildActions() {
@@ -194,13 +235,18 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary])),
+              colors: [AppColors.primary, AppColors.secondary],
+            ),
+          ),
           const SizedBox(height: 12),
           CustomButton(
             onPressed: _navigateToFortuneList,
             text: '운세 보러가기',
             backgroundColor: Colors.transparent,
-            textColor: AppColors.primary)]);
+            textColor: AppColors.primary,
+          ),
+        ],
+      );
     } else {
       return Column(
         children: [
@@ -208,13 +254,18 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             onPressed: _retry,
             text: '다시 시도',
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary])),
+              colors: [AppColors.primary, AppColors.secondary],
+            ),
+          ),
           const SizedBox(height: 12),
           CustomButton(
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
             backgroundColor: Colors.transparent,
-            textColor: AppColors.textPrimary)]);
+            textColor: AppColors.textPrimary,
+          ),
+        ],
+      );
     }
   }
 
@@ -243,18 +294,26 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       decoration: BoxDecoration(
         color: AppColors.info.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline,
             color: AppColors.info,
-            size: 20),
+            size: 20,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               helpText,
               style: AppTextStyles.caption.copyWith(
-                color: AppColors.info))]);
+                color: AppColors.info,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _copyTransactionId() {
@@ -268,13 +327,15 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
   void _navigateToHome() {
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/home',
-      (route) => false);
+      (route) => false,
+    );
   }
 
   void _navigateToFortuneList() {
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/fortune',
-      (route) => false);
+      (route) => false,
+    );
   }
 
   void _retry() {

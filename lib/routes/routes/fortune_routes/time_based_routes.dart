@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/time_based_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/hourly_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/daily_calendar_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/daily_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/today_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/tomorrow_fortune_page.dart';
@@ -18,14 +18,14 @@ final timeBasedRoutes = [
       if (periodParam != null) {
         initialPeriod = TimePeriod.values.firstWhere(
           (p) => p.value == periodParam,
-          orElse: () => TimePeriod.today);
+          orElse: () => TimePeriod.tomorrow);
       }
       
       // Pass extra data to the page
       final extra = state.extra as Map<String, dynamic>?;
       
       return TimeBasedFortunePage(
-        initialPeriod: initialPeriod ?? TimePeriod.today,
+        initialPeriod: initialPeriod ?? TimePeriod.tomorrow,
         initialParams: extra);
     }),
   
@@ -41,11 +41,14 @@ final timeBasedRoutes = [
       return '/fortune/time';
     }),
   
-  // Hourly
+  // Daily Calendar (특정일 운세)
   GoRoute(
-    path: '/hourly',
-    name: 'fortune-hourly',
-    builder: (context, state) => const HourlyFortunePage()),
+    path: '/daily-calendar',
+    name: 'fortune-daily-calendar',
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      return DailyCalendarFortunePage(initialParams: extra);
+    }),
   
   // Daily
   GoRoute(

@@ -105,6 +105,8 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
             hintText: '나이대를 선택하세요',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
+            ),
+          ),
           items: ['10대', '20대', '30대', '40대', '50대 이상'].map((age) {
             return DropdownMenuItem(
               value: age,
@@ -129,6 +131,8 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
             hintText: '스타일을 선택하세요',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
+            ),
+          ),
           items: ['귀여운', '섹시한', '시크한', '청순한', '카리스마'].map((style) {
             return DropdownMenuItem(
               value: style,
@@ -154,6 +158,9 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
             hintText: '본인의 외모 특징을 간단히 설명해주세요',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
         const SizedBox(height: 32),
         
         // Submit Button
@@ -187,12 +194,16 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
+              ),
               backgroundColor: theme.colorScheme.primary),
             child: Text(
               '닮은 연예인 찾기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold))))]
+                fontWeight: FontWeight.bold)),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -246,6 +257,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(20),
+            ),
             child: Column(
               children: [
                 Container(
@@ -266,6 +278,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 28 + _getFontSizeOffset(fontSize)),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   '$matchPercentage% 일치',
@@ -273,17 +286,24 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 36 + _getFontSizeOffset(fontSize)),
+                ),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
+                  ),
                   child: const Text(
                     '닮은꼴 연예인',
                     style: TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w600)]),
+                      fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 24),
         
         // Description
@@ -300,13 +320,19 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                     Text(
                       '매칭 분석',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   description,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     height: 1.5,
-                    fontSize: 16 + _getFontSizeOffset(fontSize))]),
+                    fontSize: 16 + _getFontSizeOffset(fontSize))),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         
         // Similarities
@@ -324,7 +350,9 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                       Text(
                         '공통점',
                         style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   ...similarities.map((similarity) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -340,8 +368,17 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                           child: Text(
                             similarity.toString(),
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: 14 + _getFontSizeOffset(fontSize))])])),
-          const SizedBox(height: 20)],
+                              fontSize: 14 + _getFontSizeOffset(fontSize))),
+                        ),
+                      ],
+                    ),
+                  )),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
         
         // Celebrity Traits
         if (celebrityTraits.isNotEmpty) ...[
@@ -358,7 +395,9 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                       Text(
                         '연예인 특징',
                         style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -368,11 +407,18 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                       decoration: BoxDecoration(
                         color: Colors.amber.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Text(
                         trait.toString(),
                         style: TextStyle(
                           color: Colors.amber.shade900,
-                          fontWeight: FontWeight.w500))).toList()])),
+                          fontWeight: FontWeight.w500)),
+                    )).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20)],
         
         // Advice
@@ -389,13 +435,19 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                     Text(
                       '스타일 조언',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   advice,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     height: 1.5,
-                    fontSize: 16 + _getFontSizeOffset(fontSize))]),
+                    fontSize: 16 + _getFontSizeOffset(fontSize))),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 24),
         
         // Share Button
@@ -407,7 +459,10 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25))))]
+                borderRadius: BorderRadius.circular(25))),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -18,7 +18,8 @@ class SocialAccountsSection extends StatefulWidget {
     required this.linkedProviders,
     required this.primaryProvider,
     required this.onProvidersChanged,
-    required this.socialAuthService});
+    required this.socialAuthService,
+  });
   
   @override
   State<SocialAccountsSection> createState() => _SocialAccountsSectionState();
@@ -33,22 +34,27 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       name: 'Google',
       iconType: SocialIconType.network,
       iconData: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
-      color: const Color(0xFF4285F4)),
+      color: const Color(0xFF4285F4),
+    ),
     'apple': SocialProviderInfo(
       name: 'Apple',
       iconType: SocialIconType.icon,
       iconData: Icons.apple,
-      color: AppColors.textPrimary),
+      color: AppColors.textPrimary,
+    ),
     'kakao': SocialProviderInfo(
       name: 'Kakao',
       iconType: SocialIconType.text,
       iconData: 'K',
-      color: const Color(0xFFFEE500)),
+      color: const Color(0xFFFEE500),
+    ),
     'naver': SocialProviderInfo(
       name: 'Naver',
       iconType: SocialIconType.text,
       iconData: 'N',
-      color: const Color(0xFF03C75A))};
+      color: const Color(0xFF03C75A),
+    ),
+  };
   
   bool _isProviderLinked(String provider) {
     return widget.linkedProviders?.contains(provider) ?? false;
@@ -93,7 +99,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${_providers[provider]?.name} 계정이 연결되었습니다.'),
-              backgroundColor: AppColors.success));
+              backgroundColor: AppColors.success,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -102,7 +110,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결에 실패했습니다.'),
-            backgroundColor: AppColors.error));
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -120,7 +130,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('기본 로그인 계정은 연결을 해제할 수 없습니다.'),
-          backgroundColor: AppColors.warning));
+          backgroundColor: AppColors.warning,
+        ),
+      );
       return;
     }
     
@@ -133,10 +145,15 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소')),
+            child: const Text('취소'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('연결 해제')]);
+            child: const Text('연결 해제'),
+          ),
+        ],
+      ),
+    );
     
     if (shouldUnlink != true) return;
     
@@ -167,7 +184,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결이 해제되었습니다.'),
-            backgroundColor: AppColors.success));
+            backgroundColor: AppColors.success,
+          ),
+        );
       }
     } catch (e) {
       Logger.error('Failed to unlink social account provider: $provider', e);
@@ -175,7 +194,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결 해제에 실패했습니다.'),
-            backgroundColor: AppColors.error));
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -204,9 +225,12 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
               color: providerInfo.color.withOpacity(0.1),
-              borderRadius: AppDimensions.borderRadiusSmall),
+              borderRadius: AppDimensions.borderRadiusSmall,
+            ),
             child: Center(
-              child: _buildProviderIcon(providerInfo)),
+              child: _buildProviderIcon(providerInfo),
+            ),
+          ),
           SizedBox(width: AppSpacing.spacing3),
           
           // Provider name and status
@@ -217,7 +241,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                 Text(
                   providerInfo.name,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600)),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 if (isLinked) ...[
                   SizedBox(height: AppSpacing.xxxSmall),
                   Row(
@@ -225,28 +251,43 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                       Icon(
                         Icons.check_circle,
                         size: 14,
-                        color: AppColors.success),
+                        color: AppColors.success,
+                      ),
                       SizedBox(width: AppSpacing.spacing1),
                       Text(
                         isPrimary ? '기본 계정' : '연결됨',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.success))])]])),
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
           
           // Action button
           if (isProcessing)
             const SizedBox(
               width: 24,
               height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2))
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
           else if (isLinked && !isPrimary)
             IconButton(
               icon: const Icon(Icons.link_off, size: AppDimensions.iconSizeSmall),
               onPressed: () => _unlinkProvider(provider),
-              tooltip: '연결 해제')
+              tooltip: '연결 해제',
+            )
           else if (!isLinked)
             TextButton(
               onPressed: () => _linkProvider(provider),
-              child: const Text('연결')]);
+              child: const Text('연결'),
+            ),
+        ],
+      ),
+    );
   }
   
   Widget _buildProviderIcon(SocialProviderInfo providerInfo) {
@@ -260,28 +301,36 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             return Icon(
               Icons.link,
               color: providerInfo.color,
-              size: AppDimensions.iconSizeMedium);
-          });
+              size: AppDimensions.iconSizeMedium,
+            );
+          },
+        );
       case SocialIconType.icon:
         return Icon(
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
           color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple' 
               ? (Theme.of(context).brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary)
-              : providerInfo.color);
+              : providerInfo.color,
+        );
       case SocialIconType.text:
         return Container(
           width: 24,
           height: 24,
           decoration: BoxDecoration(
             color: providerInfo.color,
-            shape: BoxShape.circle),
+            shape: BoxShape.circle,
+          ),
           child: Center(
             child: Text(
               providerInfo.iconData as String,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold)));
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
     }
   }
 
@@ -295,23 +344,31 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         Text(
           '소셜 계정 관리',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold)),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         SizedBox(height: AppSpacing.spacing2),
         Text(
           '여러 소셜 계정을 연결하여 편리하게 로그인하세요.',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+        ),
         SizedBox(height: AppSpacing.spacing4),
         ...(_providers.keys.map((provider) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
-          child: _buildProviderButton(provider))).toList())]);
+          child: _buildProviderButton(provider),
+        )).toList()),
+      ],
+    );
   }
 }
 
 enum SocialIconType {
   network,
   icon,
-  text}
+  text,
+}
 
 class SocialProviderInfo {
   final String name;
@@ -323,5 +380,6 @@ class SocialProviderInfo {
     required this.name,
     required this.iconType,
     required this.iconData,
-    required this.color});
+    required this.color,
+  });
 }

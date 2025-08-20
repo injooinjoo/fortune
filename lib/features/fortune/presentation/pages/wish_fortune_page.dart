@@ -47,6 +47,7 @@ class _WishInputForm extends StatelessWidget {
             Icons.star,
             size: 120,
             color: theme.colorScheme.primary.withOpacity(0.3)),
+        ),
         
         const SizedBox(height: 32),
         
@@ -58,7 +59,13 @@ class _WishInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),)]);
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -96,11 +103,20 @@ class _WishFortuneResult extends StatelessWidget {
                     Text(
                       '소원 성취 운세',
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6)])]));
+                    height: 1.6),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

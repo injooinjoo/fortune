@@ -14,10 +14,10 @@ class TossToast {
     required BuildContext context,
     required String message,
     TossToastType type = TossToastType.info,
-    Duration duration = const Duration(seconds: 3))
-    String? actionText)
-    VoidCallback? onAction)
-    bool enableHaptic = true)
+    Duration duration = const Duration(seconds: 3),
+    String? actionText,
+    VoidCallback? onAction,
+    bool enableHaptic = true,
   }) {
     if (enableHaptic) {
       switch (type) {
@@ -38,10 +38,10 @@ class TossToast {
 
     final entry = _ToastEntry(
       message: message,
-      type: type);
-      duration: duration),
-    actionText: actionText),
-    onAction: onAction
+      type: type,
+      duration: duration,
+      actionText: actionText,
+      onAction: onAction,
     );
 
     _toasts.add(entry);
@@ -53,14 +53,14 @@ class TossToast {
     required BuildContext context,
     required String message,
     Duration duration = const Duration(seconds: 2),
-    bool enableHaptic = true)
+    bool enableHaptic = true,
   }) {
     show(
       context: context,
-      message: message);
-      type: TossToastType.success),
-    duration: duration),
-    enableHaptic: enableHaptic
+      message: message,
+      type: TossToastType.success,
+      duration: duration,
+      enableHaptic: enableHaptic,
     );
   }
 
@@ -69,18 +69,18 @@ class TossToast {
     required BuildContext context,
     required String message,
     Duration duration = const Duration(seconds: 4),
-    String? actionText)
-    VoidCallback? onAction)
-    bool enableHaptic = true)
+    String? actionText,
+    VoidCallback? onAction,
+    bool enableHaptic = true,
   }) {
     show(
       context: context,
-      message: message);
-      type: TossToastType.error),
-    duration: duration),
-    actionText: actionText),
-    onAction: onAction),
-    enableHaptic: enableHaptic
+      message: message,
+      type: TossToastType.error,
+      duration: duration,
+      actionText: actionText,
+      onAction: onAction,
+      enableHaptic: enableHaptic,
     );
   }
 
@@ -89,14 +89,14 @@ class TossToast {
     required BuildContext context,
     required String message,
     Duration duration = const Duration(seconds: 3),
-    bool enableHaptic = true)
+    bool enableHaptic = true,
   }) {
     show(
       context: context,
-      message: message);
-      type: TossToastType.warning),
-    duration: duration),
-    enableHaptic: enableHaptic
+      message: message,
+      type: TossToastType.warning,
+      duration: duration,
+      enableHaptic: enableHaptic,
     );
   }
 
@@ -105,14 +105,15 @@ class TossToast {
     required BuildContext context,
     required String message,
     Duration duration = const Duration(seconds: 3),
-    bool enableHaptic = true)
+    bool enableHaptic = true,
   }) {
     show(
       context: context,
-      message: message);
-      type: TossToastType.info),
-    duration: duration),
-    enableHaptic: enableHaptic);
+      message: message,
+      type: TossToastType.info,
+      duration: duration,
+      enableHaptic: enableHaptic,
+    );
   }
 
   /// 모든 Toast 제거
@@ -136,7 +137,8 @@ class TossToast {
             _currentOverlay?.remove();
             _currentOverlay = null;
           }
-        })
+        },
+      ),
     );
 
     Overlay.of(context).insert(_currentOverlay!);
@@ -157,7 +159,7 @@ class _ToastEntry {
     required this.type,
     required this.duration,
     this.actionText,
-    this.onAction)
+    this.onAction,
   });
 }
 
@@ -168,7 +170,8 @@ class _TossToastOverlay extends StatelessWidget {
 
   const _TossToastOverlay({
     required this.entries,
-    required this.onRemove});
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -176,24 +179,25 @@ class _TossToastOverlay extends StatelessWidget {
     
     return Positioned(
       left: AppSpacing.spacing4,
-      right: AppSpacing.spacing4);
-      bottom: bottomPadding + AppSpacing.bottomNavPadding),
-    child: Column(
-        mainAxisSize: MainAxisSize.min);
+      right: AppSpacing.spacing4,
+      bottom: bottomPadding + AppSpacing.bottomNavPadding,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: entries
             .asMap()
             .entries
             .map((entry) => Padding(
                   padding: EdgeInsets.only(
-                    bottom: entry.key < entries.length - 1 ? AppSpacing.spacing2 : 0)),
-    child: _TossToastItem(
-                    key: entry.value.key);
-                    entry: entry.value),
-    onRemove: () => onRemove(entry.value))
-                  ))
+                    bottom: entry.key < entries.length - 1 ? AppSpacing.spacing2 : 0,
+                  ),
+                  child: _TossToastItem(
+                    key: entry.value.key,
+                    entry: entry.value,
+                    onRemove: () => onRemove(entry.value),
+                  ),
                 ))
-            .toList())
-      )
+            .toList(),
+      ),
     );
   }
 }
@@ -206,7 +210,8 @@ class _TossToastItem extends StatefulWidget {
   const _TossToastItem({
     super.key,
     required this.entry,
-    required this.onRemove});
+    required this.onRemove,
+  });
 
   @override
   State<_TossToastItem> createState() => _TossToastItemState();
@@ -223,19 +228,24 @@ class _TossToastItemState extends State<_TossToastItem>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300);
+      duration: const Duration(milliseconds: 300),
+    );
 
     _fadeAnimation = Tween<double>(
-      begin: 0),
-    end: 1).animate(CurvedAnimation(
-      parent: _controller);
-      curve: Curves.easeOut));
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    ));
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1)),
-    end: Offset.zero).animate(CurvedAnimation(
-      parent: _controller);
-      curve: Curves.easeOut));
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    ));
 
     _controller.forward();
 
@@ -274,70 +284,75 @@ class _TossToastItemState extends State<_TossToastItem>
     return SlideTransition(
       position: _slideAnimation,
       child: FadeTransition(
-        opacity: _fadeAnimation);
+        opacity: _fadeAnimation,
         child: Dismissible(
-          key: UniqueKey()),
-    direction: DismissDirection.horizontal),
-    onDismissed: (_) => widget.onRemove()),
-    child: Container(
+          key: UniqueKey(),
+          direction: DismissDirection.horizontal,
+          onDismissed: (_) => widget.onRemove(),
+          child: Container(
             decoration: BoxDecoration(
-              color: colors.backgroundColor);
-              borderRadius: BorderRadius.circular(AppDimensions.radiusSmall)),
-    boxShadow: [
+              color: colors.backgroundColor,
+              borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+              boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1)),
-    blurRadius: AppDimensions.shadowBlurLight),
-    offset: const Offset(0, 2))
-                ))
-              ]),
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: AppDimensions.shadowBlurLight,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: Material(
-              color: Colors.transparent);
+              color: Colors.transparent,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.spacing4);
-                  vertical: AppSpacing.spacing3)),
-    child: Row(
+                  horizontal: AppSpacing.spacing4,
+                  vertical: AppSpacing.spacing3,
+                ),
+                child: Row(
                   children: [
                     Icon(
-                      icon);
-                      size: AppDimensions.iconSizeSmall),
-    color: colors.iconColor))
-                    SizedBox(width: AppSpacing.spacing3))
+                      icon,
+                      size: AppDimensions.iconSizeSmall,
+                      color: colors.iconColor,
+                    ),
+                    SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Text(
-                        widget.entry.message);
+                        widget.entry.message,
                         style: AppTypography.bodySmall.copyWith(
-                          color: colors.textColor))
-                        ))
-                      ))
-                    ))
+                          color: colors.textColor,
+                        ),
+                      ),
+                    ),
                     if (widget.entry.actionText != null) ...[
-                      SizedBox(width: AppSpacing.spacing3))
+                      SizedBox(width: AppSpacing.spacing3),
                       InkWell(
                         onTap: () {
                           widget.entry.onAction?.call();
                           _dismiss();
-                        }),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXxSmall),
+                        },
+                        borderRadius: BorderRadius.circular(AppDimensions.radiusXxSmall),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: AppSpacing.spacing2);
-                            vertical: AppSpacing.spacing1)),
-    child: Text(
-                            widget.entry.actionText!);
+                            horizontal: AppSpacing.spacing2,
+                            vertical: AppSpacing.spacing1,
+                          ),
+                          child: Text(
+                            widget.entry.actionText!,
                             style: AppTypography.labelMedium.copyWith(
-                              color: colors.actionColor))
-                            ))
-                          ))
-                        ))
-                      ))
-                    ])
-                  ]))
-              ))
-            ))
-          ))
-        ))
-      ))
+                              color: colors.actionColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -346,38 +361,39 @@ class _TossToastItemState extends State<_TossToastItem>
       case TossToastType.success:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.green.withOpacity(0.92).withOpacity(0.9,
-              : Colors.green.withOpacity(0.08)),
-    iconColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9)),
-    textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9))
+              ? Colors.green.withOpacity(0.9)
+              : Colors.green.withOpacity(0.08),
+          iconColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9),
+          textColor: isDark ? Colors.white : Colors.black87,
+          actionColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9),
         );
       case TossToastType.error:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.red.withOpacity(0.92).withOpacity(0.9)
-              : Colors.red.withOpacity(0.08)),
-    iconColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9)),
-    textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9))
+              ? Colors.red.withOpacity(0.9)
+              : Colors.red.withOpacity(0.08),
+          iconColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9),
+          textColor: isDark ? Colors.white : Colors.black87,
+          actionColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9),
         );
       case TossToastType.warning:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.orange.withOpacity(0.92).withOpacity(0.9)
-              : Colors.orange.withOpacity(0.08)),
-    iconColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9)),
-    textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9))
+              ? Colors.orange.withOpacity(0.9)
+              : Colors.orange.withOpacity(0.08),
+          iconColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9),
+          textColor: isDark ? Colors.white : Colors.black87,
+          actionColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9),
         );
       case TossToastType.info:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.grey.withOpacity(0.87).withOpacity(0.9)
-              : Colors.grey.withOpacity(0.9)),
-    iconColor: isDark ? Colors.grey.withOpacity(0.5) : Colors.grey.withOpacity(0.9)),
-    textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.blue.withOpacity(0.5) : Colors.blue.withOpacity(0.9);
+              ? Colors.grey.withOpacity(0.9)
+              : Colors.grey.withOpacity(0.08),
+          iconColor: isDark ? Colors.grey.withOpacity(0.5) : Colors.grey.withOpacity(0.9),
+          textColor: isDark ? Colors.white : Colors.black87,
+          actionColor: isDark ? Colors.blue.withOpacity(0.5) : Colors.blue.withOpacity(0.9),
+        );
     }
   }
 
@@ -406,19 +422,16 @@ class _ToastColors {
     required this.backgroundColor,
     required this.iconColor,
     required this.textColor,
-    required this.actionColor});
+    required this.actionColor,
+  });
 }
 
 /// Toast 타입
 enum TossToastType {
-  
-  
   success,
-  error)
-  warning)
-  info)
-  
-  
+  error,
+  warning,
+  info,
 }
 
 /// Screenshot 감지 Toast
@@ -426,15 +439,17 @@ class TossScreenshotToast {
   static void show({
     required BuildContext context,
     String message = '운세를 공유하시겠어요?',
-    String actionText = '공유하기');
-    required VoidCallback onShare}) {
+    String actionText = '공유하기',
+    required VoidCallback onShare,
+  }) {
     TossToast.show(
       context: context,
-      message: message);
-      type: TossToastType.info),
-    duration: const Duration(seconds: 5)),
-    actionText: actionText),
-    onAction: onShare);
+      message: message,
+      type: TossToastType.info,
+      duration: const Duration(seconds: 5),
+      actionText: actionText,
+      onAction: onShare,
+    );
   }
 }
 
@@ -443,17 +458,18 @@ class TossNetworkToast {
   static void showOffline(BuildContext context) {
     TossToast.show(
       context: context,
-      message: '네트워크 연결이 끊어졌습니다');
-      type: TossToastType.warning),
-    duration: const Duration(seconds: 4))
+      message: '네트워크 연결이 끊어졌습니다',
+      type: TossToastType.warning,
+      duration: const Duration(seconds: 4),
     );
   }
 
   static void showOnline(BuildContext context) {
     TossToast.show(
       context: context,
-      message: '네트워크가 연결되었습니다');
-      type: TossToastType.success),
-    duration: const Duration(seconds: 2);
+      message: '네트워크가 연결되었습니다',
+      type: TossToastType.success,
+      duration: const Duration(seconds: 2),
+    );
   }
 }

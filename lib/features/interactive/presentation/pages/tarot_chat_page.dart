@@ -34,7 +34,8 @@ class ChatMessage {
     required this.isUser,
     required this.timestamp,
     this.cards,
-    this.isLoading = false});
+    this.isLoading = false,
+  });
 }
 
 class TarotCardInfo {
@@ -47,12 +48,14 @@ class TarotCardInfo {
     required this.name,
     required this.meaning,
     required this.imageUrl,
-    required this.isReversed});
+    required this.isReversed,
+  });
 }
 
 // Chat messages provider
 final chatMessagesProvider = StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
-  (ref) => ChatMessagesNotifier());
+  (ref) => ChatMessagesNotifier(),
+);
 
 class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
   ChatMessagesNotifier() : super([]);
@@ -126,7 +129,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut);
+          curve: Curves.easeOut,
+        );
       }
     });
   }
@@ -142,7 +146,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
     messages.addMessage(ChatMessage(
       text: text,
       isUser: true,
-      timestamp: DateTime.now()));
+      timestamp: DateTime.now(),
+    ));
 
     _inputController.clear();
     setState(() => _isProcessing = true);
@@ -153,7 +158,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
       text: '타로 카드를 섞고 있습니다...',
       isUser: false,
       timestamp: DateTime.now(),
-      isLoading: true));
+      isLoading: true,
+    ));
     _scrollToBottom();
 
     try {
@@ -188,7 +194,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
             name: card['name'] ?? '',
             meaning: card['meaning'] ?? '',
             imageUrl: card['imageUrl'] ?? '',
-            isReversed: card['isReversed'] ?? false);
+            isReversed: card['isReversed'] ?? false,
+          );
         }).toList();
 
         // Update with actual response
@@ -196,7 +203,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
           text: '$interpretation\n\n💡 조언: $advice',
           isUser: false,
           timestamp: DateTime.now(),
-          cards: cards));
+          cards: cards,
+        ));
       } else {
         throw Exception(response['error'] ?? '타로 카드 해석에 실패했습니다');
       }
@@ -204,7 +212,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
       messages.updateLastMessage(ChatMessage(
         text: '발생했습니다: ${e.toString()}',
         isUser: false,
-        timestamp: DateTime.now()));
+        timestamp: DateTime.now(),
+      ));
     } finally {
       setState(() => _isProcessing = false);
       _scrollToBottom();
@@ -311,7 +320,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
             alignment: WrapAlignment.center,
             children: tarotExampleQuestions.map((question) {
               return _buildExampleCard(question, fontScale);
-            }).toList()]);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildExampleCard(String question, double fontScale) {
@@ -375,8 +388,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
               child: const Icon(
                 Icons.auto_awesome,
                 size: 18,
-                color: AppColors.textPrimary)),
-            const SizedBox(width: 8)],
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
           
           Flexible(
             child: Container(
@@ -405,20 +421,28 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.textSecondary)),
+                              AppColors.textSecondary),
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           message.text,
                           style: TextStyle(
                             fontSize: 14 * fontScale,
-                            color: isUser ? Colors.white : AppColors.textPrimary))])
+                            color: isUser ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    )
                   else
                     Text(
                       message.text,
                       style: TextStyle(
                         fontSize: 14 * fontScale,
                         color: isUser ? Colors.white : AppColors.textPrimary,
-                        height: 1.4)),
+                        height: 1.4,
+                      ),
+                    ),
                   
                   // Display cards if available
                   if (message.cards != null && message.cards!.isNotEmpty) ...[
@@ -428,7 +452,14 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                       child: Row(
                         children: message.cards!.map((card) {
                           return _buildMiniCard(card, fontScale);
-                        }).toList()))]])),
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
           
           if (isUser) const SizedBox(width: 8),
         ],
@@ -446,30 +477,40 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: AppColors.eventbriteButtonBorder,
-          width: 1)),
+          width: 1),
+      ),
       child: Column(
         children: [
           Icon(
             Icons.style,
             size: 32,
-            color: AppColors.textSecondary),
+            color: AppColors.textSecondary,
+          ),
           const SizedBox(height: 4),
           Text(
             card.name,
             style: TextStyle(
               fontSize: 12 * fontScale,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary),
+              color: AppColors.textPrimary,
+            ),
             textAlign: TextAlign.center,
             maxLines: 2,
-            overflow: TextOverflow.ellipsis),
+            overflow: TextOverflow.ellipsis,
+          ),
           if (card.isReversed) ...[
             const SizedBox(height: 2),
             Text(
               '(역방향)',
               style: TextStyle(
                 fontSize: 10 * fontScale,
-                color: AppColors.textSecondary))]]));
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _buildInputArea(double fontScale) {
@@ -485,6 +526,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
           top: BorderSide(
             color: AppColors.eventbriteButtonBorder,
             width: 1)),
+      ),
       child: Row(
         children: [
           Expanded(
@@ -509,17 +551,26 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
                   vertical: 12)),
               maxLines: null,
               textInputAction: TextInputAction.send,
-              onSubmitted: _isProcessing ? null : _sendMessage)),
+              onSubmitted: _isProcessing ? null : _sendMessage,
+            ),
+          ),
           const SizedBox(width: 8),
           Container(
             decoration: BoxDecoration(
               color: _isProcessing ? AppColors.textSecondary : AppColors.textPrimary,
-              shape: BoxShape.circle),
+              shape: BoxShape.circle,
+            ),
             child: IconButton(
               icon: Icon(
                 Icons.send,
                 color: Colors.white,
-                size: 20),
-              onPressed: _isProcessing ? null : () => _sendMessage(_inputController.text))]);
+                size: 20,
+              ),
+              onPressed: _isProcessing ? null : () => _sendMessage(_inputController.text),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

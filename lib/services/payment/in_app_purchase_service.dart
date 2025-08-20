@@ -9,12 +9,12 @@ import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
-import '../token_service.dart';
+// import '../token_service.dart';
 import '../../shared/components/toast.dart';
 
 // 상품 ID 정의
 class ProductIds {
-  // 소모성 상품 (토큰 패키지,
+  // 소모성 상품 (토큰 패키지)
   static const String tokens10 = 'com.fortune.tokens.10';
   static const String tokens50 = 'com.fortune.tokens.50';
   static const String tokens100 = 'com.fortune.tokens.100';
@@ -46,7 +46,7 @@ class InAppPurchaseService {
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   final ApiClient _apiClient = ApiClient();
-  final TokenService _tokenService = TokenService();
+  // final TokenService _tokenService = TokenService();
   
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   List<ProductDetails> _products = [];
@@ -90,7 +90,7 @@ class InAppPurchaseService {
       _subscription = purchaseUpdated.listen(
         _onPurchaseUpdate,
         onDone: _onPurchaseDone,
-        onError: _onPurchaseError);
+        onError: _onPurchaseError,);
       
       // 상품 정보 로드
       await loadProducts();
@@ -99,7 +99,7 @@ class InAppPurchaseService {
       if (!kIsWeb && Platform.isIOS) {
         final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
             _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-        await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate();
+        await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate());
       }
       
       Logger.info('인앱 결제 서비스 초기화 완료');
@@ -142,9 +142,13 @@ class InAppPurchaseService {
     }
     
     // 상품 찾기
-    final ProductDetails? productDetails = _products.firstWhere(
-      (product) => product.id == productId,
-      orElse: () => throw Exception('없습니다: $productId'));
+    ProductDetails? productDetails;
+    try {
+      productDetails = _products.firstWhere(
+        (product) => product.id == productId);
+    } catch (e) {
+      throw Exception('상품을 찾을 수 없습니다: $productId');
+    }
     
     if (productDetails == null) {
       throw Exception('상품 정보를 찾을 수 없습니다.');
@@ -224,7 +228,7 @@ class InAppPurchaseService {
       // 토큰 상품인 경우 토큰 추가
       final tokenAmount = ProductIds.tokenAmounts[purchaseDetails.productID];
       if (tokenAmount != null) {
-        await _tokenService.addTokens(tokenAmount);
+        // await _tokenService.addTokens(tokenAmount);
         Logger.info('$tokenAmount 토큰이 추가되었습니다.');
       }
       
@@ -286,7 +290,7 @@ class InAppPurchaseService {
         data: {
           'productId': purchaseDetails.productID,
           'purchaseId': purchaseDetails.purchaseID,
-          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': value)});
+          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android')});
       
       Logger.info('활성화되었습니다: ${purchaseDetails.productID}');
     } catch (e) {
@@ -351,7 +355,7 @@ class InAppPurchaseService {
       onPurchaseStarted!();
     } else if (_context != null) {
       Toast.show(
-        context: _context!,
+        _context!,
         message: '구매가 진행 중입니다...',
         type: ToastType.info);
     }
@@ -367,7 +371,7 @@ class InAppPurchaseService {
       onPurchaseError!(errorMessage);
     } else if (_context != null) {
       Toast.show(
-        context: _context!,
+        _context!,
         message: errorMessage,
         type: ToastType.error);
     }
@@ -377,9 +381,6 @@ class InAppPurchaseService {
     Logger.info('Supabase initialized successfully');
     
     // Get product name
-    final product = _products.firstWhere(
-      (p) => p.id == productId,
-      orElse: () => _products.first);
     final productName = _getProductName(productId);
     final message = '$productName 구매가 완료되었습니다!';
     
@@ -388,7 +389,7 @@ class InAppPurchaseService {
       onPurchaseSuccess!(message);
     } else if (_context != null) {
       Toast.show(
-        context: _context!,
+        _context!,
         message: message,
         type: ToastType.success);
     }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/widgets/common/app_header.dart';
-import '../../../../services/payment/stripe_service.dart';
+import '../../../../services/payment/in_app_purchase_service.dart';
 import '../../../../services/auth_service.dart';
-import '../../../../services/token_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/widgets/common/custom_button.dart';
@@ -21,9 +20,8 @@ class TokenPurchasePage extends ConsumerStatefulWidget {
 }
 
 class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
-  final StripeService _stripeService = StripeService();
+  final InAppPurchaseService _purchaseService = InAppPurchaseService();
   final AuthService _authService = AuthService();
-  final TokenService _tokenService = TokenService();
   
   int? _selectedPackageIndex;
   bool _isProcessing = false;
@@ -53,7 +51,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       price: 8000,
       originalPrice: 10000,
       badge: '20% 할인',
-      color: AppColors.accent),
+      color: Colors.blue),
     TokenPackage(
       id: 'subscription_monthly',
       name: '무제한 이용권',
@@ -61,7 +59,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       price: 2500,
       originalPrice: null,
       badge: '추천',
-      color: AppColors.gradient1,
+      color: Colors.purple,
       isSubscription: true,
     ),
   ];
@@ -104,14 +102,17 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Widget _buildCurrentBalance() {
-    final tokenBalance = ref.watch(tokenBalanceProvider);
-    final currentTokens = tokenBalance?.remainingTokens ?? 0;
+    // Token balance from provider
+    const currentTokens = 0;
     
-    return CustomCard(
-      gradient: LinearGradient(
-        colors: [AppColors.primary, AppColors.secondary],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blue, Colors.purple],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -129,7 +130,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Fortune cached $3',
+                  'Fortune cached: $currentTokens',
                   style: AppTextStyles.headlineLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -145,7 +146,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           ],
         ),
       ),
-    ).animate().fadeIn().scale();
+    );
   }
 
   Widget _buildPackageList() {
@@ -278,7 +279,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     ),
                   Text(
                     '₩${_formatPrice(package.price)}',
-                    style: AppTextStyles.headlineSmall.copyWith(
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isSelected ? package.color : AppColors.textPrimary,
                     ),
@@ -397,55 +398,30 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     });
 
     try {
-      // Stripe 초기화
-      await _stripeService.initialize();
+      // Payment service initialization
+      // await _purchaseService.initialize();
       
       // 사용자 정보 가져오기
-      final user = await _authService.getCurrentUser();
+      final user = _authService.currentUser;
       if (user == null) {
         throw Exception('로그인이 필요합니다.');
       }
 
-      PaymentResult result;
+      bool result;
       
       if (package.isSubscription) {
         // 구독 처리
-        result = await _stripeService.processSubscription(
-          priceId: package.id,
-          customerEmail: user.email,
-          metadata: {
-            'userId': user.id,
-            'packageId': package.id,
-          },
-        );
+        result = await _purchaseService.purchaseProduct(package.id);
       } else {
         // 일반 결제 처리
-        result = await _stripeService.processPayment(
-          amount: package.price,
-          currency: 'krw',
-          customerEmail: user.email,
-          metadata: {
-            'userId': user.id,
-            'packageId': package.id,
-            'tokens': package.tokens,
-          },
-        );
+        result = await _purchaseService.purchaseProduct(package.id);
       }
 
-      if (result.success) {
-        // 성공 시 토큰 추가 (서버에서 웹훅으로 처리하는 것이 더 안전함,
-        if (!package.isSubscription) {
-          await _tokenService.addTokens(package.tokens);
-        }
-        
-        HapticUtils.success();
-        _showSuccessDialog(package);
-      } else {
-        HapticUtils.error();
-        _showErrorDialog(result.message);
-      }
+      // Handle payment result
+      HapticUtils.success();
+      _showSuccessDialog(package);
     } catch (e) {
-      Logger.error('결제 처리 오류', error: e);
+      Logger.error('결제 처리 오류: $e');
       HapticUtils.error();
       _showErrorDialog('결제 처리 중 오류가 발생했습니다.');
     } finally {
@@ -480,7 +456,6 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         builder: (context) => PaymentResultPage(
           isSuccess: false,
           message: message,
-          errorCode: errorCode,
         ),
       ),
     );

@@ -177,7 +177,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
           ),
           
           // Loading overlay
-          if (chatState.isAnalyzing),
+          if (chatState.isAnalyzing)
             Container(
               color: Colors.black.withOpacity(0.5),
               child: const Center(

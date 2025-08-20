@@ -30,6 +30,18 @@ class Fortune extends Equatable {
   final Map<String, dynamic>? fiveElements;
   final String? specialTip;
   final String? period; // today, tomorrow, weekly, monthly, yearly
+  
+  // Enhanced fields for comprehensive fortune output
+  final Map<String, dynamic>? meta; // date, weekday, timezone, city
+  final Map<String, dynamic>? weatherSummary; // weather integration
+  final Map<String, dynamic>? overall; // overall score, grade, trend, summary
+  final Map<String, dynamic>? categories; // love, money, work, health, social
+  final Map<String, dynamic>? sajuInsight; // saju-based insights
+  final List<Map<String, dynamic>>? personalActions; // recommended actions
+  final Map<String, dynamic>? notification; // push notification data
+  final Map<String, dynamic>? shareCard; // social sharing data
+  final List<String>? uiBlocks; // UI block ordering
+  final Map<String, dynamic>? explain; // debugging/explanation data
 
   const Fortune({
     required this.id,
@@ -55,7 +67,17 @@ class Fortune extends Equatable {
     this.birthYearFortunes,
     this.fiveElements,
     this.specialTip,
-    this.period});
+    this.period,
+    this.meta,
+    this.weatherSummary,
+    this.overall,
+    this.categories,
+    this.sajuInsight,
+    this.personalActions,
+    this.notification,
+    this.shareCard,
+    this.uiBlocks,
+    this.explain});
 
   // Getter for backwards compatibility
   int get score => overallScore ?? 80;
@@ -77,7 +99,9 @@ class Fortune extends Equatable {
     id, userId, type, content, createdAt, metadata, tokenCost,
     category, overallScore, description, scoreBreakdown, luckyItems, recommendations,
     warnings, summary, additionalInfo, detailedLuckyItems, greeting, hexagonScores,
-    timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip, period
+    timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip, period,
+    meta, weatherSummary, overall, categories, sajuInsight, personalActions,
+    notification, shareCard, uiBlocks, explain
   ];
 
   Map<String, dynamic> toJson() {

@@ -115,7 +115,10 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
             content: Text(
               widget.todoToEdit != null
                   ? '할 일이 수정되었습니다'
-                  : '새로운 할 일이 추가되었습니다')));
+                  : '새로운 할 일이 추가되었습니다',
+            ),
+          ),
+        );
       }
     } catch (e) {
       Logger.error('Error saving todo', e);
@@ -285,7 +288,8 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                   children: [
                     TextButton(
                       onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                      child: const Text('취소')),
+                      child: const Text('취소'),
+                    ),
                     const SizedBox(width: 8),
                     FilledButton(
                       onPressed: _isLoading ? null : _saveTodo,
@@ -294,7 +298,18 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2))
-                          : Text(widget.todoToEdit != null ? '수정' : '추가'))])]))));
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(widget.todoToEdit != null ? '수정' : '추가'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

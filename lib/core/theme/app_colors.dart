@@ -8,6 +8,23 @@ class AppColors {
   static const Color tossBlueDark = Color(0xFF0050CC); // Darker for emphasis
   static const Color tossBlueLight = Color(0xFF3384FF); // Lighter for hover states
   static const Color tossBlueBackground = Color(0xFFE6F1FF); // Very light blue for backgrounds
+  static const Color tossBluePale = Color(0xFFEBF4FF); // Very pale blue for icon backgrounds
+  
+  // Toss-style UI colors
+  static const Color tossBackground = Color(0xFFF7F8FA); // Toss main background
+  static const Color tossBackgroundDark = Color(0xFF17171C); // Dark mode background
+  static const Color tossCardBackground = Color(0xFFFFFFFF); // Card background
+  static const Color tossCardBackgroundDark = Color(0xFF26262E); // Dark mode card
+  static const Color tossTextPrimary = Color(0xFF191F28); // Primary text
+  static const Color tossTextPrimaryDark = Color(0xFFFFFFFF); // Dark mode primary text
+  static const Color tossTextSecondary = Color(0xFF8B95A1); // Secondary text
+  static const Color tossTextSecondaryDark = Color(0xFF9CA3AF); // Dark mode secondary text
+  static const Color tossIconBackground = Color(0xFFF2F4F6); // Icon background
+  static const Color tossIconBackgroundDark = Color(0xFF3A3A42); // Dark mode icon background
+  static const Color tossBorder = Color(0xFFE5E8EB); // Border color
+  static const Color tossBorderDark = Color(0xFF404048); // Dark mode border
+  static const Color tossArrow = Color(0xFFC1C8CE); // Arrow icon color
+  static const Color tossArrowDark = Color(0xFF6B7280); // Dark mode arrow
   
   // Primary colors - Black and white theme
   static const Color primary = Color(0xFF000000); // Pure black
@@ -235,5 +252,34 @@ class AppColors {
   
   static bool isDarkMode(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark;
+  }
+  
+  // Toss-style helper methods
+  static Color getTossBackground(BuildContext context) {
+    return getThemedColor(context, tossBackground, tossBackgroundDark);
+  }
+  
+  static Color getTossCardBackground(BuildContext context) {
+    return getThemedColor(context, tossCardBackground, tossCardBackgroundDark);
+  }
+  
+  static Color getTossTextPrimary(BuildContext context) {
+    return getThemedColor(context, tossTextPrimary, tossTextPrimaryDark);
+  }
+  
+  static Color getTossTextSecondary(BuildContext context) {
+    return getThemedColor(context, tossTextSecondary, tossTextSecondaryDark);
+  }
+  
+  static Color getTossIconBackground(BuildContext context) {
+    return getThemedColor(context, tossIconBackground, tossIconBackgroundDark);
+  }
+  
+  static Color getTossBorder(BuildContext context) {
+    return getThemedColor(context, tossBorder, tossBorderDark);
+  }
+  
+  static Color getTossArrow(BuildContext context) {
+    return getThemedColor(context, tossArrow, tossArrowDark);
   }
 }

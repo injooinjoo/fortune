@@ -36,17 +36,19 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
     super.initState();
     _controller = AnimationController(
       duration: AppAnimations.durationSkeleton,
-      vsync: this
+      vsync: this,
     );
 
     _progressAnimation = Tween<double>(
       begin: 0,
-      end: widget.progress / 100).animate(CurvedAnimation(
+      end: widget.progress / 100,
+    ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutCubic));
+      curve: Curves.easeOutCubic,
+    ));
 
     _controller.forward();
-}
+  }
 
   @override
   void didUpdateWidget(HealingProgressWidget oldWidget) {
@@ -54,18 +56,20 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
     if (oldWidget.progress != widget.progress) {
       _progressAnimation = Tween<double>(
         begin: _progressAnimation.value,
-        end: widget.progress / 100).animate(CurvedAnimation(
+        end: widget.progress / 100,
+      ).animate(CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCubic));
+        curve: Curves.easeOutCubic,
+      ));
       _controller.forward(from: 0);
-}
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +86,10 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
-              offset: const Offset(0, 4))]),
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,7 +99,9 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 Text(
                   '치유 진행도',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 AnimatedBuilder(
                   animation: _progressAnimation,
                   builder: (context, child) {
@@ -100,8 +109,13 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                       '${(_progressAnimation.value * 100).toInt()}%',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold));
-})]),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.spacing6),
             
             // Progress bar with stages
@@ -112,7 +126,9 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                   height: AppSpacing.spacing2,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withOpacity(0.1),
-                    borderRadius: AppDimensions.borderRadiusSmall),
+                    borderRadius: AppDimensions.borderRadiusSmall,
+                  ),
+                ),
                 
                 // Animated progress
                 AnimatedBuilder(
@@ -126,9 +142,14 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                         gradient: LinearGradient(
                           colors: [
                             theme.colorScheme.primary,
-                            theme.colorScheme.secondary]),
-                        borderRadius: AppDimensions.borderRadiusSmall));
-                  }),
+                            theme.colorScheme.secondary,
+                          ],
+                        ),
+                        borderRadius: AppDimensions.borderRadiusSmall,
+                      ),
+                    );
+                  },
+                ),
                 
                 // Stage markers
                 ...stages.asMap().entries.map((entry) {
@@ -154,22 +175,32 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           color: isCompleted || isCurrent
                               ? (stage['color'] as Color)
                               : theme.colorScheme.onSurface.withOpacity(0.3),
-                          width: 3),
+                          width: 3,
+                        ),
                         boxShadow: isCurrent
                             ? [
                                 BoxShadow(
                                   color: (stage['color'] as Color).withOpacity(0.5),
                                   blurRadius: 8,
-                                  spreadRadius: 2)]
-                            : null),
+                                  spreadRadius: 2,
+                                ),
+                              ]
+                            : null,
+                      ),
                       child: Center(
                         child: Icon(
                           stage['icon'] as IconData,
                           size: 20,
                           color: isCompleted || isCurrent
                               ? Colors.white
-                              : theme.colorScheme.onSurface.withOpacity(0.5)));
-                }).toList()]),
+                              : theme.colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
             
             const SizedBox(height: AppSpacing.spacing8),
             
@@ -190,8 +221,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                       color: isCompleted || isCurrent
                           ? (stage['color'] as Color)
                           : theme.colorScheme.onSurface.withOpacity(0.5),
-                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal));
-}).toList(),
+                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal),
+                  ),
+                );
+              }).toList(),
+            ),
             
             const SizedBox(height: AppSpacing.spacing4),
             
@@ -214,7 +248,17 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                     Expanded(
                       child: Text(
                         _getStageDescription(widget.currentStage),
-                        style: theme.textTheme.bodySmall)])]),;
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 }
 
   String _getStageDescription(int stage) {
@@ -227,7 +271,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
     
     if (stage > 0 && stage <= descriptions.length) {
       return descriptions[stage - 1];
-}
+    }
     return '치유의 여정을 시작하세요.';
-}
+  }
 }

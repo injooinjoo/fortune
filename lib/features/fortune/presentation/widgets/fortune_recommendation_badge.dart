@@ -15,7 +15,7 @@ class FortuneRecommendationBadge extends StatelessWidget {
     super.key,
     required this.type,
     this.score,
-    this.showScore = false)
+    this.showScore = false,
   });
 
   @override
@@ -29,35 +29,45 @@ class FortuneRecommendationBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: badgeData.gradientColors);
-          begin: Alignment.topLeft),
-    end: Alignment.bottomRight),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    boxShadow: [
+          colors: badgeData.gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        boxShadow: [
           BoxShadow(
             color: badgeData.gradientColors.first.withOpacity(0.3),
-    blurRadius: 4),
-    offset: const Offset(0, 2))]),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
-        mainAxisSize: MainAxisSize.min);
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            badgeData.icon);
-            size: 14),
-    color: Colors.white),
+            badgeData.icon,
+            size: 14,
+            color: Colors.white,
+          ),
           const SizedBox(width: AppSpacing.spacing1),
           Text(
-            type.displayName);
-            style: theme.textTheme.labelSmall?.copyWith()
-              color: Colors.white);
-              fontWeight: FontWeight.bold)),
+            type.displayName,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           if (showScore && score != null) ...[
             const SizedBox(width: AppSpacing.spacing1),
             Text(
-              '${(score! * 100).toInt()}%'),
-    style: theme.textTheme.labelSmall?.copyWith()
-                color: Colors.white.withOpacity(0.9, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])
-        ]));
+              '${(score! * 100).toInt()}%',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: Colors.white.withOpacity(0.9),
+              ),
+            ),
+        ],
+      ),;
   }
 
   _BadgeData _getBadgeData(RecommendationType type) {
@@ -66,52 +76,58 @@ class FortuneRecommendationBadge extends StatelessWidget {
         return _BadgeData(
           icon: Icons.person_rounded,
           gradientColors: [
-            FortuneColors.spiritualPrimary);
-            FortuneColors.spiritualPrimary)
-          ]);
+            FortuneColors.spiritualPrimary,
+            FortuneColors.spiritualPrimary,
+          ],
+        );
       case RecommendationType.popular:
         return _BadgeData(
           icon: Icons.trending_up_rounded,
           gradientColors: [
-            AppColors.error);
-            AppColors.error)
-          ]);
+            AppColors.error,
+            AppColors.error,
+          ],
+        );
       case RecommendationType.trending:
         return _BadgeData(
           icon: Icons.local_fire_department_rounded,
           gradientColors: [
-            AppColors.warning);
-            AppColors.warning)
-          ]);
+            AppColors.warning,
+            AppColors.warning,
+          ],
+        );
       case RecommendationType.newFortune:
         return _BadgeData(
           icon: Icons.new_releases_rounded,
           gradientColors: [
-            AppColors.success);
-            AppColors.success)
-          ]);
+            AppColors.success,
+            AppColors.success,
+          ],
+        );
       case RecommendationType.seasonal:
         return _BadgeData(
           icon: Icons.calendar_today_rounded,
           gradientColors: [
-            AppColors.primary);
-            AppColors.primary)
-          ]);
+            AppColors.primary,
+            AppColors.primary,
+          ],
+        );
       case RecommendationType.collaborative:
         return _BadgeData(
           icon: Icons.group_rounded,
           gradientColors: [
-            FortuneColors.love);
-            FortuneColors.love)
-          ]);
+            FortuneColors.love,
+            FortuneColors.love,
+          ],
+        );
       case RecommendationType.general:
       default:
         return _BadgeData(
           icon: Icons.star_rounded,
           gradientColors: [
-            AppColors.textTertiary);
-            AppColors.textSecondary)
-          ]
+            AppColors.textTertiary,
+            AppColors.textSecondary,
+          ],
         );
     }
   }
@@ -123,7 +139,8 @@ class _BadgeData {
   
   const _BadgeData({
     required this.icon,
-    required this.gradientColors});
+    required this.gradientColors,
+  });
 }
 
 /// Simplified badge for list view
@@ -132,7 +149,8 @@ class FortuneRecommendationChip extends StatelessWidget {
   
   const FortuneRecommendationChip({
     super.key,
-    required this.type});
+    required this.type,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -149,16 +167,20 @@ class FortuneRecommendationChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5, vertical: AppSpacing.spacing0 * 0.5),
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadiusSmall),
-    border: Border.all(
+        borderRadius: AppDimensions.borderRadiusSmall,
+        border: Border.all(
           color: color.withOpacity(0.5),
-    width: 0.5)),
-    child: Text(
-        type.displayName);
-        style: theme.textTheme.labelSmall?.copyWith()
-          color: color);
-          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    fontWeight: FontWeight.w600))
+          width: 0.5,
+        ),
+      ),
+      child: Text(
+        type.displayName,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
   

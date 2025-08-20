@@ -293,13 +293,13 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
     final player = playerData[selectedSport]
         ?.firstWhere((p) => p['name'] == selectedPlayer);
     final requestData = {
-      'fortuneType': 'sports-player': 'userId': userProvider.userId,
-      'name': userProvider.name ?? '선수': 'birthDate': userProvider.birthDate?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      'fortuneType': 'sports-player', 'userId': userProvider.userId,
+      'name': userProvider.name ?? '선수', 'birthDate': userProvider.birthDate?.toIso8601String() ?? DateTime.now().toIso8601String(),
       'playerName': selectedPlayer,
       'sport': player?['sport'],
       'team': player?['team'],
       'position': player?['position'],
-    }
+    };
 
     try {
       // Simulate fortune generation since we don't have FortuneProvider
@@ -307,7 +307,13 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
       
       // Create mock result data
       final result = {
-        'todaysFortune': '오늘 당신은 ${player?['name']} 선수처럼 뛰어난 성과를 낼 수 있는 날입니다!': 'physicalCondition': '몸 상태가 최고조에 달해 있습니다. 무엇이든 도전해보세요!': 'injuryPrevention': '부상 위험이 낮은 날이니 적극적으로 활동하세요.': 'performancePrediction': '${player?['sport']} 활동에서 좋은 결과를 얻을 수 있습니다.': 'teamworkLuck': '팀원들과의 협력이 잘 이루어질 것입니다.': 'trainingEfficiency': '훈련 효과가 평소보다 2배 이상 높은 날입니다.': 'performanceAnalysis': {
+        'todaysFortune': '오늘 당신은 ${player?['name']} 선수처럼 뛰어난 성과를 낼 수 있는 날입니다!',
+        'physicalCondition': '몸 상태가 최고조에 달해 있습니다. 무엇이든 도전해보세요!',
+        'injuryPrevention': '부상 위험이 낮은 날이니 적극적으로 활동하세요.',
+        'performancePrediction': '${player?['sport']} 활동에서 좋은 결과를 얻을 수 있습니다.',
+        'teamworkLuck': '팀원들과의 협력이 잘 이루어질 것입니다.',
+        'trainingEfficiency': '훈련 효과가 평소보다 2배 이상 높은 날입니다.',
+        'performanceAnalysis': {
           'stamina': 85,
           'focus': 90,
           'reaction': 78,
@@ -315,13 +321,15 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
           'mental': 88,
         },
         'trainingTips': [
-          '오전 시간을 활용하면 더 좋은 성과를 얻을 수 있습니다': '충분한 수분 섭취를 잊지 마세요',
+          '오전 시간을 활용하면 더 좋은 성과를 얻을 수 있습니다',
+          '충분한 수분 섭취를 잊지 마세요',
           '스트레칭으로 하루를 시작하세요',
         ],
         'mentalCoaching': {
-          'motivation': '당신은 충분히 해낼 수 있는 능력이 있습니다!': 'mindset': '긍정적인 마음가짐을 유지하세요',
+          'motivation': '당신은 충분히 해낼 수 있는 능력이 있습니다!',
+          'mindset': '긍정적인 마음가짐을 유지하세요',
         },
-      }
+      };
       
       if (mounted) {
         _showFortuneResult(context, result);
@@ -329,7 +337,8 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('오류가 발생했습니다: $e'));
+          SnackBar(content: Text('오류가 발생했습니다: $e')),
+        );
       }
     }
   }
@@ -359,14 +368,18 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                   decoration: BoxDecoration(
                     color: AppColors.divider,
                     borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               Text(
                 '$selectedPlayer 선수의 스타일로 보는 운동 운세',
                 style: const TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 20),
               _buildPerformanceSection(result['performanceAnalysis']),
               const SizedBox(height: 20),
@@ -389,7 +402,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
 
   Widget _buildPerformanceSection(dynamic analysis) {
     if (analysis == null) return const SizedBox.shrink();
-    final stats = analysis is Map ? analysis : {}
+    final stats = analysis is Map ? analysis : {};
     
     return Container(
       padding: const EdgeInsets.all(20),
@@ -399,16 +412,21 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFF00897B).withOpacity(0.1),
-            const Color(0xFF00BFA5).withOpacity(0.1)]),
+            const Color(0xFF00BFA5).withOpacity(0.1),
+          ],
+        ),
         borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
         children: [
           const Text(
-            '오늘의 경기력 분석',
+            '오늘의 경기력 분析',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00897B)),
+              color: Color(0xFF00897B),
+            ),
+          ),
           const SizedBox(height: 16),
           _buildStatBar('체력', stats['stamina'] ?? 0),
           _buildStatBar('집중력', stats['focus'] ?? 0),
@@ -431,7 +449,10 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
               label,
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w500)),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
           Expanded(
             child: Stack(
               children: [
@@ -440,6 +461,8 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                   decoration: BoxDecoration(
                     color: Colors.grey.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 FractionallySizedBox(
                   widthFactor: value / 100,
                   child: Container(
@@ -448,8 +471,12 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                       gradient: LinearGradient(
                         colors: [
                           const Color(0xFF00897B),
-                          const Color(0xFF00BFA5)]),
+                          const Color(0xFF00BFA5),
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -460,7 +487,9 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00897B)),
+              color: Color(0xFF00897B),
+            ),
+          ),
         ],
       ),
     );
@@ -475,8 +504,11 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
         gradient: LinearGradient(
           colors: [
             const Color(0xFF00897B).withOpacity(0.1),
-            const Color(0xFF00BFA5).withOpacity(0.1)]),
+            const Color(0xFF00BFA5).withOpacity(0.1),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -485,11 +517,14 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00897B)),
+              color: Color(0xFF00897B),
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             content.toString(),
-            style: const TextStyle(fontSize: 14)),
+            style: const TextStyle(fontSize: 14),
+          ),
         ],
       ),
     );
@@ -502,7 +537,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF00897B).withOpacity(0.3))
+        border: Border.all(color: const Color(0xFF00897B).withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -512,7 +547,9 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00897B)),
+              color: Color(0xFF00897B),
+            ),
+          ),
           const SizedBox(height: 8),
           ...tips.map((tip) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -522,14 +559,18 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                 const Icon(
                   Icons.sports_score,
                   size: 16,
-                  color: Color(0xFF00897B)),
+                  color: Color(0xFF00897B),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     tip.toString(),
-                    style: const TextStyle(fontSize: 14)),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
               ],
-            )).toList(),
+            ),
+          )).toList(),
         ],
       ),
     );
@@ -543,8 +584,11 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
         gradient: LinearGradient(
           colors: [
             const Color(0xFF00897B).withOpacity(0.05),
-            const Color(0xFF00BFA5).withOpacity(0.05)]),
+            const Color(0xFF00BFA5).withOpacity(0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -553,19 +597,24 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00897B)),
+              color: Color(0xFF00897B),
+            ),
+          ),
           const SizedBox(height: 8),
-          if (mental['motivation'] != null),
+          if (mental['motivation'] != null)
             Text(
               '💪 ${mental['motivation']}',
               style: const TextStyle(
                 fontSize: 14,
-                fontStyle: FontStyle.italic)),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           if (mental['mindset'] != null) ...[
             const SizedBox(height: 8),
             Text(
               '🎯 ${mental['mindset']}',
-              style: const TextStyle(fontSize: 14)),
+              style: const TextStyle(fontSize: 14),
+            ),
           ],
         ],
       ),

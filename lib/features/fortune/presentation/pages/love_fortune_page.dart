@@ -195,11 +195,13 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                     Colors.pink.shade300,
                     Colors.pink.shade500,
                   ],
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.pink.withOpacity(0.3),
                     blurRadius: 30,
-                    spreadRadius: 10),
+                    spreadRadius: 10,
+                  ),
                 ],
               ),
               child: Center(
@@ -209,7 +211,8 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                     const material.Icon(
                       Icons.favorite_rounded,
                       color: Colors.white,
-                      size: 40),
+                      size: 40,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       '$loveIndex점',
@@ -263,6 +266,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                     Icons.trending_up_rounded,
                     color: Colors.white,
                     size: 24),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '월간 연애운 흐름',
@@ -605,6 +609,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                     Icons.task_alt_rounded,
                     color: Colors.white,
                     size: 24),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '행운을 부르는 액션 미션',
@@ -655,12 +660,14 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                                   ? Colors.green
                                   : Colors.grey.shade400,
                               width: 2),
+                          ),
                           child: _missionChecks[index]
                               ? const material.Icon(
                                   Icons.check_rounded,
                                   color: Colors.white,
                                   size: 16)
                               : null,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -714,6 +721,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                       Icons.auto_awesome_rounded,
                       color: Colors.white,
                       size: 24),
+                  ),
                   const SizedBox(width: 12),
                   Text(
                     '행운 부스터',
@@ -807,6 +815,7 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                 Icons.psychology_rounded,
                 color: Colors.white,
                 size: 32),
+            ),
             const SizedBox(height: 16),
             Text(
               '심리 조언',

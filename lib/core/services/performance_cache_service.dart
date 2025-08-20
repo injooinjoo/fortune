@@ -32,7 +32,7 @@ class PerformanceCacheService {
     _initialized = true;
     
     // Start preload timer
-    _preloadTimer = Timer.periodic(Duration(seconds: 5), (_) => _processPreloadQueue();
+    _preloadTimer = Timer.periodic(Duration(seconds: 5), (_) => _processPreloadQueue());
     
     // Clean expired cache on startup
     await _cleanExpiredCache();
@@ -41,29 +41,29 @@ class PerformanceCacheService {
   /// Get cached data with automatic memory/disk fallback
   Future<T?> get<T>(
     String key, {
-    T Function(Map<String, dynamic>)? fromJson)
+    T Function(Map<String, dynamic>)? fromJson,
   }) async {
-    if (!_initialized) await initialize()
+    if (!_initialized) await initialize();
     
     // Check memory cache first
     final memoryEntry = _memoryCache[key];
     if (memoryEntry != null && !memoryEntry.isExpired) {
       _cacheHits++;
       _updateLRU(key);
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Cache hit: $key');
       return memoryEntry.data as T?;
     }
     
     // Check disk cache
-    final diskData = _prefs.getString('Fortune cached');
+    final diskData = _prefs.getString('cache_$key');
     if (diskData != null) {
       try {
-        final entry = CacheEntry.fromJson(json.decode(diskData);
+        final entry = CacheEntry.fromJson(json.decode(diskData));
         if (!entry.isExpired) {
           _cacheHits++;
           // Promote to memory cache
           _addToMemoryCache(key, entry);
-          debugPrint('Supabase initialized with URL: $supabaseUrl');
+          debugPrint('Disk cache hit: $key');
           
           if (fromJson != null) {
             return fromJson(entry.data);
@@ -71,12 +71,12 @@ class PerformanceCacheService {
           return entry.data as T?;
         }
       } catch (e) {
-        debugPrint('Supabase initialized with URL: $supabaseUrl');
+        debugPrint('Cache decode error: $e');
       }
     }
     
     _cacheMisses++;
-    debugPrint('Supabase initialized with URL: $supabaseUrl');
+    debugPrint('Cache miss: $key');
     return null;
   }
 
@@ -85,23 +85,24 @@ class PerformanceCacheService {
     String key,
     T data, {
     Duration? ttl,
-    Map<String, dynamic> Function(T)? toJson)
+    Map<String, dynamic> Function(T)? toJson,
   }) async {
-    if (!_initialized) await initialize()
+    if (!_initialized) await initialize();
     
     final entry = CacheEntry(
       data: toJson != null ? toJson(data) : data,
-      expiry: DateTime.now().add(ttl ?? _defaultTTL);
+      expiry: DateTime.now().add(ttl ?? _defaultTTL),
+    );
     
     // Add to memory cache
     _addToMemoryCache(key, entry);
     
     // Persist to disk
     try {
-      await _prefs.setString('cache_$key': json.encode(entry.toJson()));
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      await _prefs.setString('cache_$key', json.encode(entry.toJson()));
+      debugPrint('Cache set: $key');
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Cache set error: $e');
     }
   }
 
@@ -117,10 +118,10 @@ class PerformanceCacheService {
 
   /// Clear all cache
   Future<void> clearAll() async {
-    if (!_initialized) await initialize()
+    if (!_initialized) await initialize();
     
     _memoryCache.clear();
-    final keys = _prefs.getKeys().where((key) => key.startsWith('cache_');
+    final keys = _prefs.getKeys().where((key) => key.startsWith('cache_'));
     for (final key in keys) {
       await _prefs.remove(key);
     }
@@ -137,8 +138,8 @@ class PerformanceCacheService {
       'hits': _cacheHits,
       'misses': _cacheMisses,
       'hitRate': total > 0 ? (_cacheHits / total * 100).toStringAsFixed(1) : '0.0',
-      'memoryCacheSize': _memoryCache.length)
-      'diskCacheKeys': _prefs.getKeys().where((k) => k.startsWith('cache_')).length)
+      'memoryCacheSize': _memoryCache.length,
+      'diskCacheKeys': _prefs.getKeys().where((k) => k.startsWith('cache_')).length,
     };
   }
 
@@ -165,7 +166,7 @@ class PerformanceCacheService {
     
     final oldestKey = _memoryCache.keys.first;
     _memoryCache.remove(oldestKey);
-    debugPrint('Supabase initialized with URL: $supabaseUrl');
+    debugPrint('Cache evicted: $oldestKey');
   }
 
   Future<void> _cleanExpiredCache() async {
@@ -173,12 +174,12 @@ class PerformanceCacheService {
     _memoryCache.removeWhere((key, entry) => entry.isExpired);
     
     // Clean disk cache
-    final keys = _prefs.getKeys().where((key) => key.startsWith('cache_');
+    final keys = _prefs.getKeys().where((key) => key.startsWith('cache_'));
     for (final key in keys) {
       final data = _prefs.getString(key);
       if (data != null) {
         try {
-          final entry = CacheEntry.fromJson(json.decode(data);
+          final entry = CacheEntry.fromJson(json.decode(data));
           if (entry.isExpired) {
             await _prefs.remove(key);
           }
@@ -193,10 +194,10 @@ class PerformanceCacheService {
     // Get MBTI types that differ by one dimension
     final types = <String>[];
     final dimensions = [
-      ['E': 'I': null,
-      ['S': 'N'])
-      ['T': 'F': null,
-      ['J': 'P'])
+      ['E', 'I'],
+      ['S', 'N'],
+      ['T', 'F'],
+      ['J', 'P'],
     ];
     
     for (int i = 0; i < 4; i++) {
@@ -204,7 +205,7 @@ class PerformanceCacheService {
       final currentDim = chars[i];
       final otherDim = dimensions[i].firstWhere((d) => d != currentDim);
       chars[i] = otherDim;
-      types.add(chars.join();
+      types.add(chars.join());
     }
     
     return types;
@@ -222,7 +223,7 @@ class PerformanceCacheService {
     _preloadQueue.remove(type);
     
     // Trigger preload through provider/service
-    debugPrint('Supabase initialized with URL: $supabaseUrl');
+    debugPrint('Preloading MBTI type: $type');
   }
 
   void dispose() {
@@ -237,18 +238,20 @@ class CacheEntry {
 
   CacheEntry({
     required this.data,
-    required this.expiry});
+    required this.expiry,
+  });
 
   bool get isExpired => DateTime.now().isAfter(expiry);
 
   Map<String, dynamic> toJson() => {
     'data': data,
-    'expiry': expiry.toIso8601String())
+    'expiry': expiry.toIso8601String(),
   };
 
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry(
     data: json['data'],
-    expiry: DateTime.parse(json['expiry']);
+    expiry: DateTime.parse(json['expiry']),
+  );
 }
 
 /// Performance monitoring service
@@ -261,7 +264,7 @@ class PerformanceMonitor {
   Timer? _reportTimer;
 
   void startMonitoring() {
-    _reportTimer = Timer.periodic(Duration(minutes: 5), (_) => _reportMetrics();
+    _reportTimer = Timer.periodic(Duration(minutes: 5), (_) => _reportMetrics());
   }
 
   void recordMetric(String name, int durationMs) {
@@ -288,7 +291,7 @@ class PerformanceMonitor {
         'avg': avg.round(),
         'p50': p50,
         'p95': p95,
-        'count': durations.length)
+        'count': durations.length,
       };
     });
     

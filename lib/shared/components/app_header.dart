@@ -7,7 +7,6 @@ import 'package:share_plus/share_plus.dart';
 import '../glassmorphism/glass_container.dart';
 import '../glassmorphism/glass_effects.dart';
 import 'token_balance_widget.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
@@ -60,7 +59,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final Color? foregroundColor;
 
   const AppHeader({
-    Key? key,
+    super.key,
     this.title,
     this.showBackButton = true,
     this.showShareButton = false,
@@ -75,7 +74,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle = false,
     this.elevation = 0,
     this.backgroundColor,
-    this.foregroundColor}) : super(key: key);
+    this.foregroundColor});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -118,66 +117,49 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: preferredSize,
       child: AnimatedContainer(
         duration: AppAnimations.durationShort,
-        child: ClipRRect(
-          child: BackdropFilter(
-            filter: GlassEffects.glassBlur(blur: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                gradient: backgroundColor == null 
-                  ? GlassEffects.lightGradient(
-                      opacity: isDark ? 0.1 : 0.8)
-                  : null,
-                border: Border(
-                  bottom: BorderSide(
-                    color: isDark
-                        ? AppColors.textPrimaryDark.withOpacity(0.1)
-                        : AppColors.textPrimary.withOpacity(0.1),
-                    width: 0.5)),
-                boxShadow: elevation > 0
-                    ? GlassEffects.glassShadow(elevation: elevation)
-                    : null),
-              child: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2),
-                  child: Row(
-                    children: [
-                      if (showBackButton)
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: foregroundColor ?? theme.iconTheme.color),
-                          onPressed: () => _handleBack(context)),
-                      if (title != null)
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(right: AppSpacing.xSmall),
-                            child: Text(
-                              title!,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                color: foregroundColor),
-                              textAlign: centerTitle ? TextAlign.center : TextAlign.left,
-                              overflow: TextOverflow.ellipsis)))
-                      else
-                        const Spacer(),
-                      if (showFontSizeSelector) ...[
-                        _FontSizeSelector(
-                          currentSize: currentFontSize,
-                          onSizeChanged: onFontSizeChanged),
-                        SizedBox(width: AppSpacing.spacing2)],
-                      if (showShareButton)
-                        IconButton(
-                          icon: Icon(
-                            Icons.share_rounded,
-                            color: foregroundColor ?? theme.iconTheme.color),
-                          onPressed: () => _handleShare(context)),
-                      if (showTokenBalance) ...[
-                        const TokenBalanceWidget(),
-                        SizedBox(width: AppSpacing.spacing2)],
-                      if (showActions && actions != null) ...actions!,
-                    ],
-                  ),
-                ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor ?? Colors.transparent,
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2),
+              child: Row(
+                children: [
+                  if (showBackButton)
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_rounded,
+                        color: foregroundColor ?? theme.iconTheme.color),
+                      onPressed: () => _handleBack(context)),
+                  if (title != null)
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: AppSpacing.xSmall),
+                        child: Text(
+                          title!,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: foregroundColor),
+                          textAlign: centerTitle ? TextAlign.center : TextAlign.left,
+                          overflow: TextOverflow.ellipsis)))
+                  else
+                    const Spacer(),
+                  if (showFontSizeSelector) ...[
+                    _FontSizeSelector(
+                      currentSize: currentFontSize,
+                      onSizeChanged: onFontSizeChanged),
+                    SizedBox(width: AppSpacing.spacing2)],
+                  if (showShareButton)
+                    IconButton(
+                      icon: Icon(
+                        Icons.share_rounded,
+                        color: foregroundColor ?? theme.iconTheme.color),
+                      onPressed: () => _handleShare(context)),
+                  if (showTokenBalance) ...[
+                    const TokenBalanceWidget(),
+                    SizedBox(width: AppSpacing.spacing2)],
+                  if (showActions && actions != null) ...actions!,
+                ],
               ),
             ),
           ),
@@ -197,8 +179,6 @@ class _FontSizeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return GlassContainer(
       padding: EdgeInsets.symmetric(
         horizontal: AppSpacing.spacing3, 
@@ -224,7 +204,11 @@ class _FontSizeSelector extends StatelessWidget {
             label: '가',
             size: FontSize.large,
             isSelected: currentSize == FontSize.large,
-            onTap: () => onSizeChanged?.call(FontSize.large)]);
+            onTap: () => onSizeChanged?.call(FontSize.large),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -264,7 +248,7 @@ class _SizeButton extends StatelessWidget {
           vertical: AppSpacing.spacing1),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.primaryColor.withOpacity(0.2)
+              ? theme.primaryColor.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: AppDimensions.borderRadiusMedium),
         child: Text(
@@ -272,6 +256,10 @@ class _SizeButton extends StatelessWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color)));
+            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color,
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -78,7 +78,8 @@ class _$TokenUsageDetailModelCopyWithImpl<$Res,
     Object? usageByType = null,
     Object? topUsers = null,
     Object? packageEfficiency = null,
-    Object? trend = null}) {
+    Object? trend = null,
+  }) {
     return _then(_value.copyWith(
       summary: null == summary
           ? _value.summary
@@ -103,7 +104,8 @@ class _$TokenUsageDetailModelCopyWithImpl<$Res,
       trend: null == trend
           ? _value.trend
           : trend // ignore: cast_nullable_to_non_nullable
-              as TokenUsageTrend) as $Val);
+              as TokenUsageTrend,
+    ) as $Val);
   }
 
   /// Create a copy of TokenUsageDetailModel
@@ -181,7 +183,8 @@ class __$$TokenUsageDetailModelImplCopyWithImpl<$Res>
     Object? usageByType = null,
     Object? topUsers = null,
     Object? packageEfficiency = null,
-    Object? trend = null}) {
+    Object? trend = null,
+  }) {
     return _then(_$TokenUsageDetailModelImpl(
       summary: null == summary
           ? _value.summary
@@ -206,7 +209,8 @@ class __$$TokenUsageDetailModelImplCopyWithImpl<$Res>
       trend: null == trend
           ? _value.trend
           : trend // ignore: cast_nullable_to_non_nullable
-              as TokenUsageTrend));
+              as TokenUsageTrend,
+    ));
   }
 }
 
@@ -302,7 +306,8 @@ class _$TokenUsageDetailModelImpl implements _TokenUsageDetailModel {
   @override
   Map<String, dynamic> toJson() {
     return _$$TokenUsageDetailModelImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -394,7 +399,8 @@ class _$TokenUsageSummaryCopyWithImpl<$Res, $Val extends TokenUsageSummary>
     Object? totalTokensPurchased = null,
     Object? activeUsers = null,
     Object? averageUsagePerUser = null,
-    Object? period = null}) {
+    Object? period = null,
+  }) {
     return _then(_value.copyWith(
       totalTokensUsed: null == totalTokensUsed
           ? _value.totalTokensUsed
@@ -415,7 +421,8 @@ class _$TokenUsageSummaryCopyWithImpl<$Res, $Val extends TokenUsageSummary>
       period: null == period
           ? _value.period
           : period // ignore: cast_nullable_to_non_nullable
-              as String) as $Val);
+              as String,
+    ) as $Val);
   }
 }
 
@@ -452,7 +459,8 @@ class __$$TokenUsageSummaryImplCopyWithImpl<$Res>
     Object? totalTokensPurchased = null,
     Object? activeUsers = null,
     Object? averageUsagePerUser = null,
-    Object? period = null}) {
+    Object? period = null,
+  }) {
     return _then(_$TokenUsageSummaryImpl(
       totalTokensUsed: null == totalTokensUsed
           ? _value.totalTokensUsed
@@ -473,7 +481,8 @@ class __$$TokenUsageSummaryImplCopyWithImpl<$Res>
       period: null == period
           ? _value.period
           : period // ignore: cast_nullable_to_non_nullable
-              as String));
+              as String,
+    ));
   }
 }
 
@@ -539,7 +548,8 @@ class _$TokenUsageSummaryImpl implements _TokenUsageSummary {
   @override
   Map<String, dynamic> toJson() {
     return _$$TokenUsageSummaryImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -628,7 +638,8 @@ class _$DailyTokenUsageCopyWithImpl<$Res, $Val extends DailyTokenUsage>
     Object? tokensUsed = null,
     Object? tokensPurchased = null,
     Object? uniqueUsers = null,
-    Object? transactions = null}) {
+    Object? transactions = null,
+  }) {
     return _then(_value.copyWith(
       date: null == date
           ? _value.date
@@ -649,7 +660,8 @@ class _$DailyTokenUsageCopyWithImpl<$Res, $Val extends DailyTokenUsage>
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
-              as int) as $Val);
+              as int,
+    ) as $Val);
   }
 }
 
@@ -686,7 +698,8 @@ class __$$DailyTokenUsageImplCopyWithImpl<$Res>
     Object? tokensUsed = null,
     Object? tokensPurchased = null,
     Object? uniqueUsers = null,
-    Object? transactions = null}) {
+    Object? transactions = null,
+  }) {
     return _then(_$DailyTokenUsageImpl(
       date: null == date
           ? _value.date
@@ -707,7 +720,8 @@ class __$$DailyTokenUsageImplCopyWithImpl<$Res>
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
-              as int));
+              as int,
+    ));
   }
 }
 
@@ -773,7 +787,8 @@ class _$DailyTokenUsageImpl implements _DailyTokenUsage {
   @override
   Map<String, dynamic> toJson() {
     return _$$DailyTokenUsageImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -862,7 +877,8 @@ class _$TokenUsageByTypeCopyWithImpl<$Res, $Val extends TokenUsageByType>
     Object? fortuneCategory = null,
     Object? tokensUsed = null,
     Object? usageCount = null,
-    Object? percentage = null}) {
+    Object? percentage = null,
+  }) {
     return _then(_value.copyWith(
       fortuneType: null == fortuneType
           ? _value.fortuneType
@@ -883,7 +899,8 @@ class _$TokenUsageByTypeCopyWithImpl<$Res, $Val extends TokenUsageByType>
       percentage: null == percentage
           ? _value.percentage
           : percentage // ignore: cast_nullable_to_non_nullable
-              as double) as $Val);
+              as double,
+    ) as $Val);
   }
 }
 
@@ -920,7 +937,8 @@ class __$$TokenUsageByTypeImplCopyWithImpl<$Res>
     Object? fortuneCategory = null,
     Object? tokensUsed = null,
     Object? usageCount = null,
-    Object? percentage = null}) {
+    Object? percentage = null,
+  }) {
     return _then(_$TokenUsageByTypeImpl(
       fortuneType: null == fortuneType
           ? _value.fortuneType
@@ -941,7 +959,8 @@ class __$$TokenUsageByTypeImplCopyWithImpl<$Res>
       percentage: null == percentage
           ? _value.percentage
           : percentage // ignore: cast_nullable_to_non_nullable
-              as double));
+              as double,
+    ));
   }
 }
 
@@ -1008,7 +1027,8 @@ class _$TokenUsageByTypeImpl implements _TokenUsageByType {
   @override
   Map<String, dynamic> toJson() {
     return _$$TokenUsageByTypeImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -1106,7 +1126,8 @@ class _$TopUserUsageCopyWithImpl<$Res, $Val extends TopUserUsage>
     Object? tokensPurchased = null,
     Object? fortuneCount = null,
     Object? lastActivity = null,
-    Object? isUnlimited = null}) {
+    Object? isUnlimited = null,
+  }) {
     return _then(_value.copyWith(
       userId: null == userId
           ? _value.userId
@@ -1139,7 +1160,8 @@ class _$TopUserUsageCopyWithImpl<$Res, $Val extends TopUserUsage>
       isUnlimited: null == isUnlimited
           ? _value.isUnlimited
           : isUnlimited // ignore: cast_nullable_to_non_nullable
-              as bool) as $Val);
+              as bool,
+    ) as $Val);
   }
 }
 
@@ -1182,7 +1204,8 @@ class __$$TopUserUsageImplCopyWithImpl<$Res>
     Object? tokensPurchased = null,
     Object? fortuneCount = null,
     Object? lastActivity = null,
-    Object? isUnlimited = null}) {
+    Object? isUnlimited = null,
+  }) {
     return _then(_$TopUserUsageImpl(
       userId: null == userId
           ? _value.userId
@@ -1215,7 +1238,8 @@ class __$$TopUserUsageImplCopyWithImpl<$Res>
       isUnlimited: null == isUnlimited
           ? _value.isUnlimited
           : isUnlimited // ignore: cast_nullable_to_non_nullable
-              as bool));
+              as bool,
+    ));
   }
 }
 
@@ -1294,7 +1318,8 @@ class _$TopUserUsageImpl implements _TopUserUsage {
   @override
   Map<String, dynamic> toJson() {
     return _$$TopUserUsageImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -1386,7 +1411,8 @@ class _$PackageEfficiencyCopyWithImpl<$Res, $Val extends PackageEfficiency>
   $Res call({
     Object? packages = null,
     Object? mostPopular = null,
-    Object? bestValue = null}) {
+    Object? bestValue = null,
+  }) {
     return _then(_value.copyWith(
       packages: null == packages
           ? _value.packages
@@ -1399,7 +1425,8 @@ class _$PackageEfficiencyCopyWithImpl<$Res, $Val extends PackageEfficiency>
       bestValue: null == bestValue
           ? _value.bestValue
           : bestValue // ignore: cast_nullable_to_non_nullable
-              as String) as $Val);
+              as String,
+    ) as $Val);
   }
 }
 
@@ -1432,7 +1459,8 @@ class __$$PackageEfficiencyImplCopyWithImpl<$Res>
   $Res call({
     Object? packages = null,
     Object? mostPopular = null,
-    Object? bestValue = null}) {
+    Object? bestValue = null,
+  }) {
     return _then(_$PackageEfficiencyImpl(
       packages: null == packages
           ? _value._packages
@@ -1445,7 +1473,8 @@ class __$$PackageEfficiencyImplCopyWithImpl<$Res>
       bestValue: null == bestValue
           ? _value.bestValue
           : bestValue // ignore: cast_nullable_to_non_nullable
-              as String));
+              as String,
+    ));
   }
 }
 
@@ -1508,7 +1537,8 @@ class _$PackageEfficiencyImpl implements _PackageEfficiency {
   @override
   Map<String, dynamic> toJson() {
     return _$$PackageEfficiencyImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -1588,7 +1618,8 @@ class _$PackageStatsCopyWithImpl<$Res, $Val extends PackageStats>
     Object? packageName = null,
     Object? purchaseCount = null,
     Object? totalRevenue = null,
-    Object? conversionRate = null}) {
+    Object? conversionRate = null,
+  }) {
     return _then(_value.copyWith(
       packageName: null == packageName
           ? _value.packageName
@@ -1605,7 +1636,8 @@ class _$PackageStatsCopyWithImpl<$Res, $Val extends PackageStats>
       conversionRate: null == conversionRate
           ? _value.conversionRate
           : conversionRate // ignore: cast_nullable_to_non_nullable
-              as double) as $Val);
+              as double,
+    ) as $Val);
   }
 }
 
@@ -1640,7 +1672,8 @@ class __$$PackageStatsImplCopyWithImpl<$Res>
     Object? packageName = null,
     Object? purchaseCount = null,
     Object? totalRevenue = null,
-    Object? conversionRate = null}) {
+    Object? conversionRate = null,
+  }) {
     return _then(_$PackageStatsImpl(
       packageName: null == packageName
           ? _value.packageName
@@ -1657,7 +1690,8 @@ class __$$PackageStatsImplCopyWithImpl<$Res>
       conversionRate: null == conversionRate
           ? _value.conversionRate
           : conversionRate // ignore: cast_nullable_to_non_nullable
-              as double));
+              as double,
+    ));
   }
 }
 
@@ -1718,7 +1752,8 @@ class _$PackageStatsImpl implements _PackageStats {
   @override
   Map<String, dynamic> toJson() {
     return _$$PackageStatsImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -1804,7 +1839,8 @@ class _$TokenUsageTrendCopyWithImpl<$Res, $Val extends TokenUsageTrend>
     Object? weeklyGrowth = null,
     Object? monthlyGrowth = null,
     Object? trendDirection = null,
-    Object? peakTimes = null}) {
+    Object? peakTimes = null,
+  }) {
     return _then(_value.copyWith(
       dailyGrowth: null == dailyGrowth
           ? _value.dailyGrowth
@@ -1825,7 +1861,8 @@ class _$TokenUsageTrendCopyWithImpl<$Res, $Val extends TokenUsageTrend>
       peakTimes: null == peakTimes
           ? _value.peakTimes
           : peakTimes // ignore: cast_nullable_to_non_nullable
-              as List<PeakUsageTime>) as $Val);
+              as List<PeakUsageTime>,
+    ) as $Val);
   }
 }
 
@@ -1862,7 +1899,8 @@ class __$$TokenUsageTrendImplCopyWithImpl<$Res>
     Object? weeklyGrowth = null,
     Object? monthlyGrowth = null,
     Object? trendDirection = null,
-    Object? peakTimes = null}) {
+    Object? peakTimes = null,
+  }) {
     return _then(_$TokenUsageTrendImpl(
       dailyGrowth: null == dailyGrowth
           ? _value.dailyGrowth
@@ -1883,7 +1921,8 @@ class __$$TokenUsageTrendImplCopyWithImpl<$Res>
       peakTimes: null == peakTimes
           ? _value._peakTimes
           : peakTimes // ignore: cast_nullable_to_non_nullable
-              as List<PeakUsageTime>));
+              as List<PeakUsageTime>,
+    ));
   }
 }
 
@@ -1961,7 +2000,8 @@ class _$TokenUsageTrendImpl implements _TokenUsageTrend {
   @override
   Map<String, dynamic> toJson() {
     return _$$TokenUsageTrendImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -2043,7 +2083,8 @@ class _$PeakUsageTimeCopyWithImpl<$Res, $Val extends PeakUsageTime>
     Object? hour = null,
     Object? dayOfWeek = null,
     Object? averageTokens = null,
-    Object? userCount = null}) {
+    Object? userCount = null,
+  }) {
     return _then(_value.copyWith(
       hour: null == hour
           ? _value.hour
@@ -2060,7 +2101,8 @@ class _$PeakUsageTimeCopyWithImpl<$Res, $Val extends PeakUsageTime>
       userCount: null == userCount
           ? _value.userCount
           : userCount // ignore: cast_nullable_to_non_nullable
-              as int) as $Val);
+              as int,
+    ) as $Val);
   }
 }
 
@@ -2091,7 +2133,8 @@ class __$$PeakUsageTimeImplCopyWithImpl<$Res>
     Object? hour = null,
     Object? dayOfWeek = null,
     Object? averageTokens = null,
-    Object? userCount = null}) {
+    Object? userCount = null,
+  }) {
     return _then(_$PeakUsageTimeImpl(
       hour: null == hour
           ? _value.hour
@@ -2108,7 +2151,8 @@ class __$$PeakUsageTimeImplCopyWithImpl<$Res>
       userCount: null == userCount
           ? _value.userCount
           : userCount // ignore: cast_nullable_to_non_nullable
-              as int));
+              as int,
+    ));
   }
 }
 
@@ -2168,7 +2212,8 @@ class _$PeakUsageTimeImpl implements _PeakUsageTime {
   @override
   Map<String, dynamic> toJson() {
     return _$$PeakUsageTimeImplToJson(
-      this);
+      this,
+    );
   }
 }
 

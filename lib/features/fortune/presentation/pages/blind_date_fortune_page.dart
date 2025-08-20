@@ -153,7 +153,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       'name': _nameController.text,
       'birthDate': _birthDate!.toIso8601String(),
       'gender': _gender,
-      'mbti': null};
+      'mbti': _mbti,
+    };
   }
 
   Widget buildUserInfoForm() {
@@ -266,11 +267,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               'ISTP', 'ISFP', 'ESTP', 'ESFP'].map((mbti) => DropdownMenuItem(
               value: mbti,
               child: Text(mbti))).toList(),
-            onChanged: (value) => setState(() => _mbti = value)
-          )
-        ]
-      )
-    )
+            onChanged: (value) => setState(() => _mbti = value),
+          ),
+        ],
+      ),
+    ),
   );
   }
 
@@ -299,7 +300,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       'confidence': _confidence,
       'concerns': _concerns,
       'pastExperience': _pastExperience,
-      'isFirstBlindDate': null};
+      'isFirstBlindDate': _isFirstBlindDate,
+    };
   }
 
   @override
@@ -462,8 +464,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       ),
                     ),
                   );
-                }).toList()
+                }).toList(),
               ),
+            ],
+          ),
+        ),
+      ),
         const SizedBox(height: 16),
         // Preferences
         GlassCard(
@@ -778,7 +784,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
-          onChanged: onChanged)]);
+          onChanged: onChanged),
+      ],
+    );
   }
 
   @override
@@ -807,21 +815,22 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.favorite,
-                  color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  '소개팅 성공 예측',
-                  style: theme.textTheme.headlineSmall
-                )
-              ]
-            ),
-            const SizedBox(height: 24),
-            Stack(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.favorite,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '소개팅 성공 예측',
+                    style: theme.textTheme.headlineSmall,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Stack(
               alignment: Alignment.center,
               children: [
                 SizedBox(
@@ -833,8 +842,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getSuccessColor(successRate)
-                    )
-                  )
+                    ),
+                  ),
                 ),
                 Column(
                   children: [
@@ -843,33 +852,36 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       style: theme.textTheme.displayLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: _getSuccessColor(successRate)
-                      )
+                      ),
                     ),
                     Text(
                       _getSuccessMessage(successRate),
-                      style: theme.textTheme.bodyLarge
-                    )
-                  ]
-                )
-              ]
-            ),
-            const SizedBox(height: 24),
-            Container(
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
+              ],
+              ),
+              const SizedBox(height: 24),
+              Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1)]),
+                    theme.colorScheme.secondary.withOpacity(0.1),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 _getSuccessAdvice(successRate),
                 style: theme.textTheme.bodyLarge,
-                textAlign: TextAlign.center
+                textAlign: TextAlign.center,
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1378,19 +1390,20 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Row(
               children: [
                 Icon(
                   Icons.rule,
-                  color: theme.colorScheme.primary),
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'DO\'s & DON\'Ts',
-                  style: theme.textTheme.headlineSmall
-                )
-              ]
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Container(
@@ -1459,8 +1472,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Text(
                         'DON\'Ts - 피하세요',
                         style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-                          color: Colors.red))]),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   ...donts.map((item) => Padding(
                     padding: const EdgeInsets.only(bottom: 4),
@@ -1499,13 +1516,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Text(
                       '가장 중요한 것은 진실된 자신의 모습을 보여주는 것입니다. 행운을 빕니다!',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

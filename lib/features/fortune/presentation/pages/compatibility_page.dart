@@ -68,10 +68,13 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
       return {
         'person1': {
           'name': _person1NameController.text,
-          'birthDate': _person1BirthDate?.toIso8601String()},
+          'birthDate': _person1BirthDate?.toIso8601String(),
+        },
         'person2': {
           'name': _person2NameController.text,
-          'birthDate': _person2BirthDate?.toIso8601String()}};
+          'birthDate': _person2BirthDate?.toIso8601String(),
+        },
+      };
     }
     return null;
   }
@@ -230,6 +233,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                   Colors.blue.shade300],
               ),
             ),
+          ),
           Container(
             width: 50,
             height: 50,
@@ -250,7 +254,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
             child: const material.Icon(
               Icons.favorite_rounded,
               color: Colors.white,
-              size: 28),
+              size: 28)
           ),
         ],
       ),
@@ -319,7 +323,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 Text(
                   '전체 궁합',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6)))
               ],
             ),
             circularStrokeCap: CircularStrokeCap.round,
@@ -417,14 +421,25 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                               '${entry.value}%',
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: color))]),
+                                color: color))
+                          ]
+                        ),
                         const SizedBox(height: 8),
                         LinearProgressIndicator(
                           value: (entry.value as int) / 100,
                           backgroundColor: color.withOpacity(0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(color),
-                          minHeight: 8)])]);
-          }).toList(),);
+                          minHeight: 8)
+                      ]
+                    )
+                  )
+                ]
+              )
+            );
+          }).toList()
+        ]
+      )
+    );
   }
 
   Widget _buildPersonalityAnalysis() {
@@ -441,7 +456,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
         _buildPersonalityCard(
           name: _person2NameController.text,
           analysis: person2,
-          color: Colors.blue.shade400)]);
+          color: Colors.blue.shade400)
+      ]
+    );
   }
 
   Widget _buildPersonalityCard({
@@ -461,14 +478,17 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: color.withOpacity(0.3)),
+                  border: Border.all(color: color.withOpacity(0.3))
+                ),
                 child: Center(
                   child: Text(
                     name[0],
                     style: TextStyle(
                       color: color,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18)),
+                      fontSize: 18))
+                )
+              ),
               const SizedBox(width: 12),
               Text(
                 name,
@@ -489,9 +509,10 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
           _buildAnalysisItem(
             icon: Icons.star_outline_rounded,
             title: '강점',
-            content: analysis['strength']),
+            content: analysis['strength'])
         ],
-      ));
+      )
+    );
   }
 
   Widget _buildAnalysisItem({
@@ -513,12 +534,12 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
               Text(
                 content,
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodyMedium)
             ],
-          ),
+          )
         ),
       ],
     );
@@ -540,7 +561,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
           title: '주의점',
           items: challenges.cast<String>(),
           icon: Icons.warning_rounded,
-          color: Colors.orange.shade600)]);
+          color: Colors.orange.shade600)
+      ]
+    );
   }
 
   Widget _buildListCard({
@@ -559,12 +582,16 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                child: material.Icon(icon, color: color, size: 24)),
+                  borderRadius: BorderRadius.circular(12)
+                ),
+                child: material.Icon(icon, color: color, size: 24)
+              ),
               const SizedBox(width: 12),
               Text(
                 title,
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                style: Theme.of(context).textTheme.headlineSmall)
+            ]
+          ),
           const SizedBox(height: 16),
           ...items.map((item) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -581,7 +608,13 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 Expanded(
                   child: Text(
                     item,
-                    style: Theme.of(context).textTheme.bodyMedium)]).toList()]));
+                    style: Theme.of(context).textTheme.bodyMedium))
+              ]
+            )
+          )).toList()
+        ]
+      )
+    );
   }
 
   Widget _buildLuckyElements() {
@@ -602,15 +635,19 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.amber.shade400, Colors.amber.shade600]),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12)
+                  ),
                   child: const material.Icon(
                     Icons.stars_rounded,
                     color: Colors.white,
-                    size: 24)),
+                    size: 24)
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '행운의 요소',
-                  style: Theme.of(context).textTheme.headlineSmall)]),
+                  style: Theme.of(context).textTheme.headlineSmall)
+              ]
+            ),
             const SizedBox(height: 20),
             GridView.count(
               shrinkWrap: true,
@@ -643,8 +680,16 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                         entry.value.toString(),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber.shade900)]);
-              }).toList(),);
+                          color: Colors.amber.shade900))
+                    ]
+                  )
+                );
+              }).toList()
+            )
+          ]
+        )
+      )
+    );
   }
 
   String _getCompatibilityMessage(int score) {

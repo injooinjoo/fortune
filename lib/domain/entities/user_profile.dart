@@ -17,6 +17,7 @@ class UserProfile extends Equatable {
   final DateTime? premiumExpiry;
   final int tokenBalance;
   final Map<String, dynamic>? preferences;
+  final bool sajuCalculated;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -37,6 +38,7 @@ class UserProfile extends Equatable {
     this.premiumExpiry,
     this.tokenBalance = 0,
     this.preferences,
+    this.sajuCalculated = false,
     required this.createdAt,
     required this.updatedAt});
 
@@ -152,6 +154,7 @@ class UserProfile extends Equatable {
     DateTime? premiumExpiry,
     int? tokenBalance,
     Map<String, dynamic>? preferences,
+    bool? sajuCalculated,
     DateTime? createdAt,
     DateTime? updatedAt}) {
     return UserProfile(
@@ -171,6 +174,7 @@ class UserProfile extends Equatable {
       premiumExpiry: premiumExpiry ?? this.premiumExpiry,
       tokenBalance: tokenBalance ?? this.tokenBalance,
       preferences: preferences ?? this.preferences,
+      sajuCalculated: sajuCalculated ?? this.sajuCalculated,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt);
   }
@@ -179,6 +183,7 @@ class UserProfile extends Equatable {
   List<Object?> get props => [
     id, email, name, birthdate, birthTime, isLunar, gender,
     mbti, bloodType, zodiacSign, zodiacAnimal, onboardingCompleted,
-    isPremium, premiumExpiry, tokenBalance, preferences, createdAt, updatedAt
+    isPremium, premiumExpiry, tokenBalance, preferences, sajuCalculated, 
+    createdAt, updatedAt
   ];
 }

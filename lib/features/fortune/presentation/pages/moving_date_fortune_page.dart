@@ -71,8 +71,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF667EEA)),
-          child: child!);
+              primary: const Color(0xFF667EEA),
+            ),
+          ),
+          child: child!,
+        );
       }
     );
     if (picked != null && picked != _birthDate) {
@@ -314,22 +317,26 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             onPressed: () {
               if (_nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('이름을 입력해주세요'));
+                  const SnackBar(content: Text('이름을 입력해주세요')),
+                );
                 return;
               }
               if (_birthDate == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('생년월일을 선택해주세요'));
+                  const SnackBar(content: Text('생년월일을 선택해주세요')),
+                );
                 return;
               }
               if (_fromAddressController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('출발지를 입력해주세요'));
+                  const SnackBar(content: Text('출발지를 입력해주세요')),
+                );
                 return;
               }
               if (_toAddressController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('도착지를 입력해주세요'));
+                  const SnackBar(content: Text('도착지를 입력해주세요')),
+                );
                 return;
               }
               

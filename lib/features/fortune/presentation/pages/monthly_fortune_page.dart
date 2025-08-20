@@ -76,17 +76,23 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return [
       {
         'date': 5,
-        'type': '기회': 'description': '새로운 비즈니스 기회가 찾아올 수 있습니다': 'icon': Icons.business_center,
+        'type': '기회',
+        'description': '새로운 비즈니스 기회가 찾아올 수 있습니다',
+        'icon': Icons.business_center,
         'color': Colors.blue
       },
       {
         'date': 15,
-        'type': '전환점': 'description': '이번 달의 가장 중요한 날, 신중한 결정이 필요합니다': 'icon': Icons.change_circle,
+        'type': '전환점',
+        'description': '이번 달의 가장 중요한 날, 신중한 결정이 필요합니다',
+        'icon': Icons.change_circle,
         'color': Colors.amber
       },
       {
         'date': 23,
-        'type': '행운': 'description': '예상치 못한 좋은 소식이 있을 예정입니다': 'icon': Icons.star,
+        'type': '행운',
+        'description': '예상치 못한 좋은 소식이 있을 예정입니다',
+        'icon': Icons.star,
         'color': Colors.green
       }
     ];
@@ -204,7 +210,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
             // Weekday headers
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ['월': '화', '수': '목', '금': '토', '일']
+              children: ['월', '화', '수', '목', '금', '토', '일']
                   .map((day) => SizedBox(
                         width: 40,
                         child: Center(
@@ -273,8 +279,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                             ),
                           ),
                         ),
-                        if (isLucky),
-            Positioned(
+                        if (isLucky)
+                          Positioned(
                             top: 2,
                             right: 2,
                             child: Icon(
@@ -359,21 +365,22 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
                     '${_selectedMonth.month}월 $_selectedDay일',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)
-                  )
+                      fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   '${score}점',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: _getScoreColor(score),
-                    fontWeight: FontWeight.bold)
-                )
-              ]
+                    fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
             if (dayHighlight != null && dayHighlight.isNotEmpty) ...[
               const SizedBox(height: 16),
@@ -383,7 +390,8 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   color: (dayHighlight['color'] as Color).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: dayHighlight['color'] as Color)),
+                    color: dayHighlight['color'] as Color),
+                ),
                 child: Row(
                   children: [
                     Icon(
@@ -398,28 +406,28 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                             dayHighlight['type'],
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               color: dayHighlight['color'],
-                              fontWeight: FontWeight.bold)
+                              fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             dayHighlight['description'],
-                            style: Theme.of(context).textTheme.bodyMedium)
-                        ]
-                      )
-                    )
-                  ]
-                )
+                            style: Theme.of(context).textTheme.bodyMedium),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               )
             ],
             const SizedBox(height: 16),
             Text(
               _getDayAdvice(score),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8))
-            )
-          ]
-        )
-      )
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -454,6 +462,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                       decoration: BoxDecoration(
                         color: color.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Center(
                         child: Text(
                           '${highlight['date']}',
@@ -477,10 +486,11 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-    decoration: BoxDecoration(
+                                decoration: BoxDecoration(
                                   color: color.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(12),
-    child: Text(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
                                   highlight['type'],
                                   style: TextStyle(
                                     color: color,
@@ -581,6 +591,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                               decoration: BoxDecoration(
                                 color: colors[index % colors.length],
                                 borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Text(
@@ -602,8 +613,10 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
 
   Widget _buildMonthlyTips() {
     final tips = [
-      '월초에는 새로운 시작을 위한 계획을 세우세요': '중순에는 인간관계에 집중하는 것이 좋습니다',
-      '월말에는 한 달을 정리하고 다음 달을 준비하세요': '건강 관리는 꾸준히 해야 합니다',
+      '월초에는 새로운 시작을 위한 계획을 세우세요',
+      '중순에는 인간관계에 집중하는 것이 좋습니다',
+      '월말에는 한 달을 정리하고 다음 달을 준비하세요',
+      '건강 관리는 꾸준히 해야 합니다',
     ];
 
     return Padding(

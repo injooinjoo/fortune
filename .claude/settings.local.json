@@ -60,9 +60,36 @@
       "Bash(supabase functions deploy:*)",
       "Bash(supabase link:*)",
       "Bash(supabase db:*)",
-      "Bash(do echo \"- $f.dart\")"
+      "Bash(do echo \"- $f.dart\")",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(open:*)",
+      "Bash(keytool:*)",
+      "WebFetch(domain:supabase.com)",
+      "Bash(r)",
+      "Bash(xcrun simctl list:*)",
+      "Bash(xcrun simctl spawn:*)",
+      "Bash(supabase functions list:*)",
+      "Bash(supabase secrets:*)",
+      "Bash(xcrun simctl shutdown:*)",
+      "Bash(xcrun simctl boot:*)",
+      "Bash(supabase functions serve:*)",
+      "Bash(supabase functions logs:*)",
+      "Bash(supabase status:*)",
+      "Bash(./gradlew:*)",
+      "Bash($ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager:*)",
+      "Bash(adb shell settings put:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell settings put secure show_ime_with_hard_keyboard 1)",
+      "Bash(supabase functions list:*)",
+      "WebSearch",
+      "Bash(printf \"r\")",
+      "Bash(printf \"R\")",
+      "Bash(printf \"q\")",
+      "Bash(xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.fortuneFlutter)",
+      "Bash(git restore:*)",
+      "Bash(supabase:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
@@ -71,7 +98,10 @@
   "mcpServers": {
     "framer": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-framer"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-framer"
+      ],
       "env": {}
     }
   }

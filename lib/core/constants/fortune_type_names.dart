@@ -8,7 +8,7 @@ class FortuneTypeNames {
     'daily': '일일 운세',
     'today': '오늘의 운세',
     'tomorrow': '내일의 운세',
-    'hourly': '시간대별 운세',
+    'daily_calendar': '특정일 운세',
     'weekly': '주간 운세',
     'monthly': '월간 운세',
     'yearly': '연간 운세',
@@ -126,7 +126,7 @@ class FortuneTypeNames {
   
   /// Get the category name for a fortune type
   static String getCategory(String fortuneType) {
-    if (['daily', 'today', 'tomorrow', 'hourly', 'weekly', 'monthly', 'yearly'].contains(fortuneType)) {
+    if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly', 'yearly'].contains(fortuneType)) {
       return '시간별 운세';
     } else if (['saju', 'traditional-saju', 'saju-psychology', 'tojeong', 'salpuli', 'palmistry', 'physiognomy', 'face-reading', 'five-blessings'].contains(fortuneType)) {
       return '전통 운세';
@@ -223,7 +223,7 @@ class FortuneTypeNames {
       'daily': '/fortune/daily',
       'today': '/fortune/today',
       'tomorrow': '/fortune/tomorrow',
-      'hourly': '/fortune/hourly',
+      'daily_calendar': '/daily-calendar',
       'weekly': '/fortune/weekly',
       'monthly': '/fortune/monthly',
       'yearly': '/fortune/yearly',

@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../core/config/environment.dart';
 import '../../core/config/feature_flags.dart';
 import '../../core/constants/edge_functions_endpoints.dart';
 import '../../domain/entities/fortune.dart';
 import '../models/fortune_response_model.dart';
 import '../../presentation/providers/providers.dart';
+import '../../services/weather_service.dart';
 import 'fortune_api_service.dart';
 
 /// Extended FortuneApiService that supports Edge Functions
@@ -16,6 +18,26 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   final Ref _ref;
   
   FortuneApiServiceWithEdgeFunctions(this._ref) : super(_ref.read(apiClientProvider));
+  
+  /// Get weather info optionally (doesn't fail if location permission denied)
+  Future<WeatherInfo?> _getWeatherInfoOptional() async {
+    try {
+      // Check location permission without requesting
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied || 
+          permission == LocationPermission.deniedForever) {
+        // Don't request permission, just return null
+        debugPrint('📍 Location permission not granted, skipping location');
+        return null;
+      }
+      
+      // If permission is granted, try to get weather
+      return await WeatherService.getCurrentWeather();
+    } catch (e) {
+      debugPrint('📍 Could not get location/weather: $e');
+      return null;
+    }
+  }
 
   /// Override the base method to use Edge Functions when enabled
   @override
@@ -33,7 +55,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         userId: userId,
         fortuneType: 'daily',
         data: {
-          if (date != null) 'date': null});
+          if (date != null) 'date': date.toIso8601String()});
     }
     
     // Fall back to original implementation
@@ -55,16 +77,45 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       final supabase = Supabase.instance.client;
       final userProfileResponse = await supabase
           .from('user_profiles')
-          .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac')
+          .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac, saju_calculated')
           .eq('id', userId)
           .maybeSingle();
       
+      // Get saju data if available
+      Map<String, dynamic>? sajuData;
+      try {
+        final sajuResponse = await supabase
+            .from('user_saju')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle();
+        
+        if (sajuResponse != null) {
+          sajuData = sajuResponse;
+          debugPrint('✅ Saju data found for user');
+        } else {
+          debugPrint('⚠️ No saju data found for user');
+        }
+      } catch (e) {
+        debugPrint('⚠️ Error fetching saju data: $e');
+      }
+      
       // Debug info
+      
+      // Get location info if available (optional)
+      String? userLocation;
+      try {
+        final weatherInfo = await _getWeatherInfoOptional();
+        userLocation = weatherInfo?.cityName;
+      } catch (e) {
+        // Location is optional, continue without it
+        debugPrint('📍 Location not available (optional): $e');
+      }
       
       // Prepare request data
       final requestData = {
         ...?data,
-        'userId': null,
+        'userId': userId,
         if (userProfileResponse != null) ...{
           'name': userProfileResponse['name'] ?? '',
           'birthDate': userProfileResponse['birth_date'],
@@ -74,11 +125,14 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           'mbtiType': userProfileResponse['mbti'],
           'bloodType': userProfileResponse['blood_type'],
           'zodiacSign': userProfileResponse['zodiac_sign'],
-          'zodiacAnimal': userProfileResponse['chinese_zodiac']}};
+          'zodiacAnimal': userProfileResponse['chinese_zodiac'],
+          'sajuCalculated': userProfileResponse['saju_calculated'] ?? false},
+        if (sajuData != null) 'sajuData': sajuData,
+        if (userLocation != null) 'location': userLocation};
       // Debug info
       debugPrint('keys: ${requestData.keys.toList()}');
-      debugPrint('request: ${requestData[')period']}');
-      debugPrint('request: ${requestData[')date']}');
+      debugPrint('request period: ${requestData['period']}');
+      debugPrint('request date: ${requestData['date']}');
 
       // Create a custom Dio instance for Edge Functions
       debugPrint('URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
@@ -95,7 +149,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       // Configure headers based on platform
       final headers = <String, dynamic>{
         'Content-Type': 'application/json',
-        'apikey': null};
+        'apikey': Environment.supabaseAnonKey};
       
       // Only add XMLHttpRequest header for non-web platforms
       if (!kIsWeb) {
@@ -258,7 +312,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     // Edge Functions are being used
     // Debug info
     debugPrint('type: ${params.runtimeType}');
-    debugPrint('params: ${params?[')period']}');
+    debugPrint('params period: ${params?['period']}');
     
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Edge Functions ENABLED');
@@ -327,7 +381,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         // Configure headers based on platform
         final headers = <String, dynamic>{
           'Content-Type': 'application/json',
-          'apikey': null};
+          'apikey': Environment.supabaseAnonKey};
         
         // Only add XMLHttpRequest header for non-web platforms
         if (!kIsWeb) {
@@ -368,7 +422,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         // Configure headers based on platform
         final headers = <String, dynamic>{
           'Content-Type': 'application/json',
-          'apikey': null};
+          'apikey': Environment.supabaseAnonKey};
         
         // Only add XMLHttpRequest header for non-web platforms
         if (!kIsWeb) {

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../core/utils/logger.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 
 /// Lightweight callback handler for native auth flows (Google Sign-In SDK, etc)
@@ -11,7 +10,7 @@ import 'package:fortune/core/theme/app_colors.dart';
 class NativeAuthCallbackHandler {
   static Future<void> handleAuthSuccess(BuildContext context, User user) async {
     try {
-      Logger.info('user: ${user.id}'));
+      Logger.info('user: ${user.id}');
       
       // Check if user needs onboarding
       final needsOnboarding = await ProfileValidation.needsOnboarding();
@@ -36,9 +35,9 @@ class NativeAuthCallbackHandler {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('실패: $error'),
-          backgroundColor: AppColors.error),
-    duration: const Duration(seconds: 3))
-        )
+          backgroundColor: AppColors.error,
+          duration: const Duration(seconds: 3),
+        ),
       );
     }
   }

@@ -46,28 +46,28 @@ class UserProfile extends Equatable {
     return UserProfile(
       id: json['id'] as String? ?? '',
       userId: json['user_id'] as String? ?? json['id'] as String? ?? '',
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phone_number'],
+      name: json['name'] as String?,
+      email: json['email'] as String?,
+      phoneNumber: json['phone_number'] as String?,
       birthDate: json['birth_date'] != null 
-          ? DateTime.parse(json['birth_date']) 
+          ? DateTime.tryParse(json['birth_date'].toString()) 
           : null,
-      birthTime: json['birth_time'],
-      gender: json['gender'],
-      mbtiType: json['mbti_type'],
-      zodiacSign: json['zodiac_sign'],
-      chineseZodiac: json['chinese_zodiac'],
-      profileImageUrl: json['profile_image_url'],
-      preferences: json['preferences'],
-      tokenBalance: json['token_balance'],
+      birthTime: json['birth_time'] as String?,
+      gender: json['gender'] as String?,
+      mbtiType: json['mbti_type'] as String?,
+      zodiacSign: json['zodiac_sign'] as String?,
+      chineseZodiac: json['chinese_zodiac'] as String?,
+      profileImageUrl: json['profile_image_url'] as String?,
+      preferences: json['preferences'] as Map<String, dynamic>?,
+      tokenBalance: json['token_balance'] as int? ?? 0,
       createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) 
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
           : DateTime.now(),
       updatedAt: json['updated_at'] != null 
-          ? DateTime.parse(json['updated_at']) 
+          ? DateTime.tryParse(json['updated_at'].toString()) ?? DateTime.now()
           : DateTime.now(),
-      isTestAccount: json['is_test_account'],
-      testAccountFeatures: json['test_account_features'],
+      isTestAccount: json['is_test_account'] as bool? ?? false,
+      testAccountFeatures: json['test_account_features'] as Map<String, dynamic>?,
       fortunePreferences: json['fortune_preferences'] != null
           ? FortunePreferences.fromJson(json['fortune_preferences'] as Map<String, dynamic>)
           : null
@@ -239,7 +239,7 @@ class FortunePreferences extends Equatable {
           [],
       preferredHour: json['preferred_hour'],
       languagePreference: json['language_preference'] as String? ?? 'ko',
-      showTrending: json['show_trending'],
+      showTrending: json['show_trending'] as bool? ?? true,
       showPersonalized: json['show_personalized'] as bool? ?? true
     );
   }
@@ -248,7 +248,7 @@ class FortunePreferences extends Equatable {
     return {
       'category_weights': categoryWeights,
       'visited_fortunes': visitedFortunes,
-      'last_visited': lastVisited.map((k, v) => MapEntry(k, v.toIso8601String()),
+      'last_visited': lastVisited.map((k, v) => MapEntry(k, v.toIso8601String())),
       'favorites': favorites,
       'excluded': excluded,
       'preferred_hour': preferredHour,

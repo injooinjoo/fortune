@@ -1,18 +1,14 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/toss_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 class FortuneBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
 
   const FortuneBottomNavigationBar({
-    Key? key,
-    required this.currentIndex}) : super(key: key);
+    super.key,
+    required this.currentIndex});
 
   static const List<_NavItem> _items = [
     _NavItem(
@@ -61,7 +57,7 @@ class FortuneBottomNavigationBar extends StatelessWidget {
         color: TossTheme.backgroundWhite,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             offset: const Offset(0, -1),
             blurRadius: 0,
             spreadRadius: 0,
@@ -81,22 +77,17 @@ class FortuneBottomNavigationBar extends StatelessWidget {
                 isSelected: index == activeIndex,
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  // If already on the same route, refresh the page
-                  if (currentPath == _items[index].route || currentPath.startsWith(_items[index].route)) {
-                    // Special handling for fortune page to refresh and close any open sheets
-                    if (_items[index].route == '/fortune') {
-                      // Navigate away and back to force refresh
-                      context.go('/home');
-                      Future.delayed(const Duration(milliseconds: 50), () {
-                        context.go('/fortune');
-                      });
-                    } else {
-                      context.go(_items[index].route);
-                    }
-                  } else {
+                  // Only navigate if not already on the same route
+                  if (currentPath != _items[index].route && !currentPath.startsWith(_items[index].route)) {
                     context.go(_items[index].route);
                   }
-                })))));
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -150,6 +141,10 @@ class _NavItemWidget extends StatelessWidget {
                   : TossTheme.textGray600,
                 letterSpacing: -0.2,
               ),
-            )])));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

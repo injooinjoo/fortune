@@ -262,7 +262,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    );
+                    ),
+                  );
                 }).toList(),
               ),
             ],
@@ -533,21 +534,31 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label,
+            Text(
+              label,
               style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Text(
                 '${score}%',
                 style: theme.textTheme.bodyMedium?.copyWith(
-            color: color,
-                  fontWeight: FontWeight.bold))),
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 4),
         Text(
           description,
@@ -557,8 +568,9 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
         LinearProgressIndicator(
           value: score / 100,
           backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
-          valueColor: AlwaysStoppedAnimation<Color>(color)),
-      ]
+          valueColor: AlwaysStoppedAnimation<Color>(color),
+        ),
+      ],
     );
   }
 
@@ -623,14 +635,15 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                         trait['name'] as String,
                         style: theme.textTheme.bodySmall,
                         textAlign: TextAlign.center),
-                    ]
-                  )
+                    ],
+                  ),
                 );
-              }).toList()
-          ]
-        )
-      )
-    );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+      );
   }
 
   Widget _buildFortuneByFeature() {
@@ -763,16 +776,16 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                         const SizedBox(height: 4),
                         Text(
                           item['advice'] as String,
-                          style: theme.textTheme.bodyMedium)),
-                      ]
-                    )
-                  )
-                ]
-              )
-            )).toList()
-          ]
-        )
-      )
+                          style: theme.textTheme.bodyMedium),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
     );
   }
 }

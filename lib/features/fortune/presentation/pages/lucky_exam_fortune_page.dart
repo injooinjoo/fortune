@@ -210,7 +210,12 @@ class LuckyExamFortunePage extends ConsumerWidget {
             Text(
               summary,
               style: const TextStyle(fontSize: 16, height: 1.6),
-              textAlign: TextAlign.center)]));
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMainResultCard({
@@ -235,18 +240,30 @@ class LuckyExamFortunePage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
-                  child: Icon(icon, color: color, size: 28)),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold))]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Text(
               content,
-              style: const TextStyle(fontSize: 16, height: 1.6)]));
+              style: const TextStyle(fontSize: 16, height: 1.6),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLuckyStudyTime(String? studyTime) {

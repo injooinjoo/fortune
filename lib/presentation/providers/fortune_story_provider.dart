@@ -7,32 +7,72 @@ import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
 import '../../core/utils/logger.dart';
 import 'auth_provider.dart';
+import 'dart:async';
+import 'dart:math' as math;
 
 /// 운세 스토리 상태
 class FortuneStoryState {
   final bool isLoading;
   final List<StorySegment>? segments;
   final WeatherInfo? weather;
+  final Map<String, dynamic>? sajuAnalysis;
   final String? error;
+  
+  // Enhanced fortune data
+  final Map<String, dynamic>? meta;
+  final Map<String, dynamic>? weatherSummary;
+  final Map<String, dynamic>? overall;
+  final Map<String, dynamic>? categories;
+  final Map<String, dynamic>? sajuInsight;
+  final List<Map<String, dynamic>>? personalActions;
+  final Map<String, dynamic>? notification;
+  final Map<String, dynamic>? shareCard;
 
   const FortuneStoryState({
     this.isLoading = false,
     this.segments,
     this.weather,
+    this.sajuAnalysis,
     this.error,
+    this.meta,
+    this.weatherSummary,
+    this.overall,
+    this.categories,
+    this.sajuInsight,
+    this.personalActions,
+    this.notification,
+    this.shareCard,
   });
 
   FortuneStoryState copyWith({
     bool? isLoading,
     List<StorySegment>? segments,
     WeatherInfo? weather,
+    Map<String, dynamic>? sajuAnalysis,
     String? error,
+    Map<String, dynamic>? meta,
+    Map<String, dynamic>? weatherSummary,
+    Map<String, dynamic>? overall,
+    Map<String, dynamic>? categories,
+    Map<String, dynamic>? sajuInsight,
+    List<Map<String, dynamic>>? personalActions,
+    Map<String, dynamic>? notification,
+    Map<String, dynamic>? shareCard,
   }) {
     return FortuneStoryState(
       isLoading: isLoading ?? this.isLoading,
       segments: segments ?? this.segments,
       weather: weather ?? this.weather,
+      sajuAnalysis: sajuAnalysis ?? this.sajuAnalysis,
       error: error ?? this.error,
+      meta: meta ?? this.meta,
+      weatherSummary: weatherSummary ?? this.weatherSummary,
+      overall: overall ?? this.overall,
+      categories: categories ?? this.categories,
+      sajuInsight: sajuInsight ?? this.sajuInsight,
+      personalActions: personalActions ?? this.personalActions,
+      notification: notification ?? this.notification,
+      shareCard: shareCard ?? this.shareCard,
     );
   }
 }
@@ -41,6 +81,7 @@ class FortuneStoryState {
 class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
   final Ref ref;
   final SupabaseClient _supabase = Supabase.instance.client;
+  Map<String, dynamic>? _lastResponseData;
 
   FortuneStoryNotifier(this.ref) : super(const FortuneStoryState());
 
@@ -68,12 +109,45 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         userProfile: userProfile,
       );
 
+      // Edge Function에서 확장된 데이터 추출
+      Map<String, dynamic>? sajuAnalysis;
+      Map<String, dynamic>? meta;
+      Map<String, dynamic>? weatherSummary;
+      Map<String, dynamic>? overall;
+      Map<String, dynamic>? categories;
+      Map<String, dynamic>? sajuInsight;
+      List<Map<String, dynamic>>? personalActions;
+      Map<String, dynamic>? notification;
+      Map<String, dynamic>? shareCard;
+      
+      if (_lastResponseData != null) {
+        sajuAnalysis = _lastResponseData!['sajuAnalysis'] as Map<String, dynamic>?;
+        meta = _lastResponseData!['meta'] as Map<String, dynamic>?;
+        weatherSummary = _lastResponseData!['weatherSummary'] as Map<String, dynamic>?;
+        overall = _lastResponseData!['overall'] as Map<String, dynamic>?;
+        categories = _lastResponseData!['categories'] as Map<String, dynamic>?;
+        sajuInsight = _lastResponseData!['sajuInsight'] as Map<String, dynamic>?;
+        personalActions = (_lastResponseData!['personalActions'] as List?)?.cast<Map<String, dynamic>>();
+        notification = _lastResponseData!['notification'] as Map<String, dynamic>?;
+        shareCard = _lastResponseData!['shareCard'] as Map<String, dynamic>?;
+      }
+      
       state = state.copyWith(
         isLoading: false,
         segments: segments,
+        sajuAnalysis: sajuAnalysis,
+        meta: meta,
+        weatherSummary: weatherSummary,
+        overall: overall,
+        categories: categories,
+        sajuInsight: sajuInsight,
+        personalActions: personalActions,
+        notification: notification,
+        shareCard: shareCard,
       );
 
       Logger.info('✅ Fortune story generated successfully');
+      Logger.info('📦 Final segments count: ${segments?.length}');
     } catch (e) {
       Logger.error('❌ Error generating fortune story: $e');
       
@@ -83,6 +157,8 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         fortune: fortune,
         userProfile: userProfile,
       );
+      
+      Logger.info('🔄 Using default story with ${defaultSegments.length} segments');
       
       state = state.copyWith(
         isLoading: false,
@@ -100,7 +176,11 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     UserProfile? userProfile,
   }) async {
     try {
-      // Supabase Edge Function 호출
+      Logger.info('📡 Calling Edge Function generate-fortune-story...');
+      Logger.info('userName: $userName');
+      Logger.info('fortune score: ${fortune.overallScore}');
+      
+      // Supabase Edge Function 호출 (타임아웃 설정)
       final response = await _supabase.functions.invoke(
         'generate-fortune-story',
         body: {
@@ -151,12 +231,30 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
             'personalizedContent': true,
           },
         },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          Logger.error('⏱️ Edge Function timeout after 30 seconds');
+          throw TimeoutException('Edge Function 호출 시간 초과');
+        },
       );
 
       // 응답 전체를 로깅
-      Logger.info('🔍 GPT Response received:');
+      Logger.info('🔍 Edge Function Response received:');
+      Logger.info('Response status: ${response.status}');
       Logger.info('Response type: ${response.data.runtimeType}');
-      Logger.info('Response data: ${response.data}');
+      
+      // 응답 데이터 검증
+      if (response.data == null) {
+        Logger.error('❌ Response data is null');
+        throw Exception('Edge Function returned null data');
+      }
+      
+      Logger.info('Response data keys: ${response.data is Map ? (response.data as Map).keys.toList() : 'Not a Map'}');
+      Logger.info('Response data preview: ${response.data.toString().substring(0, math.min(500, response.data.toString().length))}...');
+      
+      // 응답 데이터 저장 (사주 분석 추출용)
+      _lastResponseData = response.data as Map<String, dynamic>?;
       
       // Check for both 'segments' and 'storySegments' keys
       if (response.data != null && (response.data['segments'] != null || response.data['storySegments'] != null)) {
@@ -213,8 +311,10 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         
         // 최소 10페이지 보장
         if (segmentsData.length < 10) {
-          Logger.info('Segments less than 10, expanding...');
-          return _expandStorySegments(segmentsData, userName, fortune);
+          Logger.info('⚠️ Segments less than 10 (${segmentsData.length}), expanding...');
+          final expanded = _expandStorySegments(segmentsData, userName, fortune);
+          Logger.info('🔄 Expanded to ${expanded.length} segments');
+          return expanded;
         }
         
         // 각 segment 상세 로깅
@@ -302,11 +402,18 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       } else {
         Logger.error('No segments in response or response is null');
       }
-    } catch (e) {
-      Logger.error('GPT API call failed: $e');
+    } catch (e, stackTrace) {
+      Logger.error('❌ Edge Function call failed: $e');
+      Logger.error('Stack trace: $stackTrace');
+      
+      // 시간 초과 에러인 경우 특별 처리
+      if (e is TimeoutException) {
+        Logger.error('⏰ Timeout occurred - Edge Function may be taking too long');
+      }
     }
 
     // GPT 실패 시 확장된 기본 스토리 반환
+    Logger.info('🎭 Using extended default story due to GPT failure');
     return _createExtendedDefaultStory(userName: userName, fortune: fortune, userProfile: userProfile);
   }
 
@@ -316,6 +423,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     required fortune_entity.Fortune fortune,
     UserProfile? userProfile,
   }) {
+    Logger.info('🎭 Creating default story for $userName');
     final now = DateTime.now();
     final score = fortune.overallScore ?? 75;
     List<StorySegment> segments = [];
@@ -639,6 +747,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       }
     }
 
+    Logger.info('🎆 Default story created with ${segments.length} segments');
     return segments;
   }
 

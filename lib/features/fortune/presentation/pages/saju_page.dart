@@ -3,15 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
-import '../widgets/hourly_fortune_chart.dart';
-import '../widgets/five_elements_balance_chart.dart';
 import '../widgets/fortune_display.dart';
 import '../../../../services/saju_calculation_service.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 
@@ -37,8 +33,6 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
   Map<String, dynamic>? _calculatedSaju;
   Fortune? _fortune;
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -47,20 +41,6 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
-    _scaleAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
   }
 
   @override
@@ -123,7 +103,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: Colors.white,
+            ),
+          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -131,8 +113,12 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
               _buildPillarCard('년주', _calculatedSaju!['year']),
               _buildPillarCard('월주', _calculatedSaju!['month']),
               _buildPillarCard('일주', _calculatedSaju!['day']),
-              _buildPillarCard('시주', _calculatedSaju!['hour'])
-            ])]));
+              _buildPillarCard('시주', _calculatedSaju!['hour']),
+            ],
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
@@ -148,7 +134,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white70)),
+            color: Colors.white70,
+          ),
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -157,7 +145,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: color.withOpacity(0.3),
-              width: 1)),
+              width: 1,
+            ),
+          ),
           child: Column(
             children: [
               Text(
@@ -165,20 +155,31 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: color)),
+                  color: color,
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 '${pillar['branchHanja']}',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: color)),
+                  color: color,
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 '${pillar['stem']}${pillar['branch']}',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white54)])]);
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
   
   Widget _buildEmptyPillar(String title) {
@@ -188,7 +189,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white70)),
+            color: Colors.white70,
+          ),
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -197,19 +200,29 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Colors.grey.withOpacity(0.3),
-              width: 1)),
+              width: 1,
+            ),
+          ),
           child: Column(
             children: [
               Icon(
                 Icons.help_outline,
                 color: Colors.grey,
-                size: 40),
+                size: 40,
+              ),
               const SizedBox(height: 4),
               Text(
                 '시간 미입력',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white54)])]);
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
   
   Widget _buildTenGodsAnalysis() {
@@ -225,7 +238,9 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: Colors.white,
+            ),
+          ),
           const SizedBox(height: 16),
           ...tenGods.entries.map((entry) {
             final position = entry.key;
@@ -241,7 +256,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                       '$position간',
                       style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 14)),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 12),
                   Wrap(
                     spacing: 8,
@@ -252,22 +270,25 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: _getTenGodColor(god).withOpacity(0.3),
-                          width: 1)),
+                          width: 1,
+                        ),
+                      ),
                       child: Text(
                         god,
                         style: TextStyle(
                           color: _getTenGodColor(god),
                           fontSize: 12,
-                          fontWeight: FontWeight.bold)
-                      )
-                    )).toList()
-                  )
-                ]
-              )
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                ],
+              ),
             );
-          }).toList()
-        ]
-      )
+          }).toList(),
+        ],
+      ),
     );
   }
   
@@ -279,7 +300,8 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
       luckyItems: _fortune!.luckyItems,
       advice: _fortune!.recommendations?.join('\n') ?? '',
       detailedFortune: {'content': null},
-      warningMessage: _fortune!.warnings?.join('\n'));
+      warningMessage: _fortune!.warnings?.join('\n'),
+    );
   }
   
   Color _getTenGodColor(String god) {
@@ -314,7 +336,11 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
             const SizedBox(height: 16),
             _buildTalentAnalysis(),
             const SizedBox(height: 16),
-            _buildPastLifeSection()]]));
+            _buildPastLifeSection(),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _buildElementsChart() {
@@ -333,16 +359,24 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                   gradient: LinearGradient(
                     colors: [
                       Colors.orange.shade400,
-                      Colors.orange.shade600]),
+                      Colors.orange.shade600,
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(12),
+                ),
                 child: const Icon(
                   Icons.analytics_rounded,
                   color: Colors.white,
-                  size: 24)),
+                  size: 24,
+                ),
+              ),
               const SizedBox(width: 12),
               Text(
                 '오행 분석',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           SizedBox(
             height: 300,
@@ -351,30 +385,41 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                 radarShape: RadarShape.polygon,
                 tickCount: 5,
                 ticksTextStyle: const TextStyle(
-                  color: Colors.transparent),
+                  color: Colors.transparent,
+                ),
                 radarBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                ),
                 gridBorderData: BorderSide(
                   color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                  width: 0.5),
+                  width: 0.5,
+                ),
                 titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
+                ),
                 dataSets: [
                   RadarDataSet(
                     fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     borderColor: Theme.of(context).colorScheme.primary,
                     borderWidth: 2,
                     dataEntries: elements.values
-                        .map((value) => RadarEntry(value: value.toDouble())
-                        .toList()],
+                        .map((value) => RadarEntry(value: value.toDouble()))
+                        .toList(),
+                  ),
+                ],
                 getTitle: (index, angle) {
                   final titles = elements.keys.toList();
                   return RadarChartTitle(
                     text: titles[index],
-                    angle: 0);
-                })).animate().fadeIn(delay: 200.ms).scale(
-            begin: const Offset(0.8, 0.8),
-            end: const Offset(1, 1)),
+                    angle: 0,
+                  );
+                },
+              ),
+            ).animate().fadeIn(delay: 200.ms).scale(
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1, 1),
+            ),
+          ),
           const SizedBox(height: 20),
           ...elements.entries.map((entry) {
             final color = _getElementColor(entry.key);
@@ -397,8 +442,16 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                     '${entry.value}%',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: color)]);
-          }).toList(),);
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
   }
 
   Widget _buildTalentAnalysis() {
@@ -417,16 +470,24 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                   gradient: LinearGradient(
                     colors: [
                       Colors.purple.shade400,
-                      Colors.purple.shade600]),
+                      Colors.purple.shade600,
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(12),
+                ),
                 child: const Icon(
                   Icons.star_rounded,
                   color: Colors.white,
-                  size: 24)),
+                  size: 24,
+                ),
+              ),
               const SizedBox(width: 12),
               Text(
                 '재능 분석',
-                style: Theme.of(context).textTheme.headlineSmall)]),
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           ...talents.asMap().entries.map((entry) {
             final index = entry.key;
@@ -451,34 +512,54 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 4),
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
                                 Theme.of(context).colorScheme.primary,
-                                Theme.of(context).colorScheme.secondary]),
+                                Theme.of(context).colorScheme.secondary,
+                              ],
+                            ),
                             borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Text(
                             '${talent['score']}점',
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12))]),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       talent['description'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: talent['score'],
                       backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.primary),
-                      minHeight: 6)])).animate()
-                  .fadeIn(delay: Duration(milliseconds: 300 + (index * 100))
-                  .slideX(begin: 0.1, end: 0);
-          }).toList(),);
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                      minHeight: 6,
+                    ),
+                  ],
+                ),
+              ),
+            ).animate()
+                .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
+                .slideX(begin: 0.1, end: 0);
+          }).toList(),
+        ],
+      ),
+    );
   }
 
   Widget _buildPastLifeSection() {
@@ -490,7 +571,8 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
       liquidColors: [
         Colors.indigo.shade300,
         Colors.purple.shade300,
-        Colors.deepPurple.shade300],
+        Colors.deepPurple.shade300,
+      ],
       child: Column(
         children: [
           Container(
@@ -499,16 +581,22 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.indigo.shade400,
-                  Colors.indigo.shade600]),
-              shape: BoxShape.circle),
+                  Colors.indigo.shade600,
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
             child: const Icon(
               Icons.history_rounded,
               color: Colors.white,
-              size: 32)),
+              size: 32,
+            ),
+          ),
           const SizedBox(height: 16),
           Text(
             '전생 분석',
-            style: Theme.of(context).textTheme.headlineSmall),
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -516,43 +604,52 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
               color: Colors.indigo.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.indigo.withOpacity(0.3)),
+                color: Colors.indigo.withOpacity(0.3),
+              ),
+            ),
             child: Text(
               pastLife['role'],
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.indigo.shade700)),
+                color: Colors.indigo.shade700,
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
           Text(
             pastLife['description'],
             style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
               borderRadius: BorderRadius.circular(16),
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
                   Icons.auto_awesome_rounded,
                   color: Colors.amber.shade600,
-                  size: 20),
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     pastLife['karma'],
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic)
-                  )
-                )
-              ]
-            )
-          )
-        ]
-      )
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ).animate()
         .fadeIn(delay: 500.ms)
         .shimmer(delay: 1000.ms, duration: 2000.ms);

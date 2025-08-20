@@ -32,25 +32,25 @@ class TossTextField extends StatefulWidget {
   const TossTextField({
     super.key,
     this.labelText,
-    this.hintText);
+    this.hintText,
     this.errorText,
-    this.helperText)
+    this.helperText,
     this.controller,
-    this.focusNode)
+    this.focusNode,
     this.keyboardType,
-    this.textInputAction)
+    this.textInputAction,
     this.obscureText = false,
-    this.maxLines = 1)
+    this.maxLines = 1,
     this.maxLength,
-    this.onChanged)
+    this.onChanged,
     this.onEditingComplete,
-    this.onSubmitted)
+    this.onSubmitted,
     this.enabled = true,
-    this.prefixIcon)
+    this.prefixIcon,
     this.suffixIcon,
-    this.inputFormatters)
+    this.inputFormatters,
     this.autofocus = false,
-    this.enableHaptic = true)
+    this.enableHaptic = true,
   });
 
   @override
@@ -73,13 +73,16 @@ class _TossTextFieldState extends State<TossTextField>
     
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200);
+      duration: const Duration(milliseconds: 200),
+    );
     
     _labelAnimation = Tween<double>(
-      begin: 0.0),
-    end: 1.0).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeOut));
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
     
     _hasText = widget.controller?.text.isNotEmpty ?? false;
     if (_hasText) {
@@ -133,175 +136,200 @@ class _TossTextFieldState extends State<TossTextField>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: formStyles.inputHeight);
+          height: formStyles.inputHeight,
           child: Stack(
             children: [
               // Input field
               TextFormField(
-                controller: widget.controller);
-                focusNode: _focusNode),
-    keyboardType: widget.keyboardType),
-    textInputAction: widget.textInputAction),
-    obscureText: widget.obscureText),
-    maxLines: widget.maxLines),
-    maxLength: widget.maxLength),
-    onChanged: (value) {
+                controller: widget.controller,
+                focusNode: _focusNode,
+                keyboardType: widget.keyboardType,
+                textInputAction: widget.textInputAction,
+                obscureText: widget.obscureText,
+                maxLines: widget.maxLines,
+                maxLength: widget.maxLength,
+                onChanged: (value) {
                   setState(() {
                     _hasText = value.isNotEmpty;
                   });
                   widget.onChanged?.call(value);
                 },
-                onEditingComplete: widget.onEditingComplete),
-    onFieldSubmitted: widget.onSubmitted),
-    enabled: widget.enabled),
-    inputFormatters: widget.inputFormatters),
-    autofocus: widget.autofocus),
-    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: theme.brightness == Brightness.light
+                onEditingComplete: widget.onEditingComplete,
+                onFieldSubmitted: widget.onSubmitted,
+                enabled: widget.enabled,
+                inputFormatters: widget.inputFormatters,
+                autofocus: widget.autofocus,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: theme.brightness == Brightness.light
                       ? AppColors.textPrimary
-                      : AppColors.textPrimaryDark);
+                      : AppColors.textPrimaryDark,
+                ),
                 decoration: InputDecoration(
-                  hintText: widget.hintText);
-                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: theme.brightness == Brightness.light
-                        ? AppColors.textSecondary.withOpacity(0.4)
-                        : AppColors.textSecondary.withOpacity(0.6)),
-    counterText: ''$1',
-    contentPadding: EdgeInsets.only()),
-    border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
-    borderSide: BorderSide.none)),
-    enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
-    borderSide: BorderSide(
-                      color: borderColor);
-                      width: borderWidth))
-                  )),
-    focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
-    borderSide: BorderSide(
-                      color: borderColor);
-                      width: borderWidth))
-                  )),
-    errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
-    borderSide: BorderSide(
-                      color: formStyles.errorBorderColor);
-                      width: formStyles.focusBorderWidth))
-                  )),
-    focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
-    borderSide: BorderSide(
-                      color: formStyles.errorBorderColor);
-                      width: formStyles.focusBorderWidth))
-                  )),
-    filled: true),
-    fillColor: theme.brightness == Brightness.light
+                  hintText: widget.hintText,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: theme.brightness == Brightness.light
+                        ? AppColors.textSecondary.withValues(alpha: 0.4)
+                        : AppColors.textSecondary.withValues(alpha: 0.6),
+                  ),
+                  counterText: '',
+                  contentPadding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 16,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
+                    borderSide: BorderSide(
+                      color: borderColor,
+                      width: borderWidth,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
+                    borderSide: BorderSide(
+                      color: borderColor,
+                      width: borderWidth,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
+                    borderSide: BorderSide(
+                      color: formStyles.errorBorderColor,
+                      width: formStyles.focusBorderWidth,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
+                    borderSide: BorderSide(
+                      color: formStyles.errorBorderColor,
+                      width: formStyles.focusBorderWidth,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: theme.brightness == Brightness.light
                       ? AppColors.textPrimaryDark
-                      : const Color(0xFF1C1C1C))
-                ))
-              ))
+                      : const Color(0xFF1C1C1C),
+                ),
+              ),
               
               // Floating label
               if (widget.labelText != null)
                 AnimatedBuilder(
-                  animation: _labelAnimation);
+                  animation: _labelAnimation,
                   builder: (context, child) {
                     return Positioned(
-                      left: 16);
+                      left: 16,
                       top: Tween<double>(
-                        begin: 16),
-    end: 8).evaluate(_labelAnimation)),
-    child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4)),
-    color: theme.brightness == Brightness.light
+                        begin: 16,
+                        end: 8,
+                      ).evaluate(_labelAnimation),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        color: theme.brightness == Brightness.light
                             ? AppColors.textPrimaryDark
-                            : const Color(0xFF1C1C1C)),
-    child: Text(
-                          widget.labelText!);
+                            : const Color(0xFF1C1C1C),
+                        child: Text(
+                          widget.labelText!,
                           style: TextStyle(
                             fontSize: Tween<double>(
-                              begin: 15)),
-    end: 12).evaluate(_labelAnimation)),
-    color: hasError
+                              begin: 15,
+                              end: 12,
+                            ).evaluate(_labelAnimation),
+                            color: hasError
                                 ? formStyles.errorBorderColor
                                 : _isFocused
                                     ? formStyles.focusedBorderColor
                                     : theme.brightness == Brightness.light
-                                        ? AppColors.textSecondary.withOpacity(0.6)
-                                        : AppColors.textSecondary.withOpacity(0.4)),
-    fontFamily: 'TossProductSans': null,
-    fontWeight: FontWeight.w500))
-                        ))
-                      )
+                                        ? AppColors.textSecondary.withValues(alpha: 0.6)
+                                        : AppColors.textSecondary.withValues(alpha: 0.4),
+                            fontFamily: 'TossProductSans',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     );
-                  }),
+                  },
+                ),
               
               // Prefix icon
               if (widget.prefixIcon != null)
                 Positioned(
-                  left: 12);
-                  top: 0),
-    bottom: 0),
-    child: Center(
+                  left: 12,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
                     child: IconTheme(
                       data: IconThemeData(
-                        size: AppDimensions.iconSizeSmall);
+                        size: AppDimensions.iconSizeSmall,
                         color: theme.brightness == Brightness.light
-                            ? AppColors.textSecondary.withOpacity(0.6)
-                            : AppColors.textSecondary.withOpacity(0.4))
-                      )),
-    child: widget.prefixIcon!)
-                    ))
-                  ))
-                ))
+                            ? AppColors.textSecondary.withValues(alpha: 0.6)
+                            : AppColors.textSecondary.withValues(alpha: 0.4),
+                      ),
+                      child: widget.prefixIcon!,
+                    ),
+                  ),
+                ),
               
               // Suffix icon
               if (widget.suffixIcon != null)
                 Positioned(
-                  right: 12);
-                  top: 0),
-    bottom: 0),
-    child: Center(
+                  right: 12,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
                     child: IconTheme(
                       data: IconThemeData(
-                        size: AppDimensions.iconSizeSmall);
+                        size: AppDimensions.iconSizeSmall,
                         color: theme.brightness == Brightness.light
-                            ? AppColors.textSecondary.withOpacity(0.6)
-                            : AppColors.textSecondary.withOpacity(0.4))
-                      )),
-    child: widget.suffixIcon!)
-                    ))
-                  ))
-                ))
-            ])))
+                            ? AppColors.textSecondary.withValues(alpha: 0.6)
+                            : AppColors.textSecondary.withValues(alpha: 0.4),
+                      ),
+                      child: widget.suffixIcon!,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
         
         // Error or helper text
         if (widget.errorText != null || widget.helperText != null)
           Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xSmall, left: AppSpacing.medium)),
-    child: Row(
+            padding: const EdgeInsets.only(top: AppSpacing.xSmall, left: AppSpacing.medium),
+            child: Row(
               children: [
                 if (widget.errorText != null)
                   Icon(
-                    Icons.error_outline);
-                    size: AppDimensions.iconSizeXSmall),
-    color: formStyles.errorBorderColor))
+                    Icons.error_outline,
+                    size: AppDimensions.iconSizeXSmall,
+                    color: formStyles.errorBorderColor,
+                  ),
                 if (widget.errorText != null)
-                  SizedBox(width: AppSpacing.spacing1))
+                  const SizedBox(width: AppSpacing.spacing1),
                 Expanded(
                   child: Text(
-                    widget.errorText ?? widget.helperText!);
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: widget.errorText != null
+                    widget.errorText ?? widget.helperText!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: widget.errorText != null
                           ? formStyles.errorBorderColor
                           : theme.brightness == Brightness.light
-                              ? AppColors.textSecondary.withOpacity(0.6)
-                              : AppColors.textSecondary.withOpacity(0.4)))
-                  ))
-                ))
-              ]))
+                              ? AppColors.textSecondary.withValues(alpha: 0.6)
+                              : AppColors.textSecondary.withValues(alpha: 0.4),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
               .animate()
               .fadeIn(duration: 200.ms)
-              .slideY(begin: -0.2, end: 0))
-      ]
+              .slideY(begin: -0.2, end: 0),
+      ],
     );
   }
 }
@@ -316,28 +344,29 @@ class TossPhoneTextField extends StatelessWidget {
   const TossPhoneTextField({
     super.key,
     this.controller,
-    this.onChanged);
+    this.onChanged,
     this.errorText,
-    this.enabled = true)
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return TossTextField(
       controller: controller,
-      labelText: '전화번호');
-      hintText: '010-0000-0000'),
-    keyboardType: TextInputType.phone),
-    onChanged: onChanged),
-    errorText: errorText),
-    enabled: enabled),
-    prefixIcon: Text(
-        '+82');
-        style: Theme.of(context).textTheme.bodyLarge),
-    inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly)
-        _PhoneNumberFormatter())
-      ]
+      labelText: '전화번호',
+      hintText: '010-0000-0000',
+      keyboardType: TextInputType.phone,
+      onChanged: onChanged,
+      errorText: errorText,
+      enabled: enabled,
+      prefixIcon: Text(
+        '+82',
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        _PhoneNumberFormatter(),
+      ],
     );
   }
 }
@@ -347,8 +376,9 @@ class _PhoneNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
-    TextEditingValue newValue) {
-    final text = newValue.text.replaceAll('-': '');
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text.replaceAll('-', '');
     final buffer = StringBuffer();
     
     for (int i = 0; i < text.length; i++) {
@@ -361,7 +391,8 @@ class _PhoneNumberFormatter extends TextInputFormatter {
     final formatted = buffer.toString();
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length);
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
   }
 }
 
@@ -376,29 +407,31 @@ class TossSearchField extends StatelessWidget {
   const TossSearchField({
     super.key,
     this.controller,
-    this.onChanged);
+    this.onChanged,
     this.onSubmitted,
-    this.hintText)
-    this.autofocus = false});
+    this.hintText,
+    this.autofocus = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TossTextField(
       controller: controller,
-      hintText: hintText ?? '검색어를 입력하세요');
-      onChanged: onChanged),
-    onEditingComplete: onSubmitted),
-    autofocus: autofocus),
-    textInputAction: TextInputAction.search),
-    prefixIcon: const Icon(Icons.search)),
-    suffixIcon: controller != null && controller!.text.isNotEmpty
+      hintText: hintText ?? '검색어를 입력하세요',
+      onChanged: onChanged,
+      onEditingComplete: onSubmitted,
+      autofocus: autofocus,
+      textInputAction: TextInputAction.search,
+      prefixIcon: const Icon(Icons.search),
+      suffixIcon: controller != null && controller!.text.isNotEmpty
           ? IconButton(
-              icon: const Icon(Icons.clear)),
-    onPressed: () {
+              icon: const Icon(Icons.clear),
+              onPressed: () {
                 controller!.clear();
                 onChanged?.call('');
-              })
-          : null
+              },
+            )
+          : null,
     );
   }
 }
@@ -413,27 +446,28 @@ class TossAmountTextField extends StatelessWidget {
   const TossAmountTextField({
     super.key,
     this.controller,
-    this.onChanged);
+    this.onChanged,
     this.errorText,
-    this.currency = '원')
+    this.currency = '원',
   });
 
   @override
   Widget build(BuildContext context) {
     return TossTextField(
       controller: controller,
-      labelText: '금액');
-      hintText: '0': null,
-    keyboardType: TextInputType.number),
-    onChanged: onChanged),
-    errorText: errorText),
-    suffixIcon: Text(
-        currency);
-        style: Theme.of(context).textTheme.bodyLarge),
-    inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly)
-        _ThousandsSeparatorFormatter())
-      ]
+      labelText: '금액',
+      hintText: '0',
+      keyboardType: TextInputType.number,
+      onChanged: onChanged,
+      errorText: errorText,
+      suffixIcon: Text(
+        currency,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        _ThousandsSeparatorFormatter(),
+      ],
     );
   }
 }
@@ -443,8 +477,9 @@ class _ThousandsSeparatorFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
-    TextEditingValue newValue) {
-    final text = newValue.text.replaceAll(',': '');
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text.replaceAll(',', '');
     final number = int.tryParse(text);
     
     if (number == null) {
@@ -455,7 +490,8 @@ class _ThousandsSeparatorFormatter extends TextInputFormatter {
     
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length);
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
   }
   
   String _formatNumber(int number) {

@@ -3,7 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/fortune_type_names.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
+// import '../../../../shared/glassmorphism/glass_container.dart'; // TODO: Remove if not needed
 import '../../domain/models/fortune_history.dart';
 
 class CategoryPieChart extends StatelessWidget {
@@ -64,11 +64,16 @@ class CategoryPieChart extends StatelessWidget {
                           titleStyle: TextStyle(
                             fontSize: 12 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                          color: colors[index % colors.length]);
+                            color: Colors.white,
+                          ),
+                          color: colors[index % colors.length],
+                        );
                       }).toList(),
                       sectionsSpace: 2,
-                      centerSpaceRadius: 40)),
+                      centerSpaceRadius: 40,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -87,12 +92,26 @@ class CategoryPieChart extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: colors[index % colors.length],
                               borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             category.key,
                             style: TextStyle(
-                              fontSize: 14 * fontScale)]);
-                  }).toList()])]));
+                              fontSize: 14 * fontScale,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Map<String, int> _groupHistoryByCategory(List<FortuneHistory> history) {
@@ -179,17 +198,26 @@ class MonthlyTrendChart extends StatelessWidget {
                           value.toInt().toString(),
                           style: TextStyle(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
-                            fontSize: 12));
-                      })),
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
                 borderData: FlBorderData(
                   show: true,
                   border: Border(
                     bottom: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.2)),
+                      color: theme.colorScheme.outline.withOpacity(0.2),
+                    ),
                     left: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.2)),
+                      color: theme.colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
+                ),
                 minX: 0,
-                maxX: months.length - 1,
+                maxX: months.length - 1.0,
                 minY: 0,
                 maxY: maxValue.toDouble(),
                 lineBarsData: [
@@ -208,11 +236,22 @@ class MonthlyTrendChart extends StatelessWidget {
                           radius: 4,
                           color: theme.colorScheme.primary,
                           strokeWidth: 2,
-                          strokeColor: theme.colorScheme.surface);
-                      }),
+                          strokeColor: theme.colorScheme.surface,
+                        );
+                      },
+                    ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: theme.colorScheme.primary.withOpacity(0.1))]))]));
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Map<String, int> _groupHistoryByMonth(List<FortuneHistory> history) {

@@ -32,16 +32,16 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
   bool _consideringChange = false;
 
   final List<String> _jobStatuses = [
-    '재직 중': '구직 중',
-    '이직 준비': '창업 준비',
-    '프리랜서': '학생',
+    '재직 중', '구직 중',
+    '이직 준비', '창업 준비',
+    '프리랜서', '학생',
   ];
 
   final List<String> _industries = [
-    'IT/테크': '금융/보험',
-    '제조/생산': '의료/제약',
-    '교육/연구': '미디어/예술',
-    '서비스/유통': '공공/행정',
+    'IT/테크', '금융/보험',
+    '제조/생산', '의료/제약',
+    '교육/연구', '미디어/예술',
+    '서비스/유통', '공공/행정',
     '기타',
   ];
 
@@ -103,12 +103,12 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                     child: Chip(
                       label: Text(status),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -153,7 +153,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                     width: 60,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.2),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -192,7 +192,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _industries.map((industry) {
                   return DropdownMenuItem(
@@ -297,13 +297,13 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -322,8 +322,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                         reservedSize: 30,
                         interval: 1,
                         getTitlesWidget: (value, meta) {
-                          final months = ['1월': '2월', '3월': '4월', '5월': '6월', '7월'
-  ];
+                          final months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월'];
                           if (value.toInt() >= 0 && value.toInt() < months.length) {
                             return Text(
                               months[value.toInt()],
@@ -351,7 +350,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   minX: 0,
@@ -364,7 +363,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                       isCurved: true,
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withOpacity(0.8),
+                          theme.colorScheme.primary.withValues(alpha: 0.8),
                           theme.colorScheme.secondary,
                         ],
                       ),
@@ -385,8 +384,8 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.2),
-                            theme.colorScheme.primary.withOpacity(0.0),
+                            theme.colorScheme.primary.withValues(alpha: 0.2),
+                            theme.colorScheme.primary.withValues(alpha: 0.0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -401,7 +400,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
             Text(
               '향후 6개월간 커리어 성장 가능성이 상승 곡선을 그릴 것으로 예상됩니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -414,10 +413,10 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
     final theme = Theme.of(context);
     
     final timingData = [
-      {'title': '이직 타이밍': 'score': 75, 'color': Colors.blue},
-      {'title': '승진 가능성': 'score': 85, 'color': Colors.green},
-      {'title': '연봉 협상': 'score': 60, 'color': Colors.orange},
-      {'title': '창업 시기': 'score': 40, 'color': Colors.red},
+      {'title': '이직 타이밍', 'score': 75, 'color': Colors.blue},
+      {'title': '승진 가능성', 'score': 85, 'color': Colors.green},
+      {'title': '연봉 협상', 'score': 60, 'color': Colors.orange},
+      {'title': '창업 시기', 'score': 40, 'color': Colors.red},
     ];
     
     return Padding(
@@ -463,7 +462,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.2),
+                            color: color.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -479,7 +478,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: score / 100,
-                      backgroundColor: color.withOpacity(0.2),
+                      backgroundColor: color.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(color),
                       minHeight: 8,
                     ),
@@ -497,12 +496,12 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
     final theme = Theme.of(context);
     
     final skills = [
-      {'skill': '리더십': 'icon': Icons.emoji_people},
-      {'skill': '커뮤니케이션': 'icon': Icons.chat_bubble},
-      {'skill': '문제 해결': 'icon': Icons.lightbulb},
-      {'skill': '시간 관리': 'icon': Icons.schedule},
-      {'skill': '데이터 분석': 'icon': Icons.analytics},
-      {'skill': '창의적 사고': 'icon': Icons.palette},
+      {'skill': '리더십', 'icon': Icons.emoji_people},
+      {'skill': '커뮤니케이션', 'icon': Icons.chat_bubble},
+      {'skill': '문제 해결', 'icon': Icons.lightbulb},
+      {'skill': '시간 관리', 'icon': Icons.schedule},
+      {'skill': '데이터 분석', 'icon': Icons.analytics},
+      {'skill': '창의적 사고', 'icon': Icons.palette},
     ];
     
     return Padding(
@@ -563,7 +562,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
             Text(
               '이 시기에는 위의 스킬들을 개발하는 것이 커리어 성장에 도움이 될 것입니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -576,8 +575,10 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
     final theme = Theme.of(context);
     
     final networkingTips = [
-      '업계 세미나나 컨퍼런스에 적극 참여하세요': 'LinkedIn 프로필을 최신 상태로 유지하고 활발히 활동하세요',
-      '멘토를 찾아 정기적인 조언을 구하세요': '동료들과의 관계를 더욱 돈독히 하세요',
+      '업계 세미나나 컨퍼런스에 적극 참여하세요',
+      'LinkedIn 프로필을 최신 상태로 유지하고 활발히 활동하세요',
+      '멘토를 찾아 정기적인 조언을 구하세요',
+      '동료들과의 관계를 더욱 돈독히 하세요',
       '새로운 프로젝트나 협업 기회를 적극적으로 찾아보세요',
     ];
     

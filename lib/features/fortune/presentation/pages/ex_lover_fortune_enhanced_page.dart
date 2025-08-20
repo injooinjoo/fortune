@@ -959,6 +959,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
                   ),
+                ),
                 const SizedBox(height: 24),
                 
                 // 이미지 분석

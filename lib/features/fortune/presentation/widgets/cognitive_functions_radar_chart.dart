@@ -16,7 +16,8 @@ class CognitiveFunctionsRadarChart extends StatefulWidget {
     Key? key,
     required this.mbtiType,
     required this.functionLevels,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true,
+  }) : super(key: key);
 
   @override
   State<CognitiveFunctionsRadarChart> createState() => _CognitiveFunctionsRadarChartState();
@@ -33,10 +34,12 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
     super.initState();
     _animationController = AnimationController(
       duration: AppAnimations.durationSkeleton,
-      vsync: this);
+      vsync: this,
+    );
     _animation = CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut,
+    );
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -70,7 +73,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         const SizedBox(height: AppSpacing.spacing5),
         _buildFunctionsList(),
         const SizedBox(height: AppSpacing.spacing4),
-        _buildStackInfo()]);
+        _buildStackInfo(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -84,11 +89,15 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           children: [
             Text(
               '인지기능 분석',
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: AppSpacing.spacing1),
             Text(
               '${widget.mbtiType} - ${typeInfo['title']}의 오늘 상태',
-              style: Theme.of(context).textTheme.bodyMedium)]),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
           decoration: BoxDecoration(
@@ -96,10 +105,16 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
             border: Border.all(
               color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.5),
-              width: 1)),
+              width: 1,
+            ),
+          ),
           child: Text(
             typeInfo['group'],
-            style: Theme.of(context).textTheme.bodyMedium))]);
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildChart() {
@@ -114,7 +129,8 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               // 배경 그리드
               CustomPaint(
                 size: Size.infinite,
-                painter: _RadarGridPainter()),
+                painter: _RadarGridPainter(),
+              ),
               // 레이더 차트
               RadarChart(
                 RadarChartData(
@@ -123,20 +139,24 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
                     color: Colors.white.withOpacity(0.2),
-                    width: 1),
+                    width: 1,
+                  ),
                   gridBorderData: BorderSide(
                     color: Colors.white.withOpacity(0.2),
-                    width: 1),
+                    width: 1,
+                  ),
                   radarBorderData: BorderSide(
                     color: Colors.purple.withOpacity(0.5),
-                    width: 2),
+                    width: 2,
+                  ),
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   titlePositionPercentageOffset: 0.15,
                   getTitle: (index, angle) {
                     final functions = MbtiCognitiveFunctionsService.cognitiveFunctions;
                     return RadarChartTitle(
                       text: functions[index],
-                      angle: 0);
+                      angle: 0,
+                    );
                   },
                   dataSets: [
                     RadarDataSet(
@@ -144,7 +164,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                       borderColor: Colors.purple,
                       borderWidth: 2,
                       entryRadius: 4,
-                      dataEntries: _getRadarEntries())],
+                      dataEntries: _getRadarEntries(),
+                    ),
+                  ],
                   radarTouchData: RadarTouchData(
                     enabled: true,
                     touchCallback: (event, response) {
@@ -155,11 +177,19 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                           _selectedIndex = null;
                         }
                       });
-                    })),
+                    },
+                  ),
+                ),
+              ),
               // 중앙 정보
               Center(
-                child: _buildCenterInfo()]);
-      });
+                child: _buildCenterInfo(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   List<RadarEntry> _getRadarEntries() {
@@ -181,7 +211,8 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
       children: [
         Text(
           '주기능',
-          style: Theme.of(context).textTheme.bodyMedium),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: AppSpacing.spacing1),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
@@ -190,17 +221,25 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
               color: _getFunctionColor(dominantFunction).withOpacity(0.5),
-              width: 1)),
+              width: 1,
+            ),
+          ),
           child: Text(
             dominantFunction,
-            style: Theme.of(context).textTheme.bodyMedium)),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
         const SizedBox(height: AppSpacing.spacing1),
         Text(
           '${(dominantLevel * 100).toInt()}%',
           style: TextStyle(
             color: _getLevelColor(dominantLevel),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-            fontWeight: FontWeight.bold))]);
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildFunctionsList() {
@@ -224,7 +263,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 color: _selectedIndex == MbtiCognitiveFunctionsService.cognitiveFunctions.indexOf(function)
                     ? _getFunctionColor(function)
                     : Colors.transparent,
-                width: 2)),
+                width: 2,
+              ),
+            ),
             child: Row(
               children: [
                 Container(
@@ -232,11 +273,15 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   height: AppDimensions.buttonHeightSmall,
                   decoration: BoxDecoration(
                     color: _getFunctionColor(function).withOpacity(0.2),
-                    borderRadius: AppDimensions.borderRadiusSmall),
+                    borderRadius: AppDimensions.borderRadiusSmall,
+                  ),
                   child: Center(
                     child: Text(
                       info['icon'],
-                      style: Theme.of(context).textTheme.bodyMedium)),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
@@ -246,25 +291,37 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                         children: [
                           Text(
                             '$function - ${info['name']}',
-                            style: Theme.of(context).textTheme.bodyMedium),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                           const SizedBox(width: AppSpacing.spacing2),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing2,
-                              vertical: AppSpacing.spacing0 * 0.5),
+                              vertical: AppSpacing.spacing0 * 0.5,
+                            ),
                             decoration: BoxDecoration(
                               color: _getStackPositionColor(stackIndex).withOpacity(0.2),
-                              borderRadius: AppDimensions.borderRadiusMedium),
+                              borderRadius: AppDimensions.borderRadiusMedium,
+                            ),
                             child: Text(
                               _getStackPositionName(stackIndex),
                               style: TextStyle(
                                 color: _getStackPositionColor(stackIndex),
                                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                                fontWeight: FontWeight.bold)))]),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         info['nameEn'],
-                        style: Theme.of(context).textTheme.bodyMedium)])),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
                 // 레벨 표시
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -274,11 +331,21 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                       style: TextStyle(
                         color: _getLevelColor(level),
                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                        fontWeight: FontWeight.bold)),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text(
                       _getFunctionStatus(level),
-                      style: Theme.of(context).textTheme.bodyMedium)])])));
-      }).toList());
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildStackInfo() {
@@ -289,7 +356,8 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         children: [
           Text(
             '인지기능 스택 구조',
-            style: Theme.of(context).textTheme.bodyMedium),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           const SizedBox(height: AppSpacing.spacing3),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -297,11 +365,17 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               _buildStackLegend('주기능', Colors.purple, 'Hero'),
               _buildStackLegend('부기능', Colors.blue, 'Parent'),
               _buildStackLegend('3차기능', Colors.green, 'Child'),
-              _buildStackLegend('열등기능', Colors.orange, 'Inferior')]),
+              _buildStackLegend('열등기능', Colors.orange, 'Inferior'),
+            ],
+          ),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             '* 주기능부터 열등기능까지 4개가 의식적으로 사용되는 기능입니다',
-            style: Theme.of(context).textTheme.bodyMedium)]));
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildStackLegend(String name, Color color, String english) {
@@ -312,14 +386,20 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           height: AppSpacing.spacing3,
           decoration: BoxDecoration(
             color: color,
-            shape: BoxShape.circle)),
+            shape: BoxShape.circle,
+          ),
+        ),
         const SizedBox(height: AppSpacing.spacing1),
         Text(
           name,
-          style: Theme.of(context).textTheme.bodyMedium),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         Text(
           english,
-          style: Theme.of(context).textTheme.bodyMedium)]);
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
   }
 
   Color _getFunctionColor(String function) {
@@ -362,6 +442,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
         padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -371,23 +452,29 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+              ),
+            ),
             const SizedBox(height: AppSpacing.spacing5),
             Text(
               info['icon'],
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: AppSpacing.spacing3),
             Text(
               '$function - ${info['name']}',
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             Text(
               info['nameEn'],
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               info['description'],
               style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AppSpacing.spacing5),
             Row(
               children: [
@@ -395,17 +482,28 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   child: _buildDetailSection(
                     '강점',
                     (info['strengths'] as List<String>),
-                    Colors.green)),
+                    Colors.green,
+                  ),
+                ),
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: _buildDetailSection(
                     '약점',
                     (info['weaknesses'] as List<String>),
-                    Colors.orange))]),
+                    Colors.orange,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.spacing5),
             Text(
               '활성도: ${(widget.functionLevels[function]! * 100).toInt()}%',
-              style: Theme.of(context).textTheme.bodyMedium)])));
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDetailSection(String title, List<String> items, Color color) {
@@ -414,7 +512,8 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.bodyMedium),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: AppSpacing.spacing2),
         ...items.map((item) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.spacing1),
@@ -423,11 +522,19 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             children: [
               Text(
                 '• ',
-                style: TextStyle(color: color)),
+                style: TextStyle(color: color),
+              ),
               Expanded(
                 child: Text(
                   item,
-                  style: Theme.of(context).textTheme.bodyMedium)])).toList()]);
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
+      ],
+    );
   }
 }
 

@@ -156,7 +156,7 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
       
       final fortune = await _apiService.getDailyFortune(
         userId: userId,
-        date: _selectedDate);
+        date: _selectedDate ?? DateTime.now());
       
       Logger.endTimer('DailyFortune API Call', stopwatch);
       Logger.info('🔍 [DailyFortuneNotifier] getDailyFortune returned successfully', {

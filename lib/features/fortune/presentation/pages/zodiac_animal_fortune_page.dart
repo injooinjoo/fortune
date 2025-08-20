@@ -594,7 +594,9 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
                           return Text(
                             '${value.toInt()}',
                             style: const TextStyle(fontSize: 10));
-                        }))),
+                        }),
+                      ),
+                    ),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(

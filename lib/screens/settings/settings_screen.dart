@@ -297,7 +297,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     if (shouldLogout == true) {
                       await supabase.auth.signOut();
                       if (mounted) {
-                        context.go('/');
+                        context.go('/splash');
                       }
                     }
                   },

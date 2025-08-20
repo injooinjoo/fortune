@@ -118,7 +118,13 @@ class AdminGuard extends ConsumerWidget {
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () => context.go('/'),
-                  child: const Text('홈으로 돌아가기')])));
+                  child: const Text('홈으로 돌아가기')),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildErrorScreen(BuildContext context, Object error) {
@@ -153,6 +159,12 @@ class AdminGuard extends ConsumerWidget {
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () => context.go('/'),
-                  child: const Text('홈으로 돌아가기')])));
+                  child: const Text('홈으로 돌아가기')),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -38,8 +38,10 @@ class TarotSummaryPage extends ConsumerStatefulWidget {
         'cards': cards,
         'interpretations': interpretations,
         'spreadType': spreadType,
-        'question': question});
-}
+        'question': question,
+      },
+    );
+  }
 
   @override
   ConsumerState<TarotSummaryPage> createState() => _TarotSummaryPageState();
@@ -140,7 +142,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       buffer.writeln(_summaryData!['summary']);
     }
     
-    await Share.share(buffer.toString();
+    await Share.share(buffer.toString());
   }
 
   Map<String, dynamic> _getCardInfo(int cardIndex) {
@@ -154,8 +156,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         };
       }
     }
-    return {'name': 'Unknown Card': 'keywords': [], 'element': 'Unknown'
-  };
+    return {'name': 'Unknown Card', 'keywords': [], 'element': 'Unknown'};
   }
 
   @override
@@ -178,7 +179,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.share),
-                    onPressed: _shareReading)]),
+                    onPressed: _shareReading,
+                  ),
+                ],
+              ),
               
               Expanded(
                 child: FadeTransition(
@@ -191,8 +195,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                         const SizedBox(height: 24),
                         _buildCardSpread(fontScale),
                         const SizedBox(height: 32),
-                        if (_isLoadingSummary) _buildLoadingIndicator(),
-            else if (_summaryData != null) _buildSummarySection(fontScale),
+                        if (_isLoadingSummary) _buildLoadingIndicator()
+                        else if (_summaryData != null) _buildSummarySection(fontScale),
                         const SizedBox(height: 24),
                         // Share section
                         _buildShareSection(fontScale),
@@ -264,7 +268,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             style: TextStyle(
               fontSize: 24 * fontScale,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: Colors.white,
+            ),
+          ),
           if (widget.question != null) ...[
             const SizedBox(height: 8),
             Text(
@@ -273,11 +279,11 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 fontSize: 16 * fontScale,
                 color: Colors.white70,
                 fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center
-            )
-          ]
-        ]
-      )
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -287,7 +293,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       gradient: LinearGradient(
         colors: [
           Colors.purple.withOpacity(0.2),
-          Colors.indigo.withOpacity(0.2)]),
+          Colors.indigo.withOpacity(0.2),
+        ],
+      ),
       child: Column(
         children: [
           Text(
@@ -295,15 +303,15 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             style: TextStyle(
               fontSize: 18 * fontScale,
               fontWeight: FontWeight.bold,
-              color: Colors.white
-            )
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 16),
-          _buildCardGrid(fontScale)
-        ]
-      )
+          _buildCardGrid(fontScale),
+        ],
+      ),
     );
-}
+  }
 
   Widget _buildCardGrid(double fontScale) {
     final spreadLayout = TarotMetadata.spreads[widget.spreadType]?.layout;
@@ -335,6 +343,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             child: Transform.rotate(
               angle: 1.57,
               child: _buildMiniCard(1, fontScale)),
+          ),
           // Cross cards (2, 3, 4, 5,
           Positioned(
             left: 120,
@@ -368,15 +377,21 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           Positioned(
             right: 20,
             top: 20,
-            child: _buildMiniCard(9, fontScale)]);
-}
+            child: _buildMiniCard(9, fontScale),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildHorizontalLayout(double fontScale) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(
         widget.cards.length,
-        (index) => _buildMiniCard(index, fontScale));
+        (index) => _buildMiniCard(index, fontScale),
+      ),
+    );
   }
 
   Widget _buildDefaultLayout(double fontScale) {
@@ -386,7 +401,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       alignment: WrapAlignment.center,
       children: List.generate(
         widget.cards.length,
-        (index) => _buildMiniCard(index, fontScale));
+        (index) => _buildMiniCard(index, fontScale),
+      ),
+    );
   }
 
   Widget _buildMiniCard(int index, double fontScale) {
@@ -400,7 +417,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       onTap: () {
         HapticFeedback.lightImpact();
         _showCardDetail(index);
-},
+      },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
@@ -440,6 +457,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(12),
+                ),
                 child: Text(
                   '${index + 1}',
                   style: TextStyle(
@@ -448,13 +466,13 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-              )
-            ]
-          )
-        )
-      )
+              ),
+            ],
+          ),
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildLoadingIndicator() {
     return Container(
@@ -462,7 +480,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       child: Column(
         children: [
           const CircularProgressIndicator(
-            color: Colors.purple),
+            color: Colors.purple,
+          ),
           const SizedBox(height: 16),
           Text(
             '전체 해석을 생성하고 있습니다...',
@@ -470,10 +489,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               color: Colors.white70,
             ),
           ),
-        ]
-      )
+        ],
+      ),
     );
-}
+  }
 
   Widget _buildSummarySection(double fontScale) {
     return Column(
@@ -481,14 +500,19 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         _buildSummaryCard(fontScale),
         if (_summaryData!['elementBalance'] != null) ...[
           const SizedBox(height: 24),
-          _buildElementBalance(fontScale)],
+          _buildElementBalance(fontScale),
+        ],
         if (_summaryData!['advice'] != null) ...[
           const SizedBox(height: 24),
-          _buildAdviceSection(fontScale)],
+          _buildAdviceSection(fontScale),
+        ],
         if (_summaryData!['timeline'] != null) ...[
           const SizedBox(height: 24),
-          _buildTimelineSection(fontScale)]]);
-}
+          _buildTimelineSection(fontScale),
+        ],
+      ],
+    );
+  }
 
   Widget _buildSummaryCard(double fontScale) {
     return GlassContainer(
@@ -496,9 +520,11 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       gradient: LinearGradient(
         colors: [
           Colors.amber.withOpacity(0.2),
-          Colors.orange.withOpacity(0.2)],
+          Colors.orange.withOpacity(0.2),
+        ],
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight),
+        end: Alignment.bottomRight,
+      ),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
         color: Colors.amber.withOpacity(0.3),
@@ -515,7 +541,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               gradient: RadialGradient(
                 colors: [
                   Colors.amber.withOpacity(0.3),
-                  Colors.transparent])),
+                  Colors.transparent,
+                ],
+              ),
+            ),
             child: Icon(
               Icons.auto_stories,
               size: 48,
@@ -523,7 +552,11 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               shadows: [
                 Shadow(
                   color: Colors.amber,
-                  blurRadius: 20)])),
+                  blurRadius: 20,
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
           Text(
             '전체 해석',
@@ -539,7 +572,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             style: TextStyle(
               fontSize: 16 * fontScale,
               color: Colors.white,
-              height: 1.5),
+              height: 1.5,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -573,7 +607,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   Icon(
                     TarotHelper.getElementIcon(entry.key),
                     size: 24,
-                    color: TarotHelper.getElementColor(entry.key)),
+                    color: TarotHelper.getElementColor(entry.key),
+                  ),
                   const SizedBox(width: 8),
                   SizedBox(
                     width: 60,
@@ -581,24 +616,28 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                       entry.key,
                       style: TextStyle(
                         fontSize: 14 * fontScale,
-                        color: Colors.white)),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Container(
                       height: 20,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10),
+                      ),
                       child: FractionallySizedBox(
                         widthFactor: percentage / 100,
                         alignment: Alignment.centerLeft,
                         child: Container(
                           decoration: BoxDecoration(
                             color: TarotHelper.getElementColor(entry.key),
-                            borderRadius: BorderRadius.circular(10)
-                          )
-                        )
-                      )
-                    )
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -608,8 +647,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                       color: Colors.white70,
                     ),
                   ),
-                ]
-              )
+                ],
+              ),
             );
           }).toList(),
           if (_summaryData!['dominantElement'] != null) ...[
@@ -619,12 +658,12 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               style: TextStyle(
                 fontSize: 14 * fontScale,
                 color: Colors.purple.shade300,
-                fontStyle: FontStyle.italic
-              )
-            )
-          ]
-        ]
-      )
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -636,13 +675,16 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       gradient: LinearGradient(
         colors: [
           Colors.green.withOpacity(0.2),
-          Colors.teal.withOpacity(0.2)]),
+          Colors.teal.withOpacity(0.2),
+        ],
+      ),
       child: Column(
         children: [
           Icon(
             Icons.lightbulb,
             size: 36,
-            color: Colors.green),
+            color: Colors.green,
+          ),
           const SizedBox(height: 12),
           Text(
             '조언',
@@ -689,13 +731,16 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       gradient: LinearGradient(
         colors: [
           Colors.blue.withOpacity(0.2),
-          Colors.cyan.withOpacity(0.2)]),
+          Colors.cyan.withOpacity(0.2),
+        ],
+      ),
       child: Row(
         children: [
           Icon(
             Icons.schedule,
             size: 36,
-            color: Colors.blue),
+            color: Colors.blue,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -717,11 +762,11 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     color: Colors.white70,
                   ),
                 ),
-              ]
-            )
-          )
-        ]
-      )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -732,10 +777,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       children: [
         SizedBox(
           width: double.infinity,
-                  child: ElevatedButton.icon(
+          child: ElevatedButton.icon(
             onPressed: () {
               context.goNamed('interactive-tarot');
-        },
+            },
             icon: const Icon(Icons.refresh),
             label: Text(
               '새로운 리딩 시작하기',
@@ -743,7 +788,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -816,14 +861,15 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-                  builder: (context) => DraggableScrollableSheet(
+      builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.8,
-    minChildSize: 0.5,
+        minChildSize: 0.5,
         maxChildSize: 0.95,
-                  builder: (context, scrollController) => Container(
+        builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.9),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
           child: ListView(
             controller: scrollController,
             padding: const EdgeInsets.all(20),
@@ -888,7 +934,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       gradient: LinearGradient(
         colors: [
           const Color(0xFF9333EA).withOpacity(0.1),
-          const Color(0xFF7C3AED).withOpacity(0.1)]),
+          const Color(0xFF7C3AED).withOpacity(0.1),
+        ],
+      ),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
         color: Colors.white.withOpacity(0.1),
@@ -902,7 +950,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               Icon(
                 Icons.share,
                 color: Colors.white.withOpacity(0.9),
-                size: 20),
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 '친구와 공유하기',
@@ -921,9 +970,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               _buildShareButton(
                 icon: Icons.message,
                 label: '메시지',
-                  color: const Color(0xFF00C853),
+                color: const Color(0xFF00C853),
                 onTap: _shareReading,
-                fontScale: fontScale),
+                fontScale: fontScale,
+              ),
               _buildShareButton(
                 icon: Icons.copy,
                 label: '복사',
@@ -950,14 +1000,17 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     buffer.writeln(_summaryData!['summary']);
                   }
                   
-                  Clipboard.setData(ClipboardData(text: buffer.toString());
+                  Clipboard.setData(ClipboardData(text: buffer.toString()));
                   HapticFeedback.lightImpact();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('클립보드에 복사되었습니다'),
-                      duration: const Duration(seconds: 2));
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
                 },
-                fontScale: fontScale),
+                fontScale: fontScale,
+              ),
               _buildShareButton(
                 icon: Icons.image,
                 label: '이미지',
@@ -965,9 +1018,11 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 onTap: () {
                   // TODO: Implement screenshot and share
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('이미지 공유 기능은 준비 중입니다'),
-                      duration: const Duration(seconds: 2));
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
                 },
                 fontScale: fontScale,
               ),
@@ -1002,15 +1057,22 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           children: [
             Icon(
               icon,
-                  color: color,
-                  size: 24),
+              color: color,
+              size: 24,
+            ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 fontSize: 12 * fontScale,
                 color: color,
-                  fontWeight: FontWeight.w500)]);
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 }
 
   String _getCardImagePath(int cardIndex) {
@@ -1020,9 +1082,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
     if (cardIndex < 22) {
       // Major Arcana
       final cardNames = [
-        'fool': 'magician', 'high_priestess': 'empress', 'emperor': 'hierophant', 'lovers': 'chariot', 'strength': 'hermit',
-        'wheel_of_fortune': 'justice', 'hanged_man': 'death', 'temperance': 'devil', 'tower': 'star', 'moon': 'sun', 'judgement': 'world'
-  ];
+        'fool', 'magician', 'high_priestess', 'empress', 'emperor', 'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
+        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance', 'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world',
+      ];
       return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
     } else if (cardIndex < 36) {
       // Wands

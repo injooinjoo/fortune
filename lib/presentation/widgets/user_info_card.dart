@@ -110,7 +110,11 @@ class _UserInfoCardState extends State<UserInfoCard> {
               Text(
                 '基本情報',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: AppSpacing.spacing5),
           
           // 프로필 이미지와 이름
@@ -140,12 +144,24 @@ class _UserInfoCardState extends State<UserInfoCard> {
                           SizedBox(width: AppSpacing.spacing2),
                           Text(
                             _getGenderLabel(userProfile!['gender']),
-                            style: theme.textTheme.bodyLarge)])]]))]),
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
           
           SizedBox(height: AppSpacing.spacing5),
           
           // 정보 그리드
-          _buildInfoGrid(context)]));
+          _buildInfoGrid(context),
+        ],
+      ),
+    );
   }
   
   Widget _buildProfileImage(BuildContext context) {
@@ -162,8 +178,11 @@ class _UserInfoCardState extends State<UserInfoCard> {
             ? Image.network(
                 userProfile!['profile_photo_url'],
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(context))
-            : _buildDefaultAvatar(context)));
+                errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(context),
+              )
+            : _buildDefaultAvatar(context),
+      ),
+    );
   }
   
   Widget _buildDefaultAvatar(BuildContext context) {
@@ -299,12 +318,24 @@ class _UserInfoCardState extends State<UserInfoCard> {
                     Text(
                       item.label,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
                     SizedBox(height: AppSpacing.xxxSmall),
                     Text(
                       item.value,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600)])])));
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
   
   String _calculateAge(String? birthDate) {

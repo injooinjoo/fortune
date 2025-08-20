@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/korean_date_picker.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/api_endpoints.dart';
-import '../../../../data/services/fortune_api_service.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -25,7 +21,8 @@ class DreamInput {
   DreamInput({
     required this.name,
     required this.birthDate,
-    required this.dreamContent});
+    required this.dreamContent,
+  });
 }
 
 class DreamAnalysisResult {
@@ -40,16 +37,18 @@ class DreamAnalysisResult {
     required this.dreamSummary,
     required this.dreamInterpretation,
     required this.luckyElements,
-    required this.advice});
+    required this.advice,
+  });
 
   factory DreamAnalysisResult.fromJson(Map<String, dynamic> json) {
     final data = json['data'] ?? {};
     return DreamAnalysisResult(
-      overallLuck: data['overall_luck'],
+      overallLuck: data['overall_luck'] ?? 70,
       dreamSummary: data['dream_summary'] ?? '',
       dreamInterpretation: data['dream_interpretation'] ?? '',
       luckyElements: List<String>.from(data['lucky_elements'] ?? []),
-      advice: data['advice'] ?? '');
+      advice: data['advice'] ?? '',
+    );
   }
 }
 
@@ -63,18 +62,19 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysisResult
 
   Future<void> _analyzeDream() async {
     try {
-      final apiService = ref.read(fortuneApiServiceProvider);
       final tokenService = ref.read(tokenProvider.notifier);
       
       // Check token balance
       final hasEnoughTokens = await tokenService.consumeTokens(
         fortuneType: 'dream',
-        amount: 2);
+        amount: 2,
+      );
       
       if (!hasEnoughTokens) {
         state = AsyncValue.error(
           Exception('토큰이 부족합니다'),
-          StackTrace.current);
+          StackTrace.current,
+        );
         return;
       }
 
@@ -86,7 +86,10 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysisResult
           'userInfo': {
             'name': input.name,
             'birth_date': input.birthDate.toIso8601String(),
-            'dream_content': input.dreamContent}});
+            'dream_content': input.dreamContent,
+          },
+        },
+      );
 
       if (response.data['success'] == true) {
         state = AsyncValue.data(DreamAnalysisResult.fromJson(response.data));
@@ -127,7 +130,8 @@ class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPag
       Toast.show(
         context,
         message: '모든 정보를 입력해주세요',
-        type: ToastType.warning);
+        type: ToastType.warning,
+      );
       return;
     }
 
@@ -135,7 +139,8 @@ class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPag
       _currentInput = DreamInput(
         name: _nameController.text,
         birthDate: _selectedBirthDate!,
-        dreamContent: _dreamController.text);
+        dreamContent: _dreamController.text,
+      );
       _showResult = true;
     });
   }
@@ -160,25 +165,32 @@ class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPag
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Column(
-
           children: [
             AppHeader(
               title: '꿈 해몽',
               showBackButton: true,
-              showTokenBalance: !_showResult),
+              showTokenBalance: !_showResult,
+            ),
             Expanded(
               child: _showResult && _currentInput != null
                   ? _DreamResultView(
                       input: _currentInput!,
                       onReset: _reset,
-                      fontScale: fontScale)
+                      fontScale: fontScale,
+                    )
                   : _DreamInputForm(
                       nameController: _nameController,
                       dreamController: _dreamController,
                       selectedBirthDate: _selectedBirthDate,
                       onBirthDateChanged: (date) => setState(() => _selectedBirthDate = date),
                       onAnalyze: _analyzeDream,
-                      fontScale: fontScale)]));
+                      fontScale: fontScale,
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -196,7 +208,8 @@ class _DreamInputForm extends StatefulWidget {
     required this.selectedBirthDate,
     required this.onBirthDateChanged,
     required this.onAnalyze,
-    required this.fontScale});
+    required this.fontScale,
+  });
 
   @override
   State<_DreamInputForm> createState() => _DreamInputFormState();
@@ -241,7 +254,8 @@ class _DreamInputFormState extends State<_DreamInputForm> {
             widget.dreamController.text = text;
             _isRecording = false;
           });
-        });
+        },
+      );
     }
   }
 
@@ -252,35 +266,42 @@ class _DreamInputFormState extends State<_DreamInputForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-
         children: [
           // Icon
           GlassContainer(
             width: 100,
             height: 100,
             borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Center(
+            child: Center(
               child: Icon(
                 Icons.bedtime_outlined,
                 size: 48,
-                color: theme.colorScheme.primary)),
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ),
           const SizedBox(height: 24),
+          
           // Title
           Text(
             '꿈의 의미를 해석해드립니다',
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24 * widget.fontScale),
-            textAlign: TextAlign.center),
+              fontSize: 24 * widget.fontScale,
+            ),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 8),
           Text(
             '꿈 내용을 자세히 입력해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-              fontSize: 16 * widget.fontScale),
-            textAlign: TextAlign.center),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: 16 * widget.fontScale,
+            ),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 32),
+          
           // Name Input
           GlassContainer(
             padding: const EdgeInsets.all(20),
@@ -291,7 +312,9 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   '이름',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16 * widget.fontScale)),
+                    fontSize: 16 * widget.fontScale,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: widget.nameController,
@@ -299,12 +322,19 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   decoration: InputDecoration(
                     hintText: '이름을 입력하세요',
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12))]),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
+          
           // Birth Date
           GlassContainer(
             padding: const EdgeInsets.all(20),
@@ -315,12 +345,19 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   '생년월일',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16 * widget.fontScale)),
+                    fontSize: 16 * widget.fontScale,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 KoreanDatePicker(
                   initialDate: widget.selectedBirthDate,
-                  onDateSelected: widget.onBirthDateChanged)])),
+                  onDateSelected: widget.onBirthDateChanged,
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
+          
           // Dream Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
@@ -334,18 +371,25 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                       '꿈 내용',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16 * widget.fontScale)),
+                        fontSize: 16 * widget.fontScale,
+                      ),
+                    ),
                     // Input Type Toggle
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surface.withOpacity(0.5),
+                        color: theme.colorScheme.surface.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Row(
+                      ),
+                      child: Row(
                         children: [
                           _buildToggleButton('text', Icons.keyboard, '텍스트'),
-                          _buildToggleButton('voice', Icons.mic, '음성')]))]),
+                          _buildToggleButton('voice', Icons.mic, '음성'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 if (_inputType == 'text')
                   TextField(
@@ -355,14 +399,21 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                     decoration: InputDecoration(
                       hintText: '예: 넓은 바다에서 헤엄치다가 황금 용을 만나는 꿈을 꾸었습니다.',
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.all(16)))
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  )
                 else
-                  _buildVoiceInput(theme)])),
+                  _buildVoiceInput(theme),
+              ],
+            ),
+          ),
           const SizedBox(height: 32),
+          
           // Analyze Button
           SizedBox(
             width: double.infinity,
@@ -379,7 +430,17 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                       '꿈 해몽 분석하기',
                       style: TextStyle(
                         fontSize: 18 * widget.fontScale,
-                        fontWeight: FontWeight.bold)]))]));
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildToggleButton(String type, IconData icon, String label) {
@@ -398,26 +459,33 @@ class _DreamInputFormState extends State<_DreamInputForm> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withOpacity(0.2)
+              ? theme.colorScheme.primary.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
+        ),
+        child: Row(
           children: [
             Icon(
               icon,
               size: 18,
               color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withOpacity(0.6)),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
             const SizedBox(width: 4),
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.6),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)]));
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildVoiceInput(ThemeData theme) {
@@ -434,13 +502,15 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withOpacity(0.5),
+                color: theme.colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: _isRecording 
                       ? theme.colorScheme.primary 
                       : Colors.transparent,
-                  width: 2)),
+                  width: 2,
+                ),
+              ),
               child: Center(
                 child: Text(
                   recognizedText.isEmpty
@@ -451,10 +521,15 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   style: TextStyle(
                     fontSize: 16 * widget.fontScale,
                     color: recognizedText.isEmpty
-                        ? theme.colorScheme.onSurface.withOpacity(0.6)
-                        : theme.colorScheme.onSurface),
-                  textAlign: TextAlign.center)));
-          }),
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                        : theme.colorScheme.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          },
+        ),
         const SizedBox(height: 20),
         GestureDetector(
           onTap: _toggleRecording,
@@ -467,17 +542,24 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               gradient: LinearGradient(
                 colors: _isRecording
                     ? [Colors.red.shade400, Colors.red.shade600]
-                    : [theme.colorScheme.primary, theme.colorScheme.primary.withOpacity(0.8)]),
+                    : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
+              ),
               boxShadow: [
                 BoxShadow(
                   color: (_isRecording ? Colors.red : theme.colorScheme.primary)
-                      .withOpacity(0.3),
+                      .withValues(alpha: 0.3),
                   blurRadius: 20,
-                  offset: const Offset(0, 10))]),
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
             child: Icon(
               _isRecording ? Icons.stop : Icons.mic,
               size: 40,
-              color: Colors.white)),
+              color: Colors.white,
+            ),
+          ),
+        ),
         const SizedBox(height: 8),
         ValueListenableBuilder<String>(
           valueListenable: _speechService.statusNotifier,
@@ -485,8 +567,13 @@ class _DreamInputFormState extends State<_DreamInputForm> {
             return Text(
               status,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6)));
-          })]);
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            );
+          },
+        ),
+      ],
+    );
   }
 }
 
@@ -498,7 +585,8 @@ class _DreamResultView extends ConsumerWidget {
   const _DreamResultView({
     required this.input,
     required this.onReset,
-    required this.fontScale});
+    required this.fontScale,
+  });
 
   Color _getLuckColor(int score) {
     if (score >= 85) return Colors.green;
@@ -528,70 +616,92 @@ class _DreamResultView extends ConsumerWidget {
             SizedBox(height: 24),
             Text(
               '꿈을 분석하고 있습니다...',
-              style: TextStyle(fontSize: 18)]),
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
       error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: theme.colorScheme.error),
-              const SizedBox(height: 16),
-              Text(
-                error.toString().contains('토큰') 
-                    ? '토큰이 부족합니다' 
-                    : '꿈 분석 중 오류가 발생했습니다',
-                style: theme.textTheme.titleLarge,
-                textAlign: TextAlign.center),
-              const SizedBox(height: 24),
-              GlassButton(
-                onPressed: onReset,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text('다시 시도'))]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              error.toString().contains('토큰') 
+                  ? '토큰이 부족합니다' 
+                  : '꿈 분석 중 오류가 발생했습니다',
+              style: theme.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            GlassButton(
+              onPressed: onReset,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                child: Text('다시 시도'),
+              ),
+            ),
+          ],
+        ),
+      ),
       data: (result) => result == null
           ? const SizedBox.shrink()
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
-
                 children: [
                   // Overall Score
                   GlassContainer(
                     padding: const EdgeInsets.all(24),
                     gradient: LinearGradient(
                       colors: [
-                        _getLuckColor(result.overallLuck).withOpacity(0.1),
-                        _getLuckColor(result.overallLuck).withOpacity(0.05)]),
+                        _getLuckColor(result.overallLuck).withValues(alpha: 0.1),
+                        _getLuckColor(result.overallLuck).withValues(alpha: 0.05),
+                      ],
+                    ),
                     child: Column(
-
                       children: [
                         Text(
                           '${input.name}님의 꿈 해몽',
                           style: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: 20 * fontScale)),
+                            fontSize: 20 * fontScale,
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           '${result.overallLuck}점',
                           style: TextStyle(
                             fontSize: 48 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: _getLuckColor(result.overallLuck)),
+                            color: _getLuckColor(result.overallLuck),
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: _getLuckColor(result.overallLuck).withOpacity(0.2),
+                            color: _getLuckColor(result.overallLuck).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
+                          ),
+                          child: Text(
                             _getLuckText(result.overallLuck),
                             style: TextStyle(
                               color: _getLuckColor(result.overallLuck),
                               fontWeight: FontWeight.bold,
-                              fontSize: 16 * fontScale))]),
+                              fontSize: 16 * fontScale,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 16),
+                  
                   // Dream Summary & Interpretation
                   GlassContainer(
                     padding: const EdgeInsets.all(20),
@@ -606,17 +716,22 @@ class _DreamResultView extends ConsumerWidget {
                               '꿈 요약 및 해석',
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18 * fontScale))]),
+                                fontSize: 18 * fontScale,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 16),
+                        
                         // Summary
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
+                          ),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
@@ -624,30 +739,41 @@ class _DreamResultView extends ConsumerWidget {
                                   Icon(
                                     Icons.summarize_outlined,
                                     size: 16,
-                                    color: theme.colorScheme.primary),
+                                    color: theme.colorScheme.primary,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     '꿈 요약',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: theme.colorScheme.primary,
-                                      fontSize: 14 * fontScale))]),
+                                      fontSize: 14 * fontScale,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 result.dreamSummary,
                                 style: TextStyle(
                                   fontSize: 16 * fontScale,
-                                  height: 1.5)]),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 12),
+                        
                         // Interpretation
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.secondary.withOpacity(0.1),
+                            color: theme.colorScheme.secondary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
+                          ),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
@@ -655,21 +781,35 @@ class _DreamResultView extends ConsumerWidget {
                                   Icon(
                                     Icons.psychology_outlined,
                                     size: 16,
-                                    color: theme.colorScheme.secondary),
+                                    color: theme.colorScheme.secondary,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     '꿈 해석',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: theme.colorScheme.secondary,
-                                      fontSize: 14 * fontScale))]),
+                                      fontSize: 14 * fontScale,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 result.dreamInterpretation,
                                 style: TextStyle(
                                   fontSize: 16 * fontScale,
-                                  height: 1.5)])])),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 16),
+                  
                   // Lucky Elements
                   if (result.luckyElements.isNotEmpty) ...[
                     GlassContainer(
@@ -685,7 +825,11 @@ class _DreamResultView extends ConsumerWidget {
                                 '행운 요소',
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18 * fontScale))]),
+                                  fontSize: 18 * fontScale,
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 16),
                           Wrap(
                             spacing: 8,
@@ -696,17 +840,27 @@ class _DreamResultView extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withOpacity(0.2),
-                                      theme.colorScheme.secondary.withOpacity(0.2)]),
+                                      theme.colorScheme.primary.withValues(alpha: 0.2),
+                                      theme.colorScheme.secondary.withValues(alpha: 0.2),
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
+                                ),
+                                child: Text(
                                   element,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 14 * fontScale)));
-                            }).toList()]),
-                    const SizedBox(height: 16)],
+                                    fontSize: 14 * fontScale,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   
                   // Advice
                   GlassContainer(
@@ -722,14 +876,24 @@ class _DreamResultView extends ConsumerWidget {
                               '조언',
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18 * fontScale))]),
+                                fontSize: 18 * fontScale,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           result.advice,
                           style: TextStyle(
                             fontSize: 16 * fontScale,
-                            height: 1.5)]),
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 32),
+                  
                   // Reset Button
                   SizedBox(
                     width: double.infinity,
@@ -746,6 +910,17 @@ class _DreamResultView extends ConsumerWidget {
                               '다른 꿈 분석하기',
                               style: TextStyle(
                                 fontSize: 18 * fontScale,
-                                fontWeight: FontWeight.bold)]))])));
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 }

@@ -33,7 +33,8 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
     this.fetchData,
     this.onAdComplete,
     this.fortuneRoute,
-    this.fortuneParams});
+    this.fortuneParams,
+  });
 
   @override
   ConsumerState<AdLoadingScreen> createState() => _AdLoadingScreenState();
@@ -118,14 +119,17 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
           content: Text(_errorMessage!),
           action: SnackBarAction(
             label: '다시 시도',
-        onPressed: () {
+            onPressed: () {
               setState(() {
                 _errorMessage = null;
                 _isLoading = true;
                 _remainingSeconds = 5;
               });
               _startLoading();
-            })));
+            },
+          ),
+        ),
+      );
       return;
     }
 
@@ -169,7 +173,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
             'fortuneData': _fetchedData,
             'fortuneParams': widget.fortuneParams,
             'autoGenerate': true, // Flag to auto-generate fortune
-          });
+          },
+        );
         print('[AdLoadingScreen] Navigation successful');
       } catch (e) {
         print('Fortune cached');
@@ -178,7 +183,9 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('발생했습니다: $e'),
-              backgroundColor: Colors.red));
+              backgroundColor: Colors.red,
+            ),
+          );
           // Navigate back using go_router
           context.pop();
         }
@@ -201,7 +208,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
-      children: [
+          children: [
             // 메인 컨텐츠 - 광고를 중앙에 배치
             Center(
               child: Column(
@@ -218,7 +225,9 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                         borderRadius: AppDimensions.borderRadiusMedium,
                         border: Border.all(
                           color: Colors.grey.withOpacity(0.3),
-                          width: 1)),
+                          width: 1,
+                        ),
+                      ),
                       child: Column(
                         children: [
                           // 광고 라벨
@@ -229,7 +238,11 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           // 광고 위젯
                           CommonAdPlacements.largeAd(
                             padding: EdgeInsets.zero,
-                            backgroundColor: Colors.white)])),
+                            backgroundColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
                     
                     const SizedBox(height: AppSpacing.spacing8),
                     
@@ -244,7 +257,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxLarge)),
                         child: Text(
                           '광고가 ${_remainingSeconds}초 후에 닫힙니다',
-                          style: Theme.of(context).textTheme.bodyMedium))] else if (_canProceed) ...[
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    ] else if (_canProceed) ...[
                       // 운세 확인 버튼
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -258,8 +274,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                               horizontal: AppSpacing.spacing12,
                               vertical: AppSpacing.spacing4),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07)),
-                            elevation: 4),
+                              borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07),
+                            ),
+                            elevation: 4,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -267,28 +285,38 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                               const SizedBox(width: AppSpacing.spacing2),
                               Text(
                                 '운세 확인하기',
-                                style: Theme.of(context).textTheme.bodyMedium)]))).animate()
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ).animate()
                           .fadeIn(duration: 300.ms)
                           .scale(
                             begin: const Offset(0.8, 0.8),
                             end: const Offset(1.0, 1.0),
                             duration: 300.ms,
-                            curve: Curves.easeOut)]
+                            curve: Curves.easeOut,
+                          ),
+                    ],
                   ] else ...[
                     // 프리미엄 사용자는 토스 스타일 로딩 표시
                     TossFortuneLoadingWidget(
                       message: '운세를 준비하고 있습니다',
                       size: 50,
-                    ),]
-                ])),
+                    ),
+                  ],
+                ],
+              ),
+            ),
             
             // 헤더 영역
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              height: 80, // Add explicit height,
-    child: Container(
+              height: 80, // Add explicit height
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.spacing4,
                   vertical: AppSpacing.spacing4),
@@ -298,7 +326,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 4,
-                      offset: const Offset(0, 2))]),
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Row(
                   children: [
                     // 뒤로가기 버튼
@@ -309,12 +340,18 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                         size: 24),
                       onPressed: () {
                         Navigator.of(context).pop();
-                      }),
+                      },
+                    ),
                     const SizedBox(width: AppSpacing.spacing2),
                     // 제목 - Remove Expanded widget
                     Text(
                       widget.fortuneTitle,
-                      style: Theme.of(context).textTheme.bodyMedium)])),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ),
             
             // 하단 프리미엄 업그레이드 영역 (무료 사용자만,
             if (!widget.isPremium)
@@ -322,8 +359,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 200, // Add explicit height,
-    child: Container(
+                height: 200, // Add explicit height
+                child: Container(
                   padding: EdgeInsets.only(
                     left: AppSpacing.spacing6,
                     right: AppSpacing.spacing6,
@@ -335,14 +372,18 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 10,
-                        offset: const Offset(0, -2))]),
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         '광고 없이 바로 운세를 확인하고 싶으신가요?',
                         style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center),
+                        textAlign: TextAlign.center,
+                      ),
                       const SizedBox(height: AppSpacing.spacing3),
                       SizedBox(
                         width: double.infinity,
@@ -354,7 +395,9 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                             padding: const EdgeInsets.symmetric(
                               vertical: AppSpacing.spacing3 * 1.17),
                             shape: RoundedRectangleBorder(
-                              borderRadius: AppDimensions.borderRadiusMedium)),
+                              borderRadius: AppDimensions.borderRadiusMedium,
+                            ),
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -362,6 +405,19 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                               const SizedBox(width: AppSpacing.spacing2),
                               Text(
                                 '프리미엄으로 업그레이드',
-                                style: Theme.of(context).textTheme.bodyMedium)]))]))])));
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }

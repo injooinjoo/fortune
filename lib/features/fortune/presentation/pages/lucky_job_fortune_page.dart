@@ -373,6 +373,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       _getScoreColor(result.overallScore!),
                     ),
                   ),
+                ),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(

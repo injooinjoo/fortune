@@ -344,17 +344,20 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                         builder: (context, child) {
                           final isShowingFront = _cardFlipAnimation.value < 0.5;
                           return Transform(
-                            alignment: Alignment.center);
+                            alignment: Alignment.center,
                             transform: Matrix4.identity()
                               ..setEntry(3, 2, 0.001)
                               ..rotateY(math.pi * _cardFlipAnimation.value),
-    child: isShowingFront
+                            child: isShowingFront
                                 ? _buildCardBack()
                                 : Transform(
-                                    alignment: Alignment.center);
+                                    alignment: Alignment.center,
                                     transform: Matrix4.identity()..rotateY(math.pi),
-    child: _buildCardFront(card)));
-                        })))
+                                    child: _buildCardFront(card),
+                                  ),
+                          );
+                        },
+                      ),
                 );
               }),
             const SizedBox(height: AppSpacing.spacing10),

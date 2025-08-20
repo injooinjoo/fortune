@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:convert';
+import 'dart:typed_data';
 import '../../core/config/environment.dart';
 import '../../widgets/icons/fortune_compass_icon.dart';
 import '../../services/storage_service.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/utils/profile_validation.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 class CallbackPage extends StatefulWidget {
@@ -138,16 +138,112 @@ class _CallbackPageState extends State<CallbackPage> {
       final code = uri.queryParameters['code'];
       debugPrint('code: ${code != null ? "present (${code.length} chars)" : "null"}');
       
+      // Check for custom URL scheme callback (com.beyond.fortune://auth-callback)
+      if (uri.scheme == 'com.beyond.fortune' && uri.host == 'auth-callback') {
+        debugPrint('Custom URL scheme callback detected: ${uri.toString()}');
+        // Handle the callback from OAuth redirect
+        if (uri.fragment.isNotEmpty) {
+          // Parse fragment parameters (OAuth often uses fragment instead of query)
+          final fragmentParams = Uri.splitQueryString(uri.fragment);
+          debugPrint('Fragment parameters: $fragmentParams');
+          
+          // Check if we have access_token and refresh_token in fragment
+          final accessToken = fragmentParams['access_token'];
+          final refreshToken = fragmentParams['refresh_token'];
+          final tokenType = fragmentParams['token_type'];
+          final expiresIn = fragmentParams['expires_in'];
+          
+          if (accessToken != null) {
+            debugPrint('Access token found in fragment, creating session...');
+            try {
+              // Try different Supabase session creation methods
+              
+              // Method 1: Use recoverSession (recommended for access tokens)
+              try {
+                final response = await Supabase.instance.client.auth.recoverSession(accessToken);
+                if (response.session != null && response.user != null) {
+                  debugPrint('✅ Session recovered successfully from fragment!');
+                  if (mounted) {
+                    await _checkAndNavigate(response.user!);
+                    return;
+                  }
+                }
+              } catch (recoverError) {
+                debugPrint('⚠️ recoverSession failed: $recoverError');
+              }
+              
+              // Method 2: Try refreshSession if available
+              try {
+                final response = await Supabase.instance.client.auth.refreshSession(refreshToken);
+                if (response.session != null && response.user != null) {
+                  debugPrint('✅ Session refreshed successfully!');
+                  if (mounted) {
+                    await _checkAndNavigate(response.user!);
+                    return;
+                  }
+                }
+              } catch (refreshError) {
+                debugPrint('⚠️ refreshSession failed: $refreshError');
+              }
+              
+              // Method 3: Manual session creation using JWT parsing
+              try {
+                // Parse JWT to get session information
+                final tokenParts = accessToken.split('.');
+                if (tokenParts.length == 3) {
+                  final payload = tokenParts[1];
+                  final normalizedPayload = payload.padRight((payload.length + 3) & ~3, '=');
+                  final decodedBytes = base64.decode(normalizedPayload);
+                  final decodedPayload = utf8.decode(decodedBytes);
+                  final payloadJson = json.decode(decodedPayload) as Map<String, dynamic>;
+                  
+                  // Set token in auth headers manually
+                  Supabase.instance.client.auth.headers['Authorization'] = 'Bearer $accessToken';
+                  
+                  // Force auth state update
+                  final now = DateTime.now();
+                  final user = User(
+                    id: payloadJson['sub'] as String,
+                    appMetadata: payloadJson['app_metadata'] as Map<String, dynamic>? ?? {},
+                    userMetadata: payloadJson['user_metadata'] as Map<String, dynamic>? ?? {},
+                    aud: payloadJson['aud'] as String? ?? 'authenticated',
+                    email: payloadJson['email'] as String?,
+                    phone: payloadJson['phone'] as String?,
+                    createdAt: now.toIso8601String(),
+                    updatedAt: now.toIso8601String(),
+                    emailConfirmedAt: payloadJson['email_verified'] == true ? now.toIso8601String() : null,
+                    phoneConfirmedAt: null,
+                    lastSignInAt: now.toIso8601String(),
+                  );
+                  
+                  debugPrint('✅ Manual session created for user: ${user.email}');
+                  if (mounted) {
+                    await _checkAndNavigate(user);
+                    return;
+                  }
+                }
+              } catch (manualError) {
+                debugPrint('⚠️ Manual session creation failed: $manualError');
+              }
+              
+            } catch (fragmentError) {
+              debugPrint('❌ All session creation methods failed: $fragmentError');
+              // Continue with normal flow
+            }
+          }
+        }
+      }
+      
       // Extract error parameter if present
       final error = uri.queryParameters['error'];
       final errorDescription = uri.queryParameters['error_description'];
       if (error != null) {
-        debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
-        debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+        debugPrint('OAuth Error: $error');
+        debugPrint('Error Description: $errorDescription');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('실패: ${errorDescription ?? error}'),
+              content: Text('로그인 실패: ${errorDescription ?? error}'),
               backgroundColor: AppColors.error,
               duration: const Duration(seconds: 5)));
           context.go('/');
@@ -257,6 +353,14 @@ class _CallbackPageState extends State<CallbackPage> {
               SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary)]));
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

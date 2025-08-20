@@ -167,12 +167,16 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     try {
       final session = Supabase.instance.client.auth.currentSession;
       
-      // Try to sync profile from Supabase first
-      if (session != null) {
-        await _syncProfileFromSupabase();
+      // If no session, stay on landing page
+      if (session == null) {
+        debugPrint('No session found, staying on landing page');
+        return;
       }
       
-      // Check if user (authenticated or guest) needs onboarding
+      // Try to sync profile from Supabase first
+      await _syncProfileFromSupabase();
+      
+      // Check if user needs onboarding (only for authenticated users)
       final needsOnboarding = await ProfileValidation.needsOnboarding();
       
       if (needsOnboarding) {
@@ -534,29 +538,46 @@ class _LandingPageState extends ConsumerState<LandingPage> {
           await prefs.remove(key);
         }
         
-        // Google Sign-In SDK 사용
+        // Google Sign-In OAuth 사용
         try {
           final response = await _socialAuthService.signInWithGoogle();
           
-          // 로딩 스낭바 닫기
+          // 로딩 스낵바 닫기
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
           
-          // The auth state listener will handle navigation after successful login
-          // OAuth 리다이렉트 방식은 항상 null을 반환하므로
-          // 취소 메시지를 표시하지 않음
+          // OAuth 리다이렉트 방식은 항상 null을 반환
+          // 실제 인증은 브라우저에서 진행되고 콜백으로 처리됨
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Google 로그인을 처리하고 있습니다...'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
         } catch (e) {
           // 로딩 스낵바 닫기
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
           
+          debugPrint('Google 로그인 에러: $e');
+          
           // Show error message
-          if (mounted && e.toString().contains('Invalid API key')) {
+          if (mounted) {
+            String errorMessage = '로그인 중 문제가 발생했습니다. 다시 시도해주세요.';
+            
+            if (e.toString().contains('Invalid API key')) {
+              errorMessage = '인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.';
+            } else if (e.toString().contains('sign in failed to start')) {
+              errorMessage = 'Google 로그인을 시작할 수 없습니다. 다시 시도해주세요.';
+            }
+            
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+              SnackBar(
+                content: Text(errorMessage),
                 backgroundColor: Colors.red));
           }
           rethrow;

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class HexagonChart extends StatelessWidget {
   final Map<String, int> scores;
@@ -15,20 +12,20 @@ class HexagonChart extends StatelessWidget {
   final bool animate;
 
   const HexagonChart({
-    Key? key,
+    super.key,
     required this.scores,
     this.size = 200,
     this.primaryColor,
     this.backgroundColor,
     this.labelStyle,
     this.showValues = true,
-    this.animate = true}) : super(key: key);
+    this.animate = true});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
-    final effectiveBackgroundColor = backgroundColor ?? AppColors.textSecondary.withOpacity(0.1);
+    final effectiveBackgroundColor = backgroundColor ?? AppColors.textSecondary.withValues(alpha: 0.1);
     final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall ?? const TextStyle(fontSize: 12);
 
     return SizedBox(
@@ -77,7 +74,7 @@ class HexagonChartPainter extends CustomPainter {
   }
 
   void _drawBackgroundGrid(Canvas canvas, Offset center, double radius, Paint paint) {
-    paint.color = backgroundColor.withOpacity(0.3);
+    paint.color = backgroundColor.withValues(alpha: 0.3);
     
     // Draw multiple hexagon layers
     for (int i = 1; i <= 5; i++) {
@@ -86,7 +83,7 @@ class HexagonChartPainter extends CustomPainter {
     }
 
     // Draw axes
-    paint.color = backgroundColor.withOpacity(0.5);
+    paint.color = backgroundColor.withValues(alpha: 0.5);
     final labels = scores.keys.toList();
     for (int i = 0; i < labels.length; i++) {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
@@ -123,7 +120,7 @@ class HexagonChartPainter extends CustomPainter {
     final path = Path();
     final paint = Paint()
       ..style = PaintingStyle.fill
-      ..color = primaryColor.withOpacity(0.3);
+      ..color = primaryColor.withValues(alpha: 0.3);
     
     final strokePaint = Paint()
       ..style = PaintingStyle.stroke

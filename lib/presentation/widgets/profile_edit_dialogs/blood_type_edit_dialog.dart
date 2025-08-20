@@ -90,7 +90,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-      onTap: () {
+        onTap: () {
           setState(() {
             _selectedBloodType = value;
           });
@@ -114,6 +114,13 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.titleMedium)]))));
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

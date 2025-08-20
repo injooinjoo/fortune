@@ -115,7 +115,10 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       },
       'wealthBoosters': {
         '행운의 숫자': ['7', '23', '45'],
-        '행운의 방향': '동쪽', '행운의 색상': '금색, 노란색', '행운의 시간': '오전 9시~11시'},
+        '행운의 방향': '동쪽',
+        '행운의 색상': '금색, 노란색',
+        '행운의 시간': '오전 9시~11시',
+      },
       'actionItems': [
         '매일 가계부 작성하기', '월 저축 목표 설정하기',
         '불필요한 구독 서비스 정리하기', '투자 포트폴리오 점검하기',
@@ -209,10 +212,12 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
                       ],
                     ),
                   ),
                 ),
+            ),
             const SizedBox(height: 24),
             Text(
               '재물 지수',
@@ -356,6 +361,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         ),
       ),
     );
+  }
 
   Widget _buildIncomeBreakdown() {
     final breakdown = _wealthData!['incomeBreakdown'] as Map<String, dynamic>;
@@ -857,8 +863,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   );
                 }).toList(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

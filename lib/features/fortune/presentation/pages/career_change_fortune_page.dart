@@ -31,20 +31,27 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
   String? _preparationLevel;
   
   final List<String> _changeReasons = [
-    '연봉 인상': '경력 개발',
-    '워라밸': '회사 문화',
-    '업무 변화': '지역 이동',
+    '연봉 인상',
+    '경력 개발',
+    '워라밸',
+    '회사 문화',
+    '업무 변화',
+    '지역 이동',
   ];
 
   final List<String> _careerYearOptions = [
-    '1년 미만': '1-3년',
-    '3-5년': '5-10년',
+    '1년 미만',
+    '1-3년',
+    '3-5년',
+    '5-10년',
     '10년 이상',
   ];
 
   final List<String> _preparationLevels = [
-    '이직 고민 중': '정보 수집 중',
-    '이력서 준비 중': '면접 진행 중',
+    '이직 고민 중',
+    '정보 수집 중',
+    '이력서 준비 중',
+    '면접 진행 중',
   ];
 
   @override
@@ -126,8 +133,8 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                 ),
                 SizedBox(height: AppSpacing.spacing4),
                 
-                // Target Company (Optional),
-            TextField(
+                // Target Company (Optional)
+                TextField(
                   controller: _targetCompanyController,
                   decoration: InputDecoration(
                     labelText: '목표 회사/직무 (선택사항)',

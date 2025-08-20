@@ -20,32 +20,32 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
   
   final Map<String, List<Map<String, String>>> politicianData = {
     'all': [
-      {'name': '이재명': 'party': '더불어민주당': 'position': '당대표'},
-      {'name': '한동훈': 'party': '국민의힘': 'position': '당대표'},
-      {'name': '이준석': 'party': '개혁신당': 'position': '당대표'},
-      {'name': '조국': 'party': '조국혁신당': 'position': '당대표'},
-      {'name': '안철수': 'party': '무소속': 'position': '의원'},
-      {'name': '윤석열': 'party': '국민의힘': 'position': '대통령'},
-      {'name': '이낙연': 'party': '더불어민주당': 'position': '의원'},
-      {'name': '심상정': 'party': '정의당': 'position': '의원'},
+      {'name': '이재명', 'party': '더불어민주당', 'position': '당대표'},
+      {'name': '한동훈', 'party': '국민의힘', 'position': '당대표'},
+      {'name': '이준석', 'party': '개혁신당', 'position': '당대표'},
+      {'name': '조국', 'party': '조국혁신당', 'position': '당대표'},
+      {'name': '안철수', 'party': '무소속', 'position': '의원'},
+      {'name': '윤석열', 'party': '국민의힘', 'position': '대통령'},
+      {'name': '이낙연', 'party': '더불어민주당', 'position': '의원'},
+      {'name': '심상정', 'party': '정의당', 'position': '의원'},
     ],
     'democratic': [
-      {'name': '이재명': 'party': '더불어민주당': 'position': '당대표'},
-      {'name': '이낙연': 'party': '더불어민주당': 'position': '의원'},
-      {'name': '박용진': 'party': '더불어민주당': 'position': '의원'},
-      {'name': '김두관': 'party': '더불어민주당': 'position': '의원'},
+      {'name': '이재명', 'party': '더불어민주당', 'position': '당대표'},
+      {'name': '이낙연', 'party': '더불어민주당', 'position': '의원'},
+      {'name': '박용진', 'party': '더불어민주당', 'position': '의원'},
+      {'name': '김두관', 'party': '더불어민주당', 'position': '의원'},
     ],
     'conservative': [
-      {'name': '한동훈': 'party': '국민의힘': 'position': '당대표'},
-      {'name': '윤석열': 'party': '국민의힘': 'position': '대통령'},
-      {'name': '김기현': 'party': '국민의힘': 'position': '의원'},
-      {'name': '나경원': 'party': '국민의힘': 'position': '의원'},
+      {'name': '한동훈', 'party': '국민의힘', 'position': '당대표'},
+      {'name': '윤석열', 'party': '국민의힘', 'position': '대통령'},
+      {'name': '김기현', 'party': '국민의힘', 'position': '의원'},
+      {'name': '나경원', 'party': '국민의힘', 'position': '의원'},
     ],
     'progressive': [
-      {'name': '이준석': 'party': '개혁신당': 'position': '당대표'},
-      {'name': '조국': 'party': '조국혁신당': 'position': '당대표'},
-      {'name': '심상정': 'party': '정의당': 'position': '의원'},
-      {'name': '안철수': 'party': '무소속': 'position': '의원'},
+      {'name': '이준석', 'party': '개혁신당', 'position': '당대표'},
+      {'name': '조국', 'party': '조국혁신당', 'position': '당대표'},
+      {'name': '심상정', 'party': '정의당', 'position': '의원'},
+      {'name': '안철수', 'party': '무소속', 'position': '의원'},
     ],
   };
 
@@ -82,10 +82,10 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       ),
       child: Row(
         children: [
-          _buildPartyTab('all': '전체', Icons.groups),
-          _buildPartyTab('democratic': '민주', Icons.flag, const Color(0xFF004EA2)),
-          _buildPartyTab('conservative': '보수', Icons.flag, const Color(0xFFE61E2B)),
-          _buildPartyTab('progressive': '진보', Icons.flag, const Color(0xFF00A85D)),
+          _buildPartyTab('all', '전체', Icons.groups),
+          _buildPartyTab('democratic', '민주', Icons.flag, const Color(0xFF004EA2)),
+          _buildPartyTab('conservative', '보수', Icons.flag, const Color(0xFFE61E2B)),
+          _buildPartyTab('progressive', '진보', Icons.flag, const Color(0xFF00A85D)),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);

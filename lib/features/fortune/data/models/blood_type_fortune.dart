@@ -39,12 +39,12 @@ class BloodTypeFortune {
       'bloodType': bloodType,
       'rhType': rhType,
       'personality': personality,
-      'todaysFortune': todaysFortune)
-      , 'loveCompatibility': loveCompatibility,
-      'workAdvice': workAdvice)
-      , 'healthTip': healthTip,
-      'luckyColor': luckyColor)
-      , 'luckyNumber': luckyNumber)}
+      'todaysFortune': todaysFortune,
+      'loveCompatibility': loveCompatibility,
+      'workAdvice': workAdvice,
+      'healthTip': healthTip,
+      'luckyColor': luckyColor,
+      'luckyNumber': luckyNumber,
     };
   }
 }

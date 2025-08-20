@@ -162,7 +162,7 @@ class FortuneContentCard extends StatelessWidget {
               width: 40,
               height: AppDimensions.buttonHeightSmall,
               decoration: BoxDecoration(
-                color: category.$4.withOpacity(0.1),
+                color: category.$4.withValues(alpha: 0.1),
                 borderRadius:
                     BorderRadius.circular(AppSpacing.spacing2 * 1.25),
               ),
@@ -197,7 +197,7 @@ class FortuneContentCard extends StatelessWidget {
                     borderRadius: AppDimensions.borderRadiusSmall,
                     child: LinearProgressIndicator(
                       value: score.toDouble() / 100,
-                      backgroundColor: category.$4.withOpacity(0.2),
+                      backgroundColor: category.$4.withValues(alpha: 0.2),
                       valueColor:
                           AlwaysStoppedAnimation<Color>(category.$4),
                       minHeight: 8,
@@ -280,9 +280,9 @@ class FortuneContentCard extends StatelessWidget {
         vertical: AppSpacing.spacing3,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

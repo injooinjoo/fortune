@@ -117,13 +117,22 @@ class StatisticsDashboard extends StatelessWidget {
                       '오늘의 인사이트',
                       style: TextStyle(
                         fontSize: 16 * fontScale,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 Text(
                   _getPersonalizedInsight(statistics),
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8))])]));
+                    color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildStatCard({

@@ -14,7 +14,8 @@ class ZodiacCompatibilityMatrix extends StatefulWidget {
     this.selectedZodiac1,
     this.selectedZodiac2,
     required this.onPairSelected,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true,
+  }) : super(key: key);
 
   @override
   State<ZodiacCompatibilityMatrix> createState() => _ZodiacCompatibilityMatrixState();
@@ -32,13 +33,16 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
-      vsync: this);
+      vsync: this,
+    );
     
     _fadeAnimation = Tween<double>(
       begin: 0,
-      end: 1).animate(CurvedAnimation(
+      end: 1,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut));
+      curve: Curves.easeInOut,
+    ));
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -61,7 +65,9 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
         const SizedBox(height: 20),
         _buildMatrix(),
         const SizedBox(height: 20),
-        _buildSelectedInfo()]);
+        _buildSelectedInfo(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -71,14 +77,19 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
         Icon(
           Icons.grid_on,
           color: Colors.purple,
-          size: 24),
+          size: 24,
+        ),
         const SizedBox(width: 8),
         Text(
           '띠별 궁합 매트릭스',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white))]);
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildMatrix() {
@@ -106,8 +117,14 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               fontWeight: FontWeight.bold,
                               color: _hoveredCol == col
                                   ? Colors.amber
-                                  : Colors.white.withOpacity(0.8)))));
-                  })]),
+                                  : Colors.white.withOpacity(0.8)),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
               const SizedBox(height: 10),
               // 매트릭스 본체
               ...List.generate(12, (row) {
@@ -124,7 +141,10 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           fontWeight: FontWeight.bold,
                           color: _hoveredRow == row
                               ? Colors.amber
-                              : Colors.white.withOpacity(0.8)),
+                              : Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                    ),
                     // 궁합 셀들
                     ...List.generate(12, (col) {
                       final zodiac2 = ZodiacCompatibilityService.zodiacAnimals[col];
@@ -174,10 +194,23 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                     fontWeight: isHovered
                                         ? FontWeight.bold
                                         : FontWeight.normal,
-                                    color: Colors.white))))));
-                    })]);
-              })]));
-      });
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildSelectedInfo() {
@@ -188,8 +221,11 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           '매트릭스에서 두 띠를 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
             color: Colors.white.withOpacity(0.6),
-            fontSize: 14),
-          textAlign: TextAlign.center));
+            fontSize: 14,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
     }
 
     final compatibility = ZodiacCompatibilityService.calculateCompatibility(
@@ -221,8 +257,14 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: _getCompatibilityColor(compatibility))]),
-              _buildZodiacInfo(widget.selectedZodiac2!)]),
+                        color: _getCompatibilityColor(compatibility)),
+                    ),
+                  ],
+                ),
+              ),
+              _buildZodiacInfo(widget.selectedZodiac2!),
+            ],
+          ),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
@@ -291,7 +333,11 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
               _analyzeYinYangCompatibility(
                 info1['yin_yang'],
                 info2['yin_yang']),
-              Icons.sync)])]);
+              Icons.sync),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildAnalysisItem(String title, String value, IconData icon) {
@@ -303,7 +349,9 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.6)),
+            color: Colors.white.withOpacity(0.6),
+          ),
+        ),
         const SizedBox(height: 2),
         Text(
           value,

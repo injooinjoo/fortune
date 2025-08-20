@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';  // AGP 8.x compatibility issue
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
@@ -122,16 +122,22 @@ class TalismanShareService {
         throw Exception('Storage permission denied');
       }
       
-      // Save image
-      final result = await ImageGallerySaver.saveImage(
-        imageData,
-        quality: 100,
-        name: 'talisman_${DateTime.now().millisecondsSinceEpoch}'
-      );
+      // Save image - Temporarily disabled due to AGP 8.x compatibility issue
+      // final result = await ImageGallerySaver.saveImage(
+      //   imageData,
+      //   quality: 100,
+      //   name: 'talisman_${DateTime.now().millisecondsSinceEpoch}'
+      // );
       
-      if (result['isSuccess'] != true) {
-        throw Exception('Failed to save image');
-      }
+      // if (result['isSuccess'] != true) {
+      //   throw Exception('Failed to save image');
+      // }
+      
+      // Temporary workaround: Save to app's document directory
+      final directory = await getApplicationDocumentsDirectory();
+      final imagePath = '${directory.path}/talisman_${DateTime.now().millisecondsSinceEpoch}.png';
+      final imageFile = File(imagePath);
+      await imageFile.writeAsBytes(imageData);
     } catch (e) {
       print('Fortune cached');
       rethrow;

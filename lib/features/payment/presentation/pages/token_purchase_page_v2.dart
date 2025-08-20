@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../../../presentation/widgets/common/app_header.dart';
 import '../../../../services/in_app_purchase_service.dart';
-import '../../../../services/auth_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/widgets/common/custom_button.dart';
@@ -81,7 +80,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                 ? const Center(child: CircularProgressIndicator())
                 : _buildContent(),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -93,7 +92,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Text(
-            '인앱결제를 사용할 수 없습니다.\n앱스토어 설정을 확인해주세요.',
+            '인앱결제를 사용할 수 없습니다.\\n앱스토어 설정을 확인해주세요.',
             textAlign: TextAlign.center,
             style: AppTextStyles.body1,
           ),
@@ -106,7 +105,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Text(
-            '상품을 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.',
+            '상품을 불러올 수 없습니다.\\n잠시 후 다시 시도해주세요.',
             textAlign: TextAlign.center,
             style: AppTextStyles.body1,
           ),
@@ -155,48 +154,47 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
             children: [
               Text(
                 '현재 보유 토큰',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    tokenBalance.hasUnlimitedAccess 
+                      ? '무제한' 
+                      : '${tokenBalance.remainingTokens}',
+                    style: AppTextStyles.heading2.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (!tokenBalance.hasUnlimitedAccess) ...[ 
+                    const SizedBox(width: 4),
                     Text(
-                      tokenBalance.hasUnlimitedAccess 
-                        ? '무제한' 
-                        : '${tokenBalance.remainingTokens}',
-                      style: AppTextStyles.heading2.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
+                      '개',
+                      style: AppTextStyles.body1.copyWith(
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                    if (!tokenBalance.hasUnlimitedAccess) ...[
-                      const SizedBox(width: 4),
-                      Text(
-                        '개',
-                        style: AppTextStyles.body1.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ],
               ),
             ],
           ),
-            Icon(
-              tokenBalance.hasUnlimitedAccess 
-                ? Icons.all_inclusive 
-                : Icons.toll,
-              size: 40,
-              color: AppColors.primary.withOpacity(0.3),
-            ),
-          ],
-        ),
-      ).animate()
-        .fadeIn(duration: 600.ms)
-        .slideX(begin: -0.1, end: 0);
+          Icon(
+            tokenBalance.hasUnlimitedAccess 
+              ? Icons.all_inclusive 
+              : Icons.toll,
+            size: 40,
+            color: AppColors.primary.withValues(alpha: 0.3),
+          ),
+        ],
+      ),
+    ).animate()
+      .fadeIn(duration: 600.ms)
+      .slideX(begin: -0.1, end: 0);
   }
 
   Widget _buildPackageList() {
@@ -230,6 +228,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
             ).animate()
               .fadeIn(duration: 600.ms, delay: (index * 100).ms)
               .slideX(begin: 0.1, end: 0),
+          );
         }),
       ],
     );
@@ -242,7 +241,6 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
     required VoidCallback onTap,
   }) {
     final isSubscription = productInfo?.isSubscription ?? false;
-    final tokens = productInfo?.tokens ?? 0;
     
     return GestureDetector(
       onTap: onTap,
@@ -252,8 +250,9 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.1),
-                  AppColors.primary.withOpacity(0.05)],
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.primary.withValues(alpha: 0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
@@ -272,7 +271,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? AppColors.primary.withOpacity(0.1)
+                  ? AppColors.primary.withValues(alpha: 0.1)
                   : AppColors.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -302,7 +301,8 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 2),
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.error,
                             borderRadius: BorderRadius.circular(4),
@@ -390,7 +390,8 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           '• 구매한 토큰은 즉시 계정에 추가됩니다',
           '• 무제한 구독은 매월 자동 갱신됩니다',
           '• 구독은 언제든지 취소할 수 있습니다',
-          '• 환불은 앱스토어/구글플레이 정책을 따릅니다'].map((text) => Padding(
+          '• 환불은 앱스토어/구글플레이 정책을 따릅니다'
+        ].map((text) => Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             text,
@@ -398,8 +399,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
               color: AppColors.textSecondary,
             ),
           ),
-        ),
-      ),
+        )),
       ],
     );
   }

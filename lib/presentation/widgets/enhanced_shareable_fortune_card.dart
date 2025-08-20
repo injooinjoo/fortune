@@ -1,8 +1,8 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
-import '../../core/constants/fortune_card_images.dart';
+// import 'dart:math' as math; // TODO: Remove if not needed
+// import '../../core/constants/fortune_card_images.dart'; // TODO: Remove if not needed
 import '../../core/constants/fortune_type_names.dart';
 // import 'package:qr_flutter/qr_flutter.dart'; // TODO: Add qr_flutter package
 
@@ -51,7 +51,10 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
           Positioned.fill(
             child: CustomPaint(
               painter: _PatternPainter(
-                color: Colors.white.withOpacity(0.1)),
+                color: Colors.white.withOpacity(0.1),
+              ),
+            ),
+          ),
           // Content
           Padding(
             padding: AppSpacing.paddingAll24,
@@ -62,7 +65,13 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                 SizedBox(height: AppSpacing.spacing6),
                 _buildFortuneContent(context),
                 SizedBox(height: AppSpacing.spacing6),
-                _buildFooter(context)])]);
+                _buildFooter(context),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTraditionalTemplate(BuildContext context) {
@@ -83,11 +92,16 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             decoration: const BoxDecoration(
               color: Color(0xFF8D6E63),
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(13)),
+                top: Radius.circular(13),
+              ),
+            ),
             child: Center(
               child: Text(
                 '⊹ 오늘의 운세 ⊹',
-                style: Theme.of(context).textTheme.bodyMedium)),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
           // Content
           Padding(
             padding: AppSpacing.paddingAll24,
@@ -96,8 +110,10 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                 if (userName != null) ...[
                   Text(
                     userName!,
-                    style: Theme.of(context).textTheme.bodyMedium),
-                  SizedBox(height: AppSpacing.spacing2)],
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  SizedBox(height: AppSpacing.spacing2),
+                ],
                 Container(
                   padding: AppSpacing.paddingAll20,
                   decoration: BoxDecoration(
@@ -105,20 +121,33 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                     borderRadius: AppDimensions.borderRadiusMedium,
                     border: Border.all(
                       color: const Color(0xFFBCAAA4),
-                      width: 1)),
+                      width: 1,
+                    ),
+                  ),
                   child: Column(
                     children: [
                       Text(
                         title,
                         style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center),
+                        textAlign: TextAlign.center,
+                      ),
                       SizedBox(height: AppSpacing.spacing4),
                       Text(
                         content,
                         style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center)])),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: AppSpacing.spacing5),
-                _buildTraditionalFooter(context)])]);
+                _buildTraditionalFooter(context),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildMinimalTemplate(BuildContext context) {
@@ -211,7 +240,12 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                   gradient: RadialGradient(
                     colors: [
                       Colors.white.withOpacity(0.3),
-                      Colors.transparent])),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
             // Content
             SafeArea(
               child: Padding(
@@ -280,7 +314,19 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                           SizedBox(width: AppSpacing.spacing2),
                           Text(
                             'Fortune AI',
-                            style: Theme.of(context).textTheme.bodyMedium)])]))])));
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -512,9 +558,7 @@ class _PatternPainter extends CustomPainter {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 1;
+      ..strokeWidth = 1;
 
     const spacing = 30.0;
     for (var i = 0; i < size.width; i += spacing.toInt()) {

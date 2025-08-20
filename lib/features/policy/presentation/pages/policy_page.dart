@@ -40,7 +40,16 @@ class PolicyPage extends ConsumerWidget {
                         color: Colors.purple,
                         onTap: () => context.push('/policy/terms')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 32),
-                      _buildInfoSection()]))]));
+                      _buildInfoSection(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildPolicyCard({
@@ -69,10 +78,13 @@ class PolicyPage extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Icon(
                 icon,
                 color: color,
-                size: 32)),
+                size: 32,
+              ),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -89,11 +101,21 @@ class PolicyPage extends ConsumerWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.8))]),
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: Colors.white.withOpacity(0.5),
-              size: 20)])));
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInfoSection() {
@@ -125,6 +147,10 @@ class PolicyPage extends ConsumerWidget {
             style: TextStyle(
               color: Colors.white.withOpacity(0.6),
               fontSize: 12),
-            textAlign: TextAlign.center)])).animate().fadeIn(delay: 400.ms, duration: 500.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 400.ms, duration: 500.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
   }
 }

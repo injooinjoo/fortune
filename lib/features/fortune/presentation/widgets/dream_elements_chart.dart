@@ -63,7 +63,8 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         const SizedBox(height: AppSpacing.spacing5),
         _buildChart(),
         const SizedBox(height: AppSpacing.spacing5),
-        _buildElementsList()]
+        _buildElementsList(),
+      ],
     );
   }
 
@@ -76,16 +77,20 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           style: Theme.of(context).textTheme.bodyMedium),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
-    decoration: BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.deepPurple.withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
-    border: Border.all(
+            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+            border: Border.all(
               color: Colors.deepPurple.withOpacity(0.3),
-    width: 1)),
-    child: Text(
+              width: 1,
+            ),
+          ),
+          child: Text(
             '${_getTotalElements()}개 요소 발견',
-            style: Theme.of(context).textTheme.bodyMedium))
-      ]
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+      ],
     );
   }
 
@@ -102,15 +107,15 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125);
-          padding: AppSpacing.paddingAll20),
-    child: Stack(
+          height: AppSpacing.spacing24 * 3.125,
+          padding: AppSpacing.paddingAll20,
+          child: Stack(
             children: [
               // 파이 차트
               PieChart(
                 PieChartData(
                   pieTouchData: PieTouchData(
-                    enabled: true);
+                    enabled: true,
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
                       setState(() {
                         if (pieTouchResponse?.touchedSection != null) {
@@ -119,17 +124,25 @@ class _DreamElementsChartState extends State<DreamElementsChart>
                           _selectedIndex = null;
                         }
                       });
-                    }),
-    borderData: FlBorderData(show: false),
-    sectionsSpace: 2),
-    centerSpaceRadius: 80),
-    sections: _getPieChartSections()),
-    swapAnimationDuration: const Duration(milliseconds: 150),
-    swapAnimationCurve: Curves.linear),
+                    },
+                  ),
+                  borderData: FlBorderData(show: false),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 80,
+                  sections: _getPieChartSections(),
+                ),
+                swapAnimationDuration: const Duration(milliseconds: 150),
+                swapAnimationCurve: Curves.linear,
+              ),
               // 중앙 텍스트
               Center(
-                child: _buildCenterInfo()]);
-      });
+                child: _buildCenterInfo(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   List<PieChartSectionData> _getPieChartSections() {
@@ -144,15 +157,18 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         sections.add(
           PieChartSectionData(
             color: _getCategoryColor(entry.key),
-            value: value * 100),
-    title: '${(value * 100).toInt()}%'),
-    radius: isSelected ? 80 : 70,
+            value: value * 100,
+            title: '${(value * 100).toInt()}%',
+            radius: isSelected ? 80 : 70,
             titleStyle: TextStyle(
-              fontSize: isSelected ? 16 : 14);
-              fontWeight: FontWeight.bold),
-    color: Colors.white),
-    badgeWidget: _buildBadge(entry.key),
-    badgePositionPercentageOffset: 1.3));
+              fontSize: isSelected ? 16 : 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            badgeWidget: _buildBadge(entry.key),
+            badgePositionPercentageOffset: 1.3,
+          ),
+        );
       }
       index++;
     }
@@ -165,14 +181,18 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       padding: AppSpacing.paddingAll8,
       decoration: BoxDecoration(
         color: _getCategoryColor(category).withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(
           color: _getCategoryColor(category).withOpacity(0.5),
-    width: 1)),
-    child: Icon(
+          width: 1,
+        ),
+      ),
+      child: Icon(
         _getCategoryIcon(category),
-    size: 20),
-    color: _getCategoryColor(category)));
+        size: 20,
+        color: _getCategoryColor(category),
+      ),
+    );
   }
 
   Widget _buildCenterInfo() {
@@ -181,14 +201,17 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.bedtime);
-            size: 32),
-    color: Colors.white54),
+            Icons.bedtime,
+            size: 32,
+            color: Colors.white54,
+          ),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
-            '꿈 요소',),
-            style: Theme.of(context).textTheme.bodyMedium))
-        ]);
+            '꿈 요소',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      );
     }
     
     final categories = widget.elementWeights.keys.toList();
@@ -201,16 +224,19 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         children: [
           Icon(
             _getCategoryIcon(category),
-    size: 32),
-    color: _getCategoryColor(category)),
+            size: 32,
+            color: _getCategoryColor(category),
+          ),
           const SizedBox(height: AppSpacing.spacing1),
           Text(
-            category);
-            style: Theme.of(context).textTheme.bodyMedium))
+            category,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           Text(
-            'Fortune cached',),
-            style: Theme.of(context).textTheme.bodyMedium))
-        ]
+            '$count개',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
       );
     }
     
@@ -222,60 +248,77 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '발견된 요소 상세',),
-          style: Theme.of(context).textTheme.bodyMedium))
+          '발견된 요소 상세',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: AppSpacing.spacing3),
         ...widget.elements.entries.where((e) => e.value.isNotEmpty).map((entry) {
           return _buildCategorySection(entry.key, entry.value);
-        }).toList()]
+        }).toList(),
+      ],
     );
   }
 
   Widget _buildCategorySection(String category, List<String> items) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
-      padding: AppSpacing.paddingAll12),
-    decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll12,
+      decoration: BoxDecoration(
         color: _getCategoryColor(category).withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(
           color: _getCategoryColor(category).withOpacity(0.3),
-    width: 1)),
-    child: Column(
+          width: 1,
+        ),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 _getCategoryIcon(category),
-    size: 16),
-    color: _getCategoryColor(category)),
+                size: 16,
+                color: _getCategoryColor(category),
+              ),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
-                category);
+                category,
                 style: TextStyle(
-                  color: _getCategoryColor(category);
-                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    fontWeight: FontWeight.bold))]),
+                  color: _getCategoryColor(category),
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.spacing2),
           Wrap(
-            spacing: 8);
-            runSpacing: 8),
-    children: items.map((item) {
+            spacing: 8,
+            runSpacing: 8,
+            children: items.map((item) {
               return GestureDetector(
                 onTap: () => _showElementDetail(category, item),
-    child: Container(
+                child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
-    decoration: BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadiusLarge),
-    border: Border.all(
+                    borderRadius: AppDimensions.borderRadiusLarge,
+                    border: Border.all(
                       color: Colors.white.withOpacity(0.2),
-    width: 1)),
-    child: Text(
-                    item);
-                    style: Theme.of(context).textTheme.bodyMedium);)
-            }).toList())])
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    item,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -285,75 +328,93 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent);
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor),
-    borderRadius: const BorderRadius.vertical(top: Radius.circular(24))
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
-    padding: AppSpacing.paddingAll24),
-    child: Column(
-          mainAxisSize: MainAxisSize.min);
+        padding: AppSpacing.paddingAll24,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40,
-              height: AppSpacing.spacing1),
-    decoration: BoxDecoration(
+              height: AppSpacing.spacing1,
+              decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+              ),
+            ),
             const SizedBox(height: AppSpacing.spacing5),
             Icon(
               _getCategoryIcon(category),
-    size: 48),
-    color: _getCategoryColor(category)),
+              size: 48,
+              color: _getCategoryColor(category),
+            ),
             const SizedBox(height: AppSpacing.spacing3),
             Text(
-              element);
-              style: Theme.of(context).textTheme.bodyMedium))
+              element,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             Text(
               symbolData['meaning'],
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: AppSpacing.spacing5),
             _buildMeaningSection(
-              '긍정적 의미');
+              '긍정적 의미',
               symbolData['positive'],
-              Colors.green),
+              Colors.green,
+            ),
             const SizedBox(height: AppSpacing.spacing3),
             _buildMeaningSection(
-              '부정적 의미');
+              '부정적 의미',
               symbolData['negative'],
-              Colors.orange),
+              Colors.orange,
+            ),
             const SizedBox(height: AppSpacing.spacing3),
             _buildMeaningSection(
-              '심리학적 해석');
+              '심리학적 해석',
               symbolData['psychological'],
-              Colors.purple)]))
+              Colors.purple,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildMeaningSection(String title, String content, Color color) {
     return Container(
       width: double.infinity,
-      padding: AppSpacing.paddingAll16);
+      padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(
           color: color.withOpacity(0.3),
-    width: 1)),
-    child: Column(
+          width: 1,
+        ),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title);
-            style: Theme.of(context).textTheme.bodyMedium))
+            title,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           const SizedBox(height: AppSpacing.spacing1),
           Text(
-            content);
+            content,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8);
-              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    height: 1.4)])
+              color: Colors.white.withOpacity(0.8),
+              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -372,9 +433,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         return Colors.teal;
       case '색상':
         return Colors.purple;
-      case , '감정': return Colors.pink;
+      case '감정': 
+        return Colors.pink;
       default:
-        return Colors.grey;}
+        return Colors.grey;
     }
   }
 
@@ -393,9 +455,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         return Icons.nature;
       case '색상':
         return Icons.palette;
-      case , '감정': return Icons.favorite;
+      case '감정': 
+        return Icons.favorite;
       default:
-        return Icons.help_outline;}
+        return Icons.help_outline;
     }
   }
 }

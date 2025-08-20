@@ -61,7 +61,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         _buildLegend(),
       ],
     );
-}
+  }
 
   Widget _buildHeader() {
     return Row(
@@ -89,7 +89,9 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         const SizedBox(width: AppSpacing.spacing2),
         Text(
           '혈액형 궁합 매트릭스',
-          style: Theme.of(context).textTheme.bodyMedium)]);
+          style: Theme.of(context).textTheme.bodyMedium),
+      ],
+    );
   }
 
   Widget _buildMatrix() {
@@ -151,7 +153,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                 child: Center(
                   child: Text(
                     '$bloodType1$rh1',
-                    style: Theme.of(context).textTheme.bodySmall)),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ),
               // 셀들
               ..._buildMatrixCells(bloodType1, rh1, row),
             ],
@@ -192,18 +197,18 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                 onEnter: (_) => setState(() {
                   _hoveredRow = row;
                   _hoveredCol = col;
-}),
+                }),
                 onExit: (_) => setState(() {
                   _hoveredRow = null;
                   _hoveredCol = null;
-}),
+                }),
                 child: AnimatedContainer(
                   duration: AppAnimations.durationShort,
                   height: AppDimensions.buttonHeightSmall,
                   margin: const EdgeInsets.all(1),
                   decoration: BoxDecoration(
                     color: _getCompatibilityColor(compatibility)
-                        .withOpacity(_fadeAnimation.value * 0.8),
+                        .withValues(alpha: _fadeAnimation.value * 0.8),
                     borderRadius: AppDimensions.borderRadiusSmall,
                     border: Border.all(
                       color: isSelected
@@ -213,7 +218,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                     boxShadow: (isSelected || isHovered) ? [
                       BoxShadow(
                         color: _getCompatibilityColor(compatibility)
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 2)] : []),
                   child: Center(
@@ -255,12 +260,12 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         child: Text(
           '매트릭스에서 두 혈액형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
           textAlign: TextAlign.center,
         ),
       );
-}
+    }
 
     final compatibility = BloodTypeAnalysisService.calculateCompatibility(
       widget.selectedType1!,
@@ -310,10 +315,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           Container(
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: _getCompatibilityColor(compatibility).withOpacity(0.1),
+              color: _getCompatibilityColor(compatibility).withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
-                color: _getCompatibilityColor(compatibility).withOpacity(0.3),
+                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -336,7 +341,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         ],
       ),
     );
-}
+  }
 
   Widget _buildBloodTypeInfo(String bloodType, String rh) {
     final characteristics = BloodTypeAnalysisService.bloodTypeCharacteristics[bloodType]!;
@@ -351,11 +356,11 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [
-                Colors.red.withOpacity(0.6),
-                Colors.red.withOpacity(0.8)]),
+                Colors.red.withValues(alpha: 0.6),
+                Colors.red.withValues(alpha: 0.8)]),
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withOpacity(0.4),
+                color: Colors.red.withValues(alpha: 0.4),
                 blurRadius: 10,
                 spreadRadius: 2)]),
           child: Center(
@@ -406,7 +411,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         Container(
           padding: AppSpacing.paddingAll12,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [
@@ -436,7 +441,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           height: AppSpacing.spacing12 * 1.04,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
           ),
           child: Center(
             child: Icon(icon, color: color, size: 24),
@@ -459,10 +464,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -503,7 +508,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             Text(
               range,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
               ),
             ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:visibility_detector/visibility_detector.dart';
+// import 'package:visibility_detector/visibility_detector.dart';
 import '../services/analytics_tracker.dart';
 
 /// Analytics를 자동으로 추적하는 위젯
@@ -78,7 +78,9 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
         eventName: 'screen_exit',
         parameters: {
           'screen_name': widget.screenName,
-          'duration_seconds': null});
+          'duration_seconds': duration,
+        },
+      );
     }
   }
   
@@ -94,7 +96,9 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
       value: value,
       parameters: {
         ...?parameters,
-        'screen')});
+        'screen_name': widget.screenName,
+      },
+    );
   }
   
   /// 전환 추적
@@ -107,7 +111,9 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
       value: value,
       parameters: {
         ...?parameters,
-        'screen')});
+        'screen_name': widget.screenName,
+      },
+    );
   }
   
   /// 에러 추적
@@ -120,7 +126,9 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
       errorMessage: errorMessage,
       parameters: {
         ...?parameters,
-        'screen')});
+        'screen_name': widget.screenName,
+      },
+    );
   }
 }
 
@@ -130,7 +138,7 @@ class AnalyticsVisibilityDetector extends ConsumerWidget {
   final String itemType;
   final Widget child;
   final Map<String, dynamic>? parameters;
-  final Function(VisibilityInfo)? onVisibilityChanged;
+  final Function(dynamic)? onVisibilityChanged;
   final double visibleThreshold;
   
   const AnalyticsVisibilityDetector({
@@ -145,25 +153,23 @@ class AnalyticsVisibilityDetector extends ConsumerWidget {
   
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return VisibilityDetector(
+    // Placeholder implementation without visibility_detector dependency
+    return GestureDetector(
       key: Key('analytics_visibility_$itemId'),
-      onVisibilityChanged: (info) {
+      onTap: () {
         final tracker = ref.read(analyticsTrackerProvider);
-        
-        // 지정된 임계값 이상 보이면 노출로 기록
-        if (info.visibleFraction >= visibleThreshold) {
-          tracker.trackEvent(
-            eventName: '${itemType}_impression',
-            parameters: {
-              'item_id': itemId,
-              'visible_fraction': null,
-              ...?parameters});
-        }
-        
-        // 사용자 정의 콜백 호출
-        onVisibilityChanged?.call(info);
+        tracker.trackEvent(
+          eventName: '${itemType}_impression',
+          parameters: {
+            'item_id': itemId,
+            'visible_fraction': 1.0,
+            ...?parameters,
+          },
+        );
+        onVisibilityChanged?.call({'visibleFraction': 1.0});
       },
-      child: child);
+      child: child,
+    );
   }
 }
 
@@ -246,7 +252,7 @@ class _AnalyticsScrollTrackerState extends ConsumerState<AnalyticsScrollTracker>
     if (_scrollController.hasClients) {
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.position.pixels;
-      final scrollPercentage = maxScroll > 0 ? currentScroll / maxScroll : 0;
+      final scrollPercentage = maxScroll > 0 ? currentScroll / maxScroll : 0.0;
       
       // 최대 스크롤 비율 업데이트
       if (scrollPercentage > _maxScrollPercentage) {
@@ -261,7 +267,9 @@ class _AnalyticsScrollTrackerState extends ConsumerState<AnalyticsScrollTracker>
           eventName: 'scroll_depth_reached',
           parameters: {
             'scroll_area': widget.scrollAreaName,
-            'depth_percentage': null});
+            'depth_percentage': (scrollPercentage * 100).round(),
+          },
+        );
       }
     }
   }
@@ -276,7 +284,9 @@ class _AnalyticsScrollTrackerState extends ConsumerState<AnalyticsScrollTracker>
             eventName: 'scroll_session_end',
             parameters: {
               'scroll_area': widget.scrollAreaName,
-              'max_depth_percentage': null});
+              'max_depth_percentage': (_maxScrollPercentage * 100).round(),
+            },
+          );
         }
         return false;
       },

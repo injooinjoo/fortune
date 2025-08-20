@@ -22,7 +22,8 @@ class TarotSelectionView extends ConsumerStatefulWidget {
     required this.selectedDeck,
     required this.onSelectionComplete,
     this.question,
-    this.spreadType = 'single'}) : super(key: key);
+    this.spreadType = 'single',
+  }) : super(key: key);
 
   @override
   ConsumerState<TarotSelectionView> createState() => _TarotSelectionViewState();
@@ -99,14 +100,19 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                 ? _buildShufflingAnimation()
                 : TarotDeckSpreadWidget(
                     key: ValueKey('spread'),
-                    cardCount: 22, // Major Arcana only for simplicity,
-    selectedDeck: widget.selectedDeck,
+                    cardCount: 22, // Major Arcana only for simplicity
+                    selectedDeck: widget.selectedDeck,
                     onCardSelected: _handleCardSelection,
                     selectedIndices: _selectedCards,
-                    spreadType: SpreadType.fan)),
+                    spreadType: SpreadType.fan,
+                  ),
+          ),
+        ),
         
         // Action buttons
-        _buildActionButtons(theme, fontScale)]);
+        _buildActionButtons(theme, fontScale),
+      ],
+    );
   }
 
   Widget _buildHeader(ThemeData theme, double fontScale) {
@@ -116,13 +122,17 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
           '카드를 선택하세요',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 24 * fontScale)),
+            fontSize: 24 * fontScale,
+          ),
+        ),
         const SizedBox(height: 8),
         Text(
           '${widget.requiredCards}장의 카드를 선택해주세요',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.7),
-            fontSize: 16 * fontScale)),
+            fontSize: 16 * fontScale,
+          ),
+        ),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
           const SizedBox(height: 16),
           GlassContainer(
@@ -133,16 +143,26 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                 Icon(
                   Icons.help_outline,
                   size: 18,
-                  color: theme.colorScheme.primary),
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
                     widget.question!,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontStyle: FontStyle.italic,
-                      fontSize: 14 * fontScale),
+                      fontSize: 14 * fontScale,
+                    ),
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis)])]]);
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   Widget _buildProgressIndicator(ThemeData theme) {
@@ -158,8 +178,11 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
             color: isSelected
                 ? theme.colorScheme.primary
                 : theme.colorScheme.onSurface.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(2)));
-      }));
+            borderRadius: BorderRadius.circular(2),
+          ),
+        );
+      }),
+    );
   }
 
   Widget _buildShufflingAnimation() {
@@ -178,12 +201,19 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                 child: Icon(
                   Icons.shuffle,
                   size: 80,
-                  color: Theme.of(context).colorScheme.primary));
-            }),
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 24),
           Text(
             '카드를 섞는 중...',
-            style: Theme.of(context).textTheme.titleLarge)]));
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildActionButtons(ThemeData theme, double fontScale) {
@@ -197,11 +227,16 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               icon: const Icon(Icons.shuffle),
               label: Text(
                 '카드 섞기',
-                style: TextStyle(fontSize: 16 * fontScale)),
+                style: TextStyle(fontSize: 16 * fontScale),
+              ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: FilledButton.icon(
@@ -213,11 +248,18 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               icon: const Icon(Icons.refresh),
               label: Text(
                 '다시 선택',
-                style: TextStyle(fontSize: 16 * fontScale)),
+                style: TextStyle(fontSize: 16 * fontScale),
+              ),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)))]);
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
-

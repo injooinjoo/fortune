@@ -135,10 +135,10 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
 
   Widget _buildBusinessType(ThemeData theme) {
     final types = [
-      {'id': 'current': 'name': '운영중': 'icon': Icons.business},
-      {'id': 'planning': 'name': '준비중': 'icon': Icons.lightbulb},
-      {'id': 'expansion': 'name': '확장중': 'icon': Icons.trending_up},
-      {'id': 'pivot': 'name': '전환중': 'icon': Icons.swap_horiz},
+      {'id': 'current', 'name': '운영중', 'icon': Icons.business},
+      {'id': 'planning', 'name': '준비중', 'icon': Icons.lightbulb},
+      {'id': 'expansion', 'name': '확장중', 'icon': Icons.trending_up},
+      {'id': 'pivot', 'name': '전환중', 'icon': Icons.swap_horiz},
     ];
 
     return GridView.builder(
@@ -204,10 +204,10 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
 
   Widget _buildIndustry(ThemeData theme) {
     final industries = [
-      {'id': 'tech': 'name': 'IT/테크'},
-      {'id': 'retail': 'name': '유통/판매'},
-      {'id': 'service': 'name': '서비스업'},
-      {'id': 'manufacturing': 'name': '제조업'},
+      {'id': 'tech', 'name': 'IT/테크'},
+      {'id': 'retail', 'name': '유통/판매'},
+      {'id': 'service', 'name': '서비스업'},
+      {'id': 'manufacturing', 'name': '제조업'},
     ];
 
     return Row(
@@ -257,10 +257,10 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
 
   Widget _buildBusinessStage(ThemeData theme) {
     final stages = [
-      {'id': 'startup': 'name': '스타트업'},
-      {'id': 'growth': 'name': '성장기'},
-      {'id': 'mature': 'name': '안정기'},
-      {'id': 'renewal': 'name': '재도약기'},
+      {'id': 'startup', 'name': '스타트업'},
+      {'id': 'growth', 'name': '성장기'},
+      {'id': 'mature', 'name': '안정기'},
+      {'id': 'renewal', 'name': '재도약기'},
     ];
 
     return Row(
@@ -310,10 +310,10 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
 
   Widget _buildMainConcern(ThemeData theme) {
     final concerns = [
-      {'id': 'revenue': 'name': '매출증대': 'icon': Icons.trending_up},
-      {'id': 'expansion': 'name': '사업확장': 'icon': Icons.expand},
-      {'id': 'partnership': 'name': '파트너십': 'icon': Icons.handshake},
-      {'id': 'innovation': 'name': '혁신전략': 'icon': Icons.lightbulb_outline},
+      {'id': 'revenue', 'name': '매출증대', 'icon': Icons.trending_up},
+      {'id': 'expansion', 'name': '사업확장', 'icon': Icons.expand},
+      {'id': 'partnership', 'name': '파트너십', 'icon': Icons.handshake},
+      {'id': 'innovation', 'name': '혁신전략', 'icon': Icons.lightbulb_outline},
     ];
 
     return GridView.builder(

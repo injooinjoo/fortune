@@ -120,7 +120,6 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     
     return GlassCard(
       padding: const EdgeInsets.all(20),
-      borderRadius: BorderRadius.circular(20),
       gradient: LinearGradient(
         colors: [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)],
         begin: Alignment.topLeft,

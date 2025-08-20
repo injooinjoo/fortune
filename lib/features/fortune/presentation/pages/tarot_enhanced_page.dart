@@ -76,7 +76,7 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
     
     _heroController.forward();
     _fadeController.forward();
-}
+  }
 
   @override
   void dispose() {
@@ -89,21 +89,21 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
     setState(() {
       _selectedSpread = spread;
       _showSpreadSelection = false;
-});
-}
+    });
+  }
 
   void _backToSpreadSelection() {
     setState(() {
       _showSpreadSelection = true;
       _selectedSpread = null;
-});
-}
+    });
+  }
 
   void _proceedFromQuestion() {
     setState(() {
       _showQuestionInput = false;
-});
-}
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,8 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
             const AppHeader(
               title: '타로 리딩',
               showBackButton: true,
-              showActions: true),
+              showActions: true,
+            ),
             Expanded(
               child: Stack(
                 children: [
@@ -140,13 +141,13 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
                   else if (_selectedSpread != null) _TarotReadingView(
                       spreadType: _selectedSpread!,
                       onBack: _backToSpreadSelection,
-                      fontScale: fontScale)
-                ]
-              )
-            )
-          ]
-        )
-      )
+                      fontScale: fontScale),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -190,7 +191,7 @@ class _MysticalParticlesPainter extends CustomPainter {
       final radius = random.nextDouble() * 3 + 1;
       
       canvas.drawCircle(Offset(x, y), radius, paint);
-}
+    }
   }
 
   @override
@@ -218,7 +219,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
   void dispose() {
     _questionController.dispose();
     super.dispose();
-}
+  }
 
   void _proceed() {
     
@@ -291,8 +292,14 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                     fillColor: theme.colorScheme.surface.withOpacity(0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.all(16))),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.all(16),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 24),
           
           // Tip
@@ -315,7 +322,13 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                     '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 14 * fontScale))]))),
+                      fontSize: 14 * widget.fontScale,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 32),
           
           // Start buttons
@@ -341,7 +354,14 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                           '애니메이션 타로 (신규)',
                           style: TextStyle(
                             fontSize: 18 * widget.fontScale,
-                            fontWeight: FontWeight.bold))]),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 12),
               // Classic flow button
               SizedBox(
@@ -352,8 +372,9 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                     // Navigate directly to card selection with question
                     context.push('/interactive/tarot', extra: {
                       'question': _questionController.text.isEmpty ? '오늘의 운세를 봐주세요' : _questionController.text,
-                      'skipSpreadSelection': null});
-},
+                      'skipSpreadSelection': null,
+                    });
+                  },
                   gradient: LinearGradient(
                     colors: [
                       Colors.purple,
@@ -369,7 +390,19 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                           '클래식 타로',
                           style: TextStyle(
                             fontSize: 18 * widget.fontScale,
-                            fontWeight: FontWeight.bold))]))])))));
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -422,7 +455,12 @@ class _SpreadSelectionView extends StatelessWidget {
             child: _SpreadOptionCard(
               spread: spread,
               onTap: () => onSpreadSelected(spread),
-              fontScale: fontScale))).toList()]));
+              fontScale: fontScale,
+            ),
+          )).toList(),
+        ],
+      ),
+    );
   }
 }
 
@@ -447,7 +485,10 @@ class _TarotHeaderCard extends StatelessWidget {
         child: Icon(
           Icons.auto_awesome,
           size: 56,
-          color: theme.colorScheme.primary)));
+          color: theme.colorScheme.primary,
+        ),
+      ),
+    );
   }
 }
 
@@ -484,7 +525,10 @@ class _SpreadOptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.purple.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.purple.withOpacity(0.5))));
+          border: Border.all(color: Colors.purple.withOpacity(0.5)),
+        ),
+      ),
+    );
   }
 
   Widget _buildThreeCardPreview() {
@@ -498,7 +542,11 @@ class _SpreadOptionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.purple.withOpacity(0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.purple.withOpacity(0.5)))));
+            border: Border.all(color: Colors.purple.withOpacity(0.5)),
+          ),
+        ),
+      )).toList(),
+    );
   }
 
   Widget _buildCelticCrossPreview() {
@@ -513,7 +561,10 @@ class _SpreadOptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.purple.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withOpacity(0.5))))),
+              border: Border.all(color: Colors.purple.withOpacity(0.5)),
+            ),
+          ),
+        ),
         Positioned(
           left: -25,
           child: Container(
@@ -522,7 +573,10 @@ class _SpreadOptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.purple.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withOpacity(0.5))))),
+              border: Border.all(color: Colors.purple.withOpacity(0.5)),
+            ),
+          ),
+        ),
         Positioned(
           right: -25,
           child: Container(
@@ -531,7 +585,12 @@ class _SpreadOptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.purple.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withOpacity(0.5)))])]);
+              border: Border.all(color: Colors.purple.withOpacity(0.5)),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildRelationshipPreview() {
@@ -554,7 +613,11 @@ class _SpreadOptionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.pink.withOpacity(0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withOpacity(0.5)))])]);
+            border: Border.all(color: Colors.pink.withOpacity(0.5)),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildDecisionPreview() {
@@ -586,7 +649,13 @@ class _SpreadOptionCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.orange.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.orange.withOpacity(0.5)))]))])]);
+                border: Border.all(color: Colors.orange.withOpacity(0.5)),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -639,13 +708,25 @@ class _SpreadOptionCard extends StatelessWidget {
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
-                          fontSize: 13 * fontScale))])])),
+                          fontSize: 13 * fontScale,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             
             // Arrow
             Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: theme.colorScheme.onSurface.withOpacity(0.3))]));
+              color: theme.colorScheme.onSurface.withOpacity(0.3),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -670,7 +751,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
   void dispose() {
     _questionController.dispose();
     super.dispose();
-}
+  }
 
   void _startReading() {
     if (widget.spreadType != TarotSpreadType.single && _questionController.text.isEmpty) {
@@ -679,13 +760,14 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
         message: '질문을 입력해주세요',
         type: ToastType.warning);
       return;
-}
+    }
 
     // Navigate to the existing tarot page with spread type parameter
     context.push('/interactive/tarot', extra: {
       'spreadType': widget.spreadType.value,
-      'question': null});
-}
+      'question': null,
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -701,7 +783,9 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
             child: TextButton.icon(
               onPressed: widget.onBack,
               icon: Icon(Icons.arrow_back),
-              label: Text('스프레드 다시 선택')),
+              label: Text('스프레드 다시 선택'),
+            ),
+          ),
           const SizedBox(height: 16),
           
           // Selected spread info
@@ -729,7 +813,11 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 16 * widget.fontScale),
-                  textAlign: TextAlign.center)])),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 24),
           
           // Question input (except for single card)
@@ -763,8 +851,14 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.all(16)))])),
-            const SizedBox(height: 24)],
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
           
           // Start button
           SizedBox(
@@ -786,8 +880,18 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                       '카드 뽑기',
                       style: TextStyle(
                         fontSize: 18 * widget.fontScale,
-                        fontWeight: FontWeight.bold))]),
-          const SizedBox(height: 24)]));
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
   }
 
   String _getSpreadDescription(TarotSpreadType type) {
@@ -853,11 +957,19 @@ class GlassButton extends StatelessWidget {
               BoxShadow(
                 color: (gradient?.colors.first ?? theme.colorScheme.primary).withOpacity(0.3),
                 blurRadius: 8,
-                offset: Offset(0, 4))]),
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
           child: DefaultTextStyle(
             style: TextStyle(color: Colors.white),
             child: IconTheme(
               data: IconThemeData(color: Colors.white),
-              child: child)))));
+              child: child,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -6,7 +6,6 @@ import '../../../features/fortune/presentation/pages/biorhythm_fortune_page.dart
 import '../../../features/fortune/presentation/pages/pet_fortune_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/pet_fortune_unified_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/moving_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/moving_fortune_enhanced_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/moving_date_fortune_page.dart' as fortune_pages;
 
 final healthSportsRoutes = [
@@ -55,12 +54,6 @@ final healthSportsRoutes = [
     path: '/moving',
     name: 'fortune-moving',
     builder: (context, state) => const fortune_pages.MovingFortunePage()),
-  
-  // Moving Enhanced
-  GoRoute(
-    path: '/moving-enhanced',
-    name: 'fortune-moving-enhanced',
-    builder: (context, state) => const fortune_pages.MovingFortuneEnhancedPage()),
   
   // Moving Date
   GoRoute(

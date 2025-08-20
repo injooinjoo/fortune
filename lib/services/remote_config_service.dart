@@ -87,32 +87,34 @@ class RemoteConfigService {
       subscriptionBadgeKey: '추천',
       
       // 토큰 관련,
-    tokenBonusRateKey: 1.0,
+      tokenBonusRateKey: 1.0,
       tokenPackagesKey: json.encode([
-        {'id': 'tokens10': 'amount': 10, 'price': 1000, 'bonus'},
-        {'id': 'tokens50': 'amount': 50, 'price': 4500, 'bonus'},
-        {'id': 'tokens100': 'amount': 100, 'price': 8000, 'bonus'},
-        {'id': 'tokens200': 'amount': 200, 'price': 14000, 'bonus'}],
+        {'id': 'tokens10', 'amount': 10, 'price': 1000, 'bonus': 0},
+        {'id': 'tokens50', 'amount': 50, 'price': 4500, 'bonus': 5},
+        {'id': 'tokens100', 'amount': 100, 'price': 8000, 'bonus': 15},
+        {'id': 'tokens200', 'amount': 200, 'price': 14000, 'bonus': 30}],
+      ),
       popularTokenPackageKey: 'tokens100',
       
       // 온보딩 관련,
-    onboardingFlowKey: 'standard': null,
-    onboardingSkippableKey: false,
+      onboardingFlowKey: 'standard',
+      onboardingSkippableKey: false,
       
       // 운세 UI 관련,
-    fortuneUIStyleKey: 'modern': null,
-    fortuneCardLayoutKey: 'card': null,
-    fortuneAnimationEnabledKey: true,
+      fortuneUIStyleKey: 'modern',
+      fortuneCardLayoutKey: 'card',
+      fortuneAnimationEnabledKey: true,
       
       // 결제 UI 관련,
-    paymentUILayoutKey: 'split': null,
-    paymentButtonStyleKey: 'rounded', null,
-    showDiscountBadgeKey: true,
+      paymentUILayoutKey: 'split',
+      paymentButtonStyleKey: 'rounded',
+      showDiscountBadgeKey: true,
       
       // 보너스 토큰,
-    dailyFreeTokensKey: 1,
+      dailyFreeTokensKey: 1,
       referralBonusTokensKey: 10,
-      newUserBonusTokensKey: 5});
+      newUserBonusTokensKey: 5,
+    });
   }
   
   // Getter 메서드들
@@ -147,7 +149,7 @@ class RemoteConfigService {
     
     try {
       final featuresJson = _remoteConfig.getString(subscriptionFeaturesKey);
-      return List<String>.from(json.decode(featuresJson);
+      return List<String>.from(json.decode(featuresJson));
     } catch (e) {
       Logger.error('Failed to parse subscription features', e);
       return [];
@@ -170,15 +172,15 @@ class RemoteConfigService {
   List<Map<String, dynamic>> getTokenPackages() {
     if (!_isInitialized) {
       return [
-        {'id': 'tokens10': 'amount': 10, 'price': 1000, 'bonus'},
-        {'id': 'tokens50': 'amount': 50, 'price': 4500, 'bonus'},
-        {'id': 'tokens100', 'amount': 100, 'price': 8000, 'bonus'},
-        {'id': 'tokens200', 'amount': 200, 'price': 14000, 'bonus'}];
+        {'id': 'tokens10', 'amount': 10, 'price': 1000, 'bonus': 0},
+        {'id': 'tokens50', 'amount': 50, 'price': 4500, 'bonus': 5},
+        {'id': 'tokens100', 'amount': 100, 'price': 8000, 'bonus': 15},
+        {'id': 'tokens200', 'amount': 200, 'price': 14000, 'bonus': 30}];
     }
     
     try {
       final packagesJson = _remoteConfig.getString(tokenPackagesKey);
-      return List<Map<String, dynamic>>.from(json.decode(packagesJson);
+      return List<Map<String, dynamic>>.from(json.decode(packagesJson));
     } catch (e) {
       Logger.error('Failed to parse token packages', e);
       return [];
@@ -284,4 +286,4 @@ final remoteConfigProvider = Provider<RemoteConfigService>((ref) {
 final remoteConfigInitializerProvider = FutureProvider<void>((ref) async {
   final remoteConfig = ref.watch(remoteConfigProvider);
   await remoteConfig.initialize();
-};
+});

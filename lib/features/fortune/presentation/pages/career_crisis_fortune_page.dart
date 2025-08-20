@@ -34,21 +34,30 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
   final List<String> _selectedSymptoms = [];
   
   final List<String> _crisisTypes = [
-    '번아웃/소진': '직장 내 갈등',
-    '성과 부진': '진로 고민',
-    '구조조정 위기': '성장 정체',
+    '번아웃/소진',
+    '직장 내 갈등',
+    '성과 부진',
+    '진로 고민',
+    '구조조정 위기',
+    '성장 정체',
   ];
 
   final List<String> _severityLevels = [
-    '경미함': '보통',
-    '심각함': '매우 심각함',
+    '경미함',
+    '보통',
+    '심각함',
+    '매우 심각함',
   ];
 
   final List<String> _symptomOptions = [
-    '의욕 상실': '불안/스트레스',
-    '수면 장애': '건강 악화',
-    '대인관계 어려움': '자신감 하락',
-    '분노/짜증': '사직 충동',
+    '의욕 상실',
+    '불안/스트레스',
+    '수면 장애',
+    '건강 악화',
+    '대인관계 어려움',
+    '자신감 하락',
+    '분노/짜증',
+    '사직 충동',
   ];
 
   @override

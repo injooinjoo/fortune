@@ -97,8 +97,18 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           _buildShareOptions(theme),
                           SizedBox(height: AppSpacing.spacing5),
                           _buildSaveOptions(theme),
-                          SizedBox(height: AppSpacing.spacing10)]))]));
-      });
+                          SizedBox(height: AppSpacing.spacing10),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildHandle() {
@@ -129,16 +139,23 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 Text(
                   '스크린샷 감지됨',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: AppSpacing.spacing1),
                 Text(
                   '운세를 친구들과 공유해보세요!',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary)]),
+                    color: AppColors.textSecondary)),
+              ],
+            ),
+          ),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close),
-            padding: EdgeInsets.zero)]));
+            padding: EdgeInsets.zero),
+        ],
+      ),
+    );
   }
 
   Widget _buildPreview(ThemeData theme) {
@@ -154,14 +171,19 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           Text(
             '미리보기',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600)),
+              fontWeight: FontWeight.w600),
+          ),
           SizedBox(height: AppSpacing.spacing3),
           ClipRRect(
             borderRadius: AppDimensions.borderRadiusMedium,
             child: Image.memory(
               widget.previewImage!,
               height: 200,
-              fit: BoxFit.cover)]);
+              fit: BoxFit.cover),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildShareOptions(ThemeData theme) {
@@ -298,13 +320,18 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           padding: AppSpacing.paddingVertical16,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+            children: [
               Icon(icon, color: color, size: AppDimensions.iconSizeSmall),
               SizedBox(width: AppSpacing.spacing2),
               Text(
                 label,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: color)]));
+                  color: color)),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

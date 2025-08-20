@@ -70,7 +70,7 @@ class FortuneBatchService {
         packageType: packageType,
         userProfile: userProfile);
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Error generating batch fortunes: $e');
       // 폴백: 캐시된 데이터 반환
       return await _getCachedBatchFortunes(userId, packageType);
     }
@@ -98,7 +98,7 @@ class FortuneBatchService {
         fortuneTypes: fortuneTypes,
         userProfile: userProfile);
     } catch (e) {
-      debugPrint('Supabase initialized with URL: $supabaseUrl');
+      debugPrint('Error generating batch fortunes: $e');
       // 폴백: 개별 운세 생성
       return await _generateIndividualFortunes(userId, fortuneTypes);
     }
@@ -223,7 +223,7 @@ class FortuneBatchService {
       if (!fromCache) {
         _cacheService.cacheFortune(
           type,
-          {'userId'},
+          {'userId': userId},
           FortuneModel(
             id: fortune.id,
             userId: fortune.userId,
@@ -247,7 +247,7 @@ class FortuneBatchService {
   List<String> _getFortuneTypesForPackage(BatchPackageType packageType) {
     switch (packageType) {
       case BatchPackageType.onboarding:
-        return ['saju': 'personality': 'talent', 'daily', 'yearly'];
+        return ['saju', 'personality', 'talent', 'daily', 'yearly'];
       case BatchPackageType.dailyRefresh:
         return ['daily', 'hourly', 'biorhythm', 'lucky-color'];
       case BatchPackageType.loveSingle:
@@ -321,7 +321,7 @@ class FortuneBatchService {
           fortune: fortuneResponse.toEntity(),
           fromCache: false));
       } catch (e) {
-        debugPrint('Supabase initialized with URL: $supabaseUrl');
+        debugPrint('Error generating batch fortunes: $e');
       }
     }
 
@@ -333,7 +333,7 @@ class FortuneBatchService {
     required String fortuneType,
     String period = 'monthly',
     bool forceRegenerate = false}) async {
-    debugPrint('Supabase initialized with URL: $supabaseUrl');
+    debugPrint('Generating system fortunes for type: $fortuneType');
 
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       final edgeFunctionsDio = Dio(BaseOptions(
@@ -391,7 +391,7 @@ class FortuneBatchService {
       'lucky-number': 1, 'lucky-items': 2, 'lucky-food': 1, 'lucky-outfit': 2,
       'biorhythm': 2, 'health': 2,
       'pet': 2, 'pet-dog': 2, 'pet-cat': 2, 'pet-compatibility': 3,
-      'children': 3, 'parenting': 3, 'pregnancy': 3, 'family-harmony')};
+      'children': 3, 'parenting': 3, 'pregnancy': 3, 'family-harmony': 3};
 
     final individualTotal = fortuneTypes.fold<int>(
       0,

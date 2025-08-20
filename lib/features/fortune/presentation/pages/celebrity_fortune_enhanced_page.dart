@@ -246,8 +246,11 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                           ? CachedNetworkImage(
                               imageUrl: _selectedCelebrity!.profileImageUrl!,
                               fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => _buildPlaceholderImage(_selectedCelebrity!, theme))
-                          : _buildPlaceholderImage(_selectedCelebrity!, theme)),
+                              errorWidget: (context, url, error) => _buildPlaceholderImage(_selectedCelebrity!, theme),
+                            )
+                          : _buildPlaceholderImage(_selectedCelebrity!, theme),
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -269,7 +272,15 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withOpacity(0.6)),
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis)]]))]))],
+                            overflow: TextOverflow.ellipsis),
+                        ],
+                      ],
+                    ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
           
           const SizedBox(height: 24),
           
@@ -316,7 +327,14 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _birthDate != null
                                   ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.5))))])),
+                                  : theme.colorScheme.onSurface.withOpacity(0.5)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(width: 12),
               SizedBox(
                 width: 120,
@@ -349,7 +367,16 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _birthTime != null
                                   ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.5))))])))],
+                                  : theme.colorScheme.onSurface.withOpacity(0.5)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 32),
           
           // Submit Button
@@ -376,7 +403,8 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                   'celebrity_birth_date': _selectedCelebrity!.birthDate.toIso8601String(),
                   'celebrity_birth_time': _selectedCelebrity!.birthTime,
                   'user_birth_date': _birthDate!.toIso8601String(),
-                  'user_birth_time': null});
+                  'user_birth_time': null,
+                });
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -384,7 +412,12 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                   borderRadius: BorderRadius.circular(12))),
               child: const Text(
                 '운세 보기',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))]);
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildCategoryChip(CelebrityCategory? category, String label) {
@@ -420,7 +453,11 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
               style: TextStyle(
                 color: theme.colorScheme.primary,
                 fontSize: 32,
-                fontWeight: FontWeight.bold))));
+                fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      );
     }
     
     return Container(
@@ -499,7 +536,11 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                                         style: TextStyle(
                                           color: theme.colorScheme.primary,
                                           fontSize: 24,
-                                          fontWeight: FontWeight.bold))))
+                                          fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                )
                               : Container(
                                   color: theme.colorScheme.primary.withOpacity(0.2),
                                   child: Center(
@@ -508,7 +549,12 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                                       style: TextStyle(
                                         color: theme.colorScheme.primary,
                                         fontSize: 24,
-                                        fontWeight: FontWeight.bold))))),
+                                        fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -526,13 +572,22 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                             Text(
                               '${celebrityInfo['zodiac'] ?? ''} • ${celebrityInfo['chinese_zodiac'] ?? ''}',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7)))]))])),
+                                color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     celebrityInfo['description'] ?? '',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: _getFontSize(fontSize),
-                      height: 1.6))])),
+                      height: 1.6)),
+                ],
+              ),
+            ),
             const SizedBox(height: 20)],
           
           // Score Section
@@ -660,7 +715,11 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                       compatibility['description'] ?? '',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: _getFontSize(fontSize),
-                        height: 1.5)]])),
+                        height: 1.5)),
+                  ],
+                ],
+              ),
+            ),
             const SizedBox(height: 20)],
           
           // Advice Section
@@ -797,7 +856,13 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold),
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis)])]));
+                  overflow: TextOverflow.ellipsis),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPredictionCard(
@@ -832,6 +897,9 @@ class _CelebrityFortuneResult extends ConsumerWidget {
             content,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: fontSize,
-              height: 1.5))])));
+              height: 1.5)),
+        ],
+      ),
+    );
   }
 }

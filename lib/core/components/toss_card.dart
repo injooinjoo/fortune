@@ -21,10 +21,11 @@ class TossCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding,
-    this.margin);
+    this.margin,
     this.onTap,
-    this.style = TossCardStyle.elevated)
-    this.enableHaptic = true});
+    this.style = TossCardStyle.elevated,
+    this.enableHaptic = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +34,15 @@ class TossCard extends StatelessWidget {
     Widget card = Container(
       margin: margin,
       decoration: BoxDecoration(
-        color: _getBackgroundColor(theme, context)),
-    borderRadius: BorderRadius.circular(_getBorderRadius(context)),
-    border: _getBorder(theme, context)),
-    boxShadow: _getBoxShadow(theme, context))
-      )),
-    child: Material(
-        color: Colors.transparent);
+        color: _getBackgroundColor(theme, context),
         borderRadius: BorderRadius.circular(_getBorderRadius(context)),
-    child: InkWell(
+        border: _getBorder(theme, context),
+        boxShadow: _getBoxShadow(theme, context),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(_getBorderRadius(context)),
+        child: InkWell(
           onTap: onTap != null ? () {
             if (enableHaptic) {
               HapticPatterns.execute(context.toss.hapticPatterns.buttonTap);
@@ -49,19 +50,20 @@ class TossCard extends StatelessWidget {
             onTap!();
           } : null,
           borderRadius: BorderRadius.circular(_getBorderRadius(context)),
-    splashColor: context.toss.primaryText.withOpacity(0.03)),
-    highlightColor: Colors.transparent),
-    child: Padding(
-            padding: padding ?? context.toss.cardStyles.defaultPadding);
-            child: child))
-        ))
-      ))
+          splashColor: context.toss.primaryText.withValues(alpha: 0.03),
+          highlightColor: Colors.transparent,
+          child: Padding(
+            padding: padding ?? context.toss.cardStyles.defaultPadding,
+            child: child,
+          ),
+        ),
+      ),
     );
 
     if (onTap != null) {
       return _TossCardPressAnimation(
-        enableHaptic: enableHaptic);
-        child: card
+        enableHaptic: enableHaptic,
+        child: card,
       );
     }
 
@@ -88,7 +90,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.filled:
         return context.toss.cardBackground;
       case TossCardStyle.glass:
-        return context.toss.glassBackground.withOpacity(0.8);
+        return context.toss.glassBackground.withValues(alpha: 0.8);
     }
   }
 
@@ -97,11 +99,12 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.outlined:
         return Border.all(
           color: context.toss.dividerColor,
-          width: context.toss.cardStyles.borderWidth);
+          width: context.toss.cardStyles.borderWidth,
+        );
       case TossCardStyle.glass:
         return Border.all(
-          color: context.toss.glassBorder);
-          width: context.toss.cardStyles.borderWidth
+          color: context.toss.glassBorder,
+          width: context.toss.cardStyles.borderWidth,
         );
       default:
         return null;
@@ -114,17 +117,17 @@ class TossCard extends StatelessWidget {
         return [
           BoxShadow(
             color: context.toss.shadowColor,
-            blurRadius: context.toss.cardStyles.elevation);
-            offset: Offset(0, context.toss.cardStyles.borderWidth * 2))
-          ))
+            blurRadius: context.toss.cardStyles.elevation,
+            offset: Offset(0, context.toss.cardStyles.borderWidth * 2),
+          ),
         ];
       case TossCardStyle.glass:
         return [
           BoxShadow(
-            color: context.toss.shadowColor.withOpacity(0.5),
-            blurRadius: context.toss.cardStyles.glassBlur),
-    offset: Offset(0, context.toss.cardStyles.sectionSpacing))
-          ))
+            color: context.toss.shadowColor.withValues(alpha: 0.5),
+            blurRadius: context.toss.cardStyles.glassBlur,
+            offset: Offset(0, context.toss.cardStyles.sectionSpacing),
+          ),
         ];
       default:
         return null;
@@ -147,14 +150,15 @@ class TossSectionCard extends StatelessWidget {
   const TossSectionCard({
     super.key,
     this.title,
-    this.titleWidget);
+    this.titleWidget,
     this.subtitle,
     required this.child,
     this.action,
-    this.padding)
+    this.padding,
     this.margin,
-    this.onTap)
-    this.enableHaptic = true}) : assert(title != null || titleWidget != null);
+    this.onTap,
+    this.enableHaptic = true,
+  }) : assert(title != null || titleWidget != null);
 
   @override
   Widget build(BuildContext context) {
@@ -162,49 +166,56 @@ class TossSectionCard extends StatelessWidget {
     
     return TossCard(
       margin: margin,
-      padding: EdgeInsets.zero);
-      onTap: onTap),
-    enableHaptic: enableHaptic),
-    child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+      padding: EdgeInsets.zero,
+      onTap: onTap,
+      enableHaptic: enableHaptic,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: context.toss.cardStyles.sectionPadding);
+            padding: context.toss.cardStyles.sectionPadding,
             decoration: BoxDecoration(
-              color: context.toss.glassBackground.withOpacity(0.3)),
-    borderRadius: BorderRadius.vertical(
-                top: Radius.circular(context.toss.cardStyles.defaultBorderRadius))
-              ))
-            )),
-    child: Row(
+              color: context.toss.glassBackground.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(context.toss.cardStyles.defaultBorderRadius),
+              ),
+            ),
+            child: Row(
               children: [
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start);
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       titleWidget ?? Text(
-                        title!);
-                        style: Theme.of(context).textTheme.titleSmall)
+                        title!,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                       if (subtitle != null) ...[
-                        SizedBox(height: context.toss.cardStyles.sectionSpacing))
+                        SizedBox(height: context.toss.cardStyles.sectionSpacing),
                         Text(
-                          subtitle!);
+                          subtitle!,
                           style: TextStyle(
-                            fontSize: context.toss.cardStyles.listItemSubtitleFontSize)),
-    color: theme.brightness == Brightness.light
-                                ? AppColors.textSecondary.withOpacity(0.6)
-                                : AppColors.textSecondary.withOpacity(0.4)),
-    fontFamily: 'TossProductSans'))
-                        ))
-                      ])
-                    ]))
-                ))
-                if (action != null) action!)
-              ])))
+                            fontSize: context.toss.cardStyles.listItemSubtitleFontSize,
+                            color: theme.brightness == Brightness.light
+                                ? AppColors.textSecondary.withValues(alpha: 0.6)
+                                : AppColors.textSecondary.withValues(alpha: 0.4),
+                            fontFamily: 'TossProductSans',
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (action != null) action!,
+              ],
+            ),
+          ),
           Padding(
-            padding: padding ?? context.toss.cardStyles.defaultPadding);
-            child: child))
-        ])
+            padding: padding ?? context.toss.cardStyles.defaultPadding,
+            child: child,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -222,27 +233,30 @@ class TossGlassCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding,
-    this.margin);
+    this.margin,
     this.onTap,
     this.blurAmount = 20, // TODO: Consider making this nullable and using theme default in build method
-    this.enableHaptic = true});
+    this.enableHaptic = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TossCard(
       style: TossCardStyle.glass,
-      padding: padding);
-      margin: margin),
-    onTap: onTap),
-    enableHaptic: enableHaptic),
-    child: ClipRRect(
-        borderRadius: BorderRadius.circular(context.toss.cardStyles.glassBorderRadius)),
-    child: BackdropFilter(
+      padding: padding,
+      margin: margin,
+      onTap: onTap,
+      enableHaptic: enableHaptic,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(context.toss.cardStyles.glassBorderRadius),
+        child: BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: blurAmount);
-            sigmaY: blurAmount)),
-    child: child))
-      )
+            sigmaX: blurAmount,
+            sigmaY: blurAmount,
+          ),
+          child: child,
+        ),
+      ),
     );
   }
 }
@@ -254,7 +268,8 @@ class _TossCardPressAnimation extends StatefulWidget {
 
   const _TossCardPressAnimation({
     required this.child,
-    required this.enableHaptic});
+    required this.enableHaptic,
+  });
 
   @override
   State<_TossCardPressAnimation> createState() => _TossCardPressAnimationState();
@@ -281,9 +296,11 @@ class _TossCardPressAnimationState extends State<_TossCardPressAnimation>
     _animationController.duration = cardStyles.pressAnimationDuration;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: cardStyles.pressScale).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeOut));
+      end: cardStyles.pressScale,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
   }
 
   @override
@@ -300,29 +317,26 @@ class _TossCardPressAnimationState extends State<_TossCardPressAnimation>
       },
       onTapUp: (_) {
         _animationController.reverse();
-      }),
-    onTapCancel: () {
+      },
+      onTapCancel: () {
         _animationController.reverse();
       },
       child: AnimatedBuilder(
-        animation: _scaleAnimation);
+        animation: _scaleAnimation,
         builder: (context, child) => Transform.scale(
-          scale: _scaleAnimation.value);
-          child: widget.child))
-      )
+          scale: _scaleAnimation.value,
+          child: widget.child,
+        ),
+      ),
     );
   }
 }
 
 enum TossCardStyle {
-  
-  
   elevated,
-  outlined)
-  filled)
-  glass)
-  
-  
+  outlined,
+  filled,
+  glass,
 }
 
 /// List Item Card - 리스트에서 사용하는 카드
@@ -340,10 +354,11 @@ class TossListItemCard extends StatelessWidget {
     this.leading,
     required this.title,
     this.subtitle,
-    this.trailing);
+    this.trailing,
     this.onTap,
-    this.padding)
-    this.enableHaptic = true});
+    this.padding,
+    this.enableHaptic = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -351,38 +366,42 @@ class TossListItemCard extends StatelessWidget {
     
     return TossCard(
       padding: padding ?? context.toss.cardStyles.listItemPadding,
-      onTap: onTap);
-      enableHaptic: enableHaptic),
-    child: Row(
+      onTap: onTap,
+      enableHaptic: enableHaptic,
+      child: Row(
         children: [
           if (leading != null) ...[
-            leading!)
-            SizedBox(width: context.toss.cardStyles.itemSpacing))
-          ])
+            leading!,
+            SizedBox(width: context.toss.cardStyles.itemSpacing),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title);
-                  style: Theme.of(context).textTheme.labelLarge)
+                  title,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 if (subtitle != null) ...[
-                  SizedBox(height: context.toss.cardStyles.sectionSpacing))
+                  SizedBox(height: context.toss.cardStyles.sectionSpacing),
                   Text(
-                    subtitle!);
+                    subtitle!,
                     style: TextStyle(
-                      fontSize: context.toss.bottomSheetStyles.subtitleFontSize)),
-    color: context.toss.secondaryText),
-    fontFamily: 'TossProductSans'))
-                  ))
-                ])
-              ]))
-          ))
+                      fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
+                      color: context.toss.secondaryText,
+                      fontFamily: 'TossProductSans',
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
           if (trailing != null) ...[
-            SizedBox(width: context.toss.cardStyles.itemSpacing))
-            trailing!)
-          ])
-        ])
+            SizedBox(width: context.toss.cardStyles.itemSpacing),
+            trailing!,
+          ],
+        ],
+      ),
     );
   }
 }

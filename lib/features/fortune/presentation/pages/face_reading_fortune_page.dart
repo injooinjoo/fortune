@@ -29,9 +29,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF6A11CB), Color(0xFF2575FC)]),
+        colors: [Color(0xFF6A11CB), Color(0xFF2575FC)]
+      ),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result));
+      resultBuilder: (context, result, onShare) => _buildResult(context, result)
+    );
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
@@ -43,13 +45,17 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             'AI 관상 분석',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold
+            ),
+          ),
           const SizedBox(height: 8),
           const Text(
             'AI가 당신의 얼굴에서 숨겨진 운명과 성격을 분석해드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey)),
+              color: Colors.grey
+            ),
+          ),
           const SizedBox(height: 24),
           // Image selection area
           GestureDetector(
@@ -63,17 +69,19 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 border: Border.all(
                   color: Colors.grey[300]!,
                   width: 2,
-                  style: BorderStyle.solid)),
+                  style: BorderStyle.solid
+                ),
+              ),
               child: _selectedImage != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Stack(
+                      child: Stack(
                         fit: StackFit.expand,
                         children: [
                           Image.file(
                             _selectedImage!,
-                            fit: BoxFit.cover),
+                            fit: BoxFit.cover
+                          ),
                           Positioned(
                             top: 8,
                             right: 8,
@@ -82,36 +90,53 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.5),
-                                  shape: BoxShape.circle),
+                                  shape: BoxShape.circle
+                                ),
                                 child: const Icon(
                                   Icons.close,
                                   color: Colors.white,
-                                  size: 20)),
+                                  size: 20
+                                ),
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _selectedImage = null;
                                 });
-                              })])]))
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.camera_alt_outlined,
                           size: 64,
-                          color: Colors.grey[400]),
+                          color: Colors.grey[400]
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           '탭하여 사진 선택',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
-                            fontWeight: FontWeight.w500)),
+                            fontWeight: FontWeight.w500
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           '카메라 또는 갤러리에서 선택할 수 있습니다',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[500])])),
+                            color: Colors.grey[500]
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
           
           const SizedBox(height: 24),
           // Guidelines
@@ -120,7 +145,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             decoration: BoxDecoration(
               color: Colors.blue[50],
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue[200]!)),
+              border: Border.all(color: Colors.blue[200]!)
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -133,12 +159,19 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue[700]))]),
+                        color: Colors.blue[700]
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 _buildGuidelineItem('정면을 바라보는 사진을 사용해주세요'),
                 _buildGuidelineItem('밝은 조명에서 촬영된 사진이 좋습니다'),
                 _buildGuidelineItem('선글라스나 마스크는 제거해주세요'),
-                _buildGuidelineItem('한 명만 나온 사진을 사용해주세요')])),
+                _buildGuidelineItem('한 명만 나온 사진을 사용해주세요'),
+              ],
+            ),
+          ),
           
           const SizedBox(height: 24),
           // Privacy notice
@@ -147,8 +180,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             decoration: BoxDecoration(
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+            ),
+            child: Row(
               children: [
                 Icon(Icons.lock_outline, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 8),
@@ -157,7 +190,13 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     '사진은 분석 후 즉시 삭제되며 저장되지 않습니다',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[600])]),
+                      color: Colors.grey[600]
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           
           const SizedBox(height: 24),
           // Submit button
@@ -179,14 +218,18 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                         // Pass image data for API processing
                         onSubmit({
                           'image': base64Image,
-                          'analysis_type': 'comprehensive': 'include_character': true,
-                          'include_fortune': true});
+                          'analysis_type': 'comprehensive',
+                          'include_character': true,
+                          'include_fortune': true
+                        });
                       } catch (e) {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('발생했습니다: $e'),
-                              backgroundColor: Colors.red));
+                              content: Text('에러가 발생했습니다: $e'),
+                              backgroundColor: Colors.red
+                            ),
+                          );
                         }
                       } finally {
                         if (mounted) {
@@ -201,8 +244,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 backgroundColor: const Color(0xFF6A11CB),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: _isAnalyzing
+                ),
+              ),
+              child: _isAnalyzing
                   ? const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -211,13 +255,19 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
+                          ),
+                        ),
                         SizedBox(width: 12),
                         Text(
                           'AI가 분석 중입니다...',
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold))])
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ],
+                    )
                   : const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -227,7 +277,16 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                           'AI 관상 분석 시작',
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold)])]));
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildGuidelineItem(String text) {
@@ -240,13 +299,21 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             '• ',
             style: TextStyle(
               color: Colors.blue[600],
-              fontSize: 14)),
+              fontSize: 14
+            ),
+          ),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
                 color: Colors.blue[600],
-                fontSize: 14)]);
+                fontSize: 14
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   void _showImageSourceDialog() {
@@ -259,7 +326,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
-              topRight: Radius.circular(20)),
+              topRight: Radius.circular(20)
+            ),
+          ),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -273,11 +342,15 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                   const Text(
                     '사진 선택',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -289,7 +362,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                         onTap: () {
                           Navigator.pop(context);
                           _pickImage(ImageSource.camera);
-                        }),
+                        }
+                      ),
                       _buildImageSourceOption(
                         icon: Icons.photo_library,
                         label: '갤러리',
@@ -297,8 +371,16 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                         onTap: () {
                           Navigator.pop(context);
                           _pickImage(ImageSource.gallery);
-                        })]),
-                  const SizedBox(height: 20)])));
+                        }
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        );
       }
     );
   }
@@ -307,19 +389,19 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     required IconData icon,
     required String label,
     required Color color,
-    required VoidCallback onTap}) {
+    required VoidCallback onTap
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Container(
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withOpacity(0.3)),
+        ),
         child: Column(
-
           children: [
             Icon(icon, size: 48, color: color),
             const SizedBox(height: 8),
@@ -328,7 +410,13 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: color)]);
+                color: color
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
   
   Future<void> _pickImage(ImageSource source) async {
@@ -337,7 +425,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         source: source,
         maxWidth: 1024,
         maxHeight: 1024,
-        imageQuality: 85);
+        imageQuality: 85
+      );
       
       if (image != null) {
         setState(() {
@@ -348,8 +437,10 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('발생했습니다: $e'),
-            backgroundColor: Colors.red));
+            content: Text('에러가 발생했습니다: $e'),
+            backgroundColor: Colors.red
+          ),
+        );
       }
     }
   }
@@ -366,30 +457,39 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             gradient: LinearGradient(
               colors: [
                 Colors.purple[100]!,
-                Colors.blue[100]!]),
+                Colors.blue[100]!
+              ]
+            ),
             borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-
+          ),
+          child: Column(
             children: [
               const Icon(
                 Icons.face,
                 size: 64,
-                color: Colors.deepPurple),
+                color: Colors.deepPurple
+              ),
               const SizedBox(height: 16),
               Text(
                 data['face_type'] ?? '관상 분석 완료',
                 style: const TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold
+                ),
+              ),
               const SizedBox(height: 8),
-              if (data['overall_fortune'] != null),
-            Text(
+              if (data['overall_fortune'] != null)
+                Text(
                   data['overall_fortune'],
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[700]),
-                  textAlign: TextAlign.center)])),
+                    color: Colors.grey[700]
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+            ],
+          ),
+        ),
         
         const SizedBox(height: 20),
         // Main Fortune
@@ -399,7 +499,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: Colors.grey[200]!)
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -411,14 +512,24 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       '종합 관상 분석',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6)])),
-          const SizedBox(height: 20)],
+                    height: 1.6
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Face Parts Analysis
         if (result.sections != null && result.sections!.isNotEmpty) ...[
@@ -427,7 +538,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: Colors.grey[200]!)
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -439,13 +551,22 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       '부위별 분석',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 ...result.sections!.entries.map((entry) => _buildFacePartAnalysis(
                   _translateFacePart(entry.key),
                   entry.value,
-                  _getFacePartIcon(entry.key)]),
-          const SizedBox(height: 20)],
+                  _getFacePartIcon(entry.key)
+                )),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Character Analysis
         if (data['character_traits'] != null) ...[
@@ -454,7 +575,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: Colors.grey[200]!)
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -466,7 +588,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       '성격 분석',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
@@ -477,13 +603,23 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       decoration: BoxDecoration(
                         color: Colors.orange[50],
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.orange[200]!)),
+                        border: Border.all(color: Colors.orange[200]!)
+                      ),
                       child: Text(
                         trait.toString(),
                         style: TextStyle(
                           color: Colors.orange[700],
-                          fontSize: 14))).toList()])),
-          const SizedBox(height: 20)],
+                          fontSize: 14
+                        ),
+                      ),
+                    )
+                  ).toList(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
         
         // Recommendations
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
@@ -493,10 +629,12 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               gradient: LinearGradient(
                 colors: [
                   Colors.green[50]!,
-                  Colors.blue[50]!]),
+                  Colors.blue[50]!
+                ]
+              ),
               borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
@@ -507,7 +645,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       '운세 개선 조언',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 ...result.recommendations!.map((rec) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -517,12 +659,24 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       const Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: Colors.green),
+                        color: Colors.green
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           rec,
-                          style: const TextStyle(fontSize: 14)])]))]]);
+                          style: const TextStyle(fontSize: 14)
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
   }
   
   Widget _buildFacePartAnalysis(String part, String analysis, IconData icon) {
@@ -535,11 +689,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.blue[50],
-              shape: BoxShape.circle),
+              shape: BoxShape.circle
+            ),
             child: Icon(
               icon,
               size: 20,
-              color: Colors.blue[700])),
+              color: Colors.blue[700]
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -549,13 +706,23 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   part,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   analysis,
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.4)])]);
+                    height: 1.4
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   String _translateFacePart(String part) {
@@ -568,7 +735,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       'cheeks': '볼',
       'eyebrows': '눈썹',
       'ears': '귀'
-  };
+    };
     return translations[part] ?? part;
   }
   
@@ -581,7 +748,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       'chin': Icons.face,
       'cheeks': Icons.face,
       'eyebrows': Icons.face,
-      'ears': null};
+      'ears': Icons.hearing
+    };
     return icons[part] ?? Icons.face;
   }
 }

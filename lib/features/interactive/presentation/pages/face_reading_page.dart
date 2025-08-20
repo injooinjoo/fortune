@@ -48,7 +48,16 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     _buildActionButtons(),
                     if (_analysisResult != null) ...[
                       const SizedBox(height: 32),
-                      _buildResultSection()]]))]));
+                      _buildResultSection(),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInstructions() {
@@ -58,38 +67,53 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           Icon(
             Icons.face,
             size: 48,
-            color: Theme.of(context).colorScheme.primary),
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(height: 16),
           Text(
             'AI가 당신의 얼굴을 분석합니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '정면 사진을 업로드하면 AI가 관상을 분석해드립니다.\n'
             '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
-            textAlign: TextAlign.center),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            ),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.toll,
                   size: 16,
-                  color: Theme.of(context).colorScheme.primary),
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold)])])).animate()
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -108,7 +132,9 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     _selectedImage!,
                     width: double.infinity,
                     height: double.infinity,
-                    fit: BoxFit.cover)),
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 if (!_isAnalyzing)
                   Positioned(
                     top: 8,
@@ -120,22 +146,36 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                         decoration: BoxDecoration(
                           color: Colors.black54,
                           borderRadius: BorderRadius.circular(20),
+                        ),
                         child: const Icon(
                           Icons.close,
                           color: Colors.white,
-                          size: 20)))])
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            )
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.add_photo_alternate,
                   size: 64,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   '탭하여 사진 선택',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))])).animate()
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ],
+            ),
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -154,7 +194,11 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     children: [
                       const Icon(Icons.camera_alt),
                       const SizedBox(width: 8),
-                      const Text('카메라로 촬영')])),
+                      const Text('카메라로 촬영'),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: GlassButton(
@@ -164,7 +208,15 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     children: [
                       const Icon(Icons.photo_library),
                       const SizedBox(width: 8),
-                      const Text('갤러리에서 선택')])))])] else ...[
+                      const Text('갤러리에서 선택'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (_selectedImage != null) ...[
           GlassButton(
             onPressed: _isAnalyzing ? null : _analyzeImage,
             width: double.infinity,
@@ -175,15 +227,23 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2)),
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                     const SizedBox(width: 8),
-                    const Text('분석 중...')])
-              : const Text('AI 관상 분석 시작')),
+                    const Text('분석 중...'),
+                  ],
+                )
+              : const Text('AI 관상 분석 시작'),
+          ),
           const SizedBox(height: 12),
           GlassButton(
             onPressed: _isAnalyzing ? null : _showImagePicker,
             width: double.infinity,
-            child: const Text('다른 사진 선택'))]]).animate()
+            child: const Text('다른 사진 선택'),
+          ),
+        ],
+      ],
+    ).animate()
       .fadeIn(duration: 600.ms, delay: 200.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -198,24 +258,33 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Icon(
                 Icons.psychology,
                 color: Theme.of(context).colorScheme.primary,
-                size: 24),
+                size: 24,
+              ),
               const SizedBox(width: 8),
               Text(
                 'AI 관상 분석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6)),
+              height: 1.6,
+            ),
+          ),
           const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
                 child: GlassButton(
                   onPressed: _resetAnalysis,
-                  child: const Text('다시 분석하기')),
+                  child: const Text('다시 분석하기'),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: GlassButton(
@@ -225,7 +294,16 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     children: [
                       const Icon(Icons.share),
                       const SizedBox(width: 8),
-                      const Text('결과 공유')])))])])).animate()
+                      const Text('결과 공유'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -258,7 +336,13 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               ListTile(
                 leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                 title: const Text('취소'),
-                onTap: () => Navigator.pop(context)]));
+                onTap: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -392,13 +476,18 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소')),
+            child: const Text('취소'),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               openAppSettings();
             },
-            child: const Text('설정으로 이동')]);
+            child: const Text('설정으로 이동'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showInsufficientTokensModal() {
@@ -408,6 +497,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       backgroundColor: Colors.transparent,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: _requiredTokens,
-        fortuneType: 'face-reading'));
+        fortuneType: 'face-reading',
+      ),
+    );
   }
 }

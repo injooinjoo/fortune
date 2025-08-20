@@ -122,8 +122,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                       });
                     },
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Chip(
+                    child: Chip(
                       label: Text(level),
                       backgroundColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.2)
@@ -155,7 +154,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '희망 분야',
-                    style: theme.textTheme.headlineSmall)],
+                    style: theme.textTheme.headlineSmall),
+                ],
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -164,6 +164,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   hintText: '희망하는 직무 분야를 선택하세요',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   filled: true,
                   fillColor: theme.colorScheme.surface.withOpacity(0.5)),
                 items: _fields.map((field) {
@@ -175,7 +176,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   setState(() {
                     _desiredField = value;
                   });
-                }),])),
+                }),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         // Job Search Duration
         GlassCard(
@@ -191,7 +195,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '구직 기간',
-                    style: theme.textTheme.headlineSmall)]),
+                    style: theme.textTheme.headlineSmall),
+                ],
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -223,7 +229,14 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                           : '$_jobSearchDuration개월',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center))]])),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         // Primary Concern
         GlassCard(
@@ -239,7 +252,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '가장 큰 고민',
-                    style: theme.textTheme.headlineSmall)]),
+                    style: theme.textTheme.headlineSmall),
+                ],
+              ),
               const SizedBox(height: 16),
               ...List.generate(_concerns.length, (index) {
                 final concern = _concerns[index];
@@ -254,8 +269,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                       });
                     },
                     borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Container(
+                    child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: isSelected
@@ -265,7 +279,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2)),
+                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                        ),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -279,8 +295,18 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                           Expanded(
                             child: Text(
                               concern,
-                              style: theme.textTheme.bodyLarge)])));
-              })])),
+                              style: theme.textTheme.bodyLarge,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         // Skill Areas
         GlassCard(
@@ -296,7 +322,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '강점 스킬 (복수 선택)',
-                    style: theme.textTheme.headlineSmall)]),
+                    style: theme.textTheme.headlineSmall),
+                ],
+              ),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -315,8 +343,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                       });
                     },
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Chip(
+                    child: Chip(
                       label: Text(skill),
                       backgroundColor: isSelected
                           ? theme.colorScheme.secondary.withOpacity(0.2)
@@ -324,10 +351,17 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.onSurface.withOpacity(0.3)));
+                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                      ),
+                    ),
+                  );
                 }).toList(),
-              )
-            ])));
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -360,7 +394,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '취업 기회 레이더',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               height: 300,
@@ -375,14 +411,23 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     RadarData('시장 수요', 0.90),
                     RadarData('경쟁력', 0.85)],
                   primaryColor: theme.colorScheme.primary,
-                  backgroundColor: theme.colorScheme.surface),
-                child: const SizedBox.expand()),
+                  backgroundColor: theme.colorScheme.surface,
+                ),
+                child: const SizedBox.expand(),
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               '현재 시장 수요가 매우 높은 시기입니다. 적극적인 지원을 추천드립니다!',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.8)),
-              textAlign: TextAlign.center)])),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildApplicationTimeline() {
     final theme = Theme.of(context);
@@ -408,7 +453,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '예상 취업 타임라인',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall),
+              ],
+            ),
             const SizedBox(height: 24),
             ...timelineEvents.map((event) {
               final index = timelineEvents.indexOf(event);
@@ -438,12 +485,18 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             color: event.isCompleted
                                 ? Colors.white
                                 : theme.colorScheme.primary,
-                            size: 20)),
+                            size: 20,
+                          ),
+                        ),
+                      ),
                       if (!isLast)
                         Container(
                           width: 2,
                           height: 60,
-                          color: theme.colorScheme.primary.withOpacity(0.3))]),
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                        ),
+                    ],
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Padding(
@@ -455,12 +508,25 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             event.period,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold)),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             event.title,
-                            style: theme.textTheme.bodyLarge))])]));
-            }).toList(),])),
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildIndustryCompatibility() {
@@ -514,14 +580,27 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             '${industry.compatibility}%',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: industry.color,
-                              fontWeight: FontWeight.bold))]),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: industry.compatibility / 100,
                       backgroundColor: industry.color.withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(industry.color),
-                      minHeight: 8)]));
-            }).toList(),);
+                      minHeight: 8,
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildLuckyCompanies() {
@@ -566,7 +645,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     border: Border.all(
                       color: isTop
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurface.withOpacity(0.2)),
+                          : theme.colorScheme.onSurface.withOpacity(0.2),
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -576,7 +657,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                           color: isTop
                               ? theme.colorScheme.primary
                               : theme.colorScheme.onSurface.withOpacity(0.3),
-                          shape: BoxShape.circle),
+                          shape: BoxShape.circle,
+                        ),
                         child: Center(
                           child: Text(
                             '${index + 1}',
@@ -585,19 +667,35 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                                   ? Colors.white
                                   : theme.colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12)),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           company,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: isTop ? FontWeight.bold : FontWeight.normal)),
+                            fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ),
                       if (isTop)
                         Icon(
                           Icons.star_rounded,
                           color: theme.colorScheme.primary,
-                          size: 20)]));
-            }).toList(),);
+                          size: 20,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildActionPlan() {
@@ -677,13 +775,28 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             Text(
                               action.title,
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold)),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               action.description,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7)])]));
-            }).toList(),);
+                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 }
 

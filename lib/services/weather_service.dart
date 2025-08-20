@@ -184,87 +184,11 @@ class WeatherInfo {
     );
   }
   
-  /// 영어 도시명을 한글로 변환
+  /// 영어 도시명을 그대로 반환 (GPT가 처리)
   static String _translateCityName(String englishName) {
-    // 주요 도시 매핑
-    final Map<String, String> cityNameMap = {
-      'Seoul': '서울',
-      'Busan': '부산',
-      'Incheon': '인천',
-      'Daegu': '대구',
-      'Daejeon': '대전',
-      'Gwangju': '광주',
-      'Ulsan': '울산',
-      'Sejong': '세종',
-      'Suwon': '수원',
-      'Suwon-si': '수원',
-      'Seongnam': '성남',
-      'Seongnam-si': '성남',
-      'Goyang': '고양',
-      'Goyang-si': '고양',
-      'Yongin': '용인',
-      'Yongin-si': '용인',
-      'Bucheon': '부천',
-      'Bucheon-si': '부천',
-      'Ansan': '안산',
-      'Ansan-si': '안산',
-      'Anyang': '안양',
-      'Anyang-si': '안양',
-      'Namyangju': '남양주',
-      'Namyangju-si': '남양주',
-      'Hwaseong': '화성',
-      'Hwaseong-si': '화성',
-      'Cheongju': '청주',
-      'Cheongju-si': '청주',
-      'Cheonan': '천안',
-      'Cheonan-si': '천안',
-      'Jeonju': '전주',
-      'Jeonju-si': '전주',
-      'Gimhae': '김해',
-      'Gimhae-si': '김해',
-      'Pohang': '포항',
-      'Pohang-si': '포항',
-      'Changwon': '창원',
-      'Changwon-si': '창원',
-      'Jeju': '제주',
-      'Jeju City': '제주',
-      'Jeju-si': '제주',
-      'Uijeongbu': '의정부',
-      'Uijeongbu-si': '의정부',
-      'Siheung': '시흥',
-      'Siheung-si': '시흥',
-      'Paju': '파주',
-      'Paju-si': '파주',
-      'Gwangmyeong': '광명',
-      'Gwangmyeong-si': '광명',
-      'Gimpo': '김포',
-      'Gimpo-si': '김포',
-      'Pyeongtaek': '평택',
-      'Pyeongtaek-si': '평택',
-      'Gyeonggi-do': '경기도',
-      'Gangwon-do': '강원도',
-      'Chungcheongbuk-do': '충청북도',
-      'Chungcheongnam-do': '충청남도',
-      'Jeollabuk-do': '전라북도',
-      'Jeollanam-do': '전라남도',
-      'Gyeongsangbuk-do': '경상북도',
-      'Gyeongsangnam-do': '경상남도',
-    };
-    
-    // -si, -gu, -dong 등의 접미사 제거
-    String cleanedName = englishName;
-    if (cleanedName.endsWith('-si')) {
-      cleanedName = cleanedName.substring(0, cleanedName.length - 3);
-    }
-    if (cleanedName.endsWith('-gu')) {
-      cleanedName = cleanedName.substring(0, cleanedName.length - 3);
-    }
-    if (cleanedName.endsWith('-dong')) {
-      cleanedName = cleanedName.substring(0, cleanedName.length - 5);
-    }
-    
-    // 매핑에서 찾기
-    return cityNameMap[englishName] ?? cityNameMap[cleanedName] ?? englishName;
+    // GPT에서 지역명을 한글로 변환하고 해석하도록
+    // 여기서는 영어 이름을 그대로 반환
+    return englishName;
   }
 
   /// 기본 날씨 정보 (API 실패 시)

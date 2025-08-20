@@ -213,10 +213,8 @@ void main() {
       await tester.pumpAndSettle();
       
       // In production, this would show platform-specific payment methods
-      // For,
-    iOS: Apple Pay
-      // For,
-    Android: Google Pay
+      // For iOS: Apple Pay
+      // For Android: Google Pay
       // Both: Credit card options
     });
     

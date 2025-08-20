@@ -109,7 +109,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
   Future<void> _updateLocationAndAddress(LatLng location) async {
     setState(() {
       _selectedLocation = location;
-});
+    });
     
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -121,22 +121,38 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         Placemark place = placemarks.first;
         String address = '';
         
-        if (place.administrativeArea != null) address += '${place.administrativeArea} ';
-        if (place.locality != null) address += '${place.locality} ';
-        if (place.subLocality != null) address += '${place.subLocality} ';
-        if (place.thoroughfare != null) address += '${place.thoroughfare} ';
-        if (place.subThoroughfare != null) address += place.subThoroughfare!;
+        // 광역시/도 단위로 간소화된 주소 생성
+        String simplifiedAddress = _getSimplifiedKoreanAddress(place);
         
         setState(() {
-          _selectedAddress = address.trim();
+          _selectedAddress = simplifiedAddress;
           _searchController.text = _selectedAddress;
-});
+        });
         
         widget.onLocationSelected(location, _selectedAddress);
-}
+      }
     } catch (e) {
-      print('Fortune cached');
-}
+      print('주소 변환 실패: $e');
+    }
+  }
+  
+  /// 영어 지역명을 그대로 반환 (GPT가 처리하도록)
+  String _getSimplifiedKoreanAddress(Placemark place) {
+    // GPT나 Edge Function에서 지역명을 처리하도록
+    // 여기서는 간단한 포맷팅만 수행
+    String address = '';
+    
+    if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
+      address += place.administrativeArea!;
+      
+      if (place.locality != null && place.locality!.isNotEmpty) {
+        address += ' ${place.locality!}';
+      }
+    } else if (place.locality != null && place.locality!.isNotEmpty) {
+      address = place.locality!;
+    }
+    
+    return address.trim().isEmpty ? 'Seoul' : address.trim();
   }
 
   void _showSnackBar(String message) {

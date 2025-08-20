@@ -14,12 +14,14 @@ class CacheEntryAdapter extends TypeAdapter<CacheEntry> {
   CacheEntry read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return CacheEntry(
       key: fields[0] as String,
       fortuneType: fields[1] as String,
       createdAt: fields[2] as DateTime,
-      expiresAt: fields[3] as DateTime);
+      expiresAt: fields[3] as DateTime,
+    );
   }
 
   @override

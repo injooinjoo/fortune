@@ -42,8 +42,10 @@ class FortuneDisplay extends StatelessWidget {
           _buildAdvice(context)],
         if (warningMessage != null) ...[
           const SizedBox(height: AppSpacing.spacing6),
-          _buildWarning(context)]]);
-}
+          _buildWarning(context)],
+      ],
+    );
+  }
 
   Widget _buildHeader(BuildContext context) {
     return GlassContainer(
@@ -67,8 +69,10 @@ class FortuneDisplay extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          scoreColor.withOpacity(0.2),
-          scoreColor.withOpacity(0.1)]),
+          scoreColor.withValues(alpha: 0.2),
+          scoreColor.withValues(alpha: 0.1),
+        ],
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -93,7 +97,13 @@ class FortuneDisplay extends StatelessWidget {
             child: Center(
               child: Text(
                 '$overallScore',
-                style: Theme.of(context).textTheme.bodyMedium))]);
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildLuckyItems(BuildContext context) {
@@ -116,12 +126,16 @@ class FortuneDisplay extends StatelessWidget {
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: luckyItems!.entries.map((entry) {
+            children: this.luckyItems!.entries.map((entry) {
               return _buildLuckyItemChip(
                 entry.key,
                 entry.value.toString(),
                 context);
-            }).toList()]);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildLuckyItemChip(String label, String value, BuildContext context) {
@@ -173,7 +187,7 @@ class FortuneDisplay extends StatelessWidget {
 
   Widget _buildDetailedFortune(BuildContext context) {
     return Column(
-      children: detailedFortune!.entries.map((entry) {
+      children: this.detailedFortune!.entries.map((entry) {
         return Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.spacing3),
           child: GlassContainer(
@@ -220,7 +234,7 @@ class FortuneDisplay extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium)]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
-            advice!,
+            this.advice!,
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 
@@ -246,7 +260,7 @@ class FortuneDisplay extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium)]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
-            warningMessage!,
+            this.warningMessage!,
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 

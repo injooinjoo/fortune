@@ -20,7 +20,8 @@ class PhoneVerificationStep extends StatefulWidget {
     required this.countryCode,
     required this.onVerify,
     required this.onResend,
-    required this.onBack});
+    required this.onBack,
+  });
 
   @override
   State<PhoneVerificationStep> createState() => _PhoneVerificationStepState();
@@ -145,8 +146,8 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, // Keep transparent for overlay,
-    body: SafeArea(
+      backgroundColor: Colors.transparent, // Keep transparent for overlay
+      body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
           child: Column(
@@ -159,13 +160,17 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                   fontWeight: FontWeight.bold,
                   height: 1.2,
                   color: context.fortuneTheme.primaryText),
-                textAlign: TextAlign.center),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               Text(
                 '${widget.countryCode} ${_formatPhoneNumber(widget.phoneNumber)}로\n인증번호를 전송했습니다',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: context.fortuneTheme.subtitleText,
                   height: 1.5),
-                textAlign: TextAlign.center),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
               // OTP Input Fields
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -184,7 +189,8 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                         keyboardType: TextInputType.number,
                         maxLength: 1,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w600),                        decoration: InputDecoration(
+                          fontWeight: FontWeight.w600),
+                        decoration: InputDecoration(
                           counterText: '',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
@@ -198,11 +204,16 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                           filled: true,
                           fillColor: _controllers[index].text.isNotEmpty
                               ? context.fortuneTheme.cardBackground
-                              : context.fortuneTheme.cardSurface),                        inputFormatters: [
+                              : context.fortuneTheme.cardSurface),
+                        inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(1)],
-                        onChanged: (value) => _onOtpFieldChanged(value, index)));
-                })),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2),
+                        onChanged: (value) => _onOtpFieldChanged(value, index)),
+                    ),
+                  );
+                }),
+              ),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2),
               // Resend Timer
               _canResend
                   ? TextButton(
@@ -211,11 +222,14 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                         '인증번호 다시 받기',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600
-                        )))                  : Text(
+                        )),
+                    )
+                  : Text(
                       '${_resendTimer}초 후 다시 받기',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: context.fortuneTheme.subtitleText
-                      )),              const Spacer(),
+                      )),
+              const Spacer(),
               // Verify Button
               SizedBox(
                 width: double.infinity,
@@ -229,23 +243,36 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                     foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
-                    elevation: 0),                   child: _isLoading
+                    elevation: 0),
+                  child: _isLoading
                       ? SizedBox(
                           width: context.fortuneTheme.socialSharing.shareIconSize,
                           height: context.fortuneTheme.socialSharing.shareIconSize,
                           child: const CircularProgressIndicator(
                             color: AppColors.textPrimaryDark,
-                            strokeWidth: 2))                      : Text(
+                            strokeWidth: 2),
+                        )
+                      : Text(
                           '인증 완료',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600
-                          )),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
+                          )),
+                ),
+              ),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               TextButton(
                 onPressed: widget.onBack,
                 child: Text(
                   '번호 다시 입력',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: context.fortuneTheme.subtitleText
-                  )),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5)])));
+                  )),
+              ),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

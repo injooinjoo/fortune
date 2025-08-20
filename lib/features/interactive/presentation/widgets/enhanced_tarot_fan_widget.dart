@@ -151,13 +151,19 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                   widget.fortuneType,
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'Choose your card',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withOpacity(0.7)))
-              ]))
+                    color: Colors.white.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
           
           // Card fan
           Positioned(
@@ -229,7 +235,8 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                       });
                   }
                 );
-              })),
+              }),
+          ),
           
           // Back button
           Positioned(
@@ -237,9 +244,12 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
             left: 10,
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context)
-            ))
-        ]));
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildCard(int index, bool isCenter, double scale) {
@@ -253,12 +263,14 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
           BoxShadow(
             color: widget.primaryColor.withOpacity(0.6),
             blurRadius: 30,
-            spreadRadius: 10)
+            spreadRadius: 10,
+          ),
         ] : [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
-            offset: const Offset(0, 5))
+            offset: const Offset(0, 5),
+          ),
         ]),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -276,17 +288,24 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                   ] : [
                     const Color(0xFF2C1810),
                     const Color(0xFF1A0F08)
-                  ])),
+                  ]),
+              ),
+            ),
             
             // Card pattern
-            Positioned.fill(
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               child: CustomPaint(
                 painter: CardPatternPainter(
                   color: isCenter 
                       ? Colors.white.withOpacity(0.3)
                       : Colors.white.withOpacity(0.1),
-                  isAnimated: isCenter)
-              )),
+                  isAnimated: isCenter),
+              ),
+            ),
             
             // Card border
             Container(
@@ -296,18 +315,21 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                   color: isCenter 
                       ? Colors.white.withOpacity(0.5)
                       : Colors.white.withOpacity(0.2),
-                  width: isCenter ? 3 : 1)
-              )),
+                  width: isCenter ? 3 : 1),
+              ),
+            ),
             
             // Center icon
-            if (scale > 0.5)
-              Center(
-                child: Icon(
-                  Icons.auto_awesome,
-                  size: 40 * scale,
-                  color: Colors.white.withOpacity(isCenter ? 0.9 : 0.5)
-                ))
-          ]))
+            scale > 0.5 ? Center(
+              child: Icon(
+                Icons.auto_awesome,
+                size: 40 * scale,
+                color: Colors.white.withValues(alpha: isCenter ? 0.9 : 0.5),
+              ),
+            ) : const SizedBox(),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -342,7 +364,7 @@ class CardPatternPainter extends CustomPainter {
       
       // Draw small circles at endpoints
       canvas.drawCircle(point, 4, paint..style = PaintingStyle.fill);
-      paint..style = PaintingStyle.stroke;
+      paint.style = PaintingStyle.stroke;
     }
     
     // Draw center circle

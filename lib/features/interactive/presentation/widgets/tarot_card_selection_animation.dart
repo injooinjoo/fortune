@@ -45,45 +45,55 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
     // Card pick animation
     _pickController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this);
+      vsync: this,
+    );
     
     // Card flip animation
     _flipController = AnimationController(
       duration: const Duration(milliseconds: 1000),
-      vsync: this);
+      vsync: this,
+    );
     
     // Other cards fade animation
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
-      vsync: this);
+      vsync: this,
+    );
     
     // Glow animation
     _glowController = AnimationController(
       duration: const Duration(milliseconds: 1500),
-      vsync: this)..repeat(reverse: true);
+      vsync: this,
+    )..repeat(reverse: true);
     
     // Set up animations
     _pickAnimation = CurvedAnimation(
       parent: _pickController,
-      curve: Curves.easeOutBack);
+      curve: Curves.easeOutBack,
+    );
     
     _flipAnimation = CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOut);
+      curve: Curves.easeInOut,
+    );
     
     _fadeAnimation = CurvedAnimation(
       parent: _fadeController,
-      curve: Curves.easeOut);
+      curve: Curves.easeOut,
+    );
     
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.3).animate(CurvedAnimation(
+      end: 1.3,
+    ).animate(CurvedAnimation(
       parent: _pickController,
-      curve: Curves.easeOut));
+      curve: Curves.easeOut,
+    ));
     
     _glowAnimation = Tween<double>(
       begin: 0.3,
-      end: 0.7).animate(_glowController);
+      end: 0.7,
+    ).animate(_glowController);
     
     // Add listener for flip timing
     _flipAnimation.addStatusListener((status) {
@@ -134,8 +144,10 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           animation: _fadeAnimation,
           builder: (context, child) {
             return Container(
-              color: Colors.black.withOpacity(_fadeAnimation.value * 0.7));
-          }),
+              color: Colors.black.withOpacity(_fadeAnimation.value * 0.7),
+            );
+          },
+        ),
         
         // Other cards fading out
         ..._buildOtherCards(),

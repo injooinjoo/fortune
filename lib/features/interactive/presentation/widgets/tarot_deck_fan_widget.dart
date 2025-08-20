@@ -140,12 +140,25 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                                   BoxShadow(
                                     color: Theme.of(context).primaryColor.withOpacity(0.4),
                                     blurRadius: 20,
-                                    spreadRadius: 5)])),
+                                    spreadRadius: 5,
+                                  ),
+                                ],
+                              ),
+                            ),
                           
                           // Card back
-                          _buildCardBack(context, index, isHovered, isSelected)]))));
-            });
-        }));
+                          _buildCardBack(context, index, isHovered, isSelected),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildCardBack(BuildContext context, int index, bool isHovered, bool isSelected) {
@@ -174,13 +187,18 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
               painter: MandalaPainter(
                 color: Colors.white.withOpacity(0.1),
                 isAnimated: isHovered)),
+          ),
           
           // Center symbol
           Center(
             child: Icon(
               Icons.auto_awesome,
               size: 40,
-              color: Colors.white.withOpacity(isHovered ? 0.9 : 0.7))]);
+              color: Colors.white.withOpacity(isHovered ? 0.9 : 0.7)),
+          ),
+        ],
+      ),
+    );
   }
 }
 

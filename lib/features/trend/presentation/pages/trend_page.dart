@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../presentation/providers/navigation_visibility_provider.dart';
 
-class TrendPage extends StatefulWidget {
+class TrendPage extends ConsumerStatefulWidget {
   const TrendPage({super.key});
 
   @override
-  State<TrendPage> createState() => _TrendPageState();
+  ConsumerState<TrendPage> createState() => _TrendPageState();
 }
 
-class _TrendPageState extends State<TrendPage> {
+class _TrendPageState extends ConsumerState<TrendPage> {
+  // Scroll controller and variables for navigation bar hiding
+  late ScrollController _scrollController;
+  double _lastScrollOffset = 0.0;
+  bool _isScrollingDown = false;
+  
   final List<Map<String, dynamic>> trendItems = [
     {
       'type': 'trend',
@@ -53,41 +60,98 @@ class _TrendPageState extends State<TrendPage> {
       'views': '0'}];
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize scroll controller with navigation bar hiding logic
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+  
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+  
+  void _onScroll() {
+    final currentScrollOffset = _scrollController.offset;
+    const scrollThreshold = 100.0; // Minimum scroll distance before hiding/showing nav
+    
+    // Only trigger if we've scrolled more than the threshold
+    if ((currentScrollOffset - _lastScrollOffset).abs() > scrollThreshold) {
+      final isScrollingDown = currentScrollOffset > _lastScrollOffset;
+      
+      // Only update if direction changed
+      if (isScrollingDown != _isScrollingDown) {
+        _isScrollingDown = isScrollingDown;
+        _lastScrollOffset = currentScrollOffset;
+        
+        // Update navigation visibility
+        final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
+        if (isScrollingDown) {
+          navigationNotifier.hide();
+        } else {
+          navigationNotifier.show();
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: [
-              Color(0xFFF58529),
-              Color(0xFFDD2A7B),
-              Color(0xFF8134AF)]).createShader(bounds),
-          child: Text(
-            '트렌드 & 테스트',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications_outlined, color: Colors.black87),
-            onPressed: () {})]),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await Future.delayed(Duration(seconds: 1));
-        },
-        child: ListView.builder(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          itemCount: trendItems.length,
-          itemBuilder: (context, index) {
-            final item = trendItems[index];
-            return _buildTrendCard(item).animate()
-              .fadeIn(delay: Duration(milliseconds: 100 * index))
-              .slideY(begin: 0.1, end: 0);
-          })));
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(Duration(seconds: 1));
+          },
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: EdgeInsets.symmetric(vertical: 8),
+            itemCount: trendItems.length + 1, // +1 for header
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // Header section replacing AppBar
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: [
+                              Color(0xFFF58529),
+                              Color(0xFFDD2A7B),
+                              Color(0xFF8134AF)]).createShader(bounds),
+                          child: Text(
+                            '트렌드 & 테스트',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.notifications_outlined, color: Colors.black87),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                );
+              }
+              
+              final item = trendItems[index - 1]; // -1 because of header
+              return _buildTrendCard(item).animate()
+                .fadeIn(delay: Duration(milliseconds: 100 * (index - 1)))
+                .slideY(begin: 0.1, end: 0);
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildTrendCard(Map<String, dynamic> item) {
@@ -135,65 +199,80 @@ class _TrendPageState extends State<TrendPage> {
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w600)),
-                    SizedBox(height: 12),
+                          fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     // Emoji and title
                     Row(
                       children: [
                         Text(
                           item['emoji'],
-                          style: TextStyle(fontSize: 32)),
-                        SizedBox(width: 12),
+                          style: const TextStyle(fontSize: 32)),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 item['title'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.5)),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 item['subtitle'],
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w400)])]),
-                    Spacer(),
+                                  fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
                     // Stats
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.favorite,
                           color: Colors.white,
                           size: 16),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           '${item['likes']}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w500)),
-                        SizedBox(width: 16),
-                        Icon(
+                        const SizedBox(width: 16),
+                        const Icon(
                           Icons.visibility,
                           color: Colors.white,
                           size: 16),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           '${item['views']}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            fontWeight: FontWeight.w500))])])),
+                            fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               // Decorative elements
               Positioned(
                 right: -20,
@@ -203,7 +282,9 @@ class _TrendPageState extends State<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1)),
+                    color: Colors.white.withValues(alpha: 0.1)),
+                ),
+              ),
               Positioned(
                 right: 20,
                 bottom: 20,
@@ -212,6 +293,13 @@ class _TrendPageState extends State<TrendPage> {
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.15))]));
+                    color: Colors.white.withValues(alpha: 0.15)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

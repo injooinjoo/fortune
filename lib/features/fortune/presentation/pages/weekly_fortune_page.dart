@@ -15,7 +15,8 @@ class WeeklyFortunePage extends BaseFortunePage {
           title: '주간 운세',
           description: '이번 주 7일간의 운세 흐름을 확인해보세요',
           fortuneType: 'weekly',
-          requiresUserInfo: false);
+          requiresUserInfo: false,
+        );
 
   @override
   ConsumerState<WeeklyFortunePage> createState() => _WeeklyFortunePageState();
@@ -203,7 +204,8 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10)),
+                            style: const TextStyle(fontSize: 10),
+                          );
                         }),
                       ),
                     ),
@@ -277,7 +279,9 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       ? LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.primary.withOpacity(0.8)])
+                            Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                          ],
+                        )
                       : null,
                     color: !isSelected 
                       ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
@@ -287,7 +291,8 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       ? Border.all(
                           color: Theme.of(context).colorScheme.primary,
                           width: 2)
-                      : null),
+                      : null,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -298,7 +303,9 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                           color: isSelected
                             ? Colors.white
                             : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         '${date.day}',
@@ -307,16 +314,18 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                           color: isSelected
                             ? Colors.white
                             : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold),
-                      ],
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-            },
-          ),
+                ),
+              ),
+            );
+          },
         ),
-      );
-  }
+      ),
+    );
   }
 
   Widget _buildSelectedDayDetail() {
@@ -350,17 +359,19 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                     '${selectedDate.month}월 ${selectedDate.day}일 ${selectedDay}요일',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                ),
                 const Spacer(),
                 Text(
                   '${dayData['score']}점',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: _getScoreColor(dayData['score']),
                     fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
@@ -563,6 +574,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                   ],
                 );
               }).toList(),
+            ),
             const SizedBox(height: 20),
             SizedBox(
               height: 150,
@@ -611,7 +623,8 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10)),
+                            style: const TextStyle(fontSize: 10),
+                          );
                         }),
                       ),
                     ),

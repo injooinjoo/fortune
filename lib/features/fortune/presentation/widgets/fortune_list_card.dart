@@ -82,8 +82,8 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
 }
 
   Widget _buildThumbnail() {
-    // Use specific fortune type image instead of random thumbnail
-    final imagePath = FortuneCardImages.getImagePath(widget.category.type);
+    // Use gradient background like trend page
+    final gradientColors = FortuneCardImages.getGradientColors(widget.category.type);
 
     return Container(
       decoration: BoxDecoration(
@@ -92,29 +92,75 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Clean image without any overlays
-          ClipRRect(
-            borderRadius: AppDimensions.borderRadiusMedium,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                // Fallback to gradient if image not found
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: widget.category.gradientColors),
+          // Gradient background instead of image
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: AppDimensions.borderRadiusMedium,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: gradientColors,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: gradientColors.first.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                // Content area with icon
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        widget.category.icon,
+                        size: 48,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.category.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  child: Center(
-                    child: Icon(
-                      widget.category.icon,
-                      size: 60,
-                      color: Colors.white.withOpacity(0.6)),
+                ),
+                // Decorative elements like trend page
+                Positioned(
+                  right: -20,
+                  bottom: -20,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
                   ),
-                );
-              },
+                ),
+                Positioned(
+                  right: 10,
+                  bottom: 10,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.15),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           // Badges only
@@ -124,8 +170,15 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2 * 1.25, vertical: AppSpacing.spacing1),
                 decoration: BoxDecoration(
-                  color: AppColors.error,
+                  color: Colors.red.withOpacity(0.9),
                   borderRadius: AppDimensions.borderRadiusMedium,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: const Text(
                   'NEW',
@@ -143,8 +196,15 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
               child: Container(
                 padding: const EdgeInsets.all(AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
-                  color: AppColors.warning,
+                  color: Colors.orange.withOpacity(0.9),
                   borderRadius: AppDimensions.borderRadiusLarge,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.lock_rounded,
@@ -295,13 +355,13 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
                         decoration: BoxDecoration(
                           color: widget.category.isFreeFortune 
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.orange.withOpacity(0.2),
+                              ? Colors.green.withValues(alpha: 0.2)
+                              : Colors.orange.withValues(alpha: 0.2),
                           borderRadius: AppDimensions.borderRadiusMedium,
                           border: Border.all(
                             color: widget.category.isFreeFortune 
-                                ? Colors.green.withOpacity(0.3)
-                                : Colors.orange.withOpacity(0.3),
+                                ? Colors.green.withValues(alpha: 0.3)
+                                : Colors.orange.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -339,7 +399,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         TextSpan(
                           text: widget.category.description,
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -352,7 +412,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                   // Gray divider line
                   Container(
                     height: 0.5,
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   ),
                 ],
               ),

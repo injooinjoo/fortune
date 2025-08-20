@@ -6,13 +6,69 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// 저장된 사주 데이터 조회 함수
+async function getSavedSajuData(supabase: any, userId: string) {
+  try {
+    const { data: sajuData, error } = await supabase
+      .from('user_saju')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle()
+    
+    if (error) {
+      console.log('⚠️ Error fetching saju data:', error)
+      return null
+    }
+    
+    if (!sajuData) {
+      console.log('ℹ️ No saju data found for user')
+      return null
+    }
+    
+    // 사주 데이터를 기존 analyzeSaju 형식으로 변환
+    return {
+      천간: sajuData.year_cheongan,
+      지지: sajuData.year_jiji,
+      오행: {
+        목: sajuData.element_wood,
+        화: sajuData.element_fire,
+        토: sajuData.element_earth,
+        금: sajuData.element_metal,
+        수: sajuData.element_water
+      },
+      간지: `${sajuData.year_cheongan}${sajuData.year_jiji}`,
+      부족한오행: sajuData.weak_element,
+      보충방법: sajuData.enhancement_method,
+      상세사주: {
+        년주: { 천간: sajuData.year_cheongan, 지지: sajuData.year_jiji },
+        월주: { 천간: sajuData.month_cheongan, 지지: sajuData.month_jiji },
+        일주: { 천간: sajuData.day_cheongan, 지지: sajuData.day_jiji },
+        시주: { 천간: sajuData.hour_cheongan, 지지: sajuData.hour_jiji }
+      },
+      성격: sajuData.personality_traits,
+      운세요약: sajuData.fortune_summary,
+      전체분석: sajuData.gpt_analysis
+    }
+  } catch (e) {
+    console.log('❌ Exception fetching saju data:', e)
+    return null
+  }
+}
+
 serve(async (req) => {
+  console.log('🚀 Function invoked:', new Date().toISOString())
+  console.log('Method:', req.method)
+  console.log('Headers:', Object.fromEntries(req.headers.entries()))
+  
   // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    const body = await req.json()
+    console.log('📦 Request body:', JSON.stringify(body))
+    
     const { 
       userName, 
       userProfile,
@@ -20,15 +76,19 @@ serve(async (req) => {
       fortune, 
       date, 
       storyConfig 
-    } = await req.json()
+    } = body
 
-    // OpenAI API 키가 없으면 기본 스토리 반환
+    // OpenAI API 키 확인
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
+    console.log('🔑 OpenAI API key configured:', !!openAIApiKey)
+    
     if (!openAIApiKey) {
-      console.log('OpenAI API key not configured, returning default story')
+      console.log('⚠️ OpenAI API key not configured, returning default story')
+      const defaultSegments = createDefaultStory(userName, fortune, userProfile, weather)
+      console.log('🎭 Default story created with', defaultSegments.length, 'segments')
       return new Response(
         JSON.stringify({ 
-          segments: createDefaultStory(userName, fortune, userProfile, weather) 
+          segments: defaultSegments 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -37,36 +97,159 @@ serve(async (req) => {
       )
     }
 
-    // GPT-4로 스토리 생성
-    const systemPrompt = `당신은 한국의 전통 운세와 현대적 감성을 결합한 스토리텔러입니다.
-사용자의 사주팔자, 현재 날씨, 오늘의 운세를 바탕으로 10페이지 분량의 몰입감 있는 운세 스토리를 만들어주세요.
+    // Supabase 클라이언트 초기화
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    
+    // 사용자 인증 확인
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('Authorization header is required')
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      throw new Error('Invalid authorization token')
+    }
+
+    // 저장된 사주 데이터 조회
+    console.log('🔮 Fetching saved Saju data for user:', userName)
+    const sajuAnalysis = await getSavedSajuData(supabase, user.id);
+    console.log('🎯 Saju analysis result:', sajuAnalysis ? '데이터 있음' : '데이터 없음');
+    
+    // GPT-4로 종합 운세 및 스토리 생성
+    const systemPrompt = `당신은 한국의 전통 사주명리학과 현대적 감성을 결합한 전문 운세 스토리텔러입니다.
+사용자의 사주팔자, 오행 균형, 현재 날씨, 오늘의 운세를 바탕으로 종합적인 운세 데이터와 15페이지 스토리를 만들어주세요.
 
 중요: 절대 "사용자님"이라고 하지 마세요. 반드시 제공된 실제 이름(userName)을 사용하세요.
 예를 들어 userName이 "김인주"라면 "김인주님"이라고 호칭하세요.
 
-반드시 JSON 형식으로 응답하세요:
+반드시 다음 JSON 형식으로 응답하세요:
 {
+  "meta": {
+    "date": "2025-08-17",
+    "weekday": "일요일", 
+    "timezone": "Asia/Seoul",
+    "city": "서울"
+  },
+  "weatherSummary": {
+    "icon": "☀",
+    "condition": "맑음",
+    "temp_high": 30,
+    "temp_low": 22,
+    "uv_index": 7,
+    "aqi_label": "보통"
+  },
+  "overall": {
+    "score": 78,
+    "grade": "A-",
+    "trend_vs_yesterday": "상승",
+    "summary": "안정 속 성과. 오후엔 체력관리에 신경 쓰면 좋습니다."
+  },
+  "categories": {
+    "love": {
+      "score": 74,
+      "short": "대화가 통하는 날",
+      "advice": "직설보단 부드럽게.",
+      "do": ["감사 표현"],
+      "dont": ["답장 지연"],
+      "lucky_time": "19:00-21:00"
+    },
+    "money": {
+      "score": 66,
+      "short": "지출 관리가 핵심",
+      "advice": "큰 지출은 미루기.",
+      "do": ["예산 점검"],
+      "dont": ["충동구매"]
+    },
+    "work": {
+      "score": 82,
+      "short": "꾸준함이 성과로",
+      "advice": "회의에서 한 문장으로 요지 정리.",
+      "do": ["우선순위 확정"],
+      "dont": ["일정 낙관"]
+    },
+    "health": {
+      "score": 70,
+      "short": "소화기 주의",
+      "advice": "따뜻한 차와 가벼운 걷기.",
+      "do": ["스트레칭"],
+      "dont": ["야식"]
+    },
+    "social": {
+      "score": 76,
+      "short": "관계 회복의 운",
+      "advice": "사소한 안부가 효과적."
+    }
+  },
+  "sajuInsight": {
+    "day_master": "을",
+    "favorable_elements": ["수", "목"],
+    "unfavorable_elements": ["토"],
+    "luck_direction": "동쪽",
+    "lucky_color": "파란색",
+    "lucky_item": "작은 노트",
+    "keyword": "정돈"
+  },
+  "personalActions": [
+    { "title": "오전 우선순위 3개 확정", "why": "일간(木)과 안정 운, 집중력 상승" },
+    { "title": "점심 산책 10분", "why": "건강운(소화) + 날씨 맑음" },
+    { "title": "지출 알림 켜기", "why": "금전운 주의 신호" }
+  ],
+  "notification": {
+    "title": "오늘 운세 도착!",
+    "body": "A- 컨디션. 오후엔 체력관리+지출 체크하면 베스트 👍"
+  },
+  "shareCard": {
+    "title": "오늘의 운세 A-",
+    "subtitle": "꾸준함=성과",
+    "hashtags": ["#데일리운세", "#행운컬러파랑"],
+    "emoji": "✨"
+  },
   "segments": [
-    { "text": "텍스트", "fontSize": 24, "fontWeight": 300 },
-    { "text": "텍스트", "fontSize": 24, "fontWeight": 300 },
-    ... (총 10개 페이지)
+    { 
+      "text": "텍스트", 
+      "fontSize": 24, 
+      "fontWeight": 300,
+      "category": "인사|사주|운세|조언|요약",
+      "emoji": "이모지 (선택적)",
+      "subtitle": "부제목 (선택적)"
+    },
+    ... (총 15개 페이지)
   ]
 }
 
-각 페이지는 다음과 같은 구조를 가져야 합니다:
-- text: 메인 텍스트 (2-4줄, 시적이고 감성적인 표현)
-- fontSize: 폰트 크기 (20-36)
-- fontWeight: 폰트 굵기 (200, 300, 400, 500, 600)
+각 섹션별 요구사항:
+- meta: 오늘 날짜 정보
+- weatherSummary: 제공된 날씨 정보 기반 생성
+- overall: 전체 운세 점수 (0-100), 등급 (A~D), 어제 대비 트렌드, 한 줄 요약
+- categories: 5대 분야별 점수와 조언 (각각 0-100점)
+- sajuInsight: 사주 기반 행운 요소들
+- personalActions: 실천 가능한 추천 활동 3개
+- notification: 푸시 알림용 짧은 메시지
+- shareCard: SNS 공유용 텍스트
+- segments: 기존 스토리 (15페이지)
+- subtitle: 작은 부제목 (선택적)
 
 스토리는 다음 흐름을 따라야 합니다:
-1. 인사 (실제 이름으로 따뜻한 인사, 예: "김인주님")
-2. 오늘 날짜와 날잒 (감성적 표현)
-3. 오늘의 총평 (운세 점수 기반)
-4-6. 운세 상세 (아침, 점심, 저녁으로 나누어)
-7. 주의사항
-8. 행운의 요소들
-9. 오늘의 조언
-10. 마무리 메시지 (실제 이름 포함)`
+1. 인사 및 환영 (실제 이름으로 따뜻한 인사)
+2. 오늘 날짜와 절기 소개
+3. 사주 간지 소개 (천간지지)
+4. 오행 균형 분석
+5. 오늘의 기운과 사주의 조화
+6. 새벽/아침 운세 (오전 6-12시)
+7. 오후 운세 (오후 12-6시)
+8. 저녁/밤 운세 (오후 6시-자정)
+9. 대인관계 운
+10. 재물운과 사업운
+11. 건강운과 주의사항
+12. 오늘의 행운 요소 (색상, 숫자, 방향)
+13. 사주 기반 맞춤 조언
+14. 내일을 위한 준비
+15. 종합 요약 및 마무리 (격려의 메시지)`
 
     const userPrompt = `사용자 정보:
 - 이름: ${userName} (절대적으로 중요: 이 이름 "${userName}"을 반드시 사용하세요. 절대로 "사용자님"이라고 하지 마세요. 반드시 "${userName}님"으로 호칭하세요)
@@ -82,7 +265,7 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
 날씨 정보:
 - 상태: ${weather.description}
 - 온도: ${weather.temperature}°C
-- 지역: ${weather.cityName}
+- 지역: ${weather.cityName} (이 지역명이 영어인 경우 한글로 변환하고, 상세 주소는 광역시/도 단위로 간소화하세요. 예: "Seoul" → "서울", "Suwon-si" → "경기도", "Gangnam-gu" → "서울")
 
 운세 정보:
 - 점수: ${fortune.score}/100
@@ -91,10 +274,23 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
 - 행운의 숫자: ${fortune.luckyNumber || ''}
 - 행운의 시간: ${fortune.luckyTime || ''}
 - 조언: ${fortune.advice || ''}
+사주 분석:
+${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
+- 지지: ${sajuAnalysis.지지}
+- 간지: ${sajuAnalysis.간지}
+- 오행 균형: 목(${sajuAnalysis.오행.목}), 화(${sajuAnalysis.오행.화}), 토(${sajuAnalysis.오행.토}), 금(${sajuAnalysis.오행.금}), 수(${sajuAnalysis.오행.수})
+- 부족한 오행: ${sajuAnalysis.부족한오행}
+- 보충 방법: ${sajuAnalysis.보충방법}
+- 성격 분석: ${sajuAnalysis.성격 || '없음'}
+- 운세 요약: ${sajuAnalysis.운세요약 || '없음'}` : '사주 정보 없음 (기본 운세로 진행)'}
 
 10페이지 분량의 운세 스토리를 만들어주세요.
-반드시 segments 키 안에 10개의 페이지 배열을 포함하세요.`
+반드시 segments 키 안에 10개의 페이지 배열을 포함하세요.
+그리고 sajuAnalysis 객체도 함께 반함하세요.`
 
+    console.log('🤖 Calling OpenAI API...')
+    const startTime = Date.now()
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -102,7 +298,7 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-5-nano',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -112,36 +308,87 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
         response_format: { type: "json_object" }
       }),
     })
+    
+    const responseTime = Date.now() - startTime
+    console.log(`⏱️ OpenAI API response time: ${responseTime}ms`)
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error('❌ OpenAI API error:', response.status, errorText)
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
     }
+    
+    console.log('✅ OpenAI API call successful')
 
     const data = await response.json()
+    console.log('📝 OpenAI response tokens used:', data.usage)
+    
     const storyContent = JSON.parse(data.choices[0].message.content)
+    console.log('📦 Story content type:', typeof storyContent)
+    console.log('📦 Story content keys:', Object.keys(storyContent))
 
-    // segments가 항상 배열로 반환되도록 보장
+    // 확장된 응답 구조 처리
     let segments = [];
-    if (Array.isArray(storyContent)) {
-      segments = storyContent;
-    } else if (storyContent.segments) {
-      // segments 안에 pages가 있는 경우
-      if (storyContent.segments.pages && Array.isArray(storyContent.segments.pages)) {
-        segments = storyContent.segments.pages;
-      } else if (Array.isArray(storyContent.segments)) {
-        segments = storyContent.segments;
-      } else if (typeof storyContent.segments === 'object') {
-        segments = Object.values(storyContent.segments);
-      }
-    } else if (storyContent.pages && Array.isArray(storyContent.pages)) {
-      segments = storyContent.pages;
+    let meta = null;
+    let weatherSummary = null;
+    let overall = null;
+    let categories = null;
+    let sajuInsight = null;
+    let personalActions = null;
+    let notification = null;
+    let shareCard = null;
+
+    if (storyContent.segments && Array.isArray(storyContent.segments)) {
+      segments = storyContent.segments;
+      
+      // 확장된 데이터 추출
+      meta = storyContent.meta || null;
+      weatherSummary = storyContent.weatherSummary || null;
+      overall = storyContent.overall || null;
+      categories = storyContent.categories || null;
+      sajuInsight = storyContent.sajuInsight || null;
+      personalActions = storyContent.personalActions || null;
+      notification = storyContent.notification || null;
+      shareCard = storyContent.shareCard || null;
     } else {
       // 기본 형식으로 변환 시도
       segments = createDefaultStory(userName, fortune, userProfile, weather);
+      
+      // 기본 데이터 생성
+      const now = new Date();
+      meta = {
+        date: now.toISOString().split('T')[0],
+        weekday: getWeekday(now.getDay()),
+        timezone: "Asia/Seoul",
+        city: "서울"
+      };
+      
+      overall = {
+        score: fortune?.score || 75,
+        grade: getGrade(fortune?.score || 75),
+        trend_vs_yesterday: "유지",
+        summary: "오늘도 좋은 하루가 되길 바랍니다."
+      };
+    }
+    
+    console.log(`🎉 Returning ${segments.length} story segments with enhanced data`)
+    
+    // 확장된 응답 데이터
+    const responseData = {
+      segments,
+      sajuAnalysis: sajuAnalysis,
+      meta,
+      weatherSummary,
+      overall,
+      categories,
+      sajuInsight,
+      personalActions,
+      notification,
+      shareCard
     }
     
     return new Response(
-      JSON.stringify({ segments }),
+      JSON.stringify(responseData),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 
@@ -149,7 +396,8 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
     )
 
   } catch (error) {
-    console.error('Error generating story:', error)
+    console.error('❌ Error generating story:', error)
+    console.error('Stack trace:', error.stack)
     
     // 에러 시 기본 스토리 반환 (userName이 없을 때만 '사용자' 사용)
     const fallbackName = req.json?.userName || ''
@@ -232,4 +480,17 @@ function createDefaultStory(userName: string, fortune: any, userProfile: any, we
 function getWeekday(day: number): string {
   const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
   return weekdays[day]
+}
+
+function getGrade(score: number): string {
+  if (score >= 90) return 'A+';
+  if (score >= 85) return 'A';
+  if (score >= 80) return 'A-';
+  if (score >= 75) return 'B+';
+  if (score >= 70) return 'B';
+  if (score >= 65) return 'B-';
+  if (score >= 60) return 'C+';
+  if (score >= 55) return 'C';
+  if (score >= 50) return 'C-';
+  return 'D';
 }

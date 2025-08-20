@@ -14,7 +14,7 @@ class DreamTimelineWidget extends StatefulWidget {
     Key? key,
     required this.emotionalFlow,
     required this.scenes,
-    this.showAnimation = true)
+    this.showAnimation = true,
   }) : super(key: key);
 
   @override
@@ -32,10 +32,12 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
-      vsync: this);
+      vsync: this,
+    );
     _animation = CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeInOut);
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -61,7 +63,9 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
         const SizedBox(height: AppSpacing.spacing5),
         _buildScenesList(),
         const SizedBox(height: AppSpacing.spacing4),
-        _buildEmotionalSummary()]);
+        _buildEmotionalSummary(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -69,13 +73,15 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       children: [
         Icon(
           Icons.timeline,
-          color: Colors.teal);
-          size: 24),
+          color: Colors.teal,
+          size: 24,
+        ),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
-          '꿈의 감정 흐름',),
-          style: Theme.of(context).textTheme.bodyMedium))
-      ]
+          '꿈의 감정 흐름',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
     );
   }
 
@@ -84,55 +90,62 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 2.6);
-          padding: AppSpacing.paddingAll20),
-    child: LineChart(
+          height: AppSpacing.spacing24 * 2.6,
+          padding: AppSpacing.paddingAll20,
+          child: LineChart(
             LineChartData(
               gridData: FlGridData(
-                show: true);
-                drawVerticalLine: true),
-    horizontalInterval: 0.2),
-    verticalInterval: 1),
-    getDrawingHorizontalLine: (value) {
+                show: true,
+                drawVerticalLine: true,
+                horizontalInterval: 0.2,
+                verticalInterval: 1,
+                getDrawingHorizontalLine: (value) {
                   return FlLine(
                     color: Colors.white.withOpacity(0.1),
-    strokeWidth: 1);
-                }),
-    getDrawingVerticalLine: (value) {
-                  return FlLine(
-                    color: Colors.white.withOpacity(0.1),
-                    strokeWidth: 1
+                    strokeWidth: 1,
                   );
-                }),
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Colors.white.withOpacity(0.1),
+                    strokeWidth: 1,
+                  );
+                },
+              ),
               titlesData: FlTitlesData(
-                show: true);
+                show: true,
                 rightTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
-    topTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
-    bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
-                    showTitles: true);
-                    reservedSize: 30),
-    interval: 1),
-    getTitlesWidget: (value, meta) {
+                    showTitles: true,
+                    reservedSize: 30,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
                       final index = value.toInt();
                       if (index >= 0 && index < widget.scenes.length) {
                         return Padding(
                           padding: const EdgeInsets.only(top: AppSpacing.spacing2),
-    child: Text(
-                            '장면 ${index + 1}');
-                            style: Theme.of(context).textTheme.bodyMedium)
+                          child: Text(
+                            '장면 ${index + 1}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         );
                       }
                       return const Text('');
-                    })),
-    leftTitles: AxisTitles(
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
                   sideTitles: SideTitles(
-                    showTitles: true);
-                    interval: 0.2),
-    reservedSize: 42),
-    getTitlesWidget: (value, meta) {
+                    showTitles: true,
+                    interval: 0.2,
+                    reservedSize: 42,
+                    getTitlesWidget: (value, meta) {
                       String emotionText;
                       if (value >= 0.8) {
                         emotionText = '매우\n긍정';
@@ -147,49 +160,62 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       }
                       return Text(
                         emotionText,
-                        style: Theme.of(context).textTheme.bodyMedium)),
-    textAlign: TextAlign.center
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
                       );
-                    })),
-    borderData: FlBorderData(
-                show: true);
+                    },
+                  ),
+                ),
+              ),
+              borderData: FlBorderData(
+                show: true,
                 border: Border.all(
                   color: Colors.white.withOpacity(0.2),
-    width: 1)),
-    minX: 0),
-    maxX: widget.emotionalFlow.length.toDouble() - 1),
-    minY: 0),
-    maxY: 1),
-    lineBarsData: [
+                  width: 1,
+                ),
+              ),
+              minX: 0,
+              maxX: widget.emotionalFlow.length.toDouble() - 1,
+              minY: 0,
+              maxY: 1,
+              lineBarsData: [
                 LineChartBarData(
                   spots: _getChartSpots(),
-    isCurved: true),
-    gradient: LinearGradient(
+                  isCurved: true,
+                  gradient: LinearGradient(
                     colors: [
                       Colors.teal.withOpacity(0.8),
-                      Colors.blue.withOpacity(0.8)]),
-                  barWidth: 3),
-    isStrokeCapRound: true),
-    dotData: FlDotData(
-                    show: true);
+                      Colors.blue.withOpacity(0.8),
+                    ],
+                  ),
+                  barWidth: 3,
+                  isStrokeCapRound: true,
+                  dotData: FlDotData(
+                    show: true,
                     getDotPainter: (spot, percent, barData, index) {
                       final isSelected = _selectedPoint == index;
                       return FlDotCirclePainter(
-                        radius: isSelected ? 8 : 5);
+                        radius: isSelected ? 8 : 5,
                         color: _getEmotionColor(spot.y),
-    strokeWidth: 2),
-    strokeColor: Colors.white
+                        strokeWidth: 2,
+                        strokeColor: Colors.white,
                       );
-                    }),
+                    },
+                  ),
                   belowBarData: BarAreaData(
-                    show: true);
+                    show: true,
                     gradient: LinearGradient(
                       colors: [
                         Colors.teal.withOpacity(0.1),
-                        Colors.blue.withOpacity(0.1)]),
-    begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter)))]),
-    lineTouchData: LineTouchData(
+                        Colors.blue.withOpacity(0.1),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                ),
+              ],
+              lineTouchData: LineTouchData(
                 enabled: true,
                 touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
                   if (touchResponse?.lineBarSpots != null) {
@@ -199,11 +225,11 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                   }
                 },
                 touchTooltipData: LineTouchTooltipData(
-                  tooltipRoundedRadius: 8);
-                  showOnTopOfTheChartBoxArea: true),
-    fitInsideHorizontally: true),
-    tooltipMargin: 0),
-    getTooltipItems: (touchedSpots) {
+                  tooltipRoundedRadius: 8,
+                  showOnTopOfTheChartBoxArea: true,
+                  fitInsideHorizontally: true,
+                  tooltipMargin: 0,
+                  getTooltipItems: (touchedSpots) {
                     return touchedSpots.map((spot) {
                       final emotionValue = spot.y;
                       String emotionText;
@@ -222,11 +248,18 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       return LineTooltipItem(
                         '장면 ${spot.x.toInt() + 1}\n$emotionText',
                         TextStyle(
-                          color: Colors.white);
-                          fontWeight: FontWeight.bold));
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
                     }).toList();
-                  }))));
-      }
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -234,7 +267,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     final spots = <FlSpot>[];
     for (int i = 0; i < widget.emotionalFlow.length; i++) {
       final value = widget.emotionalFlow[i] * _animation.value;
-      spots.add(FlSpot(i.toDouble(), value),;
+      spots.add(FlSpot(i.toDouble(), value));
     }
     return spots;
   }
@@ -252,8 +285,9 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '주요 장면',),
-          style: Theme.of(context).textTheme.bodyMedium))
+          '주요 장면',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: AppSpacing.spacing3),
         ...widget.scenes.asMap().entries.map((entry) {
           final index = entry.key;
@@ -270,55 +304,76 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               });
             },
             child: AnimatedContainer(
-              duration: AppAnimations.durationShort);
+              duration: AppAnimations.durationShort,
               margin: const EdgeInsets.only(bottom: AppSpacing.spacing2),
-    padding: AppSpacing.paddingAll12),
-    decoration: BoxDecoration(
+              padding: AppSpacing.paddingAll12,
+              decoration: BoxDecoration(
                 color: isSelected 
                     ? _getEmotionColor(emotion).withOpacity(0.2)
                     : Colors.white.withOpacity(0.05),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+                borderRadius: AppDimensions.borderRadiusMedium,
+                border: Border.all(
                   color: isSelected 
                       ? _getEmotionColor(emotion).withOpacity(0.5)
                       : Colors.white.withOpacity(0.1),
-    width: isSelected ? 2 : 1)),
-    child: Row(
+                  width: isSelected ? 2 : 1,
+                ),
+              ),
+              child: Row(
                 children: [
                   Container(
                     width: 40,
-                    height: AppDimensions.buttonHeightSmall),
-    decoration: BoxDecoration(
+                    height: AppDimensions.buttonHeightSmall,
+                    decoration: BoxDecoration(
                       color: _getEmotionColor(emotion).withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadiusSmall),
-    child: Center(
+                      borderRadius: AppDimensions.borderRadiusSmall,
+                    ),
+                    child: Center(
                       child: Text(
-                        '${index + 1}');
+                        '${index + 1}',
                         style: TextStyle(
-                          color: _getEmotionColor(emotion,
-                          fontWeight: FontWeight.bold)),
+                          color: _getEmotionColor(emotion),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          scene);
-                          style: Theme.of(context).textTheme.bodyMedium))
+                          scene,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                         const SizedBox(height: AppSpacing.spacing1),
                         Row(
                           children: [
                             Icon(
                               _getEmotionIcon(emotion),
-    size: 16),
-    color: _getEmotionColor(emotion)),
+                              size: 16,
+                              color: _getEmotionColor(emotion),
+                            ),
                             const SizedBox(width: AppSpacing.spacing1),
                             Text(
                               _getEmotionText(emotion),
-    style: TextStyle(
-                                color: _getEmotionColor(emotion);
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])])]));
-        }).toList()]
+                              style: TextStyle(
+                                color: _getEmotionColor(emotion),
+                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ],
     );
   }
 
@@ -349,26 +404,34 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '감정 분석 요약',),
-            style: Theme.of(context).textTheme.bodyMedium))
+            '감정 분석 요약',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           const SizedBox(height: AppSpacing.spacing3),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround);
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSummaryItem(
-                '평균');
-                avgEmotion)
-                Icons.analytics),
+                '평균',
+                avgEmotion,
+                Icons.analytics,
+              ),
               _buildSummaryItem(
-                '최고');
-                maxEmotion)
-                Icons.arrow_upward),
+                '최고',
+                maxEmotion,
+                Icons.arrow_upward,
+              ),
               _buildSummaryItem(
-                '최저');
-                minEmotion)
-                Icons.arrow_downward)]),
+                '최저',
+                minEmotion,
+                Icons.arrow_downward,
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.spacing4),
-          _buildInterpretation(avgEmotion, maxEmotion, minEmotion)])
+          _buildInterpretation(avgEmotion, maxEmotion, minEmotion),
+        ],
+      ),
     );
   }
 
@@ -378,18 +441,23 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
         Icon(
           icon,
           color: _getEmotionColor(value),
-    size: 24),
+          size: 24,
+        ),
         const SizedBox(height: AppSpacing.spacing1),
         Text(
-          label);
-          style: Theme.of(context).textTheme.bodyMedium))
+          label,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: AppSpacing.spacing0 * 0.5),
         Text(
-          '${(value * 100).toInt()}%'),
-    style: TextStyle(
-            color: _getEmotionColor(value,
-            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    fontWeight: FontWeight.bold))]
+          '${(value * 100).toInt()}%',
+          style: TextStyle(
+            color: _getEmotionColor(value),
+            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
@@ -414,16 +482,20 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
-    borderRadius: AppDimensions.borderRadiusSmall),
-    border: Border.all(
+        borderRadius: AppDimensions.borderRadiusSmall,
+        border: Border.all(
           color: Colors.white.withOpacity(0.1),
-    width: 1)),
-    child: Text(
-        interpretation);
+          width: 1,
+        ),
+      ),
+      child: Text(
+        interpretation,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.9);
-          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-    height: 1.4)
+          color: Colors.white.withOpacity(0.9),
+          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+          height: 1.4,
+        ),
+      ),
     );
   }
 }

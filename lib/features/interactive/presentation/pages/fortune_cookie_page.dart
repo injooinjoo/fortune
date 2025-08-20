@@ -127,7 +127,10 @@ class _FortuneCookieInputState extends State<_FortuneCookieInput>
           Text(
             '탭하여 열기',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: context.fortuneTheme.subtitleText)]);
+              color: context.fortuneTheme.subtitleText)),
+        ],
+      ),
+    );
   }
 }
 
@@ -171,7 +174,10 @@ class _FortuneCookieResult extends StatelessWidget {
                     child: const Icon(
                       Icons.card_giftcard,
                       size: 60,
-                      color: Colors.white)));
+                      color: Colors.white),
+                  ),
+                ),
+              );
             }),
           const SizedBox(height: 32),
 
@@ -216,7 +222,11 @@ class _FortuneCookieResult extends StatelessWidget {
                         luckyNumbers.join(', '),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor)]),
+                          color: AppTheme.primaryColor)),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: GlassContainer(
@@ -238,7 +248,13 @@ class _FortuneCookieResult extends StatelessWidget {
                         luckyColor,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor)]))]),
+                          color: AppTheme.primaryColor)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
 
           // Advice
@@ -258,12 +274,17 @@ class _FortuneCookieResult extends StatelessWidget {
                     Text(
                       '조언',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))]),
+                        fontWeight: FontWeight.bold)),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   advice,
                   style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center)])),
+                  textAlign: TextAlign.center),
+              ],
+            ),
+          ),
           const SizedBox(height: 24),
 
           // Share button
@@ -275,6 +296,9 @@ class _FortuneCookieResult extends StatelessWidget {
               backgroundColor: AppTheme.primaryColor,
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))]);
+                borderRadius: BorderRadius.circular(12)))),
+        ],
+      ),
+    );
   }
 }

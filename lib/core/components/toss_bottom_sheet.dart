@@ -33,15 +33,18 @@ class TossBottomSheet {
       enableDrag: enableDrag,
       isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
-      barrierColor: AppColors.textPrimary.withOpacity(bottomSheetStyles.barrierOpacity),
+      barrierColor: AppColors.textPrimary.withValues(alpha: bottomSheetStyles.barrierOpacity),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius)),
+          top: Radius.circular(bottomSheetStyles.borderRadius),
+        ),
+      ),
       builder: (context) => _TossBottomSheetWrapper(
         showHandle: showHandle,
         height: height,
         backgroundColor: backgroundColor,
-        child: builder(context))
+        child: builder(context),
+      ),
     );
   }
 
@@ -60,7 +63,8 @@ class TossBottomSheet {
       builder: (context) => _TossSelectionBottomSheet<T>(
         title: title,
         subtitle: subtitle,
-        options: options)
+        options: options,
+      ),
     );
   }
 
@@ -85,7 +89,8 @@ class TossBottomSheet {
         message: message,
         confirmText: confirmText,
         cancelText: cancelText,
-        isDanger: isDanger)
+        isDanger: isDanger,
+      ),
     );
   }
 
@@ -108,7 +113,8 @@ class TossBottomSheet {
         message: message,
         actionText: actionText,
         onAction: onAction,
-        content: content)
+        content: content,
+      ),
     );
   }
 }
@@ -136,7 +142,9 @@ class _TossBottomSheetWrapper extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? context.toss.cardSurface,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius)),
+          top: Radius.circular(bottomSheetStyles.borderRadius),
+        ),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -146,9 +154,13 @@ class _TossBottomSheetWrapper extends StatelessWidget {
               width: bottomSheetStyles.handleWidth,
               height: bottomSheetStyles.handleHeight,
               decoration: BoxDecoration(
-                color: context.toss.dividerColor.withOpacity(bottomSheetStyles.handleOpacity),
-                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2)),
-          Flexible(child: child)]))
+                color: context.toss.dividerColor.withValues(alpha: bottomSheetStyles.handleOpacity),
+                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2),
+              ),
+            ),
+          Flexible(child: child),
+        ],
+      ),)
         .animate()
         .slideY(
           begin: 1,
@@ -198,9 +210,19 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
                       style: TextStyle(
                         fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
                         color: context.toss.secondaryText,
-                        fontFamily: 'TossProductSans'))]])),
+                        fontFamily: 'TossProductSans',
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
             Divider(height: context.toss.cardStyles.borderWidth, color: context.toss.dividerColor),
-            ...options.map((option) => _OptionTile(option: option)]));
+            ...options.map((option) => _OptionTile(option: option)),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -259,11 +281,22 @@ class _OptionTile<T> extends StatelessWidget {
                         style: TextStyle(
                           fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
                           color: theme.brightness == Brightness.light
-                              ? AppColors.textSecondary.withOpacity(0.6)
-                              : AppColors.textSecondary.withOpacity(0.4),
-                          fontFamily: 'TossProductSans'))]])),
+                              ? AppColors.textSecondary.withValues(alpha: 0.6)
+                              : AppColors.textSecondary.withValues(alpha: 0.4),
+                          fontFamily: 'TossProductSans',
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
               if (option.trailing != null)
-                option.trailing!])));
+                option.trailing!,
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -317,7 +350,15 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(true),
                     style: isDanger
                         ? TossBottomSheetButtonStyle.danger
-                        : TossBottomSheetButtonStyle.primary))])])));
+                        : TossBottomSheetButtonStyle.primary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -369,7 +410,14 @@ class _TossInfoBottomSheet extends StatelessWidget {
                     onAction?.call();
                     Navigator.of(context).pop();
                   },
-                  style: TossBottomSheetButtonStyle.primary))]])));
+                  style: TossBottomSheetButtonStyle.primary,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -395,7 +443,7 @@ class _TossBottomSheetButton extends StatelessWidget {
         textColor = context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark;
         break;
       case TossBottomSheetButtonStyle.secondary:
-        backgroundColor = context.toss.glassBackground.withOpacity(0.5);
+        backgroundColor = context.toss.glassBackground.withValues(alpha: 0.5);
         textColor = context.toss.primaryText;
         break;
       case TossBottomSheetButtonStyle.danger:
@@ -418,7 +466,11 @@ class _TossBottomSheetButton extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             text,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor))));
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor),
+          ),
+        ),
+      ),
+    );
   }
 }
 

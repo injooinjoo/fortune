@@ -123,7 +123,6 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                       entryRadius: 4,
                       dataEntries: _getRadarEntries()),
                   ],
-                  swapAnimationDuration: const Duration(milliseconds: 400),
                 ),
               ),
               Center(

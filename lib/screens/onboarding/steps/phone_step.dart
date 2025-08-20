@@ -19,7 +19,8 @@ class PhoneStep extends StatefulWidget {
     required this.initialCountryCode,
     required this.onPhoneChanged,
     required this.onNext,
-    this.onBack});
+    this.onBack,
+  });
 
   @override
   State<PhoneStep> createState() => _PhoneStepState();
@@ -65,7 +66,8 @@ class _PhoneStepState extends State<PhoneStep> {
             if (widget.onBack != null)
               IconButton(
                 icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText),
-                onPressed: widget.onBack),
+                onPressed: widget.onBack,
+              ),
             SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
               Text(
                 '전화번호를 입력해주세요',
@@ -74,25 +76,38 @@ class _PhoneStepState extends State<PhoneStep> {
               Text(
                 '서비스 이용 시 본인 확인을 위해 필요합니다',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: context.fortuneTheme.subtitleText)),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2.5),
+                  color: context.fortuneTheme.subtitleText,
+                ),
+              ),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2.5),
               // Temporary simple phone input
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(11)],
+                  LengthLimitingTextInputFormatter(11),
+                ],
                 decoration: const InputDecoration(
                   labelText: '전화번호',
                   hintText: '01012345678',
                   prefixText: '+82 ',
-                  border: OutlineInputBorder()),
-                onChanged: _validateAndUpdate),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: _validateAndUpdate,
+              ),
               const Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isValid ? widget.onNext : null,
-                  child: const Text('다음'))]));
+                  child: const Text('다음'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

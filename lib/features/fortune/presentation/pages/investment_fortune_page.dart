@@ -1067,12 +1067,18 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '오늘의 투자 팁',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             _buildTipItem('분산 투자로 리스크를 줄이세요'),
             _buildTipItem('장기 투자 관점을 유지하세요'),
             _buildTipItem('감정적 판단을 피하세요'),
-            _buildTipItem('손절선을 미리 정하세요')]));
+            _buildTipItem('손절선을 미리 정하세요'),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildTipItem(String tip) {
@@ -1108,14 +1114,22 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
               '시장 전망',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildMarketIndicator('단기': null,
-                _buildMarketIndicator('중기': null,
-                _buildMarketIndicator('장기')])]));
+                _buildMarketIndicator('단기', 75, Colors.green),
+                _buildMarketIndicator('중기', 60, Colors.orange),
+                _buildMarketIndicator('장기', 85, Colors.blue),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMarketIndicator(String period, int score, Color color) {
@@ -1125,18 +1139,25 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
           value: score / 100,
           backgroundColor: Colors.grey[300],
           valueColor: AlwaysStoppedAnimation<Color>(color),
-          strokeWidth: 8),
+          strokeWidth: 8,
+        ),
         const SizedBox(height: 8),
         Text(
           period,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 14)),
+            fontSize: 14,
+          ),
+        ),
         Text(
           '$score점',
           style: TextStyle(
             color: color,
-            fontSize: 12))]);
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildStockTips() {
@@ -1154,12 +1175,20 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                   '주식 투자 팁',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold))]),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             _buildTipItem('오전 장 초반 급등주는 피하세요'),
             _buildTipItem('손절선은 -3%로 설정하세요'),
             _buildTipItem('분할 매수로 평단가를 낮추세요'),
-            _buildTipItem('뉴스와 공시를 꼭 확인하세요')]));
+            _buildTipItem('뉴스와 공시를 꼭 확인하세요'),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildRecommendationCard(String title, List<String> recommendations) {

@@ -7,7 +7,8 @@ class BottomTarotDeckWidget extends StatefulWidget {
   
   const BottomTarotDeckWidget({
     Key? key,
-    required this.onCardSelected}) : super(key: key);
+    required this.onCardSelected,
+  }) : super(key: key);
 
   @override
   State<BottomTarotDeckWidget> createState() => _BottomTarotDeckWidgetState();
@@ -116,7 +117,11 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 alignment: Alignment.bottomCenter,
                 children: List.generate(cardCount, (index) {
                   return _buildCard(index, screenWidth);
-                }))));
+                }),
+              ),
+            ),
+          ),
+        );
       });
   }
   
@@ -162,7 +167,11 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 _animateToCard(index);
               }
             },
-            child: _buildTarotCard(isCenter))));
+            child: _buildTarotCard(isCenter),
+          ),
+        ),
+      ),
+    );
   }
   
   void _animateToCard(int index) {
@@ -201,11 +210,14 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
           BoxShadow(
             color: Colors.blue.withOpacity(0.6),
             blurRadius: 20,
-            spreadRadius: 5)] : [
+            spreadRadius: 5),
+        ] : [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
             blurRadius: 5,
-            offset: const Offset(0, 3))]),
+            offset: const Offset(0, 3)),
+        ],
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Stack(
@@ -219,13 +231,19 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   colors: [
                     const Color(0xFF1E3A5F),
                     const Color(0xFF0D1B2A),
-                    const Color(0xFF415A77)])),
+                    const Color(0xFF415A77),
+                  ],
+                ),
+              ),
+            ),
             
             // Card pattern
             Positioned.fill(
               child: CustomPaint(
                 painter: TarotCardBackPainter(
-                  isHighlighted: isCenter)),
+                  isHighlighted: isCenter),
+              ),
+            ),
             
             // Card border
             Container(
@@ -235,7 +253,13 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   color: isCenter 
                       ? Colors.white.withOpacity(0.5)
                       : Colors.white.withOpacity(0.2),
-                  width: isCenter ? 2 : 1))]));
+                  width: isCenter ? 2 : 1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

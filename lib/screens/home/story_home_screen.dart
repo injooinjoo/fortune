@@ -35,6 +35,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   WeatherInfo? currentWeather;
   List<StorySegment>? storySegments;
   Map<String, dynamic>? sajuAnalysisData; // 사주 분석 데이터 저장
+  // Comprehensive fortune data from Edge Function  
+  Map<String, dynamic>? metaData;
+  Map<String, dynamic>? weatherSummaryData;
+  Map<String, dynamic>? overallData;
+  Map<String, dynamic>? categoriesData;
+  Map<String, dynamic>? sajuInsightData;
+  List<Map<String, dynamic>>? personalActionsData;
+  Map<String, dynamic>? notificationData;
+  Map<String, dynamic>? shareCardData;
+  
   bool isLoadingFortune = true;
   bool _isLoadingProfile = false; // Prevent duplicate loading
   bool _hasViewedStoryToday = false; // 오늘 스토리를 이미 봤는지 확인
@@ -466,6 +476,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           sajuAnalysisData = storyState.sajuAnalysis;
         });
       }
+      
+      // 확장된 데이터 추출
+      setState(() {
+        metaData = storyState.meta;
+        weatherSummaryData = storyState.weatherSummary;
+        overallData = storyState.overall;
+        categoriesData = storyState.categories;
+        sajuInsightData = storyState.sajuInsight;
+        personalActionsData = storyState.personalActions;
+        notificationData = storyState.notification;
+        shareCardData = storyState.shareCard;
+      });
     } else {
       // GPT 실패시 기본 스토리 생성
       generatedSegments = _createDetailedStorySegments(userName, fortune);
@@ -754,6 +776,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           userName: userProfile?.name,
           userProfile: userProfile,
           sajuAnalysis: sajuAnalysisData,
+          meta: metaData,
+          weatherSummary: weatherSummaryData,
+          overall: overallData,
+          categories: categoriesData,
+          sajuInsight: sajuInsightData,
+          personalActions: personalActionsData,
+          notification: notificationData,
+          shareCard: shareCardData,
           onReplay: () {
             // 다시 스토리 보기 - pop back to story screen
             Navigator.of(context).pop();
@@ -844,6 +874,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         userName: userProfile?.name,
         userProfile: userProfile,
         sajuAnalysis: sajuAnalysisData,
+        meta: metaData,
+        weatherSummary: weatherSummaryData,
+        overall: overallData,
+        categories: categoriesData,
+        sajuInsight: sajuInsightData,
+        personalActions: personalActionsData,
+        notification: notificationData,
+        shareCard: shareCardData,
         onReplay: () {
           // 다시 스토리 보기
           setState(() {
@@ -879,6 +917,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         userName: userProfile?.name,
         userProfile: userProfile,
         sajuAnalysis: sajuAnalysisData,
+        meta: metaData,
+        weatherSummary: weatherSummaryData,
+        overall: overallData,
+        categories: categoriesData,
+        sajuInsight: sajuInsightData,
+        personalActions: personalActionsData,
+        notification: notificationData,
+        shareCard: shareCardData,
         onReplay: () {
           // 다시 시도
           _initializeData();

@@ -111,7 +111,11 @@ class _EmploymentFortuneResult extends StatelessWidget {
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6)]),
+                    height: 1.6),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
 
           // Score Breakdown
@@ -147,12 +151,21 @@ class _EmploymentFortuneResult extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Text(
                             '${entry.value}점',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center)]).toList()])),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
             const SizedBox(height: 16)],
 
           // Lucky Items
@@ -181,8 +194,12 @@ class _EmploymentFortuneResult extends StatelessWidget {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
                         backgroundColor: theme.colorScheme.primaryContainer);
-                    }).toList()),
-            const SizedBox(height: 16)],
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
@@ -216,7 +233,19 @@ class _EmploymentFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium)]).toList()]))]]));
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Color _getScoreColor(int score) {

@@ -49,7 +49,7 @@ class TokenState {
     'zodiac-animal': 1,
     'fortune-cookie': 1,
     
-    // Medium complexity (2 tokens,
+    // Medium complexity (2 tokens)
     'love': 2,
     'career': 2,
     'wealth': 2,
@@ -63,7 +63,7 @@ class TokenState {
     'weekly': 2,
     'monthly': 2,
     
-    // Complex fortunes (3 tokens,
+    // Complex fortunes (3 tokens)
     'saju': 3,
     'traditional-saju': 3,
     'saju-psychology': 3,
@@ -74,7 +74,7 @@ class TokenState {
     'couple-match': 3,
     'chemistry': 3,
     
-    // Premium fortunes (5 tokens,
+    // Premium fortunes (5 tokens)
     'startup': 5,
     'business': 5,
     'lucky-investment': 5,
@@ -113,7 +113,7 @@ class TokenState {
     return (balance?.remainingTokens ?? 0) >= amount;
   }
   
-  // Check if user has unlimited tokens (for test accounts,
+  // Check if user has unlimited tokens (for test accounts)
   bool get hasUnlimitedTokens {
     if (userProfile == null) return false;
     return userProfile!.hasUnlimitedTokens || 
@@ -124,7 +124,7 @@ class TokenState {
     return consumptionRates[fortuneType] ?? 1;
   }
 
-  // Getter for current tokens (compatibility,
+  // Getter for current tokens (compatibility)
   int get currentTokens => balance?.remainingTokens ?? 0;
 }
 
@@ -137,7 +137,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     loadTokenData();
   }
 
-  // 토큰 데이터 로드 (잔액, 구독 정보 등,
+  // 토큰 데이터 로드 (잔액, 구독 정보 등)
   Future<void> loadTokenData() async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -154,7 +154,8 @@ class TokenNotifier extends StateNotifier<TokenState> {
       final results = await Future.wait([
         _apiService.getTokenBalance(userId: user.id),
         _apiService.getSubscription(userId: user.id),
-        _apiService.getTokenConsumptionRates()]);
+        _apiService.getTokenConsumptionRates(),
+      ]);
 
       state = state.copyWith(
         balance: results[0] as TokenBalance,
@@ -169,14 +170,14 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
-  // 토큰 확인 및 소비 (simplified method for compatibility,
+  // 토큰 확인 및 소비 (simplified method for compatibility)
   Future<bool> checkAndConsumeTokens(int amount, String fortuneType) async {
     return consumeTokens(
       fortuneType: fortuneType,
       amount: amount);
   }
 
-  // 토큰 소비 (프리미엄 운세를 볼 때,
+  // 토큰 소비 (프리미엄 운세를 볼 때)
   Future<bool> consumeTokens({
     required String fortuneType,
     required int amount,
@@ -192,7 +193,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
       return true;
     }
 
-    // 운세 타입에 따른 영혼 소비량 확인 (음수,
+    // 운세 타입에 따른 영혼 소비량 확인 (음수)
     final soulAmount = SoulRates.getSoulAmount(fortuneType);
     
     // 획득형 운세는 이 메서드를 사용하지 않음
@@ -200,7 +201,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
       return earnSouls(fortuneType: fortuneType, referenceId: referenceId);
     }
     
-    // 실제 소비량 (양수로 변환,
+    // 실제 소비량 (양수로 변환)
     final actualAmount = -soulAmount;
 
     // 토큰 부족 체크
@@ -349,7 +350,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
-  // 영혼 획득 (무료 운세를 볼 때,
+  // 영혼 획득 (무료 운세를 볼 때)
   Future<bool> earnSouls({
     required String fortuneType,
     String? referenceId}) async {
@@ -377,7 +378,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
             totalTokens: state.balance!.totalTokens + soulAmount));
       }
 
-      // API 호출 (기존 rewardTokensForAdView 사용,
+      // API 호출 (기존 rewardTokensForAdView 사용)
       final newBalance = await _apiService.rewardTokensForAdView(
         userId: user.id,
         fortuneType: fortuneType,
@@ -408,7 +409,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
-  // 광고 시청 후 토큰 보상 (레거시 - 향후 제거 예정,
+  // 광고 시청 후 토큰 보상 (레거시 - 향후 제거 예정)
   Future<bool> rewardTokensForAd({
     required String fortuneType,
     int rewardAmount = 1}) async {
@@ -459,7 +460,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
-  // 운세 타입에 따른 영혼 처리 (통합 메서드,
+  // 운세 타입에 따른 영혼 처리 (통합 메서드)
   Future<bool> processSoulForFortune(String fortuneType) async {
     final soulAmount = SoulRates.getSoulAmount(fortuneType);
     
@@ -484,7 +485,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
   // 운세 실행에 필요한 영혼 확인
   bool canAccessFortune(String fortuneType) {
-    // 테스트 계정 확인 (동기적으로 체크,
+    // 테스트 계정 확인 (동기적으로 체크)
     final userProfile = ref.read(userProfileProvider).value;
     if (userProfile != null && userProfile.hasUnlimitedTokens) {
       return true;

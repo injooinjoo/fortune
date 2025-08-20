@@ -34,22 +34,31 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
   final List<String> _selectedChallenges = [];
   
   final List<String> _freelanceTypes = [
-    '개발/프로그래밍': '디자인/크리에이티브',
-    '글쓰기/콘텐츠': '마케팅/광고',
-    '컨설팅/자문': '교육/강의',
-    '기타'
+    '개발/프로그래밍',
+    '디자인/크리에이티브',
+    '글쓰기/콘텐츠',
+    '마케팅/광고',
+    '컨설팅/자문',
+    '교육/강의',
+    '기타',
   ];
 
   final List<String> _experienceLevels = [
-    '준비 중': '초보 (1년 미만)',
-    '중급 (1-3년)': '고급 (3년 이상)'
+    '준비 중',
+    '초보 (1년 미만)',
+    '중급 (1-3년)',
+    '고급 (3년 이상)',
   ];
 
   final List<String> _challengeOptions = [
-    '클라이언트 확보': '가격 책정',
-    '시간 관리': '수입 안정성',
-    '스킬 업그레이드': '네트워킹',
-    '일과 삶의 균형': '세무/회계 관리'
+    '클라이언트 확보',
+    '가격 책정',
+    '시간 관리',
+    '수입 안정성',
+    '스킬 업그레이드',
+    '네트워킹',
+    '일과 삶의 균형',
+    '세무/회계 관리',
   ];
 
   @override
@@ -106,11 +115,15 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                   children: [
                     Icon(
                       Icons.laptop_mac,
-                      color: theme.colorScheme.primary),
+                      color: theme.colorScheme.primary,
+                    ),
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '프리랜서 정보',
-                      style: theme.textTheme.titleLarge)]),
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ],
+                ),
                 SizedBox(height: AppSpacing.spacing5),
                 
                 // Main Skill
@@ -119,13 +132,16 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                   decoration: InputDecoration(
                     labelText: '주요 스킬/전문 분야',
                     hintText: '예: 웹 개발, 그래픽 디자인, 콘텐츠 마케팅',
-    prefixIcon: const Icon(Icons.build),
-    border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium)),
+                    prefixIcon: const Icon(Icons.build),
+                    border: OutlineInputBorder(
+                      borderRadius: AppDimensions.borderRadiusMedium,
+                    ),
+                  ),
+                ),
                 SizedBox(height: AppSpacing.spacing4),
                 
-                // Monthly Goal (Optional),
-            TextField(
+                // Monthly Goal (Optional)
+                TextField(
                   controller: _monthlyGoalController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -133,7 +149,13 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                     hintText: '예: 500만원',
                     prefixIcon: const Icon(Icons.attach_money),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium)]),
+                      borderRadius: AppDimensions.borderRadiusMedium,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Freelance Type
@@ -158,8 +180,13 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                         setState(() {
                           _freelanceType = selected ? type : null;
                         });
-                      });
-                  }).toList()),
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Experience Level
@@ -170,7 +197,8 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
               children: [
                 Text(
                   '프리랜서 경력',
-                  style: theme.textTheme.titleMedium),
+                  style: theme.textTheme.titleMedium,
+                ),
                 SizedBox(height: AppSpacing.spacing3),
                 ...(_experienceLevels.map((level) {
                   final isSelected = _experience == level;
@@ -192,7 +220,9 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2)),
+                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                        ),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -201,13 +231,21 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                                 : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5)),
+                                : theme.colorScheme.onSurface.withOpacity(0.5),
+                          ),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             level,
-                            style: theme.textTheme.bodyLarge)]));
-                }))
-              ])),
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                })),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing4),
           
           // Challenges
@@ -222,12 +260,16 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '주요 고민사항 (2개 이상)',
-                      style: theme.textTheme.titleMedium)]),
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ],
+                ),
                 SizedBox(height: AppSpacing.spacing2),
                 Text(
                   '최대 4개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
                 ),
                 SizedBox(height: AppSpacing.spacing3),
                 Wrap(
@@ -246,9 +288,16 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                             _selectedChallenges.remove(challenge);
                           }
                         });
-                      });
-                  }).toList()),
-          SizedBox(height: AppSpacing.spacing8)])
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.spacing8),
+        ],
+      ),
     );
   }
 }

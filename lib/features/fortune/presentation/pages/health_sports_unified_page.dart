@@ -5,16 +5,15 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 
 enum HealthSportsType {
-  health('건강운': 'health', '오늘의 건강 상태와 조언', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
-  fitness('피트니스': 'fitness', '운동 효과와 최적의 운동법', Icons.fitness_center_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
-  yoga('요가': 'yoga', '요가 수행과 명상 가이드', Icons.self_improvement_rounded, [Color(0xFFA78BFA), Color(0xFF8B5CF6)]),
-  golf('골프': 'golf', '골프 경기 운세와 스코어 예측', Icons.golf_course_rounded, [Color(0xFF22C55E), Color(0xFF16A34A)]),
-  tennis('테니스': 'tennis', '테니스 경기 운세와 플레이 팁', Icons.sports_tennis_rounded, [Color(0xFFFFD600), Color(0xFFFFB300)]),
-  running('런닝': 'running', '러닝 컨디션과 최적의 코스', Icons.directions_run_rounded, [Color(0xFF3B82F6), Color(0xFF2563EB)]),
-  fishing('낚시': 'fishing', '낚시 운세와 포인트 추천', Icons.phishing_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]);
+  health('건강운', 'health', '오늘의 건강 상태와 조언', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
+  fitness('피트니스', 'fitness', '운동 효과와 최적의 운동법', Icons.fitness_center_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
+  yoga('요가', 'yoga', '요가 수행과 명상 가이드', Icons.self_improvement_rounded, [Color(0xFFA78BFA), Color(0xFF8B5CF6)]),
+  golf('골프', 'golf', '골프 경기 운세와 스코어 예측', Icons.golf_course_rounded, [Color(0xFF22C55E), Color(0xFF16A34A)]),
+  tennis('테니스', 'tennis', '테니스 경기 운세와 플레이 팁', Icons.sports_tennis_rounded, [Color(0xFFFFD600), Color(0xFFFFB300)]),
+  running('런닝', 'running', '러닝 컨디션과 최적의 코스', Icons.directions_run_rounded, [Color(0xFF3B82F6), Color(0xFF2563EB)]),
+  fishing('낚시', 'fishing', '낚시 운세와 포인트 추천', Icons.phishing_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]);
   
   final String label;
   final String value;
@@ -63,7 +62,6 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
     return fortune;
   }
 
-  @override
   Widget buildContent(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -95,7 +93,8 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           if (_fortuneCache[_selectedType] != null) ...[
             _buildFortuneResult(_fortuneCache[_selectedType]!),
             const SizedBox(height: 16),
-            _buildRefreshButton()],
+            _buildRefreshButton(),
+          ],
         ],
       ),
     );
@@ -123,21 +122,26 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           Icon(
             Icons.health_and_safety_rounded,
             size: 48,
-            color: Color(0xFF10B981)),
+            color: Color(0xFF10B981),
+          ),
           const SizedBox(height: 12),
           Text(
             '건강 & 운동',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF10B981)),
+              color: Color(0xFF10B981),
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             '오늘의 건강 상태와 최적의 운동 방법을 알아보세요',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center),
+              color: AppTheme.textSecondaryColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -222,7 +226,9 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-          backgroundColor: _selectedType.gradientColors[0]),
+          ),
+          backgroundColor: _selectedType.gradientColors[0],
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -265,7 +271,8 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null};
+        'gender': null,
+      };
       generateFortuneAction(params: params);
     }
   }
@@ -307,17 +314,19 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
                   ),
                 ),
               ),
-              if (fortune.score != null),
-            Container(
+              if (fortune.score != null)
+                Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
                     borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
                 ),
             ],
@@ -356,6 +365,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
                 borderRadius: BorderRadius.circular(8),
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -435,6 +445,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           decoration: BoxDecoration(
             color: _selectedType.gradientColors[0].withOpacity(0.05),
             borderRadius: BorderRadius.circular(8),
+          ),
           child: Row(
             children: [
               Icon(

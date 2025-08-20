@@ -22,11 +22,12 @@ class TarotStorytellingPage extends ConsumerStatefulWidget {
     Key? key,
     required this.selectedCards,
     required this.spreadType,
-    this.question}) : super(key: key);
+    this.question,
+  }) : super(key: key);
 
   @override
   ConsumerState<TarotStorytellingPage> createState() => _TarotStorytellingPageState();
-  }
+}
 
 class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     with TickerProviderStateMixin {
@@ -423,14 +424,19 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   height: 24,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle),
+                    shape: BoxShape.circle,
+                  ),
                   child: Center(
                     child: Text(
                       '${_currentCardIndex + 1}',
                       style: TextStyle(
                         fontSize: 12 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   positionName,
@@ -438,7 +444,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                     fontSize: 16 * fontScale,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    letterSpacing: 0.5),
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ],
             ),
           ),
@@ -459,7 +467,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
         ),
         
         // Current interpretation
-        if (_showInterpretation && _currentCardIndex < _interpretations.length) FadeTransition(
+        if (_showInterpretation && _currentCardIndex < _interpretations.length) 
+          FadeTransition(
             opacity: _fadeAnimation,
             child: Padding(
               padding: const EdgeInsets.only(top: 24),
@@ -526,7 +535,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                                color: Colors.white)),
                           ],
                         ),
                       ),
@@ -609,17 +618,20 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   ),
-                if (onPressed != null) Icon(
+                if (onPressed != null) 
+                  Icon(
                     _currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
                         ? Icons.auto_awesome
                         : Icons.arrow_forward,
-                    size: 20),
+                    size: 20,
+                  ),
                 const SizedBox(width: 8),
                 Text(
                   buttonText,
                   style: TextStyle(
                     fontSize: 16 * fontScale,
                     fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),

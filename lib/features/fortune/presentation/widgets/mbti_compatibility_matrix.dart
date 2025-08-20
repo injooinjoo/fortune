@@ -147,7 +147,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +159,9 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
         const SizedBox(height: AppSpacing.spacing5),
         _buildSelectedInfo(),
         const SizedBox(height: AppSpacing.spacing5),
-        _buildLegend()]);
+        _buildLegend(),
+      ],
+    );
   }
 
   Widget _buildHeader() {
@@ -173,7 +175,9 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
         const SizedBox(width: AppSpacing.spacing2),
         Text(
           'MBTI 궁합 매트릭스',
-          style: Theme.of(context).textTheme.bodyMedium)]);
+          style: Theme.of(context).textTheme.bodyMedium),
+      ],
+    );
   }
 
   Widget _buildMatrix() {
@@ -201,7 +205,11 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                               quarterTurns: 3,
                               child: Text(
                                 type,
-                                style: Theme.of(context).textTheme.bodyMedium)));
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
+                          ),
+                        );
                       }).toList()]),
                   const SizedBox(height: AppSpacing.spacing2 * 1.25),
                   // 매트릭스 본체
@@ -229,11 +237,11 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                               onEnter: (_) => setState(() {
                                 _hoveredRow = row;
                                 _hoveredCol = col;
-}),
+                              }),
                               onExit: (_) => setState(() {
                                 _hoveredRow = null;
                                 _hoveredCol = null;
-}),
+                              }),
                               child: AnimatedContainer(
                                 duration: AppAnimations.durationShort,
                                 width: 45,
@@ -262,10 +270,24 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                       fontWeight: isHovered
                                           ? FontWeight.bold
                                           : FontWeight.normal,
-                                      color: Colors.white)))));
-                        }).toList()]);
-                  }).toList()])));
-      });
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildSelectedInfo() {
@@ -277,8 +299,9 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           style: TextStyle(
             color: Colors.white.withOpacity(0.6),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
-          textAlign: TextAlign.center));
-}
+          textAlign: TextAlign.center),
+      );
+    }
 
     final score = _compatibilityScores[widget.selectedType1]![widget.selectedType2]!;
     final analysis = _getCompatibilityAnalysis(widget.selectedType1!, widget.selectedType2!);
@@ -350,18 +373,23 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           child: Center(
             child: Text(
               type,
-              style: Theme.of(context).textTheme.bodyMedium)),
+              style: Theme.of(context).textTheme.bodyMedium),
+          ),
+        ),
         const SizedBox(height: AppSpacing.spacing2),
         Text(
           info['title']!,
           style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center)]);
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
   }
 
   Widget _buildCognitiveFunctionComparison() {
     if (widget.selectedType1 == null || widget.selectedType2 == null) {
       return const SizedBox();
-}
+    }
 
     final functions1 = MbtiCognitiveFunctionsService.mbtiData[widget.selectedType1]!['functions'] as List<String>;
     final functions2 = MbtiCognitiveFunctionsService.mbtiData[widget.selectedType2]!['functions'] as List<String>;
@@ -396,7 +424,13 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
                             ? Colors.green
-                            : Colors.white.withOpacity(0.8)))).toList()])),
+                            : Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
             Container(
               width: 1,
               height: AppSpacing.spacing20,
@@ -442,12 +476,21 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                 Icon(
                   Icons.sync,
                   color: Colors.green,
-                  size: 16),
+                  size: 16,
+                ),
                 const SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
                     '인지기능: ${commonFunctions.join(', ')}',
-                    style: Theme.of(context).textTheme.bodyMedium)])]]);
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   Widget _buildLegend() {

@@ -472,6 +472,7 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                             _isTimeValid = true;  // Allow proceeding when checked
                             _isInputMode = false; // 시간을 모른다고 체크하면 입력 모드 종료
                             print('[TimeUnknown] Time unknown selected, ending input mode');
+                            print('[TimeUnknown] _isDateValid: $_isDateValid, _isTimeValid: $_isTimeValid, _isTimeUnknown: $_isTimeUnknown');
                             // Set default time to 12:00 when unknown
                             if (widget.onBirthTimeChanged != null) {
                               widget.onBirthTimeChanged!(const TimeOfDay(hour: 12, minute: 0));
@@ -481,6 +482,7 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                             _isInputMode = true; // 다시 시간 입력하려면 입력 모드 활성화
                             _timeFocusNode.requestFocus();
                             print('[TimeUnknown] Time unknown deselected, reactivating input mode');
+                            print('[TimeUnknown] _isDateValid: $_isDateValid, _isTimeValid: $_isTimeValid, _isTimeUnknown: $_isTimeUnknown');
                           }
                         });
                       },
@@ -527,30 +529,31 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
             
             const Spacer(),
             
-            // Custom Number Pad with Next Button - GestureDetector로 감싸서 포커스 유지
+            // Next Button - Show when date and time conditions are met (outside keypad area)
+            if (_isDateValid && (_isTimeValid || _isTimeUnknown))
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 58,
+                  margin: const EdgeInsets.only(bottom: 16.0),
+                  child: ElevatedButton(
+                    onPressed: widget.onNext,
+                    style: TossTheme.primaryButtonStyle(true),
+                    child: Text(
+                      '다음',
+                      style: TossTheme.button.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ).animate().fadeIn(duration: 300.ms),
+            
+            // Custom Number Pad - GestureDetector로 감싸서 포커스 유지
             if (showCustomKeypad)
               Column(
                 children: [
-                  // Next Button - Show only when both date and time are completed
-                  if (_isDateValid && (_isTimeValid || _isTimeUnknown))
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 58,
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        child: ElevatedButton(
-                          onPressed: widget.onNext,
-                          style: TossTheme.primaryButtonStyle(true),
-                          child: Text(
-                            '다음',
-                            style: TossTheme.button.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ).animate().fadeIn(duration: 300.ms),
                   
                   // Number Pad
                   GestureDetector(

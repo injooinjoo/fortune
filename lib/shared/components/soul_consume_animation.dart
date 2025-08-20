@@ -35,7 +35,9 @@ class SoulConsumeAnimation {
         onComplete: () {
           _currentOverlay?.remove();
           _currentOverlay = null;
-        }));
+        },
+      ),
+    );
 
     // Insert overlay
     Overlay.of(context).insert(_currentOverlay!);
@@ -60,7 +62,8 @@ class _SoulConsumeAnimationWidget extends StatefulWidget {
     required this.soulAmount,
     required this.startPosition,
     required this.endPosition,
-    required this.onComplete});
+    required this.onComplete,
+  });
 
   @override
   State<_SoulConsumeAnimationWidget> createState() => _SoulConsumeAnimationWidgetState();
@@ -143,7 +146,8 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
         angle: (i * math.pi / 3) + (random.nextDouble() * math.pi / 6),
         distance: 30.0 + random.nextDouble() * 20,
         delay: Duration(milliseconds: random.nextInt(150)),
-        size: 3.0 + random.nextDouble() * 3));
+        size: 3.0 + random.nextDouble() * 3,
+      ));
     }
   }
   
@@ -175,8 +179,10 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                   curve: const Interval(
                     0.4,
                     1.0,
-                    curve: Curves.easeOut)),
-                child: Transform.translate(
+                    curve: Curves.easeOut),
+                ),
+              ),
+              child: Transform.translate(
                   offset: Offset(
                     math.cos(particle.angle) * particle.distance * (1 - _particleController.value),
                     math.sin(particle.angle) * particle.distance * (1 - _particleController.value)),
@@ -190,8 +196,14 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                         BoxShadow(
                           color: AppColors.warning.withOpacity(0.4),
                           blurRadius: 3,
-                          spreadRadius: 1)]))).animate(delay: particle.delay)
-                  .fadeIn(duration: 200.ms)),
+                          spreadRadius: 1),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ).animate(delay: particle.delay)
+                  .fadeIn(duration: 200.ms)).toList(),
             
             // Main soul animation
             Positioned(
@@ -221,8 +233,17 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                           '-${widget.soulAmount}',
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: AppColors.warning,
-                            fontWeight: FontWeight.bold)])))]);
-      }
+                            fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -237,5 +258,6 @@ class _Particle {
     required this.angle,
     required this.distance,
     required this.delay,
-    required this.size});
+    required this.size,
+  });
 }

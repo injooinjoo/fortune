@@ -144,6 +144,45 @@ class _OnboardingPageState extends State<OnboardingPage> {
             'chinese_zodiac': profile.chineseZodiac,
             'updated_at': DateTime.now().toIso8601String()});
           debugPrint('Supabase에 프로필 동기화 완료');
+          
+          // 사주 계산 API 호출 (계정당 1회만)
+          try {
+            debugPrint('🔮 사주 계산 API 호출 중...');
+            final sajuResponse = await Supabase.instance.client.functions.invoke(
+              'calculate-saju',
+              body: {
+                'birthDate': _birthDate!.toIso8601String().split('T')[0],
+                'birthTime': birthTimeString,
+                'isLunar': false,
+                'timezone': 'Asia/Seoul'
+              },
+            ).timeout(
+              const Duration(seconds: 45),
+              onTimeout: () {
+                debugPrint('⏱️ 사주 계산 시간 초과');
+                throw Exception('사주 계산 시간 초과 (45초)');
+              },
+            );
+            
+            debugPrint('✅ 사주 계산 완료: ${sajuResponse.status}');
+            if (sajuResponse.status == 200) {
+              final sajuData = sajuResponse.data;
+              if (sajuData['success'] == true) {
+                debugPrint('✅ 사주 데이터 저장 성공');
+                // 사주 계산 플래그 업데이트
+                await Supabase.instance.client.from('user_profiles').update({
+                  'saju_calculated': true,
+                  'updated_at': DateTime.now().toIso8601String()
+                }).eq('id', _currentUser!.id);
+                debugPrint('✅ 사주 계산 플래그 업데이트 완료');
+              } else {
+                debugPrint('⚠️ 사주 계산 응답 오류: ${sajuData['error']}');
+              }
+            }
+          } catch (e) {
+            debugPrint('⚠️ 사주 계산 오류 (무시하고 계속 진행): $e');
+            // 사주 계산 실패해도 온보딩은 완료되도록 함
+          }
         } catch (e) {
           debugPrint('Supabase 프로필 동기화 오류: $e');
           // Supabase 실패해도 로컬 저장은 성공했으므로 계속 진행

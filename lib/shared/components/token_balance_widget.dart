@@ -40,11 +40,14 @@ class TokenBalanceWidget extends ConsumerWidget {
               padding: AppSpacing.paddingAll4,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.2),
-                shape: BoxShape.circle),
+                shape: BoxShape.circle,
+              ),
               child: Icon(
                 Icons.auto_awesome_rounded,
                 size: AppDimensions.iconSizeXSmall,
-                color: theme.colorScheme.primary)),
+                color: theme.colorScheme.primary,
+              ),
+            ),
             SizedBox(width: AppSpacing.spacing2),
             
             // Balance or Loading
@@ -55,7 +58,10 @@ class TokenBalanceWidget extends ConsumerWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    theme.colorScheme.primary)))
+                    theme.colorScheme.primary,
+                  ),
+                ),
+              )
             else
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -65,7 +71,15 @@ class TokenBalanceWidget extends ConsumerWidget {
                     balance?.toString() ?? '0',
                     style: AppTypography.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface))])])));
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -118,7 +132,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                 child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      theme.colorScheme.primary)))
+                      theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              )
             else
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -131,7 +149,9 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                     child: Icon(
                       Icons.auto_awesome,
                       size: AppDimensions.iconSizeLarge,
-                      color: theme.colorScheme.primary)),
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
                   SizedBox(width: AppSpacing.spacing3),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +181,15 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                   '영혼 충전하기',
                   style: AppTypography.bodyMedium.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w600))]));
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

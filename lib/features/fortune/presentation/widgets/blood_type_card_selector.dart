@@ -149,7 +149,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         end: Alignment.bottomRight,
                         colors: [
                           color,
-                          color.withOpacity(0.8)])
+                          color.withValues(alpha: 0.8)])
                     : null,
                 color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -163,7 +163,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                 boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: color.withOpacity(0.3),
+                          color: color.withValues(alpha:(0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -180,7 +180,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       child: Icon(
                         Icons.water_drop,
                         size: 80,
-                        color: Colors.white.withOpacity(0.1)),
+                        color: Colors.white.withValues(alpha: 0.1)),
                   
                   // Content
                   Padding(
@@ -193,8 +193,8 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                           height: AppDimensions.buttonHeightMedium,
                           decoration: BoxDecoration(
                             color: widget.isSelected
-                                ? Colors.white.withOpacity(0.2)
-                                : color.withOpacity(0.1),
+                                ? Colors.white.withValues(alpha:(0.2)
+                                : color.withValues(alpha: 0.1),
                             shape: BoxShape.circle),
                           child: Icon(
                             icon,
@@ -212,7 +212,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                           description,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: widget.isSelected
-                                ? Colors.white.withOpacity(0.9)
+                                ? Colors.white.withValues(alpha:(0.9)
                                 : Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
@@ -231,11 +231,15 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         height: 20,
                         decoration: const BoxDecoration(
                           color: Colors.white,
-                          shape: BoxShape.circle),
+                          shape: BoxShape.circle,
+                        ),
                         child: Icon(
                           Icons.check,
                           size: 14,
-                          color: color)),
+                          color: color,
+                        ),
+                      ),
+                    ),),
                 ],
               ),
             ),

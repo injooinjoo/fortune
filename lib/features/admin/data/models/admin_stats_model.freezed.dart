@@ -82,7 +82,8 @@ class _$AdminStatsModelCopyWithImpl<$Res, $Val extends AdminStatsModel>
     Object? totalRevenue = null,
     Object? fortuneTypeStats = null,
     Object? dailyStats = null,
-    Object? tokenUsageStats = null}) {
+    Object? tokenUsageStats = null,
+  }) {
     return _then(_value.copyWith(
       totalUsers: null == totalUsers
           ? _value.totalUsers
@@ -119,7 +120,8 @@ class _$AdminStatsModelCopyWithImpl<$Res, $Val extends AdminStatsModel>
       tokenUsageStats: null == tokenUsageStats
           ? _value.tokenUsageStats
           : tokenUsageStats // ignore: cast_nullable_to_non_nullable
-              as List<TokenUsageModel>) as $Val);
+              as List<TokenUsageModel>,
+    ) as $Val);
   }
 }
 
@@ -164,7 +166,8 @@ class __$$AdminStatsModelImplCopyWithImpl<$Res>
     Object? totalRevenue = null,
     Object? fortuneTypeStats = null,
     Object? dailyStats = null,
-    Object? tokenUsageStats = null}) {
+    Object? tokenUsageStats = null,
+  }) {
     return _then(_$AdminStatsModelImpl(
       totalUsers: null == totalUsers
           ? _value.totalUsers
@@ -201,7 +204,8 @@ class __$$AdminStatsModelImplCopyWithImpl<$Res>
       tokenUsageStats: null == tokenUsageStats
           ? _value._tokenUsageStats
           : tokenUsageStats // ignore: cast_nullable_to_non_nullable
-              as List<TokenUsageModel>));
+              as List<TokenUsageModel>,
+    ));
   }
 }
 
@@ -317,7 +321,8 @@ class _$AdminStatsModelImpl implements _AdminStatsModel {
   @override
   Map<String, dynamic> toJson() {
     return _$$AdminStatsModelImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -414,7 +419,8 @@ class _$DailyStatModelCopyWithImpl<$Res, $Val extends DailyStatModel>
     Object? fortunes = null,
     Object? users = null,
     Object? tokens = null,
-    Object? revenue = null}) {
+    Object? revenue = null,
+  }) {
     return _then(_value.copyWith(
       date: null == date
           ? _value.date
@@ -435,7 +441,8 @@ class _$DailyStatModelCopyWithImpl<$Res, $Val extends DailyStatModel>
       revenue: null == revenue
           ? _value.revenue
           : revenue // ignore: cast_nullable_to_non_nullable
-              as int) as $Val);
+              as int,
+    ) as $Val);
   }
 }
 
@@ -467,7 +474,8 @@ class __$$DailyStatModelImplCopyWithImpl<$Res>
     Object? fortunes = null,
     Object? users = null,
     Object? tokens = null,
-    Object? revenue = null}) {
+    Object? revenue = null,
+  }) {
     return _then(_$DailyStatModelImpl(
       date: null == date
           ? _value.date
@@ -488,7 +496,8 @@ class __$$DailyStatModelImplCopyWithImpl<$Res>
       revenue: null == revenue
           ? _value.revenue
           : revenue // ignore: cast_nullable_to_non_nullable
-              as int));
+              as int,
+    ));
   }
 }
 
@@ -551,7 +560,8 @@ class _$DailyStatModelImpl implements _DailyStatModel {
   @override
   Map<String, dynamic> toJson() {
     return _$$DailyStatModelImplToJson(
-      this);
+      this,
+    );
   }
 }
 
@@ -643,7 +653,8 @@ class _$TokenUsageModelCopyWithImpl<$Res, $Val extends TokenUsageModel>
     Object? tokensUsed = null,
     Object? fortuneCount = null,
     Object? lastActivity = null,
-    Object? isSubscribed = null}) {
+    Object? isSubscribed = null,
+  }) {
     return _then(_value.copyWith(
       userId: null == userId
           ? _value.userId
@@ -668,7 +679,8 @@ class _$TokenUsageModelCopyWithImpl<$Res, $Val extends TokenUsageModel>
       isSubscribed: null == isSubscribed
           ? _value.isSubscribed
           : isSubscribed // ignore: cast_nullable_to_non_nullable
-              as bool) as $Val);
+              as bool,
+    ) as $Val);
   }
 }
 
@@ -707,7 +719,8 @@ class __$$TokenUsageModelImplCopyWithImpl<$Res>
     Object? tokensUsed = null,
     Object? fortuneCount = null,
     Object? lastActivity = null,
-    Object? isSubscribed = null}) {
+    Object? isSubscribed = null,
+  }) {
     return _then(_$TokenUsageModelImpl(
       userId: null == userId
           ? _value.userId
@@ -732,7 +745,8 @@ class __$$TokenUsageModelImplCopyWithImpl<$Res>
       isSubscribed: null == isSubscribed
           ? _value.isSubscribed
           : isSubscribed // ignore: cast_nullable_to_non_nullable
-              as bool));
+              as bool,
+    ));
   }
 }
 
@@ -803,7 +817,8 @@ class _$TokenUsageModelImpl implements _TokenUsageModel {
   @override
   Map<String, dynamic> toJson() {
     return _$$TokenUsageModelImplToJson(
-      this);
+      this,
+    );
   }
 }
 

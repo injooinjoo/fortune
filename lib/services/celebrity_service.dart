@@ -119,7 +119,7 @@ class CelebrityService {
     return celebrities.take(limit).toList();
   }
 
-  // Get celebrity match score (for compatibility features,
+  // Get celebrity match score (for compatibility features)
   double calculateMatchScore(Celebrity celebrity1, Celebrity celebrity2) {
     double score = 0.0;
     
@@ -133,7 +133,7 @@ class CelebrityService {
       score += 0.15;
     }
     
-    // Similar age (within 5 years,
+    // Similar age (within 5 years)
     final ageDiff = (celebrity1.age - celebrity2.age).abs();
     if (ageDiff <= 5) {
       score += 0.15;
@@ -192,11 +192,11 @@ class CelebrityService {
     stats['ageStats'] = {
       'min': ages.reduce((a, b) => a < b ? a : b),
       'max': ages.reduce((a, b) => a > b ? a : b),
-      'average': null};
+      'average': ages.reduce((a, b) => a + b) / ages.length};
     
     // Zodiac distribution
     stats['byZodiac'] = <String, int>{};
-    final zodiacSigns = ['양자리': '황소자리': '쌍둥이자리', '게자리', '사자자리', 
+    final zodiacSigns = ['양자리', '황소자리', '쌍둥이자리', '게자리', '사자자리', 
                         '처녀자리', '천칭자리', '전갈자리', '사수자리', 
                         '염소자리', '물병자리', '물고기자리'];
     for (final sign in zodiacSigns) {

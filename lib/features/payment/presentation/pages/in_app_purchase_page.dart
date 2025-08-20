@@ -38,7 +38,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       await _purchaseService.initialize();
       await _loadProducts();
     } catch (e) {
-      Logger.error('인앱 결제 초기화 실패', error: e);
+      Logger.error('인앱 결제 초기화 실패: $e');
       _showError('결제 시스템을 초기화할 수 없습니다.');
     }
   }
@@ -62,7 +62,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
         _isLoading = false;
       });
     } catch (e) {
-      Logger.error('상품 로드 실패', error: e);
+      Logger.error('상품 로드 실패: $e');
       setState(() => _isLoading = false);
       _showError('상품 정보를 불러올 수 없습니다.');
     }
@@ -156,14 +156,17 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
   }
 
   Widget _buildCurrentBalance() {
-    final tokenBalance = ref.watch(tokenBalanceProvider);
-    final currentTokens = tokenBalance?.remainingTokens ?? 0;
+    // final tokenBalance = ref.watch(tokenBalanceProvider);
+    final currentTokens = 0; // tokenBalance?.remainingTokens ?? 0;
     
-    return CustomCard(
-      gradient: LinearGradient(
-        colors: [AppColors.primary, AppColors.secondary],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primary, AppColors.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -181,7 +184,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Fortune cached $3',
+                  '${currentTokens}개',
                   style: AppTextStyles.headlineLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -309,7 +312,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Fortune cached $3',
+                        '${tokenAmount}개',
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -321,7 +324,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                 // 가격
                 Text(
                   product.price,
-                  style: AppTextStyles.headlineSmall.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isSelected ? AppColors.primary : AppColors.textPrimary,
                   ),
@@ -352,14 +355,14 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? AppColors.accent : AppColors.surface,
+              color: isSelected ? AppColors.primary : AppColors.surface,
               width: isSelected ? 2 : 1,
             ),
             gradient: isSelected
                 ? LinearGradient(
                     colors: [
-                      AppColors.accent.withOpacity(0.1),
-                      AppColors.gradient2.withOpacity(0.1),
+                      AppColors.primary.withOpacity(0.1),
+                      AppColors.secondary.withOpacity(0.1),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -378,10 +381,10 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? AppColors.accent : AppColors.textSecondary,
+                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
                       width: 2,
                     ),
-                    color: isSelected ? AppColors.accent : Colors.transparent,
+                    color: isSelected ? AppColors.primary : Colors.transparent,
                   ),
                   child: isSelected
                       ? const Icon(
@@ -403,7 +406,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                           const Icon(
                             Icons.workspace_premium,
                             size: 20,
-                            color: AppColors.accent,
+                            color: AppColors.primary,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -419,7 +422,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.accent,
+                              color: AppColors.primary,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -450,9 +453,9 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   children: [
                     Text(
                       product.price,
-                      style: AppTextStyles.headlineSmall.copyWith(
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? AppColors.accent : AppColors.textPrimary,
+                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
                       ),
                     ),
                     Text(
@@ -539,7 +542,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
         _showSuccessResult();
       }
     } catch (e) {
-      Logger.error('구매 실패', error: e);
+      Logger.error('구매 실패', e);
       HapticUtils.error();
       _showError(e.toString());
     } finally {
@@ -555,7 +558,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       HapticUtils.success();
       _showSuccess('구매가 복원되었습니다.');
     } catch (e) {
-      Logger.error('구매 복원 실패', error: e);
+      Logger.error('구매 복원 실패', e);
       HapticUtils.error();
       _showError('구매 복원에 실패했습니다.');
     } finally {
@@ -577,8 +580,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
   }
 
   bool _isSubscription(String productId) {
-    return productId == ProductIds.monthlySubscription || 
-           productId == ProductIds.yearlySubscription;
+    return productId == ProductIds.monthlySubscription;
   }
 
   void _showSuccessResult() {

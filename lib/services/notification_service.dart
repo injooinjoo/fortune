@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+// import 'package:flutter_native_timezone/flutter_native_timezone.dart';  // AGP 8.x compatibility issue
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/services/native_platform_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -18,8 +18,10 @@ class NotificationService {
     try {
       // Initialize timezone
       tz.initializeTimeZones();
-      final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      // Temporarily using default timezone due to flutter_native_timezone compatibility issue
+      // final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+      // tz.setLocalLocation(tz.getLocation(timeZoneName));
+      tz.setLocalLocation(tz.getLocation('Asia/Seoul'));  // Default to Seoul timezone
       
       // Initialize native platform notifications
       await NativePlatformService.initialize();

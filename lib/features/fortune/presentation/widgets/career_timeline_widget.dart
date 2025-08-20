@@ -95,11 +95,11 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
             children: [
               // Timeline line
               Positioned(
-                top: 60);
-                left: 0),
-    right: 0),
-    child: Container(
-                  height: AppSpacing.spacing0 * 0.5);
+                top: 60,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: AppSpacing.spacing0 * 0.5,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [

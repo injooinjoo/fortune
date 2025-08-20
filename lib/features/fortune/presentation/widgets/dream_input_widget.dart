@@ -165,13 +165,21 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       maxLines: null,
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _sendMessage()),
+                  ),
                   
                   // Send button
-                  _buildSendButton(theme)])),
+                  _buildSendButton(theme),
+                ],
+              ),
+            ),
             const SizedBox(height: AppSpacing.spacing2),
             
             // Quick response buttons
-            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme)]))).animate().fadeIn().slideY(begin: 0.2, end: 0);
+            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme),
+          ],
+        ),
+      ),
+    ).animate().fadeIn().slideY(begin: 0.2, end: 0);
   }
   
   Widget _buildVoiceButton(ThemeData theme) {

@@ -42,7 +42,9 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error));
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -63,7 +65,9 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
           Text(
             'MBTI 성격 유형을 선택해주세요',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textSecondary)),
+              color: AppColors.textSecondary,
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing2),
           InkWell(
             onTap: () {
@@ -73,7 +77,10 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
               'MBTI를 모르시나요? 테스트 하러 가기 →',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.primary,
-                decoration: TextDecoration.underline)),
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing5),
           Container(
             constraints: const BoxConstraints(maxHeight: 300),
@@ -94,7 +101,14 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
                       return _buildMbtiOption(mbti);
                     }),
                   SizedBox(height: AppSpacing.spacing3),
-                  _buildMbtiOption(null, '선택 안함')]))]);
+                  _buildMbtiOption(null, '선택 안함'),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildMbtiOption(String? value, [String? customLabel]) {
@@ -123,6 +137,12 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: isSelected ? AppColors.textDark : AppColors.textPrimary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)))));
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

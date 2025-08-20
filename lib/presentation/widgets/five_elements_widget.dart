@@ -51,7 +51,8 @@ class FiveElementsWidget extends ConsumerWidget {
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1)),
+          width: 1),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,7 +69,11 @@ class FiveElementsWidget extends ConsumerWidget {
                   Text(
                     '五行分析',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: AppSpacing.spacing2,
@@ -87,12 +92,20 @@ class FiveElementsWidget extends ConsumerWidget {
                     Text(
                       '탭하여 상세보기',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary)])]),
+                        color: theme.colorScheme.primary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: AppSpacing.spacing2),
           Text(
             '오행의 균형으로 보는 나의 기운',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7)),
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing5),
           
           // Five Elements Grid
@@ -105,7 +118,10 @@ class FiveElementsWidget extends ConsumerWidget {
           
           // Balance advice
           if (dominantElement != null || lackingElement != null)
-            _buildBalanceAdvice(theme, dominantElement, lackingElement)]));
+            _buildBalanceAdvice(theme, dominantElement, lackingElement),
+        ],
+      ),
+    );
   }
   
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
@@ -116,7 +132,8 @@ class FiveElementsWidget extends ConsumerWidget {
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1)),
+          width: 1),
+      ),
       child: Column(
         children: [
           Icon(
@@ -131,8 +148,13 @@ class FiveElementsWidget extends ConsumerWidget {
           Text(
             '사주 정보를 입력하면 오행 분석을 확인할 수 있습니다.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7)),
-            textAlign: TextAlign.center)]));
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildFiveElementsGrid(
@@ -167,8 +189,13 @@ class FiveElementsWidget extends ConsumerWidget {
                       percentage,
                       total,
                       dominantElement == element,
-                      lackingElement == element)));
-              }).toList()),
+                      lackingElement == element,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
           SizedBox(height: AppSpacing.spacing3),
           IntrinsicHeight(
             child: Row(
@@ -188,9 +215,18 @@ class FiveElementsWidget extends ConsumerWidget {
                         percentage,
                         total,
                         dominantElement == element,
-                        lackingElement == element),
-                      SizedBox(width: AppSpacing.spacing5)]);
-                }).toList()])]);
+                        lackingElement == element,
+                      ),
+                      SizedBox(width: AppSpacing.spacing5),
+                    ],
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
   
   Widget _buildElementCircle(
@@ -217,8 +253,8 @@ class FiveElementsWidget extends ConsumerWidget {
       },
       child: SizedBox(
         width: 85,
-        height: 95, // Fixed height for all elements,
-    child: Stack(
+        height: 95, // Fixed height for all elements
+        child: Stack(
           alignment: Alignment.topCenter,
           children: [
             // Circle positioned at top
@@ -256,7 +292,13 @@ class FiveElementsWidget extends ConsumerWidget {
                             color: color)),
                         Text(
                           '$percentage%',
-                          style: context.captionMedium)]))),
+                          style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             // Label positioned at bottom (outside circle alignment)
             if (isDominant || isLacking)
               Positioned(
@@ -277,7 +319,15 @@ class FiveElementsWidget extends ConsumerWidget {
                              theme.colorScheme.primary :
                              theme.colorScheme.error,
                       fontWeight: FontWeight.bold,
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))]));
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
   
   Widget _buildElementBars(
@@ -314,6 +364,7 @@ class FiveElementsWidget extends ConsumerWidget {
                 color: isDominant ? theme.colorScheme.primary.withOpacity(0.3) :
                        isLacking ? theme.colorScheme.error.withOpacity(0.3) :
                        color.withOpacity(0.2)),
+            ),
             child: Column(
               children: [
                 Row(
@@ -327,14 +378,17 @@ class FiveElementsWidget extends ConsumerWidget {
                       child: Center(
                         child: Text(
                           _getElementHanja(entry.key),
-                          style: Theme.of(context).textTheme.titleLarge)),
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
                     SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-    children: [
+                            children: [
                               Text(
                                 '${_getElementName(entry.key)} (${entry.key})',
                                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -366,7 +420,13 @@ class FiveElementsWidget extends ConsumerWidget {
                                     '부족',
                                     style: theme.textTheme.labelSmall?.copyWith(
                                       color: theme.colorScheme.error,
-                                      fontWeight: FontWeight.bold)))]]),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                           SizedBox(height: AppSpacing.spacing2),
                           Row(
                             children: [
@@ -381,12 +441,26 @@ class FiveElementsWidget extends ConsumerWidget {
                                 '$percentage%',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: color))])])),
+                                  color: color),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                     Icon(
                       Icons.arrow_forward_ios,
                       size: AppDimensions.iconSizeXSmall,
-                      color: theme.colorScheme.onSurface.withOpacity(0.3))])])));
-      }).toList());
+                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
   
   Widget _buildBalanceAdvice(ThemeData theme, String? dominantElement, String? lackingElement) {
@@ -399,6 +473,7 @@ class FiveElementsWidget extends ConsumerWidget {
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -412,7 +487,11 @@ class FiveElementsWidget extends ConsumerWidget {
               Text(
                 '오행 균형 조언',
                 style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: AppSpacing.spacing3),
           if (dominantElement != null)
             Padding(
@@ -428,12 +507,17 @@ class FiveElementsWidget extends ConsumerWidget {
                       top: AppSpacing.xSmall),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary,
-                      shape: BoxShape.circle)),
+                      shape: BoxShape.circle),
+                  ),
                   SizedBox(width: AppSpacing.spacing2),
                   Expanded(
-    child: Text(
+                    child: Text(
                       '${_getElementName(dominantElement)}($dominantElement)의 기운이 강합니다. 과도한 기운을 조절하여 균형을 맞추세요.',
-                      style: theme.textTheme.bodySmall)]),
+                      style: theme.textTheme.bodySmall),
+                  ),
+                ],
+              ),
+            ),
           if (lackingElement != null)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -445,18 +529,26 @@ class FiveElementsWidget extends ConsumerWidget {
                     top: AppSpacing.xSmall),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.error,
-                    shape: BoxShape.circle)),
+                    shape: BoxShape.circle),
+                ),
                 SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
                     '${_getElementName(lackingElement)}($lackingElement)의 기운이 부족합니다. 부족한 기운을 보충하여 조화를 이루세요.',
-                    style: theme.textTheme.bodySmall))]),
+                    style: theme.textTheme.bodySmall),
+                ),
+              ],
+            ),
           SizedBox(height: AppSpacing.spacing2),
           Text(
             '자세한 조언을 보려면 각 오행을 탭하세요.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface.withOpacity(0.6),
-              fontStyle: FontStyle.italic)]);
+              fontStyle: FontStyle.italic),
+          ),
+        ],
+      ),
+    );
   }
   
   Color _getElementColor(String element) {

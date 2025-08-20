@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math' as math;
 
 import '../presentation/providers/navigation_visibility_provider.dart';
 
@@ -27,20 +28,52 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
   late AnimationController _fadeController;
   late List<AnimationController> _checkControllers;
   
-  final List<LoadingStep> _steps = [
+  // 30개의 다양한 로딩 메시지 풀
+  final List<LoadingStep> _allLoadingMessages = [
     LoadingStep('오늘의 날씨 확인 중', '하늘의 기운을 읽고 있어요'),
     LoadingStep('사주팔자 분석 중', '당신의 운명을 해석하고 있어요'),
     LoadingStep('우주의 기운 해석 중', '별들의 메시지를 받고 있어요'),
-    LoadingStep('행운의 요소 탐색 중', '오늘의 행운을 찾고 있어요'),
-    LoadingStep('오늘의 이야기 생성 중', '특별한 이야기를 만들고 있어요'),
+    LoadingStep('오늘의 행운 색상 선별 중', '당신만의 특별한 색을 찾고 있어요'),
+    LoadingStep('띠별 운세 분석 중', '12띠의 기운을 살펴보고 있어요'),
+    LoadingStep('길운 방향 탐색 중', '오늘의 좋은 방향을 확인하고 있어요'),
+    LoadingStep('행복 에너지 충전 중', '긍정적인 파동을 모으고 있어요'),
+    LoadingStep('별자리 궁합 계산 중', '우주의 궁합을 살펴보고 있어요'),
+    LoadingStep('오늘의 귀인 찾는 중', '당신을 도울 사람을 찾고 있어요'),
+    LoadingStep('금전운 파동 분석 중', '재물의 흐름을 읽고 있어요'),
+    LoadingStep('연애운 기류 측정 중', '사랑의 에너지를 확인하고 있어요'),
+    LoadingStep('건강운 지수 확인 중', '몸과 마음의 건강을 체크하고 있어요'),
+    LoadingStep('직장운 흐름 읽는 중', '업무 운세를 살펴보고 있어요'),
+    LoadingStep('가족운 기운 감지 중', '가족과의 화합을 확인하고 있어요'),
+    LoadingStep('시간대별 운세 정리 중', '하루 시간의 흐름을 정리하고 있어요'),
+    LoadingStep('행운의 숫자 추출 중', '당신만의 특별한 숫자를 찾고 있어요'),
+    LoadingStep('꿈의 메시지 해석 중', '잠재의식의 신호를 읽고 있어요'),
+    LoadingStep('운명의 실타래 풀어보는 중', '복잡한 인연을 정리하고 있어요'),
+    LoadingStep('오늘의 주의사항 검토 중', '조심해야 할 것들을 확인하고 있어요'),
+    LoadingStep('행운의 아이템 선정 중', '당신에게 맞는 부적을 고르고 있어요'),
+    LoadingStep('오늘의 조언 준비 중', '현명한 말씀을 준비하고 있어요'),
+    LoadingStep('당신만의 부적 만드는 중', '특별한 보호막을 만들고 있어요'),
+    LoadingStep('오늘의 명언 선택 중', '마음에 새길 말을 고르고 있어요'),
+    LoadingStep('에너지 밸런스 조정 중', '몸과 마음의 균형을 맞추고 있어요'),
+    LoadingStep('운세 지도 그리는 중', '하루의 길을 그려보고 있어요'),
+    LoadingStep('오늘의 테마 설정 중', '하루를 관통할 주제를 정하고 있어요'),
+    LoadingStep('행복 지수 계산 중', '당신의 만족도를 측정하고 있어요'),
+    LoadingStep('스트레스 해소법 찾는 중', '마음의 평안을 위한 방법을 찾고 있어요'),
+    LoadingStep('오늘의 미션 준비 중', '작은 도전과제를 준비하고 있어요'),
+    LoadingStep('수호천사 부르는 중', '당신을 지켜줄 천사를 부르고 있어요'),
+    LoadingStep('오늘의 기회 포착 중', '놓치지 말아야 할 순간을 찾고 있어요'),
+    LoadingStep('마지막 행운 체크 중', '모든 준비가 완료되었는지 확인하고 있어요'),
   ];
   
+  List<LoadingStep> _steps = [];
   int _currentStep = 0;
   double _scrollOffset = 0;
   
   @override
   void initState() {
     super.initState();
+    
+    // 30개 메시지 중 랜덤하게 5개 선택
+    _generateRandomSteps();
     
     // 네비게이션 바 숨기기
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -74,6 +107,31 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
     });
     
     _startAnimation();
+  }
+  
+  // 30개 메시지 중 랜덤하게 5개를 선택하는 메서드
+  void _generateRandomSteps() {
+    final random = math.Random();
+    final selectedMessages = <LoadingStep>[];
+    final usedIndices = <int>{};
+    
+    // 첫 번째와 마지막 메시지는 고정 (날씨 확인과 이야기 생성)
+    selectedMessages.add(_allLoadingMessages[0]); // 오늘의 날씨 확인 중
+    usedIndices.add(0);
+    
+    // 중간에 3개 랜덤 선택 (1번부터 30번까지 중에서)
+    while (selectedMessages.length < 4) {
+      final randomIndex = random.nextInt(_allLoadingMessages.length - 2) + 1; // 1부터 30까지
+      if (!usedIndices.contains(randomIndex) && randomIndex != _allLoadingMessages.length - 1) {
+        selectedMessages.add(_allLoadingMessages[randomIndex]);
+        usedIndices.add(randomIndex);
+      }
+    }
+    
+    // 마지막 메시지 추가 (마지막 행운 체크)
+    selectedMessages.add(_allLoadingMessages.last);
+    
+    _steps = selectedMessages;
   }
   
   void _startAnimation() async {

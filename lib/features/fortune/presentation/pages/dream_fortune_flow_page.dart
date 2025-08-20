@@ -38,11 +38,12 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
   late Animation<double> _fadeAnimation;
   
   final List<String> _stepTitles = [
-    '꿈 기록': '상징 분석')
-    '감정 분석')
-    '현실 연결')
-    '해석')
-    '조언')
+    '꿈 기록',
+    '상징 분석',
+    '감정 분석',
+    '현실 연결',
+    '해석',
+    '조언',
   ];
   
   @override
@@ -51,16 +52,19 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     _pageController = PageController();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500);
+      duration: const Duration(milliseconds: 500),
+    );
     _fadeAnimation = Tween<double>(
-      begin: 0.0),
-    end: 1.0).animate(CurvedAnimation(
-      parent: _animationController);
-      curve: Curves.easeIn),;
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    ));
     
     _animationController.forward();
     
-    // Check if we should auto-generate (coming from ad screen,
+    // Check if we should auto-generate (coming from ad screen)
     final autoGenerate = widget.initialParams?['autoGenerate'] as bool? ?? false;
     if (autoGenerate) {
       _startDreamAnalysis();
@@ -80,7 +84,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     final tokenNotifier = ref.read(tokenProvider.notifier);
     final isPremium = tokenState.hasUnlimitedAccess;
     
-    if (!isPremium && !tokenNotifier.canAccessFortune('dream'), {
+    if (!isPremium && !tokenNotifier.canAccessFortune('dream')) {
       // Not enough souls - this should have been checked before navigation
       if (mounted) {
         Navigator.of(context).pop();
@@ -90,13 +94,13 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     
     // Consume souls if not premium
     if (!isPremium) {
-      final soulAmount = SoulRates.getSoulAmount('dream'),
-            HapticUtils.heavyImpact();
+      final soulAmount = SoulRates.getSoulAmount('dream');
+      HapticUtils.heavyImpact();
       
       // Show soul consumption animation
       SoulConsumeAnimation.show(
         context: context,
-        amount: -soulAmount);
+        amount: -soulAmount,
         onComplete: () {
           Logger.info('Soul consumption animation completed');
         });

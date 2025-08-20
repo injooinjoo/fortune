@@ -679,6 +679,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                                 ),
                               ),
                             ),
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -785,7 +786,8 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                 shape: BoxShape.circle,
                 color: isCompleted 
                   ? theme.colorScheme.primary 
-                  : theme.colorScheme.onSurface.withOpacity(0.2)),
+                  : theme.colorScheme.onSurface.withOpacity(0.2),
+              ),
               child: Center(
                 child: isCompleted
                   ? Icon(Icons.check, color: Colors.white, size: 20)
@@ -809,7 +811,8 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
             ),
           ],
         );
-      }).toList();
+      }).toList(),
+    );
   }
   
   Widget _buildTodayFocusItem(IconData icon, String title, String content, Color color) {
@@ -880,8 +883,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         final theme = Theme.of(context);
-        final emotionalState = widget.fortuneData['emotionalState'
-  ];
+        final emotionalState = widget.fortuneData['emotionalState'];
         
         return Container(
           height: MediaQuery.of(context).size.height * 0.7,
@@ -957,6 +959,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
       decoration: BoxDecoration(
         color: theme.colorScheme.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1033,7 +1036,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
         'duration': '3개월 이후',
         'description': '이별을 받아들이고 새로운 시작을 준비하는 시기입니다. 평화로운 마음을 되찾게 됩니다.',
       },
-    }
+    };
     
     return stages[stage] ?? stages[1]!;
   }
@@ -1070,7 +1073,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
         '자신에게 보상하기',
         '미래 계획 세우기',
       ],
-    }
+    };
     
     return recommendations[stage] ?? recommendations[1]!;
   }

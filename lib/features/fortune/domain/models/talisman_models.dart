@@ -60,14 +60,14 @@ class TalismanDesign {
   factory TalismanDesign.fromJson(Map<String, dynamic> json) {
     return TalismanDesign(
       baseSymbol: json['baseSymbol'],
-      primaryColor: Color(json['primaryColor'],
-      secondaryColor: Color(json['secondaryColor'],
+      primaryColor: Color(json['primaryColor']),
+      secondaryColor: Color(json['secondaryColor']),
       personalText: json['personalText'],
       protectionSymbol: json['protectionSymbol'],
-      createdDate: DateTime.parse(json['createdDate'],
+      createdDate: DateTime.parse(json['createdDate']),
       userBirthInfo: json['userBirthInfo'],
       userName: json['userName'],
-      customSymbols: json['customSymbols']
+      customSymbols: json['customSymbols'],
     );
   }
 }
@@ -108,14 +108,14 @@ class TalismanResult {
 
   factory TalismanResult.fromJson(Map<String, dynamic> json) {
     return TalismanResult(
-      type: TalismanType.values.firstWhere((t) => t.name == json['type'],
-      design: TalismanDesign.fromJson(json['design'],
+      type: TalismanType.values.firstWhere((t) => t.name == json['type']),
+      design: TalismanDesign.fromJson(json['design']),
       meaning: json['meaning'],
       usage: json['usage'],
       effectiveness: json['effectiveness'],
-      precautions: List<String>.from(json['precautions'],
+      precautions: List<String>.from(json['precautions']),
       shareableImageUrl: json['shareableImageUrl'],
-      additionalInfo: json['additionalInfo']
+      additionalInfo: json['additionalInfo'],
     );
   }
 }
