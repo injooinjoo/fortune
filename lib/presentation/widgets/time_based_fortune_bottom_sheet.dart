@@ -270,7 +270,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     
     return AnimatedContainer(
       duration: AppAnimations.durationShort,
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
@@ -454,7 +454,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             curve: Curves.easeOutCubic,
           )),
           child: Container(
-            height: screenHeight * 0.85,
+            height: screenHeight * 0.82,
             decoration: BoxDecoration(
               color: theme.brightness == Brightness.dark 
                   ? AppColors.textPrimary 
@@ -476,11 +476,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                 _buildHandle(),
                 _buildHeader(theme),
                 Expanded(
-                  child: Column(
-                    children: [
-                      _buildCalendar(theme),
-                      _buildSelectedDateInfo(),
-                    ],
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _buildCalendar(theme),
+                        _buildSelectedDateInfo(),
+                      ],
+                    ),
                   ),
                 ),
                 _buildBottomButton(theme, canGetFortune),
@@ -510,22 +513,12 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
   Widget _buildHeader(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-      child: Column(
-        children: [
-          Text(
-            '특정일 운세',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '운세를 확인할 날짜를 선택해주세요',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-        ],
+      child: Text(
+        '운세를 확인할 날짜를 선택해주세요',
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurface.withOpacity(0.7),
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
@@ -592,7 +585,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             titleTextStyle: (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
               fontWeight: FontWeight.bold,
             ),
+            titleTextFormatter: (date, locale) => DateFormat('yyyy년 M월', 'ko_KR').format(date),
           ),
+          daysOfWeekStyle: DaysOfWeekStyle(
+            weekdayStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            weekendStyle: TextStyle(color: Colors.red.withOpacity(0.7)),
+          ),
+          daysOfWeekHeight: 40,
+          locale: 'ko_KR',
         ),
       ),
     );
@@ -603,8 +603,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       padding: EdgeInsets.only(
         left: AppSpacing.xLarge,
         right: AppSpacing.xLarge,
-        bottom: MediaQuery.of(context).padding.bottom + 24,
-        top: 16,
+        bottom: MediaQuery.of(context).padding.bottom + 16,
+        top: 12,
       ),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,

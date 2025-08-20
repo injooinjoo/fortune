@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/toast.dart';
-import '../../../../core/utils/korean_holidays.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/app_theme_extensions.dart';
+import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/services/personalized_fortune_service.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
@@ -81,84 +83,462 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
 
   @override
   Widget buildInputForm() {
-    final theme = Theme.of(context);
+    return _buildDateHeaderSection();
+  }
 
+  @override
+  Widget buildFortuneResult() {
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        children: [
+          // 기본 운세 결과는 제외하고 특정일에 맞는 정보만 표시
+          _buildOverallScoreSection(),
+          _buildTodaysCoreSection(), 
+          _buildHourlyFortuneSection(),
+          _buildLuckyElementsSection(),
+          _buildRelationshipSection(),
+          _buildMoneySection(),
+          _buildHealthSection(),
+          if (_isSpecialDay()) _buildSpecialDaySection(),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateHeaderSection() {
+    return TossCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _formatDate(_selectedDate),
+            style: AppTypography.displayMedium.copyWith(
+              color: AppColors.getTossTextPrimary(context),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _getLunarDate(_selectedDate),
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.getTossTextSecondary(context),
+            ),
+          ),
+          if (_holidayName != null || _specialName != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.tossBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.tossBlue.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                _holidayName ?? _specialName!,
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.tossBlue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildOverallScoreSection() {
+    final overallScore = 75 + (DateTime.now().millisecond % 25);
+    final gradeText = _getGradeText(overallScore);
+    final summaryText = _getSummaryText(overallScore);
+    
+    return TossCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Text(
+            '$overallScore',
+            style: AppTypography.displayLarge.copyWith(
+              color: AppColors.getTossTextPrimary(context),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: _getScoreColor(overallScore).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              gradeText,
+              style: AppTypography.bodyMedium.copyWith(
+                color: _getScoreColor(overallScore),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            summaryText,
+            style: AppTypography.bodyLarge.copyWith(
+              color: AppColors.getTossTextPrimary(context),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodaysCoreSection() {
+    final todos = PersonalizedFortuneService.getPersonalizedTodos(userProfile);
+    final avoids = PersonalizedFortuneService.getPersonalizedAvoids(userProfile);
+    
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '오늘의 핵심',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildCoreItem('✅', '할 일', todos, AppColors.positive),
+          const SizedBox(height: 16),
+          _buildCoreItem('❌', '피할 일', avoids, AppColors.negative),
+          const SizedBox(height: 16),
+          _buildAdviceBox(),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildCoreItem(String icon, String title, List<String> items, Color color) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Selected Date Info
-        GlassCard(
-          padding: const EdgeInsets.all(20),
+        Row(
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: AppTypography.titleMedium.copyWith(
+                color: AppColors.getTossTextPrimary(context),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...items.map((item) => Padding(
+          padding: const EdgeInsets.only(left: 24, bottom: 4),
+          child: Text(
+            '• $item',
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.getTossTextSecondary(context),
+            ),
+          ),
+        )),
+      ],
+    );
+  }
+  
+  Widget _buildAdviceBox() {
+    final advice = PersonalizedFortuneService.getPersonalizedAdvice(userProfile);
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.getTossIconBackground(context),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Text('💡', style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              advice,
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.getTossTextPrimary(context),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHourlyFortuneSection() {
+    final hourlyData = PersonalizedFortuneService.getPersonalizedHourlyActivities(userProfile);
+    
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '시간대별 운세',
+      child: Column(
+        children: hourlyData.map((hour) => _buildHourlyItem(hour)).toList(),
+      ),
+    );
+  }
+  
+  Widget _buildHourlyItem(Map<String, dynamic> hour) {
+    final score = hour['score'] as int;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 80,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: _getScoreColor(score).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              hour['time'] as String,
+              style: AppTypography.bodySmall.copyWith(
+                color: _getScoreColor(score),
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              hour['activity'] as String,
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.getTossTextPrimary(context),
+              ),
+            ),
+          ),
+          Text(
+            '${score}점',
+            style: AppTypography.titleSmall.copyWith(
+              color: _getScoreColor(score),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+
+
+  Widget _buildLuckyElementsSection() {
+    final elements = [
+      {'title': '행운의 숫자', 'value': '3, 7, 21', 'icon': '🔢'},
+      {'title': '행운의 색상', 'value': '파란색, 은색', 'icon': '🎨'},
+      {'title': '행운의 방향', 'value': '동쪽, 남동쪽', 'icon': '🧭'},
+      {'title': '행운의 아이템', 'value': '시계, 펜', 'icon': '🍀'},
+    ];
+    
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '행운 요소',
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: _buildLuckyElementCard(elements[0])),
+              const SizedBox(width: 12),
+              Expanded(child: _buildLuckyElementCard(elements[1])),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _buildLuckyElementCard(elements[2])),
+              const SizedBox(width: 12),
+              Expanded(child: _buildLuckyElementCard(elements[3])),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildLuckyElementCard(Map<String, dynamic> element) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.getTossIconBackground(context),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            element['icon'] as String,
+            style: const TextStyle(fontSize: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            element['title'] as String,
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.getTossTextSecondary(context),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            element['value'] as String,
+            style: AppTypography.titleSmall.copyWith(
+              color: AppColors.getTossTextPrimary(context),
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _isSpecialDay() {
+    return _holidayName != null || _specialName != null;
+  }
+  
+  Widget _buildSpecialDaySection() {
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '특별한 날',
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.tossBlue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: AppColors.tossBlue.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _holidayName ?? _specialName ?? '',
+              style: AppTypography.titleMedium.copyWith(
+                color: AppColors.tossBlue,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '특별한 날에는 평소보다 더 좋은 기운이 함께합니다. 새로운 시작이나 중요한 일을 계획해보세요.',
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.getTossTextPrimary(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  String _getLunarDate(DateTime date) {
+    // 간단한 음력 변환 (실제로는 더 정확한 계산 필요)
+    final dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
+    final lunarDay = (dayOfYear % 30) + 1;
+    final lunarMonth = ((dayOfYear ~/ 30) + 1) % 12 + 1;
+    return '음력 ${lunarMonth}월 ${lunarDay}일';
+  }
+  
+  String _getGradeText(int score) {
+    if (score >= 90) return '매우 좋음';
+    if (score >= 80) return '좋음';
+    if (score >= 70) return '보통';
+    if (score >= 60) return '주의';
+    return '나쁨';
+  }
+  
+  String _getSummaryText(int score) {
+    if (score >= 90) return '오늘은 새로운 시작에 매우 좋은 날입니다';
+    if (score >= 80) return '긍정적인 에너지가 함께하는 하루입니다';
+    if (score >= 70) return '평온하고 안정적인 하루가 예상됩니다';
+    if (score >= 60) return '신중하게 행동하면 좋은 결과를 얻을 수 있어요';
+    return '차분히 기다리는 자세가 필요한 날입니다';
+  }
+  
+  Color _getScoreColor(int score) {
+    if (score >= 90) return AppColors.positive;
+    if (score >= 80) return AppColors.tossBlue;
+    if (score >= 70) return AppColors.caution;
+    return AppColors.negative;
+  }
+
+  Widget _buildRelationshipSection() {
+    final relationships = PersonalizedFortuneService.getPersonalizedRelationships(userProfile);
+    
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '인간관계',
+      child: Column(
+        children: [
+          _buildRelationshipItem(
+            '👥',
+            '귀인운',
+            relationships['lucky'] ?? '나이가 많은 동료나 선배',
+            AppColors.positive,
+          ),
+          const SizedBox(height: 12),
+          _buildRelationshipItem(
+            '⚠️',
+            '주의할 사람',
+            relationships['careful'] ?? '감정적인 성향이 강한 사람',
+            AppColors.caution,
+          ),
+          const SizedBox(height: 12),
+          _buildRelationshipItem(
+            '💕',
+            '연애운',
+            relationships['love'] ?? '진솔한 대화가 관계를 발전시킴',
+            AppColors.tossBlue,
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildRelationshipItem(String icon, String title, String description, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(icon, style: const TextStyle(fontSize: 16)),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today_rounded,
-                    color: theme.colorScheme.primary,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '선택된 날짜',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _formatDate(_selectedDate),
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    if (_holidayName != null || _specialName != null) ...[
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _holidayName != null
-                              ? Colors.red.withOpacity(0.1)
-                              : Colors.orange.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          _holidayName ?? _specialName!,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: _holidayName != null
-                                ? Colors.red
-                                : Colors.orange,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
               Text(
-                '선택한 날짜의 전반적인 운세와 시간대별 가이드를 확인할 수 있습니다',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                title,
+                style: AppTypography.titleSmall.copyWith(
+                  color: AppColors.getTossTextPrimary(context),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                description,
+                style: AppTypography.bodyMedium.copyWith(
+                  color: AppColors.getTossTextSecondary(context),
                 ),
               ),
             ],
@@ -167,393 +547,154 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       ],
     );
   }
-
-  @override
-  Widget buildFortuneResult() {
-    // Add daily-specific sections to the base result with SingleChildScrollView
-    return SingleChildScrollView(
+  
+  Widget _buildMoneySection() {
+    final moneyScore = 78;
+    
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '금전운',
       child: Column(
         children: [
-          super.buildFortuneResult(),
-          _buildDateSummary(),
-          _buildLuckyHours(),
-          _buildActivityRecommendations()
-        ]
+          Row(
+            children: [
+              Expanded(
+                child: _buildMoneyScoreCard(moneyScore),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '투자/소비 조언',
+                      style: AppTypography.titleSmall.copyWith(
+                        color: AppColors.getTossTextPrimary(context),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      PersonalizedFortuneService.getPersonalizedMoneyAdvice(userProfile),
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.getTossTextSecondary(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
-
-  Widget _buildDateSummary() {
-    final theme = Theme.of(context);
-    
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.today_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${_formatDate(_selectedDate)} 운세 요약',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _buildOverallScore(),
-            const SizedBox(height: 16),
-            if (_holidayName != null || _specialName != null)
-              _buildSpecialDayInfo(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOverallScore() {
-    final theme = Theme.of(context);
-    
-    // 모의 점수 생성 (실제로는 API에서 받아올 것)
-    final overallScore = 75 + (DateTime.now().millisecond % 25);
-    final luckScore = 60 + (DateTime.now().millisecond % 40);
-    final healthScore = 70 + (DateTime.now().millisecond % 30);
-    final workScore = 80 + (DateTime.now().millisecond % 20);
-    
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildScoreCard('전체 운세', overallScore, theme.colorScheme.primary),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildScoreCard('행운도', luckScore, Colors.amber),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildScoreCard('건강 운세', healthScore, Colors.green),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildScoreCard('업무 운세', workScore, Colors.blue),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScoreCard(String title, int score, Color color) {
-    final theme = Theme.of(context);
-    
+  
+  Widget _buildMoneyScoreCard(int score) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            color.withOpacity(0.1),
-            color.withOpacity(0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-        ),
+        color: AppColors.getTossIconBackground(context),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
           Text(
-            title,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
+            '💰',
+            style: const TextStyle(fontSize: 24),
           ),
           const SizedBox(height: 8),
           Text(
             '$score점',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
+            style: AppTypography.titleLarge.copyWith(
+              color: _getScoreColor(score),
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: score / 100,
-            backgroundColor: color.withOpacity(0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 4,
+          const SizedBox(height: 4),
+          Text(
+            '재물운',
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.getTossTextSecondary(context),
+            ),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildSpecialDayInfo() {
-    final theme = Theme.of(context);
-    final info = _holidayName ?? _specialName!;
+  
+  Widget _buildHealthSection() {
+    final healthScore = 82;
     
+    return TossSectionCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      title: '건강',
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _buildHealthScoreCard(healthScore),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '건강 조언',
+                      style: AppTypography.titleSmall.copyWith(
+                        color: AppColors.getTossTextPrimary(context),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      PersonalizedFortuneService.getPersonalizedHealthAdvice(userProfile),
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.getTossTextSecondary(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildHealthScoreCard(int score) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _holidayName != null
-            ? Colors.red.withOpacity(0.1)
-            : Colors.orange.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _holidayName != null
-              ? Colors.red.withOpacity(0.3)
-              : Colors.orange.withOpacity(0.3),
-        ),
+        color: AppColors.getTossIconBackground(context),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Icon(
-            _holidayName != null ? Icons.celebration : Icons.star,
-            color: _holidayName != null ? Colors.red : Colors.orange,
+          Text(
+            '🏥',
+            style: const TextStyle(fontSize: 24),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '특별한 날',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  info,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: _holidayName != null ? Colors.red : Colors.orange,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 8),
+          Text(
+            '$score점',
+            style: AppTypography.titleLarge.copyWith(
+              color: _getScoreColor(score),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '건강운',
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.getTossTextSecondary(context),
             ),
           ),
         ],
       ),
-    );
-  }
-
-
-
-
-  Widget _buildLuckyHours() {
-    final theme = Theme.of(context);
-    
-    final luckyHours = [
-      {'time': '09:00-10:00', 'activity': '중요한 결정', 'score': 95},
-      {'time': '14:00-15:00', 'activity': '창의적 작업', 'score': 88},
-      {'time': '19:00-20:00', 'activity': '사교 활동', 'score': 92},
-      {'time': '22:00-23:00', 'activity': '명상/휴식', 'score': 85}
-    ];
-    
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.star_rounded,
-                  color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  '오늘의 행운 시간대',
-                  style: theme.textTheme.headlineSmall
-                )
-              ]
-            ),
-            const SizedBox(height: 16),
-            ...luckyHours.map((hour) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      theme.colorScheme.primary.withOpacity(0.1),
-                      theme.colorScheme.secondary.withOpacity(0.1)
-                    ]
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.3)
-                  )
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        hour['time'] as String,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold
-                        )
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        hour['activity'] as String,
-                        style: theme.textTheme.bodyMedium
-                      )
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: _getScoreColor(hour['score'] as int).withOpacity(0.2),
-                        shape: BoxShape.circle
-                      ),
-                      child: Text(
-                        '${hour['score']}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold
-                        )
-                      )
-                    )
-                  ]
-                )
-                )
-              )
-            ).toList()
-          ]
-        )
-      )
-    );
-  }
-
-  Color _getScoreColor(int score) {
-    if (score >= 90) return Colors.green;
-    if (score >= 80) return Colors.blue;
-    if (score >= 70) return Colors.orange;
-    return Colors.red;
-  }
-
-  Widget _buildActivityRecommendations() {
-    final theme = Theme.of(context);
-    
-    final timeSlots = [
-      {
-        'period': '새벽 (00:00-06:00)', 'icon': Icons.nightlight_round,
-        'activities': ['깊은 수면', '명상', '일기 쓰기'],
-        'color': Colors.indigo
-      },
-      {
-        'period': '아침 (06:00-12:00)', 'icon': Icons.wb_sunny,
-        'activities': ['운동', '중요한 업무', '학습'],
-        'color': Colors.orange
-      },
-      {
-        'period': '오후 (12:00-18:00)', 'icon': Icons.wb_twilight,
-        'activities': ['미팅', '창의적 작업', '네트워킹'],
-        'color': Colors.amber
-      },
-      {
-        'period': '저녁 (18:00-24:00)', 'icon': Icons.nights_stay,
-        'activities': ['가족 시간', '취미 활동', '휴식'],
-        'color': Colors.purple
-      }
-    ];
-    
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.schedule_rounded,
-                  color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  '시간대별 추천 활동',
-                  style: theme.textTheme.headlineSmall
-                )
-              ]
-            ),
-            const SizedBox(height: 16),
-            ...timeSlots.map((slot) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: (slot['color'] as Color).withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8)
-                    ),
-                    child: Icon(
-                      slot['icon'] as IconData,
-                      size: 24,
-                      color: slot['color'] as Color
-                    )
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          slot['period'] as String,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold
-                          )
-                        ),
-                        const SizedBox(height: 4),
-                        Wrap(
-                          spacing: 8,
-                          children: (slot['activities'] as List<String>).map((activity) {
-                            return Chip(
-                              label: Text(
-                                activity,
-                                style: theme.textTheme.bodySmall
-                              ),
-                              backgroundColor: theme.colorScheme.surface.withOpacity(0.5),
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              padding: const EdgeInsets.symmetric(horizontal: 8)
-                            );
-                          }).toList()
-                        )
-                      ]
-                    )
-                  )
-                ]
-              )
-            )).toList()
-          ]
-        )
-      )
     );
   }
 

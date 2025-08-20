@@ -40,13 +40,6 @@ class HolidayService {
             .select('*')
             .gte('date', startOfMonth.toIso8601String().split('T')[0])
             .lte('date', endOfMonth.toIso8601String().split('T')[0]);
-
-        // 손없는날 데이터 가져오기
-        final auspiciousResponse = await _supabase
-            .from('auspicious_days')
-            .select('*')
-            .gte('date', startOfMonth.toIso8601String().split('T')[0])
-            .lte('date', endOfMonth.toIso8601String().split('T')[0]);
         
         // 공휴일/기념일 처리
         if (holidaysResponse != null) {
@@ -72,27 +65,31 @@ class HolidayService {
           }
         }
         
-        // 손없는날 처리
-        if (auspiciousResponse != null) {
-          for (final auspicious in auspiciousResponse) {
-            final date = DateTime.parse(auspicious['date']);
+        // Edge Function으로 손없는날 계산
+        try {
+          final auspiciousDays = await _calculateAuspiciousDaysFromEdgeFunction(month.year, month.month);
+          for (final auspiciousDay in auspiciousDays) {
+            final date = DateTime.parse(auspiciousDay['date']);
             final normalizedDate = DateTime(date.year, date.month, date.day);
-            
             final existingEvent = events[normalizedDate];
             
             events[normalizedDate] = CalendarEventInfo(
               date: normalizedDate,
               holidayName: existingEvent?.holidayName,
               specialName: existingEvent?.specialName,
-              auspiciousName: auspicious['description'] ?? '손없는날',
+              auspiciousName: auspiciousDay['description'] ?? '손없는날',
               isHoliday: existingEvent?.isHoliday ?? false,
               isSpecial: existingEvent?.isSpecial ?? false,
               isAuspicious: true,
-              auspiciousScore: auspicious['score'],
-              description: auspicious['description'],
+              auspiciousScore: auspiciousDay['score'],
+              description: auspiciousDay['description'],
             );
           }
+        } catch (edgeFunctionError) {
+          debugPrint('Edge Function error, using fallback: $edgeFunctionError');
+          _addFallbackAuspiciousDays(events, month);
         }
+        
       } catch (dbError) {
         debugPrint('Database not available, using fallback data: $dbError');
         // 데이터베이스 테이블이 없는 경우 fallback 데이터 사용
@@ -108,6 +105,61 @@ class HolidayService {
     } catch (e) {
       debugPrint('Error loading holiday events: $e');
       return {};
+    }
+  }
+  
+  /// Edge Function으로 손없는날 계산
+  Future<List<dynamic>> _calculateAuspiciousDaysFromEdgeFunction(int year, int month) async {
+    try {
+      final response = await _supabase.functions.invoke(
+        'calculate-auspicious-days',
+        body: {
+          'year': year,
+          'month': month,
+        },
+      );
+      
+      if (response.status == 200 && response.data != null) {
+        final data = response.data as Map<String, dynamic>;
+        return data['auspicious_days'] as List<dynamic>;
+      } else {
+        throw Exception('Edge Function returned error: ${response.status}');
+      }
+    } catch (e) {
+      debugPrint('Error calling auspicious days Edge Function: $e');
+      rethrow;
+    }
+  }
+  
+  /// Edge Function 실패시 사용할 fallback 손없는날 데이터
+  void _addFallbackAuspiciousDays(Map<DateTime, CalendarEventInfo> events, DateTime month) {
+    // 최소한의 손없는날 데이터 (음력 9,0일 근사치)
+    final startOfMonth = DateTime(month.year, month.month, 1);
+    final endOfMonth = DateTime(month.year, month.month + 1, 0);
+    
+    for (int day = 1; day <= endOfMonth.day; day++) {
+      final date = DateTime(month.year, month.month, day);
+      final dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
+      final lunarApprox = (dayOfYear % 30) + 1;
+      
+      // 음력 끝자리가 9 또는 0인 날 (간단한 근사치)
+      if (lunarApprox % 10 == 9 || lunarApprox % 10 == 0) {
+        final normalizedDate = DateTime(date.year, date.month, date.day);
+        final existingEvent = events[normalizedDate];
+        final score = lunarApprox % 10 == 0 ? 95 : 90;
+        
+        events[normalizedDate] = CalendarEventInfo(
+          date: normalizedDate,
+          holidayName: existingEvent?.holidayName,
+          specialName: existingEvent?.specialName,
+          auspiciousName: '손없는날 (근사치)',
+          isHoliday: existingEvent?.isHoliday ?? false,
+          isSpecial: existingEvent?.isSpecial ?? false,
+          isAuspicious: true,
+          auspiciousScore: score,
+          description: '손없는날 - 이사하기 좋은 날 (근사치)',
+        );
+      }
     }
   }
   
@@ -130,14 +182,20 @@ class HolidayService {
       
       // 2025년
       {'date': '2025-01-01', 'name': '신정', 'type': 'holiday'},
+      {'date': '2025-01-28', 'name': '설날 연휴', 'type': 'holiday'},
       {'date': '2025-01-29', 'name': '설날', 'type': 'holiday'},
+      {'date': '2025-01-30', 'name': '설날 연휴', 'type': 'holiday'},
       {'date': '2025-03-01', 'name': '삼일절', 'type': 'holiday'},
+      {'date': '2025-03-03', 'name': '삼일절 대체공휴일', 'type': 'holiday'},
       {'date': '2025-05-05', 'name': '어린이날', 'type': 'holiday'},
       {'date': '2025-05-12', 'name': '부처님오신날', 'type': 'holiday'},
       {'date': '2025-06-06', 'name': '현충일', 'type': 'holiday'},
       {'date': '2025-08-15', 'name': '광복절', 'type': 'holiday'},
-      {'date': '2025-10-06', 'name': '추석', 'type': 'holiday'},
       {'date': '2025-10-03', 'name': '개천절', 'type': 'holiday'},
+      {'date': '2025-10-05', 'name': '추석 연휴', 'type': 'holiday'},
+      {'date': '2025-10-06', 'name': '추석', 'type': 'holiday'},
+      {'date': '2025-10-07', 'name': '추석 연휴', 'type': 'holiday'},
+      {'date': '2025-10-08', 'name': '추석 대체공휴일', 'type': 'holiday'},
       {'date': '2025-10-09', 'name': '한글날', 'type': 'holiday'},
       {'date': '2025-12-25', 'name': '크리스마스', 'type': 'holiday'},
       
@@ -148,13 +206,7 @@ class HolidayService {
       {'date': '2025-05-08', 'name': '어버이날', 'type': 'memorial'},
     ];
     
-    // 손없는날 샘플 데이터
-    final auspiciousDays = <Map<String, dynamic>>[
-      {'date': '2024-08-20', 'score': 95, 'description': '손없는날 - 이사하기 매우 좋은 날'},
-      {'date': '2024-09-07', 'score': 93, 'description': '손없는날 - 이사하기 매우 좋은 날'},
-      {'date': '2025-01-05', 'score': 89, 'description': '손없는날 - 이사하기 매우 좋은 날'},
-      {'date': '2025-02-01', 'score': 91, 'description': '손없는날 - 이사하기 매우 좋은 날'},
-    ];
+    // 공휴일만 fallback으로 처리하고, 손없는날은 _addFallbackAuspiciousDays 사용
     
     final startOfMonth = DateTime(month.year, month.month, 1);
     final endOfMonth = DateTime(month.year, month.month + 1, 0);
@@ -182,27 +234,8 @@ class HolidayService {
       }
     }
     
-    // 손없는날 처리
-    for (final day in auspiciousDays) {
-      final date = DateTime.parse(day['date']);
-      if (date.isAfter(startOfMonth.subtract(const Duration(days: 1))) && 
-          date.isBefore(endOfMonth.add(const Duration(days: 1)))) {
-        final normalizedDate = DateTime(date.year, date.month, date.day);
-        final existingEvent = events[normalizedDate];
-        
-        events[normalizedDate] = CalendarEventInfo(
-          date: normalizedDate,
-          holidayName: existingEvent?.holidayName,
-          specialName: existingEvent?.specialName,
-          auspiciousName: day['description'],
-          isHoliday: existingEvent?.isHoliday ?? false,
-          isSpecial: existingEvent?.isSpecial ?? false,
-          isAuspicious: true,
-          auspiciousScore: day['score'],
-          description: day['description'],
-        );
-      }
-    }
+    // 손없는날은 Edge Function에서 처리하므로 fallback에는 공휴일만
+    _addFallbackAuspiciousDays(events, month);
   }
   
   /// 특정 날짜의 이벤트 정보 가져오기
