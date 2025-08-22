@@ -87,7 +87,8 @@
       "Bash(xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.fortuneFlutter)",
       "Bash(git restore:*)",
       "Bash(supabase:*)",
-      "Bash(printf \"1\")"
+      "Bash(printf \"1\")",
+      "Bash(xcrun devicectl device list:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -430,7 +430,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 1. 인사
     segments.add(StorySegment(
-      subtitle: '인사',
       text: userName.isNotEmpty ? userName + '님' : '오늘의 주인공',
       fontSize: 36,
       fontWeight: FontWeight.w200,
@@ -438,7 +437,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 2. 날짜
     segments.add(StorySegment(
-      subtitle: '오늘은',
       text: '${now.month}월 ${now.day}일\n${_getWeekdayKorean(now.weekday)}',
       fontSize: 28,
       fontWeight: FontWeight.w300,
@@ -446,7 +444,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 3. 총평
     segments.add(StorySegment(
-      subtitle: '오늘의 총평',
       text: score >= 80 
           ? '특별한 에너지가\n넘치는 날'
           : score >= 60
@@ -459,7 +456,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 4. 핵심 운세
     segments.add(StorySegment(
-      subtitle: '운세 이야기',
       text: _getShortFortuneText(score, 1),
       fontSize: 24,
       fontWeight: FontWeight.w300,
@@ -467,7 +463,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 5. 오전 운세
     segments.add(StorySegment(
-      subtitle: '오전 운세',
       text: _getShortFortuneText(score, 2),
       fontSize: 24,
       fontWeight: FontWeight.w300,
@@ -475,7 +470,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 6. 오후 운세
     segments.add(StorySegment(
-      subtitle: '오후 운세',
       text: _getShortFortuneText(score, 3),
       fontSize: 24,
       fontWeight: FontWeight.w300,
@@ -564,7 +558,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 1. 인사
     segments.add(StorySegment(
-      subtitle: '인사',
       text: userName.isNotEmpty ? userName + '님' : '오늘의 주인공',
       fontSize: 36,
       fontWeight: FontWeight.w200,
@@ -572,7 +565,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 2. 날짜
     segments.add(StorySegment(
-      subtitle: '오늘은',
       text: '${now.month}월 ${now.day}일\n${_getWeekdayKorean(now.weekday)}',
       fontSize: 28,
       fontWeight: FontWeight.w300,
@@ -585,7 +577,6 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         ? '차분하고 안정적인\n하루'
         : '천천히 가도\n괜찮은 날';
     segments.add(StorySegment(
-      subtitle: '오늘의 총평',
       text: energyText,
       fontSize: 26,
       fontWeight: FontWeight.w300,

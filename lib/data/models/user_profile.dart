@@ -10,6 +10,7 @@ class UserProfile extends Equatable {
   final String? birthTime;
   final String? gender;
   final String? mbtiType;
+  final String? bloodType;
   final String? zodiacSign;
   final String? chineseZodiac;
   final String? profileImageUrl;
@@ -31,6 +32,7 @@ class UserProfile extends Equatable {
     this.birthTime,
     this.gender,
     this.mbtiType,
+    this.bloodType,
     this.zodiacSign,
     this.chineseZodiac,
     this.profileImageUrl,
@@ -54,7 +56,8 @@ class UserProfile extends Equatable {
           : null,
       birthTime: json['birth_time'] as String?,
       gender: json['gender'] as String?,
-      mbtiType: json['mbti_type'] as String?,
+      mbtiType: json['mbti_type'] as String? ?? json['mbti'] as String?,
+      bloodType: json['blood_type'] as String?,
       zodiacSign: json['zodiac_sign'] as String?,
       chineseZodiac: json['chinese_zodiac'] as String?,
       profileImageUrl: json['profile_image_url'] as String?,
@@ -85,6 +88,7 @@ class UserProfile extends Equatable {
       'birth_time': birthTime,
       'gender': gender,
       'mbti_type': mbtiType,
+      'blood_type': bloodType,
       'zodiac_sign': zodiacSign,
       'chinese_zodiac': chineseZodiac,
       'profile_image_url': profileImageUrl,
@@ -120,6 +124,7 @@ class UserProfile extends Equatable {
     String? birthTime,
     String? gender,
     String? mbtiType,
+    String? bloodType,
     String? zodiacSign,
     String? chineseZodiac,
     String? profileImageUrl,
@@ -140,6 +145,7 @@ class UserProfile extends Equatable {
       birthTime: birthTime ?? this.birthTime,
       gender: gender ?? this.gender,
       mbtiType: mbtiType ?? this.mbtiType,
+      bloodType: bloodType ?? this.bloodType,
       zodiacSign: zodiacSign ?? this.zodiacSign,
       chineseZodiac: chineseZodiac ?? this.chineseZodiac,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
@@ -163,6 +169,7 @@ class UserProfile extends Equatable {
     birthTime,
     gender,
     mbtiType,
+    bloodType,
     zodiacSign,
     chineseZodiac,
     profileImageUrl,

@@ -3,6 +3,8 @@ import '../../domain/entities/fortune.dart';
 import '../../data/services/fortune_api_service.dart';
 import '../../core/errors/exceptions.dart';
 import '../../core/utils/logger.dart';
+import '../../services/cache_service.dart';
+import '../../models/fortune_model.dart';
 import 'auth_provider.dart';
 
 // Fortune State
@@ -125,6 +127,7 @@ abstract class BaseFortuneNotifier extends StateNotifier<FortuneState> {
 // Daily Fortune Notifier
 class DailyFortuneNotifier extends BaseFortuneNotifier {
   DateTime? _selectedDate;
+  final CacheService _cacheService = CacheService();
 
   DailyFortuneNotifier(super._apiService, super.ref);
 
@@ -146,19 +149,39 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
                   _selectedDate!.day == DateTime.now().day),
       'timestamp': null});
     
-    final stopwatch = Logger.startTimer('DailyFortune API Call');
+    final stopwatch = Logger.startTimer('DailyFortune Generation');
     
     try {
-      Logger.debug('📡 [DailyFortuneNotifier] Calling API service', {
+      // 1. 먼저 캐시 확인
+      Logger.debug('📦 [DailyFortuneNotifier] Checking cache first');
+      final cachedFortune = await _cacheService.getCachedFortune('daily', {'userId': userId});
+      
+      if (cachedFortune != null) {
+        Logger.endTimer('DailyFortune Generation', stopwatch);
+        final fortuneEntity = cachedFortune.toEntity();
+        Logger.info('✅ [DailyFortuneNotifier] Using cached fortune', {
+          'fortuneId': cachedFortune.id,
+          'overallScore': fortuneEntity.overallScore,
+          'cacheTime': '${stopwatch.elapsedMilliseconds}ms'});
+        return fortuneEntity;
+      }
+      
+      // 2. 캐시가 없으면 API 호출
+      Logger.debug('📡 [DailyFortuneNotifier] No cache found, calling API', {
         'method': 'getDailyFortune',
         'userId': userId,
         'date': null});
       
+      final apiStopwatch = Logger.startTimer('DailyFortune API Call');
       final fortune = await _apiService.getDailyFortune(
         userId: userId,
         date: _selectedDate ?? DateTime.now());
+      Logger.endTimer('DailyFortune API Call', apiStopwatch);
       
-      Logger.endTimer('DailyFortune API Call', stopwatch);
+      // 3. API 결과를 캐시에 저장
+      await _cacheService.cacheFortune('daily', {'userId': userId}, FortuneModel.fromEntity(fortune));
+      
+      Logger.endTimer('DailyFortune Generation', stopwatch);
       Logger.info('🔍 [DailyFortuneNotifier] getDailyFortune returned successfully', {
         'fortuneId': fortune.id,
         'fortuneType': fortune.type,
@@ -166,17 +189,18 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
         'category': fortune.category,
         'hasDescription': fortune.description?.isNotEmpty ?? false,
         'luckyItemsCount': fortune.luckyItems?.length ?? 0,
-        'apiCallTime': '${stopwatch.elapsedMilliseconds}ms'});
+        'apiCallTime': '${apiStopwatch.elapsedMilliseconds}ms',
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
       
       return fortune;
     } catch (e, stackTrace) {
-      Logger.endTimer('DailyFortune API Call', stopwatch);
+      Logger.endTimer('DailyFortune Generation', stopwatch);
       Logger.error('❌ [DailyFortuneNotifier] Error in generateFortune', {
         'error': e.toString(),
         'errorType': e.runtimeType.toString(),
         'userId': userId,
         'selectedDate': _selectedDate?.toIso8601String(),
-        'apiCallTime': '${stopwatch.elapsedMilliseconds}ms',
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
         'stackTrace': null});
       rethrow;
     }

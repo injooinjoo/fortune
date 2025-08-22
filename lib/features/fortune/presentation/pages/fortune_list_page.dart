@@ -14,10 +14,12 @@ import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
+import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../data/models/fortune_card_score.dart';
+import '../widgets/lucky_items_bottom_sheet.dart';
 
 class FortuneCategory {
   final String title;
@@ -399,12 +401,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
     // ==================== Personal/Character-based Fortunes (통합) ====================
     FortuneCategory(
-      title: '성격 운세',
-      route: '/personality',
-      type: 'personality',
-      icon: Icons.psychology_rounded,
-      gradientColors: [Color(0xFF6366F1), Color(0xFF3B82F6)],
-      description: 'MBTI/혈액형',
+      title: '성격 DNA',
+      route: '/personality-dna',
+      type: 'personality-dna',
+      icon: Icons.biotech_rounded,
+      gradientColors: [Color(0xFF8B5CF6), Color(0xFFEC4899)],
+      description: '4가지 조합으로 만드는 당신만의 DNA',
       category: 'lifestyle',
       isNew: true),
     FortuneCategory(
@@ -495,7 +497,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'lifestyle'),
     FortuneCategory(
       title: '재능 발견',
-      route: '/lifestyle?type=talent',
+      route: '/fortune/talent',
       type: 'talent',
       icon: Icons.stars_rounded,
       gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
@@ -694,7 +696,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             ),
             
             // 하단 여백
-            const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
+            const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
           ],
         ),
       ),
@@ -832,8 +834,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         context,
         onDismiss: () {},
       );
+    } else if (category.type == 'personality-dna') {
+      // PersonalityDNA는 소개 페이지로 직접 이동
+      context.push('/personality-dna');
     } else if (category.type == 'tarot') {
       context.push('/tarot');
+    } else if (category.type == 'lucky_items') {
+      // 행운 아이템은 Bottom Sheet로 처리
+      LuckyItemsBottomSheet.show(context);
     } else {
       // Record visit for recommendation system
       ref.read(fortuneRecommendationProvider.notifier).recordVisit(

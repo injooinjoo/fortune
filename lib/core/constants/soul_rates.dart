@@ -29,6 +29,7 @@ class SoulRates {
     'biorhythm': 3,
     'mbti': 3,
     'personality': 3,
+    'personality-dna': 4,
     'weekly': 4,
     'monthly': 5,
     'birth-season': 3,

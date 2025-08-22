@@ -6,6 +6,8 @@ import '../../../features/fortune/presentation/pages/birthdate_fortune_page.dart
 import '../../../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
 import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lifestyle_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/personality_dna_page.dart';
+import '../../../core/models/personality_dna_model.dart';
 
 final personalityRoutes = [
   // Personality Fortune Unified
@@ -49,4 +51,12 @@ final personalityRoutes = [
     path: '/lifestyle',
     name: 'fortune-lifestyle',
     builder: (context, state) => const LifestyleFortunePage()),
+  
+  // Personality DNA
+  GoRoute(
+    path: '/personality-dna',
+    name: 'fortune-personality-dna',
+    builder: (context, state) => PersonalityDNAPage(
+      initialDNA: state.extra as PersonalityDNA?,
+    )),
 ];

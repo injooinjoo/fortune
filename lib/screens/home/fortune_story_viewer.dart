@@ -252,23 +252,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 소제목이 있으면 표시
-                if (segment.subtitle != null) ...[
-                  Text(
-                    segment.subtitle!,
-                    style: TextStyle(
-                      color: isDark 
-                        ? Colors.white.withValues(alpha: 0.5)
-                        : Colors.black.withValues(alpha: 0.5),
-                      fontSize: segment.subtitleFontSize ?? 14,
-                      fontWeight: segment.subtitleFontWeight ?? FontWeight.w300,
-                      letterSpacing: 2,
-                      height: 1.4,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                // 소제목 제거됨
                 
                 // 이모지가 있으면 표시
                 if (segment.emoji != null) ...[

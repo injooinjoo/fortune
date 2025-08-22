@@ -9,6 +9,7 @@ import '../../../features/fortune/presentation/pages/lucky_series_fortune_page.d
 import '../../../features/fortune/presentation/pages/birthstone_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/five_blessings_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/lucky_items_results_page.dart';
 
 final luckyItemRoutes = [
   // Lucky Items Unified
@@ -16,6 +17,12 @@ final luckyItemRoutes = [
     path: '/lucky-items',
     name: 'fortune-lucky-items',
     builder: (context, state) => const LuckyItemsUnifiedPage()),
+    
+  // Lucky Items Results (New)
+  GoRoute(
+    path: '/lucky-items-results',
+    name: 'fortune-lucky-items-results',
+    builder: (context, state) => const LuckyItemsResultsPage()),
   
   // Lucky Color
   GoRoute(
