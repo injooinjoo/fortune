@@ -11,7 +11,6 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../domain/models/fortune_result.dart';
-import '../../../../presentation/screens/ad_loading_screen.dart';
 
 typedef InputBuilder = Widget Function(BuildContext context, Function(Map<String, dynamic>) onSubmit);
 typedef ResultBuilder = Widget Function(BuildContext context, FortuneResult result, VoidCallback onShare);
@@ -130,24 +129,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
     try {
       Fortune? generatedFortune;
       
-      // Show ad loading screen (or premium loading for premium users)
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AdLoadingScreen(
-            fortuneType: widget.fortuneType,
-            fortuneTitle: widget.title,
-            isPremium: isPremium,
-            onComplete: () {
-              Navigator.pop(context);
-            },
-            onSkip: () {
-              Navigator.pop(context);
-            },
-          ),
-          fullscreenDialog: true,
-        ),
-      );
+      // Direct fortune generation (no ad screen)
       
       // Generate fortune after ad screen
       final fortune = await ref.read(

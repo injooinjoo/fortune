@@ -60,7 +60,7 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
 
 class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
   final _wishController = TextEditingController();
-  WishCategory? _selectedCategory;
+  WishCategory _selectedCategory = WishCategory.other; // 기본값으로 '기타' 설정
   int _urgencyLevel = 3; // 1-5 별점
 
   @override
@@ -70,15 +70,14 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
   }
 
   bool _canSubmit() {
-    return _wishController.text.trim().isNotEmpty && 
-           _selectedCategory != null;
+    return _wishController.text.trim().isNotEmpty;
   }
 
   void _submitWish() {
     if (!_canSubmit()) return;
 
     final wishText = _wishController.text.trim();
-    final category = _selectedCategory!.name;
+    final category = _selectedCategory.name;
     final urgency = _urgencyLevel;
 
     // 바텀시트 닫기
@@ -141,10 +140,6 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                   
                   // 소원 입력
                   _buildWishInput(),
-                  const SizedBox(height: 24),
-                  
-                  // 카테고리 선택
-                  _buildCategorySelection(),
                   const SizedBox(height: 24),
                   
                   // 간절함 정도

@@ -9,7 +9,6 @@ import '../../core/constants/fortune_type_names.dart';
 import '../../data/fortune_explanations.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/providers/token_provider.dart';
-import '../../presentation/screens/ad_loading_screen.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -565,29 +564,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                       'bloodType': _selectedBloodType,
                     };
                     
-                    // Check premium status
-                    final tokenState = ref.read(tokenProvider);
-                    final isPremium = tokenState.hasUnlimitedAccess;
-                    
-                    // Navigate to AdLoadingScreen with proper parameters
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AdLoadingScreen(
-                          fortuneType: widget.fortuneType,
-                          fortuneTitle: _getFortuneTypeName(widget.fortuneType),
-                          isPremium: isPremium,
-                          onComplete: () {
-                            // This will be handled by the AdLoadingScreen navigation
-                          },
-                          onSkip: () {
-                            // Navigate to premium upgrade
-                            context.go('/premium');
-                          },
-                          fortuneRoute: _getFortuneRoute(widget.fortuneType),
-                          fortuneParams: fortuneParams,
-                        ),
-                      ),
-                    );
+                    // Direct navigation to fortune route
+                    final fortuneRoute = _getFortuneRoute(widget.fortuneType);
+                    context.go(fortuneRoute, extra: fortuneParams);
                   }
                 : null,
             style: ElevatedButton.styleFrom(

@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/components/loading_states.dart';
@@ -16,6 +18,7 @@ import '../../domain/models/fortune_history.dart';
 import '../widgets/statistics_dashboard.dart';
 import '../widgets/fortune_charts.dart';
 import '../widgets/timeline_view.dart';
+import '../widgets/fortune_calendar_view.dart';
 
 class FortuneHistoryPage extends ConsumerStatefulWidget {
   const FortuneHistoryPage({Key? key}) : super(key: key);
@@ -33,7 +36,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     
     // Load fortune history
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -55,43 +58,136 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     final historyState = ref.watch(fortuneHistoryProvider);
     
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: TossTheme.backgroundWhite,
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(
-              title: '운세 기록',
-              showBackButton: true,
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.filter_list),
-                  onPressed: _showFilterOptions)]),
-            
-            // Tab Bar
+            // 토스 스타일 헤더
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.shadow.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2))]),
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: theme.colorScheme.primary),
-                labelColor: Colors.white,
-                unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
-                labelStyle: TextStyle(
-                  fontSize: 14 * fontScale,
-                  fontWeight: FontWeight.bold),
-                tabs: const [
-                  Tab(text: '타임라인'),
-                  Tab(text: '통계'),
-                  Tab(text: '차트')])),
+              padding: const EdgeInsets.all(TossTheme.spacingL),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: TossTheme.textBlack),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  Expanded(
+                    child: Text(
+                      '운세 기록',
+                      style: TossTheme.heading2,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.filter_list, color: TossTheme.textBlack),
+                    onPressed: _showFilterOptions,
+                  ),
+                ],
+              ),
+            ),
+            
+            // 토스 스타일 탭 바
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TossCard(
+                      onTap: () => setState(() => _tabController.index = 0),
+                      style: _tabController.index == 0 
+                        ? TossCardStyle.filled 
+                        : TossCardStyle.outlined,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: TossTheme.spacingS, 
+                        horizontal: TossTheme.spacingM,
+                      ),
+                      child: Text(
+                        '타임라인',
+                        style: TossTheme.body2.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: _tabController.index == 0 
+                            ? Colors.white 
+                            : TossTheme.textGray600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: TossTheme.spacingS),
+                  Expanded(
+                    child: TossCard(
+                      onTap: () => setState(() => _tabController.index = 1),
+                      style: _tabController.index == 1 
+                        ? TossCardStyle.filled 
+                        : TossCardStyle.outlined,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: TossTheme.spacingS, 
+                        horizontal: TossTheme.spacingM,
+                      ),
+                      child: Text(
+                        '통계',
+                        style: TossTheme.body2.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: _tabController.index == 1 
+                            ? Colors.white 
+                            : TossTheme.textGray600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: TossTheme.spacingS),
+                  Expanded(
+                    child: TossCard(
+                      onTap: () => setState(() => _tabController.index = 2),
+                      style: _tabController.index == 2 
+                        ? TossCardStyle.filled 
+                        : TossCardStyle.outlined,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: TossTheme.spacingS, 
+                        horizontal: TossTheme.spacingM,
+                      ),
+                      child: Text(
+                        '차트',
+                        style: TossTheme.body2.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: _tabController.index == 2 
+                            ? Colors.white 
+                            : TossTheme.textGray600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  
+                  // 일일 운세 탭
+                  Expanded(
+                    child: TossCard(
+                      onTap: () => setState(() => _tabController.index = 3),
+                      style: _tabController.index == 3 
+                        ? TossCardStyle.filled 
+                        : TossCardStyle.outlined,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: TossTheme.spacingM,
+                        vertical: TossTheme.spacingS,
+                      ),
+                      child: Text(
+                        '일일운세',
+                        style: TossTheme.body2.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: _tabController.index == 3 
+                            ? Colors.white 
+                            : TossTheme.textGray600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: TossTheme.spacingL),
             
             // Tab Content
             Expanded(
@@ -104,34 +200,137 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   final filteredHistory = _filterHistory(history);
                   final statistics = _calculateStatistics(filteredHistory);
                   
-                  return TabBarView(
-                    controller: _tabController,
+                  return Column(
                     children: [
-                      // Timeline Tab
-                      SingleChildScrollView(
-                        child: TimelineView(
-                          history: filteredHistory,
-                          fontScale: fontScale,
-                          onItemTap: _showFortuneDetail)),
+                      // 이번 달 요약 카드 (토스 스타일)
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+                        child: TossCard(
+                          padding: const EdgeInsets.all(TossTheme.spacingL),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    '이번 달 요약',
+                                    style: TossTheme.heading2.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    DateFormat('yyyy년 MM월').format(DateTime.now()),
+                                    style: TossTheme.caption.copyWith(
+                                      color: TossTheme.textGray600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: TossTheme.spacingM),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '${statistics.monthlyCount}',
+                                          style: TossTheme.heading1.copyWith(
+                                            color: TossTheme.primaryBlue,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Text(
+                                          '운세 조회',
+                                          style: TossTheme.caption.copyWith(
+                                            color: TossTheme.textGray600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '${statistics.averageScore.toStringAsFixed(1)}',
+                                          style: TossTheme.heading1.copyWith(
+                                            color: TossTheme.primaryBlue,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Text(
+                                          '평균 점수',
+                                          style: TossTheme.caption.copyWith(
+                                            color: TossTheme.textGray600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          statistics.mostFrequentCategory,
+                                          style: TossTheme.heading2.copyWith(
+                                            color: TossTheme.primaryBlue,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Text(
+                                          '자주 본 운세',
+                                          style: TossTheme.caption.copyWith(
+                                            color: TossTheme.textGray600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       
-                      // Statistics Tab
-                      SingleChildScrollView(
-                        child: StatisticsDashboard(
-                          statistics: statistics,
-                          fontScale: fontScale)),
+                      const SizedBox(height: TossTheme.spacingL),
                       
-                      // Charts Tab
-                      SingleChildScrollView(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
+                      // 탭별 컨텐츠
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
                           children: [
-                            CategoryPieChart(
-                              history: filteredHistory,
-                              fontScale: fontScale),
-                            const SizedBox(height: 32),
-                            MonthlyTrendChart(
-                              history: filteredHistory,
-                              fontScale: fontScale),
+                            // Timeline Tab
+                            SingleChildScrollView(
+                              child: TimelineView(
+                                history: filteredHistory,
+                                fontScale: fontScale,
+                                onItemTap: _showFortuneDetail)),
+                            
+                            // Statistics Tab
+                            SingleChildScrollView(
+                              child: StatisticsDashboard(
+                                statistics: statistics,
+                                fontScale: fontScale)),
+                            
+                            // Charts Tab
+                            SingleChildScrollView(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  CategoryPieChart(
+                                    history: filteredHistory,
+                                    fontScale: fontScale),
+                                  const SizedBox(height: 32),
+                                  MonthlyTrendChart(
+                                    history: filteredHistory,
+                                    fontScale: fontScale),
+                                ],
+                              ),
+                            ),
+                            
+                            // Daily Fortune Calendar Tab
+                            _buildDailyFortuneCalendar(filteredHistory),
                           ],
                         ),
                       ),
@@ -156,26 +355,59 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
 
   Widget _buildEmptyState(double fontScale) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.history,
-            size: 80,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
-          const SizedBox(height: 16),
-          Text(
-            '아직 운세 기록이 없습니다',
-            style: TextStyle(
-              fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(
-            '운세를 보고 나면 여기에 기록됩니다',
-            style: TextStyle(
-              fontSize: 14 * fontScale,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
-        ],
+      child: Container(
+        margin: const EdgeInsets.all(TossTheme.spacingXL),
+        child: TossCard(
+          padding: const EdgeInsets.all(TossTheme.spacingXL),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '📜',
+                style: TextStyle(fontSize: 64),
+              ),
+              const SizedBox(height: TossTheme.spacingL),
+              Text(
+                '아직 운세 기록이 없어요',
+                style: TossTheme.heading2.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: TossTheme.spacingS),
+              Text(
+                '운세를 보고 나면 여기에 기록됩니다',
+                style: TossTheme.body2.copyWith(
+                  color: TossTheme.textGray600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: TossTheme.spacingL),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TossTheme.primaryBlue,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(0, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    '운세 보러 가기',
+                    style: TossTheme.button.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -427,5 +659,309 @@ $content
     await Share.share(
       shareText,
       subject: '${item.title} - Fortune 운세');
+  }
+
+  Widget _buildDailyFortuneCalendar(List<FortuneHistory> history) {
+    // 일일 운세만 필터링
+    final dailyHistory = history.where((item) => item.fortuneType == 'daily').toList();
+    
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          if (dailyHistory.isNotEmpty)
+            FortuneCalendarView(
+              history: dailyHistory,
+              onDateTap: (fortuneHistory) {
+                _showDailyFortuneDetail(fortuneHistory);
+              },
+            )
+          else
+            Container(
+              padding: const EdgeInsets.all(TossTheme.spacingXXL),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.calendar_today,
+                    size: 64,
+                    color: TossTheme.textGray600,
+                  ),
+                  const SizedBox(height: TossTheme.spacingL),
+                  Text(
+                    '아직 일일 운세 기록이 없습니다',
+                    style: TossTheme.heading2.copyWith(
+                      color: TossTheme.textGray600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: TossTheme.spacingM),
+                  Text(
+                    '홈에서 오늘의 운세를 확인하면\n여기에서 기록을 볼 수 있습니다',
+                    style: TossTheme.body2.copyWith(
+                      color: TossTheme.textGray600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _showDailyFortuneDetail(FortuneHistory fortuneHistory) {
+    HapticUtils.lightImpact();
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(TossTheme.radiusL),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(TossTheme.spacingL),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: TossTheme.borderGray200,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            fortuneHistory.title,
+                            style: TossTheme.heading2.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: TossTheme.spacingXS),
+                          Text(
+                            DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(fortuneHistory.createdAt),
+                            style: TossTheme.caption.copyWith(
+                              color: TossTheme.textGray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  child: _buildDailyFortuneContent(fortuneHistory),
+                ),
+              ),
+            ],
+          ),
+        ),
+    );
+  }
+
+  Widget _buildDailyFortuneContent(FortuneHistory fortuneHistory) {
+    final summary = fortuneHistory.summary;
+    final score = summary['score'] as int? ?? 80;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 점수 표시
+        Center(
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: _getScoreColor(score),
+                width: 8,
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$score',
+                    style: TossTheme.heading1.copyWith(
+                      fontSize: 36,
+                      color: _getScoreColor(score),
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    '점',
+                    style: TossTheme.body2.copyWith(
+                      color: _getScoreColor(score),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        
+        const SizedBox(height: TossTheme.spacingXL),
+        
+        // 운세 내용
+        if (summary['content'] != null) ...[
+          Text(
+            '오늘의 운세',
+            style: TossTheme.heading2.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(TossTheme.spacingL),
+            decoration: BoxDecoration(
+              color: TossTheme.borderGray200,
+              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            ),
+            child: Text(
+              summary['content'] as String,
+              style: TossTheme.body1,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingL),
+        ],
+        
+        // 행운 정보
+        if (summary['luckyColor'] != null || summary['luckyNumber'] != null) ...[
+          Text(
+            '행운 아이템',
+            style: TossTheme.heading2.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          Row(
+            children: [
+              if (summary['luckyColor'] != null)
+                Expanded(
+                  child: _buildLuckyItem('🎨', '행운 색상', summary['luckyColor'] as String),
+                ),
+              if (summary['luckyColor'] != null && summary['luckyNumber'] != null)
+                const SizedBox(width: TossTheme.spacingM),
+              if (summary['luckyNumber'] != null)
+                Expanded(
+                  child: _buildLuckyItem('🔢', '행운 숫자', '${summary['luckyNumber']}'),
+                ),
+            ],
+          ),
+          const SizedBox(height: TossTheme.spacingL),
+        ],
+        
+        // 조언
+        if (summary['advice'] != null) ...[
+          Text(
+            '오늘의 조언',
+            style: TossTheme.heading2.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(TossTheme.spacingL),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            ),
+            child: Text(
+              summary['advice'] as String,
+              style: TossTheme.body1,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingL),
+        ],
+        
+        // 주의사항
+        if (summary['caution'] != null) ...[
+          Text(
+            '주의사항',
+            style: TossTheme.heading2.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(TossTheme.spacingL),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            ),
+            child: Text(
+              summary['caution'] as String,
+              style: TossTheme.body1,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildLuckyItem(String emoji, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(TossTheme.spacingM),
+      decoration: BoxDecoration(
+        color: TossTheme.borderGray200,
+        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+      ),
+      child: Column(
+        children: [
+          Text(
+            emoji,
+            style: const TextStyle(fontSize: 24),
+          ),
+          const SizedBox(height: TossTheme.spacingXS),
+          Text(
+            label,
+            style: TossTheme.caption.copyWith(
+              color: TossTheme.textGray600,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingXS),
+          Text(
+            value,
+            style: TossTheme.body2.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getScoreColor(int score) {
+    if (score >= 80) return const Color(0xFF10B981); // green
+    if (score >= 70) return TossTheme.primaryBlue;
+    if (score >= 60) return const Color(0xFFF59E0B); // yellow
+    return const Color(0xFFEF4444); // red
   }
 }

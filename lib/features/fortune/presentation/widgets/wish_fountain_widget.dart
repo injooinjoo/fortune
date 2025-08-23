@@ -7,6 +7,7 @@ class WishFountainWidget extends StatefulWidget {
   final VoidCallback? onThrowCoin;
   final bool hasWish;
   final int coinCount;
+  final bool isThrowingCoin;
 
   const WishFountainWidget({
     super.key,
@@ -14,6 +15,7 @@ class WishFountainWidget extends StatefulWidget {
     this.onThrowCoin,
     this.hasWish = false,
     this.coinCount = 127,
+    this.isThrowingCoin = false,
   });
 
   @override
@@ -237,20 +239,33 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: widget.onThrowCoin,
+                onPressed: widget.isThrowingCoin ? null : widget.onThrowCoin,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
+                  backgroundColor: widget.isThrowingCoin 
+                    ? const Color(0xFFFFD700).withOpacity(0.6)
+                    : const Color(0xFFFFD700),
                   foregroundColor: const Color(0xFF1E3A8A),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  elevation: 8,
+                  elevation: widget.isThrowingCoin ? 4 : 8,
                 ),
-                icon: const Icon(Icons.toll, size: 24),
-                label: const Text(
-                  '동전 던지기',
-                  style: TextStyle(
+                icon: widget.isThrowingCoin
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          const Color(0xFF1E3A8A),
+                        ),
+                      ),
+                    )
+                  : const Icon(Icons.toll, size: 24),
+                label: Text(
+                  widget.isThrowingCoin ? '동전을 던지는 중...' : '동전 던지기',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),

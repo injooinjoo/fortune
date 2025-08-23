@@ -194,36 +194,36 @@ final specialFortuneRoutes = [
       description: '운세를 확인해보세요',
       fortuneTypes: ['general'])),
   
-  // Tarot Main
+  // Tarot Main (Legacy)
   GoRoute(
-    path: '/tarot',
-    name: 'fortune-tarot',
+    path: '/tarot-legacy',
+    name: 'fortune-tarot-legacy',
     builder: (context, state) => const TarotMainPage()),
   
-  // Tarot Deck Selection
+  // Tarot Deck Selection (Legacy)
   GoRoute(
-    path: '/tarot-deck',
-    name: 'fortune-tarot-deck',
+    path: '/tarot-deck-legacy',
+    name: 'fortune-tarot-deck-legacy',
     builder: (context, state) => const TarotDeckSelectionPage()),
   
-  // Tarot Enhanced
+  // Tarot Enhanced (Legacy)
   GoRoute(
-    path: '/tarot-enhanced',
-    name: 'fortune-tarot-enhanced',
+    path: '/tarot-enhanced-legacy',
+    name: 'fortune-tarot-enhanced-legacy',
     builder: (context, state) => const TarotEnhancedPage()),
   
-  // Tarot Storytelling
+  // Tarot Storytelling (Legacy)
   GoRoute(
-    path: '/tarot-storytelling',
-    name: 'fortune-tarot-storytelling',
+    path: '/tarot-storytelling-legacy',
+    name: 'fortune-tarot-storytelling-legacy',
     builder: (context, state) => TarotStorytellingPage(
       selectedCards: const [],
       spreadType: 'basic')),
   
-  // Tarot Summary
+  // Tarot Summary (Legacy)
   GoRoute(
-    path: '/tarot-summary',
-    name: 'fortune-tarot-summary',
+    path: '/tarot-summary-legacy',
+    name: 'fortune-tarot-summary-legacy',
     builder: (context, state) => const TarotSummaryPage(
       cards: [],
       interpretations: [],

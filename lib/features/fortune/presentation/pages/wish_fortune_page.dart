@@ -8,7 +8,7 @@ import '../widgets/coin_throw_animation.dart';
 import '../../domain/services/divine_wish_analyzer.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../presentation/screens/ad_loading_screen.dart';
+import '../../../../services/ad_service.dart';
 
 /// 소원 빌기 페이지 - 분수대에 동전을 던지는 새로운 경험
 class WishFortunePage extends ConsumerStatefulWidget {
@@ -37,6 +37,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   int _urgency = 3;
   String _divineResponse = '';
   bool _hasWish = false;
+  bool _isThrowingCoin = false;
 
   @override
   void initState() {
@@ -140,37 +141,29 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   /// 동전 던지기
   void _throwCoin() {
     setState(() {
-      _currentState = WishPageState.coinThrow;
+      _isThrowingCoin = true;
     });
-  }
-
-  /// 동전 던지기 애니메이션 완료
-  void _onCoinThrowComplete() {
-    // AdLoadingScreen으로 이동
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => AdLoadingScreen(
-          fortuneType: 'wish',
-          fortuneTitle: '소원 빌기',
-          onComplete: () {
-            // 광고 완료 후 신의 응답 표시
-            Navigator.of(context).pop();
-            _generateDivineResponse(_wishText, _category, _urgency);
-          },
-          onSkip: () {
-            // 프리미엄 업그레이드 (현재는 그냥 완료 처리)
-            Navigator.of(context).pop();
-            _generateDivineResponse(_wishText, _category, _urgency);
-          },
-          isPremium: false, // TODO: 실제 프리미엄 상태 확인
-          fortuneRoute: '/wish',
-          fortuneParams: {
-            'text': _wishText,
-            'category': _category,
-            'urgency': _urgency,
-          },
-        ),
-      ),
+    
+    // AdMob 광고 직접 표시
+    AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        // 광고 완료 후 신의 응답 표시
+        if (mounted) {
+          setState(() {
+            _isThrowingCoin = false;
+          });
+          _generateDivineResponse(_wishText, _category, _urgency);
+        }
+      },
+      onAdFailed: () {
+        // 광고 실패 시에도 결과 표시
+        if (mounted) {
+          setState(() {
+            _isThrowingCoin = false;
+          });
+          _generateDivineResponse(_wishText, _category, _urgency);
+        }
+      },
     );
   }
 
@@ -183,6 +176,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
       _category = '';
       _urgency = 3;
       _divineResponse = '';
+      _isThrowingCoin = false;
     });
     
     _fadeController.reset();
@@ -194,10 +188,11 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
     switch (_currentState) {
       case WishPageState.fountain:
         return _buildFountainView();
-      case WishPageState.coinThrow:
-        return _buildCoinThrowView();
       case WishPageState.divineResponse:
         return _buildDivineResponseView();
+      case WishPageState.coinThrow:
+        // 더 이상 사용하지 않지만 enum에서 제거하지 않고 fountain으로 리다이렉트
+        return _buildFountainView();
     }
   }
 
@@ -222,18 +217,19 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
         onThrowCoin: _hasWish ? _throwCoin : null,
         hasWish: _hasWish,
         coinCount: 127,
+        isThrowingCoin: _isThrowingCoin,
       ),
     );
   }
 
-  /// 동전 던지기 화면
-  Widget _buildCoinThrowView() {
-    return CoinThrowAnimation(
-      onAnimationComplete: _onCoinThrowComplete,
-      wishText: _wishText,
-      category: _category,
-    );
-  }
+  // 더 이상 사용하지 않는 동전 던지기 화면 메서드는 주석 처리
+  // Widget _buildCoinThrowView() {
+  //   return CoinThrowAnimation(
+  //     onAnimationComplete: _onCoinThrowComplete,
+  //     wishText: _wishText,
+  //     category: _category,
+  //   );
+  // }
 
   /// 신의 응답 화면
   Widget _buildDivineResponseView() {

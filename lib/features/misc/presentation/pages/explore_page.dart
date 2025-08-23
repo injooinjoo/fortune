@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../presentation/screens/ad_loading_screen.dart';
 import '../../../../presentation/providers/token_provider.dart';
 
 // Fortune item model
@@ -489,40 +488,8 @@ class _FortuneItemCard extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        // Special handling for hourly fortune to show ads
-        if (item.id == 'hourly') {
-          final isPremium = ref.read(tokenProvider).hasUnlimitedAccess;
-          
-          // Navigate to AdLoadingScreen which will then navigate to hourly fortune
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
-                fortuneType: item.id,
-                fortuneTitle: item.name,
-                fortuneRoute: item.route,
-                isPremium: isPremium,
-                onComplete: () {
-                  // This won't be called since we're using fortuneRoute
-                },
-                onSkip: () {
-                  // Navigate to premium page or handle skip
-                  context.push('/subscription');
-                },
-              ),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                // Use a fade transition for smoother navigation
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              transitionDuration: const Duration(milliseconds: 80),
-            ),
-          );
-        } else {
-          // Direct navigation for other fortune types
-          context.push(item.route);
-        }
+        // Direct navigation for all fortune types
+        context.push(item.route);
       },
       child: Stack(
         children: [

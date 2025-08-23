@@ -31,13 +31,9 @@ class TraditionalFortuneUnifiedPage extends ConsumerStatefulWidget {
 class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortuneUnifiedPage> {
   @override
   Widget build(BuildContext context) {
-    // Navigate directly to the enhanced page
+    // Navigate directly to the saju toss page
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const TraditionalFortuneEnhancedPage(),
-        ),
-      );
+      context.pushReplacement('/traditional-saju');
     });
     
     // Show loading while navigating

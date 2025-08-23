@@ -3,13 +3,23 @@ import 'package:flutter/material.dart';
 class TossTheme {
   // Colors
   static const Color primaryBlue = Color(0xFF0066FF);
+  static const Color brandBlue = Color(0xFF0066FF);
   static const Color backgroundWhite = Color(0xFFFFFFFF);
+  static const Color backgroundPrimary = Color(0xFFFFFFFF);
+  static const Color backgroundSecondary = Color(0xFFF8F9FA);
   static const Color textBlack = Color(0xFF000000);
   static const Color textGray600 = Color(0xFF666666);
+  static const Color textGray500 = Color(0xFF888888);
   static const Color textGray400 = Color(0xFF999999);
   static const Color borderGray300 = Color(0xFFDDDDDD);
   static const Color borderGray200 = Color(0xFFEEEEEE);
+  static const Color borderPrimary = Color(0xFFDDDDDD);
   static const Color disabledGray = Color(0xFFCCCCCC);
+  
+  // Semantic Colors
+  static const Color success = Color(0xFF10B981);
+  static const Color error = Color(0xFFEF4444);
+  static const Color warning = Color(0xFFF59E0B);
   
   // Typography
   static const String fontFamily = 'Pretendard'; // Toss uses Pretendard font
@@ -30,6 +40,15 @@ class TossTheme {
     color: textBlack,
     height: 1.2,
     letterSpacing: -0.3,
+    fontFamily: fontFamily,
+  );
+  
+  static const TextStyle heading3 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: textBlack,
+    height: 1.3,
+    letterSpacing: -0.2,
     fontFamily: fontFamily,
   );
   
@@ -60,6 +79,14 @@ class TossTheme {
   static const TextStyle body2 = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w500,
+    color: textBlack,
+    letterSpacing: -0.1,
+    fontFamily: fontFamily,
+  );
+  
+  static const TextStyle body3 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
     color: textBlack,
     letterSpacing: -0.1,
     fontFamily: fontFamily,

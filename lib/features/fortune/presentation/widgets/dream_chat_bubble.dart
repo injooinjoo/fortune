@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../core/theme/toss_theme.dart';
 import '../providers/dream_chat_provider.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class DreamChatBubble extends StatelessWidget {
   final DreamChatMessage message;
@@ -43,48 +41,54 @@ class _FortuneTellerBubble extends StatelessWidget {
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.spacing2,
-        horizontal: AppSpacing.spacing4,
+        vertical: TossTheme.spacingS,
+        horizontal: TossTheme.spacingM,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showAvatar) ...[
             _buildAvatar(),
-            const SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: TossTheme.spacingS),
           ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (showAvatar)
-                  Text(
-                    '해몽가',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.deepPurple.withOpacity(0.5),
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+                    child: Text(
+                      '해몽가',
+                      style: TossTheme.caption.copyWith(
+                        color: TossTheme.primaryBlue,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                const SizedBox(height: AppSpacing.spacing1),
-                GlassContainer(
-                  padding: AppSpacing.paddingAll16,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.deepPurple.withOpacity(0.3),
-                      Colors.deepPurple.withOpacity(0.2),
+                Container(
+                  padding: const EdgeInsets.all(TossTheme.spacingM),
+                  decoration: BoxDecoration(
+                    color: TossTheme.backgroundWhite,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(TossTheme.radiusS),
+                      topRight: Radius.circular(TossTheme.radiusL),
+                      bottomLeft: Radius.circular(TossTheme.radiusL),
+                      bottomRight: Radius.circular(TossTheme.radiusL),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
                   child: Text(
                     message.content,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
-                      height: 1.4,
+                    style: TossTheme.body3.copyWith(
+                      color: TossTheme.textBlack,
+                      height: 1.5,
                     ),
                   ),
                 ),
@@ -101,18 +105,13 @@ class _FortuneTellerBubble extends StatelessWidget {
   Widget _buildAvatar() {
     return Container(
       width: 40,
-      height: AppDimensions.buttonHeightSmall,
+      height: 40,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [
-            Colors.deepPurple.withOpacity(0.6),
-            Colors.deepPurple.withOpacity(0.8),
-          ],
-        ),
+        color: TossTheme.primaryBlue,
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurple.withOpacity(0.3),
+            color: TossTheme.primaryBlue.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -121,7 +120,7 @@ class _FortuneTellerBubble extends StatelessWidget {
       child: const Icon(
         Icons.auto_awesome,
         color: Colors.white,
-        size: 24,
+        size: 20,
       ),
     );
   }
@@ -138,36 +137,40 @@ class _UserBubble extends StatelessWidget {
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.spacing2,
-        horizontal: AppSpacing.spacing4,
+        vertical: TossTheme.spacingS,
+        horizontal: TossTheme.spacingM,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const SizedBox(width: AppSpacing.spacing15),
+          const SizedBox(width: 60),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: AppSpacing.paddingAll16,
+                  padding: const EdgeInsets.all(TossTheme.spacingM),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    color: TossTheme.primaryBlue,
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(4),
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
+                      topLeft: Radius.circular(TossTheme.radiusL),
+                      topRight: Radius.circular(TossTheme.radiusS),
+                      bottomLeft: Radius.circular(TossTheme.radiusL),
+                      bottomRight: Radius.circular(TossTheme.radiusL),
                     ),
-                    border: Border.all(
-                      color: theme.colorScheme.primary.withOpacity(0.3),
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossTheme.primaryBlue.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Text(
                     message.content,
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: TossTheme.body3.copyWith(
                       color: Colors.white,
-                      height: 1.4,
+                      height: 1.5,
                     ),
                   ),
                 ),
@@ -193,54 +196,62 @@ class _LoadingBubble extends StatelessWidget {
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.spacing2,
-        horizontal: AppSpacing.spacing4,
+        vertical: TossTheme.spacingS,
+        horizontal: TossTheme.spacingM,
       ),
       child: Row(
         children: [
           Container(
             width: 40,
-            height: AppDimensions.buttonHeightSmall,
+            height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple.withOpacity(0.6),
-                  Colors.deepPurple.withOpacity(0.8),
-                ],
-              ),
+              color: TossTheme.primaryBlue,
+              boxShadow: [
+                BoxShadow(
+                  color: TossTheme.primaryBlue.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,
-              size: 24,
+              size: 20,
             ),
           ).animate(onPlay: (c) => c.repeat()).rotate(duration: 2.seconds),
-          const SizedBox(width: AppSpacing.spacing3),
+          const SizedBox(width: TossTheme.spacingS),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '해몽가',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.deepPurple.withOpacity(0.5),
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+                  child: Text(
+                    '해몽가',
+                    style: TossTheme.caption.copyWith(
+                      color: TossTheme.primaryBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.spacing1),
-                GlassContainer(
-                  padding: AppSpacing.paddingAll16,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.deepPurple.withOpacity(0.3),
-                      Colors.deepPurple.withOpacity(0.2),
+                Container(
+                  padding: const EdgeInsets.all(TossTheme.spacingM),
+                  decoration: BoxDecoration(
+                    color: TossTheme.backgroundWhite,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(TossTheme.radiusS),
+                      topRight: Radius.circular(TossTheme.radiusL),
+                      bottomLeft: Radius.circular(TossTheme.radiusL),
+                      bottomRight: Radius.circular(TossTheme.radiusL),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
                   child: Row(
@@ -248,20 +259,20 @@ class _LoadingBubble extends StatelessWidget {
                       Expanded(
                         child: Text(
                           message.content,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            height: 1.4,
+                          style: TossTheme.body3.copyWith(
+                            color: TossTheme.textBlack,
+                            height: 1.5,
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: TossTheme.spacingS),
                       const SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 18,
+                        height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white70,
+                            TossTheme.primaryBlue,
                           ),
                         ),
                       ),
@@ -290,26 +301,21 @@ class _ResultBubble extends StatelessWidget {
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.spacing2,
-        horizontal: AppSpacing.spacing4,
+        vertical: TossTheme.spacingS,
+        horizontal: TossTheme.spacingM,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 40,
-            height: AppDimensions.buttonHeightSmall,
+            height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple.withOpacity(0.6),
-                  Colors.deepPurple.withOpacity(0.8),
-                ],
-              ),
+              color: TossTheme.primaryBlue,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.deepPurple.withOpacity(0.3),
+                  color: TossTheme.primaryBlue.withOpacity(0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -318,64 +324,71 @@ class _ResultBubble extends StatelessWidget {
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,
-              size: 24,
+              size: 20,
             ),
           ),
-          const SizedBox(width: AppSpacing.spacing3),
+          const SizedBox(width: TossTheme.spacingS),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '해몽가',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.deepPurple.withOpacity(0.5),
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+                  child: Text(
+                    '해몽가',
+                    style: TossTheme.caption.copyWith(
+                      color: TossTheme.primaryBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.spacing1),
-                GlassContainer(
-                  padding: AppSpacing.paddingAll20,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.deepPurple.withOpacity(0.4),
-                      Colors.deepPurple.withOpacity(0.3),
+                Container(
+                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  decoration: BoxDecoration(
+                    color: TossTheme.backgroundWhite,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(TossTheme.radiusS),
+                      topRight: Radius.circular(TossTheme.radiusL),
+                      bottomLeft: Radius.circular(TossTheme.radiusL),
+                      bottomRight: Radius.circular(TossTheme.radiusL),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 12,
+                        offset: const Offset(0, 3),
+                      ),
                     ],
-                  ),
-                  border: Border.all(
-                    color: Colors.deepPurple.withOpacity(0.3),
+                    border: Border.all(
+                      color: TossTheme.borderGray200,
+                      width: 1,
+                    ),
                   ),
                   child: MarkdownBody(
                     data: message.content,
                     styleSheet: MarkdownStyleSheet(
-                      p: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white,
-                        height: 1.5,
+                      p: TossTheme.body3.copyWith(
+                        color: TossTheme.textBlack,
+                        height: 1.6,
                       ),
-                      h1: theme.textTheme.headlineSmall?.copyWith(
-                        color: Colors.white,
+                      h1: TossTheme.heading3.copyWith(
+                        color: TossTheme.textBlack,
                         fontWeight: FontWeight.bold,
                       ),
-                      h2: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.deepPurple.withOpacity(0.5),
+                      h2: TossTheme.body1.copyWith(
+                        color: TossTheme.primaryBlue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      h3: TossTheme.subtitle1.copyWith(
+                        color: TossTheme.primaryBlue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      strong: TossTheme.body3.copyWith(
+                        color: TossTheme.textBlack,
                         fontWeight: FontWeight.bold,
                       ),
-                      h3: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.deepPurple.withOpacity(0.5),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      strong: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      blockquote: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white70,
+                      blockquote: TossTheme.body3.copyWith(
+                        color: TossTheme.textGray600,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -403,43 +416,55 @@ class TypingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.spacing2,
-        horizontal: AppSpacing.spacing4,
+        vertical: TossTheme.spacingS,
+        horizontal: TossTheme.spacingM,
       ),
       child: Row(
         children: [
           Container(
             width: 40,
-            height: AppDimensions.buttonHeightSmall,
+            height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple.withOpacity(0.6),
-                  Colors.deepPurple.withOpacity(0.8),
-                ],
-              ),
+              color: TossTheme.primaryBlue,
+              boxShadow: [
+                BoxShadow(
+                  color: TossTheme.primaryBlue.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,
-              size: 24,
+              size: 20,
             ),
           ),
-          const SizedBox(width: AppSpacing.spacing3),
-          GlassContainer(
+          const SizedBox(width: TossTheme.spacingS),
+          Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.spacing5,
-              vertical: AppSpacing.spacing3,
+              horizontal: TossTheme.spacingM,
+              vertical: TossTheme.spacingS,
             ),
-            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+            decoration: BoxDecoration(
+              color: TossTheme.backgroundWhite,
+              borderRadius: BorderRadius.circular(TossTheme.radiusL),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _Dot(delayMs: 0),
-                const SizedBox(width: AppSpacing.spacing1),
+                const SizedBox(width: TossTheme.spacingXS),
                 _Dot(delayMs: 200),
-                const SizedBox(width: AppSpacing.spacing1),
+                const SizedBox(width: TossTheme.spacingXS),
                 _Dot(delayMs: 400),
               ],
             ),
@@ -457,10 +482,10 @@ class _Dot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 8,
-      height: AppSpacing.spacing2,
-      decoration: const BoxDecoration(
-        color: Colors.white60,
+      width: 6,
+      height: 6,
+      decoration: BoxDecoration(
+        color: TossTheme.textGray400,
         shape: BoxShape.circle,
       ),
     )

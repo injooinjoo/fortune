@@ -1,0 +1,224 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../domain/models/fortune_history.dart';
+
+/// 운세 히스토리 캘린더 뷰
+class FortuneCalendarView extends StatefulWidget {
+  final List<FortuneHistory> history;
+  final Function(FortuneHistory)? onDateTap;
+
+  const FortuneCalendarView({
+    Key? key,
+    required this.history,
+    this.onDateTap,
+  }) : super(key: key);
+
+  @override
+  State<FortuneCalendarView> createState() => _FortuneCalendarViewState();
+}
+
+class _FortuneCalendarViewState extends State<FortuneCalendarView> {
+  late DateTime _currentMonth;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentMonth = DateTime.now();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TossCard(
+      padding: const EdgeInsets.all(TossTheme.spacingL),
+      child: Column(
+        children: [
+          // 월 네비게이션
+          _buildMonthNavigation(),
+          const SizedBox(height: TossTheme.spacingL),
+          // 요일 헤더
+          _buildWeekdayHeaders(),
+          const SizedBox(height: TossTheme.spacingS),
+          // 캘린더 그리드
+          _buildCalendarGrid(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthNavigation() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: Icon(Icons.chevron_left, color: TossTheme.textBlack),
+          onPressed: () => _changeMonth(-1),
+        ),
+        Text(
+          DateFormat('yyyy년 MM월').format(_currentMonth),
+          style: TossTheme.heading2.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.chevron_right, color: TossTheme.textBlack),
+          onPressed: () => _changeMonth(1),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeekdayHeaders() {
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    return Row(
+      children: weekdays.map((weekday) {
+        return Expanded(
+          child: Text(
+            weekday,
+            style: TossTheme.caption.copyWith(
+              fontWeight: FontWeight.w600,
+              color: TossTheme.textGray600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildCalendarGrid() {
+    final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final lastDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
+    final firstWeekday = firstDayOfMonth.weekday == 7 ? 0 : firstDayOfMonth.weekday;
+    
+    final days = <Widget>[];
+    
+    // 이전 달 빈 공간
+    for (int i = 0; i < firstWeekday; i++) {
+      days.add(Container());
+    }
+    
+    // 이번 달 날짜들
+    for (int day = 1; day <= lastDayOfMonth.day; day++) {
+      final date = DateTime(_currentMonth.year, _currentMonth.month, day);
+      final fortuneForDate = _getFortuneForDate(date);
+      
+      days.add(_buildCalendarDay(date, fortuneForDate));
+    }
+    
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 7,
+      childAspectRatio: 1,
+      mainAxisSpacing: 4,
+      crossAxisSpacing: 4,
+      children: days,
+    );
+  }
+
+  Widget _buildCalendarDay(DateTime date, FortuneHistory? fortune) {
+    final isToday = _isToday(date);
+    final hasFortune = fortune != null;
+    
+    Color backgroundColor = Colors.transparent;
+    Color textColor = TossTheme.textBlack;
+    
+    if (isToday) {
+      backgroundColor = TossTheme.primaryBlue.withOpacity(0.1);
+      textColor = TossTheme.primaryBlue;
+    }
+    
+    if (hasFortune) {
+      final score = fortune.summary['score'] as int? ?? 0;
+      backgroundColor = _getScoreColor(score).withOpacity(0.2);
+      textColor = _getScoreColor(score);
+    }
+    
+    return GestureDetector(
+      onTap: hasFortune && widget.onDateTap != null 
+        ? () => widget.onDateTap!(fortune)
+        : null,
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(TossTheme.radiusS),
+          border: isToday ? Border.all(
+            color: TossTheme.primaryBlue,
+            width: 1.5,
+          ) : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${date.day}',
+              style: TossTheme.body2.copyWith(
+                color: textColor,
+                fontWeight: isToday || hasFortune 
+                  ? FontWeight.w700 
+                  : FontWeight.w500,
+              ),
+            ),
+            if (hasFortune) ...[
+              const SizedBox(height: 2),
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: textColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  FortuneHistory? _getFortuneForDate(DateTime date) {
+    try {
+      return widget.history.firstWhere((fortune) {
+        return fortune.createdAt.year == date.year &&
+               fortune.createdAt.month == date.month &&
+               fortune.createdAt.day == date.day;
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year &&
+           date.month == now.month &&
+           date.day == now.day;
+  }
+
+  Color _getScoreColor(int score) {
+    if (score >= 80) return const Color(0xFF10B981); // green
+    if (score >= 70) return TossTheme.primaryBlue;
+    if (score >= 60) return const Color(0xFFF59E0B); // yellow
+    return const Color(0xFFEF4444); // red
+  }
+
+  void _changeMonth(int delta) {
+    setState(() {
+      _currentMonth = DateTime(
+        _currentMonth.year,
+        _currentMonth.month + delta,
+        1,
+      );
+    });
+  }
+}

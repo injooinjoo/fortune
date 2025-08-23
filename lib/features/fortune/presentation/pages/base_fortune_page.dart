@@ -823,7 +823,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 height: 200,
                 width: double.infinity,
                 child: Image.asset(
-                  FortuneCardImages.getRandomThumbnail(widget.fortuneType),
+                  FortuneCardImages.getImagePath(widget.fortuneType),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     // Fallback gradient if image fails

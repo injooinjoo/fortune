@@ -12,6 +12,7 @@ import '../../presentation/providers/fortune_story_provider.dart';
 import '../../services/cache_service.dart';
 import '../../models/fortune_model.dart';
 import '../../services/weather_service.dart';
+import '../../services/fortune_history_service.dart';
 import '../../widgets/emotional_loading_checklist.dart';
 import 'fortune_story_viewer.dart';
 import 'fortune_completion_page.dart';
@@ -479,6 +480,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           todaysFortune = fortune;
         });
         
+        // 일일 운세를 히스토리에 저장
+        await _saveDailyFortuneToHistory(fortune);
+        
         // Provider가 이미 캐싱을 처리하므로 여기서는 스토리만 생성
         await _generateStory(fortune);
       } else if (fortuneState.error != null) {
@@ -486,6 +490,80 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
     } catch (e) {
       debugPrint('❌ Error loading fortune via Provider: $e');
+    }
+  }
+  
+  /// 일일 운세를 히스토리에 저장
+  Future<void> _saveDailyFortuneToHistory(fortune_entity.Fortune fortune) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        debugPrint('❌ User not authenticated, skipping fortune history save');
+        return;
+      }
+
+      final now = DateTime.now();
+      final title = '${now.year}년 ${now.month}월 ${now.day}일 운세';
+      
+      // Fortune 엔티티에서 필요한 정보를 추출하여 요약 데이터 생성
+      final summary = {
+        'score': fortune.overallScore ?? 80,
+        'content': fortune.content,
+        'advice': fortune.advice ?? fortune.recommendations?.firstOrNull,
+        'caution': fortune.caution ?? fortune.warnings?.firstOrNull,
+        'summary': fortune.summary,
+        'greeting': fortune.greeting,
+        'luckyColor': fortune.luckyColor,
+        'luckyNumber': fortune.luckyNumber,
+        'luckyDirection': fortune.luckyDirection,
+        'bestTime': fortune.bestTime,
+      };
+
+      // 상세 메타데이터
+      final metadata = {
+        'hexagonScores': fortune.hexagonScores,
+        'scoreBreakdown': fortune.scoreBreakdown,
+        'recommendations': fortune.recommendations,
+        'warnings': fortune.warnings,
+        'luckyItems': fortune.luckyItems,
+        'detailedLuckyItems': fortune.detailedLuckyItems,
+        'timeSpecificFortunes': fortune.timeSpecificFortunes,
+        'birthYearFortunes': fortune.birthYearFortunes,
+        'fiveElements': fortune.fiveElements,
+        'specialTip': fortune.specialTip,
+        'meta': fortune.meta,
+        'weatherSummary': fortune.weatherSummary,
+        'overall': fortune.overall,
+        'categories': fortune.categories,
+        'sajuInsight': fortune.sajuInsight,
+        'personalActions': fortune.personalActions,
+        'notification': fortune.notification,
+        'shareCard': fortune.shareCard,
+      };
+
+      // 태그 생성
+      final tags = <String>['일일', '${now.year}년${now.month}월'];
+      final score = fortune.overallScore ?? 80;
+      if (score >= 90) tags.add('최고운');
+      else if (score >= 80) tags.add('대길');
+      else if (score >= 70) tags.add('길');
+      else if (score >= 60) tags.add('보통');
+      else tags.add('주의');
+
+      // FortuneHistoryService에 저장
+      final historyService = FortuneHistoryService();
+      await historyService.saveDailyFortuneFromHome(
+        userId: userId,
+        fortuneId: fortune.id,
+        title: title,
+        summary: summary,
+        metadata: metadata,
+        tags: tags,
+      );
+
+      debugPrint('✅ Daily fortune saved to history: $title');
+    } catch (error) {
+      debugPrint('❌ Error saving daily fortune to history: $error');
     }
   }
   

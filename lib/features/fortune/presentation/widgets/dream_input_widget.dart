@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../services/speech_recognition_service.dart';
+import '../../../../core/theme/toss_theme.dart';
 import '../providers/dream_chat_provider.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class DreamInputWidget extends ConsumerStatefulWidget {
   final bool enabled;
@@ -115,35 +111,45 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     
     return Container(
       padding: EdgeInsets.only(
-        left: AppSpacing.spacing4,
-        right: AppSpacing.spacing4,
-        bottom: MediaQuery.of(context).padding.bottom + 16,
-        top: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.3)])),
+        left: TossTheme.spacingM,
+        right: TossTheme.spacingM,
+        bottom: MediaQuery.of(context).padding.bottom + TossTheme.spacingM,
+        top: TossTheme.spacingS,
+      ),
+      decoration: const BoxDecoration(
+        color: TossTheme.backgroundWhite,
+        border: Border(
+          top: BorderSide(
+            color: TossTheme.borderGray200,
+            width: 1,
+          ),
+        ),
+      ),
       child: SafeArea(
         top: false,
         child: Column(
           children: [
             if (chatState.isListening) _buildVoiceListeningIndicator(theme),
-            GlassContainer(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              borderRadius: BorderRadius.circular(AppSpacing.spacing7),
-              blur: 20,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white.withOpacity(0.1),
-                  Colors.white.withOpacity(0.05)]),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: TossTheme.spacingS, 
+                vertical: TossTheme.spacingXS,
+              ),
+              decoration: BoxDecoration(
+                color: TossTheme.backgroundSecondary,
+                borderRadius: BorderRadius.circular(TossTheme.radiusL),
+                border: Border.all(
+                  color: _focusNode.hasFocus 
+                      ? TossTheme.primaryBlue 
+                      : TossTheme.borderGray300,
+                  width: _focusNode.hasFocus ? 2 : 1,
+                ),
+              ),
               child: Row(
                 children: [
                   // Voice button
                   _buildVoiceButton(theme),
-                  const SizedBox(width: AppSpacing.spacing3),
+                  const SizedBox(width: TossTheme.spacingS),
                   
                   // Text input
                   Expanded(
@@ -151,20 +157,24 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       controller: _textController,
                       focusNode: _focusNode,
                       enabled: widget.enabled && !_isVoiceMode,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: TossTheme.body3.copyWith(color: TossTheme.textBlack),
                       decoration: InputDecoration(
                         hintText: _isVoiceMode 
                             ? '음성으로 말씀해주세요...' 
                             : '꿈 이야기를 입력하세요...',
-                        hintStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.5)),
+                        hintStyle: TossTheme.body3.copyWith(
+                          color: TossTheme.textGray400,
+                        ),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.spacing0,
-                          vertical: AppSpacing.spacing3)),
+                          horizontal: 0,
+                          vertical: TossTheme.spacingS,
+                        ),
+                      ),
                       maxLines: null,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _sendMessage()),
+                      onSubmitted: (_) => _sendMessage(),
+                    ),
                   ),
                   
                   // Send button
@@ -172,7 +182,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossTheme.spacingS),
             
             // Quick response buttons
             if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme),
@@ -186,24 +196,22 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     return GestureDetector(
       onTap: widget.enabled ? _toggleVoiceMode : null,
       child: AnimatedContainer(
-        duration: AppAnimations.durationShort,
-        width: 40,
-        height: AppDimensions.buttonHeightSmall,
+        duration: TossTheme.animationNormal,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: _isVoiceMode
-              ? LinearGradient(
-                  colors: [
-                    Colors.red.withOpacity(0.6),
-                    Colors.red.withOpacity(0.8)])
-              : LinearGradient(
-                  colors: [
-                    Colors.deepPurple.withOpacity(0.3),
-                    Colors.deepPurple.withOpacity(0.3)])),
+          color: _isVoiceMode
+              ? TossTheme.error
+              : TossTheme.textGray400,
+        ),
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
           color: Colors.white,
-          size: 24)));
+          size: 18,
+        ),
+      ),
+    );
   }
   
   Widget _buildSendButton(ThemeData theme) {
@@ -212,44 +220,57 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     return GestureDetector(
       onTap: canSend ? _sendMessage : null,
       child: AnimatedContainer(
-        duration: AppAnimations.durationShort,
-        width: 40,
-        height: AppDimensions.buttonHeightSmall,
+        duration: TossTheme.animationNormal,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: canSend
-              ? LinearGradient(
-                  colors: [
-                    Colors.deepPurple.withOpacity(0.6),
-                    Colors.deepPurple.withOpacity(0.8)])
-              : LinearGradient(
-                  colors: [
-                    Colors.grey.withOpacity(0.9).withOpacity(0.3),
-                    Colors.grey.withOpacity(0.87).withOpacity(0.3)])),
+          color: canSend
+              ? TossTheme.primaryBlue
+              : TossTheme.disabledGray,
+        ),
         child: Icon(
           Icons.send_rounded,
-          color: canSend ? Colors.white : Colors.white30,
-          size: 20)));
+          color: Colors.white,
+          size: 16,
+        ),
+      ),
+    );
   }
   
   Widget _buildVoiceListeningIndicator(ThemeData theme) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
-      child: GlassContainer(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+      margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: TossTheme.spacingM, 
+          vertical: TossTheme.spacingS,
+        ),
+        decoration: BoxDecoration(
+          color: TossTheme.backgroundWhite,
+          borderRadius: BorderRadius.circular(TossTheme.radiusL),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.mic,
-              color: Colors.red.withOpacity(0.6),
-              size: 20),
-            const SizedBox(width: AppSpacing.spacing2),
+              color: TossTheme.error,
+              size: 18,
+            ),
+            const SizedBox(width: TossTheme.spacingS),
             Text(
               '듣고 있습니다...',
-              style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(width: AppSpacing.spacing2),
+              style: TossTheme.body3.copyWith(color: TossTheme.textBlack),
+            ),
+            const SizedBox(width: TossTheme.spacingS),
             ValueListenableBuilder<String>(
               valueListenable: _speechService.recognizedTextNotifier,
               builder: (context, text, _) {
@@ -257,33 +278,36 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                   return Flexible(
                     child: Text(
                       text,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: TossTheme.body3.copyWith(color: TossTheme.textBlack),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis));
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
                 }
                 return Row(
                   children: List.generate(3, (index) {
                     return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing0 * 0.5),
+                      margin: const EdgeInsets.symmetric(horizontal: 2),
                       width: 4,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white60,
+                        color: TossTheme.textGray400,
                         shape: BoxShape.circle,
                       ),
                     )
-                      .animate(
-                        onPlay: (controller) => controller.repeat())
+                      .animate(onPlay: (controller) => controller.repeat())
                       .scale(
                         duration: 600.ms,
                         delay: Duration(milliseconds: index * 200),
                         begin: const Offset(0.5, 0.5),
-                        end: const Offset(1.5, 1.5))
+                        end: const Offset(1.5, 1.5),
+                      )
                       .then()
                       .scale(
                         duration: 600.ms,
                         begin: const Offset(1.5, 1.5),
-                        end: const Offset(0.5, 0.5));
+                        end: const Offset(0.5, 0.5),
+                      );
                   }),
                 );
               },
@@ -324,9 +348,9 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
       height: 36,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         itemCount: quickResponses.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.spacing2),
+        separatorBuilder: (_, __) => const SizedBox(width: TossTheme.spacingS),
         itemBuilder: (context, index) {
           final response = quickResponses[index];
           return GestureDetector(
@@ -335,16 +359,28 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               _textController.text = response;
               _sendMessage();
             },
-            child: GlassContainer(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              borderRadius: BorderRadius.circular(AppSpacing.spacing4 * 1.125),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple.withOpacity(0.3),
-                  Colors.deepPurple.withOpacity(0.3)]),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: TossTheme.spacingM,
+                vertical: TossTheme.spacingS,
+              ),
+              decoration: BoxDecoration(
+                color: TossTheme.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(TossTheme.radiusL),
+                border: Border.all(
+                  color: TossTheme.primaryBlue.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
               child: Text(
                 response,
-                style: Theme.of(context).textTheme.bodyMedium)));
+                style: TossTheme.body3.copyWith(
+                  color: TossTheme.primaryBlue,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          );
         }))
       .animate()
         .fadeIn(delay: 300.ms)

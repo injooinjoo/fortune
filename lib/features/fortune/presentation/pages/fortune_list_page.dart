@@ -534,7 +534,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true),
     FortuneCategory(
       title: '이사운',
-      route: '/lifestyle?type=moving',
+      route: '/moving',
       type: 'moving',
       icon: Icons.home_work_rounded,
       gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],

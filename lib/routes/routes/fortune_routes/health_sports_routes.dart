@@ -5,7 +5,7 @@ import '../../../features/fortune/presentation/pages/enhanced_sports_fortune_pag
 import '../../../features/fortune/presentation/pages/biorhythm_fortune_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/pet_fortune_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/pet_fortune_unified_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/moving_fortune_page.dart' as fortune_pages;
+import '../../../features/fortune/presentation/pages/moving_fortune_toss_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/moving_date_fortune_page.dart' as fortune_pages;
 
 final healthSportsRoutes = [
@@ -53,7 +53,7 @@ final healthSportsRoutes = [
   GoRoute(
     path: '/moving',
     name: 'fortune-moving',
-    builder: (context, state) => const fortune_pages.MovingFortunePage()),
+    builder: (context, state) => const fortune_pages.MovingFortuneTossPage()),
   
   // Moving Date
   GoRoute(

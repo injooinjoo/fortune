@@ -1,0 +1,603 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/toss_button.dart';
+import '../../../../core/components/toss_input.dart';
+
+/// 사주팔자 정보 입력 폼 위젯
+class SajuInputForm extends StatefulWidget {
+  final Function(String name, DateTime birthDate, String? birthTime, String gender) onComplete;
+
+  const SajuInputForm({
+    super.key,
+    required this.onComplete,
+  });
+
+  @override
+  State<SajuInputForm> createState() => _SajuInputFormState();
+}
+
+class _SajuInputFormState extends State<SajuInputForm>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  
+  DateTime? _selectedDate;
+  String? _selectedTime;
+  String _selectedGender = '남';
+  bool _unknownTime = false;
+  
+  final List<String> _hourOptions = [
+    '모름',
+    '자시 (23:00-01:00)', '축시 (01:00-03:00)', '인시 (03:00-05:00)',
+    '묘시 (05:00-07:00)', '진시 (07:00-09:00)', '사시 (09:00-11:00)',
+    '오시 (11:00-13:00)', '미시 (13:00-15:00)', '신시 (15:00-17:00)',
+    '유시 (17:00-19:00)', '술시 (19:00-21:00)', '해시 (21:00-23:00)',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
+    
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
+    ));
+    
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  void _selectDate() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(1990, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      locale: const Locale('ko', 'KR'),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: TossTheme.brandBlue,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
+  void _selectTime(String? value) {
+    setState(() {
+      if (value == '모름') {
+        _unknownTime = true;
+        _selectedTime = null;
+      } else {
+        _unknownTime = false;
+        _selectedTime = value;
+      }
+    });
+  }
+
+  void _onSubmit() {
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_selectedDate != null) {
+        widget.onComplete(
+          _nameController.text.trim(),
+          _selectedDate!,
+          _selectedTime,
+          _selectedGender,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundPrimary,
+      body: SafeArea(
+        child: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: TossTheme.spacingL),
+                        
+                        // 제목과 설명
+                        _buildHeader(),
+                        
+                        const SizedBox(height: TossTheme.spacingXL),
+                        
+                        // 이름 입력
+                        _buildNameInput(),
+                        
+                        const SizedBox(height: TossTheme.spacingL),
+                        
+                        // 생년월일 선택
+                        _buildDateInput(),
+                        
+                        const SizedBox(height: TossTheme.spacingL),
+                        
+                        // 출생 시간 선택
+                        _buildTimeInput(),
+                        
+                        const SizedBox(height: TossTheme.spacingL),
+                        
+                        // 성별 선택
+                        _buildGenderInput(),
+                        
+                        const SizedBox(height: TossTheme.spacingXL),
+                        
+                        // 안내 메시지
+                        _buildInfoMessage(),
+                        
+                        const SizedBox(height: TossTheme.spacingXL),
+                        
+                        // 확인 버튼
+                        TossButton(
+                          text: '사주팔자 분석하기',
+                          onPressed: _onSubmit,
+                          style: TossButtonStyle.primary,
+                          width: double.infinity,
+                          leadingIcon: const Icon(Icons.auto_awesome),
+                        ),
+                        
+                        const SizedBox(height: TossTheme.spacingXL),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '정보 입력',
+          style: TossTheme.heading1.copyWith(
+            color: TossTheme.textBlack,
+          ),
+        ),
+        const SizedBox(height: TossTheme.spacingS),
+        Text(
+          '정확한 사주팔자 분석을 위해\n기본 정보를 입력해주세요',
+          style: TossTheme.body1.copyWith(
+            color: TossTheme.textGray600,
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNameInput() {
+    return TossCard(
+      padding: const EdgeInsets.all(TossTheme.spacingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.person_outline,
+                color: TossTheme.brandBlue,
+                size: 20,
+              ),
+              const SizedBox(width: TossTheme.spacingS),
+              Text(
+                '이름',
+                style: TossTheme.body1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                ' *',
+                style: TossTheme.body1.copyWith(
+                  color: TossTheme.error,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          TossTextField(
+            controller: _nameController,
+            hintText: '성함을 입력해주세요',
+            onChanged: (value) {
+              // validation logic can be added here if needed
+            },
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(10),
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z가-힣\s]')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateInput() {
+    return TossCard(
+      padding: const EdgeInsets.all(TossTheme.spacingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                color: TossTheme.brandBlue,
+                size: 20,
+              ),
+              const SizedBox(width: TossTheme.spacingS),
+              Text(
+                '생년월일',
+                style: TossTheme.body1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                ' *',
+                style: TossTheme.body1.copyWith(
+                  color: TossTheme.error,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          GestureDetector(
+            onTap: _selectDate,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(TossTheme.spacingM),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: _selectedDate != null 
+                    ? TossTheme.brandBlue 
+                    : TossTheme.borderPrimary,
+                ),
+                borderRadius: BorderRadius.circular(TossTheme.radiusM),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDate != null
+                        ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
+                        : '생년월일을 선택해주세요',
+                    style: TossTheme.body1.copyWith(
+                      color: _selectedDate != null
+                          ? TossTheme.textBlack
+                          : TossTheme.textGray500,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: TossTheme.textGray500,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeInput() {
+    return TossCard(
+      padding: const EdgeInsets.all(TossTheme.spacingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.access_time_outlined,
+                color: TossTheme.brandBlue,
+                size: 20,
+              ),
+              const SizedBox(width: TossTheme.spacingS),
+              Text(
+                '출생 시간',
+                style: TossTheme.body1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: TossTheme.spacingS),
+          Text(
+            '정확한 분석을 위해 출생 시간을 선택해주세요',
+            style: TossTheme.caption.copyWith(
+              color: TossTheme.textGray600,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+            decoration: BoxDecoration(
+              border: Border.all(color: TossTheme.borderPrimary),
+              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _unknownTime ? '모름' : _selectedTime,
+                hint: Text(
+                  '출생 시간을 선택하세요',
+                  style: TossTheme.body1.copyWith(
+                    color: TossTheme.textGray500,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: TossTheme.textGray500,
+                ),
+                style: TossTheme.body1.copyWith(
+                  color: TossTheme.textBlack,
+                ),
+                dropdownColor: TossTheme.backgroundPrimary,
+                items: _hourOptions.map((String time) {
+                  return DropdownMenuItem<String>(
+                    value: time,
+                    child: Text(time),
+                  );
+                }).toList(),
+                onChanged: _selectTime,
+              ),
+            ),
+          ),
+          if (_unknownTime) ...[
+            const SizedBox(height: TossTheme.spacingS),
+            Container(
+              padding: const EdgeInsets.all(TossTheme.spacingS),
+              decoration: BoxDecoration(
+                color: TossTheme.warning.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(TossTheme.radiusS),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: TossTheme.warning,
+                  ),
+                  const SizedBox(width: TossTheme.spacingXS),
+                  Expanded(
+                    child: Text(
+                      '시간을 모르는 경우 정오(12시) 기준으로 분석됩니다',
+                      style: TossTheme.caption.copyWith(
+                        color: TossTheme.warning,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGenderInput() {
+    return TossCard(
+      padding: const EdgeInsets.all(TossTheme.spacingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.wc_outlined,
+                color: TossTheme.brandBlue,
+                size: 20,
+              ),
+              const SizedBox(width: TossTheme.spacingS),
+              Text(
+                '성별',
+                style: TossTheme.body1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                ' *',
+                style: TossTheme.body1.copyWith(
+                  color: TossTheme.error,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedGender = '남'),
+                  child: Container(
+                    padding: const EdgeInsets.all(TossTheme.spacingM),
+                    decoration: BoxDecoration(
+                      color: _selectedGender == '남'
+                          ? TossTheme.brandBlue.withOpacity(0.1)
+                          : TossTheme.backgroundSecondary,
+                      border: Border.all(
+                        color: _selectedGender == '남'
+                            ? TossTheme.brandBlue
+                            : TossTheme.borderPrimary,
+                      ),
+                      borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.male,
+                          color: _selectedGender == '남'
+                              ? TossTheme.brandBlue
+                              : TossTheme.textGray600,
+                        ),
+                        const SizedBox(width: TossTheme.spacingS),
+                        Text(
+                          '남성',
+                          style: TossTheme.body1.copyWith(
+                            color: _selectedGender == '남'
+                                ? TossTheme.brandBlue
+                                : TossTheme.textGray600,
+                            fontWeight: _selectedGender == '남'
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: TossTheme.spacingM),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedGender = '여'),
+                  child: Container(
+                    padding: const EdgeInsets.all(TossTheme.spacingM),
+                    decoration: BoxDecoration(
+                      color: _selectedGender == '여'
+                          ? TossTheme.brandBlue.withOpacity(0.1)
+                          : TossTheme.backgroundSecondary,
+                      border: Border.all(
+                        color: _selectedGender == '여'
+                            ? TossTheme.brandBlue
+                            : TossTheme.borderPrimary,
+                      ),
+                      borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.female,
+                          color: _selectedGender == '여'
+                              ? TossTheme.brandBlue
+                              : TossTheme.textGray600,
+                        ),
+                        const SizedBox(width: TossTheme.spacingS),
+                        Text(
+                          '여성',
+                          style: TossTheme.body1.copyWith(
+                            color: _selectedGender == '여'
+                                ? TossTheme.brandBlue
+                                : TossTheme.textGray600,
+                            fontWeight: _selectedGender == '여'
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoMessage() {
+    return Container(
+      padding: const EdgeInsets.all(TossTheme.spacingM),
+      decoration: BoxDecoration(
+        color: TossTheme.brandBlue.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        border: Border.all(
+          color: TossTheme.brandBlue.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.info_outline,
+            color: TossTheme.brandBlue,
+            size: 20,
+          ),
+          const SizedBox(width: TossTheme.spacingM),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '개인정보 보호',
+                  style: TossTheme.body2.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: TossTheme.brandBlue,
+                  ),
+                ),
+                const SizedBox(height: TossTheme.spacingXS),
+                Text(
+                  '입력하신 정보는 사주 분석 목적으로만 사용되며, 서버에 저장되지 않습니다.',
+                  style: TossTheme.caption.copyWith(
+                    color: TossTheme.textGray600,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

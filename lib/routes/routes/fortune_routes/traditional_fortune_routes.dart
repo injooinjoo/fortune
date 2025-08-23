@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/tojeong_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/traditional_saju_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
 import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/physiognomy_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart';
@@ -8,6 +9,7 @@ import '../../../features/fortune/presentation/pages/saju_psychology_fortune_pag
 import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart';
 import '../../../features/fortune/presentation/pages/traditional_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/face_reading_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/tarot_renewed_page.dart';
 
 final traditionalFortuneRoutes = [
   // Traditional Fortune Unified
@@ -26,7 +28,7 @@ final traditionalFortuneRoutes = [
   GoRoute(
     path: '/traditional-saju',
     name: 'fortune-traditional-saju',
-    builder: (context, state) => const TraditionalSajuFortunePage()),
+    builder: (context, state) => const TraditionalSajuTossPage()),
   
   // Palmistry
   GoRoute(
@@ -57,4 +59,10 @@ final traditionalFortuneRoutes = [
     path: '/face-reading',
     name: 'fortune-face-reading',
     builder: (context, state) => const FaceReadingFortunePage()),
+  
+  // Tarot Renewed (Main)
+  GoRoute(
+    path: '/tarot',
+    name: 'fortune-tarot',
+    builder: (context, state) => const TarotRenewedPage()),
 ];

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 /// Fortune card thumbnail images for each fortune type
 /// Instagram-style aesthetic images
 class FortuneCardImages {
   static const String basePath = 'assets/images/fortune_cards/';
-  static const String randomBasePath = 'assets/images/random_thumbnails/';
-
-  // Cache for storing selected random images per fortune type
-  static final Map<String, int> _randomImageCache = {};
 
   /// Default image mapping for fortune types
   static const Map<String, String> fortuneTypeImages = {
@@ -86,29 +81,6 @@ class FortuneCardImages {
     return fortuneTypeImages[fortuneType] ?? fortuneTypeImages['default']!;
   }
 
-  /// Get random thumbnail image for a fortune type
-  /// Returns a consistent random image for each fortune type during the session
-  static String getRandomThumbnail(String fortuneType) {
-    // Check if we already have a cached image for this fortune type
-    if (_randomImageCache.containsKey(fortuneType)) {
-      final imageIndex = _randomImageCache[fortuneType]!;
-      return '${randomBasePath}thumbnail_$imageIndex.jpg';
-    }
-
-    // Generate a random index (0-8)
-    final random = Random();
-    final imageIndex = random.nextInt(9);
-
-    // Cache the selection
-    _randomImageCache[fortuneType] = imageIndex;
-
-    return '${randomBasePath}thumbnail_$imageIndex.jpg';
-  }
-
-  /// Clear the random image cache (useful when refreshing the UI)
-  static void clearRandomCache() {
-    _randomImageCache.clear();
-  }
 
   /// Category-based gradient overlays for better text visibility
   static Map<String, List<Color>> categoryGradients = {

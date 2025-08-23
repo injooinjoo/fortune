@@ -6,7 +6,6 @@ import '../../../../core/components/toss_bottom_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_dimensions.dart';
-import '../../../../presentation/screens/ad_loading_screen.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
@@ -38,7 +37,6 @@ class LuckyItemsBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
-  bool _isShowingAd = false;
   bool _isLoadingAd = false;
 
   // 8개 카테고리 정의
@@ -163,7 +161,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
         ),
       ),
       child: SafeArea(
-        child: _isShowingAd ? _buildAdView() : _buildContentView(),
+        child: _buildContentView(),
       ),
     );
   }
@@ -416,52 +414,4 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
     );
   }
 
-  Widget _buildAdView() {
-    final isPremium = ref.read(hasUnlimitedAccessProvider);
-    
-    return Column(
-      children: [
-        // 광고 헤더
-        Container(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '잠시만요! 광고 후 운세를 확인하세요',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF191F28),
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  ref.read(navigationVisibilityProvider.notifier).show();
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.close, size: 24),
-              ),
-            ],
-          ),
-        ),
-        
-        // 광고 영역
-        Expanded(
-          child: AdLoadingScreen(
-            fortuneType: 'lucky_items',
-            fortuneTitle: '행운 아이템',
-            isPremium: isPremium,
-            onComplete: _navigateToLuckyItems,
-            onSkip: () {
-              ref.read(navigationVisibilityProvider.notifier).show();
-              Navigator.of(context).pop();
-              context.push('/subscription');
-            },
-          ),
-        ),
-      ],
-    );
-  }
 }

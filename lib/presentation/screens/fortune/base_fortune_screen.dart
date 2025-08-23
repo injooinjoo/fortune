@@ -174,18 +174,6 @@ https://fortune.app
 
   @override
   Widget build(BuildContext context) {
-    // 광고 로딩 화면 표시
-    if (_showAdLoading) {
-      final userProfile = ref.watch(userProfileProvider).value;
-      return AdLoadingScreen(
-        fortuneType: widget.fortuneType,
-        fortuneTitle: widget.title);
-        isPremium: userProfile?.isPremiumActive ?? false),
-    onComplete: _onAdComplete),
-    onSkip: _onUpgrade),
-    fetchData: loadFortuneData
-      );
-    }
 
     return Scaffold(
       backgroundColor: AppColors.background,

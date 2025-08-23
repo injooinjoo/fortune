@@ -1,0 +1,321 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
+import '../features/history/domain/models/fortune_history.dart';
+import '../core/utils/logger.dart';
+
+/// 운세 히스토리 관리 서비스
+class FortuneHistoryService {
+  static final FortuneHistoryService _instance = FortuneHistoryService._internal();
+  factory FortuneHistoryService() => _instance;
+  FortuneHistoryService._internal();
+
+  static const String _tableName = 'fortune_results';
+  final _supabase = Supabase.instance.client;
+  final _uuid = const Uuid();
+
+  /// 운세 결과를 히스토리에 저장
+  Future<String?> saveFortuneResult({
+    required String fortuneType,
+    required String title,
+    required Map<String, dynamic> summary,
+    Map<String, dynamic>? metadata,
+    Map<String, dynamic>? detailedResult,
+    List<String>? tags,
+    String? mood,
+  }) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        Logger.warning('[FortuneHistoryService] User not authenticated');
+        return null;
+      }
+
+      final fortuneId = _uuid.v4();
+      final now = DateTime.now();
+
+      final fortuneHistory = FortuneHistory(
+        id: fortuneId,
+        userId: userId,
+        fortuneType: fortuneType,
+        title: title,
+        summary: summary,
+        createdAt: now,
+        metadata: metadata,
+        detailedResult: detailedResult,
+        tags: tags ?? _generateTags(fortuneType, summary),
+        viewCount: 1,
+        isShared: false,
+        lastViewedAt: now,
+        mood: mood,
+      );
+
+      await _supabase
+        .from(_tableName)
+        .insert(fortuneHistory.toJson());
+
+      Logger.info('[FortuneHistoryService] Fortune saved: $fortuneType ($fortuneId)');
+      return fortuneId;
+
+    } catch (error, stackTrace) {
+      Logger.error('[FortuneHistoryService] Failed to save fortune',
+          error, stackTrace);
+      return null;
+    }
+  }
+
+  /// 운세 조회수 증가
+  Future<void> incrementViewCount(String fortuneId) async {
+    try {
+      await _supabase.rpc('increment_fortune_view_count', 
+        params: {'fortune_id': fortuneId});
+      
+      Logger.debug('[FortuneHistoryService] View count incremented: $fortuneId');
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to increment view count: $error');
+    }
+  }
+
+  /// 운세 공유 상태 업데이트
+  Future<void> updateShareStatus(String fortuneId, bool isShared) async {
+    try {
+      await _supabase
+        .from(_tableName)
+        .update({'is_shared': isShared})
+        .eq('id', fortuneId);
+      
+      Logger.debug('[FortuneHistoryService] Share status updated: $fortuneId -> $isShared');
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to update share status: $error');
+    }
+  }
+
+  /// 실제 결과 기록 (운세 검증용)
+  Future<void> recordActualResult(String fortuneId, String actualResult) async {
+    try {
+      await _supabase
+        .from(_tableName)
+        .update({'actual_result': actualResult})
+        .eq('id', fortuneId);
+      
+      Logger.debug('[FortuneHistoryService] Actual result recorded: $fortuneId');
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to record actual result: $error');
+    }
+  }
+
+  /// 운세 타입과 결과를 기반으로 태그 자동 생성
+  List<String> _generateTags(String fortuneType, Map<String, dynamic> summary) {
+    final tags = <String>[];
+    
+    // 운세 타입 기반 태그
+    if (fortuneType.contains('love')) tags.add('연애');
+    if (fortuneType.contains('money') || fortuneType.contains('wealth')) tags.add('금전');
+    if (fortuneType.contains('career') || fortuneType.contains('job')) tags.add('직업');
+    if (fortuneType.contains('health')) tags.add('건강');
+    if (fortuneType.contains('daily') || fortuneType.contains('today')) tags.add('일일');
+    if (fortuneType.contains('weekly')) tags.add('주간');
+    if (fortuneType.contains('monthly')) tags.add('월간');
+    if (fortuneType.contains('moving')) tags.add('이사');
+    if (fortuneType.contains('wish')) tags.add('소원');
+    
+    // 점수 기반 태그
+    final score = summary['score'] as int?;
+    if (score != null) {
+      if (score >= 90) tags.add('최고운');
+      else if (score >= 80) tags.add('대길');
+      else if (score >= 70) tags.add('길');
+      else if (score >= 60) tags.add('보통');
+      else if (score >= 40) tags.add('소흉');
+      else tags.add('주의');
+    }
+
+    return tags;
+  }
+
+  /// 사용자의 최근 운세 히스토리 가져오기
+  Future<List<FortuneHistory>> getRecentHistory({int limit = 10}) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return [];
+
+      final response = await _supabase
+        .from(_tableName)
+        .select()
+        .eq('user_id', userId)
+        .order('created_at', ascending: false)
+        .limit(limit);
+
+      return (response as List)
+        .map((json) => FortuneHistory.fromJson(json))
+        .toList();
+
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to get recent history: $error');
+      return [];
+    }
+  }
+
+  /// 일일 운세 히스토리만 가져오기 (월별)
+  Future<List<FortuneHistory>> getDailyFortuneHistory({
+    DateTime? year,
+    DateTime? month,
+    int limit = 31
+  }) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return [];
+
+      var query = _supabase
+        .from(_tableName)
+        .select()
+        .eq('user_id', userId)
+        .eq('fortune_type', 'daily');
+
+      // 월별 필터링
+      if (month != null) {
+        final startOfMonth = DateTime(month.year, month.month, 1);
+        final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
+        query = query
+          .gte('created_at', startOfMonth.toIso8601String())
+          .lte('created_at', endOfMonth.toIso8601String());
+      }
+      // 연도별 필터링
+      else if (year != null) {
+        final startOfYear = DateTime(year.year, 1, 1);
+        final endOfYear = DateTime(year.year, 12, 31, 23, 59, 59);
+        query = query
+          .gte('created_at', startOfYear.toIso8601String())
+          .lte('created_at', endOfYear.toIso8601String());
+      }
+
+      final response = await query
+        .order('created_at', ascending: false)
+        .limit(limit);
+
+      return (response as List)
+        .map((json) => FortuneHistory.fromJson(json))
+        .toList();
+
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to get daily fortune history: $error');
+      return [];
+    }
+  }
+
+  /// 특정 운세 타입의 히스토리 가져오기
+  Future<List<FortuneHistory>> getHistoryByType(String fortuneType, {int limit = 50}) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return [];
+
+      final response = await _supabase
+        .from(_tableName)
+        .select()
+        .eq('user_id', userId)
+        .eq('fortune_type', fortuneType)
+        .order('created_at', ascending: false)
+        .limit(limit);
+
+      return (response as List)
+        .map((json) => FortuneHistory.fromJson(json))
+        .toList();
+
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to get history by type: $error');
+      return [];
+    }
+  }
+
+  /// 일일 운세를 히스토리에 저장 (홈 화면 전용)
+  Future<String?> saveDailyFortuneFromHome({
+    required String userId,
+    required String fortuneId,
+    required String title,
+    required Map<String, dynamic> summary,
+    Map<String, dynamic>? metadata,
+    List<String>? tags,
+  }) async {
+    try {
+      final now = DateTime.now();
+      
+      // 이미 오늘 일일 운세가 저장되어 있는지 확인
+      final todayKey = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final existingFortune = await _supabase
+        .from(_tableName)
+        .select('id')
+        .eq('user_id', userId)
+        .eq('fortune_type', 'daily')
+        .gte('created_at', DateTime(now.year, now.month, now.day).toIso8601String())
+        .lt('created_at', DateTime(now.year, now.month, now.day + 1).toIso8601String())
+        .maybeSingle();
+      
+      // 이미 오늘 운세가 있으면 업데이트
+      if (existingFortune != null) {
+        Logger.debug('[FortuneHistoryService] Updating existing daily fortune for today');
+        await _supabase
+          .from(_tableName)
+          .update({
+            'title': title,
+            'summary': summary,
+            'metadata': metadata,
+            'tags': tags ?? _generateTags('daily', summary),
+            'view_count': 1,
+            'last_viewed_at': now.toIso8601String(),
+          })
+          .eq('id', existingFortune['id']);
+        
+        Logger.info('[FortuneHistoryService] Daily fortune updated for today');
+        return existingFortune['id'] as String;
+      }
+      
+      // 새로운 운세 저장
+      final historyId = _uuid.v4();
+      final fortuneHistory = FortuneHistory(
+        id: historyId,
+        userId: userId,
+        fortuneType: 'daily',
+        title: title,
+        summary: summary,
+        createdAt: now,
+        metadata: metadata,
+        tags: tags ?? _generateTags('daily', summary),
+        viewCount: 1,
+        isShared: false,
+        lastViewedAt: now,
+      );
+
+      await _supabase
+        .from(_tableName)
+        .insert(fortuneHistory.toJson());
+
+      Logger.info('[FortuneHistoryService] Daily fortune saved: $title ($historyId)');
+      return historyId;
+
+    } catch (error, stackTrace) {
+      Logger.error('[FortuneHistoryService] Failed to save daily fortune',
+          error, stackTrace);
+      return null;
+    }
+  }
+
+  /// 운세 히스토리 삭제
+  Future<bool> deleteFortuneHistory(String fortuneId) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+
+      await _supabase
+        .from(_tableName)
+        .delete()
+        .eq('id', fortuneId)
+        .eq('user_id', userId); // 보안: 자신의 기록만 삭제
+
+      Logger.info('[FortuneHistoryService] Fortune deleted: $fortuneId');
+      return true;
+
+    } catch (error) {
+      Logger.error('[FortuneHistoryService] Failed to delete fortune: $error');
+      return false;
+    }
+  }
+}
