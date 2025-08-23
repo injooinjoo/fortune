@@ -107,12 +107,17 @@ class FortuneApiService {
       // Cache the result
       Logger.debug('🔍 [FortuneApiService] Caching fortune result...');
       final cacheWriteStopwatch = Logger.startTimer('Cache Write - daily');
-      await _cacheService.cacheFortune(
+      final cacheSuccess = await _cacheService.cacheFortune(
         'daily',
         params,
         _entityToFortuneModel(fortune, 'daily'));
       Logger.endTimer('Cache Write - daily', cacheWriteStopwatch);
-      Logger.debug('🔍 [FortuneApiService] Fortune cached successfully');
+      
+      if (cacheSuccess) {
+        Logger.debug('🔍 [FortuneApiService] Fortune cached successfully');
+      } else {
+        Logger.warning('⚠️ [FortuneApiService] Fortune cache save failed');
+      }
 
       Logger.endTimer('getDailyFortune - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] getDailyFortune completed', {

@@ -20,6 +20,7 @@ import '../../../../presentation/providers/fortune_recommendation_provider.dart'
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../data/models/fortune_card_score.dart';
 import '../widgets/lucky_items_bottom_sheet.dart';
+import '../widgets/talent_fortune_bottom_sheet.dart';
 
 class FortuneCategory {
   final String title;
@@ -504,12 +505,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       description: '숨겨진 재능 발견',
       category: 'lifestyle'),
     FortuneCategory(
-      title: '소원 성취',
-      route: '/lifestyle?type=wish',
+      title: '소원 빌기',
+      route: '/wish',
       type: 'wish',
       icon: Icons.star_rounded,
       gradientColors: [Color(0xFFFF4081), Color(0xFFF50057)],
-      description: '소원 성취 가능성',
+      description: '신에게 소원을 빌어보세요',
       category: 'lifestyle'),
 
     // ==================== Health/Sports Fortunes (통합) ====================
@@ -842,6 +843,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     } else if (category.type == 'lucky_items') {
       // 행운 아이템은 Bottom Sheet로 처리
       LuckyItemsBottomSheet.show(context);
+    } else if (category.type == 'talent') {
+      // 재능 발견은 전용 Bottom Sheet로 처리
+      TalentFortuneBottomSheet.show(context);
     } else {
       // Record visit for recommendation system
       ref.read(fortuneRecommendationProvider.notifier).recordVisit(
@@ -849,29 +853,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         category.category
       );
       
-      final isPremium = ref.read(hasUnlimitedAccessProvider);
-      
-      Navigator.of(context).push(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
-            fortuneType: fortuneType,
-            fortuneTitle: category.title,
-            fortuneRoute: category.route,
-            isPremium: isPremium,
-            onComplete: () {},
-            onSkip: () {
-              context.push('/subscription');
-            },
-          ),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          transitionDuration: const Duration(milliseconds: 80),
-        ),
-      );
+      // 다른 운세들은 직접 라우팅
+      context.push(category.route);
     }
   }
 

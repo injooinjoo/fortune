@@ -127,6 +127,7 @@ abstract class BaseFortuneNotifier extends StateNotifier<FortuneState> {
 // Daily Fortune Notifier
 class DailyFortuneNotifier extends BaseFortuneNotifier {
   DateTime? _selectedDate;
+  String? _lastCachedDateKey; // 마지막으로 캐시된 날짜 키 추적
   final CacheService _cacheService = CacheService();
 
   DailyFortuneNotifier(super._apiService, super.ref);
@@ -134,29 +135,60 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
   void setDate(DateTime date) {
     Logger.debug('📅 [DailyFortuneNotifier] Setting date', {
       'previousDate': _selectedDate?.toIso8601String(),
-      'newDate': null});
+      'newDate': date.toIso8601String()});
     _selectedDate = date;
+  }
+
+  // 날짜 키 생성 (CacheService와 동일한 로직)
+  String _getDateKey() {
+    final date = _selectedDate ?? DateTime.now();
+    return '${date.year}-${date.month}-${date.day}';
+  }
+
+  // 날짜 변경 여부 확인
+  bool _hasDateChanged() {
+    final currentDateKey = _getDateKey();
+    if (_lastCachedDateKey == null || _lastCachedDateKey != currentDateKey) {
+      Logger.debug('📅 [DailyFortuneNotifier] Date changed detected', {
+        'lastCached': _lastCachedDateKey,
+        'current': currentDateKey});
+      return true;
+    }
+    return false;
   }
 
   @override
   Future<Fortune> generateFortune(String userId) async {
+    final currentDateKey = _getDateKey();
+    
     Logger.info('🔍 [DailyFortuneNotifier] generateFortune called', {
       'userId': userId,
       'selectedDate': _selectedDate?.toIso8601String(),
+      'dateKey': currentDateKey,
+      'dateChanged': _hasDateChanged(),
       'isToday': _selectedDate == null || 
                  (_selectedDate!.year == DateTime.now().year && 
                   _selectedDate!.month == DateTime.now().month && 
                   _selectedDate!.day == DateTime.now().day),
-      'timestamp': null});
+      'timestamp': DateTime.now().toIso8601String()});
     
     final stopwatch = Logger.startTimer('DailyFortune Generation');
     
     try {
-      // 1. 먼저 캐시 확인
-      Logger.debug('📦 [DailyFortuneNotifier] Checking cache first');
-      final cachedFortune = await _cacheService.getCachedFortune('daily', {'userId': userId});
+      // 1. 날짜가 바뀌었거나 캐시가 없는지 확인
+      final dateChanged = _hasDateChanged();
       
-      if (cachedFortune != null) {
+      Logger.debug('📦 [DailyFortuneNotifier] Checking cache', {
+        'dateChanged': dateChanged,
+        'lastCachedKey': _lastCachedDateKey,
+        'currentKey': currentDateKey});
+      
+      FortuneModel? cachedFortune;
+      if (!dateChanged) {
+        cachedFortune = await _cacheService.getCachedFortune('daily', {'userId': userId});
+      }
+      
+      if (cachedFortune != null && !dateChanged) {
         Logger.endTimer('DailyFortune Generation', stopwatch);
         final fortuneEntity = cachedFortune.toEntity();
         Logger.info('✅ [DailyFortuneNotifier] Using cached fortune', {
@@ -166,11 +198,12 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
         return fortuneEntity;
       }
       
-      // 2. 캐시가 없으면 API 호출
-      Logger.debug('📡 [DailyFortuneNotifier] No cache found, calling API', {
+      // 2. 캐시가 없거나 날짜가 변경된 경우 API 호출
+      Logger.debug('📡 [DailyFortuneNotifier] Fetching new fortune from API', {
+        'reason': dateChanged ? 'date_changed' : 'no_cache',
         'method': 'getDailyFortune',
         'userId': userId,
-        'date': null});
+        'date': (_selectedDate ?? DateTime.now()).toIso8601String()});
       
       final apiStopwatch = Logger.startTimer('DailyFortune API Call');
       final fortune = await _apiService.getDailyFortune(
@@ -178,8 +211,31 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
         date: _selectedDate ?? DateTime.now());
       Logger.endTimer('DailyFortune API Call', apiStopwatch);
       
-      // 3. API 결과를 캐시에 저장
-      await _cacheService.cacheFortune('daily', {'userId': userId}, FortuneModel.fromEntity(fortune));
+      // 3. API 결과를 캐시에 저장하고 성공 여부 확인
+      Logger.debug('💾 [DailyFortuneNotifier] Saving to cache');
+      final cacheStopwatch = Logger.startTimer('Cache Save');
+      
+      try {
+        final cacheSuccess = await _cacheService.cacheFortune('daily', {'userId': userId}, FortuneModel.fromEntity(fortune));
+        Logger.endTimer('Cache Save', cacheStopwatch);
+        
+        if (cacheSuccess) {
+          _lastCachedDateKey = currentDateKey; // 캐시 성공 시에만 업데이트
+          Logger.info('✅ [DailyFortuneNotifier] Cache save successful', {
+            'cacheKey': currentDateKey,
+            'saveTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
+        } else {
+          Logger.error('❌ [DailyFortuneNotifier] Cache save failed - verification failed', {
+            'cacheKey': currentDateKey,
+            'saveTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
+        }
+      } catch (cacheError) {
+        Logger.endTimer('Cache Save', cacheStopwatch);
+        Logger.error('❌ [DailyFortuneNotifier] Cache save failed - exception', {
+          'error': cacheError.toString(),
+          'saveTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
+        // 캐시 저장 실패해도 운세 자체는 반환
+      }
       
       Logger.endTimer('DailyFortune Generation', stopwatch);
       Logger.info('🔍 [DailyFortuneNotifier] getDailyFortune returned successfully', {
@@ -190,7 +246,8 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
         'hasDescription': fortune.description?.isNotEmpty ?? false,
         'luckyItemsCount': fortune.luckyItems?.length ?? 0,
         'apiCallTime': '${apiStopwatch.elapsedMilliseconds}ms',
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
+        'cachedDateKey': _lastCachedDateKey});
       
       return fortune;
     } catch (e, stackTrace) {
@@ -200,8 +257,9 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
         'errorType': e.runtimeType.toString(),
         'userId': userId,
         'selectedDate': _selectedDate?.toIso8601String(),
+        'dateKey': currentDateKey,
         'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-        'stackTrace': null});
+        'stackTrace': stackTrace.toString()});
       rethrow;
     }
   }

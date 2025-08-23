@@ -389,15 +389,42 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       
       debugPrint('🎯 Loading today\'s fortune for user: $userId');
       
-      // 1. 캐시된 운세와 스토리 모두 확인 
+      // 현재 날짜 키 생성 (CacheService와 동일한 로직)
+      final now = DateTime.now();
+      final dateKey = '${now.year}-${now.month}-${now.day}';
+      
+      debugPrint('📅 Current date key: $dateKey');
+      
+      // 1. 캐시된 운세와 스토리 모두 확인 (Provider 상태보다 우선)
       final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
       final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
       
       debugPrint('📦 Cache check - fortune: ${cachedFortuneData != null}, story: ${cachedStorySegments != null && cachedStorySegments.isNotEmpty}');
       
-      // 2. 캐시된 데이터가 모두 있으면 즉시 설정하고 로딩 상태 false로 변경
+      // 2. Provider 상태와 캐시 상태 비교
+      final currentProviderState = ref.read(dailyFortuneProvider);
+      final hasProviderFortune = currentProviderState.fortune != null && !currentProviderState.isLoading;
+      
+      debugPrint('📊 Provider state - hasFortune: $hasProviderFortune, isLoading: ${currentProviderState.isLoading}');
+      
+      // 3. 캐시된 데이터가 모두 있으면 즉시 설정하고 로딩 상태 false로 변경
       if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
         debugPrint('✅ Using fully cached data - skip loading screen');
+        
+        // Provider 상태도 캐시 데이터로 동기화
+        if (!hasProviderFortune) {
+          debugPrint('🔄 Syncing Provider with cached data');
+          final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
+          final today = DateTime.now();
+          dailyFortuneNotifier.setDate(today);
+          // Provider에 캐시된 데이터가 반영되도록 강제로 상태 업데이트
+          ref.read(dailyFortuneProvider.notifier).state = ref.read(dailyFortuneProvider.notifier).state.copyWith(
+            fortune: cachedFortuneData.toEntity(),
+            isLoading: false,
+            error: null
+          );
+        }
+        
         setState(() {
           todaysFortune = cachedFortuneData.toEntity();
           storySegments = cachedStorySegments;
@@ -406,7 +433,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         return; // 더 이상 처리할 필요 없음
       }
       
-      // 3. 캐시가 없거나 불완전한 경우에만 API 호출 및 로딩 상태 관리
+      // 4. 캐시가 없거나 불완전한 경우에만 API 호출 및 로딩 상태 관리
       debugPrint('📡 Need to fetch from API or generate story');
       await _fetchFortuneFromAPI();
       

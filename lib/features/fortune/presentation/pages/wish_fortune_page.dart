@@ -1,119 +1,330 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'base_fortune_page_v2.dart';
-import '../../domain/models/fortune_result.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:go_router/go_router.dart';
+import '../widgets/divine_response_widget.dart';
+import '../widgets/wish_input_bottom_sheet.dart';
+import '../widgets/wish_fountain_widget.dart';
+import '../widgets/coin_throw_animation.dart';
+import '../../domain/services/divine_wish_analyzer.dart';
+import '../../../../shared/components/app_header.dart';
+import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../presentation/screens/ad_loading_screen.dart';
 
-class WishFortunePage extends ConsumerWidget {
+/// 소원 빌기 페이지 - 분수대에 동전을 던지는 새로운 경험
+class WishFortunePage extends ConsumerStatefulWidget {
   const WishFortunePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return BaseFortunePageV2(
-      title: '소원 성취',
-      fortuneType: 'wish',
-      headerGradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFFFF4081), Color(0xFFF50057)]),
-      inputBuilder: (context, onSubmit) => _WishInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _WishFortuneResult(
-        result: result,
-        onShare: onShare));
-  }
+  ConsumerState<WishFortunePage> createState() => _WishFortunePageState();
 }
 
-class _WishInputForm extends StatelessWidget {
-  final Function(Map<String, dynamic>) onSubmit;
+enum WishPageState {
+  fountain,      // 분수대 화면
+  coinThrow,     // 동전 던지기 애니메이션
+  divineResponse // 신의 응답
+}
 
-  const _WishInputForm({required this.onSubmit});
+class _WishFortunePageState extends ConsumerState<WishFortunePage>
+    with TickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  
+  WishPageState _currentState = WishPageState.fountain;
+  String _wishText = '';
+  String _category = '';
+  int _urgency = 3;
+  String _divineResponse = '';
+  bool _hasWish = false;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  void initState() {
+    super.initState();
+    
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+    
+    // 페이지 로드시 네비게이션 숨기기
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navigationVisibilityProvider.notifier).hide();
+      _checkForAutoGeneration();
+    });
+  }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '소원 성취 가능성을 확인해보세요!\n소원을 이루기 위한 방법을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5)),
-        const SizedBox(height: 32),
-        
-        Center(
-          child: Icon(
-            Icons.star,
-            size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3)),
-        ),
-        
-        const SizedBox(height: 32),
-        
-        Center(
-          child: ElevatedButton.icon(
-            onPressed: () => onSubmit({}),
-            icon: const Icon(Icons.star),
-            label: const Text('운세 확인하기'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ),
-      ],
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _slideController.dispose();
+    super.dispose();
+  }
+
+  /// 자동 생성 파라미터 확인
+  void _checkForAutoGeneration() {
+    final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
+    
+    if (extra != null && extra['autoGenerate'] == true) {
+      final wishParams = extra['wishParams'] as Map<String, dynamic>?;
+      if (wishParams != null) {
+        _generateDivineResponse(
+          wishParams['text'] ?? '',
+          wishParams['category'] ?? '',
+          wishParams['urgency'] ?? 3,
+        );
+      }
+    }
+  }
+
+  /// 신의 응답 생성
+  void _generateDivineResponse(String wishText, String category, int urgency) {
+    setState(() {
+      _wishText = wishText;
+      _category = category;
+      _urgency = urgency;
+      _divineResponse = DivineWishAnalyzer.generateDivineResponse(
+        wishText: wishText,
+        category: category,
+        urgency: urgency,
+      );
+      _currentState = WishPageState.divineResponse;
+    });
+    
+    // 애니메이션 시작
+    _fadeController.forward();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _slideController.forward();
+    });
+  }
+
+  /// 소원 작성하기
+  void _writeWish() {
+    WishInputBottomSheet.show(
+      context,
+      onWishSubmitted: _onWishSubmitted,
     );
   }
-}
 
-class _WishFortuneResult extends StatelessWidget {
-  final FortuneResult result;
-  final VoidCallback onShare;
+  /// 소원 작성 완료 콜백
+  void _onWishSubmitted(String wishText, String category, int urgency) {
+    setState(() {
+      _wishText = wishText;
+      _category = category;
+      _urgency = urgency;
+      _hasWish = true;
+    });
+  }
 
-  const _WishFortuneResult({
-    required this.result,
-    required this.onShare});
+  /// 동전 던지기
+  void _throwCoin() {
+    setState(() {
+      _currentState = WishPageState.coinThrow;
+    });
+  }
+
+  /// 동전 던지기 애니메이션 완료
+  void _onCoinThrowComplete() {
+    // AdLoadingScreen으로 이동
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AdLoadingScreen(
+          fortuneType: 'wish',
+          fortuneTitle: '소원 빌기',
+          onComplete: () {
+            // 광고 완료 후 신의 응답 표시
+            Navigator.of(context).pop();
+            _generateDivineResponse(_wishText, _category, _urgency);
+          },
+          onSkip: () {
+            // 프리미엄 업그레이드 (현재는 그냥 완료 처리)
+            Navigator.of(context).pop();
+            _generateDivineResponse(_wishText, _category, _urgency);
+          },
+          isPremium: false, // TODO: 실제 프리미엄 상태 확인
+          fortuneRoute: '/wish',
+          fortuneParams: {
+            'text': _wishText,
+            'category': _category,
+            'urgency': _urgency,
+          },
+        ),
+      ),
+    );
+  }
+
+  /// 새로운 소원 빌기
+  void _makeNewWish() {
+    setState(() {
+      _currentState = WishPageState.fountain;
+      _hasWish = false;
+      _wishText = '';
+      _category = '';
+      _urgency = 3;
+      _divineResponse = '';
+    });
+    
+    _fadeController.reset();
+    _slideController.reset();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final fortune = result.fortune;
+    switch (_currentState) {
+      case WishPageState.fountain:
+        return _buildFountainView();
+      case WishPageState.coinThrow:
+        return _buildCoinThrowView();
+      case WishPageState.divineResponse:
+        return _buildDivineResponseView();
+    }
+  }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Main Fortune Content
-          GlassContainer(
-            padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+  /// 분수대 화면
+  Widget _buildFountainView() {
+    return Scaffold(
+      appBar: AppHeader(
+        title: '소원 빌기',
+        showBackButton: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.white),
+            onPressed: () => _showHelpDialog(),
+          ),
+        ],
+      ),
+      extendBodyBehindAppBar: true,
+      body: WishFountainWidget(
+        onWriteWish: _writeWish,
+        onThrowCoin: _hasWish ? _throwCoin : null,
+        hasWish: _hasWish,
+        coinCount: 127,
+      ),
+    );
+  }
+
+  /// 동전 던지기 화면
+  Widget _buildCoinThrowView() {
+    return CoinThrowAnimation(
+      onAnimationComplete: _onCoinThrowComplete,
+      wishText: _wishText,
+      category: _category,
+    );
+  }
+
+  /// 신의 응답 화면
+  Widget _buildDivineResponseView() {
+    return Scaffold(
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: Stack(
+            children: [
+              // 신의 응답 위젯
+              DivineResponseWidget(
+                wishText: _wishText,
+                category: _category,
+                urgency: _urgency,
+                divineResponse: _divineResponse,
+              ),
+              
+              // 상단 버튼들
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 16,
+                right: 16,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.star,
-                      color: theme.colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Text(
-                      '소원 성취 운세',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold)),
+                    // 뒤로가기 버튼
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          ref.read(navigationVisibilityProvider.notifier).show();
+                          context.pop();
+                        },
+                      ),
+                    ),
+                    
+                    // 새 소원 버튼
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: TextButton.icon(
+                        onPressed: _makeNewWish,
+                        icon: const Icon(Icons.add, color: Colors.white, size: 20),
+                        label: const Text(
+                          '새 소원',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  fortune.content,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6),
-                ),
-              ],
-            ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  /// 도움말 다이얼로그
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.help_outline, color: Color(0xFF6B46C1)),
+            SizedBox(width: 8),
+            Text('소원 빌기란?'),
+          ],
+        ),
+        content: const Text(
+          '소원 빌기는 운세를 보는 것이 아니라, 당신의 간절한 소원을 신에게 전달하고 신의 응답과 격려를 받는 특별한 경험입니다.\n\n'
+          '소원을 작성하면 신이 당신만을 위한 맞춤형 응답과 조언을 주실 것입니다.',
+          style: TextStyle(height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('확인'),
           ),
         ],
       ),
