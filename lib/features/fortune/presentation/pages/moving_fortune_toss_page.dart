@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../services/fortune_history_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../shared/components/app_header.dart';
 import '../widgets/moving_step_indicator.dart';
 import '../widgets/moving_input_step1.dart';
 import '../widgets/moving_input_step2.dart';
@@ -158,27 +160,37 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: _currentStep > 0 && _currentStep < 3
-            ? IconButton(
-                icon: Icon(Icons.arrow_back, color: TossTheme.textBlack),
-                onPressed: _previousStep,
-              )
-            : IconButton(
-                icon: Icon(Icons.close, color: TossTheme.textBlack),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-        title: _currentStep < 3
-            ? MovingStepIndicator(
+      backgroundColor: TossTheme.backgroundWhite,
+      appBar: _currentStep < 3
+          ? AppBar(
+              backgroundColor: TossTheme.backgroundWhite,
+              elevation: 0,
+              leading: _currentStep > 0
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back, color: TossTheme.textBlack),
+                      onPressed: _previousStep,
+                    )
+                  : IconButton(
+                      icon: Icon(Icons.close, color: TossTheme.textBlack),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+              title: MovingStepIndicator(
                 currentStep: _currentStep,
                 totalSteps: 3,
-              )
-            : null,
-        centerTitle: true,
-      ),
+              ),
+              centerTitle: true,
+            )
+          : AppHeader(
+              title: '이사운 결과',
+              showBackButton: false,
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.close, color: TossTheme.textBlack),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
       body: _isLoading
           ? _buildLoadingScreen()
           : _buildCurrentStep(),

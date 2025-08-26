@@ -1,1422 +1,466 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'base_fortune_page.dart';
-import '../../../../domain/entities/fortune.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../services/weather_service.dart';
-import '../../../../services/external_api_service.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/components/toss_button.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../domain/entities/fortune.dart';
+import '../../../../presentation/providers/fortune_provider.dart';
 
 enum SportType {
-  golf('골프', 'golf', Icons.golf_course),
-  tennis('테니스', 'tennis', Icons.sports_tennis),
-  baseball('야구', 'baseball', Icons.sports_baseball),
-  swimming('수영', 'swimming', Icons.pool),
-  yoga('요가', 'yoga', Icons.self_improvement),
-  hiking('등산', 'hiking', Icons.terrain),
-  cycling('자전거', 'cycling', Icons.directions_bike),
-  running('러닝', 'running', Icons.directions_run),
-  fitness('피트니스', 'fitness', Icons.fitness_center),
-  fishing('낚시', 'fishing', Icons.phishing);
+  golf('골프', 'golf', Icons.golf_course, Color(0xFF10B981)),
+  tennis('테니스', 'tennis', Icons.sports_tennis, Color(0xFFEF4444)),
+  baseball('야구', 'baseball', Icons.sports_baseball, Color(0xFF3B82F6)),
+  swimming('수영', 'swimming', Icons.pool, Color(0xFF06B6D4)),
+  yoga('요가', 'yoga', Icons.self_improvement, Color(0xFF8B5CF6)),
+  hiking('등산', 'hiking', Icons.terrain, Color(0xFF059669)),
+  cycling('자전거', 'cycling', Icons.directions_bike, Color(0xFFF59E0B)),
+  running('러닝', 'running', Icons.directions_run, Color(0xFFDC2626)),
+  fitness('피트니스', 'fitness', Icons.fitness_center, Color(0xFF7C3AED)),
+  fishing('낚시', 'fishing', Icons.phishing, Color(0xFF0891B2));
   
   final String label;
   final String value;
   final IconData icon;
-  const SportType(this.label, this.value, this.icon);
+  final Color color;
+  const SportType(this.label, this.value, this.icon, this.color);
 }
 
-class SportsFortunePage extends BaseFortunePage {
+class SportsFortunePage extends ConsumerStatefulWidget {
   final SportType initialType;
   
   const SportsFortunePage({
-    Key? key,
+    super.key,
     this.initialType = SportType.fitness,
-  }) : super(
-          key: key,
-          title: '운동/스포츠 운세',
-          description: '오늘의 운동 운세를 확인하고 최고의 컨디션을 만들어보세요',
-          fortuneType: 'sports',
-          requiresUserInfo: false,
-        );
+  });
 
   @override
   ConsumerState<SportsFortunePage> createState() => _SportsFortunePageState();
 }
 
-class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
+class _SportsFortunePageState extends ConsumerState<SportsFortunePage> {
   late SportType _selectedType;
   Map<String, dynamic>? _sportsData;
-  WeatherInfo? _weatherData;
-  List<GameSchedule>? _baseballSchedule;
-  String _selectedLocation = '서울';
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _selectedType = widget.initialType;
-    _loadWeatherData();
   }
 
-  Future<void> _loadWeatherData() async {
-    try {
-      _weatherData = await WeatherService.getCurrentWeather();
-      
-      // Load baseball schedule if baseball is selected
-      if (_selectedType == SportType.baseball) {
-        _baseballSchedule = await ExternalApiService.getBaseballSchedule('LG');
-      }
-      
-      setState(() {});
-    } catch (e) {
-      // Handle error
-    }
-  }
-
-  @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    params['sportType'] = _selectedType.value;
-    
-    final fortune = await fortuneService.getSportsFortune(
-      userId: params['userId'],
-      fortuneType: _selectedType.value,
-      params: {
-        'sportType': _selectedType.value,
-      },
-    );
-
-    // Extract sport-specific data
+  Future<void> _analyzeSports() async {
     setState(() {
-      _sportsData = _extractSportsData(fortune);
+      _isLoading = true;
     });
-    
-    return fortune;
-  }
 
-  void _onGenerateFortune() {
-    // Get user profile and generate fortune
-    final profile = userProfile;
-    if (profile != null) {
+    try {
+      final fortuneService = ref.read(fortuneServiceProvider);
       final params = {
-        'userId': profile.id,
-        'name': profile.name,
-        'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': profile.gender,
+        'sport_type': _selectedType.value,
+        'sport_name': _selectedType.label,
       };
-      generateFortune(params);
-    }
-  }
-
-  Map<String, dynamic> _extractSportsData(Fortune fortune) {
-    // Common data for all sports with real weather data
-    final weatherCondition = _weatherData?.condition ?? 'Clear';
-    final temperature = _weatherData?.temperature ?? 20;
-    final windSpeed = _weatherData?.windSpeed ?? 5;
-    
-    final commonData = {
-      'bestTime': _getBestTimeForSport(_selectedType),
-      'condition': fortune.score >= 80 ? '최상' : fortune.score >= 60 ? '양호' : '주의',
-      'weather': _getKoreanWeatherCondition(weatherCondition),
-      'temperature': temperature,
-      'windSpeed': windSpeed,
-      'tips': _getSportTips(_selectedType, _weatherData),
-    };
-
-    // Sport-specific data
-    switch (_selectedType) {
-      case SportType.golf:
-        return {
-          ...commonData,
-          'expectedScore': 85,
-          'bestHoles': [3, 7, 15],
-          'windDirection': '북서풍',
-          'course': '그린 컨디션 양호',
+      
+      final fortune = await fortuneService.getSportsFortune(
+        userId: 'user123', // 임시 사용자 ID
+        params: params,
+      );
+      
+      setState(() {
+        _sportsData = {
+          'fortune': fortune,
+          'sport_type': _selectedType,
         };
-      case SportType.tennis:
-        return {
-          ...commonData,
-          'winRate': 75,
-          'strongShot': '포핸드',
-          'strategy': '공격적 플레이',
-          'stamina': 85,
-        };
-      case SportType.swimming:
-        return {
-          ...commonData,
-          'poolCondition': '최적',
-          'bestStroke': '자유형',
-          'distance': '1000m',
-          'waterTemp': '26°C',
-        };
-      case SportType.running:
-        return {
-          ...commonData,
-          'pace': '5:30/km',
-          'distance': '10km',
-          'route': '평지 추천',
-          'hydration': '필수',
-        };
-      case SportType.fitness:
-        return {
-          ...commonData,
-          'focusArea': '상체',
-          'intensity': '고강도',
-          'restTime': '60초',
-          'supplement': '프로틴',
-        };
-      default:
-        return commonData;
-    }
-  }
-
-  String _getBestTimeForSport(SportType sport) {
-    switch (sport) {
-      case SportType.golf:
-      case SportType.tennis:
-        return '오전 7-10시';
-      case SportType.swimming:
-      case SportType.fitness:
-        return '오후 6-8시';
-      case SportType.running:
-      case SportType.cycling:
-        return '새벽 5-7시';
-      case SportType.yoga:
-        return '오전 6-8시';
-      case SportType.hiking:
-        return '오전 6-12시';
-      case SportType.fishing:
-        return '새벽 4-7시';
-      default:
-        return '오전 9-11시';
-    }
-  }
-
-  List<String> _getSportTips(SportType sport, WeatherInfo? weather) {
-    final baseTips = _getBaseSportTips(sport);
-    final weatherTips = <String>[];
-    
-    if (weather != null) {
-      // Add weather-specific tips
-      if (weather.temperature > 30) {
-        weatherTips.add('더운 날씨 - 수분 보충 자주하기');
-      } else if (weather.temperature < 10) {
-        weatherTips.add('추운 날씨 - 충분한 준비운동 필수');
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('분석 중 오류가 발생했습니다: $e')),
+        );
       }
-      
-      if (weather.windSpeed > 10) {
-        weatherTips.add('강한 바람 - 균형 유지 주의');
-      }
-      
-      if (weather.condition == 'Rain' || weather.condition == 'Snow') {
-        weatherTips.add('비/눈 예상 - 미끄럼 주의');
-      }
-      
-      if (weather.temperature > 30) {
-        weatherTips.add('고온 주의 - 충분한 수분 섭취');
-      }
-    }
-    
-    return [...baseTips, ...weatherTips].take(3).toList();
-  }
-  
-  List<String> _getBaseSportTips(SportType sport) {
-    switch (sport) {
-      case SportType.golf:
-        return ['스윙 템포 유지', '그린 읽기 신중히', '바람 방향 체크'];
-      case SportType.tennis:
-        return ['서브 정확도 중점', '발 움직임 활발히', '상대 약점 공략'];
-      case SportType.swimming:
-        return ['호흡 리듬 유지', '스트레칭 충분히', '페이스 조절'];
-      case SportType.running:
-        return ['워밍업 필수', '수분 섭취', '무릎 보호'];
-      case SportType.fitness:
-        return ['폼 정확히', '호흡 신경쓰기', '무리하지 않기'];
-      default:
-        return ['준비운동 철저히', '안전 우선', '즐기면서 하기'];
-    }
-  }
-  
-  String _getKoreanWeatherCondition(String condition) {
-    switch (condition.toLowerCase()) {
-      case 'clear': return '맑음';
-      case 'clouds':
-        return '흐림';
-      case 'rain':
-        return '비';
-      case 'snow':
-        return '눈';
-      case 'mist':
-      case 'fog': return '안개';
-      default:
-        return '보통';
-    }
-  }
-
-  String _getWeatherAdviceForSport(String sportType, WeatherInfo weather) {
-    final condition = weather.condition.toLowerCase();
-    final temp = weather.temperature;
-    final wind = weather.windSpeed;
-    
-    // Sport-specific weather advice
-    switch (sportType) {
-      case 'golf':
-        if (wind > 10) return '강한 바람으로 공의 궤적이 영향받을 수 있습니다';
-        if (condition == 'rain') return '비로 인해 그립과 클럽 관리가 중요합니다';
-        return '골프하기 좋은 날씨입니다';
-      
-      case 'tennis':
-        if (temp > 30) return '고온 주의 - 충분한 수분 섭취가 필요합니다';
-        if (wind > 8) return '바람이 강해 서브와 랠리에 영향이 있을 수 있습니다';
-        return '테니스하기 적절한 날씨입니다';
-      
-      case 'baseball':
-        if (condition == 'rain') return '우천 시 경기 취소 가능성이 있습니다';
-        if (wind > 12) return '강풍으로 타구 방향 예측이 어려울 수 있습니다';
-        return '야구 관람하기 좋은 날씨입니다';
-      
-      case 'swimming':
-        if (temp < 20) return '실외 수영장은 춥게 느껴질 수 있습니다';
-        return '수영하기 좋은 날씨입니다';
-      
-      case 'hiking':
-        if (condition == 'rain' || condition == 'snow') return '미끄러운 등산로 주의가 필요합니다';
-        if (temp > 30) return '고온 주의 - 충분한 휴식과 수분 섭취가 필요합니다';
-        return '등산하기 좋은 날씨입니다';
-      
-      case 'cycling':
-        if (wind > 10) return '맞바람이 강해 체력 소모가 클 수 있습니다';
-        if (condition == 'rain') return '젖은 노면 주의 - 제동거리가 길어집니다';
-        return '자전거 타기 좋은 날씨입니다';
-      
-      case 'running':
-        if (temp > 28) return '고온 주의 - 이른 아침이나 저녁 운동을 추천합니다';
-        if (condition == 'rain') return '미끄러운 노면 주의가 필요합니다';
-        return '러닝하기 좋은 날씨입니다';
-        
-      default:
-        return '운동하기 적절한 날씨입니다';
     }
   }
 
   @override
-  Widget buildContent(BuildContext context, Fortune fortune) {
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundPrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.only(left: 16),
+          child: IconButton(
+            onPressed: () => Navigator.pop(context),
+            style: IconButton.styleFrom(
+              backgroundColor: TossTheme.backgroundSecondary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: TossTheme.textBlack,
+              size: 20,
+            ),
+          ),
+        ),
+        title: Text(
+          '스포츠/운동 운세',
+          style: TossTheme.heading3.copyWith(
+            color: TossTheme.textBlack,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: _sportsData != null 
+          ? _buildResultView()
+          : _buildInputView(),
+    );
+  }
+
+  Widget _buildInputView() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sport Type Selector
-          _buildSportSelector(),
-          const SizedBox(height: 20),
+          // 헤더 카드
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        TossTheme.primaryBlue,
+                        const Color(0xFF00C896),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossTheme.primaryBlue.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.sports_tennis,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                
+                const SizedBox(height: 24),
+                
+                Text(
+                  '오늘의 운동 운세',
+                  style: TossTheme.heading2.copyWith(
+                    color: TossTheme.textBlack,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 12),
+                
+                Text(
+                  '어떤 운동을 하실 예정인가요?\n맞춤형 운세를 알려드릴게요!',
+                  style: TossTheme.body2.copyWith(
+                    color: TossTheme.textGray600,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+
+          const SizedBox(height: 32),
+
+          // 운동 선택 섹션
+          Text(
+            '운동 종목을 선택해주세요',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           
-          // Main Fortune Card
-          _buildMainFortuneCard(fortune),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           
-          // Sport-specific content
-          ..._buildSportSpecificContent(fortune),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.5,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+            ),
+            itemCount: SportType.values.length,
+            itemBuilder: (context, index) {
+              final sport = SportType.values[index];
+              final isSelected = sport == _selectedType;
+              
+              return TossCard(
+                onTap: () {
+                  setState(() {
+                    _selectedType = sport;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isSelected 
+                        ? sport.color.withOpacity(0.1) 
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    border: isSelected 
+                        ? Border.all(color: sport.color, width: 2)
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        sport.icon,
+                        size: 32,
+                        color: isSelected ? sport.color : TossTheme.textGray600,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        sport.label,
+                        style: TossTheme.body2.copyWith(
+                          color: isSelected ? sport.color : TossTheme.textBlack,
+                          fontWeight: isSelected 
+                              ? FontWeight.w600 
+                              : FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ).animate(delay: (index * 50).ms)
+               .fadeIn(duration: 400.ms)
+               .slideY(begin: 0.3);
+            },
+          ),
+
+          const SizedBox(height: 40),
+
+          // 분석 버튼
+          SizedBox(
+            width: double.infinity,
+            child: TossButton(
+              text: '운동 운세 분석하기',
+              isLoading: _isLoading,
+              onPressed: _analyzeSports,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          Text(
+            '분석 결과는 참고용으로만 활용해 주세요',
+            style: TossTheme.caption.copyWith(
+              color: TossTheme.textGray600,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSportSelector() {
-    return Container(
-      height: 80,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: SportType.values.length,
-        itemBuilder: (context, index) {
-          final sport = SportType.values[index];
-          final isSelected = sport == _selectedType;
-          
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  _selectedType = sport;
-                });
-                _loadWeatherData(); // Reload weather data for new sport
-                _onGenerateFortune();
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: 80,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppTheme.primaryColor.withOpacity(0.1)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppTheme.primaryColor
-                        : AppTheme.dividerColor,
-                    width: isSelected ? 2 : 1,
+  Widget _buildResultView() {
+    final fortune = _sportsData!['fortune'] as Fortune;
+    final sportType = _sportsData!['sport_type'] as SportType;
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // 헤더 카드
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: sportType.color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: sportType.color, width: 2),
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  child: Icon(
+                    sportType.icon,
+                    color: sportType.color,
+                    size: 36,
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      sport.icon,
-                      size: 28,
-                      color: isSelected
-                          ? AppTheme.primaryColor
-                          : AppTheme.textSecondaryColor),
-                    const SizedBox(height: 4),
-                    Text(
-                      sport.label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected
-                            ? AppTheme.primaryColor
-                            : AppTheme.textColor),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis),
-                  ],
+                
+                const SizedBox(height: 16),
+                
+                Text(
+                  '${sportType.label} 운세',
+                  style: TossTheme.heading2.copyWith(
+                    color: TossTheme.textBlack,
+                  ),
                 ),
-              ),
+                
+                const SizedBox(height: 8),
+                
+                Text(
+                  fortune.summary ?? '오늘의 ${sportType.label} 운세',
+                  style: TossTheme.body1.copyWith(
+                    color: sportType.color,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-          );
-        },
-      ),
-    );
-  }
+          ).animate().fadeIn().slideY(begin: -0.3),
 
-  Widget _buildMainFortuneCard(Fortune fortune) {
-    final condition = _sportsData?['condition'] ?? '양호';
-    final conditionColor = condition == '최상'
-        ? Colors.green
-        : condition == '양호'
-            ? Colors.blue
-            : Colors.orange;
+          const SizedBox(height: 24),
 
-    return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              _getSportColor(_selectedType).withOpacity(0.1),
-              _getSportColor(_selectedType).withOpacity(0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // 운세 내용
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(
-                      _selectedType.icon,
-                      color: _getSportColor(_selectedType),
-                      size: 32,
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: sportType.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.auto_awesome,
+                        color: sportType.color,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${_selectedType.label} 운세',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: conditionColor.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '컨디션: $condition',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: conditionColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    Text(
+                      '오늘의 운세',
+                      style: TossTheme.heading4.copyWith(
+                        color: TossTheme.textBlack,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
-                Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: _getScoreColor(fortune.score),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${fortune.score}점',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              fortune.message,
-              style: TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: AppTheme.textColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
-  }
-
-  List<Widget> _buildSportSpecificContent(Fortune fortune) {
-    final commonWidgets = [
-      _buildTimeAndWeatherCard(),
-      const SizedBox(height: 16),
-      _buildPerformanceChart(fortune),
-      const SizedBox(height: 16),
-      _buildTipsCard(),
-    ];
-
-    switch (_selectedType) {
-      case SportType.golf:
-        return [
-          _buildGolfSpecific(),
-          const SizedBox(height: 16),
-          ...commonWidgets,
-        ];
-      case SportType.tennis:
-        return [
-          _buildTennisSpecific(),
-          const SizedBox(height: 16),
-          ...commonWidgets,
-        ];
-      case SportType.baseball:
-        return [
-          if (_baseballSchedule != null && _baseballSchedule!.isNotEmpty)
-            _buildBaseballSchedule(),
-          const SizedBox(height: 16),
-          ...commonWidgets,
-        ];
-      case SportType.swimming:
-        return [
-          _buildSwimmingSpecific(),
-          const SizedBox(height: 16),
-          ...commonWidgets,
-        ];
-      case SportType.running:
-        return [
-          _buildRunningSpecific(),
-          const SizedBox(height: 16),
-          ...commonWidgets,
-        ];
-      case SportType.fitness:
-        return [
-          _buildFitnessSpecific(),
-          const SizedBox(height: 16),
-          ...commonWidgets,
-        ];
-      default:
-        return commonWidgets;
-    }
-  }
-
-  Widget _buildTimeAndWeatherCard() {
-    final bestTime = _sportsData?['bestTime'] ?? '오전 9-11시';
-    final weather = _sportsData?['weather'] ?? '맑음';
-    final temperature = _weatherData?.temperature ?? 20;
-    final windSpeed = _weatherData?.windSpeed ?? 5;
-    final humidity = _weatherData?.humidity ?? 50;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      Icon(Icons.access_time, color: AppTheme.primaryColor, size: 32),
-                      const SizedBox(height: 8),
-                      const Text(
-                        '최적 시간',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        bestTime,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 60,
-                  color: AppTheme.dividerColor),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Icon(_getWeatherIcon(weather), color: _getWeatherColor(weather), size: 32),
-                      const SizedBox(height: 8),
-                      const Text(
-                        '날씨',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$weather ${temperature.round()}°C',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
-                    ],
+                
+                const SizedBox(height: 16),
+                
+                Text(
+                  fortune.content,
+                  style: TossTheme.body2.copyWith(
+                    color: TossTheme.textBlack,
+                    height: 1.6,
                   ),
                 ),
               ],
             ),
-            if (_weatherData != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildWeatherDetail(Icons.air, '바람', '${windSpeed.round()}m/s'),
-                    _buildWeatherDetail(Icons.water_drop, '습도', '${humidity.round()}%'),
-                    if (_weatherData!.temperature > 25)
-                      _buildWeatherDetail(Icons.wb_sunny, '체감', '${_weatherData!.feelsLike.round()}°'),
-                  ],
-                ),
-              ),
-            ],
-            if (_isOutdoorSport(_selectedType) && _weatherData != null) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: _getWeatherAdviceColor(),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, size: 16, color: Colors.white),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        _getWeatherAdviceForSport(_selectedType.value, _weatherData!),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildWeatherDetail(IconData icon, String label, String value) {
-    return Column(
-      children: [
-        Icon(icon, size: 20, color: AppTheme.textSecondaryColor),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: AppTheme.textSecondaryColor)),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold)),
-      ],
-    );
-  }
-  
-  IconData _getWeatherIcon(String weather) {
-    switch (weather) {
-      case '맑음': return Icons.wb_sunny;
-      case '흐림':
-        return Icons.cloud;
-      case '비':
-        return Icons.beach_access;
-      case '눈':
-        return Icons.ac_unit;
-      case '안개': return Icons.foggy;
-      default:
-        return Icons.wb_sunny;
-    }
-  }
-  
-  Color _getWeatherColor(String weather) {
-    switch (weather) {
-      case '맑음': return Colors.orange;
-      case '흐림':
-        return Colors.grey;
-      case '비':
-        return Colors.blue;
-      case '눈':
-        return Colors.lightBlue;
-      case '안개': return Colors.blueGrey;
-      default:
-        return Colors.orange;
-    }
-  }
-  
-  Color _getWeatherAdviceColor() {
-    if (_weatherData == null) return Colors.blue;
-    
-    if (_weatherData!.temperature > 30 || _weatherData!.temperature < 5) {
-      return Colors.red;
-    } else if (_weatherData!.windSpeed > 10 || _weatherData!.condition == 'Rain' || _weatherData!.condition == 'Snow') {
-      return Colors.orange;
-    } else {
-      return Colors.green;
-    }
-  }
-  
-  bool _isOutdoorSport(SportType sport) {
-    return [
-      SportType.golf,
-      SportType.tennis,
-      SportType.baseball,
-      SportType.running,
-      SportType.cycling,
-      SportType.hiking,
-      SportType.fishing,
-    ].contains(sport);
-  }
+          ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
-  Widget _buildPerformanceChart(Fortune fortune) {
-    final categories = ['체력', '집중력', '유연성', '근력', '지구력'];
-    final scores = [
-      fortune.score + 5,
-      fortune.score - 5,
-      fortune.score,
-      fortune.score - 10,
-      fortune.score + 10,
-    ].map((s) => s.clamp(0, 100)).toList();
+          const SizedBox(height: 16),
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '오늘의 운동 능력',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: RadarChart(
-                RadarChartData(
-                  dataSets: [
-                    RadarDataSet(
-                      fillColor: AppTheme.primaryColor.withOpacity(0.3),
-                      borderColor: AppTheme.primaryColor,
-                      borderWidth: 2,
-                      dataEntries: scores
-                          .map((score) => RadarEntry(value: score.toDouble()))
-                          .toList(),
-                    ),
-                  ],
-                  radarShape: RadarShape.polygon,
-                  radarBorderData: BorderSide(color: AppTheme.dividerColor),
-                  titlePositionPercentageOffset: 0.2,
-                  titleTextStyle: const TextStyle(fontSize: 12),
-                  getTitle: (index, angle) {
-                    return RadarChartTitle(
-                      text: categories[index],
-                      angle: 0);
-                  },
-                  tickCount: 5,
-                  ticksTextStyle: const TextStyle(fontSize: 10),
-                  tickBorderData: BorderSide(color: AppTheme.dividerColor),
-                  gridBorderData: BorderSide(
-                    color: AppTheme.dividerColor.withOpacity(0.5)),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTipsCard() {
-    final tips = _sportsData?['tips'] ?? [];
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.lightbulb, color: Colors.amber, size: 24),
-                const SizedBox(width: 8),
-                const Text(
-                  '오늘의 운동 팁',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...tips.map((tip) => _buildTipItem(tip)).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTipItem(String tip) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              tip,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.4)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Sport-specific widgets
-  Widget _buildGolfSpecific() {
-    final expectedScore = _sportsData?['expectedScore'] ?? 85;
-    final bestHoles = _sportsData?['bestHoles'] ?? [];
-    final windDirection = _sportsData?['windDirection'] ?? '북서풍';
-    final course = _sportsData?['course'] ?? '그린 컨디션 양호';
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '골프 상세 정보',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '예상 스코어',
-                    '$expectedScore타',
-                    Icons.flag,
-                    Colors.green,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '바람',
-                    windDirection,
-                    Icons.air,
-                    Colors.blue,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildInfoBox(
-              '코스 상태',
-              course,
-              Icons.grass,
-              Colors.green),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
+          // 추천 사항
+          if (fortune.advice?.isNotEmpty == true)
+            TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.star, color: Colors.amber, size: 20),
-                  const SizedBox(width: 8),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: TossTheme.success.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.lightbulb,
+                          color: TossTheme.success,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        '오늘의 추천',
+                        style: TossTheme.heading4.copyWith(
+                          color: TossTheme.textBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
                   Text(
-                    '홀: ${bestHoles.join(", ")}번',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                    fortune.advice!,
+                    style: TossTheme.body2.copyWith(
+                      color: TossTheme.textBlack,
+                      height: 1.6,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.3),
 
-  Widget _buildTennisSpecific() {
-    final winRate = _sportsData?['winRate'] ?? 75;
-    final strongShot = _sportsData?['strongShot'] ?? '포핸드';
-    final strategy = _sportsData?['strategy'] ?? '공격적 플레이';
-    final stamina = _sportsData?['stamina'] ?? 85;
+          const SizedBox(height: 32),
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '테니스 상세 정보',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          // 다시 분석하기 버튼
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _sportsData = null;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: TossTheme.primaryBlue,
+                side: BorderSide(color: TossTheme.primaryBlue),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '승률 예측',
-                    '$winRate%',
-                    Icons.emoji_events,
-                    Colors.amber,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '체력',
-                    '$stamina%',
-                    Icons.battery_charging_full,
-                    Colors.green,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '강점 샷',
-                    strongShot,
-                    Icons.sports_tennis,
-                    Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '전략',
-                    strategy,
-                    Icons.psychology,
-                    Colors.purple,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSwimmingSpecific() {
-    final poolCondition = _sportsData?['poolCondition'] ?? '최적';
-    final bestStroke = _sportsData?['bestStroke'] ?? '자유형';
-    final distance = _sportsData?['distance'] ?? '1000m';
-    final waterTemp = _sportsData?['waterTemp'] ?? '26°C';
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '수영 상세 정보',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '수온',
-                    waterTemp,
-                    Icons.thermostat,
-                    Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '수질',
-                    poolCondition,
-                    Icons.water_drop,
-                    Colors.cyan,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '추천 영법',
-                    bestStroke,
-                    Icons.pool,
-                    Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '목표 거리',
-                    distance,
-                    Icons.straighten,
-                    Colors.green,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRunningSpecific() {
-    final pace = _sportsData?['pace'] ?? '5:30/km';
-    final distance = _sportsData?['distance'] ?? '10km';
-    final route = _sportsData?['route'] ?? '평지 추천';
-    final hydration = _sportsData?['hydration'] ?? '필수';
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '러닝 상세 정보',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '목표 페이스',
-                    pace,
-                    Icons.speed,
-                    Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '추천 거리',
-                    distance,
-                    Icons.route,
-                    Colors.blue,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '코스',
-                    route,
-                    Icons.map,
-                    Colors.green,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '수분 섭취',
-                    hydration,
-                    Icons.water,
-                    Colors.cyan,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFitnessSpecific() {
-    final focusArea = _sportsData?['focusArea'] ?? '상체';
-    final intensity = _sportsData?['intensity'] ?? '고강도';
-    final restTime = _sportsData?['restTime'] ?? '60초';
-    final supplement = _sportsData?['supplement'] ?? '프로틴';
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '피트니스 상세 정보',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '집중 부위',
-                    focusArea,
-                    Icons.fitness_center,
-                    Colors.red,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '운동 강도',
-                    intensity,
-                    Icons.flash_on,
-                    Colors.orange,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoBox(
-                    '휴식 시간',
-                    restTime,
-                    Icons.timer,
-                    Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInfoBox(
-                    '보충제',
-                    supplement,
-                    Icons.local_drink,
-                    Colors.purple,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildWorkoutPlan(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWorkoutPlan() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '추천 운동 루틴',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 8),
-          _buildWorkoutItem('벤치프레스', '4세트 x 12회'),
-          _buildWorkoutItem('덤벨 플라이', '3세트 x 15회'),
-          _buildWorkoutItem('푸시업', '3세트 x 20회'),
-          _buildWorkoutItem('케이블 크로스오버', '3세트 x 15회'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWorkoutItem(String exercise, String reps) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          const Icon(Icons.check_circle, size: 16, color: Colors.green),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              exercise,
-              style: const TextStyle(fontSize: 13),
-            ),
-          ),
-          Text(
-            reps,
-            style: TextStyle(
-              fontSize: 13,
-              color: AppTheme.textSecondaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoBox(String label, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.textSecondaryColor)),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getSportColor(SportType sport) {
-    switch (sport) {
-      case SportType.golf:
-        return Colors.green;
-      case SportType.tennis:
-        return Colors.orange;
-      case SportType.baseball:
-        return Colors.red;
-      case SportType.swimming:
-        return Colors.blue;
-      case SportType.yoga:
-        return Colors.purple;
-      case SportType.hiking:
-        return Colors.brown;
-      case SportType.cycling:
-        return Colors.cyan;
-      case SportType.running:
-        return Colors.indigo;
-      case SportType.fitness:
-        return Colors.pink;
-      case SportType.fishing:
-        return Colors.teal;
-    }
-  }
-
-  Widget _buildBaseballSchedule() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.sports_baseball, color: Colors.red, size: 24),
-                const SizedBox(width: 8),
-                const Text(
-                  'KBO 경기 일정',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ..._baseballSchedule!.take(3).map((game) => _buildGameItem(game)).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildGameItem(GameSchedule game) {
-    final isToday = game.gameTime.day == DateTime.now().day;
-    final isHome = game.homeTeam == 'LG'; // Example team
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isToday ? Colors.blue.withOpacity(0.1) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isToday ? Colors.blue : AppTheme.dividerColor)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${game.homeTeam} vs ${game.awayTeam}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16)),
-              if (isToday)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    '오늘',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(Icons.stadium, size: 16, color: AppTheme.textSecondaryColor),
-              const SizedBox(width: 4),
-              Text(
-                game.stadium,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.textSecondaryColor)),
-              const SizedBox(width: 16),
-              Icon(Icons.access_time, size: 16, color: AppTheme.textSecondaryColor),
-              const SizedBox(width: 4),
-              Text(
-                '${game.gameTime.hour}:${game.gameTime.minute.toString().padLeft(2, '0')}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.textSecondaryColor)),
-            ],
-          ),
-          if (isHome) ...[
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                '홈경기',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
+              child: Text(
+                '다른 운동으로 분석하기',
+                style: TossTheme.body1.copyWith(
+                  color: TossTheme.primaryBlue,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-          ],
+          ),
         ],
       ),
     );
-  }
-
-  Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
   }
 }

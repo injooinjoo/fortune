@@ -23,6 +23,7 @@ import '../../../features/fortune/presentation/pages/tarot_enhanced_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_storytelling_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_summary_page.dart';
 import '../../../features/fortune/presentation/pages/fortune_snap_scroll_page.dart';
+import '../../../features/fortune/presentation/pages/talisman_fortune_page.dart';
 
 final specialFortuneRoutes = [
   // Dream Fortune
@@ -45,11 +46,6 @@ final specialFortuneRoutes = [
         initialParams: extra);
     }),
   
-  // Family Fortune Unified
-  GoRoute(
-    path: '/family',
-    name: 'fortune-family',
-    builder: (context, state) => const FamilyFortuneUnifiedPage()),
   
   // Children
   GoRoute(
@@ -228,4 +224,10 @@ final specialFortuneRoutes = [
       cards: [],
       interpretations: [],
       spreadType: 'basic')),
+  
+  // Talisman Fortune
+  GoRoute(
+    path: '/talisman',
+    name: 'fortune-talisman',
+    builder: (context, state) => const TalismanFortunePage()),
 ];

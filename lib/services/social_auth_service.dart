@@ -436,9 +436,208 @@ class SocialAuthService {
   // Kakao Sign In
   Future<AuthResponse?> signInWithKakao() async {
     try {
-      Logger.info('Starting Kakao Sign-In process with Supabase OAuth');
+      Logger.info('=== KAKAO SIGN-IN STARTED ===');
+      Logger.info('Platform: ${kIsWeb ? 'Web' : (Platform.isIOS ? 'iOS' : 'Android')}');
       
-      // Supabase OAuth를 사용한 카카오 로그인
+      // iOS/Android에서는 네이티브 카카오 SDK 사용, 웹에서는 OAuth 사용
+      if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+        Logger.info('Using native Kakao SDK for mobile platform');
+        final result = await _signInWithKakaoNative();
+        Logger.info('Native Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
+        return result;
+      } else {
+        Logger.info('Using Kakao OAuth for web platform');
+        final result = await _signInWithKakaoOAuth();
+        Logger.info('OAuth Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
+        return result;
+      }
+    } catch (error) {
+      Logger.error('=== KAKAO SIGN-IN FAILED ===', error);
+      Logger.error('Error type: ${error.runtimeType}');
+      Logger.error('Error message: ${error.toString()}');
+      rethrow;
+    }
+  }
+  
+  // 네이티브 카카오 로그인 (iOS/Android) - OAuth 방식으로 변경
+  Future<AuthResponse?> _signInWithKakaoNative() async {
+    try {
+      Logger.info('Using native Kakao Sign-In with OAuth');
+      
+      // 카카오톡 설치 여부 확인 후 로그인
+      bool isKakaoTalkInstalled = await kakao.isKakaoTalkInstalled();
+      
+      kakao.OAuthToken token;
+      if (isKakaoTalkInstalled) {
+        Logger.info('Kakao login via KakaoTalk app');
+        token = await kakao.UserApi.instance.loginWithKakaoTalk();
+      } else {
+        Logger.info('Kakao login via web account');
+        token = await kakao.UserApi.instance.loginWithKakaoAccount();
+      }
+      
+      Logger.info('Kakao OAuth token obtained successfully');
+      
+      // 사용자 정보 가져오기
+      final kakaoUser = await kakao.UserApi.instance.me();
+      Logger.info('Kakao user info retrieved: ${kakaoUser.id}');
+      
+      final String? email = kakaoUser.kakaoAccount?.email;
+      if (email == null) {
+        throw Exception('Kakao account does not have an email address');
+      }
+      
+      Logger.info('Processing Kakao login for email: $email');
+      
+      // Supabase Edge Function을 사용해 OAuth 처리
+      try {
+        final response = await _supabase.functions.invoke(
+          'kakao-oauth',
+          body: {
+            'access_token': token.accessToken,
+            'refresh_token': token.refreshToken,
+            'user_info': {
+              'id': kakaoUser.id.toString(),
+              'email': email,
+              'nickname': kakaoUser.kakaoAccount?.profile?.nickname,
+              'profile_image_url': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
+            }
+          }
+        );
+        
+        if (response.status != 200) {
+          Logger.error('Kakao OAuth Edge Function failed: ${response.status}');
+          throw Exception('Kakao OAuth failed: ${response.data}');
+        }
+        
+        final data = response.data as Map<String, dynamic>;
+        
+        if (!data['success']) {
+          throw Exception(data['error'] ?? 'Kakao OAuth failed');
+        }
+        
+        final sessionUrl = data['session_url'] as String?;
+        if (sessionUrl == null) {
+          throw Exception('No session URL returned from Kakao OAuth');
+        }
+        
+        Logger.info('Got session URL from Edge Function, processing...');
+        
+        // Parse the magic link URL to get the session
+        final uri = Uri.parse(sessionUrl);
+        final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
+        
+        if (sessionResponse.session == null) {
+          throw Exception('Failed to create session from Kakao OAuth');
+        }
+        
+        Logger.securityCheckpoint('Kakao OAuth: ${sessionResponse.session?.user?.id}');
+        
+        // Return the auth response
+        return AuthResponse(
+          session: sessionResponse.session,
+          user: sessionResponse.session?.user
+        );
+        
+      } catch (edgeFunctionError) {
+        Logger.error('Kakao Edge Function failed, falling back to manual user creation', edgeFunctionError);
+        
+        // Fallback: 직접 사용자 생성 후 OAuth 세션 처리
+        try {
+          // Create or get existing user by email
+          final existingUser = await _findUserByEmail(email);
+          
+          if (existingUser != null) {
+            // 기존 사용자 - 카카오 정보 업데이트
+            await _updateUserProfile(
+              userId: existingUser.id,
+              email: email,
+              name: kakaoUser.kakaoAccount?.profile?.nickname,
+              photoUrl: kakaoUser.kakaoAccount?.profile?.profileImageUrl,
+              provider: 'kakao'
+            );
+            
+            // Create a session for existing user
+            final sessionResponse = await _createManualSession(existingUser);
+            return sessionResponse;
+            
+          } else {
+            // 새 사용자 생성
+            final signUpResponse = await _supabase.auth.signUp(
+              email: email,
+              password: 'kakao_oauth_${kakaoUser.id}_${DateTime.now().millisecondsSinceEpoch}',
+              data: {
+                'provider': 'kakao',
+                'kakao_id': kakaoUser.id.toString(),
+                'name': kakaoUser.kakaoAccount?.profile?.nickname ?? email.split('@')[0],
+                'profile_image': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
+              }
+            );
+            
+            if (signUpResponse.user != null) {
+              Logger.securityCheckpoint('Kakao new user: ${signUpResponse.user?.id}');
+              
+              // 프로필 정보 업데이트
+              await _updateUserProfile(
+                userId: signUpResponse.user!.id,
+                email: email,
+                name: kakaoUser.kakaoAccount?.profile?.nickname,
+                photoUrl: kakaoUser.kakaoAccount?.profile?.profileImageUrl,
+                provider: 'kakao'
+              );
+            }
+            
+            return signUpResponse;
+          }
+        } catch (fallbackError) {
+          Logger.error('Kakao fallback authentication failed', fallbackError);
+          throw Exception('Kakao authentication failed: $fallbackError');
+        }
+      }
+    } catch (error) {
+      Logger.error('Native Kakao Sign-In failed', error);
+      rethrow;
+    }
+  }
+  
+  // Helper method to find user by email
+  Future<User?> _findUserByEmail(String email) async {
+    try {
+      final response = await _supabase
+          .from('auth.users')
+          .select('id')
+          .eq('email', email)
+          .maybeSingle();
+      
+      if (response != null) {
+        return User.fromJson(response);
+      }
+      return null;
+    } catch (e) {
+      Logger.warning('Failed to find user by email', e);
+      return null;
+    }
+  }
+  
+  // Helper method to create manual session
+  Future<AuthResponse?> _createManualSession(User user) async {
+    try {
+      // This is a simplified approach - in production you'd want proper JWT generation
+      Logger.info('Creating manual session for user: ${user.id}');
+      
+      // For now, return null to trigger OAuth flow
+      return null;
+    } catch (e) {
+      Logger.error('Failed to create manual session', e);
+      return null;
+    }
+  }
+  
+  // OAuth 카카오 로그인 (웹)
+  Future<AuthResponse?> _signInWithKakaoOAuth() async {
+    try {
+      Logger.info('Using Kakao OAuth sign in');
+      
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.kakao,
         redirectTo: kIsWeb 
@@ -451,14 +650,9 @@ class SocialAuthService {
       }
       
       Logger.securityCheckpoint('Kakao OAuth sign in initiated');
-      
-      // OAuth 로그인은 웹브라우저나 카카오톡 앱을 통해 진행되며,
-      // 완료 후 앱으로 돌아올 때 Supabase가 자동으로 세션을 처리합니다.
-      // 따라서 여기서는 null을 반환하고, 
-      // 실제 인증 완료는 deep link 콜백에서 처리됩니다.
-      return null;
+      return null; // OAuth flow will handle the callback
     } catch (error) {
-      Logger.error('Kakao Sign-In failed', error);
+      Logger.error('Kakao OAuth Sign-In failed', error);
       rethrow;
     }
   }
@@ -483,49 +677,50 @@ class SocialAuthService {
         throw Exception('Failed to get Naver access token');
       }
       
+      Logger.info('Got Naver access token, calling Edge Function');
+      
       // Call our Edge Function to handle OAuth
       final response = await _supabase.functions.invoke(
         'naver-oauth',
         body: {
-          'accessToken': tokenResult.accessToken});
+          'accessToken': tokenResult.accessToken
+        }
+      );
       
       if (response.status != 200) {
+        Logger.error('Naver OAuth Edge Function failed: ${response.status}');
         throw Exception('Naver OAuth failed: ${response.data}');
       }
       
       final data = response.data as Map<String, dynamic>;
-      final userData = data['user'] as Map<String, dynamic>;
       
-      // Sign in the user with email and generated password
-      // Since Naver doesn't provide direct OAuth, we use email/password auth
-      final email = userData['email'] as String;
-      final userId = userData['id'] as String;
-      
-      // Try to sign in first
-      try {
-        final signInResponse = await _supabase.auth.signInWithPassword(
-          email: email,
-          password: 'naver_$userId', // Use a consistent password pattern
-        );
-        
-        Logger.securityCheckpoint('Naver: ${signInResponse.user?.id}');
-        
-        // Update user profile with Naver info
-        await _updateUserProfile(
-          userId: signInResponse.user!.id,
-          email: email,
-          provider: 'naver');
-        
-        return signInResponse;
-      } catch (signInError) {
-        // If sign in fails, the user might not exist with password auth
-        // In this case, we need to handle it differently
-        Logger.warning('Naver sign in with password failed, user might need different auth method');
-        
-        // Since we can't create a session directly, we return null
-        // and show a message to the user
-        throw Exception('Naver 로그인을 완료하려면 이메일 인증이 필요합니다. 이메일을 확인해주세요.');
+      if (!data['success']) {
+        throw Exception(data['error'] ?? 'Naver OAuth failed');
       }
+      
+      final sessionUrl = data['session_url'] as String?;
+      if (sessionUrl == null) {
+        throw Exception('No session URL returned from Naver OAuth');
+      }
+      
+      Logger.info('Got session URL from Edge Function, processing...');
+      
+      // Parse the magic link URL to get the session
+      final uri = Uri.parse(sessionUrl);
+      final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
+      
+      if (sessionResponse.session == null) {
+        throw Exception('Failed to create session from Naver OAuth');
+      }
+      
+      Logger.securityCheckpoint('Naver: ${sessionResponse.session?.user?.id}');
+      
+      // Return the auth response
+      return AuthResponse(
+        session: sessionResponse.session,
+        user: sessionResponse.session?.user
+      );
+      
     } catch (error) {
       Logger.error('Naver Sign-In failed', error);
       rethrow;

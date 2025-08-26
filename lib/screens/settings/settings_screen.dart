@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +32,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final fortuneTheme = context.fortuneTheme;
     
     return Scaffold(
-      backgroundColor: AppColors.getCardBackground(context),
+      backgroundColor: AppColors.getTossBackground(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -53,36 +54,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // 계정 섹션
             const SizedBox(height: 24),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: fortuneTheme.cardSurface,
-                borderRadius: BorderRadius.circular(16),
+                color: AppColors.getTossCardBackground(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.getTossBorder(context),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10,
-                    offset: const Offset(0, 2))]),
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+                    child: Text(
+                      '계정',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        color: AppColors.getTossTextPrimary(context),
+                        letterSpacing: -0.3,
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '계정',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20),
-                        ),
-                      ],
                     ),
                   ),
                   _buildSettingItem(
@@ -115,36 +115,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // 앱 설정 섹션
             const SizedBox(height: 24),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: fortuneTheme.cardSurface,
-                borderRadius: BorderRadius.circular(16),
+                color: AppColors.getTossCardBackground(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.getTossBorder(context),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10,
-                    offset: const Offset(0, 2))]),
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+                    child: Text(
+                      '앱 설정',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        color: AppColors.getTossTextPrimary(context),
+                        letterSpacing: -0.3,
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '앱 설정',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20),
-                        ),
-                      ],
                     ),
                   ),
                   _buildSettingItem(
@@ -156,7 +155,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ref.read(themeModeProvider.notifier).setThemeMode(
                           value ? ThemeMode.dark : ThemeMode.light);
                       },
-                      activeColor: AppColors.primary),
+                      activeColor: AppColors.tossBlue),
                     isFirst: true),
                   _buildSettingItem(
                     icon: Icons.language_outlined,
@@ -170,34 +169,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // 결제 섹션
             const SizedBox(height: 24),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: fortuneTheme.cardSurface,
-                borderRadius: BorderRadius.circular(16),
+                color: AppColors.getTossCardBackground(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.getTossBorder(context),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10,
-                    offset: const Offset(0, 2))]),
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.shade50,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16)),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '결제',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20)),
-                      ],
+                    child: Text(
+                      '결제',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        color: AppColors.getTossTextPrimary(context),
+                        letterSpacing: -0.3,
+                      ),
                     ),
                   ),
                   _buildSettingItem(
@@ -220,34 +220,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // 지원 섹션
             const SizedBox(height: 24),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: fortuneTheme.cardSurface,
-                borderRadius: BorderRadius.circular(16),
+                color: AppColors.getTossCardBackground(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.getTossBorder(context),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10,
-                    offset: const Offset(0, 2))]),
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.purple.shade50,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16)),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '지원',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20)),
-                      ],
+                    child: Text(
+                      '지원',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        color: AppColors.getTossTextPrimary(context),
+                        letterSpacing: -0.3,
+                      ),
                     ),
                   ),
                   _buildSettingItem(
@@ -268,10 +269,60 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             
+            // 개발자 도구 (개발 환경에서만 표시)
+            if (kDebugMode) ...[
+              const SizedBox(height: 32),
+              Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.grey[300]!,
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.developer_mode,
+                            size: 20,
+                            color: fortuneTheme.secondaryText,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '개발자 도구',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: fortuneTheme.primaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _buildSettingItem(
+                      icon: Icons.cloud_download_outlined,
+                      title: '유명인 정보 크롤링',
+                      onTap: () => context.push('/admin/celebrity-crawling'),
+                      isFirst: true,
+                      isLast: true),
+                  ],
+                ),
+              ),
+            ),
+            ],
+            
             // 로그아웃
             const SizedBox(height: 32),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(

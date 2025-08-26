@@ -12,6 +12,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/components/toss_button.dart';
 import 'ex_lover_fortune_result_page.dart';
 
 // Step 관리를 위한 StateNotifier
@@ -592,29 +593,20 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           const SizedBox(height: 24),
           
           // Next Button
-          SizedBox(
+          TossButton(
+            text: '다음',
+            onPressed: () {
+              if (_validateStep1()) {
+                ref.read(exLoverStepProvider.notifier).nextStep();
+                _pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut
+                );
+              }
+            },
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_validateStep1()) {
-                  ref.read(exLoverStepProvider.notifier).nextStep();
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                '다음',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
           ),
         ],
       ),
@@ -907,29 +899,20 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           const SizedBox(height: 24),
           
           // Next Button
-          SizedBox(
+          TossButton(
+            text: '다음',
+            onPressed: () {
+              if (_validateStep2()) {
+                ref.read(exLoverStepProvider.notifier).nextStep();
+                _pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut
+                );
+              }
+            },
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_validateStep2()) {
-                  ref.read(exLoverStepProvider.notifier).nextStep();
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                '다음',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
           ),
         ],
       ),
@@ -1092,7 +1075,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
+                child: TossButton(
+                  text: '건너뛰기',
                   onPressed: () {
                     ref.read(exLoverStepProvider.notifier).nextStep();
                     _pageController.nextPage(
@@ -1100,22 +1084,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       curve: Curves.easeInOut
                     );
                   },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    side: const BorderSide(color: Colors.white),
-                  ),
-                  child: const Text(
-                    '건너뛰기',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
+                  style: TossButtonStyle.secondary,
+                  size: TossButtonSize.large,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
+                child: TossButton(
+                  text: '다음',
                   onPressed: () {
                     ref.read(exLoverStepProvider.notifier).nextStep();
                     _pageController.nextPage(
@@ -1123,16 +1099,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       curve: Curves.easeInOut
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    '다음',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.large,
                 ),
               ),
             ],
@@ -1233,25 +1201,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           const SizedBox(height: 24),
           
           // 분석 시작 버튼
-          SizedBox(
+          TossButton(
+            text: '운세 분석 시작 ($totalSouls 영혼)',
+            onPressed: _startFortuneTelling,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _startFortuneTelling,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: theme.colorScheme.primary,
-              ),
-              child: Text(
-                '운세 분석 시작 ($totalSouls 영혼)',
-                style: const TextStyle(
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-              ),
-            ),
           ),
         ],
       ),
@@ -1558,9 +1513,11 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             style: theme.textTheme.bodyMedium,
           ),
           actions: [
-            TextButton(
+            TossButton(
+              text: '확인',
               onPressed: () => Navigator.pop(context),
-              child: const Text('확인'),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.small,
             ),
           ],
         );
@@ -2041,22 +1998,21 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             ],
           ),
           actions: [
-            TextButton(
+            TossButton(
+              text: '닫기',
               onPressed: () => Navigator.pop(context),
-              child: const Text('닫기'),
+              style: TossButtonStyle.secondary,
+              size: TossButtonSize.small,
             ),
             if (retryAction != null)
-              ElevatedButton(
+              TossButton(
+                text: '다시 시도',
                 onPressed: () {
                   Navigator.pop(context);
                   retryAction();
                 },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text('다시 시도'),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.small,
               ),
           ],
         );
@@ -2118,22 +2074,21 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             ],
           ),
           actions: [
-            TextButton(
+            TossButton(
+              text: '취소',
               onPressed: () => Navigator.pop(context),
-              child: const Text('취소'),
+              style: TossButtonStyle.secondary,
+              size: TossButtonSize.small,
             ),
-            ElevatedButton(
+            TossButton(
+              text: '영혼 충전하기',
               onPressed: () {
                 Navigator.pop(context);
                 // Navigate to soul recharge page
                 context.go('/soul-recharge');
               },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('영혼 충전하기'),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.small,
             ),
           ],
         );

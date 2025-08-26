@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/daily_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/wealth_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/health_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/saju_page.dart';
 import '../../../features/fortune/presentation/pages/zodiac_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/zodiac_animal_fortune_page.dart';
@@ -75,12 +74,6 @@ final basicFortuneRoutes = [
       return WealthFortunePage(
         initialParams: extra);
     }),
-  
-  // Health
-  GoRoute(
-    path: '/health',
-    name: 'fortune-health',
-    builder: (context, state) => const HealthFortunePage()),
   
   // Destiny
   GoRoute(

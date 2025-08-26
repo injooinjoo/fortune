@@ -6,6 +6,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/components/toss_button.dart';
 
 class PhysiognomyEnhancedPage extends ConsumerWidget {
   const PhysiognomyEnhancedPage({Key? key}) : super(key: key);
@@ -248,43 +249,21 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
 
   Widget _buildStartButton(
       BuildContext context, WidgetRef ref, ThemeData theme) {
-    return SizedBox(
+    return TossButton(
+      text: '관상 분석 시작하기',
+      onPressed: () {
+        HapticUtils.mediumImpact();
+        NavigationFlowHelper.navigateWithAd(
+          context: context,
+          ref: ref,
+          destinationRoute: 'physiognomy-input',
+          fortuneType: 'physiognomy',
+        );
+      },
+      style: TossButtonStyle.primary,
+      size: TossButtonSize.large,
       width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: () {
-          HapticUtils.mediumImpact();
-          NavigationFlowHelper.navigateWithAd(
-            context: context,
-            ref: ref,
-            destinationRoute: 'physiognomy-input',
-            fortuneType: 'physiognomy',
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: Colors.white,
-          elevation: 8,
-          shadowColor: theme.colorScheme.primary.withOpacity(0.4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              '관상 분석 시작하기',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward_rounded),
-          ],
-        ),
-      ),
+      trailingIcon: const Icon(Icons.arrow_forward_rounded),
     )
         .animate()
         .fadeIn(duration: 600.ms, delay: 600.ms)

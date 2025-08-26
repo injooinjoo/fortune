@@ -225,6 +225,8 @@ flutter:
     - assets/images/tarot/decks/rider_waite/pentacles/
     - assets/images/tarot/decks/rider_waite/swords/
     - assets/images/tarot/decks/rider_waite/wands/
+    - assets/images/talismans/
+    - assets/images/health/
     - assets/fonts/
     - assets/icons/
 

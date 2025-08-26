@@ -33,6 +33,11 @@ class _LandingPageState extends ConsumerState<LandingPage> {
   @override
   void initState() {
     super.initState();
+    
+    // 상태 초기화 명확히 하기
+    _isAuthProcessing = false;
+    print('🔵 initState: _isAuthProcessing initialized to false');
+    
     _socialAuthService = SocialAuthService(Supabase.instance.client);
     _checkAuthState();
     _checkUrlParameters();
@@ -250,14 +255,23 @@ class _LandingPageState extends ConsumerState<LandingPage> {
   }
 
   Future<void> _handleAppleLogin() async {
-    if (_isAuthProcessing) return;
+    print('🍎 _handleAppleLogin() called');
+    print('🍎 _isAuthProcessing at start: $_isAuthProcessing');
     
+    if (_isAuthProcessing) {
+      print('🍎 Already processing, returning early');
+      return;
+    }
+    
+    print('🍎 Setting _isAuthProcessing to true');
     setState(() => _isAuthProcessing = true);
     
     try {
+      print('🍎 Calling _authService.signInWithApple()');
       // Apple OAuth 로그인
       await _authService.signInWithApple();
       
+      print('🍎 signInWithApple() completed successfully');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -266,6 +280,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         );
       }
     } catch (e) {
+      print('🍎 Apple login error: $e');
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -274,6 +289,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
             backgroundColor: Colors.red));
       }
     } finally {
+      print('🍎 Setting _isAuthProcessing to false');
       if (mounted) {
         setState(() => _isAuthProcessing = false);
       }
@@ -429,8 +445,17 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                           
                           // Apple Login
                           _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () {
-                              Navigator.pop(context);
+                            onPressed: _isAuthProcessing ? null : () async {
+                              print('🍎 Apple login button clicked');
+                              print('🍎 _isAuthProcessing: $_isAuthProcessing');
+                              
+                              // 모달을 먼저 닫기
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              }
+                              
+                              // 잠시 기다렸다가 로그인 처리 (UI가 완전히 업데이트되도록)
+                              await Future.delayed(Duration(milliseconds: 100));
                               _handleAppleLogin();
                             },
                             type: 'apple'),
@@ -583,10 +608,93 @@ class _LandingPageState extends ConsumerState<LandingPage> {
           rethrow;
         }
       } else if (provider == 'Kakao') {
+        // 카카오 로그인 진행 중 피드백 표시
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('카카오 로그인은 현재 준비 중입니다.')));
+              content: Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                  ),
+                  SizedBox(width: 16),
+                  Text('카카오 로그인 진행 중...'),
+                ],
+              ),
+              duration: Duration(seconds: 10),
+            ),
+          );
+        }
+        
+        try {
+          debugPrint('🟡 Starting Kakao login...');
+          final response = await _socialAuthService.signInWithKakao();
+          
+          // 로딩 스낵바 닫기
+          if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }
+          
+          debugPrint('🟡 Kakao login response: $response');
+          
+          // 카카오 네이티브 로그인은 AuthResponse를 반환할 수 있음
+          if (response != null && response.user != null) {
+            debugPrint('🟡 Kakao login successful, user: ${response.user?.id}');
+            
+            // 성공 메시지 표시
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('카카오 로그인이 완료되었습니다.'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+            
+            // 명시적으로 프로필 동기화 및 페이지 이동 처리
+            await _syncProfileFromSupabase();
+            
+            // 프로필 상태 확인 후 페이지 이동
+            final needsOnboarding = await ProfileValidation.needsOnboarding();
+            if (needsOnboarding && mounted) {
+              debugPrint('🟡 Profile incomplete, redirecting to onboarding...');
+              context.go('/onboarding');
+            } else if (mounted) {
+              debugPrint('🟡 Profile complete, redirecting to home...');
+              context.go('/home');
+            }
+          } else {
+            // OAuth 방식인 경우 (response == null)
+            debugPrint('🟡 Kakao OAuth flow initiated, waiting for callback...');
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('카카오 로그인을 처리하고 있습니다...'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
+          }
+        } catch (kakaoError) {
+          debugPrint('🟡 Kakao login error: $kakaoError');
+          
+          // 로딩 스낵바 닫기
+          if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }
+          
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('카카오 로그인 중 문제가 발생했습니다: ${kakaoError.toString()}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       } else if (provider == 'Instagram') {
         if (mounted) {
@@ -1099,6 +1207,11 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       default:
         icon = Container();
         text = '';
+    }
+    
+    // 디버깅: 버튼 상태 로그
+    if (type == 'apple') {
+      print('🔴 Building Apple button - onPressed: ${onPressed != null ? 'enabled' : 'disabled'}');
     }
     
     return SizedBox(

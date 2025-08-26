@@ -63,7 +63,7 @@ void main() async {
   if (!kIsWeb) {
     // Kakao SDK
     kakao.KakaoSdk.init(
-      nativeAppKey: '58c7f979c3838b7c088a6bb75c887acd', // TODO: Move to .env
+      nativeAppKey: '79a067e199f5984dd47438d057ecb0c5', // TODO: Move to .env
     );
     
     // Naver SDK - Skip for now as initSdk might not be available

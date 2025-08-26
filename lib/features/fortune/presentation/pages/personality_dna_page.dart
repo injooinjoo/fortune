@@ -63,14 +63,23 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
     if (_currentDNA != null) {
       _animationController.forward();
     }
+    
+    // 페이지 로드되자마자 bottomsheet 열기
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _showPersonalityDNABottomSheet();
+      }
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     
-    // 네비게이션 바 즉시 복원
-    ref.read(navigationVisibilityProvider.notifier).show();
+    // 네비게이션 바 즉시 복원 - dispose 전에 실행
+    if (mounted) {
+      ref.read(navigationVisibilityProvider.notifier).show();
+    }
     
     super.dispose();
   }

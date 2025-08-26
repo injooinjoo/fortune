@@ -88,7 +88,16 @@
       "Bash(git restore:*)",
       "Bash(supabase:*)",
       "Bash(printf \"1\")",
-      "Bash(xcrun devicectl device list:*)"
+      "Bash(xcrun devicectl device list:*)",
+      "Bash(git clean:*)",
+      "Bash(xcrun devicectl list:*)",
+      "Bash(xcrun devicectl device process launch:*)",
+      "Bash(xcrun devicectl device install app:*)",
+      "Bash(security find-identity:*)",
+      "Bash(sudo pkill:*)",
+      "Bash(codesign:*)",
+      "Bash(printf \"\")",
+      "Bash(printf:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -24,11 +24,7 @@ final traditionalFortuneRoutes = [
     name: 'fortune-tojeong',
     builder: (context, state) => const TojeongFortunePage()),
   
-  // Traditional Saju
-  GoRoute(
-    path: '/traditional-saju',
-    name: 'fortune-traditional-saju',
-    builder: (context, state) => const TraditionalSajuTossPage()),
+  // Traditional Saju - moved to route_config.dart (outside shell)
   
   // Palmistry
   GoRoute(
@@ -36,11 +32,7 @@ final traditionalFortuneRoutes = [
     name: 'fortune-palmistry',
     builder: (context, state) => const PalmistryFortunePage()),
   
-  // Physiognomy Fortune
-  GoRoute(
-    path: '/physiognomy',
-    name: 'fortune-physiognomy',
-    builder: (context, state) => const PhysiognomyFortunePage()),
+  // Physiognomy Fortune - moved to route_config.dart (outside shell)
   
   // Salpuli
   GoRoute(

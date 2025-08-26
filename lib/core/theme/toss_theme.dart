@@ -52,6 +52,24 @@ class TossTheme {
     fontFamily: fontFamily,
   );
   
+  static const TextStyle heading4 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: textBlack,
+    height: 1.4,
+    letterSpacing: -0.1,
+    fontFamily: fontFamily,
+  );
+  
+  static const TextStyle heading5 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: textBlack,
+    height: 1.4,
+    letterSpacing: -0.1,
+    fontFamily: fontFamily,
+  );
+  
   static const TextStyle subtitle1 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w400,

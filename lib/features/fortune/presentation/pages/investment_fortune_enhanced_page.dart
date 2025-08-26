@@ -12,6 +12,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'investment_fortune_result_page.dart';
+import '../../../../core/components/toss_button.dart';
 
 // Step 관리를 위한 StateNotifier
 class InvestmentStepNotifier extends StateNotifier<int> {
@@ -323,7 +324,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         children: [
           if (currentStep > 0)
             Expanded(
-              child: OutlinedButton(
+              child: TossButton(
+                text: '이전',
                 onPressed: () {
                   ref.read(investmentStepProvider.notifier).previousStep();
                   _pageController.previousPage(
@@ -331,13 +333,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     curve: Curves.easeOut,
                   );
                 },
-                child: const Text('이전'),
+                style: TossButtonStyle.secondary,
+                size: TossButtonSize.large,
               ),
             ),
           if (currentStep > 0) const SizedBox(width: 16),
           Expanded(
             flex: currentStep == 0 ? 1 : 2,
-            child: ElevatedButton(
+            child: TossButton(
+              text: currentStep == 3 ? '운세 보기' : '다음',
               onPressed: isValid
                   ? () {
                       if (currentStep < 3) {
@@ -351,13 +355,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       }
                     }
                   : null,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: Text(
-                currentStep == 3 ? '운세 보기' : '다음',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
             ),
           ),
         ],

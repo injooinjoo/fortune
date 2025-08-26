@@ -121,7 +121,7 @@ class CacheService {
       debugPrint('💾 Saving to cache: type=$fortuneType, userId=$userId, dateKey=$dateKey');
       
       // DB에 운세 데이터 저장 (upsert)
-      final response = await _supabase.from('fortune_cache').upsert({
+      await _supabase.from('fortune_cache').upsert({
         'user_id': userId,
         'fortune_type': fortuneType,
         'fortune_date': dateKey,
@@ -130,12 +130,6 @@ class CacheService {
         'created_at': DateTime.now().toIso8601String(),
       }, 
       onConflict: 'user_id,fortune_type,fortune_date');
-      
-      // 저장 성공 확인
-      if (response.error != null) {
-        debugPrint('❌ Cache save failed: ${response.error}');
-        return false;
-      }
       
       debugPrint('✅ Fortune cached to DB successfully');
       
@@ -182,6 +176,30 @@ class CacheService {
       debugPrint('Removed cached fortune from DB');
     } catch (e) {
       debugPrint('DB cache delete error: $e');
+    }
+  }
+
+  Future<void> removeCachedStorySegments(
+    String fortuneType,
+    Map<String, dynamic> params,
+  ) async {
+    try {
+      final userId = params['userId'];
+      if (userId == null) return;
+      
+      final dateKey = _getDateKeyForType(fortuneType);
+      
+      // DB에서 스토리 캐시 삭제
+      await _supabase
+          .from('fortune_stories')
+          .delete()
+          .eq('user_id', userId)
+          .eq('fortune_type', fortuneType)
+          .eq('story_date', dateKey);
+          
+      debugPrint('Removed cached story segments from DB');
+    } catch (e) {
+      debugPrint('DB story cache delete error: $e');
     }
   }
 

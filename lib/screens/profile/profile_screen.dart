@@ -263,7 +263,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (userProfile != null || localProfile != null) ...[
                 const SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: UserInfoCard(
                     userProfile: userProfile ?? localProfile,
                     onProfileUpdated: _loadUserData,
@@ -280,54 +280,62 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     return Column(
                       children: [
                         const SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: BaseCard(
-                            padding: EdgeInsets.zero,
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: AppColors.getTossCardBackground(context),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColors.getTossBorder(context),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
+                                Padding(
                                   padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange.shade50,
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(16),
-                                      topRight: Radius.circular(16),
-                                    ),
-                                  ),
                                   child: Row(
                                     children: [
                                       Icon(
                                         Icons.bug_report,
-                                        color: Colors.orange.shade700,
+                                        color: AppColors.tossBlue,
                                         size: 24,
                                       ),
                                       const SizedBox(width: 12),
                                       Text(
                                         '테스트 계정 설정',
-                                        style: theme.textTheme.titleLarge?.copyWith(
+                                        style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 20,
-                                          color: Colors.orange.shade700,
+                                          color: AppColors.getTossTextPrimary(context),
+                                          letterSpacing: -0.3,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(20),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Text(
+                                          Text(
                                             '무제한 토큰',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
+                                              color: AppColors.getTossTextPrimary(context),
                                             ),
                                           ),
                                           Container(
@@ -351,10 +359,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         ],
                                       ),
                                       const SizedBox(height: 8),
-                                      const Text(
+                                      Text(
                                         '모든 운세를 토큰 제한 없이 이용할 수 있습니다.',
                                         style: TextStyle(
-                                          color: AppColors.textSecondary,
+                                          color: AppColors.getTossTextSecondary(context),
                                           fontSize: 14,
                                         ),
                                       ),
@@ -362,11 +370,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Text(
+                                          Text(
                                             '프리미엄 기능',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
+                                              color: AppColors.getTossTextPrimary(context),
                                             ),
                                           ),
                                           Switch(
@@ -405,14 +414,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                 }
                                               }
                                             },
-                                            activeColor: AppColors.primary,
+                                            activeColor: AppColors.tossBlue,
                                           ),
                                         ],
                                       ),
-                                      const Text(
+                                      Text(
                                         '프리미엄 기능을 즉시 켜고 끌 수 있습니다.',
                                         style: TextStyle(
-                                          color: AppColors.textSecondary,
+                                          color: AppColors.getTossTextSecondary(context),
                                           fontSize: 14,
                                         ),
                                       ),
@@ -420,17 +429,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: Colors.blue.shade50,
+                                          color: AppColors.tossBluePale,
                                           borderRadius: BorderRadius.circular(8),
                                           border: Border.all(
-                                            color: Colors.blue.shade200,
+                                            color: AppColors.getTossBorder(context),
                                           ),
                                         ),
                                         child: Row(
                                           children: [
                                             Icon(
                                               Icons.info_outline,
-                                              color: Colors.blue.shade700,
+                                              color: AppColors.tossBlue,
                                               size: 20,
                                             ),
                                             const SizedBox(width: 8),
@@ -438,7 +447,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               child: Text(
                                                 '계정: ${profile.email}',
                                                 style: TextStyle(
-                                                  color: Colors.blue.shade700,
+                                                  color: AppColors.tossBlue,
                                                   fontSize: 14,
                                                 ),
                                               ),
@@ -452,7 +461,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ],
                             ),
                           ),
-                        ),
                       ],
                     );
                   }
@@ -464,7 +472,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (userProfile != null || localProfile != null) ...[
                 const SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SajuChartWidget(
                     userProfile: userProfile ?? localProfile,
                   ),
@@ -475,7 +483,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (userProfile != null || localProfile != null) ...[
                 const SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: FiveElementsWidget(
                     userProfile: userProfile ?? localProfile,
                   ),
@@ -485,7 +493,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // 운세 히스토리 요약 카드
               const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: FortuneHistorySummaryWidget(
                   userId: userProfile?['user_id'] ?? supabase.auth.currentUser?.id ?? '',
                 ),

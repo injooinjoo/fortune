@@ -276,3 +276,31 @@ class MonthlyTrendChart extends StatelessWidget {
     return monthlyCount;
   }
 }
+
+class FortuneCharts extends StatelessWidget {
+  final List<FortuneHistory> filteredHistory;
+  final double fontScale;
+
+  const FortuneCharts({
+    Key? key,
+    required this.filteredHistory,
+    required this.fontScale,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CategoryPieChart(
+          history: filteredHistory,
+          fontScale: fontScale,
+        ),
+        const SizedBox(height: 24),
+        MonthlyTrendChart(
+          history: filteredHistory,
+          fontScale: fontScale,
+        ),
+      ],
+    );
+  }
+}

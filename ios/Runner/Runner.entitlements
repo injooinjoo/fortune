@@ -5,6 +5,11 @@
     <!-- In-App Purchase capability -->
     <key>com.apple.developer.in-app-payments</key>
     <array/>
+    <!-- Sign In with Apple capability -->
+    <key>com.apple.developer.applesignin</key>
+    <array>
+        <string>Default</string>
+    </array>
     <!-- App Groups for Widget Data Sharing -->
     <key>com.apple.security.application-groups</key>
     <array>

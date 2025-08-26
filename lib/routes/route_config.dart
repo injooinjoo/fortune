@@ -28,7 +28,36 @@ import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
+
+// Import pages that need to hide navigation bar
+import '../features/fortune/presentation/pages/moving_fortune_toss_page.dart';
+import '../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
+import '../features/fortune/presentation/pages/physiognomy_fortune_page.dart';
+import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
+import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
+import '../features/fortune/presentation/pages/love/love_fortune_main_page.dart';
+import '../features/fortune/presentation/pages/ex_lover_fortune_enhanced_page.dart';
+import '../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
 import '../screens/subscription/subscription_page.dart';
+
+// Import page classes for routes outside shell
+import '../features/health/presentation/pages/health_fortune_toss_page.dart';
+import '../features/fortune/presentation/pages/sports_fortune_page.dart';
+import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
+import '../features/fortune/presentation/pages/compatibility_page.dart';
+import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
+import '../features/fortune/presentation/pages/ex_lover_fortune_page.dart';
+import '../features/fortune/presentation/pages/career_fortune_page.dart';
+import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
+import '../features/fortune/presentation/pages/investment_fortune_page.dart';
+import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
+import '../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
+import '../features/fortune/presentation/pages/pet_compatibility_page.dart';
+import '../features/fortune/presentation/pages/family_fortune_unified_page.dart';
+import '../features/fortune/presentation/pages/daily_calendar_fortune_page.dart';
+
+// Import admin pages
+import '../features/admin/pages/celebrity_crawling_page.dart';
 
 // Import route groups
 import 'routes/auth_routes.dart';
@@ -139,6 +168,101 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
       
+      // Fortune routes that need to hide navigation bar
+      GoRoute(
+        path: '/health-toss',
+        name: 'fortune-health-toss',
+        builder: (context, state) => const HealthFortuneTossPage(),
+      ),
+      GoRoute(
+        path: '/exercise',
+        name: 'fortune-exercise',
+        builder: (context, state) => const ExerciseFortunePage(),
+      ),
+      GoRoute(
+        path: '/sports-game',
+        name: 'fortune-sports-game',
+        builder: (context, state) {
+          final sportParam = state.uri.queryParameters['type'];
+          SportType? initialType;
+          if (sportParam != null) {
+            initialType = SportType.values.firstWhere(
+              (s) => s.value == sportParam,
+              orElse: () => SportType.fitness);
+          }
+          return SportsFortunePage(
+            initialType: initialType ?? SportType.fitness);
+        }),
+      
+      // Fortune routes that need to hide navigation bar (additional)
+      GoRoute(
+        path: '/compatibility',
+        name: 'fortune-compatibility',
+        builder: (context, state) {
+          final params = state.uri.queryParameters;
+          return CompatibilityPage(initialParams: params.isNotEmpty ? params : null);
+        },
+      ),
+      GoRoute(
+        path: '/avoid-people',
+        name: 'fortune-avoid-people',
+        builder: (context, state) => const AvoidPeopleFortunePage(),
+      ),
+      GoRoute(
+        path: '/ex-lover',
+        name: 'fortune-ex-lover',
+        builder: (context, state) => const ExLoverFortunePage(),
+      ),
+      GoRoute(
+        path: '/career',
+        name: 'fortune-career',
+        builder: (context, state) => const CareerFortunePage(),
+      ),
+      GoRoute(
+        path: '/lucky-exam',
+        name: 'fortune-lucky-exam',
+        builder: (context, state) => const LuckyExamFortunePage(),
+      ),
+      
+      // Investment Fortune (outside shell - no navigation bar)
+      GoRoute(
+        path: '/investment',
+        name: 'fortune-investment',
+        builder: (context, state) => const InvestmentFortunePage(),
+      ),
+      
+      // Fortune Cookie (outside shell - no navigation bar)
+      GoRoute(
+        path: '/fortune-cookie',
+        name: 'fortune-cookie',
+        builder: (context, state) => const FortuneCookiePage(),
+      ),
+      
+      // Celebrity Fortune (outside shell - no navigation bar)
+      GoRoute(
+        path: '/celebrity',
+        name: 'fortune-celebrity',
+        builder: (context, state) => const CelebrityFortuneEnhancedPage(),
+      ),
+      
+      
+      // Family Fortune (outside shell - no navigation bar)
+      GoRoute(
+        path: '/family',
+        name: 'fortune-family',
+        builder: (context, state) => const FamilyFortuneUnifiedPage(),
+      ),
+      
+      // Pet Compatibility (outside shell - no navigation bar)
+      GoRoute(
+        path: '/pet',
+        name: 'fortune-pet',
+        builder: (context, state) => const PetCompatibilityPage(
+          fortuneType: 'pet-compatibility',
+          title: '반려동물 궁합',
+          description: '나와 반려동물의 궁합을 확인해보세요'
+        )),
+      
       // Other routes outside shell
       GoRoute(
         path: '/subscription',
@@ -164,6 +288,63 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/terms-of-service',
         name: 'terms-of-service',
         builder: (context, state) => const TermsOfServicePage(),
+      ),
+      
+      // Fortune routes that need to hide navigation bar
+      GoRoute(
+        path: '/moving',
+        name: 'fortune-moving',
+        builder: (context, state) => const MovingFortuneTossPage(),
+      ),
+      GoRoute(
+        path: '/daily-calendar',
+        name: 'fortune-daily-calendar',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return DailyCalendarFortunePage(initialParams: extra);
+        },
+      ),
+      GoRoute(
+        path: '/traditional-saju',
+        name: 'fortune-traditional-saju',
+        builder: (context, state) => const TraditionalSajuTossPage(),
+      ),
+      GoRoute(
+        path: '/physiognomy',
+        name: 'fortune-physiognomy',
+        builder: (context, state) => const PhysiognomyFortunePage(),
+      ),
+      GoRoute(
+        path: '/lucky-talisman',
+        name: 'fortune-lucky-talisman',
+        builder: (context, state) => const TalismanFortunePage(),
+      ),
+      GoRoute(
+        path: '/biorhythm',
+        name: 'fortune-biorhythm',
+        builder: (context, state) => const BiorhythmFortunePage(),
+      ),
+      GoRoute(
+        path: '/love',
+        name: 'fortune-love',
+        builder: (context, state) => const LoveFortuneMainPage(),
+      ),
+      GoRoute(
+        path: '/ex-lover-enhanced',
+        name: 'fortune-ex-lover-enhanced',
+        builder: (context, state) => const ExLoverFortuneEnhancedPage(),
+      ),
+      GoRoute(
+        path: '/investment-enhanced',
+        name: 'fortune-investment-enhanced',
+        builder: (context, state) => const InvestmentFortuneEnhancedPage(),
+      ),
+
+      // Admin routes (outside shell - no navigation bar)
+      GoRoute(
+        path: '/admin/celebrity-crawling',
+        name: 'admin-celebrity-crawling',
+        builder: (context, state) => const CelebrityCrawlingPage(),
       ),
     ],
   );

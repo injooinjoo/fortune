@@ -1,114 +1,292 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../../../../shared/components/app_header.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
-import 'base_fortune_page_v2.dart';
-import '../../domain/models/fortune_result.dart';
-import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../data/models/celebrity.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/toss_button.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../../../domain/entities/fortune.dart';
+import '../../../../data/models/celebrity.dart';
+import '../../../../core/utils/logger.dart';
 
-class CelebrityFortuneEnhancedPage extends ConsumerWidget {
+class CelebrityFortuneEnhancedPage extends ConsumerStatefulWidget {
   const CelebrityFortuneEnhancedPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return BaseFortunePageV2(
-      title: '유명인 운세',
-      fortuneType: 'celebrity',
-      headerGradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFFFF6B6B), Color(0xFFC44569)]),
-      inputBuilder: (context, onSubmit) => _CelebrityGridInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _CelebrityFortuneResult(
-        result: result,
-        onShare: onShare),
-    );
-  }
+  ConsumerState<CelebrityFortuneEnhancedPage> createState() => _CelebrityFortuneEnhancedPageState();
 }
 
-class _CelebrityGridInputForm extends ConsumerStatefulWidget {
-  final Function(Map<String, dynamic>) onSubmit;
-
-  const _CelebrityGridInputForm({required this.onSubmit});
-
-  @override
-  ConsumerState<_CelebrityGridInputForm> createState() => _CelebrityGridInputFormState();
-}
-
-class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm> {
-  Celebrity? _selectedCelebrity;
+class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneEnhancedPage> {
+  int _currentStep = 0;
   CelebrityCategory? _selectedCategory;
-  DateTime? _birthDate;
-  String? _birthTime;
-
-  // Dummy celebrity images for demonstration
-  static const Map<String, String> _celebrityImages = {
-    'pol_001': 'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=YS',
-    'pol_002': 'https://via.placeholder.com/200/4ECDC4/FFFFFF?text=LJM',
-    'pol_003': 'https://via.placeholder.com/200/F7B731/FFFFFF?text=HDH',
-    'act_001': 'https://via.placeholder.com/200/9B59B6/FFFFFF?text=SJK',
-    'act_002': 'https://via.placeholder.com/200/3498DB/FFFFFF?text=SYJ',
-    'singer_001': 'https://via.placeholder.com/200/E74C3C/FFFFFF?text=IU',
-    'singer_002': 'https://via.placeholder.com/200/1ABC9C/FFFFFF?text=GD'
-  };
+  Celebrity? _selectedCelebrity;
+  String _connectionType = 'ideal_match'; // ideal_match, compatibility, career_advice
+  String _questionType = 'love'; // love, career, personality, future
+  
+  bool _isLoading = false;
+  Fortune? _fortune;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final allCelebrities = ref.watch(allCelebritiesProvider);
-    
-    // Filter celebrities by category
-    final filteredCelebrities = _selectedCategory != null
-        ? allCelebrities.where((c) => c.category == _selectedCategory).toList()
-        : allCelebrities;
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundSecondary,
+      appBar: AppBar(
+        backgroundColor: TossTheme.backgroundWhite,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: TossTheme.textBlack),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          '유명인 운세',
+          style: TextStyle(
+            color: TossTheme.textBlack,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: _fortune != null 
+        ? _buildResultScreen() 
+        : _buildInputScreen(),
+    );
+  }
 
+  Widget _buildInputScreen() {
+    return Column(
+      children: [
+        // Progress indicator
+        _buildProgressIndicator(),
+        
+        // Step content
+        Expanded(
+          child: PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildStep1CategorySelection(),
+              _buildStep2CelebritySelection(),
+              _buildStep3QuestionType(),
+            ],
+            controller: PageController(initialPage: _currentStep),
+          ),
+        ),
+        
+        // Bottom button
+        _buildBottomButton(),
+      ],
+    );
+  }
+
+  Widget _buildProgressIndicator() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      color: TossTheme.backgroundWhite,
+      child: Row(
+        children: List.generate(3, (index) {
+          final isActive = index <= _currentStep;
+          
+          return Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isActive ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                if (index < 2) const SizedBox(width: 8),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildStep1CategorySelection() {
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '좋아하는 유명인을 선택하고\n오늘의 운세를 확인해보세요!',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
-              height: 1.5),
+            '어떤 분야의 유명인과\n궁합을 보고 싶으신가요?',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: TossTheme.textBlack,
+            ),
           ),
-          const SizedBox(height: 24),
-          
-          // Category Selection
+          const SizedBox(height: 8),
           Text(
-            '카테고리',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold),
+            '관심 있는 분야를 선택해주시면\n그 분야의 유명인들을 보여드려요',
+            style: TextStyle(
+              fontSize: 16,
+              color: TossTheme.textGray600,
+            ),
           ),
+          const SizedBox(height: 32),
+          
+          // All categories option
+          _buildCategoryCard(null, '전체', '모든 분야의 유명인', Icons.star),
           const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildCategoryChip(null, '전체'),
-                const SizedBox(width: 8),
-                ...CelebrityCategory.values.map((category) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _buildCategoryChip(category, category.displayName),
-                  );
-                }),
-              ],
+          
+          // Individual categories
+          ...CelebrityCategory.values.map((category) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildCategoryCard(
+                category, 
+                category.displayName,
+                _getCategoryDescription(category),
+                _getCategoryIcon(category),
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
+  }
+
+  Widget _buildCategoryCard(CelebrityCategory? category, String title, String description, IconData icon) {
+    final isSelected = _selectedCategory == category;
+    
+    return GestureDetector(
+      onTap: () => setState(() => _selectedCategory = category),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : Colors.white,
+          border: Border.all(
+            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? Colors.white : TossTheme.textGray600,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: TossTheme.textBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: TossTheme.textGray600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle,
+                color: TossTheme.primaryBlue,
+                size: 24,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStep2CelebritySelection() {
+    final celebritiesAsyncValue = _selectedCategory != null
+        ? ref.watch(celebritiesByCategoryProvider(_selectedCategory!))
+        : ref.watch(allCelebritiesProvider);
+    
+    return celebritiesAsyncValue.when(
+      data: (celebrities) => _buildCelebritySelectionContent(celebrities),
+      loading: () => _buildLoadingState(),
+      error: (error, stack) => _buildErrorState(error),
+    );
+  }
+  
+  Widget _buildCelebritySelectionContent(List<Celebrity> celebrities) {
+    final displayCelebrities = celebrities.take(20).toList(); // 최대 20개만 표시
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '궁합을 보고 싶은\n유명인을 선택해주세요',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: TossTheme.textBlack,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '선택한 유명인과의 운세와 궁합을 분석해드릴게요',
+            style: TextStyle(
+              fontSize: 16,
+              color: TossTheme.textGray600,
+            ),
+          ),
+          const SizedBox(height: 32),
+          
+          // Search bar
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: TossTheme.backgroundSecondary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: '유명인 이름으로 검색',
+                hintStyle: TextStyle(color: TossTheme.textGray600),
+                prefixIcon: Icon(Icons.search, color: TossTheme.textGray600),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                // TODO: 검색 기능 구현
+              },
             ),
           ),
           const SizedBox(height: 24),
           
-          // Celebrity Grid
-          Text(
-            '유명인 선택',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
+          // Celebrity grid
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -116,748 +294,705 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.85),
-            itemCount: filteredCelebrities.length > 30 ? 30 : filteredCelebrities.length,
+              childAspectRatio: 0.75,
+            ),
+            itemCount: displayCelebrities.length,
             itemBuilder: (context, index) {
-              final celebrity = filteredCelebrities[index];
+              final celebrity = displayCelebrities[index];
               final isSelected = _selectedCelebrity?.id == celebrity.id;
               
               return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedCelebrity = celebrity;
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
+                onTap: () => setState(() => _selectedCelebrity = celebrity),
+                child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : Colors.white,
                     border: Border.all(
-                      color: isSelected 
-                          ? theme.colorScheme.primary 
-                          : theme.colorScheme.outline.withOpacity(0.3),
-                      width: isSelected ? 3 : 1),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: theme.colorScheme.primary.withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4)),
-                          ]
-                        : null),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Stack(
-                      children: [
-                        // Celebrity Image
-                        Positioned.fill(
-                          child: celebrity.profileImageUrl != null
-                              ? CachedNetworkImage(
-                                  imageUrl: celebrity.profileImageUrl!,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
-                                    color: theme.colorScheme.surfaceVariant,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(strokeWidth: 2)),
-                                  ),
-                                  errorWidget: (context, url, error) => _buildPlaceholderImage(celebrity, theme),
-                              )
-                              : _buildPlaceholderImage(celebrity, theme),
+                      color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                      width: isSelected ? 2 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Celebrity avatar
+                      Container(
+                        width: double.infinity,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: _getCelebrityColor(celebrity.name),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                         ),
-                        // Gradient Overlay
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.7),
-                                ],
-                                stops: const [0.5, 1.0],
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Text(
+                                celebrity.name.substring(0, 1),
+                                style: TextStyle(
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
+                            if (isSelected)
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    color: TossTheme.primaryBlue,
+                                    size: 16,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                        // Celebrity Info
-                        Positioned(
-                          left: 8,
-                          right: 8,
-                          bottom: 8,
+                      ),
+                      // Celebrity info
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 celebrity.name,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: TossTheme.textBlack,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 4),
                               Text(
-                                '${celebrity.category.displayName} • ${celebrity.age}세',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withOpacity(0.8)),
+                                celebrity.category.displayName,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: TossTheme.textGray600,
+                                ),
                               ),
+                              if (celebrity.age != null) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${celebrity.age}세',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: TossTheme.textGray600,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
-                        // Selection Indicator
-                        if (isSelected)
-            Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primary,
-                                shape: BoxShape.circle),
-                              child: const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );
             },
           ),
-          
-          if (_selectedCelebrity != null) ...[
-            const SizedBox(height: 24),
-            // Selected Celebrity Details
-            GlassContainer(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: _selectedCelebrity!.profileImageUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: _selectedCelebrity!.profileImageUrl!,
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => _buildPlaceholderImage(_selectedCelebrity!, theme),
-                            )
-                          : _buildPlaceholderImage(_selectedCelebrity!, theme),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _selectedCelebrity!.name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${_selectedCelebrity!.category.displayName} • ${_selectedCelebrity!.age}세 • ${_selectedCelebrity!.zodiacSign}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7))),
-                        if (_selectedCelebrity!.description != null) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            _selectedCelebrity!.description!,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6)),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis),
-                        ],
-                      ],
-                    ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-          
-          const SizedBox(height: 24),
-          
-          // Birth Date & Time Selection
+        ],
+      ),
+    ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
+  }
+
+  Widget _buildStep3QuestionType() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            '생년월일',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: _birthDate ?? DateTime(1990),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
-                      locale: const Locale('ko', 'KR'));
-                    if (date != null) {
-                      setState(() {
-                        _birthDate = date;
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today_rounded,
-                          color: theme.colorScheme.primary,
-                          size: 20),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            _birthDate != null
-                                ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                                : '생년월일',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: _birthDate != null
-                                  ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.5)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: 120,
-                child: InkWell(
-                  onTap: () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now());
-                    if (time != null && mounted) {
-                      setState(() {
-                        _birthTime = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.access_time_rounded,
-                          color: theme.colorScheme.primary,
-                          size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _birthTime ?? '시간',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: _birthTime != null
-                                  ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.5)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            '어떤 것이 궁금하신가요?',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: TossTheme.textBlack,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${_selectedCelebrity?.name ?? '선택한 유명인'}님과의 관계에서\n가장 궁금한 부분을 선택해주세요',
+            style: TextStyle(
+              fontSize: 16,
+              color: TossTheme.textGray600,
+            ),
           ),
           const SizedBox(height: 32),
           
-          // Submit Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_selectedCelebrity == null) {
-                  Toast.error(context, '유명인을 선택해주세요');
-                  return;
-                }
-                if (_birthDate == null) {
-                  Toast.error(context, '생년월일을 선택해주세요');
-                  return;
-                }
-                
-                widget.onSubmit({
-                  'celebrity_id': _selectedCelebrity!.id,
-                  'celebrity_name': _selectedCelebrity!.name,
-                  'category': _selectedCelebrity!.category.displayName,
-                  'celebrity_age': _selectedCelebrity!.age,
-                  'celebrity_zodiac': _selectedCelebrity!.zodiacSign,
-                  'celebrity_chinese_zodiac': _selectedCelebrity!.chineseZodiac,
-                  'celebrity_birth_date': _selectedCelebrity!.birthDate.toIso8601String(),
-                  'celebrity_birth_time': _selectedCelebrity!.birthTime,
-                  'user_birth_date': _birthDate!.toIso8601String(),
-                  'user_birth_time': null,
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
-              child: const Text(
-                '운세 보기',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          // Connection type
+          Text(
+            '관계 유형',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: TossTheme.textBlack,
             ),
           ),
+          const SizedBox(height: 16),
+          
+          _buildConnectionOption('ideal_match', '이상형 매치', '나와 잘 맞는 이상형인지 알아보기', Icons.favorite),
+          const SizedBox(height: 12),
+          _buildConnectionOption('compatibility', '전체 궁합', '종합적인 궁합 점수와 분석', Icons.people),
+          const SizedBox(height: 12),
+          _buildConnectionOption('career_advice', '조언 구하기', '인생과 진로에 대한 조언', Icons.lightbulb_outline),
+          
+          const SizedBox(height: 32),
+          
+          // Question type
+          Text(
+            '궁금한 영역',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: TossTheme.textBlack,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          _buildQuestionOption('love', '연애운', '사랑과 인간관계에 대해', Icons.favorite_border),
+          const SizedBox(height: 12),
+          _buildQuestionOption('career', '사업운', '일과 성공에 대해', Icons.work_outline),
+          const SizedBox(height: 12),
+          _buildQuestionOption('personality', '성격 분석', '나의 성격과 특징', Icons.psychology),
+          const SizedBox(height: 12),
+          _buildQuestionOption('future', '미래 전망', '앞으로의 운세와 기회', Icons.trending_up),
         ],
+      ),
+    ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
+  }
+
+  Widget _buildConnectionOption(String value, String title, String description, IconData icon) {
+    final isSelected = _connectionType == value;
+    return GestureDetector(
+      onTap: () => setState(() => _connectionType = value),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : Colors.white,
+          border: Border.all(
+            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: isSelected ? Colors.white : TossTheme.textGray600, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: TossTheme.textBlack,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: TossTheme.textGray600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle, color: TossTheme.primaryBlue, size: 20),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCategoryChip(CelebrityCategory? category, String label) {
-    final theme = Theme.of(context);
-    final isSelected = _selectedCategory == category;
-    
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        setState(() {
-          _selectedCategory = selected ? category : null;
-        });
-      },
-      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
-      labelStyle: TextStyle(
-        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
+  Widget _buildQuestionOption(String value, String title, String description, IconData icon) {
+    final isSelected = _questionType == value;
+    return GestureDetector(
+      onTap: () => setState(() => _questionType = value),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? Color(0xFFFF6B6B).withValues(alpha: 0.05) : Colors.white,
+          border: Border.all(
+            color: isSelected ? Color(0xFFFF6B6B) : TossTheme.borderGray200,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: isSelected ? Color(0xFFFF6B6B) : TossTheme.backgroundSecondary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: isSelected ? Colors.white : TossTheme.textGray600, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: TossTheme.textBlack,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: TossTheme.textGray600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle, color: Color(0xFFFF6B6B), size: 20),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _buildPlaceholderImage(Celebrity celebrity, ThemeData theme) {
-    // Use dummy image URL or generate placeholder
-    final imageUrl = _celebrityImages[celebrity.id];
-    
-    if (imageUrl != null) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => Container(
-          color: theme.colorScheme.primary.withOpacity(0.2),
-          child: Center(
-            child: Text(
-              celebrity.name.substring(0, 2),
-              style: TextStyle(
-                color: theme.colorScheme.primary,
-                fontSize: 32,
-                fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      );
-    }
+  Widget _buildBottomButton() {
+    final canProceed = (_currentStep == 0) ||
+                      (_currentStep == 1 && _selectedCelebrity != null) ||
+                      (_currentStep == 2);
     
     return Container(
-      color: theme.colorScheme.primary.withOpacity(0.2),
-      child: Center(
-        child: Text(
-          celebrity.name.substring(0, 2),
-          style: TextStyle(
-            color: theme.colorScheme.primary,
-            fontSize: 32,
-            fontWeight: FontWeight.bold))));
+      padding: const EdgeInsets.all(20),
+      color: TossTheme.backgroundWhite,
+      child: SafeArea(
+        child: Row(
+          children: [
+            if (_currentStep > 0) ...[
+              Expanded(
+                flex: 1,
+                child: TossButton(
+                  text: '이전',
+                  style: TossButtonStyle.secondary,
+                  onPressed: () => setState(() => _currentStep--),
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              flex: 2,
+              child: TossButton(
+                text: _currentStep < 2 ? '다음' : _isLoading ? '운세 생성 중...' : '운세 보기',
+                isLoading: _isLoading,
+                onPressed: canProceed ? _handleButtonPress : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
-}
 
-class _CelebrityFortuneResult extends ConsumerWidget {
-  final FortuneResult result;
-  final VoidCallback onShare;
-
-  const _CelebrityFortuneResult({
-    required this.result,
-    required this.onShare});
-
-  double _getFontSize(FontSize fontSize) {
-    switch (fontSize) {
-      case FontSize.small:
-        return 14.0;
-      case FontSize.medium:
-        return 16.0;
-      case FontSize.large:
-        return 18.0;
+  void _handleButtonPress() {
+    if (_currentStep < 2) {
+      setState(() => _currentStep++);
+    } else {
+      _generateFortune();
     }
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
+  Future<void> _generateFortune() async {
+    if (_isLoading) return;
     
-    // Extract celebrity info from result
-    final celebrityInfo = result.details?['celebrity'] as Map<String, dynamic>?;
-    final predictions = result.details?['predictions'] as Map<String, dynamic>?;
-    final compatibility = result.details?['compatibility'] as Map<String, dynamic>?;
-    
+    setState(() => _isLoading = true);
+
+    try {
+      final user = ref.read(userProvider).value;
+      if (user == null) {
+        throw Exception('로그인이 필요합니다');
+      }
+
+      final userProfile = await ref.read(userProfileProvider.future);
+      
+      final params = {
+        'celebrity_id': _selectedCelebrity?.id,
+        'celebrity_name': _selectedCelebrity?.name,
+        'connection_type': _connectionType,
+        'question_type': _questionType,
+        'category': _selectedCategory?.name,
+        'name': userProfile?.name ?? '사용자',
+        'birthDate': userProfile?.birthDate?.toIso8601String(),
+      };
+
+      final fortuneService = ref.read(fortuneServiceProvider);
+      final fortune = await fortuneService.getFortune(
+        fortuneType: 'celebrity',
+        userId: user.id,
+        params: params,
+      );
+
+      setState(() {
+        _fortune = fortune;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      Logger.error('유명인운세 생성 실패', e);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildResultScreen() {
+    if (_fortune == null) return const SizedBox();
+
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Celebrity Info Card
-          if (celebrityInfo != null) ...[
-            GlassContainer(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  theme.colorScheme.primary.withOpacity(0.1),
-                  theme.colorScheme.secondary.withOpacity(0.05)]),
+          // Celebrity info header
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: _getCelebrityColor(_selectedCelebrity?.name ?? ''),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _selectedCelebrity?.name.substring(0, 1) ?? '?',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${_selectedCelebrity?.name}님과의 궁합',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: TossTheme.textBlack,
+                        ),
+                      ),
+                      Text(
+                        _getConnectionTypeText(_connectionType),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: TossTheme.textGray600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _getScoreColor(_fortune!.score).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    '${_fortune!.score}점',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: _getScoreColor(_fortune!.score),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // Main fortune message
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  color: Color(0xFFFF6B6B),
+                  size: 32,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  _fortune!.message,
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.6,
+                    color: TossTheme.textGray600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // Recommendations
+          if (_fortune!.recommendations?.isNotEmpty ?? false) ...[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      // Celebrity Profile Image
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: celebrityInfo['profile_image'] != null
-                              ? CachedNetworkImage(
-                                  imageUrl: celebrityInfo['profile_image'],
-                                  fit: BoxFit.cover,
-                                  errorWidget: (context, url, error) => Container(
-                                    color: theme.colorScheme.primary.withOpacity(0.2),
-                                    child: Center(
-                                      child: Text(
-                                        celebrityInfo['name']?.substring(0, 2) ?? '?',
-                                        style: TextStyle(
-                                          color: theme.colorScheme.primary,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  color: theme.colorScheme.primary.withOpacity(0.2),
-                                  child: Center(
-                                    child: Text(
-                                      celebrityInfo['name']?.substring(0, 2) ?? '?',
-                                      style: TextStyle(
-                                        color: theme.colorScheme.primary,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              celebrityInfo['name'] ?? '',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold)),
-                            Text(
-                              celebrityInfo['category'] ?? '',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.primary)),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${celebrityInfo['zodiac'] ?? ''} • ${celebrityInfo['chinese_zodiac'] ?? ''}',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7)),
-                            ),
-                          ],
+                      Icon(Icons.lightbulb_outline, color: TossTheme.primaryBlue, size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        '추천 조언',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: TossTheme.textBlack,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    celebrityInfo['description'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: _getFontSize(fontSize),
-                      height: 1.6)),
+                  ...(_fortune!.recommendations ?? []).map((advice) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(top: 8),
+                          decoration: BoxDecoration(
+                            color: TossTheme.primaryBlue,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            advice,
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.5,
+                              color: TossTheme.textGray600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
                 ],
               ),
             ),
-            const SizedBox(height: 20)],
+            const SizedBox(height: 20),
+          ],
           
-          // Score Section
+          // Action buttons
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildScoreCard(
-                context,
-                '오늘',
-                result.details?['todayScore'] ?? '',
-                Icons.today,
-                theme.colorScheme.primary),
-              _buildScoreCard(
-                context,
-                '이번 주',
-                result.details?['weeklyScore'] ?? '',
-                Icons.calendar_view_week,
-                theme.colorScheme.secondary),
-              _buildScoreCard(
-                context,
-                '이번 달',
-                result.details?['monthlyScore'] ?? '',
-                Icons.calendar_month,
-                theme.colorScheme.tertiary)]),
-          const SizedBox(height: 20),
-          
-          // Main Fortune Summary
-          GlassContainer(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.auto_awesome, 
-                      color: theme.colorScheme.primary,
-                      size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      '종합 운세',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))]),
-                const SizedBox(height: 12),
-                Text(
-                  result.details?['summary'] ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: _getFontSize(fontSize),
-                    height: 1.6))])),
-          const SizedBox(height: 20),
-          
-          // Lucky Items Grid
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 2.5,
-            children: [
-              _buildLuckyItemCard(
-                context,
-                '행운의 시간',
-                result.details?['luckyTime'] ?? '',
-                Icons.access_time,
-                theme.colorScheme.primary.withOpacity(0.1)),
-              _buildLuckyItemCard(
-                context,
-                '행운의 색상',
-                result.details?['luckyColor'] ?? '',
-                Icons.palette,
-                theme.colorScheme.secondary.withOpacity(0.1)),
-              _buildLuckyItemCard(
-                context,
-                '행운의 아이템',
-                result.details?['luckyItem'] ?? '',
-                Icons.diamond,
-                theme.colorScheme.tertiary.withOpacity(0.1)),
-              _buildLuckyItemCard(
-                context,
-                '행운의 방향',
-                result.details?['luckyDirection'] ?? '',
-                Icons.explore,
-                theme.colorScheme.error.withOpacity(0.1))]),
-          const SizedBox(height: 20),
-          
-          // Compatibility Section
-          if (compatibility != null) ...[
-            GlassContainer(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.pink.withOpacity(0.1),
-                  Colors.purple.withOpacity(0.05)]),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.favorite, 
-                        color: Colors.pink,
-                        size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        '궁합',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
-                  const SizedBox(height: 12),
-                  if (compatibility['best_match'] != null) ...[
-                    Text(
-                      '궁합: ${compatibility['best_match']}',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontSize: _getFontSize(fontSize),
-                        color: Colors.pink,
-                        fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8)],
-                  if (compatibility['worst_match'] != null) ...[
-                    Text(
-                      '궁합: ${compatibility['worst_match']}',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontSize: _getFontSize(fontSize),
-                        color: theme.colorScheme.error)),
-                    const SizedBox(height: 8)],
-                  if (compatibility['description'] != null) ...[
-                    Text(
-                      compatibility['description'] ?? '',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: _getFontSize(fontSize),
-                        height: 1.5)),
-                  ],
-                ],
+              Expanded(
+                child: TossButton(
+                  text: '다시 해보기',
+                  style: TossButtonStyle.secondary,
+                  onPressed: () => setState(() {
+                    _fortune = null;
+                    _currentStep = 0;
+                    _selectedCelebrity = null;
+                  }),
+                ),
               ),
-            ),
-            const SizedBox(height: 20)],
-          
-          // Advice Section
-          if (result.details?['advice'] != null) ...[
-            GlassContainer(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  theme.colorScheme.primary.withOpacity(0.05),
-                  theme.colorScheme.primary.withOpacity(0.02)]),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.lightbulb_outline, 
-                        color: theme.colorScheme.primary,
-                        size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        '조언',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))]),
-                  const SizedBox(height: 12),
-                  Text(
-                    result.details?['advice'] ?? '',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: _getFontSize(fontSize),
-                      height: 1.6))])),
-            const SizedBox(height: 20)],
-          
-          // Predictions Section
-          if (predictions != null) ...[
-            Text(
-              '분야별 운세',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            _buildPredictionCard(
-              context,
-              '연애운',
-              predictions['love'] ?? '',
-              Icons.favorite_border,
-              const Color(0xFFFF6B9D),
-              _getFontSize(fontSize)),
-            const SizedBox(height: 12),
-            _buildPredictionCard(
-              context,
-              '사업/경력운',
-              predictions['career'] ?? '',
-              Icons.trending_up,
-              const Color(0xFF4ECDC4),
-              _getFontSize(fontSize)),
-            const SizedBox(height: 12),
-            _buildPredictionCard(
-              context,
-              '재물운',
-              predictions['wealth'] ?? '',
-              Icons.attach_money,
-              const Color(0xFFF7B731),
-              _getFontSize(fontSize)),
-            const SizedBox(height: 12),
-            _buildPredictionCard(
-              context,
-              '건강운',
-              predictions['health'] ?? '',
-              Icons.favorite,
-              const Color(0xFF5F27CD),
-              _getFontSize(fontSize))]]));
+              const SizedBox(width: 12),
+              Expanded(
+                child: TossButton(
+                  text: '공유하기',
+                  onPressed: () {
+                    // TODO: 공유 기능 구현
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms);
   }
 
-  Widget _buildScoreCard(
-    BuildContext context, 
-    String label, 
-    String score,
-    IconData icon,
-    Color color) {
-    final theme = Theme.of(context);
-    return GlassContainer(
-      width: 100,
-      height: 100,
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          color.withOpacity(0.1),
-          color.withOpacity(0.05)]),
+  String _getCategoryDescription(CelebrityCategory category) {
+    switch (category) {
+      case CelebrityCategory.actor:
+        return '배우, 탤런트, 영화배우';
+      case CelebrityCategory.singer:
+        return '가수, 아이돌, 뮤지션';
+      case CelebrityCategory.politician:
+        return '정치인, 공인, 사회인사';
+      case CelebrityCategory.sports:
+        return '운동선수, 스포츠 스타';
+      case CelebrityCategory.youtuber:
+        return '방송인, 개그맨, MC';
+      default:
+        return '다양한 분야의 유명인';
+    }
+  }
+
+  IconData _getCategoryIcon(CelebrityCategory category) {
+    switch (category) {
+      case CelebrityCategory.actor:
+        return Icons.movie;
+      case CelebrityCategory.singer:
+        return Icons.music_note;
+      case CelebrityCategory.politician:
+        return Icons.account_balance;
+      case CelebrityCategory.sports:
+        return Icons.sports;
+      case CelebrityCategory.youtuber:
+        return Icons.tv;
+      default:
+        return Icons.person;
+    }
+  }
+
+  Color _getCelebrityColor(String name) {
+    final colors = [
+      Color(0xFFFF6B6B), Color(0xFF4ECDC4), Color(0xFF45B7D1),
+      Color(0xFF96CEB4), Color(0xFFDDA0DD), Color(0xFFFFD93D),
+      Color(0xFF6C5CE7), Color(0xFFFD79A8), Color(0xFF00B894),
+    ];
+    return colors[name.hashCode % colors.length];
+  }
+
+  String _getConnectionTypeText(String type) {
+    switch (type) {
+      case 'ideal_match':
+        return '이상형 매치';
+      case 'compatibility':
+        return '전체 궁합';
+      case 'career_advice':
+        return '조언 구하기';
+      default:
+        return '궁합 분석';
+    }
+  }
+
+  Color _getScoreColor(int score) {
+    if (score >= 80) return Colors.green;
+    if (score >= 60) return TossTheme.primaryBlue;
+    if (score >= 40) return Colors.orange;
+    return Colors.red;
+  }
+
+  Widget _buildLoadingState() {
+    return Container(
+      padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          CircularProgressIndicator(color: TossTheme.primaryBlue),
+          const SizedBox(height: 24),
           Text(
-            score,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color)),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6)))]));
-  }
-
-  Widget _buildLuckyItemCard(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-    Color backgroundColor) {
-    final theme = Theme.of(context);
-    return GlassContainer(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          backgroundColor,
-          backgroundColor.withOpacity(0.5)]),
-      child: Row(
-        children: [
-          Icon(icon, color: theme.colorScheme.primary, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  label,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6))),
-                Text(
-                  value,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-              ],
+            '유명인 정보를 불러오고 있어요...',
+            style: TextStyle(
+              fontSize: 16,
+              color: TossTheme.textGray600,
             ),
           ),
         ],
@@ -865,39 +1000,42 @@ class _CelebrityFortuneResult extends ConsumerWidget {
     );
   }
 
-  Widget _buildPredictionCard(
-    BuildContext context,
-    String title,
-    String content,
-    IconData icon,
-    Color color,
-    double fontSize) {
-    final theme = Theme.of(context);
-    return GlassContainer(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          color.withOpacity(0.1),
-          color.withOpacity(0.05)]),
+  Widget _buildErrorState(dynamic error) {
+    return Container(
+      padding: const EdgeInsets.all(40),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color))]),
-          const SizedBox(height: 12),
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: TossTheme.textGray600,
+          ),
+          const SizedBox(height: 24),
           Text(
-            content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontSize: fontSize,
-              height: 1.5)),
+            '유명인 정보를 불러올 수 없어요',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: TossTheme.textBlack,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '잠시 후 다시 시도해주세요',
+            style: TextStyle(
+              fontSize: 14,
+              color: TossTheme.textGray600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          TossButton(
+            text: '다시 시도',
+            style: TossButtonStyle.secondary,
+            onPressed: () => setState(() {}),
+          ),
         ],
       ),
     );

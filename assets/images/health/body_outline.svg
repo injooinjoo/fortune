@@ -1,0 +1,121 @@
+<svg width="300" height="600" viewBox="0 0 300 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- 전체 인체 실루엣 -->
+  
+  <!-- 머리 -->
+  <ellipse id="head" cx="150" cy="80" rx="35" ry="45" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="head"/>
+  
+  <!-- 목 -->
+  <rect id="neck" x="135" y="115" width="30" height="20" 
+        fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+        rx="15" class="body-part" data-part="neck"/>
+  
+  <!-- 몸통 상체 (가슴) -->
+  <ellipse id="chest" cx="150" cy="170" rx="55" ry="40" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="chest"/>
+  
+  <!-- 어깨 좌우 -->
+  <circle id="left-shoulder" cx="95" cy="150" r="25" 
+          fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+          class="body-part" data-part="shoulders"/>
+  <circle id="right-shoulder" cx="205" cy="150" r="25" 
+          fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+          class="body-part" data-part="shoulders"/>
+  
+  <!-- 팔 좌우 -->
+  <ellipse id="left-arm" cx="70" cy="190" rx="15" ry="35" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="arms"/>
+  <ellipse id="right-arm" cx="230" cy="190" rx="15" ry="35" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="arms"/>
+  
+  <!-- 손 좌우 -->
+  <circle id="left-hand" cx="70" cy="235" r="12" 
+          fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+          class="body-part" data-part="arms"/>
+  <circle id="right-hand" cx="230" cy="235" r="12" 
+          fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+          class="body-part" data-part="arms"/>
+  
+  <!-- 배/복부 -->
+  <ellipse id="stomach" cx="150" cy="240" rx="45" ry="35" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="stomach"/>
+  
+  <!-- 등/허리 (뒷면 표시용, 실제로는 겹쳐서 표시) -->
+  <ellipse id="back" cx="150" cy="200" rx="35" ry="50" 
+           fill="#FFF3E0" stroke="#F57C00" stroke-width="2" 
+           opacity="0.5" class="body-part" data-part="back"/>
+  
+  <!-- 골반 -->
+  <ellipse id="pelvis" cx="150" cy="300" rx="40" ry="25" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="whole"/>
+  
+  <!-- 다리 좌우 (허벅지) -->
+  <ellipse id="left-thigh" cx="125" cy="380" rx="20" ry="55" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="legs"/>
+  <ellipse id="right-thigh" cx="175" cy="380" rx="20" ry="55" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="legs"/>
+  
+  <!-- 무릎 -->
+  <circle id="left-knee" cx="125" cy="440" r="12" 
+          fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+          class="body-part" data-part="legs"/>
+  <circle id="right-knee" cx="175" cy="440" r="12" 
+          fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+          class="body-part" data-part="legs"/>
+  
+  <!-- 정강이 -->
+  <ellipse id="left-shin" cx="125" cy="500" rx="15" ry="45" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="legs"/>
+  <ellipse id="right-shin" cx="175" cy="500" rx="15" ry="45" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="legs"/>
+  
+  <!-- 발 -->
+  <ellipse id="left-foot" cx="125" cy="560" rx="18" ry="12" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="legs"/>
+  <ellipse id="right-foot" cx="175" cy="560" rx="18" ry="12" 
+           fill="#E3F2FD" stroke="#1976D2" stroke-width="2" 
+           class="body-part" data-part="legs"/>
+  
+  <!-- 얼굴 특징 (간단하게) -->
+  <circle cx="140" cy="75" r="2" fill="#1976D2"/> <!-- 왼쪽 눈 -->
+  <circle cx="160" cy="75" r="2" fill="#1976D2"/> <!-- 오른쪽 눈 -->
+  <path d="M 145 85 Q 150 90 155 85" stroke="#1976D2" stroke-width="2" fill="none"/> <!-- 입 -->
+  
+  <!-- CSS 스타일 (Flutter에서는 별도로 적용) -->
+  <defs>
+    <style>
+      .body-part {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .body-part:hover {
+        fill: #BBDEFB;
+        stroke-width: 3;
+      }
+      .body-part.selected {
+        fill: #1976D2;
+        stroke: #0D47A1;
+        stroke-width: 3;
+      }
+      .body-part.warning {
+        fill: #FFCDD2;
+        stroke: #F44336;
+      }
+      .body-part.caution {
+        fill: #FFE0B2;
+        stroke: #FF9800;
+      }
+    </style>
+  </defs>
+</svg>

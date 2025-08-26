@@ -40,27 +40,8 @@ final healthSportsRoutes = [
         initialType: initialType ?? fortune_pages.SportType.fitness);
     }),
   
-  // Biorhythm
-  GoRoute(
-    path: '/biorhythm',
-    name: 'fortune-biorhythm',
-    builder: (context, state) => const fortune_pages.BiorhythmFortunePage()),
-  
-  // Pet Fortune Unified
-  GoRoute(
-    path: '/pet',
-    name: 'fortune-pet',
-    builder: (context, state) => const PetCompatibilityPage(
-      fortuneType: 'pet-compatibility',
-      title: '반려동물 궁합',
-      description: '나와 반려동물의 궁합을 확인해보세요'
-    )),
-  
-  // Moving
-  GoRoute(
-    path: '/moving',
-    name: 'fortune-moving',
-    builder: (context, state) => const fortune_pages.MovingFortuneTossPage()),
+  // Biorhythm - moved to route_config.dart (outside shell)
+  // Moving - moved to route_config.dart (outside shell)
   
   // Moving Date
   GoRoute(

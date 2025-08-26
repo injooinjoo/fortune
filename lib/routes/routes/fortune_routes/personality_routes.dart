@@ -34,11 +34,6 @@ final personalityRoutes = [
     name: 'fortune-birthdate',
     builder: (context, state) => const BirthdateFortunePage()),
   
-  // Celebrity
-  GoRoute(
-    path: '/celebrity',
-    name: 'fortune-celebrity',
-    builder: (context, state) => const CelebrityFortuneEnhancedPage()),
   
   // Same Birthday Celebrity
   GoRoute(

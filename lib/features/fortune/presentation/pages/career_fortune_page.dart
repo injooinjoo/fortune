@@ -1,569 +1,842 @@
-import 'package:flutter/material.dart' hide Icon;
-import 'package:flutter/material.dart' as material show Icon;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'base_fortune_page.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/components/toss_button.dart';
+import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 
-class CareerFortunePage extends BaseFortunePage {
-  const CareerFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams,
-  }) : super(
-          key: key,
-          title: '직업운',
-          description: '커리어 발전과 직장에서의 성공을 위한 운세',
-          fortuneType: 'career',
-          requiresUserInfo: false,
-          initialParams: initialParams,
-        );
+class CareerFortuneInput {
+  final String jobStatus;
+  final String experience;
+  final String industry;
+  final double satisfaction;
+  final String sixMonthGoal;
+  final String importantValue;
+  final List<String> specificConcerns;
+  final String customConcern;
+
+  CareerFortuneInput({
+    required this.jobStatus,
+    required this.experience,
+    required this.industry,
+    required this.satisfaction,
+    required this.sixMonthGoal,
+    required this.importantValue,
+    required this.specificConcerns,
+    required this.customConcern,
+  });
+}
+
+class CareerFortunePage extends ConsumerStatefulWidget {
+  const CareerFortunePage({super.key});
 
   @override
   ConsumerState<CareerFortunePage> createState() => _CareerFortunePageState();
 }
 
-class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
-  String? _currentJobStatus;
-  int _yearsOfExperience = 0;
-  String? _industry;
-  bool _consideringChange = false;
+class _CareerFortunePageState extends ConsumerState<CareerFortunePage> {
+  int _currentStep = 0;
+  bool _isLoading = false;
+  Fortune? _fortune;
 
-  final List<String> _jobStatuses = [
-    '재직 중', '구직 중',
-    '이직 준비', '창업 준비',
-    '프리랜서', '학생',
-  ];
+  // Step 1 data
+  String _jobStatus = '';
+  String _experience = '';
+  String _industry = '';
 
-  final List<String> _industries = [
-    'IT/테크', '금융/보험',
-    '제조/생산', '의료/제약',
-    '교육/연구', '미디어/예술',
-    '서비스/유통', '공공/행정',
-    '기타',
-  ];
+  // Step 2 data
+  double _satisfaction = 3.0;
+  String _sixMonthGoal = '';
+  String _importantValue = '';
 
-  @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
-      fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
-    );
-  }
+  // Step 3 data
+  List<String> _specificConcerns = [];
+  final TextEditingController _customConcernController = TextEditingController();
 
   @override
-  Future<Map<String, dynamic>?> getFortuneParams() async {
-    if (_currentJobStatus == null) {
-      return null;
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return _buildLoadingView();
     }
 
-    return {
-      'jobStatus': _currentJobStatus,
-      'yearsOfExperience': _yearsOfExperience,
-      'industry': _industry,
-      'consideringChange': _consideringChange,
-    };
-  }
+    if (_fortune != null) {
+      return _buildResultView();
+    }
 
-  @override
-  Widget buildInputForm() {
-    final theme = Theme.of(context);
-
-    return Column(
-      children: [
-        // Job Status Selection
-        GlassCard(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '현재 직업 상태',
-                style: theme.textTheme.headlineSmall,
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundPrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.only(left: 16),
+          child: IconButton(
+            onPressed: () => Navigator.pop(context),
+            style: IconButton.styleFrom(
+              backgroundColor: TossTheme.backgroundSecondary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _jobStatuses.map((status) {
-                  final isSelected = _currentJobStatus == status;
-                  
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _currentJobStatus = status;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(20),
-                    child: Chip(
-                      label: Text(status),
-                      backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                          : theme.colorScheme.surface.withValues(alpha: 0.5),
-                      side: BorderSide(
-                        color: isSelected
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+            ),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: TossTheme.textBlack,
+              size: 20,
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        
-        // Years of Experience
-        GlassCard(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '경력 연수',
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
+        title: Text(
+          '커리어 운세',
+          style: TossTheme.heading3.copyWith(
+            color: TossTheme.textBlack,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // Progress indicator
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: List.generate(3, (index) {
+                final isActive = index <= _currentStep;
+                final isCompleted = index < _currentStep;
+                
+                return Expanded(
+                  child: Container(
+                    height: 4,
+                    margin: EdgeInsets.only(right: index == 2 ? 0 : 8),
+                    decoration: BoxDecoration(
+                      color: isActive 
+                          ? TossTheme.primaryBlue 
+                          : TossTheme.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ).animate()
+                   .scaleX(
+                     duration: 300.ms,
+                     begin: isCompleted ? 1.0 : 0.0,
+                     end: 1.0,
+                   ),
+                );
+              }),
+            ),
+          ),
+          
+          Expanded(
+            child: _buildCurrentStep(),
+          ),
+          
+          // Bottom navigation
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                if (_currentStep > 0)
                   Expanded(
-                    child: Slider(
-                      value: _yearsOfExperience.toDouble(),
-                      min: 0,
-                      max: 30,
-                      divisions: 30,
-                      label: _yearsOfExperience == 0
-                          ? '신입'
-                          : '$_yearsOfExperience년',
-                      onChanged: (value) {
+                    child: TossButton(
+                      text: '이전',
+                      onPressed: () {
                         setState(() {
-                          _yearsOfExperience = value.round();
+                          _currentStep--;
                         });
                       },
+                      style: TossButtonStyle.secondary,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Container(
-                    width: 60,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      _yearsOfExperience == 0
-                          ? '신입'
-                          : '$_yearsOfExperience년',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                
+                if (_currentStep > 0) const SizedBox(width: 12),
+                
+                Expanded(
+                  child: TossButton(
+                    text: _currentStep == 2 ? '운세 분석하기' : '다음',
+                    onPressed: _canProceed() ? _proceedToNext : null,
                   ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        
-        // Industry Selection
-        GlassCard(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '업종 선택',
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _industry,
-                decoration: InputDecoration(
-                  hintText: '업종을 선택하세요',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                ),
-                items: _industries.map((industry) {
-                  return DropdownMenuItem(
-                    value: industry,
-                    child: Text(industry),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _industry = value;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        
-        // Career Change Consideration
-        GlassCard(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '이직/전직을 고려 중이신가요?',
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ),
-              Switch(
-                value: _consideringChange,
-                onChanged: (value) {
-                  setState(() {
-                    _consideringChange = value;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget buildFortuneResult() {
-    // Add career-specific sections to the base result
-    return Column(
-      children: [
-        super.buildFortuneResult(),
-        _buildCareerGrowthChart(),
-        _buildTimingAnalysis(),
-        _buildSkillsRecommendation(),
-        _buildNetworkingAdvice(),
-      ],
-    );
-  }
-
-  Widget _buildCareerGrowthChart() {
-    final theme = Theme.of(context);
-    
-    // Mock data for career growth trajectory
-    final spots = [
-      const FlSpot(0, 40),
-      const FlSpot(1, 45),
-      const FlSpot(2, 55),
-      const FlSpot(3, 65),
-      const FlSpot(4, 70),
-      const FlSpot(5, 85),
-      const FlSpot(6, 90),
-    ];
-    
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                material.Icon(
-                  Icons.trending_up_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '경력 발전 전망',
-                  style: theme.textTheme.headlineSmall,
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 200,
-              child: LineChart(
-                LineChartData(
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: true,
-                    horizontalInterval: 20,
-                    verticalInterval: 1,
-                    getDrawingHorizontalLine: (value) {
-                      return FlLine(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                        strokeWidth: 1,
-                      );
-                    },
-                    getDrawingVerticalLine: (value) {
-                      return FlLine(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                        strokeWidth: 1,
-                      );
-                    },
-                  ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        interval: 1,
-                        getTitlesWidget: (value, meta) {
-                          final months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월'];
-                          if (value.toInt() >= 0 && value.toInt() < months.length) {
-                            return Text(
-                              months[value.toInt()],
-                              style: theme.textTheme.bodySmall,
-                            );
-                          }
-                          return const Text('');
-                        },
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        interval: 20,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            '${value.toInt()}%',
-                            style: theme.textTheme.bodySmall,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  minX: 0,
-                  maxX: 6,
-                  minY: 0,
-                  maxY: 100,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: spots,
-                      isCurved: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          theme.colorScheme.primary.withValues(alpha: 0.8),
-                          theme.colorScheme.secondary,
-                        ],
-                      ),
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                      dotData: FlDotData(
-                        show: true,
-                        getDotPainter: (spot, percent, barData, index) {
-                          return FlDotCirclePainter(
-                            radius: 4,
-                            color: theme.colorScheme.primary,
-                            strokeWidth: 2,
-                            strokeColor: theme.colorScheme.surface,
-                          );
-                        },
-                      ),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.2),
-                            theme.colorScheme.primary.withValues(alpha: 0.0),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '향후 6개월간 커리어 성장 가능성이 상승 곡선을 그릴 것으로 예상됩니다.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTimingAnalysis() {
-    final theme = Theme.of(context);
-    
-    final timingData = [
-      {'title': '이직 타이밍', 'score': 75, 'color': Colors.blue},
-      {'title': '승진 가능성', 'score': 85, 'color': Colors.green},
-      {'title': '연봉 협상', 'score': 60, 'color': Colors.orange},
-      {'title': '창업 시기', 'score': 40, 'color': Colors.red},
-    ];
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+  Widget _buildCurrentStep() {
+    switch (_currentStep) {
+      case 0:
+        return _buildStep1();
+      case 1:
+        return _buildStep2();
+      case 2:
+        return _buildStep3();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildStep1() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
               children: [
-                material.Icon(
-                  Icons.schedule_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '타이밍 분석',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...timingData.map((data) {
-              final score = data['score'] as int;
-              final color = data['color'] as Color;
-              
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          data['title'] as String,
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: color.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '$score%',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: color,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        TossTheme.primaryBlue,
+                        TossTheme.primaryBlue.withOpacity(0.7),
                       ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: score / 100,
-                      backgroundColor: color.withValues(alpha: 0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
-                      minHeight: 8,
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSkillsRecommendation() {
-    final theme = Theme.of(context);
-    
-    final skills = [
-      {'skill': '리더십', 'icon': Icons.emoji_people},
-      {'skill': '커뮤니케이션', 'icon': Icons.chat_bubble},
-      {'skill': '문제 해결', 'icon': Icons.lightbulb},
-      {'skill': '시간 관리', 'icon': Icons.schedule},
-      {'skill': '데이터 분석', 'icon': Icons.analytics},
-      {'skill': '창의적 사고', 'icon': Icons.palette},
-    ];
-    
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                material.Icon(
-                  Icons.star_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '주목해야 할 스킬',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
-              childAspectRatio: 1,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              children: skills.map((item) {
-                return GlassContainer(
-                  padding: const EdgeInsets.all(12),
-                  borderRadius: BorderRadius.circular(16),
-                  blur: 10,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      material.Icon(
-                        item['icon'] as IconData,
-                        size: 28,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        item['skill'] as String,
-                        style: theme.textTheme.bodySmall,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossTheme.primaryBlue.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                );
-              }).toList(),
+                  child: const Icon(
+                    Icons.work_rounded,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                
+                const SizedBox(height: 24),
+                
+                Text(
+                  '현재 상황을 알려주세요',
+                  style: TossTheme.heading2.copyWith(
+                    color: TossTheme.textBlack,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 12),
+                
+                Text(
+                  '당신의 현재 직업 상황을 바탕으로\n더 정확한 커리어 운세를 제공해드려요',
+                  style: TossTheme.body2.copyWith(
+                    color: TossTheme.textGray600,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              '이 시기에는 위의 스킬들을 개발하는 것이 커리어 성장에 도움이 될 것입니다.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+
+          const SizedBox(height: 32),
+
+          // Job Status
+          Text(
+            '현재 직업 상태',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                ...['재직중', '구직중', '학생', '프리랜서', '창업준비', '기타'].map((status) => 
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Radio<String>(
+                        value: status,
+                        groupValue: _jobStatus,
+                        onChanged: (value) => setState(() => _jobStatus = value!),
+                        activeColor: TossTheme.primaryBlue,
+                      ),
+                      title: Text(
+                        status,
+                        style: TossTheme.body1.copyWith(
+                          color: TossTheme.textBlack,
+                        ),
+                      ),
+                      onTap: () => setState(() => _jobStatus = status),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 24),
+
+          // Experience
+          Text(
+            '경력 수준',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ['신입 (0-2년)', '주니어 (2-5년)', '시니어 (5-10년)', '리드 (10년+)', '임원급'].map((exp) => 
+              GestureDetector(
+                onTap: () => setState(() => _experience = exp),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _experience == exp 
+                        ? TossTheme.primaryBlue.withOpacity(0.1)
+                        : TossTheme.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(24),
+                    border: _experience == exp
+                        ? Border.all(color: TossTheme.primaryBlue)
+                        : null,
+                  ),
+                  child: Text(
+                    exp,
+                    style: TossTheme.body2.copyWith(
+                      color: _experience == exp 
+                          ? TossTheme.primaryBlue
+                          : TossTheme.textBlack,
+                      fontWeight: _experience == exp 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ),
               ),
+            ).toList(),
+          ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 24),
+
+          // Industry
+          Text(
+            '업계/분야',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ['IT/개발', '마케팅', '디자인', '영업', '금융', '컨설팅', '의료', '교육', '제조', '서비스', '공공기관', '기타'].map((industry) => 
+              GestureDetector(
+                onTap: () => setState(() => _industry = industry),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _industry == industry 
+                        ? const Color(0xFF10B981).withOpacity(0.1)
+                        : TossTheme.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(20),
+                    border: _industry == industry
+                        ? Border.all(color: const Color(0xFF10B981))
+                        : null,
+                  ),
+                  child: Text(
+                    industry,
+                    style: TossTheme.caption.copyWith(
+                      color: _industry == industry 
+                          ? const Color(0xFF10B981)
+                          : TossTheme.textBlack,
+                      fontWeight: _industry == industry 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ).toList(),
+          ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep2() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFEC4899),
+                        const Color(0xFFBE185D),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFEC4899).withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.favorite_rounded,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                
+                const SizedBox(height: 24),
+                
+                Text(
+                  '마음과 목표를 들려주세요',
+                  style: TossTheme.heading2.copyWith(
+                    color: TossTheme.textBlack,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 12),
+                
+                Text(
+                  '현재의 감정과 앞으로의 목표를 통해\n더 개인화된 조언을 드릴게요',
+                  style: TossTheme.body2.copyWith(
+                    color: TossTheme.textGray600,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+
+          const SizedBox(height: 32),
+
+          // Satisfaction
+          Text(
+            '현재 만족도',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: ['😭', '😟', '😐', '😊', '🤩'].asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String emoji = entry.value;
+                    bool isSelected = _satisfaction.round() - 1 == index;
+                    
+                    return GestureDetector(
+                      onTap: () => setState(() => _satisfaction = index + 1.0),
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: isSelected 
+                              ? const Color(0xFFEC4899).withOpacity(0.1)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(30),
+                          border: isSelected
+                              ? Border.all(color: const Color(0xFFEC4899), width: 2)
+                              : null,
+                        ),
+                        child: Center(
+                          child: Text(
+                            emoji,
+                            style: TextStyle(
+                              fontSize: isSelected ? 32 : 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    activeTrackColor: const Color(0xFFEC4899),
+                    inactiveTrackColor: TossTheme.backgroundSecondary,
+                    thumbColor: const Color(0xFFEC4899),
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
+                    trackHeight: 4,
+                  ),
+                  child: Slider(
+                    value: _satisfaction,
+                    min: 1,
+                    max: 5,
+                    divisions: 4,
+                    onChanged: (value) => setState(() => _satisfaction = value),
+                  ),
+                ),
+                
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('매우 불만', style: TossTheme.caption.copyWith(color: TossTheme.textGray600)),
+                    Text('매우 만족', style: TossTheme.caption.copyWith(color: TossTheme.textGray600)),
+                  ],
+                ),
+              ],
+            ),
+          ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 24),
+
+          // 6 Month Goal
+          Text(
+            '6개월 후 목표',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ['승진/성과', '이직/전직', '스킬업', '워라벨', '연봉상승', '창업/독립', '안정성', '새로운 도전'].map((goal) => 
+              GestureDetector(
+                onTap: () => setState(() => _sixMonthGoal = goal),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _sixMonthGoal == goal 
+                        ? const Color(0xFFEC4899).withOpacity(0.1)
+                        : TossTheme.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(24),
+                    border: _sixMonthGoal == goal
+                        ? Border.all(color: const Color(0xFFEC4899))
+                        : null,
+                  ),
+                  child: Text(
+                    goal,
+                    style: TossTheme.body2.copyWith(
+                      color: _sixMonthGoal == goal 
+                          ? const Color(0xFFEC4899)
+                          : TossTheme.textBlack,
+                      fontWeight: _sixMonthGoal == goal 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ).toList(),
+          ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 24),
+
+          // Important Value
+          Text(
+            '가장 중요하게 생각하는 가치',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ['성장', '안정', '자유', '인정', '돈', '관계', '의미', '도전'].map((value) => 
+              GestureDetector(
+                onTap: () => setState(() => _importantValue = value),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _importantValue == value 
+                        ? const Color(0xFF8B5CF6).withOpacity(0.1)
+                        : TossTheme.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(20),
+                    border: _importantValue == value
+                        ? Border.all(color: const Color(0xFF8B5CF6))
+                        : null,
+                  ),
+                  child: Text(
+                    value,
+                    style: TossTheme.caption.copyWith(
+                      color: _importantValue == value 
+                          ? const Color(0xFF8B5CF6)
+                          : TossTheme.textBlack,
+                      fontWeight: _importantValue == value 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ).toList(),
+          ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep3() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF8B5CF6),
+                        const Color(0xFF7C3AED),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.psychology_rounded,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                
+                const SizedBox(height: 24),
+                
+                Text(
+                  '구체적인 고민을 나눠주세요',
+                  style: TossTheme.heading2.copyWith(
+                    color: TossTheme.textBlack,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 12),
+                
+                Text(
+                  '현재 가장 큰 고민이나 궁금한 점을\n선택하거나 직접 작성해주세요',
+                  style: TossTheme.body2.copyWith(
+                    color: TossTheme.textGray600,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+
+          const SizedBox(height: 32),
+
+          // Preset concerns
+          Text(
+            '주요 관심사 (복수 선택 가능)',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              '상사/동료 관계',
+              '업무 스트레스',
+              '커리어 방향성',
+              '연봉 협상',
+              '이직 타이밍',
+              '스킬 개발',
+              '워라벨',
+              '승진 전략',
+              '부서 이동',
+              '창업/독립',
+              '새로운 분야 도전',
+              '나이/경력 고민'
+            ].map((concern) => 
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (_specificConcerns.contains(concern)) {
+                      _specificConcerns.remove(concern);
+                    } else {
+                      _specificConcerns.add(concern);
+                    }
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _specificConcerns.contains(concern) 
+                        ? const Color(0xFF8B5CF6).withOpacity(0.1)
+                        : TossTheme.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(20),
+                    border: _specificConcerns.contains(concern)
+                        ? Border.all(color: const Color(0xFF8B5CF6))
+                        : null,
+                  ),
+                  child: Text(
+                    concern,
+                    style: TossTheme.caption.copyWith(
+                      color: _specificConcerns.contains(concern) 
+                          ? const Color(0xFF8B5CF6)
+                          : TossTheme.textBlack,
+                      fontWeight: _specificConcerns.contains(concern) 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ).toList(),
+          ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 24),
+
+          // Custom concern
+          Text(
+            '추가 질문이나 구체적인 고민',
+            style: TossTheme.heading4.copyWith(
+              color: TossTheme.textBlack,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: TextField(
+              controller: _customConcernController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: '예: 현재 회사에서 3년째 근무 중인데, 언제 이직하는 게 좋을까요?',
+                hintStyle: TossTheme.body2.copyWith(
+                  color: TossTheme.textGray600.withOpacity(0.7),
+                ),
+                border: InputBorder.none,
+              ),
+              style: TossTheme.body2.copyWith(
+                color: TossTheme.textBlack,
+              ),
+            ),
+          ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingView() {
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundPrimary,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    TossTheme.primaryBlue,
+                    const Color(0xFF8B5CF6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: TossTheme.primaryBlue.withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.auto_awesome_rounded,
+                color: Colors.white,
+                size: 60,
+              ),
+            ).animate(onPlay: (controller) => controller.repeat())
+             .rotate(duration: 2000.ms),
+            
+            const SizedBox(height: 32),
+            
+            Text(
+              '커리어 운세 분석 중...',
+              style: TossTheme.heading3.copyWith(
+                color: TossTheme.textBlack,
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            Text(
+              '당신만의 맞춤형 커리어 조언을 준비하고 있어요',
+              style: TossTheme.body2.copyWith(
+                color: TossTheme.textGray600,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -571,61 +844,284 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
     );
   }
 
-  Widget _buildNetworkingAdvice() {
-    final theme = Theme.of(context);
+  Widget _buildResultView() {
+    if (_fortune == null) return const SizedBox.shrink();
     
-    final networkingTips = [
-      '업계 세미나나 컨퍼런스에 적극 참여하세요',
-      'LinkedIn 프로필을 최신 상태로 유지하고 활발히 활동하세요',
-      '멘토를 찾아 정기적인 조언을 구하세요',
-      '동료들과의 관계를 더욱 돈독히 하세요',
-      '새로운 프로젝트나 협업 기회를 적극적으로 찾아보세요',
-    ];
-    
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-      child: GlassCard(
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundPrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.only(left: 16),
+          child: IconButton(
+            onPressed: () => Navigator.pop(context),
+            style: IconButton.styleFrom(
+              backgroundColor: TossTheme.backgroundSecondary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: TossTheme.textBlack,
+              size: 20,
+            ),
+          ),
+        ),
+        title: Text(
+          '커리어 운세 결과',
+          style: TossTheme.heading3.copyWith(
+            color: TossTheme.textBlack,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: IconButton(
+              onPressed: () {
+                // Share functionality
+              },
+              style: IconButton.styleFrom(
+                backgroundColor: TossTheme.backgroundSecondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: Icon(
+                Icons.share,
+                color: TossTheme.textBlack,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                material.Icon(
-                  Icons.connect_without_contact_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '네트워킹 조언',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...networkingTips.map((tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // Main result card
+            TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
                 children: [
-                  material.Icon(
-                    Icons.arrow_right_rounded,
-                    size: 24,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      tip,
-                      style: theme.textTheme.bodyMedium,
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          TossTheme.primaryBlue,
+                          const Color(0xFF8B5CF6),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
                     ),
+                    child: const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  Text(
+                    '커리어 운세 분석 완료!',
+                    style: TossTheme.heading2.copyWith(
+                      color: TossTheme.textBlack,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  Text(
+                    _fortune!.content,
+                    style: TossTheme.body1.copyWith(
+                      color: TossTheme.textGray600,
+                      height: 1.6,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-            )).toList(),
+            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+            
+            const SizedBox(height: 20),
+            
+            // Score breakdown if available
+            if (_fortune!.scoreBreakdown != null) ...[
+              TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '세부 분석',
+                      style: TossTheme.heading4.copyWith(
+                        color: TossTheme.textBlack,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    ..._fortune!.scoreBreakdown!.entries.map((entry) => 
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              entry.key,
+                              style: TossTheme.body2.copyWith(
+                                color: TossTheme.textBlack,
+                              ),
+                            ),
+                            Text(
+                              '${entry.value}%',
+                              style: TossTheme.body2.copyWith(
+                                color: TossTheme.primaryBlue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).toList(),
+                  ],
+                ),
+              ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+              
+              const SizedBox(height: 20),
+            ],
+            
+            // Recommendations
+            if (_fortune!.recommendations != null && _fortune!.recommendations!.isNotEmpty) ...[
+              TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '추천 행동',
+                      style: TossTheme.heading4.copyWith(
+                        color: TossTheme.textBlack,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    ..._fortune!.recommendations!.map((rec) => 
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              margin: const EdgeInsets.only(top: 8, right: 12),
+                              decoration: BoxDecoration(
+                                color: TossTheme.primaryBlue,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                rec,
+                                style: TossTheme.body2.copyWith(
+                                  color: TossTheme.textBlack,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).toList(),
+                  ],
+                ),
+              ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+              
+              const SizedBox(height: 32),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  bool _canProceed() {
+    switch (_currentStep) {
+      case 0:
+        return _jobStatus.isNotEmpty && _experience.isNotEmpty && _industry.isNotEmpty;
+      case 1:
+        return _sixMonthGoal.isNotEmpty && _importantValue.isNotEmpty;
+      case 2:
+        return _specificConcerns.isNotEmpty || _customConcernController.text.isNotEmpty;
+      default:
+        return false;
+    }
+  }
+
+  Future<void> _proceedToNext() async {
+    if (_currentStep < 2) {
+      setState(() {
+        _currentStep++;
+      });
+    } else {
+      await _generateFortune();
+    }
+  }
+
+  Future<void> _generateFortune() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final fortuneService = ref.read(fortuneServiceProvider);
+      final params = {
+        'jobStatus': _jobStatus,
+        'experience': _experience,
+        'industry': _industry,
+        'satisfaction': _satisfaction,
+        'sixMonthGoal': _sixMonthGoal,
+        'importantValue': _importantValue,
+        'specificConcerns': _specificConcerns,
+        'customConcern': _customConcernController.text,
+      };
+
+      final fortune = await fortuneService.getFortune(
+        userId: 'user123',
+        fortuneType: 'career',
+        params: params,
+      );
+
+      setState(() {
+        _fortune = fortune;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('분석 중 오류가 발생했습니다: $e')),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _customConcernController.dispose();
+    super.dispose();
   }
 }

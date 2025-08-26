@@ -122,8 +122,12 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                   if (selectedDate != null) {
                     setState(() {
                       _birthDate = selectedDate;
-                      // Find celebrities with the same birthday
-                      _sameBirthdayCelebrities = ref.read(celebritiesWithBirthdayProvider(selectedDate!));
+                      // Find celebrities with the same birthday asynchronously
+                      ref.read(celebritiesWithBirthdayProvider(selectedDate!).future).then((celebrities) {
+                        setState(() {
+                          _sameBirthdayCelebrities = celebrities;
+                        });
+                      });
                     });
                   }
                 },

@@ -1,288 +1,338 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'base_fortune_page_v2.dart';
-import '../../domain/models/fortune_result.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../../talisman/domain/models/talisman_wish.dart';
+import '../../../talisman/presentation/widgets/talisman_wish_selector.dart';
+import '../../../talisman/presentation/widgets/talisman_wish_input.dart';
+import '../../../talisman/presentation/widgets/talisman_generation_animation.dart';
+import '../../../talisman/presentation/widgets/talisman_result_card.dart';
+import '../../../talisman/presentation/providers/talisman_provider.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/components/toss_button.dart';
+import '../../../../presentation/providers/auth_provider.dart';
+import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
+import '../../../../services/in_app_purchase_service.dart';
 
-class TalismanFortunePage extends ConsumerWidget {
+class TalismanFortunePage extends ConsumerStatefulWidget {
   const TalismanFortunePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return BaseFortunePageV2(
-      title: '부적',
-      fortuneType: 'talisman',
-      headerGradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF8D6E63), Color(0xFF6D4C41)]),
-      inputBuilder: (context, onSubmit) => _TalismanInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _TalismanFortuneResult(
-        result: result,
-        onShare: onShare,
+  ConsumerState<TalismanFortunePage> createState() => _TalismanFortunePageState();
+}
+
+class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
+  TalismanCategory? _selectedCategory;
+  String? _selectedWish;
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authStateProvider).value;
+    final userId = authState?.session?.user.id;
+    
+    final talismanState = ref.watch(talismanGenerationProvider(userId));
+
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundPrimary,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // App Bar
+            _buildAppBar(context, ref, talismanState.step, userId),
+            
+            // Content
+            Expanded(
+              child: _buildContent(context, ref, talismanState, userId),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
 
-class _TalismanInputForm extends StatelessWidget {
-  final Function(Map<String, dynamic>) onSubmit;
-
-  const _TalismanInputForm({required this.onSubmit});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '오늘 필요한 부적을 확인해보세요!\n액운을 막고 행운을 부르는 방법을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5,
-          ),
-        ),
-        const SizedBox(height: 32),
-        
-        Center(
-          child: Icon(
-            Icons.shield,
-            size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3),
-          ),
-        ),
-        
-        const SizedBox(height: 32),
-        
-        Center(
-          child: ElevatedButton.icon(
-            onPressed: () => onSubmit({}),
-            icon: const Icon(Icons.shield),
-            label: const Text('운세 확인하기'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TalismanFortuneResult extends StatelessWidget {
-  final FortuneResult result;
-  final VoidCallback onShare;
-
-  const _TalismanFortuneResult({
-    required this.result,
-    required this.onShare,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final fortune = result.fortune;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildAppBar(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId) {
+    // 결과 페이지에서는 앱바 숨김
+    if (step == TalismanGenerationStep.result) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Row(
         children: [
-          // Main Fortune Content
-          GlassContainer(
-            padding: const EdgeInsets.all(20),
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.shield,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '부적',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+          if (step != TalismanGenerationStep.categorySelection)
+            GestureDetector(
+              onTap: () {
+                ref.read(talismanGenerationProvider(userId).notifier).goBack();
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: TossTheme.backgroundSecondary,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  fortune.content,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20,
                 ),
-              ],
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: TossTheme.backgroundSecondary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.close,
+                  size: 20,
+                ),
+              ),
+            ),
+          
+          const SizedBox(width: 16),
+          
+          Text(
+            '부적',
+            style: TossTheme.heading3,
+          ),
+          
+          const Spacer(),
+          
+          // Premium Badge (추후 구현)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: TossTheme.primaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'BASIC',
+              style: TossTheme.caption.copyWith(
+                color: TossTheme.primaryBlue,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-
-          // Score Breakdown
-          if (fortune.scoreBreakdown != null) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.analytics,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '상세 분석',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            entry.key,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                        Container(
-                          width: 60,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: _getScoreColor(entry.value).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '${entry.value}점',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: _getScoreColor(entry.value),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Lucky Items
-          if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.stars,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '행운 아이템',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: fortune.luckyItems!.entries.map((entry) {
-                      return Chip(
-                        label: Text('${entry.key}: ${entry.value}'),
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Recommendations
-          if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.tips_and_updates,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '조언',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...fortune.recommendations!.map((rec) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            rec,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );
   }
 
-  Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+  Widget _buildContent(BuildContext context, WidgetRef ref, TalismanGenerationState state, String? userId) {
+    if (state.error != null) {
+      return _buildErrorState(context, ref, state.error!, userId);
+    }
+
+    switch (state.step) {
+      case TalismanGenerationStep.categorySelection:
+        return _buildCategorySelection(context, ref, userId);
+      case TalismanGenerationStep.wishInput:
+        return _buildWishInput(context, ref);
+      case TalismanGenerationStep.generation:
+        return _buildGenerationAnimation(context, ref);
+      case TalismanGenerationStep.result:
+        return _buildResult(context, ref, state.design!);
+    }
+  }
+
+  Widget _buildCategorySelection(BuildContext context, WidgetRef ref, String? userId) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: TalismanWishSelector(
+        selectedCategory: _selectedCategory,
+        onCategorySelected: (category) {
+          setState(() {
+            _selectedCategory = category;
+          });
+          ref.read(talismanGenerationProvider(userId).notifier).selectCategory(category);
+        },
+      ),
+    );
+  }
+
+  Widget _buildWishInput(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: TalismanWishInput(
+        selectedCategory: _selectedCategory!,
+        onWishSubmitted: (wish) async {
+          final authState = ref.read(authStateProvider).value;
+          final userId = authState?.session?.user.id;
+
+          if (userId == null) {
+            _showLoginRequiredDialog(context);
+            return;
+          }
+
+          // 하루 제한 체크
+          final canCreate = await ref.read(dailyTalismanLimitProvider(userId).future);
+          if (canCreate) {
+            // 제한 초과 시 프리미엄 안내
+            await _showPremiumBottomSheet(context);
+            return;
+          }
+
+          setState(() {
+            _selectedWish = wish;
+          });
+          ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
+            category: _selectedCategory!,
+            specificWish: wish,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildGenerationAnimation(BuildContext context, WidgetRef ref) {
+    return TalismanGenerationAnimation(
+      category: _selectedCategory!,
+      wishText: _selectedWish ?? "소원을 이루어보세요",
+      onCompleted: () {
+        // 애니메이션 완료 후 자동으로 결과 화면으로 이동됨
+      },
+    );
+  }
+
+  Widget _buildResult(BuildContext context, WidgetRef ref, design) {
+    return TalismanResultCard(
+      talismanDesign: design,
+      onSave: () {
+        // TODO: 부적 저장 로직
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('부적이 저장되었습니다!')),
+        );
+      },
+      onShare: () {
+        // TODO: 공유 로직
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('공유 기능은 준비 중입니다')),
+        );
+      },
+      onSetWallpaper: () {
+        // TODO: 배경화면 설정 로직
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('배경화면 설정 기능은 준비 중입니다')),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error, String? userId) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: TossTheme.error,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '오류가 발생했습니다',
+            style: TossTheme.heading3,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            error,
+            style: TossTheme.body3.copyWith(
+              color: TossTheme.textGray600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: TossButton(
+              text: '다시 시도',
+              onPressed: () {
+                ref.read(talismanGenerationProvider(userId).notifier).reset();
+                setState(() {
+                  _selectedCategory = null;
+                  _selectedWish = null;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showPremiumBottomSheet(BuildContext context) async {
+    await TalismanPremiumBottomSheet.show(
+      context,
+      onSubscribe: () async {
+        Navigator.of(context).pop();
+        await _handleSubscription();
+      },
+      onOneTimePurchase: () async {
+        Navigator.of(context).pop();
+        await _handleOneTimePurchase();
+      },
+    );
+  }
+
+  Future<void> _handleSubscription() async {
+    try {
+      // TODO: 실제 구독 처리 로직
+      final purchaseService = InAppPurchaseService();
+      // await purchaseService.purchaseSubscription('premium_monthly');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('구독 기능은 준비 중입니다')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('구독 처리 중 오류가 발생했습니다: $e')),
+      );
+    }
+  }
+
+  Future<void> _handleOneTimePurchase() async {
+    try {
+      // TODO: 실제 일회성 구매 처리 로직
+      final purchaseService = InAppPurchaseService();
+      // await purchaseService.purchaseOneTime('premium_talisman');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('구매 기능은 준비 중입니다')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('구매 처리 중 오류가 발생했습니다: $e')),
+      );
+    }
+  }
+
+  void _showLoginRequiredDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그인이 필요합니다'),
+        content: const Text('부적을 생성하려면 로그인이 필요합니다.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // TODO: 로그인 페이지로 이동
+            },
+            child: const Text('로그인'),
+          ),
+        ],
+      ),
+    );
   }
 }

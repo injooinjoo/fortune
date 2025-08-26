@@ -41,15 +41,6 @@ final timeBasedRoutes = [
       return '/fortune/time';
     }),
   
-  // Daily Calendar (특정일 운세)
-  GoRoute(
-    path: '/daily-calendar',
-    name: 'fortune-daily-calendar',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return DailyCalendarFortunePage(initialParams: extra);
-    }),
-  
   // Daily
   GoRoute(
     path: '/daily',

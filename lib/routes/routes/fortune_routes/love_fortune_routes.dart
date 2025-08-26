@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/love_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/love/love_fortune_main_page.dart';
 import '../../../features/fortune/presentation/pages/compatibility_page.dart';
 import '../../../features/fortune/presentation/pages/marriage_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/traditional_compatibility_page.dart';
@@ -15,25 +16,7 @@ import '../../../features/fortune/presentation/pages/avoid_people_fortune_page.d
 import '../../../domain/entities/fortune.dart';
 
 final loveFortuneRoutes = [
-  // Love
-  GoRoute(
-    path: '/love',
-    name: 'fortune-love',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return LoveFortunePage(
-        initialParams: extra);
-    }),
-  
-  // Compatibility
-  GoRoute(
-    path: '/compatibility',
-    name: 'fortune-compatibility',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return CompatibilityPage(
-        initialParams: extra);
-    }),
+  // Love - moved to route_config.dart (outside shell)
   
   // Marriage
   GoRoute(
@@ -53,17 +36,7 @@ final loveFortuneRoutes = [
     name: 'fortune-couple-match',
     builder: (context, state) => const CoupleMatchPage()),
   
-  // Ex-Lover
-  GoRoute(
-    path: '/ex-lover',
-    name: 'fortune-ex-lover',
-    builder: (context, state) => const ExLoverFortunePage()),
-  
-  // Ex-Lover Enhanced
-  GoRoute(
-    path: '/ex-lover-enhanced',
-    name: 'fortune-ex-lover-enhanced',
-    builder: (context, state) => const ExLoverFortuneEnhancedPage()),
+  // Ex-Lover Enhanced - moved to route_config.dart (outside shell)
   
   // Blind Date
   GoRoute(
@@ -89,18 +62,5 @@ final loveFortuneRoutes = [
     name: 'fortune-celebrity-compatibility',
     builder: (context, state) => const CelebrityCompatibilityPage()),
   
-  // Pet Compatibility
-  GoRoute(
-    path: '/pet-compatibility',
-    name: 'fortune-pet-compatibility',
-    builder: (context, state) => const PetCompatibilityPage(
-      fortuneType: 'pet-compatibility',
-      title: '반려동물 궁합',
-      description: '나와 반려동물의 궁합을 확인해보세요')),
   
-  // Avoid People
-  GoRoute(
-    path: '/avoid-people',
-    name: 'fortune-avoid-people',
-    builder: (context, state) => const AvoidPeopleFortunePage())
 ];

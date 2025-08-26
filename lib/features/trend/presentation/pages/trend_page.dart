@@ -75,27 +75,31 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   }
   
   void _onScroll() {
-    final currentScrollOffset = _scrollController.offset;
-    const scrollThreshold = 100.0; // Minimum scroll distance before hiding/showing nav
+    final currentScrollPosition = _scrollController.offset;
+    const scrollDownThreshold = 10.0; // Minimum scroll down distance
+    const scrollUpThreshold = 3.0; // Ultra sensitive scroll up detection
     
-    // Only trigger if we've scrolled more than the threshold
-    if ((currentScrollOffset - _lastScrollOffset).abs() > scrollThreshold) {
-      final isScrollingDown = currentScrollOffset > _lastScrollOffset;
-      
-      // Only update if direction changed
-      if (isScrollingDown != _isScrollingDown) {
-        _isScrollingDown = isScrollingDown;
-        _lastScrollOffset = currentScrollOffset;
-        
-        // Update navigation visibility
-        final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
-        if (isScrollingDown) {
-          navigationNotifier.hide();
-        } else {
-          navigationNotifier.show();
-        }
+    // Always show navigation when at the top
+    if (currentScrollPosition <= 10.0) {
+      if (_isScrollingDown) {
+        _isScrollingDown = false;
+        ref.read(navigationVisibilityProvider.notifier).show();
       }
+      _lastScrollOffset = currentScrollPosition;
+      return;
     }
+    
+    if (currentScrollPosition > _lastScrollOffset + scrollDownThreshold && !_isScrollingDown) {
+      // Scrolling down - hide navigation
+      _isScrollingDown = true;
+      ref.read(navigationVisibilityProvider.notifier).hide();
+    } else if (currentScrollPosition < _lastScrollOffset - scrollUpThreshold && _isScrollingDown) {
+      // Scrolling up - show navigation (very sensitive)
+      _isScrollingDown = false;
+      ref.read(navigationVisibilityProvider.notifier).show();
+    }
+    
+    _lastScrollOffset = currentScrollPosition;
   }
 
   @override

@@ -66,11 +66,7 @@ final luckyItemRoutes = [
     name: 'fortune-birthstone',
     builder: (context, state) => const BirthstoneFortunePage()),
   
-  // Talisman
-  GoRoute(
-    path: '/talisman',
-    name: 'fortune-talisman',
-    builder: (context, state) => const TalismanFortunePage()),
+  // Talisman (Lucky Item) - moved to route_config.dart (outside shell)
   
   // Five Blessings
   GoRoute(

@@ -10,6 +10,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../core/components/toss_button.dart';
 
 class LoveFortunePage extends BaseFortunePage {
   const LoveFortunePage({
@@ -126,7 +127,8 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 30),
-            ElevatedButton(
+            TossButton(
+              text: '연애운 확인하기',
               onPressed: () async {
                 setState(() {
                   isLoading = true;
@@ -143,7 +145,8 @@ class _LoveFortunePageState extends ConsumerState<LoveFortunePage> with TickerPr
                   });
                 }
               },
-              child: const Text('연애운 확인하기'),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
             ),
           ],
         ),

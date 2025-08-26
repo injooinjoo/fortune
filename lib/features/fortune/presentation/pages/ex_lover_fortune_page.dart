@@ -6,6 +6,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
+import '../../../../core/theme/toss_theme.dart';
 
 class ExLoverFortunePage extends BaseFortunePage {
   const ExLoverFortunePage({Key? key})
@@ -14,7 +15,8 @@ class ExLoverFortunePage extends BaseFortunePage {
           title: '전 애인 운세',
           description: '과거 관계의 의미와 새로운 시작',
           fortuneType: 'ex-lover',
-          requiresUserInfo: true
+          requiresUserInfo: true,
+          backgroundColor: TossTheme.backgroundPrimary,
         );
 
   @override

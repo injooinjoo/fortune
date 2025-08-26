@@ -412,7 +412,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true),
     FortuneCategory(
       title: '바이오리듬',
-      route: '/lifestyle?type=biorhythm',
+      route: '/biorhythm',
       type: 'biorhythm',
       icon: Icons.timeline_rounded,
       gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
@@ -423,7 +423,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Relationship/Love Fortunes ====================
     FortuneCategory(
       title: '연애운',
-      route: '/relationship?type=love',
+      route: '/love',
       type: 'love',
       icon: Icons.favorite_rounded,
       gradientColors: [Color(0xFFEC4899), Color(0xFFDB2777)],
@@ -431,7 +431,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'love'),
     FortuneCategory(
       title: '궁합',
-      route: '/relationship?type=compatibility',
+      route: '/compatibility',
       type: 'compatibility',
       icon: Icons.people_rounded,
       gradientColors: [Color(0xFFBE185D), Color(0xFF9333EA)],
@@ -439,7 +439,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'love'),
     FortuneCategory(
       title: '피해야 할 사람',
-      route: '/relationship?type=avoid-people',
+      route: '/avoid-people',
       type: 'relationship',
       icon: Icons.person_off_rounded,
       gradientColors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
@@ -468,7 +468,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true),
     FortuneCategory(
       title: '시험 운세',
-      route: '/career?type=exam',
+      route: '/lucky-exam',
       type: 'study',
       icon: Icons.school_rounded,
       gradientColors: [Color(0xFF03A9F4), Color(0xFF0288D1)],
@@ -513,25 +513,32 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       description: '신에게 소원을 빌어보세요',
       category: 'lifestyle'),
 
-    // ==================== Health/Sports Fortunes (통합) ====================
+    // ==================== Health & Sports Fortunes (분리) ====================
     FortuneCategory(
-      title: '건강 & 운동',
-      route: '/health-sports',
+      title: '건강운세',
+      route: '/health-toss',
       type: 'health',
-      icon: Icons.health_and_safety_rounded,
+      icon: Icons.favorite_rounded,
       gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-      description: '건강/피트니스/요가/스포츠',
+      description: '오늘의 건강 상태와 신체 부위별 운세',
       category: 'health',
       isNew: true),
     FortuneCategory(
-      title: '스포츠 운세',
-      route: '/enhanced-sports',
-      type: 'enhanced_sports',
+      title: '운동운세',
+      route: '/exercise',
+      type: 'exercise',
+      icon: Icons.fitness_center_rounded,
+      gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+      description: '피트니스, 요가, 런닝 운세',
+      category: 'health'),
+    FortuneCategory(
+      title: '스포츠경기',
+      route: '/sports-game',
+      type: 'sports_game',
       icon: Icons.sports_rounded,
       gradientColors: [Color(0xFFEA580C), Color(0xFFDC2626)],
-      description: '모든 스포츠 종목별 운세와 팀 승부운',
-      category: 'health',
-      isNew: true),
+      description: '골프, 야구, 테니스 등 경기 운세',
+      category: 'health'),
     FortuneCategory(
       title: '이사운',
       route: '/moving',
@@ -544,7 +551,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Interactive Fortunes ====================
     FortuneCategory(
       title: '포춘 쿠키',
-      route: '/interactive?type=fortune-cookie',
+      route: '/interactive/fortune-cookie',
       type: 'fortune-cookie',
       icon: Icons.cookie_rounded,
       gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
@@ -822,12 +829,6 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   // 카테고리 탭 처리
   void _handleCategoryTap(FortuneCategory category) {
     String fortuneType = category.type;
-    
-    // Handle special routes with query parameters
-    if (category.route.contains('?type=')) {
-      final queryPart = category.route.split('?type=').last;
-      fortuneType = queryPart;
-    }
     
     // Check if this is time-based fortune
     if (category.route == '/time') {

@@ -160,7 +160,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       letterSpacing: 0.5,
                     ),
                   ).animate()
-                    .fadeIn(duration: 600.ms),
+                    .fadeIn(duration: 300.ms),
                   
                   const SizedBox(height: 24),
 
@@ -202,7 +202,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         ],
                       ),
                     ).animate()
-                      .fadeIn(duration: 800.ms, delay: 200.ms)
+                      .fadeIn(duration: 400.ms, delay: 100.ms)
                       .slideY(begin: 0.1, curve: Curves.easeOut),
                     const SizedBox(height: 32),
                   ],
@@ -334,7 +334,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         ],
                       ),
                     ).animate()
-                      .fadeIn(duration: 800.ms, delay: 600.ms)
+                      .fadeIn(duration: 400.ms, delay: 250.ms)
                       .slideY(begin: 0.1, curve: Curves.easeOut),
                     const SizedBox(height: 24),
                   ],
@@ -383,7 +383,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         ],
                       ),
                     ).animate()
-                      .fadeIn(duration: 800.ms, delay: 700.ms)
+                      .fadeIn(duration: 400.ms, delay: 350.ms)
                       .slideY(begin: 0.1, curve: Curves.easeOut),
                     const SizedBox(height: 24),
                   ],
@@ -439,7 +439,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         ],
                       ),
                     ).animate()
-                      .fadeIn(duration: 800.ms, delay: 800.ms)
+                      .fadeIn(duration: 400.ms, delay: 450.ms)
                       .slideY(begin: 0.1, curve: Curves.easeOut),
                     const SizedBox(height: 32),
                   ],
@@ -1021,8 +1021,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
           color: Colors.amber,
           size: 24,
         ).animate()
-          .fadeIn(duration: 400.ms, delay: Duration(milliseconds: 600 + (index * 100)))
-          .scale(begin: const Offset(0, 0), end: const Offset(1, 1));
+          .fadeIn(duration: 200.ms, delay: Duration(milliseconds: 300 + (index * 50)))
+          .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1));
       }),
     );
   }
@@ -1065,8 +1065,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             showValues: true,
           ),
         ).animate()
-          .fadeIn(duration: 800.ms, delay: 500.ms)
-          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+          .fadeIn(duration: 400.ms, delay: 200.ms)
+          .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),
       ],
     );
   }
@@ -1098,7 +1098,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             showPercentage: true,
           ),
         ).animate()
-          .fadeIn(duration: 800.ms, delay: 600.ms)
+          .fadeIn(duration: 400.ms, delay: 250.ms)
           .slideY(begin: 0.1, end: 0),
       ],
     );
@@ -1190,7 +1190,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         ],
       ),
     ).animate()
-      .fadeIn(duration: 800.ms, delay: 700.ms)
+      .fadeIn(duration: 400.ms, delay: 350.ms)
       .slideY(begin: 0.1, end: 0);
   }
   
@@ -1265,7 +1265,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         ],
       ),
     ).animate()
-      .fadeIn(duration: 800.ms, delay: 700.ms)
+      .fadeIn(duration: 400.ms, delay: 350.ms)
       .slideY(begin: 0.1, end: 0);
   }
   

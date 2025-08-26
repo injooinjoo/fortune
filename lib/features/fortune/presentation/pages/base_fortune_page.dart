@@ -26,6 +26,7 @@ import '../../../../shared/components/soul_earn_animation.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../core/components/toss_button.dart';
 
 abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final String title;
@@ -35,6 +36,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final bool showShareButton;
   final bool showFontSizeSelector;
   final Map<String, dynamic>? initialParams;
+  final Color? backgroundColor;
 
   const BaseFortunePage({
     Key? key,
@@ -44,7 +46,8 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
     this.requiresUserInfo = true,
     this.showShareButton = true,
     this.showFontSizeSelector = false,
-    this.initialParams}) : super(key: key);
+    this.initialParams,
+    this.backgroundColor}) : super(key: key);
 }
 
 abstract class BaseFortunePageState<T extends BaseFortunePage>
@@ -163,27 +166,31 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   }
   
   void _onScroll() {
-    final currentScrollOffset = _scrollController.offset;
-    const scrollThreshold = 100.0; // Minimum scroll distance before hiding/showing nav
+    final currentScrollPosition = _scrollController.offset;
+    const scrollDownThreshold = 10.0; // Minimum scroll down distance
+    const scrollUpThreshold = 3.0; // Ultra sensitive scroll up detection
     
-    // Only trigger if we've scrolled more than the threshold
-    if ((currentScrollOffset - _lastScrollOffset).abs() > scrollThreshold) {
-      final isScrollingDown = currentScrollOffset > _lastScrollOffset;
-      
-      // Only update if direction changed
-      if (isScrollingDown != _isScrollingDown) {
-        _isScrollingDown = isScrollingDown;
-        _lastScrollOffset = currentScrollOffset;
-        
-        // Update navigation visibility
-        final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
-        if (isScrollingDown) {
-          navigationNotifier.hide();
-        } else {
-          navigationNotifier.show();
-        }
+    // Always show navigation when at the top
+    if (currentScrollPosition <= 10.0) {
+      if (_isScrollingDown) {
+        _isScrollingDown = false;
+        ref.read(navigationVisibilityProvider.notifier).show();
       }
+      _lastScrollOffset = currentScrollPosition;
+      return;
     }
+    
+    if (currentScrollPosition > _lastScrollOffset + scrollDownThreshold && !_isScrollingDown) {
+      // Scrolling down - hide navigation
+      _isScrollingDown = true;
+      ref.read(navigationVisibilityProvider.notifier).hide();
+    } else if (currentScrollPosition < _lastScrollOffset - scrollUpThreshold && _isScrollingDown) {
+      // Scrolling up - show navigation (very sensitive)
+      _isScrollingDown = false;
+      ref.read(navigationVisibilityProvider.notifier).show();
+    }
+    
+    _lastScrollOffset = currentScrollPosition;
   }
 
   // Abstract method to be implemented by each fortune page
@@ -776,7 +783,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: widget.backgroundColor ?? AppColors.cardBackground,
       appBar: AppHeader(
         title: widget.title,
         showShareButton: widget.showShareButton,
@@ -902,9 +909,11 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center),
             const SizedBox(height: 24),
-            ElevatedButton(
+            TossButton(
+              text: '다시 시도',
               onPressed: generateFortuneAction,
-              child: const Text('다시 시도'),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
             ),
           ],
         ),
@@ -917,41 +926,35 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         boxShadow: GlassEffects.glassShadow(elevation: 10)),
-      child: SizedBox(
+      child: TossButton(
+        text: '운세 보기',
+        onPressed: () {
+          Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button', {
+            'fortuneType': widget.fortuneType,
+            'title': widget.title,
+            'hasUserProfile': _userProfile != null,
+            'requiresUserInfo': widget.requiresUserInfo,
+            'timestamp': DateTime.now().toIso8601String()});
+          
+          Logger.debug('📋 [BaseFortunePage] Opening fortune explanation bottom sheet', {
+            'fortuneType': widget.fortuneType});
+          
+          // Show bottom sheet for fortune settings
+          FortuneExplanationBottomSheet.show(
+            context,
+            fortuneType: widget.fortuneType,
+            fortuneData: null,
+            onFortuneButtonPressed: () {
+              Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed', {
+                'fortuneType': widget.fortuneType,
+                'timestamp': DateTime.now().toIso8601String()});
+              // This will be handled by the bottom sheet
+            }
+          );
+        },
+        style: TossButtonStyle.primary,
+        size: TossButtonSize.large,
         width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button', {
-              'fortuneType': widget.fortuneType,
-              'title': widget.title,
-              'hasUserProfile': _userProfile != null,
-              'requiresUserInfo': widget.requiresUserInfo,
-              'timestamp': DateTime.now().toIso8601String()});
-            
-            Logger.debug('📋 [BaseFortunePage] Opening fortune explanation bottom sheet', {
-              'fortuneType': widget.fortuneType});
-            
-            // Show bottom sheet for fortune settings
-            FortuneExplanationBottomSheet.show(
-              context,
-              fortuneType: widget.fortuneType,
-              fortuneData: null,
-              onFortuneButtonPressed: () {
-                Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed', {
-                  'fortuneType': widget.fortuneType,
-                  'timestamp': DateTime.now().toIso8601String()});
-                // This will be handled by the bottom sheet
-              }
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          child: const Text(
-            '운세 보기',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
       ),
     );
   }

@@ -24,12 +24,6 @@ import '../../../features/fortune/presentation/widgets/career_fortune_selector.d
 import '../../../domain/entities/fortune.dart';
 
 final careerFortuneRoutes = [
-  // Career
-  GoRoute(
-    path: '/career',
-    name: 'fortune-career',
-    builder: (context, state) => const CareerFortunePage()),
-  
   // Career Seeker
   GoRoute(
     path: '/career-seeker',
@@ -66,17 +60,8 @@ final careerFortuneRoutes = [
       );
     }),
   
-  // Investment Unified
-  GoRoute(
-    path: '/investment',
-    name: 'fortune-investment',
-    builder: (context, state) => const InvestmentFortuneUnifiedPage()),
   
-  // Investment Enhanced
-  GoRoute(
-    path: '/investment-enhanced',
-    name: 'fortune-investment-enhanced',
-    builder: (context, state) => const InvestmentFortuneEnhancedPage()),
+  // Investment Enhanced - moved to route_config.dart (outside shell)
   
   // Lucky Investment
   GoRoute(
@@ -107,12 +92,6 @@ final careerFortuneRoutes = [
     path: '/lucky-realestate',
     name: 'fortune-lucky-realestate',
     builder: (context, state) => const LuckyRealEstateFortunePage()),
-  
-  // Lucky Exam
-  GoRoute(
-    path: '/lucky-exam',
-    name: 'fortune-lucky-exam',
-    builder: (context, state) => const LuckyExamFortunePage()),
   
   // Career Change
   GoRoute(
