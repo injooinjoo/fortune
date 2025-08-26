@@ -54,7 +54,9 @@ class FortuneModel extends HiveObject {
     content: content,
     createdAt: createdAt,
     metadata: metadata,
-    tokenCost: tokenCost);
+    tokenCost: tokenCost,
+    overallScore: metadata?['overallScore'] as int? ?? 
+                  (metadata?['categories']?['total']?['score'] as int?));
 
   factory FortuneModel.fromEntity(Fortune fortune) => FortuneModel(
     id: fortune.id,

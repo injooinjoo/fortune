@@ -52,6 +52,37 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   bool _isReallyLoggedIn = false; // 실제 로그인 여부 (익명 아닌)
   bool _showPreviewScreen = false; // 프리뷰 화면 표시 여부
   
+  // Pull-to-refresh를 위한 새로고침 함수
+  Future<void> _refreshFortuneData() async {
+    try {
+      debugPrint('🔄 Pull-to-refresh initiated - clearing cache and loading fresh data');
+      
+      // 캐시 무효화
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) {
+        await _cacheService.removeCachedFortune('daily', {'userId': userId});
+        await _cacheService.removeCachedStorySegments('daily', {'userId': userId});
+      }
+      
+      // Provider 상태 초기화
+      ref.read(dailyFortuneProvider.notifier).reset();
+      
+      // 새로운 데이터 로드
+      setState(() {
+        isLoadingFortune = true;
+        todaysFortune = null;
+        storySegments = null;
+        _hasViewedStoryToday = false; // 새로운 스토리 보기 위해 재설정
+      });
+      
+      await _loadTodaysFortune();
+      
+      debugPrint('✅ Pull-to-refresh completed');
+    } catch (e) {
+      debugPrint('❌ Pull-to-refresh failed: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -402,40 +433,62 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       
       debugPrint('📦 Cache check - fortune: ${cachedFortuneData != null}, story: ${cachedStorySegments != null && cachedStorySegments.isNotEmpty}');
       
-      // 2. Provider 상태와 캐시 상태 비교
+      // 2. Provider 상태 우선 확인 (최신 데이터)
       final currentProviderState = ref.read(dailyFortuneProvider);
       final hasProviderFortune = currentProviderState.fortune != null && !currentProviderState.isLoading;
       
       debugPrint('📊 Provider state - hasFortune: $hasProviderFortune, isLoading: ${currentProviderState.isLoading}');
       
-      // 3. 캐시된 데이터가 모두 있으면 즉시 설정하고 로딩 상태 false로 변경
-      if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-        debugPrint('✅ Using fully cached data - skip loading screen');
-        
-        // Provider 상태도 캐시 데이터로 동기화
-        if (!hasProviderFortune) {
-          debugPrint('🔄 Syncing Provider with cached data');
-          final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
-          final today = DateTime.now();
-          dailyFortuneNotifier.setDate(today);
-          // Provider에 캐시된 데이터가 반영되도록 강제로 상태 업데이트
-          ref.read(dailyFortuneProvider.notifier).state = ref.read(dailyFortuneProvider.notifier).state.copyWith(
-            fortune: cachedFortuneData.toEntity(),
-            isLoading: false,
-            error: null
-          );
-        }
+      // 3. Provider에 데이터가 있으면 Provider 우선 사용 (캐시보다 최신)
+      if (hasProviderFortune) {
+        final providerFortune = currentProviderState.fortune!;
+        debugPrint('🚀 Using Provider data (latest) - score: ${providerFortune.overallScore}');
         
         setState(() {
-          todaysFortune = cachedFortuneData.toEntity();
-          storySegments = cachedStorySegments;
-          isLoadingFortune = false; // 로딩 화면 스킵
+          todaysFortune = providerFortune;
+          isLoadingFortune = false;
         });
-        return; // 더 이상 처리할 필요 없음
+        
+        // Provider 데이터가 있으면 스토리만 생성/확인
+        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+          debugPrint('✅ Using cached story segments');
+          setState(() {
+            storySegments = cachedStorySegments;
+          });
+        } else {
+          debugPrint('📝 Generating new story for Provider fortune');
+          await _generateStory(providerFortune);
+        }
+        return;
       }
       
-      // 4. 캐시가 없거나 불완전한 경우에만 API 호출 및 로딩 상태 관리
-      debugPrint('📡 Need to fetch from API or generate story');
+      // 4. Provider에 없으면 캐시 확인 (단, 유효한 데이터만)
+      if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+        final cachedFortune = cachedFortuneData.toEntity();
+        
+        // 디버그: 캐시 데이터 상세 정보 확인
+        debugPrint('🔍 DEBUG - Cached data analysis:');
+        debugPrint('  - Metadata: ${cachedFortuneData.metadata}');
+        debugPrint('  - Mapped overallScore: ${cachedFortune.overallScore}');
+        debugPrint('  - Metadata overallScore: ${cachedFortuneData.metadata?['overallScore']}');
+        
+        // 캐시된 운세에 유효한 점수가 있는지 확인
+        if (cachedFortune.overallScore != null) {
+          debugPrint('✅ Using cached data as fallback - score: ${cachedFortune.overallScore}');
+          
+          setState(() {
+            todaysFortune = cachedFortune;
+            storySegments = cachedStorySegments;
+            isLoadingFortune = false; // 로딩 화면 스킵
+          });
+          return; // 더 이상 처리할 필요 없음
+        } else {
+          debugPrint('⚠️ Cached fortune has invalid overallScore, will fetch fresh data');
+        }
+      }
+      
+      // 5. 캐시가 없거나 불완전한 경우에만 API 호출 및 로딩 상태 관리
+      debugPrint('📡 Need to fetch fresh data from API');
       await _fetchFortuneFromAPI();
       
       // 스토리가 캐시되어 있으면 사용, 없으면 생성
@@ -476,15 +529,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         final fortune = fortuneState.fortune!;
         debugPrint('✅ Fortune loaded successfully - score: ${fortune.overallScore}, content length: ${fortune.content?.length ?? 0}');
         
-        setState(() {
-          todaysFortune = fortune;
-        });
-        
-        // 일일 운세를 히스토리에 저장
-        await _saveDailyFortuneToHistory(fortune);
-        
-        // Provider가 이미 캐싱을 처리하므로 여기서는 스토리만 생성
-        await _generateStory(fortune);
+        // 유효한 점수가 있는지 확인
+        if (fortune.overallScore != null) {
+          debugPrint('✅ Fortune has valid overallScore: ${fortune.overallScore}');
+          
+          // 캐시 삭제 로직 제거 - 같은 날의 캐시는 유지하여 재사용
+          debugPrint('✅ New fortune loaded - keeping cache for future use');
+          
+          setState(() {
+            todaysFortune = fortune;
+          });
+          
+          // 일일 운세를 히스토리에 저장
+          await _saveDailyFortuneToHistory(fortune);
+          
+          // Provider가 이미 캐싱을 처리하므로 여기서는 스토리만 생성
+          await _generateStory(fortune);
+        } else {
+          debugPrint('⚠️ Fortune loaded but overallScore is null, retrying...');
+          // 점수가 없는 운세는 무효하므로 다시 시도
+          throw Exception('Fortune data incomplete - missing overallScore');
+        }
       } else if (fortuneState.error != null) {
         debugPrint('❌ Fortune loading error: ${fortuneState.error}');
       }
@@ -640,7 +705,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     fortune_entity.Fortune fortune,
   ) {
     final now = DateTime.now();
-    final score = fortune.overallScore ?? 75;
+    
+    // 유효한 운세 데이터가 없으면 빈 세그먼트 반환하고 새로 로드 시도
+    if (fortune.overallScore == null) {
+      debugPrint('⚠️ Fortune overallScore is null, triggering fortune reload');
+      // 비동기로 운세 다시 로드
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _fetchFortuneFromAPI();
+      });
+      return [
+        StorySegment(
+          text: '운세를 불러오는 중...',
+          fontSize: 24,
+          fontWeight: FontWeight.w300,
+        ),
+      ];
+    }
+    
+    final score = fortune.overallScore!;
     List<StorySegment> segments = [];
     
     // 1. 인사 페이지
@@ -986,41 +1068,47 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         ref.read(navigationVisibilityProvider.notifier).show();
       });
       
-      return FortuneCompletionPage(
-        fortune: todaysFortune,
-        userName: userProfile?.name,
-        userProfile: userProfile,
-        sajuAnalysis: sajuAnalysisData,
-        meta: metaData,
-        weatherSummary: weatherSummaryData,
-        overall: overallData,
-        categories: categoriesData,
-        sajuInsight: sajuInsightData,
-        personalActions: personalActionsData,
-        notification: notificationData,
-        shareCard: shareCardData,
-        onReplay: () {
-          // 다시 스토리 보기
-          setState(() {
-            _hasViewedStoryToday = false;
-          });
-        },
+      return RefreshIndicator(
+        onRefresh: _refreshFortuneData,
+        child: FortuneCompletionPage(
+          fortune: todaysFortune,
+          userName: userProfile?.name,
+          userProfile: userProfile,
+          sajuAnalysis: sajuAnalysisData,
+          meta: metaData,
+          weatherSummary: weatherSummaryData,
+          overall: overallData,
+          categories: categoriesData,
+          sajuInsight: sajuInsightData,
+          personalActions: personalActionsData,
+          notification: notificationData,
+          shareCard: shareCardData,
+          onReplay: () {
+            // 다시 스토리 보기
+            setState(() {
+              _hasViewedStoryToday = false;
+            });
+          },
+        ),
       );
     }
     
     // 스토리 뷰어 또는 기본 화면
     if (storySegments != null && storySegments!.isNotEmpty) {
-      return FortuneStoryViewer(
-        segments: storySegments!,
-        userName: userProfile?.name,
-        onComplete: () {
-          // 완료 화면으로 이동
-          _showCompletionPage();
-        },
-        onSkip: () {
-          // 건너뛰기 시에도 완료 화면으로
-          _showCompletionPage();
-        },
+      return RefreshIndicator(
+        onRefresh: _refreshFortuneData,
+        child: FortuneStoryViewer(
+          segments: storySegments!,
+          userName: userProfile?.name,
+          onComplete: () {
+            // 완료 화면으로 이동
+            _showCompletionPage();
+          },
+          onSkip: () {
+            // 건너뛰기 시에도 완료 화면으로
+            _showCompletionPage();
+          },
+        ),
       );
     } else {
       // 운세 데이터가 없는 경우 기본 완료 화면 표시

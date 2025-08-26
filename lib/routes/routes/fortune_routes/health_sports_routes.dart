@@ -7,6 +7,9 @@ import '../../../features/fortune/presentation/pages/pet_fortune_page.dart' as f
 import '../../../features/fortune/presentation/pages/pet_fortune_unified_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/moving_fortune_toss_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/moving_date_fortune_page.dart' as fortune_pages;
+import '../../../features/health/presentation/pages/health_fortune_toss_page.dart';
+import '../../../features/sports/presentation/pages/sports_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/pet_compatibility_page.dart';
 
 final healthSportsRoutes = [
   // Health Sports Unified
@@ -21,7 +24,7 @@ final healthSportsRoutes = [
     name: 'fortune-enhanced-sports',
     builder: (context, state) => const fortune_pages.EnhancedSportsFortunePage()),
   
-  // Sports
+  // Sports (Original)
   GoRoute(
     path: '/sports',
     name: 'fortune-sports',
@@ -47,7 +50,11 @@ final healthSportsRoutes = [
   GoRoute(
     path: '/pet',
     name: 'fortune-pet',
-    builder: (context, state) => const fortune_pages.PetFortuneUnifiedPage()),
+    builder: (context, state) => const PetCompatibilityPage(
+      fortuneType: 'pet-compatibility',
+      title: '반려동물 궁합',
+      description: '나와 반려동물의 궁합을 확인해보세요'
+    )),
   
   // Moving
   GoRoute(
