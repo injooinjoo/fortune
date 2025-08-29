@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/components/toss_card.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 
 /// 소원 카테고리 정의
@@ -48,10 +46,10 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
       builder: (context) => WishInputBottomSheet(
         onWishSubmitted: onWishSubmitted,
       ),
-    ).whenComplete(() {
-      // Bottom Sheet가 닫힐 때 네비게이션 바 다시 표시
-      container.read(navigationVisibilityProvider.notifier).show();
-    });
+    );
+    
+    // 네비게이션 바 다시 표시
+    container.read(navigationVisibilityProvider.notifier).show();
   }
 
   @override
@@ -59,9 +57,9 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
-  final _wishController = TextEditingController();
-  WishCategory _selectedCategory = WishCategory.other; // 기본값으로 '기타' 설정
-  int _urgencyLevel = 3; // 1-5 별점
+  final TextEditingController _wishController = TextEditingController();
+  WishCategory _selectedCategory = WishCategory.love;
+  int _urgencyLevel = 3;
 
   @override
   void dispose() {
@@ -75,74 +73,59 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
 
   void _submitWish() {
     if (!_canSubmit()) return;
-
-    final wishText = _wishController.text.trim();
-    final category = _selectedCategory.name;
-    final urgency = _urgencyLevel;
-
-    // 바텀시트 닫기
-    Navigator.of(context).pop();
     
-    // 콜백이 있으면 콜백 호출, 없으면 기존 방식 사용
-    if (widget.onWishSubmitted != null) {
-      widget.onWishSubmitted!(wishText, category, urgency);
-    } else {
-      // 기존 방식: 소원 빌기 페이지로 이동
-      context.go('/wish', extra: {
-        'autoGenerate': true,
-        'wishParams': {
-          'text': wishText,
-          'category': category,
-          'urgency': urgency,
-        },
-      });
-    }
+    widget.onWishSubmitted?.call(
+      _wishController.text.trim(),
+      _selectedCategory.name,
+      _urgencyLevel,
+    );
+    
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    
     return Container(
-      height: screenHeight * 0.9,
+      height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+        color: Color(0xFFF7F8FA),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
-          // Handle
+          // Handle bar
           Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
+            width: 32,
             height: 4,
+            margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: const Color(0xFFE5E5E5),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           
-          const SizedBox(height: 20),
+          // Header
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              '소원을 빌어주세요',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF191F28),
+                fontFamily: 'TossProductSans',
+              ),
+            ),
+          ),
           
-          // Content
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 헤더
-                  _buildHeader(),
-                  const SizedBox(height: 32),
-                  
-                  // 소원 입력
+                  _buildCategorySelection(),
+                  const SizedBox(height: 24),
                   _buildWishInput(),
                   const SizedBox(height: 24),
-                  
-                  // 간절함 정도
                   _buildUrgencyLevel(),
                   const SizedBox(height: 32),
                 ],
@@ -150,254 +133,214 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             ),
           ),
           
-          // 하단 버튼
-          _buildSubmitButton(),
+          // Submit button
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: _canSubmit() ? _submitWish : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _canSubmit() ? const Color(0xFF1F4EF5) : const Color(0xFFE5E5E5),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text(
+                  '소원 빌기',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'TossProductSans',
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              '🙏',
-              style: const TextStyle(fontSize: 32),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '소원 빌기',
-                    style: TossTheme.heading2.copyWith(
-                      color: TossTheme.primaryBlue,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '간절한 마음으로 소원을 빌어보세요',
-                    style: TossTheme.subtitle1.copyWith(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: TossTheme.primaryBlue.withOpacity(0.2),
-            ),
-          ),
-          child: Text(
-            '✨ 신이 당신의 소원을 들어주실 것입니다 ✨',
-            style: TossTheme.subtitle2.copyWith(
-              color: TossTheme.primaryBlue,
+  Widget _buildCategorySelection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF0F0F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '어떤 소원인가요?',
+            style: TextStyle(
+              fontSize: 16,
               fontWeight: FontWeight.w600,
+              color: Color(0xFF191F28),
+              fontFamily: 'TossProductSans',
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: WishCategory.values.map((category) {
+              final isSelected = _selectedCategory == category;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedCategory = category;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFF1F4EF5) : const Color(0xFFF7F8FA),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? const Color(0xFF1F4EF5) : const Color(0xFFE5E5E5),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        category.emoji,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        category.name,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : const Color(0xFF8B95A1),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'TossProductSans',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildWishInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '소원을 적어주세요',
-          style: TossTheme.body1.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: _wishController.text.isNotEmpty 
-                  ? TossTheme.primaryBlue 
-                  : TossTheme.borderGray300,
-              width: _wishController.text.isNotEmpty ? 2 : 1,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF0F0F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '소원을 자세히 적어주세요',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF191F28),
+              fontFamily: 'TossProductSans',
             ),
           ),
-          child: TextField(
+          const SizedBox(height: 16),
+          TextField(
             controller: _wishController,
             maxLines: 4,
-            maxLength: 200,
-            style: TossTheme.body2,
+            onChanged: (value) => setState(() {}),
             decoration: InputDecoration(
-              hintText: '예: 올해 안에 좋은 직장에 취업하고 싶습니다\n가족 모두가 건강하게 지내길 바랍니다',
-              hintStyle: TossTheme.subtitle2.copyWith(
-                color: TossTheme.textGray400,
+              hintText: '마음을 담아 소원을 적어보세요...',
+              hintStyle: const TextStyle(
+                color: Color(0xFF8B95A1),
+                fontFamily: 'TossProductSans',
               ),
-              border: InputBorder.none,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF1F4EF5)),
+              ),
+              filled: true,
+              fillColor: const Color(0xFFF7F8FA),
               contentPadding: const EdgeInsets.all(16),
-              counterStyle: TossTheme.caption.copyWith(
-                color: TossTheme.textGray400,
-              ),
             ),
-            onChanged: (value) {
-              setState(() {});
-            },
+            style: const TextStyle(
+              fontFamily: 'TossProductSans',
+              fontSize: 14,
+            ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCategorySelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '소원 종류를 선택해주세요',
-          style: TossTheme.body1.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 12),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          childAspectRatio: 3.5,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          children: WishCategory.values.map((category) {
-            final isSelected = _selectedCategory == category;
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: isSelected 
-                      ? category.color.withOpacity(0.1)
-                      : Colors.grey[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected 
-                        ? category.color
-                        : TossTheme.borderGray300,
-                    width: isSelected ? 2 : 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      category.emoji,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            category.name,
-                            style: TossTheme.subtitle2.copyWith(
-                              color: isSelected 
-                                  ? category.color
-                                  : TossTheme.textBlack,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            category.description,
-                            style: TossTheme.caption.copyWith(
-                              color: isSelected 
-                                  ? category.color
-                                  : TossTheme.textGray600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildUrgencyLevel() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '얼마나 간절한가요?',
-          style: TossTheme.body1.copyWith(
-            fontWeight: FontWeight.w700,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF0F0F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '얼마나 간절한가요?',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF191F28),
+              fontFamily: 'TossProductSans',
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: TossTheme.borderGray200.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
+          const SizedBox(height: 16),
+          Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  final isSelected = index < _urgencyLevel;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _urgencyLevel = index + 1;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Icon(
-                        isSelected ? Icons.star : Icons.star_border,
-                        size: 32,
-                        color: isSelected 
-                            ? const Color(0xFFFFD700)
-                            : TossTheme.textGray400,
-                      ),
-                    ),
-                  );
-                }),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _getUrgencyText(_urgencyLevel),
-                style: TossTheme.subtitle2.copyWith(
-                  color: TossTheme.textGray600,
+              Expanded(
+                child: Slider(
+                  value: _urgencyLevel.toDouble(),
+                  min: 1,
+                  max: 5,
+                  divisions: 4,
+                  activeColor: const Color(0xFF1F4EF5),
+                  onChanged: (value) {
+                    setState(() {
+                      _urgencyLevel = value.round();
+                    });
+                  },
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
-        ),
-      ],
+          Text(
+            _getUrgencyText(_urgencyLevel),
+            style: const TextStyle(
+              color: Color(0xFF8B95A1),
+              fontFamily: 'TossProductSans',
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -410,49 +353,5 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       case 5: return '온 마음을 다해 빌어요';
       default: return '';
     }
-  }
-
-  Widget _buildSubmitButton() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: _canSubmit() ? _submitWish : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _canSubmit() 
-                ? TossTheme.primaryBlue 
-                : TossTheme.disabledGray,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.auto_awesome, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                _canSubmit() ? '신에게 소원 빌기' : '모든 항목을 작성해주세요',
-                style: TossTheme.button,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

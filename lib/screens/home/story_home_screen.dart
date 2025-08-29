@@ -615,15 +615,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       else if (score >= 60) tags.add('보통');
       else tags.add('주의');
 
-      // FortuneHistoryService에 저장
+      // FortuneHistoryService에 저장 (새로운 히스토리 테이블)
       final historyService = FortuneHistoryService();
-      await historyService.saveDailyFortuneFromHome(
-        userId: userId,
-        fortuneId: fortune.id,
+      await historyService.saveFortuneResult(
+        fortuneType: 'daily',
         title: title,
         summary: summary,
+        fortuneData: fortune.toJson(), // 전체 운세 데이터
         metadata: metadata,
         tags: tags,
+        score: fortune.overallScore,
       );
 
       debugPrint('✅ Daily fortune saved to history: $title');
@@ -1035,6 +1036,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         body: EmotionalLoadingChecklist(
           isLoggedIn: _isReallyLoggedIn,
+          isApiComplete: !isLoadingFortune && (todaysFortune != null || storySegments != null),
           onComplete: () {
             debugPrint('🔔 EmotionalLoadingChecklist onComplete called for logged in user');
             debugPrint('📈 Current state - isLoading: $isLoadingFortune, segments: ${storySegments?.length}, fortune: ${todaysFortune != null}');

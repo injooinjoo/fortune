@@ -102,7 +102,12 @@ class _MovingResultTossState extends State<MovingResultToss> {
           // 인사말
           Text(
             '${widget.name}님의\n이사운을 확인해 보세요',
-            style: TossTheme.heading2,
+            style: TossTheme.heading1.copyWith(
+              fontSize: 36,
+              fontWeight: FontWeight.w800,
+              height: 1.1,
+              letterSpacing: -0.6,
+            ),
             textAlign: TextAlign.center,
           ),
           
@@ -196,13 +201,15 @@ class _MovingResultTossState extends State<MovingResultToss> {
 
   Widget _buildScoreCard() {
     return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         children: [
           Text(
             '종합 이사운',
-            style: TossTheme.body1.copyWith(
+            style: TossTheme.heading3.copyWith(
+              fontSize: 22,
               fontWeight: FontWeight.w700,
+              color: TossTheme.textBlack,
             ),
           ),
           
@@ -233,13 +240,17 @@ class _MovingResultTossState extends State<MovingResultToss> {
                     Text(
                       '$_overallScore',
                       style: TossTheme.heading1.copyWith(
-                        fontSize: 36,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w800,
                         color: _getScoreColor(),
+                        letterSpacing: -1.0,
                       ),
                     ),
                     Text(
                       '점',
                       style: TossTheme.body2.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                         color: _getScoreColor(),
                       ),
                     ),
@@ -253,9 +264,11 @@ class _MovingResultTossState extends State<MovingResultToss> {
           
           Text(
             _scoreDescription,
-            style: TossTheme.subtitle1.copyWith(
-              fontWeight: FontWeight.w600,
+            style: TossTheme.body2.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
               color: _getScoreColor(),
+              letterSpacing: -0.2,
             ),
           ),
         ],
@@ -265,18 +278,20 @@ class _MovingResultTossState extends State<MovingResultToss> {
 
   Widget _buildMainAdviceCard() {
     return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text('💡', style: TextStyle(fontSize: 20)),
+              Text('💡', style: const TextStyle(fontSize: 24)),
               const SizedBox(width: TossTheme.spacingS),
               Text(
                 '핵심 조언',
-                style: TossTheme.body1.copyWith(
+                style: TossTheme.heading3.copyWith(
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
+                  color: TossTheme.textBlack,
                 ),
               ),
             ],
@@ -286,7 +301,12 @@ class _MovingResultTossState extends State<MovingResultToss> {
           
           Text(
             _mainAdvice,
-            style: TossTheme.subtitle1,
+            style: TossTheme.body2.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+              color: TossTheme.textGray600,
+              height: 1.6,
+            ),
           ),
         ],
       ),
@@ -295,18 +315,20 @@ class _MovingResultTossState extends State<MovingResultToss> {
 
   Widget _buildLuckyDatesCard() {
     return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text('📅', style: TextStyle(fontSize: 20)),
+              Text('📅', style: const TextStyle(fontSize: 24)),
               const SizedBox(width: TossTheme.spacingS),
               Text(
                 '추천 이사 날짜',
-                style: TossTheme.body1.copyWith(
+                style: TossTheme.heading3.copyWith(
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
+                  color: TossTheme.textBlack,
                 ),
               ),
             ],
@@ -360,17 +382,19 @@ class _MovingResultTossState extends State<MovingResultToss> {
 
   Widget _buildDirectionCard() {
     return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         children: [
           Row(
             children: [
-              Text('🧭', style: TextStyle(fontSize: 20)),
+              Text('🧭', style: const TextStyle(fontSize: 24)),
               const SizedBox(width: TossTheme.spacingS),
               Text(
                 '길방향',
-                style: TossTheme.body1.copyWith(
+                style: TossTheme.heading3.copyWith(
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
+                  color: TossTheme.textBlack,
                 ),
               ),
             ],
@@ -407,14 +431,16 @@ class _MovingResultTossState extends State<MovingResultToss> {
 
   Widget _buildSummaryCard() {
     return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '이사 정보',
-            style: TossTheme.body1.copyWith(
+            style: TossTheme.heading3.copyWith(
+              fontSize: 20,
               fontWeight: FontWeight.w700,
+              color: TossTheme.textBlack,
             ),
           ),
           

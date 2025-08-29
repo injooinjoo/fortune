@@ -8,7 +8,7 @@ import '../../../../services/fortune_history_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/app_header.dart';
 import '../widgets/moving_step_indicator.dart';
-import '../widgets/moving_input_step1.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../widgets/moving_input_step2.dart';
 import '../widgets/moving_input_step3.dart';
 import '../widgets/moving_result_toss.dart';
@@ -26,15 +26,13 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   bool _isLoading = false;
 
   // 사용자 입력 데이터
-  String _name = '';
-  DateTime? _birthDate;
   String _currentArea = '';
   String _targetArea = '';
   String _movingPeriod = '';
   String _purpose = '';
 
   void _nextStep() {
-    if (_currentStep < 3) {
+    if (_currentStep < 2) {
       setState(() {
         _currentStep++;
       });
@@ -49,15 +47,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
     }
   }
 
-  void _onStep1Complete(String name, DateTime birthDate) {
-    setState(() {
-      _name = name;
-      _birthDate = birthDate;
-    });
-    _nextStep();
-  }
-
-  void _onStep2Complete(String currentArea, String targetArea, String period) {
+  void _onStep1Complete(String currentArea, String targetArea, String period) {
     setState(() {
       _currentArea = currentArea;
       _targetArea = targetArea;
@@ -66,7 +56,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
     _nextStep();
   }
 
-  void _onStep3Complete(String purpose) {
+  void _onStep2Complete(String purpose) {
     setState(() {
       _purpose = purpose;
       _isLoading = true;
@@ -89,20 +79,23 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   /// 이사운 결과를 히스토리에 저장
   Future<void> _saveMovingFortuneResult() async {
     try {
+      final userProfile = ref.read(userProfileProvider).value;
+      final userName = userProfile?.name ?? '사용자';
+      
       // 임시 점수 생성 (실제로는 운세 API에서 받을 값)
       final score = 65 + (DateTime.now().millisecond % 30);
       
       final summary = {
         'score': score,
-        'content': '${_name}님의 이사운을 분석한 결과입니다.',
+        'content': '${userName}님의 이사운을 분석한 결과입니다.',
         'advice': _getMainAdvice(),
         'luckyDirection': _getLuckyDirection(),
         'luckyDates': _getLuckyDates().map((d) => d.toIso8601String()).toList(),
       };
 
       final metadata = {
-        'name': _name,
-        'birthDate': _birthDate?.toIso8601String(),
+        'name': userName,
+        'birthDate': userProfile?.birthDate?.toIso8601String(),
         'currentArea': _currentArea,
         'targetArea': _targetArea,
         'movingPeriod': _movingPeriod,
@@ -113,7 +106,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
 
       await FortuneHistoryService().saveFortuneResult(
         fortuneType: 'moving',
-        title: '${_name}님의 이사운',
+        title: '${userName}님의 이사운',
         summary: summary,
         metadata: metadata,
         tags: tags,
@@ -161,7 +154,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TossTheme.backgroundWhite,
-      appBar: _currentStep < 3
+      appBar: _currentStep < 2
           ? AppBar(
               backgroundColor: TossTheme.backgroundWhite,
               elevation: 0,
@@ -176,7 +169,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
                     ),
               title: MovingStepIndicator(
                 currentStep: _currentStep,
-                totalSteps: 3,
+                totalSteps: 2,
               ),
               centerTitle: true,
             )
@@ -198,23 +191,21 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   }
 
   Widget _buildCurrentStep() {
+    final userProfile = ref.watch(userProfileProvider).value;
+    
     switch (_currentStep) {
       case 0:
-        return MovingInputStep1(
+        return MovingInputStep2(
           onComplete: _onStep1Complete,
         );
       case 1:
-        return MovingInputStep2(
+        return MovingInputStep3(
           onComplete: _onStep2Complete,
         );
       case 2:
-        return MovingInputStep3(
-          onComplete: _onStep3Complete,
-        );
-      case 3:
         return MovingResultToss(
-          name: _name,
-          birthDate: _birthDate!,
+          name: userProfile?.name ?? '사용자',
+          birthDate: userProfile?.birthDate ?? DateTime.now(),
           currentArea: _currentArea,
           targetArea: _targetArea,
           movingPeriod: _movingPeriod,
@@ -223,8 +214,6 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
             setState(() {
               _currentStep = 0;
               // 모든 데이터 초기화
-              _name = '';
-              _birthDate = null;
               _currentArea = '';
               _targetArea = '';
               _movingPeriod = '';
@@ -233,7 +222,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
           },
         );
       default:
-        return MovingInputStep1(
+        return MovingInputStep2(
           onComplete: _onStep1Complete,
         );
     }

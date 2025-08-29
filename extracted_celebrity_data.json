@@ -1,0 +1,50 @@
+[
+  {
+    "name": "이재용",
+    "birth_date": "1968-06-23",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시",
+    "agency": "삼성전자",
+    "category": "",
+    "raw_data": {
+      "wiki_text_length": 93
+    }
+  },
+  {
+    "name": "임영웅",
+    "birth_date": "1991-06-16",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "경상북도 포항시",
+    "agency": "물고기뮤직",
+    "category": "",
+    "raw_data": {
+      "wiki_text_length": 96
+    }
+  },
+  {
+    "name": "이정재",
+    "birth_date": "1973-03-15",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시",
+    "agency": "아티스트컴퍼니",
+    "category": "",
+    "raw_data": {
+      "wiki_text_length": 95
+    }
+  },
+  {
+    "name": "유재석",
+    "birth_date": "1972-08-14",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시 강북구",
+    "agency": "FNC엔터테인먼트",
+    "category": "",
+    "raw_data": {
+      "wiki_text_length": 102
+    }
+  }
+]

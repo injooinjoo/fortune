@@ -1,0 +1,120 @@
+{
+  "title": "Korean Celebrity Master List",
+  "description": "한국의 유명인들을 카테고리별로 정리한 마스터 목록",
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-18",
+  "totalCelebrities": 400,
+  "categories": {
+    "singer": {
+      "displayName": "가수",
+      "count": 100,
+      "file": "singers.json",
+      "subcategories": ["솔로 가수", "아이돌 그룹", "힙합/래퍼", "발라드", "트로트", "록/밴드", "인디"]
+    },
+    "actor": {
+      "displayName": "배우",
+      "count": 100,
+      "file": "actors.json",
+      "subcategories": ["영화배우", "드라마배우", "뮤지컬배우", "성우", "아역배우"]
+    },
+    "streamer_youtuber": {
+      "displayName": "스트리머&유튜버",
+      "count": 100,
+      "file": "streamers_youtubers.json",
+      "subcategories": ["트위치 스트리머", "아프리카TV BJ", "치지직 스트리머", "엔터테인먼트 유튜버", "게임 유튜버", "먹방 유튜버", "교육 유튜버", "키즈 콘텐츠 유튜버"]
+    },
+    "politician": {
+      "displayName": "정치인",
+      "count": 50,
+      "file": "politicians.json",
+      "subcategories": ["대통령", "전직대통령", "당대표", "장관", "국회의원", "원내대표", "시도지사", "시장"]
+    },
+    "business": {
+      "displayName": "기업인",
+      "count": 50,
+      "file": "business_leaders.json",
+      "subcategories": ["대기업 CEO", "IT기업 CEO", "스타트업 CEO", "게임기업 CEO", "핀테크 CEO", "투자자", "바이오 CEO"]
+    },
+    "comedian_athlete": {
+      "displayName": "코미디언&운동선수",
+      "count": 100,
+      "file": "comedians_athletes.json",
+      "subcategories": ["개그맨", "개그우먼", "스탠드업 코미디언", "축구선수", "야구선수", "골프선수", "배구선수", "배드민턴선수", "피겨스케이팅선수"]
+    }
+  },
+  "popularityRanking": [
+    {
+      "rank": 1,
+      "name": "BTS",
+      "category": "singer",
+      "searchVolume": 3000000
+    },
+    {
+      "rank": 2,
+      "name": "손흥민",
+      "category": "comedian_athlete",
+      "searchVolume": 3000000
+    },
+    {
+      "rank": 3,
+      "name": "쯔양",
+      "category": "streamer_youtuber",
+      "searchVolume": 2500000
+    },
+    {
+      "rank": 4,
+      "name": "블랙핑크",
+      "category": "singer",
+      "searchVolume": 2500000
+    },
+    {
+      "rank": 5,
+      "name": "아이유",
+      "category": "singer",
+      "searchVolume": 2000000
+    },
+    {
+      "rank": 6,
+      "name": "우왁굳",
+      "category": "streamer_youtuber",
+      "searchVolume": 2000000
+    },
+    {
+      "rank": 7,
+      "name": "유재석",
+      "category": "comedian_athlete",
+      "searchVolume": 2000000
+    },
+    {
+      "rank": 8,
+      "name": "윤석열",
+      "category": "politician",
+      "searchVolume": 2000000
+    },
+    {
+      "rank": 9,
+      "name": "임영웅",
+      "category": "singer",
+      "searchVolume": 1800000
+    },
+    {
+      "rank": 10,
+      "name": "침착맨",
+      "category": "streamer_youtuber",
+      "searchVolume": 1800000
+    }
+  ],
+  "crawlingStatus": {
+    "totalTargets": 400,
+    "crawledCount": 0,
+    "crawlingPercentage": 0.0,
+    "estimatedCrawlingTime": "약 7시간 (1초 간격으로 크롤링 시)"
+  },
+  "metadata": {
+    "createdBy": "Claude Code SuperClaude",
+    "purpose": "나무위키 크롤링을 위한 기초 데이터",
+    "dataSource": "인기도 및 검색량 기반 수동 선별",
+    "updateFrequency": "월 1회",
+    "nextUpdate": "2025-01-18"
+  }
+}

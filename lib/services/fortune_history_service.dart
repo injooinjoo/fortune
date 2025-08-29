@@ -9,19 +9,25 @@ class FortuneHistoryService {
   factory FortuneHistoryService() => _instance;
   FortuneHistoryService._internal();
 
-  static const String _tableName = 'fortune_results';
+  static const String _tableName = 'fortune_history';
   final _supabase = Supabase.instance.client;
   final _uuid = const Uuid();
+  
+  // 중복 호출 방지를 위한 캐시
+  List<int>? _cachedDailyScores;
+  DateTime? _lastCacheTime;
+  static const Duration _cacheValidDuration = Duration(minutes: 5);
 
   /// 운세 결과를 히스토리에 저장
   Future<String?> saveFortuneResult({
     required String fortuneType,
     required String title,
     required Map<String, dynamic> summary,
+    required Map<String, dynamic> fortuneData, // 전체 운세 데이터 추가
     Map<String, dynamic>? metadata,
-    Map<String, dynamic>? detailedResult,
     List<String>? tags,
     String? mood,
+    int? score, // 점수 추가
   }) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
@@ -33,31 +39,33 @@ class FortuneHistoryService {
       final fortuneId = _uuid.v4();
       final now = DateTime.now();
 
-      final fortuneHistory = FortuneHistory(
-        id: fortuneId,
-        userId: userId,
-        fortuneType: fortuneType,
-        title: title,
-        summary: summary,
-        createdAt: now,
-        metadata: metadata,
-        detailedResult: detailedResult,
-        tags: tags ?? _generateTags(fortuneType, summary),
-        viewCount: 1,
-        isShared: false,
-        lastViewedAt: now,
-        mood: mood,
-      );
+      // 새로운 테이블 구조에 맞게 데이터 구성
+      final historyData = {
+        'id': fortuneId,
+        'user_id': userId,
+        'fortune_type': fortuneType,
+        'title': title,
+        'summary': summary,
+        'fortune_data': fortuneData, // 전체 운세 데이터
+        'score': score ?? summary['score'], // 점수
+        'created_at': now.toIso8601String(),
+        'metadata': metadata,
+        'tags': tags ?? _generateTags(fortuneType, summary),
+        'view_count': 1,
+        'is_shared': false,
+        'last_viewed_at': now.toIso8601String(),
+        'mood': mood,
+      };
 
       await _supabase
         .from(_tableName)
-        .insert(fortuneHistory.toJson());
+        .insert(historyData);
 
-      Logger.info('[FortuneHistoryService] Fortune saved: $fortuneType ($fortuneId)');
+      Logger.info('[FortuneHistoryService] Fortune saved to history: $fortuneType ($fortuneId)');
       return fortuneId;
 
     } catch (error, stackTrace) {
-      Logger.error('[FortuneHistoryService] Failed to save fortune',
+      Logger.error('[FortuneHistoryService] Failed to save fortune to history',
           error, stackTrace);
       return null;
     }
@@ -316,6 +324,58 @@ class FortuneHistoryService {
     } catch (error) {
       Logger.error('[FortuneHistoryService] Failed to delete fortune: $error');
       return false;
+    }
+  }
+
+  /// 최근 7일간 일별 운세 점수 가져오기 (그래프용)
+  Future<List<int>> getLast7DaysDailyScores() async {
+    // 캐시된 데이터가 있고 유효하면 반환
+    final now = DateTime.now();
+    if (_cachedDailyScores != null && _lastCacheTime != null) {
+      if (now.difference(_lastCacheTime!).compareTo(_cacheValidDuration) < 0) {
+        Logger.info('[FortuneHistoryService] Using cached 7 days scores: $_cachedDailyScores');
+        return _cachedDailyScores!;
+      }
+    }
+    
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        _cachedDailyScores = List.filled(7, 0);
+        _lastCacheTime = now;
+        return _cachedDailyScores!;
+      }
+
+      // 새로운 함수를 사용하여 7일간 점수 조회
+      final response = await _supabase.rpc('get_last_7_days_scores', params: {
+        'target_user_id': userId,
+      });
+
+      List<int> scores = List.filled(7, 0);
+      
+      if (response is List && response.isNotEmpty) {
+        for (final item in response) {
+          final dayOffset = item['day_offset'] as int?;
+          final score = item['score'] as int?;
+          
+          if (dayOffset != null && dayOffset >= 0 && dayOffset < 7 && score != null) {
+            scores[dayOffset] = score;
+          }
+        }
+      }
+      
+      // 캐시에 저장
+      _cachedDailyScores = scores;
+      _lastCacheTime = now;
+      
+      Logger.info('[FortuneHistoryService] Retrieved 7 days scores from history DB: $scores');
+      return scores;
+
+    } catch (error, stackTrace) {
+      Logger.error('[FortuneHistoryService] Failed to get 7 days scores from history', error, stackTrace);
+      _cachedDailyScores = List.filled(7, 0);
+      _lastCacheTime = now;
+      return _cachedDailyScores!;
     }
   }
 }

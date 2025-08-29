@@ -220,7 +220,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 4,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.8,
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
           children: _mbtiTypes.map((mbti) {

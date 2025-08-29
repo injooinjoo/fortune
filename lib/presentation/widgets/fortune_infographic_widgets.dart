@@ -138,7 +138,7 @@ class FortuneInfographicWidgets {
   /// 토스 스타일 5각형 레이더 차트 (총운 중심)
   static Widget buildTossStyleRadarChart({
     required Map<String, int> categories,
-    double size = 220,
+    double size = 300, // 사이즈 증가
   }) {
     // 기본 5개 카테고리: 총운, 재물운, 연애운, 건강운, 학업운
     final categoryOrder = ['총운', '학업운', '재물운', '연애운', '건강운'];
@@ -146,8 +146,8 @@ class FortuneInfographicWidgets {
     
     return Container(
       width: size,
-      height: size,
-      padding: const EdgeInsets.all(24),
+      height: size + 30, // 높이 더 증가로 텍스트 잘림 방지
+      padding: const EdgeInsets.all(30), // 패딩 더 증가
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -160,7 +160,7 @@ class FortuneInfographicWidgets {
         children: [
           // 토스 스타일 5각형 차트 (더 연한 색상)
           Container(
-            padding: const EdgeInsets.all(40),
+            padding: const EdgeInsets.all(35), // 패딩 조정
             child: RadarChart(
               RadarChartData(
                 radarTouchData: RadarTouchData(enabled: false),
@@ -176,7 +176,7 @@ class FortuneInfographicWidgets {
                 radarBackgroundColor: Colors.transparent,
                 borderData: FlBorderData(show: false),
                 radarBorderData: const BorderSide(color: Colors.transparent),
-                titlePositionPercentageOffset: 0.15,
+                titlePositionPercentageOffset: 0.15, // 텍스트를 차트에서 더 멀리
                 titleTextStyle: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12,
@@ -200,33 +200,46 @@ class FortuneInfographicWidgets {
             ),
           ),
           
-          // 각 카테고리 점수 표시 (토스 스타일)
+          // 각 카테고리 점수 표시 (토스 스타일) - 텍스트 직하단 위치
           ...categoryOrder.asMap().entries.map((entry) {
             final index = entry.key;
             final category = entry.value;
             final score = categories[category] ?? 70;
             
+            // 텍스트 위치를 기준으로 점수 위치 계산
+            final chartCenter = size * 0.5;
+            final textRadius = size * 0.42; // 텍스트 위치 반지름
+            final angleRadians = (index * 2 * math.pi / 5) - math.pi / 2;
+            final scoreCircleRadius = 12.0; // 점수 원 반지름 축소
+            
+            // 텍스트 바로 아래에 점수 위치 계산
+            final textX = chartCenter + textRadius * math.cos(angleRadians);
+            final textY = chartCenter + textRadius * math.sin(angleRadians);
+            
             return Positioned(
-              left: size * 0.5 + (size * 0.35) * math.cos((index * 2 * math.pi / 5) - math.pi / 2) - 12,
-              top: size * 0.5 + (size * 0.35) * math.sin((index * 2 * math.pi / 5) - math.pi / 2) - 12,
+              left: textX - scoreCircleRadius,
+              top: textY + 12, // 텍스트 바로 아래 12px 간격
               child: Container(
-                width: 24,
-                height: 24,
+                width: scoreCircleRadius * 2,
+                height: scoreCircleRadius * 2,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFF4ECDC4),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFF2F4F6),
-                    width: 1,
-                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Text(
                     '$score',
                     style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -308,144 +321,130 @@ class FortuneInfographicWidgets {
       .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOut);
   }
 
-  /// 5대 카테고리 점수 카드 (토스 스타일)
+  /// 5대 카테고리 점수 카드 (토스 스타일) - 미니멀 디자인
   static Widget buildCategoryCards(Map<String, dynamic>? categories, {bool isDarkMode = true}) {
     if (categories == null) return const SizedBox.shrink();
     
     final categoryList = [
-      {'key': 'love', 'title': '연애운', 'icon': Icons.favorite_rounded},
-      {'key': 'money', 'title': '재물운', 'icon': Icons.monetization_on_rounded},
-      {'key': 'work', 'title': '직업운', 'icon': Icons.work_rounded},
-      {'key': 'health', 'title': '건강운', 'icon': Icons.health_and_safety_rounded},
-      {'key': 'social', 'title': '사교운', 'icon': Icons.people_rounded},
+      {'key': 'total', 'title': '총운', 'icon': Icons.star_outline},
+      {'key': 'love', 'title': '연애운', 'icon': Icons.favorite_outline},
+      {'key': 'money', 'title': '재물운', 'icon': Icons.monetization_on_outlined},
+      {'key': 'work', 'title': '직장운', 'icon': Icons.work_outline},
+      {'key': 'health', 'title': '건강운', 'icon': Icons.health_and_safety_outlined},
     ];
     
-    return GridView.builder(
+    return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(4),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.3,
-      ),
+      padding: EdgeInsets.zero,
       itemCount: categoryList.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final category = categoryList[index];
         final categoryData = categories[category['key']] as Map<String, dynamic>?;
         final score = categoryData?['score'] ?? 0;
-        final short = categoryData?['short'] ?? '';
-        final advice = categoryData?['advice'] ?? '';
-        final isHighScore = score >= 80;
         
-        return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.gray200,
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.gray100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      category['icon'] as IconData,
-                      color: AppColors.gray600,
-                      size: 20,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '$score',
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: isHighScore ? AppColors.tossBlue : AppColors.gray100,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          _getScoreGrade(score),
-                          style: TextStyle(
-                            color: isHighScore ? Colors.white : AppColors.gray600,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                category['title'] as String,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              if (short.isNotEmpty) ...[
-                Text(
-                  short,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                    height: 1.3,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-              if (advice.isNotEmpty && short.isEmpty) ...[
-                Text(
-                  advice,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 11,
-                    height: 1.3,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ],
-          ),
-        ).animate()
-          .fadeIn(delay: Duration(milliseconds: 120 * index))
-          .slideY(begin: 0.3, curve: Curves.easeOutBack);
+        return _buildTossStyleCategoryCard(category, score, index);
       },
     );
+  }
+
+  static Widget _buildTossStyleCategoryCard(Map<String, dynamic> category, int score, int index) {
+    // 토스 스타일 점수별 색상
+    Color scoreColor;
+    Color backgroundColor = Colors.white;
+    
+    if (score >= 90) {
+      scoreColor = const Color(0xFF0066FF); // 토스 블루
+    } else if (score >= 80) {
+      scoreColor = const Color(0xFF10B981); // 성공 그린
+    } else if (score >= 70) {
+      scoreColor = const Color(0xFF000000); // 일반 블랙
+    } else if (score >= 60) {
+      scoreColor = const Color(0xFFF59E0B); // 경고 오렌지
+    } else {
+      scoreColor = const Color(0xFFEF4444); // 에러 레드
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFEEEEEE),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // 아이콘
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              category['icon'] as IconData,
+              color: const Color(0xFF666666),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          
+          // 카테고리 정보
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  category['title'] as String,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF000000),
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _getScoreGrade(score),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: scoreColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // 점수
+          Text(
+            '$score',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: scoreColor,
+              height: 1.0,
+            ),
+          ),
+          
+          Text(
+            '점',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: scoreColor.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
+    ).animate()
+      .fadeIn(delay: Duration(milliseconds: 100 * index))
+      .slideX(begin: 0.2, curve: Curves.easeOut);
   }
 
   /// 추천 활동 번호 매김 리스트 (토스 스타일)
@@ -683,10 +682,13 @@ class FortuneInfographicWidgets {
   static Widget buildWeatherFortune(Map<String, dynamic>? weather, int? score) {
     if (weather == null || score == null) return const SizedBox.shrink();
     
-    final icon = weather['icon'] ?? '☀';
-    final condition = weather['condition'] ?? '맑음';
-    final tempHigh = weather['temp_high'] ?? 25;
-    final tempLow = weather['temp_low'] ?? 18;
+    // 다양한 데이터 구조를 지원
+    final weatherData = weather['weather'] ?? weather; // 중첩된 구조 지원
+    
+    final icon = weatherData['icon'] ?? weatherData['weather_icon'] ?? '☀';
+    final condition = weatherData['condition'] ?? weatherData['weather_condition'] ?? '맑음';
+    final tempHigh = weatherData['temp_high'] ?? weatherData['high_temp'] ?? weatherData['temperature'] ?? 25;
+    final tempLow = weatherData['temp_low'] ?? weatherData['low_temp'] ?? weatherData['min_temp'] ?? 18;
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -919,17 +921,19 @@ class FortuneInfographicWidgets {
   /// 토스 스타일 일별 운세 곡선 그래프
   static Widget buildTossStyleWeeklyChart({
     List<int>? dailyScores, // 7일간 점수
-    int? todayIndex = 2, // 오늘의 인덱스 (기본값: 중간)
-    double height = 120,
+    int? todayIndex, // 오늘의 인덱스 (자동 계산)
+    int? currentScore, // 현재 점수 (메인 스코어와 동일하게 사용)
+    double height = 160, // 높이 증가
   }) {
-    // 기본값으로 일주일간 데이터 생성
-    final scores = dailyScores ?? [75, 82, 85, 88, 79, 84, 77];
-    final today = todayIndex ?? 2;
-    final weekdays = ['그제', '어제', '오늘', '내일', '모레'];
+    // 실제 DB 데이터 사용 (dailyScores가 null이면 빈 배열)
+    final scores = dailyScores ?? [];
+    final today = todayIndex ?? (scores.length - 1); // 오늘은 마지막 인덱스
+    final todayScore = currentScore ?? (scores.isNotEmpty ? scores.last : 75); // 오늘의 총점수
+    final weekdays = ['6일전', '5일전', '4일전', '3일전', '2일전', '어제', '오늘']; // 7일 데이터
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      height: height + 60,
+      height: height + 90, // 총점수 표시 공간 추가
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -942,13 +946,18 @@ class FortuneInfographicWidgets {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '일별 운세',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                '일별 운세',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -965,7 +974,8 @@ class FortuneInfographicWidgets {
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
-                        if (index >= 0 && index < weekdays.length) {
+                        // 안전한 인덱스 범위 체크
+                        if (index >= 0 && index < weekdays.length && index < scores.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
@@ -990,12 +1000,15 @@ class FortuneInfographicWidgets {
                 ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
-                maxX: (scores.length - 1).toDouble(),
-                minY: 60,
-                maxY: 100,
+                maxX: math.min(scores.length - 1, weekdays.length - 1).toDouble(),
+                minY: math.max(0, scores.reduce(math.min) - 10).toDouble(),
+                maxY: math.min(100, scores.reduce(math.max) + 10).toDouble(),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: scores.asMap().entries.map((entry) {
+                    spots: scores.asMap().entries.where((entry) {
+                      // 유효한 인덱스만 사용
+                      return entry.key >= 0 && entry.key < weekdays.length;
+                    }).map((entry) {
                       return FlSpot(entry.key.toDouble(), entry.value.toDouble());
                     }).toList(),
                     isCurved: true,
@@ -1039,7 +1052,7 @@ class FortuneInfographicWidgets {
               ),
             ),
           ),
-          // 오늘 점수 강조 표시
+          // 오늘 점수 강조 표시 (실제 API 점수 사용)
           Container(
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -1048,7 +1061,7 @@ class FortuneInfographicWidgets {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              '오늘 ${scores[today]}점',
+              '${weekdays[today]} ${todayScore}점',
               style: const TextStyle(
                 color: Color(0xFF4ECDC4),
                 fontSize: 14,
@@ -1895,6 +1908,7 @@ class FortuneInfographicWidgets {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TabBar(
+                    isScrollable: false, // 균등 분할을 위해 추가
                     indicator: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(6),
@@ -1918,6 +1932,7 @@ class FortuneInfographicWidgets {
                       fontWeight: FontWeight.w400,
                     ),
                     dividerHeight: 0,
+                    tabAlignment: TabAlignment.fill, // 탭을 균등하게 채움
                     tabs: const [
                       Tab(text: '띠'),
                       Tab(text: '별자리'),
@@ -2158,9 +2173,12 @@ class FortuneInfographicWidgets {
     required String label,
     VoidCallback? onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),
@@ -2200,7 +2218,7 @@ class FortuneInfographicWidgets {
           ],
         ),
       ),
-    );
+    ));
   }
 
   /// 토스 스타일 액션 버튼들 (공유하기, 저장하기, 다시보기, 다른운세보기)
@@ -2247,9 +2265,12 @@ class FortuneInfographicWidgets {
     required String label,
     VoidCallback? onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2271,6 +2292,6 @@ class FortuneInfographicWidgets {
           ],
         ),
       ),
-    );
+    ));
   }
 }

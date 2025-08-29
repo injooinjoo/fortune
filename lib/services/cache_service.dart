@@ -7,7 +7,7 @@ import '../screens/home/fortune_story_viewer.dart';
 
 class CacheService {
   static const Map<String, int> _cacheDuration = {
-    'daily': 24,
+    'daily': 168, // 7일간 보존 (24 * 7 = 168시간)
     'hourly': 1,
     'weekly': 168,
     'monthly': 720,

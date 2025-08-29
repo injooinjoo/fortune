@@ -413,13 +413,92 @@ ${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
   }
 })
 
-// 기본 스토리 생성 함수
+// 기본 스토리 생성 함수 (동적)
 function createDefaultStory(userName: string, fortune: any, userProfile: any, weather: any) {
   const score = fortune?.score || 75
   const now = new Date()
   
+  // 날짜 기반 시드 생성
+  const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate()
+  const userSeed = (userName || 'anonymous').split('').reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  const combinedSeed = dateSeed + userSeed
+  
+  // 시드를 기반으로 한 난수 생성 함수
+  const seededRandom = (seed: number) => {
+    const x = Math.sin(seed) * 10000
+    return x - Math.floor(x)
+  }
+  
   // Ensure we use the actual name, not '사용자'
   const displayName = (userName && userName !== '사용자') ? `${userName}님` : '오늘의 주인공'
+  
+  // 동적 에너지 메시지
+  const energyMessages = score >= 80 
+    ? ['특별한 에너지가\n넘치는 날', '빛나는 기운이\n함께하는 날', '모든 일이 순조로운\n행운의 날']
+    : score >= 60 
+    ? ['차분하고 안정적인\n하루', '균형잡힌\n평온한 하루', '꾸준함이 빛나는\n의미있는 하루']
+    : ['천천히 가도\n괜찮은 날', '마음의 여유가\n필요한 날', '휴식과 재충전의\n소중한 시간']
+    
+  const energyIndex = Math.floor(seededRandom(combinedSeed) * energyMessages.length)
+  
+  // 동적 기회 메시지
+  const opportunityMessages = [
+    '오늘 당신에게는\n새로운 기회가\n찾아올 것입니다',
+    '예상치 못한\n좋은 소식이\n들려올 수 있습니다',
+    '소중한 인연이\n당신을 기다리고\n있을지도 모릅니다',
+    '평소 관심있던 일에\n진전이 있을\n수 있습니다'
+  ]
+  const oppIndex = Math.floor(seededRandom(combinedSeed * 2) * opportunityMessages.length)
+  
+  // 동적 아침 메시지
+  const morningMessages = [
+    '아침에는\n맑은 정신으로\n하루를 시작하세요',
+    '새벽의 고요함 속에서\n내면의 평화를\n찾아보세요',
+    '아침 햇살처럼\n밝은 마음으로\n시작하시길'
+  ]
+  const morningIndex = Math.floor(seededRandom(combinedSeed * 3) * morningMessages.length)
+  
+  // 동적 오후 메시지
+  const afternoonMessages = [
+    '오후에는\n중요한 결정을\n내릴 수 있습니다',
+    '점심 이후\n활발한 소통이\n기다리고 있습니다',
+    '오후 시간에\n창의적 영감이\n떠오를 것입니다'
+  ]
+  const afternoonIndex = Math.floor(seededRandom(combinedSeed * 4) * afternoonMessages.length)
+  
+  // 동적 주의사항
+  const cautionMessages = [
+    '급하게 서두르지 말고\n신중하게 행동하세요',
+    '감정적인 결정보다는\n이성적 판단을\n우선하세요',
+    '완벽을 추구하기보다\n최선을 다하는\n마음가짐이 중요합니다'
+  ]
+  const cautionIndex = Math.floor(seededRandom(combinedSeed * 5) * cautionMessages.length)
+  
+  // 동적 의미 메시지
+  const meaningMessages = [
+    '오늘은 작은 것에서\n큰 의미를 발견하는\n특별한 하루입니다',
+    '평범한 순간들이\n특별한 기억으로\n남을 것입니다',
+    '당신의 따뜻한 마음이\n주변에 좋은 영향을\n미칠 것입니다'
+  ]
+  const meaningIndex = Math.floor(seededRandom(combinedSeed * 6) * meaningMessages.length)
+  
+  // 동적 마무리 메시지
+  const closingMessages = [
+    '좋은 하루 되세요',
+    '행복한 하루 보내세요',
+    '의미있는 하루가 되길',
+    '평안한 하루 되시길'
+  ]
+  const closingIndex = Math.floor(seededRandom(combinedSeed * 7) * closingMessages.length)
+  
+  // 운세 데이터에서 실제 정보 추출
+  const luckyColor = fortune?.advice?.includes('색') ? 
+    fortune.advice.match(/(빨간색|주황색|노란색|초록색|파란색|남색|보라색|하늘색|분홍색|검은색|흰색|회색)/)?.[0] || '하늘색'
+    : fortune?.luckyColor || '하늘색'
+    
+  const luckyNumber = fortune?.content?.match(/\d+/)?.[0] || 
+    fortune?.luckyNumber || 
+    String(Math.floor(seededRandom(combinedSeed * 8) * 9) + 1)
   
   return [
     {
@@ -433,44 +512,42 @@ function createDefaultStory(userName: string, fortune: any, userProfile: any, we
       fontWeight: 300
     },
     {
-      text: score >= 80 ? '특별한 에너지가\n넘치는 날' : 
-            score >= 60 ? '차분하고 안정적인\n하루' : 
-            '천천히 가도\n괜찮은 날',
+      text: energyMessages[energyIndex],
       fontSize: 26,
       fontWeight: 300
     },
     {
-      text: '오늘 당신에게는\n새로운 기회가\n찾아올 것입니다',
+      text: opportunityMessages[oppIndex],
       fontSize: 24,
       fontWeight: 300
     },
     {
-      text: '아침에는\n맑은 정신으로\n하루를 시작하세요',
+      text: morningMessages[morningIndex],
       fontSize: 24,
       fontWeight: 300
     },
     {
-      text: '오후에는\n중요한 결정을\n내릴 수 있습니다',
+      text: afternoonMessages[afternoonIndex],
       fontSize: 24,
       fontWeight: 300
     },
     {
-      text: '급하게 서두르지 말고\n신중하게 행동하세요',
+      text: cautionMessages[cautionIndex],
       fontSize: 22,
       fontWeight: 300
     },
     {
-      text: `행운의 색: ${fortune?.luckyColor || '하늘색'}\n행운의 숫자: ${fortune?.luckyNumber || '7'}`,
+      text: `행운의 색: ${luckyColor}\n행운의 숫자: ${luckyNumber}`,
       fontSize: 24,
       fontWeight: 300
     },
     {
-      text: '오늘은 작은 것에서\n큰 의미를 발견하는\n특별한 하루입니다',
+      text: meaningMessages[meaningIndex],
       fontSize: 24,
       fontWeight: 300
     },
     {
-      text: '좋은 하루 되세요',
+      text: closingMessages[closingIndex],
       fontSize: 28,
       fontWeight: 300
     }

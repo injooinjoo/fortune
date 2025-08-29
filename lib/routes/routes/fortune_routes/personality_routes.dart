@@ -4,6 +4,7 @@ import '../../../features/fortune/presentation/pages/personality_fortune_unified
 import '../../../features/fortune/presentation/pages/birth_season_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/birthdate_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
+import '../../../features/fortune/presentation/pages/celebrity_fortune_page_v2.dart';
 import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lifestyle_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/personality_dna_page.dart';
@@ -34,6 +35,11 @@ final personalityRoutes = [
     name: 'fortune-birthdate',
     builder: (context, state) => const BirthdateFortunePage()),
   
+  // Celebrity Fortune (New Saju-based)
+  GoRoute(
+    path: '/celebrity-saju',
+    name: 'fortune-celebrity-saju',
+    builder: (context, state) => const CelebrityFortunePageV2()),
   
   // Same Birthday Celebrity
   GoRoute(

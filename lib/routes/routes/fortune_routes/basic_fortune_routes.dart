@@ -21,8 +21,7 @@ final basicFortuneRoutes = [
     name: 'fortune-saju',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
-      return SajuPage(
-        initialParams: extra);
+      return const SajuPage();
     }),
   
   // Zodiac

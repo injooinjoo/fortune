@@ -21,6 +21,7 @@ import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../data/models/fortune_card_score.dart';
 import '../widgets/lucky_items_bottom_sheet.dart';
 import '../widgets/talent_fortune_bottom_sheet.dart';
+import '../widgets/wish_input_bottom_sheet.dart';
 
 class FortuneCategory {
   final String title;
@@ -837,8 +838,19 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         onDismiss: () {},
       );
     } else if (category.type == 'personality-dna') {
-      // PersonalityDNA는 소개 페이지로 직접 이동
-      context.push('/personality-dna');
+      // PersonalityDNA는 바로 BottomSheet 표시
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        useRootNavigator: true, // 네비게이션 바 숨김
+        builder: (context) => PersonalityDNABottomSheet(
+          onResult: (personalityDNA) {
+            // 결과 페이지로 이동
+            context.push('/personality-dna', extra: personalityDNA);
+          },
+        ),
+      );
     } else if (category.type == 'tarot') {
       context.push('/tarot');
     } else if (category.type == 'lucky_items') {
@@ -847,6 +859,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     } else if (category.type == 'talent') {
       // 재능 발견은 전용 Bottom Sheet로 처리
       TalentFortuneBottomSheet.show(context);
+    } else if (category.type == 'wish') {
+      // 소원빌기는 바로 BottomSheet 표시
+      WishInputBottomSheet.show(
+        context,
+        onWishSubmitted: (wishText, category, urgency) {
+          // 소원 입력 후 결과 페이지로 이동
+          context.push('/wish');
+        },
+      );
     } else {
       // Record visit for recommendation system
       ref.read(fortuneRecommendationProvider.notifier).recordVisit(

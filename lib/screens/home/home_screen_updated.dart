@@ -433,13 +433,6 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
         'colors': [FortuneColors.spiritualPrimary, FortuneColors.spiritualPrimary]
       },
       {
-        'icon': Icons.auto_awesome,
-        'title': '프리미엄',
-        'desc': '만화로 보는 사주',
-        'route': '/premium',
-        'colors': [AppColors.primary, AppColors.primary]
-      },
-      {
         'icon': Icons.apps,
         'title': '전체 운세',
         'desc': '모든 운세 보기',

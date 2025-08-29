@@ -1,273 +1,336 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'base_fortune_page.dart';
-import '../widgets/fortune_display.dart';
+import 'package:intl/intl.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/toss_button.dart';
+import '../../../../core/theme/toss_theme.dart';
+import '../../../../shared/components/app_header.dart';
 import '../../../../services/saju_calculation_service.dart';
-import '../../../../domain/entities/fortune.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/glassmorphism/glass_effects.dart';
-import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 
-class SajuPage extends BaseFortunePage {
-  const SajuPage({
-    Key? key,
-    Map<String, dynamic>? initialParams,
-  }) : super(
-          key: key,
-          title: '사주팔자',
-          description: '당신의 사주팔자를 통해 타고난 운명을 확인해보세요',
-          fortuneType: 'saju',
-          requiresUserInfo: false,
-          initialParams: initialParams,
-        );
+/// 토스 스타일 사주팔자 페이지
+class SajuPage extends ConsumerStatefulWidget {
+  const SajuPage({super.key});
 
   @override
   ConsumerState<SajuPage> createState() => _SajuPageState();
 }
 
-class _SajuPageState extends BaseFortunePageState<SajuPage> {
+class _SajuPageState extends ConsumerState<SajuPage> {
   Map<String, dynamic>? _sajuData;
-  Map<String, dynamic>? _calculatedSaju;
-  Fortune? _fortune;
-  late AnimationController _animationController;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
+    _loadSajuData();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = ref.read(userProvider).value;
-    if (user == null) {
-      throw Exception('로그인이 필요합니다');
+  Future<void> _loadSajuData() async {
+    final userProfile = ref.read(userProfileProvider).value;
+    if (userProfile?.birthDate != null) {
+      setState(() {
+        _sajuData = SajuCalculationService.calculateSaju(
+          birthDate: userProfile!.birthDate!,
+          birthTime: userProfile.birthTime,
+        );
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
     }
-
-    // Use actual API call
-    final fortuneService = ref.read(fortuneServiceProvider);
-    final birthDate = user.userMetadata?['birthDate'] != null 
-        ? DateTime.parse(user.userMetadata!['birthDate'])
-        : DateTime.now();
-    
-    final fortune = await fortuneService.getSajuFortune(
-      userId: user.id,
-      birthDate: birthDate);
-
-    // Calculate detailed saju data
-    _calculatedSaju = SajuCalculationService.calculateSaju(
-      birthDate: birthDate,
-      birthTime: user.userMetadata?['birthTime']
-    );
-    
-    // Extract saju data from the fortune response
-    _sajuData = {
-      'elements': fortune.additionalInfo?['elements'] ?? {
-        '목(木)': 85,
-        '화(火)': 70,
-        '토(土)': 60,
-        '금(金)': 75,
-        '수(水)': 65},
-      'talents': fortune.additionalInfo?['talents'] ?? [
-        {'title': '리더십', 'description': '타고난 지도자의 기질을 가지고 있습니다', 'score': 85},
-        {'title': '창의성', 'description': '독창적인 아이디어가 풍부합니다', 'score': 90},
-        {'title': '인간관계', 'description': '사람들과 쉽게 친해집니다', 'score': 80}],
-      'pastLife': fortune.additionalInfo?['pastLife'] ?? {
-        'role': '조선시대 선비', 'description': '학문을 사랑하고 정의를 추구했던 선비였습니다', 'karma': '현생에서도 지식을 추구하고 올바른 길을 걷게 됩니다'}};
-
-    _fortune = fortune;
-    _animationController.forward();
-    return fortune;
   }
-  
-  Widget _buildSajuTable() {
-    return GlassContainer(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '사주팔자',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+  @override
+  Widget build(BuildContext context) {
+    final userProfile = ref.watch(userProfileProvider).value;
+
+    return Scaffold(
+      backgroundColor: TossTheme.backgroundWhite,
+      appBar: AppHeader(
+        title: '사주팔자',
+        centerTitle: true,
+      ),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: TossTheme.primaryBlue,
+              ),
+            )
+          : userProfile?.birthDate == null
+              ? _buildNoBirthDateView()
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  child: Column(
+                    children: [
+                      // 사용자 정보 카드
+                      _buildUserInfoCard(userProfile!),
+                      const SizedBox(height: TossTheme.spacingL),
+                      
+                      // 사주 팔자 카드
+                      _buildSajuMainCard(),
+                      const SizedBox(height: TossTheme.spacingL),
+                      
+                      // 십신 분석 카드
+                      _buildTenGodsCard(),
+                      const SizedBox(height: TossTheme.spacingL),
+                      
+                      // 오행 분석 카드
+                      _buildElementsCard(),
+                      const SizedBox(height: TossTheme.spacingL),
+                      
+                      // 십이운성 카드
+                      _buildTwelveStatesCard(),
+                      const SizedBox(height: TossTheme.spacingL),
+                      
+                      // 특수 정보 카드
+                      _buildSpecialInfoCard(),
+                    ],
+                  ),
+                ),
+    );
+  }
+
+  Widget _buildNoBirthDateView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(TossTheme.spacingL),
+        child: TossCard(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildPillarCard('년주', _calculatedSaju!['year']),
-              _buildPillarCard('월주', _calculatedSaju!['month']),
-              _buildPillarCard('일주', _calculatedSaju!['day']),
-              _buildPillarCard('시주', _calculatedSaju!['hour']),
+              Icon(
+                Icons.cake_outlined,
+                size: 64,
+                color: TossTheme.textGray400,
+              ),
+              const SizedBox(height: TossTheme.spacingL),
+              Text(
+                '생년월일 정보가 필요해요',
+                style: TossTheme.heading3,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: TossTheme.spacingS),
+              Text(
+                '사주팔자를 보려면 프로필에서\n생년월일을 설정해주세요',
+                style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: TossTheme.spacingL),
+              TossButton(
+                text: '프로필 설정하기',
+                size: TossButtonSize.medium,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserInfoCard(dynamic userProfile) {
+    final birthDate = userProfile.birthDate as DateTime;
+    final formatter = DateFormat('yyyy년 M월 d일');
+
+    return TossSectionCard(
+      title: '기본 정보',
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                ),
+                child: Icon(
+                  Icons.person_outline,
+                  color: TossTheme.primaryBlue,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: TossTheme.spacingM),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userProfile.name ?? '사용자',
+                      style: TossTheme.heading4,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      formatter.format(birthDate),
+                      style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
       ),
     );
   }
-  
-  Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
+
+  Widget _buildSajuMainCard() {
+    if (_sajuData == null) return const SizedBox.shrink();
+
+    return TossSectionCard(
+      title: '사주팔자',
+      subtitle: '네 개의 기둥으로 보는 운명',
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: _buildPillar('년주', _sajuData!['year'])),
+              const SizedBox(width: TossTheme.spacingS),
+              Expanded(child: _buildPillar('월주', _sajuData!['month'])),
+              const SizedBox(width: TossTheme.spacingS),
+              Expanded(child: _buildPillar('일주', _sajuData!['day'])),
+              const SizedBox(width: TossTheme.spacingS),
+              Expanded(child: _buildPillar('시주', _sajuData!['hour'])),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPillar(String title, Map<String, dynamic>? pillar) {
     if (pillar == null) {
       return _buildEmptyPillar(title);
     }
-    
-    final color = _getElementColor(pillar['element']);
-    
-    return Column(
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.white70,
-          ),
+
+    final elementColor = _getElementColor(pillar['element']);
+
+    return Container(
+      padding: const EdgeInsets.all(TossTheme.spacingM),
+      decoration: BoxDecoration(
+        color: elementColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        border: Border.all(
+          color: elementColor.withOpacity(0.3),
+          width: 1,
         ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: color.withOpacity(0.3),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            children: [
-              Text(
-                '${pillar['stemHanja']}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${pillar['branchHanja']}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${pillar['stem']}${pillar['branch']}',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.white54,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildEmptyPillar(String title) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.white70,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.grey.withOpacity(0.3),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            children: [
-              Icon(
-                Icons.help_outline,
-                color: Colors.grey,
-                size: 40,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '시간 미입력',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.white54,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildTenGodsAnalysis() {
-    final tenGods = _calculatedSaju!['tenGods'] as Map<String, dynamic>;
-    
-    return GlassContainer(
-      padding: const EdgeInsets.all(20),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '십신 분석',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+            title,
+            style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
+          ),
+          const SizedBox(height: TossTheme.spacingS),
+          Text(
+            pillar['stemHanja'] ?? '?',
+            style: TossTheme.heading1.copyWith(
+              color: elementColor,
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 16),
-          ...tenGods.entries.map((entry) {
-            final position = entry.key;
-            final gods = entry.value as List<String>;
-            
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 60,
-                    child: Text(
-                      '$position간',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
+          Text(
+            pillar['branchHanja'] ?? '?',
+            style: TossTheme.heading1.copyWith(
+              color: elementColor,
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: TossTheme.spacingXS),
+          Text(
+            '${pillar['stem'] ?? '?'}${pillar['branch'] ?? '?'}',
+            style: TossTheme.caption.copyWith(
+              color: TossTheme.textGray400,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPillar(String title) {
+    return Container(
+      padding: const EdgeInsets.all(TossTheme.spacingM),
+      decoration: BoxDecoration(
+        color: TossTheme.borderGray200,
+        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        border: Border.all(
+          color: TossTheme.borderGray300,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
+          ),
+          const SizedBox(height: TossTheme.spacingS),
+          Icon(
+            Icons.help_outline,
+            color: TossTheme.textGray400,
+            size: 40,
+          ),
+          const SizedBox(height: TossTheme.spacingXS),
+          Text(
+            '시간\n미입력',
+            style: TossTheme.caption.copyWith(
+              color: TossTheme.textGray400,
+              fontSize: 10,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTenGodsCard() {
+    if (_sajuData == null || _sajuData!['tenGods'] == null) {
+      return const SizedBox.shrink();
+    }
+
+    final tenGods = _sajuData!['tenGods'] as Map<String, dynamic>;
+
+    return TossSectionCard(
+      title: '십신 분석',
+      subtitle: '성격과 재능을 나타내는 요소',
+      child: Column(
+        children: tenGods.entries.map((entry) {
+          final position = entry.key;
+          final gods = entry.value as List<String>;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: TossTheme.spacingM),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '$position간',
+                    style: TossTheme.body3.copyWith(color: TossTheme.textGray500),
                   ),
-                  const SizedBox(width: 12),
-                  Wrap(
-                    spacing: 8,
+                ),
+                const SizedBox(width: TossTheme.spacingM),
+                Expanded(
+                  child: Wrap(
+                    spacing: TossTheme.spacingS,
                     children: gods.map((god) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: TossTheme.spacingS,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getTenGodColor(god).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        color: _getTenGodColor(god).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(TossTheme.radiusS),
                         border: Border.all(
                           color: _getTenGodColor(god).withOpacity(0.3),
                           width: 1,
@@ -275,398 +338,205 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                       ),
                       child: Text(
                         god,
-                        style: TextStyle(
+                        style: TossTheme.caption.copyWith(
                           color: _getTenGodColor(god),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     )).toList(),
                   ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
-  }
-  
-  Widget _buildFortuneContent() {
-    return FortuneDisplay(
-      title: _fortune!.summary ?? '사주팔자 운세',
-      description: _fortune!.description ?? _fortune!.content,
-      overallScore: _fortune!.score,
-      luckyItems: _fortune!.luckyItems,
-      advice: _fortune!.recommendations?.join('\n') ?? '',
-      detailedFortune: {'content': null},
-      warningMessage: _fortune!.warnings?.join('\n'),
-    );
-  }
-  
-  Color _getTenGodColor(String god) {
-    switch (god) {
-      case '비견': case '겁재':
-        return Colors.blue;
-      case '식신':
-      case '상관':
-        return Colors.green;
-      case '정재':
-      case '편재':
-        return Colors.amber;
-      case '정관':
-      case '편관':
-        return Colors.red;
-      case '정인':
-      case '편인': return Colors.purple;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  @override
-  Widget buildFortuneResult() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          super.buildFortuneResult(),
-          if (_sajuData != null) ...[
-            _buildElementsChart(),
-            const SizedBox(height: 16),
-            _buildTalentAnalysis(),
-            const SizedBox(height: 16),
-            _buildPastLifeSection(),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildElementsChart() {
-    final elements = _sajuData!['elements'] as Map<String, dynamic>;
-    
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.orange.shade400,
-                      Colors.orange.shade600,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.analytics_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                '오행 분석',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 300,
-            child: RadarChart(
-              RadarChartData(
-                radarShape: RadarShape.polygon,
-                tickCount: 5,
-                ticksTextStyle: const TextStyle(
-                  color: Colors.transparent,
-                ),
-                radarBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                ),
-                gridBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                  width: 0.5,
-                ),
-                titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                dataSets: [
-                  RadarDataSet(
-                    fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    borderColor: Theme.of(context).colorScheme.primary,
-                    borderWidth: 2,
-                    dataEntries: elements.values
-                        .map((value) => RadarEntry(value: value.toDouble()))
-                        .toList(),
-                  ),
-                ],
-                getTitle: (index, angle) {
-                  final titles = elements.keys.toList();
-                  return RadarChartTitle(
-                    text: titles[index],
-                    angle: 0,
-                  );
-                },
-              ),
-            ).animate().fadeIn(delay: 200.ms).scale(
-              begin: const Offset(0.8, 0.8),
-              end: const Offset(1, 1),
-            ),
-          ),
-          const SizedBox(height: 20),
-          ...elements.entries.map((entry) {
-            final color = _getElementColor(entry.key);
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle)),
-                  const SizedBox(width: 8),
-                  Text(
-                    entry.key,
-                    style: Theme.of(context).textTheme.bodyMedium),
-                  const Spacer(),
-                  Text(
-                    '${entry.value}%',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTalentAnalysis() {
-    final talents = _sajuData!['talents'] as List<dynamic>;
-
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.purple.shade400,
-                      Colors.purple.shade600,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.star_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                '재능 분석',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ...talents.asMap().entries.map((entry) {
-            final index = entry.key;
-            final talent = entry.value as Map<String, dynamic>;
-            
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: GlassContainer(
-                padding: const EdgeInsets.all(16),
-                borderRadius: BorderRadius.circular(16),
-                blur: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          talent['title'],
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold)),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).colorScheme.primary,
-                                Theme.of(context).colorScheme.secondary,
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '${talent['score']}점',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      talent['description'],
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: talent['score'],
-                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.primary,
-                      ),
-                      minHeight: 6,
-                    ),
-                  ],
-                ),
-              ),
-            ).animate()
-                .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
-                .slideX(begin: 0.1, end: 0);
-          }).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPastLifeSection() {
-    final pastLife = _sajuData!['pastLife'] as Map<String, dynamic>;
-
-    return LiquidGlassContainer(
-      padding: const EdgeInsets.all(24),
-      borderRadius: BorderRadius.circular(24),
-      liquidColors: [
-        Colors.indigo.shade300,
-        Colors.purple.shade300,
-        Colors.deepPurple.shade300,
-      ],
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.indigo.shade400,
-                  Colors.indigo.shade600,
-                ],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.history_rounded,
-              color: Colors.white,
-              size: 32,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '전생 분석',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.indigo.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.indigo.withOpacity(0.3),
-              ),
-            ),
-            child: Text(
-              pastLife['role'],
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo.shade700,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            pastLife['description'],
-            style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.auto_awesome_rounded,
-                  color: Colors.amber.shade600,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    pastLife['karma'],
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
                 ),
               ],
             ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildElementsCard() {
+    if (_sajuData == null || _sajuData!['elements'] == null) {
+      return const SizedBox.shrink();
+    }
+
+    final elements = _sajuData!['elements'] as Map<String, int>;
+
+    return TossSectionCard(
+      title: '오행 분석',
+      subtitle: '나의 오행 균형 상태',
+      child: Column(
+        children: elements.entries.map((entry) {
+          final element = entry.key;
+          final value = entry.value;
+          final color = _getElementColor(element);
+          final percentage = value / 100.0;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: TossTheme.spacingM),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: TossTheme.spacingS),
+                        Text(
+                          element,
+                          style: TossTheme.body3,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      '$value%',
+                      style: TossTheme.body3.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: color,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: TossTheme.spacingXS),
+                LinearProgressIndicator(
+                  value: percentage,
+                  backgroundColor: TossTheme.borderGray200,
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                  minHeight: 6,
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildTwelveStatesCard() {
+    if (_sajuData == null || _sajuData!['twelveStates'] == null) {
+      return const SizedBox.shrink();
+    }
+
+    final twelveStates = _sajuData!['twelveStates'] as List<String>;
+
+    return TossSectionCard(
+      title: '십이운성',
+      subtitle: '인생의 흐름과 운세',
+      child: Wrap(
+        spacing: TossTheme.spacingS,
+        runSpacing: TossTheme.spacingS,
+        children: twelveStates.map((state) => Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: TossTheme.spacingM,
+            vertical: TossTheme.spacingS,
+          ),
+          decoration: BoxDecoration(
+            color: TossTheme.primaryBlue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            border: Border.all(
+              color: TossTheme.primaryBlue.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Text(
+            state,
+            style: TossTheme.body3.copyWith(
+              color: TossTheme.primaryBlue,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        )).toList(),
+      ),
+    );
+  }
+
+  Widget _buildSpecialInfoCard() {
+    return TossSectionCard(
+      title: '특수 정보',
+      child: Column(
+        children: [
+          TossListItemCard(
+            leading: Icon(
+              Icons.stars,
+              color: Colors.amber,
+              size: 24,
+            ),
+            title: '공망',
+            subtitle: '허무함을 나타내는 요소',
+          ),
+          const SizedBox(height: TossTheme.spacingS),
+          TossListItemCard(
+            leading: Icon(
+              Icons.flash_on,
+              color: Colors.orange,
+              size: 24,
+            ),
+            title: '역마살',
+            subtitle: '이동과 변화를 나타냄',
+          ),
+          const SizedBox(height: TossTheme.spacingS),
+          TossListItemCard(
+            leading: Icon(
+              Icons.auto_awesome,
+              color: Colors.purple,
+              size: 24,
+            ),
+            title: '화개살',
+            subtitle: '예술적 재능과 종교성',
           ),
         ],
       ),
-    ).animate()
-        .fadeIn(delay: 500.ms)
-        .shimmer(delay: 1000.ms, duration: 2000.ms);
+    );
   }
 
   Color _getElementColor(String element) {
     switch (element) {
-      case '목(木)': return Colors.green;
+      case '목':
+      case '목(木)':
+        return const Color(0xFF10B981);
+      case '화':
       case '화(火)':
-        return Colors.red;
+        return const Color(0xFFEF4444);
+      case '토':
       case '토(土)':
-        return Colors.brown;
+        return const Color(0xFF92400E);
+      case '금':
       case '금(金)':
-        return Colors.amber;
-      case '수(水)': return Colors.blue;
+        return const Color(0xFFF59E0B);
+      case '수':
+      case '수(水)':
+        return TossTheme.primaryBlue;
       default:
-        return Colors.grey;
+        return TossTheme.textGray400;
+    }
+  }
+
+  Color _getTenGodColor(String god) {
+    switch (god) {
+      case '비견':
+      case '겁재':
+        return const Color(0xFF3B82F6);
+      case '식신':
+      case '상관':
+        return const Color(0xFF10B981);
+      case '정재':
+      case '편재':
+        return const Color(0xFFF59E0B);
+      case '정관':
+      case '편관':
+        return const Color(0xFFEF4444);
+      case '정인':
+      case '편인':
+        return const Color(0xFF8B5CF6);
+      default:
+        return TossTheme.textGray400;
     }
   }
 }

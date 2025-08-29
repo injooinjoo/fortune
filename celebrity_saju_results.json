@@ -1,0 +1,802 @@
+[
+  {
+    "name": "이효리",
+    "name_en": "Lee Hyo-ri",
+    "birth_date": "1979-05-10",
+    "birth_time": "12:00",
+    "gender": "F",
+    "birth_place": "경기도 성남시",
+    "category": "가수",
+    "agency": "핀네이션",
+    "year_pillar": "기미",
+    "month_pillar": "기사",
+    "day_pillar": "정미",
+    "hour_pillar": "병오",
+    "saju_string": "기미 기사 정미 병오",
+    "wood_count": 0,
+    "fire_count": 2,
+    "earth_count": 2,
+    "metal_count": 0,
+    "water_count": 0,
+    "created_at": "2025-08-27T20:56:25.552508",
+    "updated_at": "2025-08-27T20:56:25.552855",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "기",
+        "branch": "미",
+        "stemHanja": "己",
+        "branchHanja": "未",
+        "element": "토"
+      },
+      "month": {
+        "stem": "기",
+        "branch": "사",
+        "stemHanja": "己",
+        "branchHanja": "巳",
+        "element": "토"
+      },
+      "day": {
+        "stem": "정",
+        "branch": "미",
+        "stemHanja": "丁",
+        "branchHanja": "未",
+        "element": "화"
+      },
+      "hour": {
+        "stem": "병",
+        "branch": "오",
+        "stemHanja": "丙",
+        "branchHanja": "午",
+        "element": "화"
+      },
+      "elementBalance": {
+        "목": 0,
+        "화": 4,
+        "토": 4,
+        "금": 0,
+        "수": 0
+      },
+      "tenGods": {
+        "year": [
+          "식신"
+        ],
+        "month": [
+          "식신"
+        ],
+        "hour": [
+          "정인"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 46,
+        "startAge": 40,
+        "endAge": 49,
+        "stem": "계",
+        "branch": "유",
+        "stemHanja": "癸",
+        "branchHanja": "酉"
+      }
+    }
+  },
+  {
+    "name": "박진영",
+    "name_en": "Park Jin-young",
+    "birth_date": "1972-12-13",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시 강서구",
+    "category": "가수",
+    "agency": "JYP엔터테인먼트",
+    "year_pillar": "임자",
+    "month_pillar": "임자",
+    "day_pillar": "무신",
+    "hour_pillar": "무오",
+    "saju_string": "임자 임자 무신 무오",
+    "wood_count": 0,
+    "fire_count": 0,
+    "earth_count": 2,
+    "metal_count": 0,
+    "water_count": 2,
+    "created_at": "2025-08-27T20:56:25.552884",
+    "updated_at": "2025-08-27T20:56:25.552888",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "임",
+        "branch": "자",
+        "stemHanja": "壬",
+        "branchHanja": "子",
+        "element": "수"
+      },
+      "month": {
+        "stem": "임",
+        "branch": "자",
+        "stemHanja": "壬",
+        "branchHanja": "子",
+        "element": "수"
+      },
+      "day": {
+        "stem": "무",
+        "branch": "신",
+        "stemHanja": "戊",
+        "branchHanja": "申",
+        "element": "토"
+      },
+      "hour": {
+        "stem": "무",
+        "branch": "오",
+        "stemHanja": "戊",
+        "branchHanja": "午",
+        "element": "토"
+      },
+      "elementBalance": {
+        "목": 0,
+        "화": 1,
+        "토": 2,
+        "금": 1,
+        "수": 4
+      },
+      "tenGods": {
+        "year": [
+          "편재"
+        ],
+        "month": [
+          "편재"
+        ],
+        "hour": [
+          "비견"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 53,
+        "startAge": 50,
+        "endAge": 59,
+        "stem": "정",
+        "branch": "사",
+        "stemHanja": "丁",
+        "branchHanja": "巳"
+      }
+    }
+  },
+  {
+    "name": "방탄소년단 RM",
+    "name_en": "방탄소년단 RM",
+    "birth_date": "1994-09-12",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "경기도 고양시",
+    "category": "가수",
+    "agency": "빅히트뮤직",
+    "year_pillar": "갑술",
+    "month_pillar": "계유",
+    "day_pillar": "신미",
+    "hour_pillar": "갑오",
+    "saju_string": "갑술 계유 신미 갑오",
+    "wood_count": 2,
+    "fire_count": 0,
+    "earth_count": 0,
+    "metal_count": 1,
+    "water_count": 1,
+    "created_at": "2025-08-27T20:56:25.552914",
+    "updated_at": "2025-08-27T20:56:25.552918",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "갑",
+        "branch": "술",
+        "stemHanja": "甲",
+        "branchHanja": "戌",
+        "element": "목"
+      },
+      "month": {
+        "stem": "계",
+        "branch": "유",
+        "stemHanja": "癸",
+        "branchHanja": "酉",
+        "element": "수"
+      },
+      "day": {
+        "stem": "신",
+        "branch": "미",
+        "stemHanja": "辛",
+        "branchHanja": "未",
+        "element": "금"
+      },
+      "hour": {
+        "stem": "갑",
+        "branch": "오",
+        "stemHanja": "甲",
+        "branchHanja": "午",
+        "element": "목"
+      },
+      "elementBalance": {
+        "목": 2,
+        "화": 1,
+        "토": 2,
+        "금": 2,
+        "수": 1
+      },
+      "tenGods": {
+        "year": [
+          "상관"
+        ],
+        "month": [
+          "식신"
+        ],
+        "hour": [
+          "상관"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 31,
+        "startAge": 30,
+        "endAge": 39,
+        "stem": "병",
+        "branch": "자",
+        "stemHanja": "丙",
+        "branchHanja": "子"
+      }
+    }
+  },
+  {
+    "name": "송혜교",
+    "name_en": "Song Hye-kyo",
+    "birth_date": "1981-11-22",
+    "birth_time": "12:00",
+    "gender": "F",
+    "birth_place": "대구광역시",
+    "category": "배우",
+    "agency": "UAA",
+    "year_pillar": "신유",
+    "month_pillar": "기해",
+    "day_pillar": "갑술",
+    "hour_pillar": "경오",
+    "saju_string": "신유 기해 갑술 경오",
+    "wood_count": 1,
+    "fire_count": 0,
+    "earth_count": 1,
+    "metal_count": 2,
+    "water_count": 0,
+    "created_at": "2025-08-27T20:56:25.552941",
+    "updated_at": "2025-08-27T20:56:25.552945",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "신",
+        "branch": "유",
+        "stemHanja": "辛",
+        "branchHanja": "酉",
+        "element": "금"
+      },
+      "month": {
+        "stem": "기",
+        "branch": "해",
+        "stemHanja": "己",
+        "branchHanja": "亥",
+        "element": "토"
+      },
+      "day": {
+        "stem": "갑",
+        "branch": "술",
+        "stemHanja": "甲",
+        "branchHanja": "戌",
+        "element": "목"
+      },
+      "hour": {
+        "stem": "경",
+        "branch": "오",
+        "stemHanja": "庚",
+        "branchHanja": "午",
+        "element": "금"
+      },
+      "elementBalance": {
+        "목": 1,
+        "화": 1,
+        "토": 2,
+        "금": 3,
+        "수": 1
+      },
+      "tenGods": {
+        "year": [
+          "정관"
+        ],
+        "month": [
+          "정재"
+        ],
+        "hour": [
+          "편관"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 44,
+        "startAge": 40,
+        "endAge": 49,
+        "stem": "계",
+        "branch": "묘",
+        "stemHanja": "癸",
+        "branchHanja": "卯"
+      }
+    }
+  },
+  {
+    "name": "현빈",
+    "name_en": "Hyun Bin",
+    "birth_date": "1982-09-25",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시",
+    "category": "배우",
+    "agency": "VAST엔터테인먼트",
+    "year_pillar": "임술",
+    "month_pillar": "기유",
+    "day_pillar": "신사",
+    "hour_pillar": "갑오",
+    "saju_string": "임술 기유 신사 갑오",
+    "wood_count": 1,
+    "fire_count": 0,
+    "earth_count": 1,
+    "metal_count": 1,
+    "water_count": 1,
+    "created_at": "2025-08-27T20:56:25.552969",
+    "updated_at": "2025-08-27T20:56:25.552992",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "임",
+        "branch": "술",
+        "stemHanja": "壬",
+        "branchHanja": "戌",
+        "element": "수"
+      },
+      "month": {
+        "stem": "기",
+        "branch": "유",
+        "stemHanja": "己",
+        "branchHanja": "酉",
+        "element": "토"
+      },
+      "day": {
+        "stem": "신",
+        "branch": "사",
+        "stemHanja": "辛",
+        "branchHanja": "巳",
+        "element": "금"
+      },
+      "hour": {
+        "stem": "갑",
+        "branch": "오",
+        "stemHanja": "甲",
+        "branchHanja": "午",
+        "element": "목"
+      },
+      "elementBalance": {
+        "목": 1,
+        "화": 2,
+        "토": 2,
+        "금": 2,
+        "수": 1
+      },
+      "tenGods": {
+        "year": [
+          "겁재"
+        ],
+        "month": [
+          "편인"
+        ],
+        "hour": [
+          "상관"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 43,
+        "startAge": 40,
+        "endAge": 49,
+        "stem": "계",
+        "branch": "축",
+        "stemHanja": "癸",
+        "branchHanja": "丑"
+      }
+    }
+  },
+  {
+    "name": "최태원",
+    "name_en": "Choi Tae-won",
+    "birth_date": "1960-12-03",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시",
+    "category": "기업인",
+    "agency": "SK그룹",
+    "year_pillar": "경자",
+    "month_pillar": "정해",
+    "day_pillar": "을미",
+    "hour_pillar": "임오",
+    "saju_string": "경자 정해 을미 임오",
+    "wood_count": 1,
+    "fire_count": 1,
+    "earth_count": 0,
+    "metal_count": 1,
+    "water_count": 1,
+    "created_at": "2025-08-27T20:56:25.553016",
+    "updated_at": "2025-08-27T20:56:25.553021",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "경",
+        "branch": "자",
+        "stemHanja": "庚",
+        "branchHanja": "子",
+        "element": "금"
+      },
+      "month": {
+        "stem": "정",
+        "branch": "해",
+        "stemHanja": "丁",
+        "branchHanja": "亥",
+        "element": "화"
+      },
+      "day": {
+        "stem": "을",
+        "branch": "미",
+        "stemHanja": "乙",
+        "branchHanja": "未",
+        "element": "목"
+      },
+      "hour": {
+        "stem": "임",
+        "branch": "오",
+        "stemHanja": "壬",
+        "branchHanja": "午",
+        "element": "수"
+      },
+      "elementBalance": {
+        "목": 1,
+        "화": 2,
+        "토": 1,
+        "금": 1,
+        "수": 3
+      },
+      "tenGods": {
+        "year": [
+          "정재"
+        ],
+        "month": [
+          "식신"
+        ],
+        "hour": [
+          "정관"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 65,
+        "startAge": 60,
+        "endAge": 69,
+        "stem": "계",
+        "branch": "사",
+        "stemHanja": "癸",
+        "branchHanja": "巳"
+      }
+    }
+  },
+  {
+    "name": "구광모",
+    "name_en": "Koo Kwang-mo",
+    "birth_date": "1969-07-06",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "서울특별시",
+    "category": "기업인",
+    "agency": "LG그룹",
+    "year_pillar": "기유",
+    "month_pillar": "경오",
+    "day_pillar": "임자",
+    "hour_pillar": "병오",
+    "saju_string": "기유 경오 임자 병오",
+    "wood_count": 0,
+    "fire_count": 1,
+    "earth_count": 1,
+    "metal_count": 1,
+    "water_count": 1,
+    "created_at": "2025-08-27T20:56:25.553059",
+    "updated_at": "2025-08-27T20:56:25.553063",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "기",
+        "branch": "유",
+        "stemHanja": "己",
+        "branchHanja": "酉",
+        "element": "토"
+      },
+      "month": {
+        "stem": "경",
+        "branch": "오",
+        "stemHanja": "庚",
+        "branchHanja": "午",
+        "element": "금"
+      },
+      "day": {
+        "stem": "임",
+        "branch": "자",
+        "stemHanja": "壬",
+        "branchHanja": "子",
+        "element": "수"
+      },
+      "hour": {
+        "stem": "병",
+        "branch": "오",
+        "stemHanja": "丙",
+        "branchHanja": "午",
+        "element": "화"
+      },
+      "elementBalance": {
+        "목": 0,
+        "화": 3,
+        "토": 1,
+        "금": 2,
+        "수": 2
+      },
+      "tenGods": {
+        "year": [
+          "정관"
+        ],
+        "month": [
+          "편인"
+        ],
+        "hour": [
+          "편재"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 56,
+        "startAge": 50,
+        "endAge": 59,
+        "stem": "을",
+        "branch": "해",
+        "stemHanja": "乙",
+        "branchHanja": "亥"
+      }
+    }
+  },
+  {
+    "name": "이재명",
+    "name_en": "Lee Jae-myung",
+    "birth_date": "1964-12-22",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "경기도 안동시",
+    "category": "정치인",
+    "agency": "더불어민주당",
+    "year_pillar": "갑진",
+    "month_pillar": "병자",
+    "day_pillar": "을해",
+    "hour_pillar": "임오",
+    "saju_string": "갑진 병자 을해 임오",
+    "wood_count": 2,
+    "fire_count": 1,
+    "earth_count": 0,
+    "metal_count": 0,
+    "water_count": 1,
+    "created_at": "2025-08-27T20:56:25.553087",
+    "updated_at": "2025-08-27T20:56:25.553091",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "갑",
+        "branch": "진",
+        "stemHanja": "甲",
+        "branchHanja": "辰",
+        "element": "목"
+      },
+      "month": {
+        "stem": "병",
+        "branch": "자",
+        "stemHanja": "丙",
+        "branchHanja": "子",
+        "element": "화"
+      },
+      "day": {
+        "stem": "을",
+        "branch": "해",
+        "stemHanja": "乙",
+        "branchHanja": "亥",
+        "element": "목"
+      },
+      "hour": {
+        "stem": "임",
+        "branch": "오",
+        "stemHanja": "壬",
+        "branchHanja": "午",
+        "element": "수"
+      },
+      "elementBalance": {
+        "목": 2,
+        "화": 2,
+        "토": 1,
+        "금": 0,
+        "수": 3
+      },
+      "tenGods": {
+        "year": [
+          "정인"
+        ],
+        "month": [
+          "겁재"
+        ],
+        "hour": [
+          "정관"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 61,
+        "startAge": 60,
+        "endAge": 69,
+        "stem": "임",
+        "branch": "오",
+        "stemHanja": "壬",
+        "branchHanja": "午"
+      }
+    }
+  },
+  {
+    "name": "침착맨",
+    "name_en": "ChimChakMan",
+    "birth_date": "1995-04-15",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "경기도 안산시",
+    "category": "스트리머/유튜버",
+    "agency": "샌드박스 네트워크",
+    "year_pillar": "을해",
+    "month_pillar": "경진",
+    "day_pillar": "병오",
+    "hour_pillar": "갑오",
+    "saju_string": "을해 경진 병오 갑오",
+    "wood_count": 2,
+    "fire_count": 1,
+    "earth_count": 0,
+    "metal_count": 1,
+    "water_count": 0,
+    "created_at": "2025-08-27T20:56:25.553138",
+    "updated_at": "2025-08-27T20:56:25.553149",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "을",
+        "branch": "해",
+        "stemHanja": "乙",
+        "branchHanja": "亥",
+        "element": "목"
+      },
+      "month": {
+        "stem": "경",
+        "branch": "진",
+        "stemHanja": "庚",
+        "branchHanja": "辰",
+        "element": "금"
+      },
+      "day": {
+        "stem": "병",
+        "branch": "오",
+        "stemHanja": "丙",
+        "branchHanja": "午",
+        "element": "화"
+      },
+      "hour": {
+        "stem": "갑",
+        "branch": "오",
+        "stemHanja": "甲",
+        "branchHanja": "午",
+        "element": "목"
+      },
+      "elementBalance": {
+        "목": 2,
+        "화": 3,
+        "토": 1,
+        "금": 1,
+        "수": 1
+      },
+      "tenGods": {
+        "year": [
+          "정인"
+        ],
+        "month": [
+          "편재"
+        ],
+        "hour": [
+          "편인"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 30,
+        "startAge": 30,
+        "endAge": 39,
+        "stem": "계",
+        "branch": "미",
+        "stemHanja": "癸",
+        "branchHanja": "未"
+      }
+    }
+  },
+  {
+    "name": "손흥민",
+    "name_en": "Son Heung-min",
+    "birth_date": "1992-07-08",
+    "birth_time": "12:00",
+    "gender": "M",
+    "birth_place": "강원도 춘천시",
+    "category": "운동선수",
+    "agency": "토트넘 홋스퍼",
+    "year_pillar": "임신",
+    "month_pillar": "정미",
+    "day_pillar": "을묘",
+    "hour_pillar": "임오",
+    "saju_string": "임신 정미 을묘 임오",
+    "wood_count": 1,
+    "fire_count": 1,
+    "earth_count": 0,
+    "metal_count": 0,
+    "water_count": 2,
+    "created_at": "2025-08-27T20:56:25.553182",
+    "updated_at": "2025-08-27T20:56:25.553187",
+    "data_source": "namuwiki_extraction",
+    "full_saju_data": {
+      "year": {
+        "stem": "임",
+        "branch": "신",
+        "stemHanja": "壬",
+        "branchHanja": "申",
+        "element": "수"
+      },
+      "month": {
+        "stem": "정",
+        "branch": "미",
+        "stemHanja": "丁",
+        "branchHanja": "未",
+        "element": "화"
+      },
+      "day": {
+        "stem": "을",
+        "branch": "묘",
+        "stemHanja": "乙",
+        "branchHanja": "卯",
+        "element": "목"
+      },
+      "hour": {
+        "stem": "임",
+        "branch": "오",
+        "stemHanja": "壬",
+        "branchHanja": "午",
+        "element": "수"
+      },
+      "elementBalance": {
+        "목": 2,
+        "화": 2,
+        "토": 1,
+        "금": 1,
+        "수": 2
+      },
+      "tenGods": {
+        "year": [
+          "정관"
+        ],
+        "month": [
+          "식신"
+        ],
+        "hour": [
+          "정관"
+        ]
+      },
+      "daeunInfo": {
+        "currentAge": 33,
+        "startAge": 30,
+        "endAge": 39,
+        "stem": "경",
+        "branch": "술",
+        "stemHanja": "庚",
+        "branchHanja": "戌"
+      }
+    }
+  }
+]

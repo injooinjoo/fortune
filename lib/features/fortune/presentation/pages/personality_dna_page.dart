@@ -64,12 +64,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
       _animationController.forward();
     }
     
-    // 페이지 로드되자마자 bottomsheet 열기
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _showPersonalityDNABottomSheet();
-      }
-    });
+    // 결과 페이지로만 사용 - 자동 bottomsheet 제거
   }
 
   @override

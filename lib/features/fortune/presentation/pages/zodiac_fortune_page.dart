@@ -223,7 +223,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              childAspectRatio: 1,
+              childAspectRatio: 1.8,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12),
             itemCount: _zodiacSigns.length,

@@ -5,17 +5,19 @@ import 'dart:math' as math;
 
 import '../presentation/providers/navigation_visibility_provider.dart';
 
-/// 감성적인 로딩 체크리스트 위젯 (Monarch 스타일 - 롤링 애니메이션)
+/// 최적화된 감성적인 로딩 체크리스트 위젯 (픽셀 깨짐 방지)
 class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
   final VoidCallback? onComplete;
-  final VoidCallback? onPreviewComplete; // 미로그인 사용자용
-  final bool isLoggedIn; // 실제 로그인 여부
+  final VoidCallback? onPreviewComplete;
+  final bool isLoggedIn;
+  final bool isApiComplete;
   
   const EmotionalLoadingChecklist({
     super.key,
     this.onComplete,
     this.onPreviewComplete,
     this.isLoggedIn = true,
+    this.isApiComplete = false,
   });
 
   @override
@@ -24,161 +26,173 @@ class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
 
 class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChecklist> 
     with TickerProviderStateMixin {
-  late AnimationController _scrollController;
-  late AnimationController _fadeController;
-  late List<AnimationController> _checkControllers;
   
-  // 30개의 다양한 로딩 메시지 풀
-  final List<LoadingStep> _allLoadingMessages = [
+  // 애니메이션 컨트롤러 최소화
+  late AnimationController _checkController;
+  late Animation<double> _checkAnimation;
+  
+  // 전체 50개 감성적 로딩 메시지 (픽셀 깨짐 방지 최적화 적용)
+  static const List<LoadingStep> _emotionalLoadingMessages = [
     LoadingStep('오늘의 날씨 확인 중', '하늘의 기운을 읽고 있어요'),
     LoadingStep('사주팔자 분석 중', '당신의 운명을 해석하고 있어요'),
     LoadingStep('우주의 기운 해석 중', '별들의 메시지를 받고 있어요'),
     LoadingStep('오늘의 행운 색상 선별 중', '당신만의 특별한 색을 찾고 있어요'),
-    LoadingStep('띠별 운세 분석 중', '12띠의 기운을 살펴보고 있어요'),
     LoadingStep('길운 방향 탐색 중', '오늘의 좋은 방향을 확인하고 있어요'),
-    LoadingStep('행복 에너지 충전 중', '긍정적인 파동을 모으고 있어요'),
-    LoadingStep('별자리 궁합 계산 중', '우주의 궁합을 살펴보고 있어요'),
     LoadingStep('오늘의 귀인 찾는 중', '당신을 도울 사람을 찾고 있어요'),
     LoadingStep('금전운 파동 분석 중', '재물의 흐름을 읽고 있어요'),
     LoadingStep('연애운 기류 측정 중', '사랑의 에너지를 확인하고 있어요'),
     LoadingStep('건강운 지수 확인 중', '몸과 마음의 건강을 체크하고 있어요'),
-    LoadingStep('직장운 흐름 읽는 중', '업무 운세를 살펴보고 있어요'),
-    LoadingStep('가족운 기운 감지 중', '가족과의 화합을 확인하고 있어요'),
     LoadingStep('시간대별 운세 정리 중', '하루 시간의 흐름을 정리하고 있어요'),
-    LoadingStep('행운의 숫자 추출 중', '당신만의 특별한 숫자를 찾고 있어요'),
-    LoadingStep('꿈의 메시지 해석 중', '잠재의식의 신호를 읽고 있어요'),
-    LoadingStep('운명의 실타래 풀어보는 중', '복잡한 인연을 정리하고 있어요'),
-    LoadingStep('오늘의 주의사항 검토 중', '조심해야 할 것들을 확인하고 있어요'),
-    LoadingStep('행운의 아이템 선정 중', '당신에게 맞는 부적을 고르고 있어요'),
     LoadingStep('오늘의 조언 준비 중', '현명한 말씀을 준비하고 있어요'),
-    LoadingStep('당신만의 부적 만드는 중', '특별한 보호막을 만들고 있어요'),
-    LoadingStep('오늘의 명언 선택 중', '마음에 새길 말을 고르고 있어요'),
-    LoadingStep('에너지 밸런스 조정 중', '몸과 마음의 균형을 맞추고 있어요'),
-    LoadingStep('운세 지도 그리는 중', '하루의 길을 그려보고 있어요'),
-    LoadingStep('오늘의 테마 설정 중', '하루를 관통할 주제를 정하고 있어요'),
-    LoadingStep('행복 지수 계산 중', '당신의 만족도를 측정하고 있어요'),
-    LoadingStep('스트레스 해소법 찾는 중', '마음의 평안을 위한 방법을 찾고 있어요'),
-    LoadingStep('오늘의 미션 준비 중', '작은 도전과제를 준비하고 있어요'),
-    LoadingStep('수호천사 부르는 중', '당신을 지켜줄 천사를 부르고 있어요'),
-    LoadingStep('오늘의 기회 포착 중', '놓치지 말아야 할 순간을 찾고 있어요'),
     LoadingStep('마지막 행운 체크 중', '모든 준비가 완료되었는지 확인하고 있어요'),
+    LoadingStep('천체 움직임 계산 중', '행성들의 위치를 파악하고 있어요'),
+    LoadingStep('음양오행 밸런스 분석 중', '당신의 에너지 균형을 확인하고 있어요'),
+    LoadingStep('생년월일 진동 측정 중', '태어난 날의 특별한 에너지를 읽고 있어요'),
+    LoadingStep('이름 궁합 계산 중', '당신 이름의 운세를 분석하고 있어요'),
+    LoadingStep('오늘의 럭키 넘버 선별 중', '행운을 부를 숫자를 찾고 있어요'),
+    LoadingStep('타로카드 에너지 읽는 중', '카드들이 전하는 메시지를 받고 있어요'),
+    LoadingStep('수호천사 연결 중', '당신을 지켜주는 존재와 소통하고 있어요'),
+    LoadingStep('과거생 인연 탐색 중', '전생에서 이어진 인연을 찾고 있어요'),
+    LoadingStep('미래 가능성 스캔 중', '앞으로 일어날 일들을 엿보고 있어요'),
+    LoadingStep('직업운 흐름 분석 중', '일터에서의 운세를 살펴보고 있어요'),
+    LoadingStep('학업운 에너지 체크 중', '공부와 배움의 기운을 확인하고 있어요'),
+    LoadingStep('가족운 조화 측정 중', '가족과의 관계 운세를 보고 있어요'),
+    LoadingStep('친구운 자기장 분석 중', '친구들과의 인연을 살펴보고 있어요'),
+    LoadingStep('여행운 경로 탐색 중', '떠남과 돌아옴의 운세를 보고 있어요'),
+    LoadingStep('창작운 영감 수신 중', '예술과 창작의 기운을 받고 있어요'),
+    LoadingStep('시험운 집중력 측정 중', '중요한 순간의 운세를 확인하고 있어요'),
+    LoadingStep('투자운 흐름 예측 중', '돈의 흐름과 투자 운세를 보고 있어요'),
+    LoadingStep('부동산운 터 기운 분석 중', '땅과 집의 에너지를 읽고 있어요'),
+    LoadingStep('차량운 이동 에너지 체크 중', '교통과 이동의 운세를 확인하고 있어요'),
+    LoadingStep('반려동물운 교감 측정 중', '동물 친구들과의 인연을 보고 있어요'),
+    LoadingStep('취미운 열정 에너지 분석 중', '즐거움과 취미의 운세를 읽고 있어요'),
+    LoadingStep('운동운 체력 기운 체크 중', '몸의 건강과 활력을 확인하고 있어요'),
+    LoadingStep('다이어트운 의지력 측정 중', '몸매 관리 운세를 살펴보고 있어요'),
+    LoadingStep('패션운 스타일 감각 분석 중', '옷차림과 멋의 운세를 보고 있어요'),
+    LoadingStep('뷰티운 매력 지수 계산 중', '아름다움의 기운을 측정하고 있어요'),
+    LoadingStep('요리운 맛의 조화 체크 중', '음식과 요리의 운세를 확인하고 있어요'),
+    LoadingStep('독서운 지식 흡수력 분석 중', '책과 배움의 인연을 읽고 있어요'),
+    LoadingStep('영화운 감성 공명 측정 중', '영상과 이야기의 운세를 보고 있어요'),
+    LoadingStep('음악운 리듬 진동 분석 중', '소리와 멜로디의 기운을 읽고 있어요'),
+    LoadingStep('게임운 승부 기운 체크 중', '놀이와 경쟁의 운세를 확인하고 있어요'),
+    LoadingStep('쇼핑운 선택 감각 측정 중', '구매와 소비의 운세를 보고 있어요'),
+    LoadingStep('소셜미디어운 인기 지수 분석 중', '온라인 인연과 소통 운세를 읽고 있어요'),
+    LoadingStep('카페운 휴식 에너지 체크 중', '여유와 힐링의 기운을 확인하고 있어요'),
+    LoadingStep('날씨운 자연 조화 측정 중', '하늘과 바람의 메시지를 받고 있어요'),
+    LoadingStep('꽃운 생명력 기운 분석 중', '꽃과 식물의 에너지를 읽고 있어요'),
+    LoadingStep('물운 정화 에너지 체크 중', '물의 흐름과 정화 운세를 보고 있어요'),
+    LoadingStep('불운 열정 기운 측정 중', '태양과 열정의 에너지를 확인하고 있어요'),
+    LoadingStep('바람운 변화 흐름 분석 중', '바람이 가져올 변화를 읽고 있어요'),
+    LoadingStep('마지막 총운 조합 중', '모든 운세를 하나로 엮고 있어요'),
   ];
   
-  List<LoadingStep> _steps = [];
   int _currentStep = 0;
-  double _scrollOffset = 0;
+  bool _isCompleted = false;
   
   @override
   void initState() {
     super.initState();
-    
-    // 30개 메시지 중 랜덤하게 5개 선택
-    _generateRandomSteps();
     
     // 네비게이션 바 숨기기
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).hide();
     });
     
-    _scrollController = AnimationController(
+    // 애니메이션 컨트롤러 초기화 (하나만 사용)
+    _checkController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 400),
-      vsync: this,
+    // 부드러운 애니메이션 설정
+    _checkAnimation = CurvedAnimation(
+      parent: _checkController,
+      curve: Curves.elasticOut,
     );
-    
-    _checkControllers = List.generate(
-      _steps.length,
-      (index) => AnimationController(
-        duration: const Duration(milliseconds: 400),
-        vsync: this,
-      ),
-    );
-    
-    _scrollController.addListener(() {
-      if (mounted) {
-        setState(() {
-          _scrollOffset = _scrollController.value * 80; // 각 항목의 높이
-        });
-      }
-    });
     
     _startAnimation();
   }
-  
-  // 30개 메시지 중 랜덤하게 5개를 선택하는 메서드
-  void _generateRandomSteps() {
-    final random = math.Random();
-    final selectedMessages = <LoadingStep>[];
-    final usedIndices = <int>{};
+
+  @override
+  void didUpdateWidget(covariant EmotionalLoadingChecklist oldWidget) {
+    super.didUpdateWidget(oldWidget);
     
-    // 첫 번째와 마지막 메시지는 고정 (날씨 확인과 이야기 생성)
-    selectedMessages.add(_allLoadingMessages[0]); // 오늘의 날씨 확인 중
-    usedIndices.add(0);
-    
-    // 중간에 3개 랜덤 선택 (1번부터 30번까지 중에서)
-    while (selectedMessages.length < 4) {
-      final randomIndex = random.nextInt(_allLoadingMessages.length - 2) + 1; // 1부터 30까지
-      if (!usedIndices.contains(randomIndex) && randomIndex != _allLoadingMessages.length - 1) {
-        selectedMessages.add(_allLoadingMessages[randomIndex]);
-        usedIndices.add(randomIndex);
-      }
+    // API 완료 신호가 오면 로딩 완료 처리
+    if (widget.isApiComplete && !oldWidget.isApiComplete && !_isCompleted) {
+      _completeLoading();
     }
+  }
+  
+  void _completeLoading() {
+    if (_isCompleted || !mounted) return;
     
-    // 마지막 메시지 추가 (마지막 행운 체크)
-    selectedMessages.add(_allLoadingMessages.last);
+    setState(() {
+      _isCompleted = true;
+    });
     
-    _steps = selectedMessages;
+    debugPrint('✅ Loading animation completed by API');
+    if (widget.isLoggedIn) {
+      widget.onComplete?.call();
+    } else {
+      widget.onPreviewComplete?.call();
+    }
   }
   
   void _startAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 500));
     
-    for (int i = 0; i < _steps.length; i++) {
-      if (!mounted) return;
-      
-      // 체크 애니메이션
-      _checkControllers[i].forward();
-      
-      await Future.delayed(const Duration(milliseconds: 1200));
-      
-      if (i < _steps.length - 1) {
-        // 다음 단계로 스크롤
+    while (!_isCompleted && mounted && !widget.isApiComplete) {
+      for (int i = 0; i < _emotionalLoadingMessages.length; i++) {
+        if (_isCompleted || !mounted || widget.isApiComplete) {
+          if (widget.isApiComplete && !_isCompleted) {
+            _completeLoading();
+          }
+          return;
+        }
+        
+        // 현재 단계 업데이트 (부드럽게)
         if (mounted) {
           setState(() {
-            _currentStep = i + 1;
+            _currentStep = i;
           });
-          _scrollController.forward(from: 0);
+          
+          // 체크 애니메이션 실행
+          _checkController.forward();
+        }
+        
+        // 적절한 대기 시간
+        await Future.delayed(const Duration(milliseconds: 1800));
+        
+        // API 완료 체크
+        if (_isCompleted || !mounted || widget.isApiComplete) {
+          if (widget.isApiComplete && !_isCompleted) {
+            _completeLoading();
+          }
+          return;
+        }
+        
+        // 다음 스텝 준비
+        if (i < _emotionalLoadingMessages.length - 1) {
+          _checkController.reset();
         }
       }
-    }
-    
-    // 모든 단계 완료
-    await Future.delayed(const Duration(milliseconds: 800));
-    debugPrint('✅ Loading animation completed normally');
-    if (mounted) {
-      if (widget.isLoggedIn) {
-        // 로그인된 사용자는 바로 운세 보기
-        widget.onComplete?.call();
-      } else {
-        // 미로그인 사용자는 프리뷰 화면
-        widget.onPreviewComplete?.call();
+      
+      // 한 사이클 완료 후 초기화
+      if (!_isCompleted && mounted && !widget.isApiComplete) {
+        setState(() {
+          _currentStep = 0;
+        });
+        _checkController.reset();
+        await Future.delayed(const Duration(milliseconds: 500));
       }
     }
   }
   
   @override
   void dispose() {
-    _scrollController.dispose();
-    _fadeController.dispose();
-    for (var controller in _checkControllers) {
-      controller.dispose();
-    }
+    _checkController.dispose();
     
-    // 네비게이션 바 복원 (안전장치)
+    // 네비게이션 바 복원
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(navigationVisibilityProvider.notifier).show();
@@ -191,7 +205,6 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final screenHeight = MediaQuery.of(context).size.height;
     
     return Container(
       decoration: BoxDecoration(
@@ -212,138 +225,17 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
       child: SafeArea(
         child: Column(
           children: [
-            // 상단 패딩만 유지 (타이틀 제거)
             const SizedBox(height: 80),
             
-            // 롤링 체크리스트 영역
+            // 최적화된 로딩 리스트 (픽셀 깨짐 방지)
             Expanded(
-              child: Stack(
-                children: [
-                  // 중앙 포커스 인디케이터 (옵션)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: screenHeight * 0.25,
-                    child: Container(
-                      height: 80,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Colors.transparent,
-                            (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
-                            (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  // 스크롤되는 리스트
-                  AnimatedBuilder(
-                    animation: _scrollController,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(0, -_currentStep * 80.0 + screenHeight * 0.25),
-                        child: Column(
-                          children: _steps.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final step = entry.value;
-                            final isCompleted = index <= _currentStep;
-                            final isActive = index == _currentStep;
-                            final isPending = index > _currentStep;
-                            
-                            // 위치에 따른 투명도 계산 - 현재 위 2개까지만 보이도록
-                            double opacity = 1.0;
-                            if (index < _currentStep - 2) {
-                              opacity = 0.0; // 현재 위 2개보다 이전 항목들은 완전히 숨김
-                            } else if (index == _currentStep - 2) {
-                              opacity = 0.1; // 현재 위 2번째 항목은 매우 흐리게
-                            } else if (index == _currentStep - 1) {
-                              opacity = 0.3; // 바로 이전 항목은 약간 흐리게
-                            } else if (index == _currentStep) {
-                              opacity = 1.0; // 현재 항목은 완전 불투명
-                            } else if (index == _currentStep + 1) {
-                              opacity = 0.5; // 다음 항목은 반투명
-                            } else if (index == _currentStep + 2) {
-                              opacity = 0.2; // 그 다음 항목은 흐리게
-                            } else {
-                              opacity = 0.0; // 현재 아래 2개보다 뒤 항목들은 완전히 숨김
-                            }
-                            
-                            return Container(
-                              height: 80,
-                              padding: const EdgeInsets.symmetric(horizontal: 40),
-                              child: Opacity(
-                                opacity: opacity,
-                                child: _buildStepItem(
-                                  step: step,
-                                  isCompleted: index < _currentStep,
-                                  isActive: isActive,
-                                  isPending: isPending,
-                                  isDark: isDark,
-                                  animationController: _checkControllers[index],
-                                  index: index,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      );
-                    },
-                  ),
-                  
-                  // 상하 그라데이션 마스크
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 100,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: isDark
-                            ? [
-                                const Color(0xFF1a1a2e),
-                                const Color(0xFF1a1a2e).withValues(alpha: 0),
-                              ]
-                            : [
-                                Colors.white,
-                                Colors.white.withValues(alpha: 0),
-                              ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: 100,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: isDark
-                            ? [
-                                const Color(0xFF0f1624),
-                                const Color(0xFF0f1624).withValues(alpha: 0),
-                              ]
-                            : [
-                                const Color(0xFFF5F5F5),
-                                const Color(0xFFF5F5F5).withValues(alpha: 0),
-                              ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              child: Center(
+                child: _OptimizedLoadingList(
+                  steps: _emotionalLoadingMessages,
+                  currentStep: _currentStep,
+                  checkAnimation: _checkAnimation,
+                  isDark: isDark,
+                ),
               ),
             ),
           ],
@@ -351,24 +243,104 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
       ),
     );
   }
+}
+
+/// 최적화된 로딩 리스트 위젯 (별도 위젯으로 분리하여 리빌드 최소화)
+class _OptimizedLoadingList extends StatelessWidget {
+  final List<LoadingStep> steps;
+  final int currentStep;
+  final Animation<double> checkAnimation;
+  final bool isDark;
   
-  Widget _buildStepItem({
-    required LoadingStep step,
-    required bool isCompleted,
-    required bool isActive,
-    required bool isPending,
-    required bool isDark,
-    required AnimationController animationController,
-    required int index,
-  }) {
+  const _OptimizedLoadingList({
+    required this.steps,
+    required this.currentStep,
+    required this.checkAnimation,
+    required this.isDark,
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: steps.asMap().entries.map((entry) {
+          final index = entry.key;
+          final step = entry.value;
+          final isCompleted = index < currentStep;
+          final isActive = index == currentStep;
+          
+          // 가시성 최적화 - 현재 단계 주변만 표시
+          if ((index - currentStep).abs() > 3) {
+            return const SizedBox(height: 80); // 빈 공간 유지
+          }
+          
+          // 부드러운 투명도 계산 (픽셀 깨짐 방지)
+          double opacity = 1.0;
+          if (index < currentStep - 2) {
+            opacity = 0.0;
+          } else if (index == currentStep - 2) {
+            opacity = 0.1;
+          } else if (index == currentStep - 1) {
+            opacity = 0.4;
+          } else if (index == currentStep) {
+            opacity = 1.0;
+          } else if (index == currentStep + 1) {
+            opacity = 0.4;
+          } else if (index == currentStep + 2) {
+            opacity = 0.1;
+          } else {
+            opacity = 0.0;
+          }
+          
+          return AnimatedOpacity(
+            duration: const Duration(milliseconds: 600), // 부드러운 전환
+            opacity: opacity,
+            curve: Curves.easeInOutCubic,
+            child: Container(
+              height: 80,
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: _OptimizedStepItem(
+                step: step,
+                isCompleted: isCompleted,
+                isActive: isActive,
+                isDark: isDark,
+                checkAnimation: isActive ? checkAnimation : null,
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// 최적화된 스텝 아이템 (StatelessWidget으로 변경하여 성능 향상)
+class _OptimizedStepItem extends StatelessWidget {
+  final LoadingStep step;
+  final bool isCompleted;
+  final bool isActive;
+  final bool isDark;
+  final Animation<double>? checkAnimation;
+  
+  const _OptimizedStepItem({
+    required this.step,
+    required this.isCompleted,
+    required this.isActive,
+    required this.isDark,
+    this.checkAnimation,
+  });
+  
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // 체크박스/로딩
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          width: isActive ? 32 : 28,
-          height: isActive ? 32 : 28,
+        // 최적화된 체크박스 (픽셀 완벽 정렬)
+        Container(
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isCompleted 
@@ -378,63 +350,85 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
               color: isCompleted
                 ? const Color(0xFF52C41A)
                 : isActive 
-                  ? (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.5)
-                  : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.2),
-              width: isCompleted ? 2.5 : isActive ? 2 : 1.5,
+                  ? (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.6)
+                  : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.3),
+              width: isCompleted ? 2.5 : isActive ? 2.2 : 1.8,
             ),
           ),
-          child: Center(
-            child: AnimatedBuilder(
-              animation: animationController,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: animationController.value,
-                  child: isCompleted
-                    ? Icon(
-                        Icons.check,
-                        size: isActive ? 18 : 16,
-                        color: const Color(0xFF52C41A),
-                      )
-                    : null,
-                );
-              },
-            ),
-          ),
+          child: checkAnimation != null
+            ? AnimatedBuilder(
+                animation: checkAnimation!,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: checkAnimation!.value,
+                    child: isCompleted || checkAnimation!.value > 0.5
+                      ? Icon(
+                          Icons.check,
+                          size: 18,
+                          color: const Color(0xFF52C41A),
+                        )
+                      : (isActive 
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black54
+                                ),
+                              ),
+                            )
+                          : null),
+                  );
+                },
+              )
+            : (isCompleted
+                ? Icon(
+                    Icons.check,
+                    size: 18,
+                    color: const Color(0xFF52C41A),
+                  )
+                : null),
         ),
         
         const SizedBox(width: 20),
         
-        // 텍스트
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 400),
-              style: TextStyle(
-                fontSize: isActive ? 18 : 16,
-                fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
-                color: isCompleted || isActive
-                  ? (isDark ? Colors.white : Colors.black87)
-                  : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.5),
-              ),
-              child: Text(step.title),
-            ),
-            if (isActive) ...[
-              const SizedBox(height: 4),
+        // 최적화된 텍스트 (픽셀 완벽 정렬)
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
-                step.subtitle,
+                step.title,
                 style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w300,
-                  color: (isDark ? Colors.white : Colors.black87)
-                      .withValues(alpha: 0.6),
+                  fontSize: isActive ? 18 : 16,
+                  fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
+                  color: isCompleted || isActive
+                    ? (isDark ? Colors.white : Colors.black87)
+                    : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.5),
+                  height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
                 ),
-              ).animate()
-                .fadeIn(duration: 600.ms)
-                .slideY(begin: -0.1, end: 0),
+              ),
+              if (isActive) ...[
+                const SizedBox(height: 4),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 400),
+                  opacity: 1.0,
+                  child: Text(
+                    step.subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w300,
+                      color: (isDark ? Colors.white : Colors.black87)
+                          .withValues(alpha: 0.6),
+                      height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ],
     );
@@ -445,5 +439,5 @@ class LoadingStep {
   final String title;
   final String subtitle;
   
-  LoadingStep(this.title, this.subtitle);
+  const LoadingStep(this.title, this.subtitle);
 }
