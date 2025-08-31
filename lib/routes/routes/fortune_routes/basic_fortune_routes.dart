@@ -1,10 +1,5 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/daily_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/wealth_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/saju_page.dart';
-import '../../../features/fortune/presentation/pages/zodiac_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/zodiac_animal_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/blood_type_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/mbti_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/destiny_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/past_life_fortune_page.dart';
@@ -24,35 +19,6 @@ final basicFortuneRoutes = [
       return const SajuPage();
     }),
   
-  // Zodiac
-  GoRoute(
-    path: '/zodiac',
-    name: 'fortune-zodiac',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return ZodiacFortunePage(
-        initialParams: extra);
-    }),
-  
-  // Zodiac Animal
-  GoRoute(
-    path: '/zodiac-animal',
-    name: 'fortune-zodiac-animal',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return ZodiacAnimalFortunePage(
-        initialParams: extra);
-    }),
-  
-  // Blood Type
-  GoRoute(
-    path: '/blood-type',
-    name: 'fortune-blood-type',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return BloodTypeFortunePage(
-        initialParams: extra);
-    }),
   
   // MBTI
   GoRoute(
@@ -64,15 +30,6 @@ final basicFortuneRoutes = [
         initialParams: extra);
     }),
   
-  // Wealth
-  GoRoute(
-    path: '/wealth',
-    name: 'fortune-wealth',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return WealthFortunePage(
-        initialParams: extra);
-    }),
   
   // Destiny
   GoRoute(

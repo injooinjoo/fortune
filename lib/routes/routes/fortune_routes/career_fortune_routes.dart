@@ -6,9 +6,7 @@ import '../../../features/fortune/presentation/pages/business_fortune_page.dart'
 import '../../../features/fortune/presentation/pages/startup_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/employment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/talent_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/investment_fortune_unified_page.dart';
 import '../../../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
-import '../../../features/fortune/presentation/pages/investment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_investment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_stock_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_crypto_fortune_page.dart';

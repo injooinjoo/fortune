@@ -42,14 +42,11 @@ import '../screens/subscription/subscription_page.dart';
 
 // Import page classes for routes outside shell
 import '../features/health/presentation/pages/health_fortune_toss_page.dart';
-import '../features/fortune/presentation/pages/sports_fortune_page.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
 import '../features/fortune/presentation/pages/compatibility_page.dart';
 import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
-import '../features/fortune/presentation/pages/ex_lover_fortune_page.dart';
 import '../features/fortune/presentation/pages/career_fortune_page.dart';
 import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
-import '../features/fortune/presentation/pages/investment_fortune_page.dart';
 import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
 import '../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
 import '../features/fortune/presentation/pages/pet_compatibility_page.dart';
@@ -182,17 +179,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/sports-game',
         name: 'fortune-sports-game',
-        builder: (context, state) {
-          final sportParam = state.uri.queryParameters['type'];
-          SportType? initialType;
-          if (sportParam != null) {
-            initialType = SportType.values.firstWhere(
-              (s) => s.value == sportParam,
-              orElse: () => SportType.fitness);
-          }
-          return SportsFortunePage(
-            initialType: initialType ?? SportType.fitness);
-        }),
+        builder: (context, state) => const ExerciseFortunePage()),
       
       // Fortune routes that need to hide navigation bar (additional)
       GoRoute(
@@ -209,11 +196,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AvoidPeopleFortunePage(),
       ),
       GoRoute(
-        path: '/ex-lover',
-        name: 'fortune-ex-lover',
-        builder: (context, state) => const ExLoverFortunePage(),
-      ),
-      GoRoute(
         path: '/career',
         name: 'fortune-career',
         builder: (context, state) => const CareerFortunePage(),
@@ -224,12 +206,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LuckyExamFortunePage(),
       ),
       
-      // Investment Fortune (outside shell - no navigation bar)
-      GoRoute(
-        path: '/investment',
-        name: 'fortune-investment',
-        builder: (context, state) => const InvestmentFortunePage(),
-      ),
       
       // Fortune Cookie (outside shell - no navigation bar)
       GoRoute(

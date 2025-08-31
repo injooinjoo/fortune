@@ -1,11 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/time_based_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/daily_calendar_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/daily_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/today_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/tomorrow_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/weekly_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/monthly_fortune_page.dart';
 
 final timeBasedRoutes = [
   // Time-based Fortune
@@ -41,35 +36,6 @@ final timeBasedRoutes = [
       return '/fortune/time';
     }),
   
-  // Daily
-  GoRoute(
-    path: '/daily',
-    name: 'fortune-daily',
-    builder: (context, state) => const DailyFortunePage()),
-  
-  // Today
-  GoRoute(
-    path: '/today',
-    name: 'fortune-today',
-    builder: (context, state) => const TodayFortunePage()),
-  
-  // Tomorrow
-  GoRoute(
-    path: '/tomorrow',
-    name: 'fortune-tomorrow',
-    builder: (context, state) => const TomorrowFortunePage()),
-  
-  // Weekly
-  GoRoute(
-    path: '/weekly',
-    name: 'fortune-weekly',
-    builder: (context, state) => const WeeklyFortunePage()),
-  
-  // Monthly
-  GoRoute(
-    path: '/monthly',
-    name: 'fortune-monthly',
-    builder: (context, state) => const MonthlyFortunePage()),
   
   // Yearly
   GoRoute(

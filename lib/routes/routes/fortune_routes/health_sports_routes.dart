@@ -1,7 +1,4 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/health_sports_unified_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/sports_fortune_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/enhanced_sports_fortune_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/biorhythm_fortune_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/pet_fortune_page.dart' as fortune_pages;
 import '../../../features/fortune/presentation/pages/pet_fortune_unified_page.dart' as fortune_pages;
@@ -12,33 +9,6 @@ import '../../../features/sports/presentation/pages/sports_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/pet_compatibility_page.dart';
 
 final healthSportsRoutes = [
-  // Health Sports Unified
-  GoRoute(
-    path: '/health-sports',
-    name: 'fortune-health-sports',
-    builder: (context, state) => const fortune_pages.HealthSportsUnifiedPage()),
-  
-  // Enhanced Sports
-  GoRoute(
-    path: '/enhanced-sports',
-    name: 'fortune-enhanced-sports',
-    builder: (context, state) => const fortune_pages.EnhancedSportsFortunePage()),
-  
-  // Sports (Original)
-  GoRoute(
-    path: '/sports',
-    name: 'fortune-sports',
-    builder: (context, state) {
-      final sportParam = state.uri.queryParameters['type'];
-      fortune_pages.SportType? initialType;
-      if (sportParam != null) {
-        initialType = fortune_pages.SportType.values.firstWhere(
-          (s) => s.value == sportParam,
-          orElse: () => fortune_pages.SportType.fitness);
-      }
-      return fortune_pages.SportsFortunePage(
-        initialType: initialType ?? fortune_pages.SportType.fitness);
-    }),
   
   // Biorhythm - moved to route_config.dart (outside shell)
   // Moving - moved to route_config.dart (outside shell)

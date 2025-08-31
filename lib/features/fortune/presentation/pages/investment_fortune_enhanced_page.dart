@@ -11,7 +11,6 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_colors.dart';
-import 'investment_fortune_result_page.dart';
 import '../../../../core/components/toss_button.dart';
 
 // Step 관리를 위한 StateNotifier

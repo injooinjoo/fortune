@@ -412,6 +412,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'lifestyle',
       isNew: true),
     FortuneCategory(
+      title: 'MBTI 운세',
+      route: '/mbti',
+      type: 'mbti',
+      icon: Icons.psychology_rounded,
+      gradientColors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
+      description: 'MBTI 성격별 오늘의 운세',
+      category: 'lifestyle',
+      isNew: true),
+    FortuneCategory(
       title: '바이오리듬',
       route: '/biorhythm',
       type: 'biorhythm',
@@ -454,6 +463,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.heart_broken_rounded,
       gradientColors: [Color(0xFF6B7280), Color(0xFF374151)],
       description: '헤어진 연인과의 재회 가능성',
+      category: 'love',
+      isNew: true),
+    FortuneCategory(
+      title: '소개팅 운세',
+      route: '/blind-date',
+      type: 'blind-date',
+      icon: Icons.waving_hand_rounded,
+      gradientColors: [Color(0xFFFF6B9D), Color(0xFFE91E63)],
+      description: '오늘의 소개팅 성공 가능성',
       category: 'love',
       isNew: true),
 
