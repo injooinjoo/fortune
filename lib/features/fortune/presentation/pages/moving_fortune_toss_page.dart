@@ -9,9 +9,8 @@ import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/app_header.dart';
 import '../widgets/moving_step_indicator.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
-import '../widgets/moving_input_step2.dart';
-import '../widgets/moving_input_step3.dart';
-import '../widgets/moving_result_toss.dart';
+import '../widgets/moving_input_unified.dart';
+import '../widgets/moving_result_infographic.dart';
 
 /// 토스 스타일 이사운 페이지
 class MovingFortuneTossPage extends ConsumerStatefulWidget {
@@ -23,7 +22,6 @@ class MovingFortuneTossPage extends ConsumerStatefulWidget {
 
 class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   int _currentStep = 0;
-  bool _isLoading = false;
 
   // 사용자 입력 데이터
   String _currentArea = '';
@@ -31,48 +29,19 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   String _movingPeriod = '';
   String _purpose = '';
 
-  void _nextStep() {
-    if (_currentStep < 2) {
-      setState(() {
-        _currentStep++;
-      });
-    }
-  }
-
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-    }
-  }
-
-  void _onStep1Complete(String currentArea, String targetArea, String period) {
+  void _onInputComplete(String currentArea, String targetArea, String period, String purpose) async {
     setState(() {
       _currentArea = currentArea;
       _targetArea = targetArea;
       _movingPeriod = period;
-    });
-    _nextStep();
-  }
-
-  void _onStep2Complete(String purpose) {
-    setState(() {
       _purpose = purpose;
-      _isLoading = true;
     });
     
-    // 운세 생성 시뮬레이션
-    Future.delayed(const Duration(seconds: 2), () async {
-      if (mounted) {
-        // 운세 결과를 히스토리에 저장
-        await _saveMovingFortuneResult();
-        
-        setState(() {
-          _isLoading = false;
-        });
-        _nextStep();
-      }
+    // 운세 결과를 히스토리에 저장
+    await _saveMovingFortuneResult();
+    
+    setState(() {
+      _currentStep = 1; // 결과 페이지로 이동
     });
   }
 
@@ -108,6 +77,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
         fortuneType: 'moving',
         title: '${userName}님의 이사운',
         summary: summary,
+        fortuneData: summary, // fortuneData 추가
         metadata: metadata,
         tags: tags,
       );
@@ -152,42 +122,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: TossTheme.backgroundWhite,
-      appBar: _currentStep < 2
-          ? AppBar(
-              backgroundColor: TossTheme.backgroundWhite,
-              elevation: 0,
-              leading: _currentStep > 0
-                  ? IconButton(
-                      icon: Icon(Icons.arrow_back, color: TossTheme.textBlack),
-                      onPressed: _previousStep,
-                    )
-                  : IconButton(
-                      icon: Icon(Icons.close, color: TossTheme.textBlack),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-              title: MovingStepIndicator(
-                currentStep: _currentStep,
-                totalSteps: 2,
-              ),
-              centerTitle: true,
-            )
-          : AppHeader(
-              title: '이사운 결과',
-              showBackButton: false,
-              centerTitle: true,
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.close, color: TossTheme.textBlack),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-      body: _isLoading
-          ? _buildLoadingScreen()
-          : _buildCurrentStep(),
-    );
+    return _buildCurrentStep();
   }
 
   Widget _buildCurrentStep() {
@@ -195,15 +130,11 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
     
     switch (_currentStep) {
       case 0:
-        return MovingInputStep2(
-          onComplete: _onStep1Complete,
+        return MovingInputUnified(
+          onComplete: _onInputComplete,
         );
       case 1:
-        return MovingInputStep3(
-          onComplete: _onStep2Complete,
-        );
-      case 2:
-        return MovingResultToss(
+        return MovingResultInfographic(
           name: userProfile?.name ?? '사용자',
           birthDate: userProfile?.birthDate ?? DateTime.now(),
           currentArea: _currentArea,
@@ -222,39 +153,10 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
           },
         );
       default:
-        return MovingInputStep2(
-          onComplete: _onStep1Complete,
+        return MovingInputUnified(
+          onComplete: _onInputComplete,
         );
     }
   }
 
-  Widget _buildLoadingScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(
-            width: 60,
-            height: 60,
-            child: CircularProgressIndicator(
-              strokeWidth: 3,
-              valueColor: AlwaysStoppedAnimation<Color>(TossTheme.primaryBlue),
-            ),
-          ),
-          const SizedBox(height: TossTheme.spacingXL),
-          Text(
-            '이사운을 분석하고 있어요...',
-            style: TossTheme.subtitle1,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-          Text(
-            '최적의 이사 시기와 방향을\n찾고 있습니다',
-            style: TossTheme.caption,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
 }

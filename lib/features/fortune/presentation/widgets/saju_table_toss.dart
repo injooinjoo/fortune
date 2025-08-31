@@ -187,7 +187,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                     child: ScaleTransition(
                       scale: _pillarAnimations[index],
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingM),
+                        padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
                         decoration: BoxDecoration(
                           border: Border(
                             right: index < pillars.length - 1 
@@ -195,10 +195,10 @@ class _SajuTableTossState extends State<SajuTableToss> {
                               : BorderSide.none,
                           ),
                           color: isDay 
-                            ? TossTheme.brandBlue.withOpacity(0.05)
+                            ? TossTheme.brandBlue.withOpacity(0.08)
                             : null,
                         ),
-                        child: _buildStemCell(pillarData?['stem'], isDay),
+                        child: _buildStemCell(pillarData?['cheongan'], isDay),
                       ),
                     ),
                   ),
@@ -224,7 +224,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                   child: ScaleTransition(
                     scale: _pillarAnimations[index],
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingM),
+                      padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
                       decoration: BoxDecoration(
                         border: Border(
                           right: index < pillars.length - 1 
@@ -232,7 +232,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                             : BorderSide.none,
                         ),
                         color: isDay 
-                          ? TossTheme.brandBlue.withOpacity(0.05)
+                          ? TossTheme.brandBlue.withOpacity(0.08)
                           : null,
                         borderRadius: index == pillars.length - 1 
                           ? const BorderRadius.only(
@@ -244,7 +244,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                               )
                             : null,
                       ),
-                      child: _buildBranchCell(pillarData?['branch'], isDay),
+                      child: _buildBranchCell(pillarData?['jiji'], isDay),
                     ),
                   ),
                 ),
@@ -261,22 +261,41 @@ class _SajuTableTossState extends State<SajuTableToss> {
       return const Text('-', textAlign: TextAlign.center);
     }
 
-    final name = stemData['name'] as String? ?? '';
+    final name = stemData['char'] as String? ?? '';
+    final hanja = stemData['hanja'] as String? ?? '';
     final element = stemData['element'] as String? ?? '';
     final color = _getElementColor(element);
 
     return Column(
       children: [
-        Text(
-          name,
-          style: TossTheme.body1.copyWith(
-            fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
-            color: isDay ? TossTheme.brandBlue : color,
-            fontSize: isDay ? 18 : 16,
-          ),
-          textAlign: TextAlign.center,
+        // 한글 + 한자 (더 크고 명확하게)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              name,
+              style: TossTheme.body1.copyWith(
+                fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
+                color: isDay ? TossTheme.brandBlue : color,
+                fontSize: isDay ? 20 : 18,
+              ),
+            ),
+            if (hanja.isNotEmpty) ...[
+              const SizedBox(width: 4),
+              Text(
+                hanja,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                  fontSize: isDay ? 18 : 16,
+                ),
+              ),
+            ],
+          ],
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
+        // 오행 표시
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
@@ -301,31 +320,53 @@ class _SajuTableTossState extends State<SajuTableToss> {
       return const Text('-', textAlign: TextAlign.center);
     }
 
-    final name = branchData['name'] as String? ?? '';
+    final name = branchData['char'] as String? ?? '';
+    final hanja = branchData['hanja'] as String? ?? '';
     final animal = branchData['animal'] as String? ?? '';
     final element = branchData['element'] as String? ?? '';
     final color = _getElementColor(element);
 
     return Column(
       children: [
+        // 한글 + 한자 (더 크고 명확하게)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              name,
+              style: TossTheme.body1.copyWith(
+                fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
+                color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                fontSize: isDay ? 20 : 18,
+              ),
+            ),
+            if (hanja.isNotEmpty) ...[
+              const SizedBox(width: 4),
+              Text(
+                hanja,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                  fontSize: isDay ? 18 : 16,
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 2),
+        // 동물 띠
         Text(
-          name,
-          style: TossTheme.body1.copyWith(
-            fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
-            color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
-            fontSize: isDay ? 18 : 16,
+          animal,
+          style: TossTheme.caption.copyWith(
+            color: isDay ? TossTheme.brandBlue.withOpacity(0.8) : TossTheme.textGray600,
+            fontSize: isDay ? 12 : 11,
+            fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 2),
-        Text(
-          animal,
-          style: TossTheme.caption.copyWith(
-            color: TossTheme.textGray600,
-            fontSize: 10,
-          ),
-          textAlign: TextAlign.center,
-        ),
+        // 오행 표시
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
@@ -349,10 +390,11 @@ class _SajuTableTossState extends State<SajuTableToss> {
     final dayData = widget.sajuData['day'];
     if (dayData == null) return const SizedBox.shrink();
 
-    final stemData = dayData['stem'] as Map<String, dynamic>?;
+    final stemData = dayData['cheongan'] as Map<String, dynamic>?;
     if (stemData == null) return const SizedBox.shrink();
 
-    final stemName = stemData['name'] as String? ?? '';
+    final stemName = stemData['char'] as String? ?? '';
+    final stemHanja = stemData['hanja'] as String? ?? '';
     final element = stemData['element'] as String? ?? '';
     final color = _getElementColor(element);
 
@@ -383,7 +425,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '일간: $stemName ($element)',
+                  '일간: $stemName($stemHanja) · $element 오행',
                   style: TossTheme.body2.copyWith(
                     fontWeight: FontWeight.bold,
                     color: color,

@@ -199,39 +199,43 @@ class SajuNotifier extends StateNotifier<SajuState> {
       'year': {
         'cheongan': {
           'char': rawData['year_stem'],
-          'hanja': rawData['year_stem_hanja'],
+          'hanja': rawData['year_stem_hanja'] ?? _getHanjaForStem(rawData['year_stem']),
           'element': _getElementForStem(rawData['year_stem'])},
         'jiji': {
           'char': rawData['year_branch'],
-          'hanja': rawData['year_branch_hanja'],
+          'hanja': rawData['year_branch_hanja'] ?? _getHanjaForBranch(rawData['year_branch']),
+          'animal': _getAnimalForBranch(rawData['year_branch']),
           'element': _getElementForBranch(rawData['year_branch'])}},
       'month': {
         'cheongan': {
           'char': rawData['month_stem'],
-          'hanja': rawData['month_stem_hanja'],
+          'hanja': rawData['month_stem_hanja'] ?? _getHanjaForStem(rawData['month_stem']),
           'element': _getElementForStem(rawData['month_stem'])},
         'jiji': {
           'char': rawData['month_branch'],
-          'hanja': rawData['month_branch_hanja'],
+          'hanja': rawData['month_branch_hanja'] ?? _getHanjaForBranch(rawData['month_branch']),
+          'animal': _getAnimalForBranch(rawData['month_branch']),
           'element': _getElementForBranch(rawData['month_branch'])}},
       'day': {
         'cheongan': {
           'char': rawData['day_stem'],
-          'hanja': rawData['day_stem_hanja'],
+          'hanja': rawData['day_stem_hanja'] ?? _getHanjaForStem(rawData['day_stem']),
           'element': _getElementForStem(rawData['day_stem'])},
         'jiji': {
           'char': rawData['day_branch'],
-          'hanja': rawData['day_branch_hanja'],
+          'hanja': rawData['day_branch_hanja'] ?? _getHanjaForBranch(rawData['day_branch']),
+          'animal': _getAnimalForBranch(rawData['day_branch']),
           'element': _getElementForBranch(rawData['day_branch'])}},
       'hour': rawData['hour_stem'] != null
           ? {
               'cheongan': {
                 'char': rawData['hour_stem'],
-                'hanja': rawData['hour_stem_hanja'],
+                'hanja': rawData['hour_stem_hanja'] ?? _getHanjaForStem(rawData['hour_stem']),
                 'element': _getElementForStem(rawData['hour_stem'])},
               'jiji': {
                 'char': rawData['hour_branch'],
-                'hanja': rawData['hour_branch_hanja'],
+                'hanja': rawData['hour_branch_hanja'] ?? _getHanjaForBranch(rawData['hour_branch']),
+                'animal': _getAnimalForBranch(rawData['hour_branch']),
                 'element': _getElementForBranch(rawData['hour_branch'])}}
           : null,
       'elements': rawData['element_balance'] ?? {},
@@ -269,22 +273,46 @@ class SajuNotifier extends StateNotifier<SajuState> {
     return branchElements[branch] ?? '';
   }
 
+  String _getAnimalForBranch(String branch) {
+    const branchAnimals = {
+      '자': '쥐', '축': '소', '인': '호랑이', '묘': '토끼',
+      '진': '용', '사': '뱀', '오': '말', '미': '양',
+      '신': '원숭이', '유': '닭', '술': '개', '해': '돼지'
+    };
+    return branchAnimals[branch] ?? '';
+  }
+
+  // 천간 한자 매핑
+  static const Map<String, String> stemHanjaMap = {
+    '갑': '甲', '을': '乙', '병': '丙', '정': '丁', '무': '戊',
+    '기': '己', '경': '庚', '신': '辛', '임': '壬', '계': '癸'
+  };
+  
+  // 지지 한자 매핑
+  static const Map<String, String> branchHanjaMap = {
+    '자': '子', '축': '丑', '인': '寅', '묘': '卯', '진': '辰', '사': '巳',
+    '오': '午', '미': '未', '신': '申', '유': '酉', '술': '戌', '해': '亥'
+  };
+
   String _getDaeunHanja(String? daeun) {
     if (daeun == null || daeun.length < 2) return '';
     
-    const stemHanja = {
-      '갑': '甲', '을': '乙', '병': '丙', '정': '丁', '무': '戊',
-      '기': '己', '경': '庚', '신': '辛', '임': '壬', '계': '癸'
-    };
-    const branchHanja = {
-      '자': '子', '축': '丑', '인': '寅', '묘': '卯', '진': '辰', '사': '巳',
-      '오': '午', '미': '未', '신': '申', '유': '酉', '술': '戌', '해': '亥'
-    };
-    
     final stem = daeun[0];
     final branch = daeun[1];
-    return '${stemHanja[stem] ?? stem}${branchHanja[branch] ?? branch}';
+    return '${stemHanjaMap[stem] ?? stem}${branchHanjaMap[branch] ?? branch}';
 }
+
+  // 천간에 대한 한자 가져오기
+  String _getHanjaForStem(String? stem) {
+    if (stem == null || stem.isEmpty) return '';
+    return stemHanjaMap[stem] ?? '';
+  }
+
+  // 지지에 대한 한자 가져오기
+  String _getHanjaForBranch(String? branch) {
+    if (branch == null || branch.isEmpty) return '';
+    return branchHanjaMap[branch] ?? '';
+  }
 
   // Clear Saju data
   void clearSaju() {

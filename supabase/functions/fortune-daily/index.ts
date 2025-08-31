@@ -5,6 +5,139 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// 완전한 일일 운세 응답 스키마 정의
+interface DailyFortuneResponse {
+  // 필수 기본 정보
+  overall_score: number;
+  summary: string;
+  greeting: string;
+  advice: string;
+  caution: string;
+  description: string;
+  
+  // 필수 카테고리별 운세 (모든 필드 필수)
+  categories: {
+    total: { score: number; advice: string; };
+    love: { score: number; advice: string; };
+    money: { score: number; advice: string; };
+    work: { score: number; advice: string; };
+    health: { score: number; advice: string; };
+  };
+  
+  // 필수 행운 요소들 (모든 필드 필수)
+  lucky_items: {
+    time: string;
+    color: string;
+    number: string;
+    direction: string;
+    food: string;
+    item: string;
+  };
+  
+  // 필수 행운 번호들
+  lucky_numbers: string[];
+  
+  // 필수 조언들 (모든 필드 필수)
+  special_tip: string;
+  ai_insight: string;
+  ai_tips: string[];
+  
+  // 필수 추가 정보
+  fortuneSummary: {
+    byZodiacAnimal: { title: string; content: string; score: number; };
+    byZodiacSign: { title: string; content: string; score: number; };
+    byMBTI: { title: string; content: string; score: number; };
+  };
+  
+  personalActions: Array<{
+    title: string;
+    why: string;
+    priority: number;
+  }>;
+  
+  sajuInsight: {
+    lucky_color: string;
+    lucky_food: string;
+    lucky_item: string;
+    luck_direction: string;
+    keyword: string;
+  };
+  
+  // 필수 동적 섹션들
+  lucky_outfit: {
+    title: string;
+    description: string;
+    items: string[];
+  };
+  
+  celebrities_same_day: Array<{
+    name: string;
+    year: string;
+    description: string;
+  }>;
+  
+  age_fortune: {
+    ageGroup: string;
+    title: string;
+    description: string;
+    zodiacAnimal?: string;
+  };
+  
+  daily_predictions: {
+    morning: string;
+    afternoon: string;
+    evening: string;
+  };
+  
+  // 선택적 메타데이터
+  metadata?: {
+    weather?: any;
+    [key: string]: any;
+  };
+  
+  // 공유 정보
+  share_count: string;
+}
+
+// 응답 검증 함수
+function validateFortuneResponse(fortune: any): fortune is DailyFortuneResponse {
+  const requiredFields = [
+    'overall_score', 'summary', 'greeting', 'advice', 'caution', 'description',
+    'categories', 'lucky_items', 'lucky_numbers', 'special_tip', 'ai_insight', 'ai_tips',
+    'fortuneSummary', 'personalActions', 'sajuInsight', 'lucky_outfit',
+    'celebrities_same_day', 'age_fortune', 'daily_predictions', 'share_count'
+  ];
+  
+  for (const field of requiredFields) {
+    if (!(field in fortune) || fortune[field] === null || fortune[field] === undefined) {
+      console.error(`Missing required field: ${field}`);
+      return false;
+    }
+  }
+  
+  // 카테고리 필드 검증
+  const requiredCategories = ['total', 'love', 'money', 'work', 'health'];
+  for (const category of requiredCategories) {
+    if (!(category in fortune.categories) || 
+        !fortune.categories[category].score || 
+        !fortune.categories[category].advice) {
+      console.error(`Missing category field: ${category}`);
+      return false;
+    }
+  }
+  
+  // 행운 요소 필드 검증
+  const requiredLuckyFields = ['time', 'color', 'number', 'direction', 'food', 'item'];
+  for (const field of requiredLuckyFields) {
+    if (!(field in fortune.lucky_items) || !fortune.lucky_items[field]) {
+      console.error(`Missing lucky_items field: ${field}`);
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 // 영어 지역명을 한글로 변환하는 간단한 함수
 // GPT나 다른 서비스에서 더 정확한 변환을 할 수 있도록 기본 처리만 제공
 function processLocation(location: string): string {
@@ -1105,6 +1238,12 @@ serve(async (req) => {
     // 동적 스토리 세그먼트 생성 실행
     const storySegments = generateDynamicStorySegments()
     
+    // 응답 검증
+    if (!validateFortuneResponse(fortune)) {
+      console.error('Fortune response validation failed:', fortune);
+      throw new Error('Generated fortune data is incomplete');
+    }
+
     // 운세와 스토리를 함께 반환
     return new Response(
       JSON.stringify({ 

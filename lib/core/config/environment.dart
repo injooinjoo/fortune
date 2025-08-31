@@ -99,6 +99,9 @@ class Environment {
   static String get kakaoAppKey => dotenv.env['KAKAO_APP_KEY'] ?? '';
   static String get naverClientId => dotenv.env['NAVER_CLIENT_ID'] ?? '';
   static String get naverClientSecret => dotenv.env['NAVER_CLIENT_SECRET'] ?? '';
+
+  // Kakao API 설정
+  static String get kakaoRestApiKey => dotenv.env['KAKAO_REST_API_KEY'] ?? '';
   
   // 기능 플래그
   static bool get enableAnalytics => 

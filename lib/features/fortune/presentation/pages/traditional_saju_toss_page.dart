@@ -8,6 +8,7 @@ import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_table_toss.dart';
 import '../widgets/saju_element_chart.dart';
+import '../widgets/manseryeok_display.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// 토스 스타일 전통 사주팔자 페이지
@@ -394,17 +395,15 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   }
   
   Widget _buildBasicSajuInfo(Map<String, dynamic> sajuData) {
-    return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
-      child: Column(
-        children: [
-          // 사주 명식 테이블
-          SajuTableToss(
-            sajuData: sajuData,
-            animationController: _resultAnimationController,
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        // 사주 명식 표시 (만세력 스타일)
+        ManseryeokDisplay(sajuData: sajuData),
+        const SizedBox(height: TossTheme.spacingL),
+        
+        // 오행 차트
+        SajuElementChart(sajuData: sajuData),
+      ],
     );
   }
 

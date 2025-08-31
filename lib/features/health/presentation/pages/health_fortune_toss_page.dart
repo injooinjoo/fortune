@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/body_part_selector.dart';
+import '../widgets/body_part_grid_selector.dart';
 import '../widgets/health_score_card.dart';
 import '../widgets/health_timeline_chart.dart';
 import '../../domain/models/health_fortune_model.dart';
@@ -23,6 +24,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
   
   int _currentStep = 0;
   bool _isLoading = false;
+  bool _useGridSelector = true; // 그리드 선택기 사용 여부
   
   // 입력 데이터
   ConditionState? _currentCondition;
@@ -414,14 +416,141 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
   Widget _buildBodyPartSelectionPage() {
     return Column(
       children: [
+        // 선택 모드 토글
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: TossTheme.backgroundSecondary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    setState(() {
+                      _useGridSelector = true;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _useGridSelector ? Colors.white : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: _useGridSelector
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.grid_view_rounded,
+                          size: 18,
+                          color: _useGridSelector
+                              ? TossTheme.primaryBlue
+                              : TossTheme.textGray600,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '목록 선택',
+                          style: TossTheme.body3.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: _useGridSelector
+                                ? TossTheme.primaryBlue
+                                : TossTheme.textGray600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    setState(() {
+                      _useGridSelector = false;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: !_useGridSelector ? Colors.white : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: !_useGridSelector
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person_outline_rounded,
+                          size: 18,
+                          color: !_useGridSelector
+                              ? TossTheme.primaryBlue
+                              : TossTheme.textGray600,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '실루엣 선택',
+                          style: TossTheme.body3.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: !_useGridSelector
+                                ? TossTheme.primaryBlue
+                                : TossTheme.textGray600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        // 선택기
         Expanded(
-          child: BodyPartSelector(
-            selectedParts: _selectedBodyParts,
-            onSelectionChanged: (parts) {
-              setState(() {
-                _selectedBodyParts = parts;
-              });
-            },
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _useGridSelector
+                ? BodyPartGridSelector(
+                    key: const ValueKey('grid'),
+                    selectedParts: _selectedBodyParts,
+                    onSelectionChanged: (parts) {
+                      setState(() {
+                        _selectedBodyParts = parts;
+                      });
+                    },
+                  )
+                : BodyPartSelector(
+                    key: const ValueKey('silhouette'),
+                    selectedParts: _selectedBodyParts,
+                    onSelectionChanged: (parts) {
+                      setState(() {
+                        _selectedBodyParts = parts;
+                      });
+                    },
+                  ),
           ),
         ),
         

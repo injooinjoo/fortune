@@ -27,6 +27,19 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   
   bool _isLoading = false;
   Fortune? _fortune;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +49,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         backgroundColor: TossTheme.backgroundWhite,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: TossTheme.textBlack),
+          icon: Icon(Icons.arrow_back_ios, color: TossTheme.textBlack, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           '유명인 운세',
           style: TextStyle(
             color: TossTheme.textBlack,
-            fontSize: 18,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -65,12 +78,17 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         Expanded(
           child: PageView(
             physics: const NeverScrollableScrollPhysics(),
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentStep = index;
+              });
+            },
             children: [
               _buildStep1CategorySelection(),
               _buildStep2CelebritySelection(),
               _buildStep3QuestionType(),
             ],
-            controller: PageController(initialPage: _currentStep),
           ),
         ),
         
@@ -118,17 +136,19 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           Text(
             '어떤 분야의 유명인과\n궁합을 보고 싶으신가요?',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
               color: TossTheme.textBlack,
+              height: 1.3,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
-            '관심 있는 분야를 선택해주시면\n그 분야의 유명인들을 보여드려요',
+            '관심 있는 분야를 선택해주세요',
             style: TextStyle(
-              fontSize: 16,
-              color: TossTheme.textGray600,
+              fontSize: 15,
+              color: TossTheme.textGray500,
+              height: 1.4,
             ),
           ),
           const SizedBox(height: 32),
@@ -158,37 +178,42 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     final isSelected = _selectedCategory == category;
     
     return GestureDetector(
-      onTap: () => setState(() => _selectedCategory = category),
+      onTap: () {
+        setState(() => _selectedCategory = category);
+        // 카테고리 선택 후 자동으로 다음 페이지로 이동
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            _pageController.animateToPage(
+              1,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      },
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : Colors.white,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : TossTheme.backgroundWhite,
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 1.5 : 1,
           ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
-                borderRadius: BorderRadius.circular(12),
+                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundGray100,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.white : TossTheme.textGray600,
-                size: 24,
+                color: isSelected ? Colors.white : TossTheme.textGray500,
+                size: 22,
               ),
             ),
             const SizedBox(width: 16),
@@ -199,17 +224,17 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     description,
                     style: TextStyle(
-                      fontSize: 14,
-                      color: TossTheme.textGray600,
+                      fontSize: 13,
+                      color: TossTheme.textGray500,
                     ),
                   ),
                 ],
@@ -250,33 +275,47 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           Text(
             '궁합을 보고 싶은\n유명인을 선택해주세요',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
               color: TossTheme.textBlack,
+              height: 1.3,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
-            '선택한 유명인과의 운세와 궁합을 분석해드릴게요',
+            '선택한 유명인과의 운세를 분석해드려요',
             style: TextStyle(
-              fontSize: 16,
-              color: TossTheme.textGray600,
+              fontSize: 15,
+              color: TossTheme.textGray500,
+              height: 1.4,
             ),
           ),
           const SizedBox(height: 32),
           
           // Search bar
           Container(
+            height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
-              borderRadius: BorderRadius.circular(12),
+              color: TossTheme.backgroundGray100,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
+              style: TextStyle(
+                fontSize: 15,
+                color: TossTheme.textBlack,
+              ),
               decoration: InputDecoration(
-                hintText: '유명인 이름으로 검색',
-                hintStyle: TextStyle(color: TossTheme.textGray600),
-                prefixIcon: Icon(Icons.search, color: TossTheme.textGray600),
+                hintText: '이름으로 검색',
+                hintStyle: TextStyle(
+                  color: TossTheme.textGray400,
+                  fontSize: 15,
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: TossTheme.textGray400,
+                  size: 20,
+                ),
                 border: InputBorder.none,
               ),
               onChanged: (value) {
@@ -284,7 +323,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               },
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           
           // Celebrity grid
           GridView.builder(
@@ -302,22 +341,27 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               final isSelected = _selectedCelebrity?.id == celebrity.id;
               
               return GestureDetector(
-                onTap: () => setState(() => _selectedCelebrity = celebrity),
+                onTap: () {
+                  setState(() => _selectedCelebrity = celebrity);
+                  // 유명인 선택 후 자동으로 다음 페이지로 이동
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted && _selectedCelebrity != null) {
+                      _pageController.animateToPage(
+                        2,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  });
+                },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : Colors.white,
+                    color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : TossTheme.backgroundWhite,
                     border: Border.all(
                       color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
-                      width: isSelected ? 2 : 1,
+                      width: isSelected ? 1.5 : 1,
                     ),
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Column(
                     children: [
@@ -372,19 +416,19 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                               Text(
                                 celebrity.name,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  color: TossTheme.textBlack,
+                                  color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               Text(
                                 celebrity.category.displayName,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: TossTheme.textGray600,
+                                  color: TossTheme.textGray500,
                                 ),
                               ),
                               if (celebrity.age != null) ...[
@@ -393,7 +437,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                   '${celebrity.age}세',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: TossTheme.textGray600,
+                                    color: TossTheme.textGray400,
                                   ),
                                 ),
                               ],
@@ -421,17 +465,19 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           Text(
             '어떤 것이 궁금하신가요?',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
               color: TossTheme.textBlack,
+              height: 1.3,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
-            '${_selectedCelebrity?.name ?? '선택한 유명인'}님과의 관계에서\n가장 궁금한 부분을 선택해주세요',
+            '${_selectedCelebrity?.name ?? '선택한 유명인'}님과의 관계에서\n궁금한 부분을 선택해주세요',
             style: TextStyle(
-              fontSize: 16,
-              color: TossTheme.textGray600,
+              fontSize: 15,
+              color: TossTheme.textGray500,
+              height: 1.4,
             ),
           ),
           const SizedBox(height: 32),
@@ -605,7 +651,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildBottomButton() {
-    final canProceed = (_currentStep == 0) ||
+    final canProceed = (_currentStep == 0 && _selectedCategory != null) ||
                       (_currentStep == 1 && _selectedCelebrity != null) ||
                       (_currentStep == 2);
     
@@ -621,7 +667,13 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 child: TossButton(
                   text: '이전',
                   style: TossButtonStyle.secondary,
-                  onPressed: () => setState(() => _currentStep--),
+                  onPressed: () {
+                    _pageController.animateToPage(
+                      _currentStep - 1,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 12),
@@ -642,7 +694,11 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
 
   void _handleButtonPress() {
     if (_currentStep < 2) {
-      setState(() => _currentStep++);
+      _pageController.animateToPage(
+        _currentStep + 1,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
     } else {
       _generateFortune();
     }

@@ -229,13 +229,11 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
             
             // 최적화된 로딩 리스트 (픽셀 깨짐 방지)
             Expanded(
-              child: Center(
-                child: _OptimizedLoadingList(
-                  steps: _emotionalLoadingMessages,
-                  currentStep: _currentStep,
-                  checkAnimation: _checkAnimation,
-                  isDark: isDark,
-                ),
+              child: _OptimizedLoadingList(
+                steps: _emotionalLoadingMessages,
+                currentStep: _currentStep,
+                checkAnimation: _checkAnimation,
+                isDark: isDark,
               ),
             ),
           ],
@@ -261,58 +259,59 @@ class _OptimizedLoadingList extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: steps.asMap().entries.map((entry) {
-          final index = entry.key;
-          final step = entry.value;
-          final isCompleted = index < currentStep;
-          final isActive = index == currentStep;
-          
-          // 가시성 최적화 - 현재 단계 주변만 표시
-          if ((index - currentStep).abs() > 3) {
-            return const SizedBox(height: 80); // 빈 공간 유지
-          }
-          
-          // 부드러운 투명도 계산 (픽셀 깨짐 방지)
-          double opacity = 1.0;
-          if (index < currentStep - 2) {
-            opacity = 0.0;
-          } else if (index == currentStep - 2) {
-            opacity = 0.1;
-          } else if (index == currentStep - 1) {
-            opacity = 0.4;
-          } else if (index == currentStep) {
-            opacity = 1.0;
-          } else if (index == currentStep + 1) {
-            opacity = 0.4;
-          } else if (index == currentStep + 2) {
-            opacity = 0.1;
-          } else {
-            opacity = 0.0;
-          }
-          
-          return AnimatedOpacity(
-            duration: const Duration(milliseconds: 600), // 부드러운 전환
-            opacity: opacity,
-            curve: Curves.easeInOutCubic,
-            child: Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: _OptimizedStepItem(
-                step: step,
-                isCompleted: isCompleted,
-                isActive: isActive,
-                isDark: isDark,
-                checkAnimation: isActive ? checkAnimation : null,
+    // Stack을 사용하여 항목들을 화면 중앙에 고정
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // 현재 스텝 주변 5개 항목만 렌더링 (성능 최적화)
+        for (int i = -2; i <= 2; i++)
+          if (currentStep + i >= 0 && currentStep + i < steps.length)
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOutCubic,
+              // 중앙(0)을 기준으로 위아래로 배치
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Center(
+                child: Transform.translate(
+                  offset: Offset(0, i * 90.0), // 각 항목을 90픽셀씩 간격으로 배치
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 600),
+                    opacity: _getOpacity(i),
+                    curve: Curves.easeInOutCubic,
+                    child: Container(
+                      height: 80,
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: _OptimizedStepItem(
+                        step: steps[currentStep + i],
+                        isCompleted: (currentStep + i) < currentStep,
+                        isActive: i == 0,
+                        isDark: isDark,
+                        checkAnimation: i == 0 ? checkAnimation : null,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          );
-        }).toList(),
-      ),
+      ],
     );
+  }
+  
+  // 위치에 따른 투명도 계산
+  double _getOpacity(int offset) {
+    switch (offset.abs()) {
+      case 0:
+        return 1.0;
+      case 1:
+        return 0.4;
+      case 2:
+        return 0.1;
+      default:
+        return 0.0;
+    }
   }
 }
 

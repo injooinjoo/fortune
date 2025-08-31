@@ -29,17 +29,42 @@ class MovingResultToss extends StatefulWidget {
   State<MovingResultToss> createState() => _MovingResultTossState();
 }
 
-class _MovingResultTossState extends State<MovingResultToss> {
+class _MovingResultTossState extends State<MovingResultToss> with TickerProviderStateMixin {
   late int _overallScore;
   late String _scoreDescription;
   late List<DateTime> _luckyDates;
   late String _luckyDirection;
   late String _mainAdvice;
+  
+  late AnimationController _scoreController;
+  late Animation<double> _scoreAnimation;
+  late AnimationController _cardController;
+  late Animation<double> _cardAnimation;
 
   @override
   void initState() {
     super.initState();
     _generateFortune();
+    
+    _scoreController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _scoreAnimation = Tween<double>(begin: 0, end: _overallScore / 100)
+        .animate(CurvedAnimation(parent: _scoreController, curve: Curves.easeOutCubic));
+    
+    _cardController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _cardAnimation = Tween<double>(begin: 0, end: 1)
+        .animate(CurvedAnimation(parent: _cardController, curve: Curves.easeOut));
+    
+    // Start animations
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _scoreController.forward();
+      _cardController.forward();
+    });
   }
 
   void _generateFortune() {
@@ -93,11 +118,14 @@ class _MovingResultTossState extends State<MovingResultToss> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
-      child: Column(
-        children: [
-          const SizedBox(height: TossTheme.spacingXL),
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(TossTheme.spacingL),
+          child: Column(
+            children: [
+              const SizedBox(height: TossTheme.spacingXL),
           
           // 인사말
           Text(
@@ -194,7 +222,9 @@ class _MovingResultTossState extends State<MovingResultToss> {
               ],
             ),
           ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -492,6 +522,13 @@ class _MovingResultTossState extends State<MovingResultToss> {
   String _getWeekdayName(int weekday) {
     const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
     return weekdays[weekday - 1];
+  }
+
+  @override
+  void dispose() {
+    _scoreController.dispose();
+    _cardController.dispose();
+    super.dispose();
   }
 
   void _shareResult() {

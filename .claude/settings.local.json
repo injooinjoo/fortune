@@ -106,7 +106,9 @@
       "Bash(export:*)",
       "Bash(nslookup:*)",
       "Bash(npm install:*)",
-      "Bash(/opt/homebrew/opt/postgresql@14/bin/psql \"postgresql://postgres.vwvlmrftbefbtwkrgxjp:Godsplan12!@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres\" -c \"DELETE FROM fortune_cache WHERE user_id = ''070ceecf-774f-4ee0-bb9e-059238dcf028'' AND fortune_type = ''daily'';\")"
+      "Bash(/opt/homebrew/opt/postgresql@14/bin/psql \"postgresql://postgres.vwvlmrftbefbtwkrgxjp:Godsplan12!@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres\" -c \"DELETE FROM fortune_cache WHERE user_id = ''070ceecf-774f-4ee0-bb9e-059238dcf028'' AND fortune_type = ''daily'';\")",
+      "Bash(echo:*)",
+      "Bash(/opt/homebrew/opt/postgresql@14/bin/psql:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

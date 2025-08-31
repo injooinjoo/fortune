@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/fortune.dart';
 import '../../data/services/fortune_api_service.dart';
 import '../../core/errors/exceptions.dart';
@@ -130,7 +131,43 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
   String? _lastCachedDateKey; // 마지막으로 캐시된 날짜 키 추적
   final CacheService _cacheService = CacheService();
 
-  DailyFortuneNotifier(super._apiService, super.ref);
+  DailyFortuneNotifier(super._apiService, super.ref) {
+    // 앱 시작시 마지막 캐시 날짜 복원
+    _loadLastCachedDateKey();
+  }
+  
+  Future<void> _loadLastCachedDateKey() async {
+    // SharedPreferences에서 마지막 캐시 날짜 불러오기
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _lastCachedDateKey = prefs.getString('last_cached_daily_fortune_date');
+      if (_lastCachedDateKey != null) {
+        Logger.debug('📅 [DailyFortuneNotifier] Restored last cached date', {
+          'lastCachedDateKey': _lastCachedDateKey
+        });
+      }
+    } catch (e) {
+      Logger.error('❌ [DailyFortuneNotifier] Failed to load last cached date', {
+        'error': e.toString()
+      });
+    }
+  }
+  
+  Future<void> _saveLastCachedDateKey(String dateKey) async {
+    // SharedPreferences에 마지막 캐시 날짜 저장
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('last_cached_daily_fortune_date', dateKey);
+      _lastCachedDateKey = dateKey;
+      Logger.debug('💾 [DailyFortuneNotifier] Saved last cached date', {
+        'lastCachedDateKey': dateKey
+      });
+    } catch (e) {
+      Logger.error('❌ [DailyFortuneNotifier] Failed to save last cached date', {
+        'error': e.toString()
+      });
+    }
+  }
 
   void setDate(DateTime date) {
     Logger.debug('📅 [DailyFortuneNotifier] Setting date', {
@@ -142,7 +179,7 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
   // 날짜 키 생성 (CacheService와 동일한 로직)
   String _getDateKey() {
     final date = _selectedDate ?? DateTime.now();
-    return '${date.year}-${date.month}-${date.day}';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   // 날짜 변경 여부 확인
@@ -220,7 +257,7 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
         Logger.endTimer('Cache Save', cacheStopwatch);
         
         if (cacheSuccess) {
-          _lastCachedDateKey = currentDateKey; // 캐시 성공 시에만 업데이트
+          await _saveLastCachedDateKey(currentDateKey); // SharedPreferences에도 저장
           Logger.info('✅ [DailyFortuneNotifier] Cache save successful', {
             'cacheKey': currentDateKey,
             'saveTime': '${cacheStopwatch.elapsedMilliseconds}ms'});

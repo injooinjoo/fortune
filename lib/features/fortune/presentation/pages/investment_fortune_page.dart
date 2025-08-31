@@ -2,39 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../domain/entities/fortune.dart';
-import '../../../../core/utils/logger.dart';
-
-/// 투자 카테고리 열거형
-enum InvestmentCategory {
-  stock('주식', '주식시장의 기회를 찾아보세요', '📈', AppColors.tossBlue),
-  crypto('암호화폐', '디지털 자산의 미래를 예측하세요', '🪙', Color(0xFFF57C00)),
-  realEstate('부동산', '안정적인 부동산 투자 시기를 알아보세요', '🏠', Color(0xFF388E3C)),
-  business('사업/창업', '새로운 사업 기회를 발견하세요', '💼', Color(0xFF7B1FA2));
-
-  const InvestmentCategory(this.title, this.description, this.emoji, this.color);
-  
-  final String title;
-  final String description;
-  final String emoji;
-  final Color color;
-}
-
-/// 위험 성향 열거형
-enum RiskLevel {
-  conservative('안정형', '안전한 투자를 선호', Color(0xFF00D67A)),
-  balanced('균형형', '적절한 위험을 감수', AppColors.tossBlue),
-  aggressive('공격형', '높은 수익을 추구', Color(0xFFFF3B30));
-
-  const RiskLevel(this.title, this.description, this.color);
-  
-  final String title;
-  final String description;
-  final Color color;
-}
+import '../../../../core/theme/toss_theme.dart';
+import 'investment_fortune_input_page.dart';
 
 class InvestmentFortunePage extends ConsumerStatefulWidget {
   const InvestmentFortunePage({super.key});
@@ -43,925 +12,330 @@ class InvestmentFortunePage extends ConsumerStatefulWidget {
   ConsumerState<InvestmentFortunePage> createState() => _InvestmentFortunePageState();
 }
 
-class _InvestmentFortunePageState extends ConsumerState<InvestmentFortunePage> {
-  Fortune? _fortune;
-  bool _isLoading = false;
-  
-  // 선택된 설정들
-  InvestmentCategory? _selectedCategory;
-  int _investmentAmount = 100;
-  RiskLevel _selectedRiskLevel = RiskLevel.balanced;
-  int _investmentPeriod = 12;
+class _InvestmentFortunePageState extends ConsumerState<InvestmentFortunePage> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _scaleAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.elasticOut,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.tossBackground,
-      appBar: _buildAppBar(),
-      body: _fortune != null 
-        ? _buildResultView()
-        : _buildMainView(),
-    );
-  }
-
-  /// 토스 스타일 앱바
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
+      backgroundColor: TossTheme.backgroundWhite,
+      appBar: AppBar(
+        backgroundColor: TossTheme.backgroundWhite,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: TossTheme.textBlack),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          '투자 운세',
+          style: TossTheme.heading4,
+        ),
+        centerTitle: true,
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: AppColors.tossTextPrimary),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      title: const Text(
-        '투자운세',
-        style: TextStyle(
-          color: AppColors.tossTextPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.3,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildIllustrationSection(),
+              _buildContentSection(),
+              _buildBottomSection(),
+            ],
+          ),
         ),
       ),
-      centerTitle: true,
     );
   }
 
-  /// 메인 뷰 (운세 요약 + 카테고리 선택)
-  Widget _buildMainView() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+  Widget _buildIllustrationSection() {
+    return Container(
+      height: 280,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            TossTheme.primaryBlue.withOpacity(0.05),
+            TossTheme.backgroundWhite,
+          ],
+        ),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildTodayFortuneCard(),
-          const SizedBox(height: 32),
-          _buildSectionTitle('어떤 투자를 고민 중이신가요?'),
-          const SizedBox(height: 16),
-          _buildCategoryGrid(),
-          const SizedBox(height: 100), // 하단 여백
+          ScaleTransition(
+            scale: _scaleAnimation,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    TossTheme.primaryBlue.withOpacity(0.2),
+                    TossTheme.primaryBlue.withOpacity(0.1),
+                  ],
+                ),
+              ),
+              child: Icon(
+                Icons.trending_up,
+                size: 60,
+                color: TossTheme.primaryBlue,
+              ),
+            ),
+          ).animate()
+            .fadeIn(duration: 800.ms)
+            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+          const SizedBox(height: 24),
+          Text(
+            '투자 운세',
+            style: TossTheme.heading2.copyWith(
+              fontSize: 32,
+            ),
+          ).animate()
+            .fadeIn(duration: 600.ms, delay: 200.ms)
+            .slideY(begin: 0.1, end: 0),
+          const SizedBox(height: 8),
+          Text(
+            '오늘의 투자 운을 확인해보세요',
+            style: TossTheme.body3.copyWith(
+              color: TossTheme.textGray600,
+            ),
+          ).animate()
+            .fadeIn(duration: 600.ms, delay: 400.ms)
+            .slideY(begin: 0.1, end: 0),
         ],
       ),
     );
   }
 
-  /// 오늘의 투자운세 요약 카드
-  Widget _buildTodayFortuneCard() {
+  Widget _buildContentSection() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          _buildFeatureCard(
+            icon: Icons.analytics_outlined,
+            title: 'AI 투자 분석',
+            description: '당신의 투자 성향을 분석하고\n최적의 투자 전략을 제안합니다',
+            color: TossTheme.primaryBlue,
+            delay: 600,
+          ),
+          const SizedBox(height: 16),
+          _buildFeatureCard(
+            icon: Icons.pie_chart_outline,
+            title: '포트폴리오 추천',
+            description: '리스크 성향에 맞는\n포트폴리오를 구성해드립니다',
+            color: TossTheme.success,
+            delay: 700,
+          ),
+          const SizedBox(height: 16),
+          _buildFeatureCard(
+            icon: Icons.schedule,
+            title: '최적 타이밍',
+            description: '오늘의 투자 타이밍을\n운세로 알려드립니다',
+            color: TossTheme.warning,
+            delay: 800,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureCard({
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    required int delay,
+  }) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: TossTheme.borderGray200,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.04),
             offset: const Offset(0, 2),
+            blurRadius: 8,
+            spreadRadius: 0,
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppColors.tossBlueBackground,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.trending_up,
-                  color: AppColors.tossBlue,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Text(
-                '오늘의 투자운세',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.tossTextPrimary,
-                  letterSpacing: -0.3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Text(
-                '75',
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.tossBlue,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '점',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.tossTextSecondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '차분하고 안정적인 투자 시기입니다',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppColors.tossTextSecondary,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 20),
           Container(
-            width: double.infinity,
-            height: 4,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              color: AppColors.gray200,
-              borderRadius: BorderRadius.circular(2),
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: 0.75,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.tossBlue,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 28,
             ),
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3, end: 0);
-  }
-
-  /// 섹션 타이틀
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: AppColors.tossTextPrimary,
-        letterSpacing: -0.5,
-      ),
-    );
-  }
-
-  /// 투자 카테고리 그리드
-  Widget _buildCategoryGrid() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.1,
-      ),
-      itemCount: InvestmentCategory.values.length,
-      itemBuilder: (context, index) {
-        final category = InvestmentCategory.values[index];
-        return _buildCategoryCard(category, index);
-      },
-    );
-  }
-
-  /// 개별 카테고리 카드
-  Widget _buildCategoryCard(InvestmentCategory category, int index) {
-    return GestureDetector(
-      onTap: () => _onCategorySelected(category),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: category.color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  category.emoji,
-                  style: const TextStyle(fontSize: 24),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              category.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.tossTextPrimary,
-                letterSpacing: -0.3,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              category.description,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                color: AppColors.tossTextSecondary,
-                height: 1.3,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate(delay: (index * 100).ms)
-        .fadeIn(duration: 500.ms)
-        .slideY(begin: 0.3, end: 0);
-  }
-
-  /// 카테고리 선택 시 호출
-  void _onCategorySelected(InvestmentCategory category) {
-    setState(() {
-      _selectedCategory = category;
-    });
-    
-    _showInvestmentInputSheet(category);
-  }
-
-  /// 투자 상세 입력 바텀 시트
-  void _showInvestmentInputSheet(InvestmentCategory category) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _buildInvestmentInputSheet(category),
-    );
-  }
-
-  /// 투자 입력 바텀 시트 내용
-  Widget _buildInvestmentInputSheet(InvestmentCategory category) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.8,
-      minChildSize: 0.5,
-      maxChildSize: 0.9,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              // 핸들
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(top: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.gray300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              
-              // 헤더
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: category.color.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          category.emoji,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${category.title} 투자운세',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.tossTextPrimary,
-                            ),
-                          ),
-                          Text(
-                            '투자 성향을 알려주세요',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.tossTextSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: AppColors.tossTextSecondary),
-                    ),
-                  ],
-                ),
-              ),
-              
-              // 입력 폼
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildAmountSection(),
-                      const SizedBox(height: 32),
-                      _buildRiskLevelSection(),
-                      const SizedBox(height: 32),
-                      _buildPeriodSection(),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                ),
-              ),
-              
-              // 하단 버튼
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : () => _generateFortune(category),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.tossBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : const Text(
-                            '투자운세 확인하기',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// 투자 금액 섹션
-  Widget _buildAmountSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '투자 예정 금액',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.tossTextPrimary,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Text(
-              '$_investmentAmount만원',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: AppColors.tossBlue,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppColors.tossBlue,
-            inactiveTrackColor: AppColors.gray200,
-            thumbColor: AppColors.tossBlue,
-            overlayColor: AppColors.tossBlue.withValues(alpha: 0.2),
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-            trackHeight: 4,
-          ),
-          child: Slider(
-            value: _investmentAmount.toDouble(),
-            min: 10,
-            max: 1000,
-            divisions: 99,
-            onChanged: (value) {
-              setState(() {
-                _investmentAmount = value.round();
-              });
-            },
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '10만원',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.tossTextSecondary,
-              ),
-            ),
-            Text(
-              '1000만원',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.tossTextSecondary,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  /// 위험 성향 섹션
-  Widget _buildRiskLevelSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '투자 성향',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.tossTextPrimary,
-          ),
-        ),
-        const SizedBox(height: 16),
-        ...RiskLevel.values.map((risk) {
-          final isSelected = _selectedRiskLevel == risk;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedRiskLevel = risk;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected ? risk.color.withValues(alpha: 0.1) : Colors.transparent,
-                  border: Border.all(
-                    color: isSelected ? risk.color : AppColors.gray200,
-                    width: isSelected ? 2 : 1,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: isSelected ? risk.color : Colors.transparent,
-                        border: Border.all(
-                          color: isSelected ? risk.color : AppColors.gray300,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: isSelected
-                          ? const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 12,
-                            )
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            risk.title,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected ? risk.color : AppColors.tossTextPrimary,
-                            ),
-                          ),
-                          Text(
-                            risk.description,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.tossTextSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ],
-    );
-  }
-
-  /// 투자 기간 섹션
-  Widget _buildPeriodSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '투자 기간',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.tossTextPrimary,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [1, 3, 6, 12, 24].map((months) {
-            final isSelected = _investmentPeriod == months;
-            return Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  right: months == 24 ? 0 : 8,
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _investmentPeriod = months;
-                    });
-                  },
-                  child: Container(
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColors.tossBlue : Colors.transparent,
-                      border: Border.all(
-                        color: isSelected ? AppColors.tossBlue : AppColors.gray200,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$months개월',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected ? Colors.white : AppColors.tossTextPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  /// 운세 생성
-  Future<void> _generateFortune(InvestmentCategory category) async {
-    if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final user = ref.read(userProvider).value;
-      if (user == null) {
-        throw Exception('로그인이 필요합니다');
-      }
-
-      final userProfile = await ref.read(userProfileProvider.future);
-      final params = {
-        'investmentType': category.name,
-        'amount': _investmentAmount,
-        'riskLevel': _selectedRiskLevel.name,
-        'period': _investmentPeriod,
-        'name': userProfile?.name ?? '사용자',
-        'birthDate': userProfile?.birthDate?.toIso8601String(),
-      };
-
-      final fortuneService = ref.read(fortuneServiceProvider);
-      final fortune = await fortuneService.getFortune(
-        fortuneType: 'investment',
-        userId: user.id,
-        params: params,
-      );
-
-      setState(() {
-        _fortune = fortune;
-        _isLoading = false;
-      });
-
-      // 바텀 시트 닫기
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      
-      Logger.error('Investment fortune generation failed', e);
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('운세 생성에 실패했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.negative,
-          ),
-        );
-      }
-    }
-  }
-
-  /// 결과 화면
-  Widget _buildResultView() {
-    if (_fortune == null) return const SizedBox();
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          _buildFortuneScoreCard(),
-          const SizedBox(height: 24),
-          _buildFortuneContentCard(),
-          const SizedBox(height: 24),
-          _buildActionButtons(),
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
-  }
-
-  /// 운세 점수 카드
-  Widget _buildFortuneScoreCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            '${_selectedCategory?.title} 투자운세',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppColors.tossTextSecondary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // 점수 원형 표시
-          SizedBox(
-            width: 120,
-            height: 120,
-            child: Stack(
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: CircularProgressIndicator(
-                      value: (_fortune?.score ?? 0) / 100,
-                      strokeWidth: 8,
-                      backgroundColor: AppColors.gray200,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        _getScoreColor(_fortune?.score ?? 0),
-                      ),
-                    ),
+                Text(
+                  title,
+                  style: TossTheme.body2.copyWith(
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${_fortune?.score ?? 0}',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w800,
-                          color: _getScoreColor(_fortune?.score ?? 0),
-                          height: 1,
-                        ),
-                      ),
-                      Text(
-                        '점',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.tossTextSecondary,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TossTheme.caption.copyWith(
+                    color: TossTheme.textGray600,
+                    height: 1.4,
                   ),
                 ),
               ],
             ),
           ),
-          
-          const SizedBox(height: 20),
-          Text(
-            _getScoreDescription(_fortune?.score ?? 0),
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.tossTextPrimary,
-            ),
-            textAlign: TextAlign.center,
+          Icon(
+            Icons.chevron_right,
+            color: TossTheme.textGray400,
+            size: 24,
           ),
         ],
       ),
-    ).animate().scale(duration: 600.ms, curve: Curves.elasticOut);
+    ).animate()
+      .fadeIn(duration: 400.ms, delay: delay.ms)
+      .slideX(begin: 0.05, end: 0);
   }
 
-  /// 운세 내용 카드
-  Widget _buildFortuneContentCard() {
+  Widget _buildBottomSection() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: TossTheme.backgroundWhite,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.05),
+            offset: const Offset(0, -4),
+            blurRadius: 12,
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'AI 운세 분석',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.tossTextPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            _fortune?.content ?? '운세 내용을 불러올 수 없습니다.',
-            style: TextStyle(
-              fontSize: 15,
-              height: 1.6,
-              color: AppColors.tossTextPrimary,
-            ),
-          ),
-        ],
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: TossTheme.primaryBlue.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: TossTheme.primaryBlue,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '투자 운세는 재미로 보는 것이며,\n실제 투자는 신중하게 결정하세요',
+                      style: TossTheme.caption.copyWith(
+                        color: TossTheme.primaryBlue,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ).animate()
+              .fadeIn(duration: 600.ms, delay: 900.ms)
+              .slideY(begin: 0.1, end: 0),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: _startFortuneTelling,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TossTheme.primaryBlue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
+                  textStyle: TossTheme.button,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '투자 운세 보기',
+                      style: TossTheme.button.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.arrow_forward,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ).animate()
+              .fadeIn(duration: 600.ms, delay: 1000.ms)
+              .slideY(begin: 0.2, end: 0)
+              .then()
+              .shimmer(duration: 2000.ms, delay: 1000.ms),
+          ],
+        ),
       ),
-    ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3, end: 0);
+    );
   }
 
-  /// 액션 버튼들
-  Widget _buildActionButtons() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _fortune = null;
-                _selectedCategory = null;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.tossBlue,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              '다른 투자 운세 보기',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: OutlinedButton(
-            onPressed: () {
-              // 공유 기능 구현
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.tossTextPrimary,
-              side: const BorderSide(color: AppColors.gray200),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              '공유하기',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ).animate(delay: 500.ms).fadeIn().slideY(begin: 0.3, end: 0);
-  }
-
-  /// 점수에 따른 색상
-  Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.positive;
-    if (score >= 60) return AppColors.tossBlue;
-    if (score >= 40) return AppColors.caution;
-    return AppColors.negative;
-  }
-
-  /// 점수에 따른 설명
-  String _getScoreDescription(int score) {
-    if (score >= 90) return '매우 좋은 투자 시기입니다';
-    if (score >= 80) return '좋은 투자 기회가 있습니다';
-    if (score >= 70) return '안정적인 투자를 권합니다';
-    if (score >= 60) return '신중한 투자가 필요합니다';
-    if (score >= 40) return '투자를 미루는 것이 좋겠습니다';
-    return '투자는 잠시 보류하세요';
+  void _startFortuneTelling() {
+    HapticFeedback.mediumImpact();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const InvestmentFortuneInputPage(),
+      ),
+    );
   }
 }

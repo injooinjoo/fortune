@@ -234,8 +234,17 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          Logger.error('⏱️ Edge Function timeout after 30 seconds');
-          throw TimeoutException('Edge Function 호출 시간 초과');
+          Logger.error('⏱️ Edge Function timeout after 30 seconds - using fallback story');
+          // Return a fallback response instead of throwing
+          // Create fallback story segments (return empty to trigger fallback in handler)
+          return FunctionResponse(
+            data: {
+              'segments': null,  // Return null to trigger fallback logic
+              'error': 'timeout',
+              'message': 'Story generation timed out, using fallback'
+            },
+            status: 200,
+          );
         },
       );
 

@@ -10,6 +10,7 @@ import '../../presentation/widgets/hexagon_chart.dart';
 import '../../presentation/widgets/element_balance_chart.dart';
 import '../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../../presentation/providers/fortune_history_provider.dart';
+import '../../presentation/providers/fortune_cache_provider.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/app_colors.dart';
@@ -58,14 +59,14 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
   late ScrollController _scrollController;
   double _lastScrollPosition = 0.0;
   bool _isScrollingDown = false;
-  late Future<List<int>> _dailyScoresFuture;
+  // Remove the Future variable since we'll use provider directly
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_handleScroll);
-    _dailyScoresFuture = FortuneHistoryService().getLast7DaysDailyScores();
+    // Removed _dailyScoresFuture initialization - will use provider directly
   }
 
   @override
@@ -231,29 +232,52 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   
                   const SizedBox(height: 40),
 
-                  // 일별 운세 곡선 그래프 - 실제 DB 데이터 사용
-                  FutureBuilder<List<int>>(
-                    future: _dailyScoresFuture,
-                    builder: (context, snapshot) {
-                      List<int> dailyScores;
-                      if (snapshot.hasData) {
-                        dailyScores = snapshot.data!;
-                        // 오늘 점수가 0이면 현재 API 점수로 업데이트
-                        if (dailyScores.isNotEmpty && dailyScores.last == 0 && score != null) {
-                          dailyScores[dailyScores.length - 1] = score;
-                        }
-                      } else {
-                        // 로딩 중이거나 에러 시 기본 데이터 사용 (모두 0)
-                        dailyScores = List.filled(7, 0);
-                        if (score != null) {
-                          dailyScores[6] = score; // 오늘 점수만 설정
-                        }
-                      }
+                  // 일별 운세 곡선 그래프 - fortune_cache 테이블에서 데이터 가져오기
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final cacheScoresAsync = ref.watch(fortuneCacheScoresProvider(score));
                       
-                      return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
-                        dailyScores: dailyScores,
-                        currentScore: score,
-                        height: 160,
+                      return cacheScoresAsync.when(
+                        data: (dailyScores) {
+                          // 오늘 점수가 0이면 현재 API 점수로 업데이트
+                          if (dailyScores.isNotEmpty && dailyScores.last == 0 && score != null) {
+                            dailyScores[dailyScores.length - 1] = score;
+                          }
+                          print('📊 Daily scores from fortune_cache: $dailyScores');
+                          
+                          return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
+                            dailyScores: dailyScores,
+                            currentScore: score,
+                            height: 160,
+                          );
+                        },
+                        loading: () {
+                          // 로딩 중 - 기본 데이터 사용
+                          List<int> dailyScores = List.filled(7, 0);
+                          if (score != null) {
+                            dailyScores[6] = score; // 오늘 점수만 설정
+                          }
+                          
+                          return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
+                            dailyScores: dailyScores,
+                            currentScore: score,
+                            height: 160,
+                          );
+                        },
+                        error: (error, stack) {
+                          print('❌ Error loading daily scores: $error');
+                          // 에러 시 기본 데이터 사용
+                          List<int> dailyScores = List.filled(7, 0);
+                          if (score != null) {
+                            dailyScores[6] = score; // 오늘 점수만 설정
+                          }
+                          
+                          return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
+                            dailyScores: dailyScores,
+                            currentScore: score,
+                            height: 160,
+                          );
+                        },
                       );
                     },
                   ),
@@ -1920,46 +1944,11 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
 
   /// Get daily scores for the past week (7 days)
   List<int> _getDailyScoresForWeek(int? currentScore) {
-    final fortuneHistory = ref.read(fortuneHistoryProvider);
-    final scores = <int>[];
-    final today = DateTime.now();
+    // Use the new provider that fetches from fortune_cache
+    final cacheScores = ref.watch(fortuneCacheScoresProvider(currentScore));
     
-    return fortuneHistory.when(
-      data: (history) {
-        // Create scores for last 7 days (6 days ago + today)
-        for (int i = 6; i >= 0; i--) {
-          final targetDate = today.subtract(Duration(days: i));
-          
-          // Find score for this specific day
-          int dayScore = currentScore ?? 75; // Default for today
-          
-          if (i > 0) { // For past days, look in history
-            for (final item in history) {
-              final historyDate = DateTime.parse(item.createdAt.toString());
-              if (historyDate.year == targetDate.year &&
-                  historyDate.month == targetDate.month &&
-                  historyDate.day == targetDate.day) {
-                final summary = item.summary as Map<String, dynamic>?;
-                if (summary != null && summary['overall_score'] != null) {
-                  final score = summary['overall_score'];
-                  if (score is int) {
-                    dayScore = score;
-                  } else if (score is double) {
-                    dayScore = score.round();
-                  } else if (score is String) {
-                    dayScore = int.tryParse(score) ?? dayScore;
-                  }
-                }
-                break;
-              }
-            }
-          }
-          
-          scores.add(dayScore);
-        }
-        
-        return scores;
-      },
+    return cacheScores.when(
+      data: (scores) => scores,
       loading: () {
         // Generate realistic sample scores if loading
         final baseScore = currentScore ?? 75;

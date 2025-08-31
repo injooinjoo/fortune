@@ -40,18 +40,18 @@ class CacheService {
 
     switch (fortuneType) {
       case 'hourly':
-        return '${now.year}-${now.month}-${now.day}-${now.hour}';
+        return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}-${now.hour.toString().padLeft(2, '0')}';
       case 'daily':
-        return '${now.year}-${now.month}-${now.day}';
+        return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
       case 'weekly':
         final weekNumber = _getWeekNumber(now);
-        return '${now.year}-W$weekNumber';
+        return '${now.year}-W${weekNumber.toString().padLeft(2, '0')}';
       case 'monthly':
-        return '${now.year}-${now.month}';
+        return '${now.year}-${now.month.toString().padLeft(2, '0')}';
       case 'yearly':
         return '${now.year}';
       default:
-        return '${now.year}-${now.month}-${now.day}';
+        return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
     }
   }
 

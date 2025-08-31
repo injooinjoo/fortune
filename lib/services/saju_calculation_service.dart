@@ -20,6 +20,11 @@ class SajuCalculationService {
     '子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'
   ];
   
+  // 12지 동물 (Zodiac Animals)
+  static const List<String> zodiacAnimals = [
+    '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'
+  ];
+  
   // 오행 (Five Elements)
   static const Map<String, String> stemElements = {
     '갑': '목', '을': '목',
@@ -121,32 +126,56 @@ class SajuCalculationService {
     
     return {
       'year': {
-        'stem': yearPillar['stem'],
-        'branch': yearPillar['branch'],
-        'stemHanja': yearPillar['stemHanja'],
-        'branchHanja': yearPillar['branchHanja'],
-        'element': stemElements[yearPillar['stem']],
+        'stem': {
+          'name': yearPillar['stem'],
+          'hanja': yearPillar['stemHanja'],
+          'element': stemElements[yearPillar['stem']],
+        },
+        'branch': {
+          'name': yearPillar['branch'],
+          'hanja': yearPillar['branchHanja'],
+          'animal': zodiacAnimals[yearPillar['branchIndex']],
+          'element': branchElements[yearPillar['branch']],
+        },
       },
       'month': {
-        'stem': monthPillar['stem'],
-        'branch': monthPillar['branch'],
-        'stemHanja': monthPillar['stemHanja'],
-        'branchHanja': monthPillar['branchHanja'],
-        'element': stemElements[monthPillar['stem']],
+        'stem': {
+          'name': monthPillar['stem'],
+          'hanja': monthPillar['stemHanja'],
+          'element': stemElements[monthPillar['stem']],
+        },
+        'branch': {
+          'name': monthPillar['branch'],
+          'hanja': monthPillar['branchHanja'],
+          'animal': zodiacAnimals[monthPillar['branchIndex']],
+          'element': branchElements[monthPillar['branch']],
+        },
       },
       'day': {
-        'stem': dayPillar['stem'],
-        'branch': dayPillar['branch'],
-        'stemHanja': dayPillar['stemHanja'],
-        'branchHanja': dayPillar['branchHanja'],
-        'element': stemElements[dayPillar['stem']],
+        'stem': {
+          'name': dayPillar['stem'],
+          'hanja': dayPillar['stemHanja'],
+          'element': stemElements[dayPillar['stem']],
+        },
+        'branch': {
+          'name': dayPillar['branch'],
+          'hanja': dayPillar['branchHanja'],
+          'animal': zodiacAnimals[dayPillar['branchIndex']],
+          'element': branchElements[dayPillar['branch']],
+        },
       },
       'hour': hourPillar != null ? {
-        'stem': hourPillar['stem'],
-        'branch': hourPillar['branch'],
-        'stemHanja': hourPillar['stemHanja'],
-        'branchHanja': hourPillar['branchHanja'],
-        'element': stemElements[hourPillar['stem']],
+        'stem': {
+          'name': hourPillar['stem'],
+          'hanja': hourPillar['stemHanja'],
+          'element': stemElements[hourPillar['stem']],
+        },
+        'branch': {
+          'name': hourPillar['branch'],
+          'hanja': hourPillar['branchHanja'],
+          'animal': zodiacAnimals[hourPillar['branchIndex']],
+          'element': branchElements[hourPillar['branch']],
+        },
       } : null,
       'elementBalance': elementBalance,
       'tenGods': tenGods,

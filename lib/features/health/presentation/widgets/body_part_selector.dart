@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
@@ -126,28 +127,55 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
       top: areaConfig['top'],
       child: GestureDetector(
         onTap: () => _toggleBodyPart(part),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           width: areaConfig['width'],
           height: areaConfig['height'],
           decoration: BoxDecoration(
             color: _getAreaColor(part, isSelected, healthLevel),
             borderRadius: BorderRadius.circular(areaConfig['borderRadius'] ?? 8),
-            border: isSelected
-                ? Border.all(color: TossTheme.primaryBlue, width: 2)
+            border: Border.all(
+              color: isSelected 
+                  ? TossTheme.primaryBlue 
+                  : TossTheme.borderGray200.withOpacity(0.5),
+              width: isSelected ? 2 : 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: TossTheme.primaryBlue.withOpacity(0.3),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ]
                 : null,
           ),
-          child: Center(
-            child: isSelected
-                ? Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
-                    size: 16,
-                  )
-                : null,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // 부위 이름 라벨
+              if (!isSelected)
+                Text(
+                  part.displayName,
+                  style: TossTheme.caption.copyWith(
+                    color: TossTheme.textGray600,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              // 선택 체크마크
+              if (isSelected)
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                  size: 20,
+                ),
+            ],
           ),
         ),
       ).animate(target: isSelected ? 1 : 0)
-        .scale(end: const Offset(1.1, 1.1))
+        .scale(end: const Offset(1.05, 1.05))
         .then()
         .scale(end: const Offset(1.0, 1.0)),
     );
@@ -196,11 +224,13 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
     if (isSelected) {
       return TossTheme.primaryBlue.withOpacity(0.7);
     } else {
-      return Colors.transparent;
+      // 선택되지 않은 영역도 약간 보이도록 설정
+      return TossTheme.borderGray200.withOpacity(0.15);
     }
   }
 
   void _toggleBodyPart(BodyPart part) {
+    HapticFeedback.lightImpact();
     setState(() {
       if (_selectedParts.contains(part)) {
         _selectedParts.remove(part);
