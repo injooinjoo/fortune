@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lottie/lottie.dart';
@@ -155,7 +157,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     final state = ref.watch(talismanCreationProvider);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -266,7 +268,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                       Text(
                         '${(_progress * 100).toInt()}%',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary)])),
+                          color: TossDesignSystem.gray600)])),
               
               // Bottom actions
               if (!_isGenerating) OutlinedButton(

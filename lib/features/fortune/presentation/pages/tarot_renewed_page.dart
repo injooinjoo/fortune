@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:math' as dart_math;
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_loading_button.dart';
 import '../widgets/tarot/tarot_result_card.dart';

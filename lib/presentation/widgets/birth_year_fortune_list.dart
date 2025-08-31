@@ -3,7 +3,7 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/fortune.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class BirthYearFortuneList extends StatelessWidget {
   final List<BirthYearFortune> fortunes;
@@ -245,7 +245,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                       Text(
                         '특별 운세',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
+                          color: TossDesignSystem.gray600,
                         ),
                       ),
                     ],

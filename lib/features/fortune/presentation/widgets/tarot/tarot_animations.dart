@@ -9,7 +9,7 @@ class TarotAnimations {
 
   /// Standard durations
   static const Duration cardFlipDuration = AppAnimations.durationXLong;
-  static const Duration fanSpreadDuration = AppAnimations.durationSkeleton;
+  static const Duration fanSpreadDuration = const Duration(milliseconds: 1500);
   static const Duration cardSelectionDuration = Duration(milliseconds: 600);
   static const Duration hoverDuration = AppAnimations.durationShort;
   static const Duration shuffleDuration = Duration(milliseconds: 2000);

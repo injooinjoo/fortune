@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
 import '../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class SocialShareBottomSheet extends ConsumerStatefulWidget {
   final String fortuneTitle;
@@ -75,7 +75,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               top: Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.textPrimary.withOpacity(0.1),
+                color: TossDesignSystem.gray900.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, -5))]),
           child: Transform.translate(
@@ -118,7 +118,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: AppColors.textSecondary,
+        color: TossDesignSystem.gray600,
         borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall)));
   }
 
@@ -145,7 +145,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 Text(
                   '운세를 친구들과 공유해보세요!',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary)),
+                    color: TossDesignSystem.gray600)),
               ],
             ),
           ),
@@ -204,7 +204,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               label: '카카오톡',
               icon: Icons.chat_bubble,
               color: const Color(0xFFFEE500),
-              iconColor: AppColors.textPrimary.withOpacity(0.87)),
+              iconColor: TossDesignSystem.gray900.withOpacity(0.87)),
             _buildShareButton(
               platform: SharePlatform.instagram,
               label: '인스타그램',
@@ -222,7 +222,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               platform: SharePlatform.twitter,
               label: 'X (트위터)',
               icon: Icons.tag,
-              color: AppColors.textPrimary),
+              color: TossDesignSystem.gray900),
             _buildShareButton(
               platform: SharePlatform.whatsapp,
               label: 'WhatsApp',
@@ -232,7 +232,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               platform: SharePlatform.other,
               label: '더보기',
               icon: Icons.more_horiz,
-              color: AppColors.textSecondary)])]);
+              color: TossDesignSystem.gray600)])]);
   }
 
   Widget _buildShareButton({
@@ -257,7 +257,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           borderRadius: AppDimensions.borderRadiusMedium,
           boxShadow: [
             BoxShadow(
-              color: (color ?? AppColors.textSecondary).withOpacity(0.3),
+              color: (color ?? TossDesignSystem.gray600).withOpacity(0.3),
               blurRadius: 8,
               offset: const Offset(0, 2))]),
         child: Column(
@@ -265,7 +265,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           children: [
             Icon(
               icon,
-              color: iconColor ?? AppColors.textPrimaryDark,
+              color: iconColor ?? TossDesignSystem.grayDark900,
               size: AppDimensions.iconSizeXLarge),
             SizedBox(height: AppSpacing.spacing2),
             Text(
@@ -302,7 +302,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 },
                 icon: Icons.copy_outlined,
                 label: '텍스트 복사',
-                color: AppColors.textSecondary))])]);
+                color: TossDesignSystem.gray600))])]);
   }
 
   Widget _buildActionButton({

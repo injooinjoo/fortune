@@ -17,11 +17,7 @@ import '../../core/theme/app_dimensions.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../core/config/environment.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class HomeScreenUpdated extends ConsumerStatefulWidget {
   const HomeScreenUpdated({super.key});
@@ -423,21 +419,21 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
         'title': '사주팔자',
         'desc': '정통 사주 풀이',
         'route': '/fortune/saju',
-        'colors': [AppColors.warning, AppColors.error]
+        'colors': [TossDesignSystem.warningOrange, TossDesignSystem.errorRed]
       },
       {
         'icon': Icons.camera_alt,
         'title': 'AI 관상',
         'desc': '얼굴로 보는 운세',
         'route': '/physiognomy',
-        'colors': [FortuneColors.spiritualPrimary, FortuneColors.spiritualPrimary]
+        'colors': [TossDesignSystem.tossBlue, TossDesignSystem.tossBlue]
       },
       {
         'icon': Icons.apps,
         'title': '전체 운세',
         'desc': '모든 운세 보기',
         'route': '/fortune',
-        'colors': [AppColors.success, AppColors.success]
+        'colors': [TossDesignSystem.successGreen, TossDesignSystem.successGreen]
       }];
 
     return Padding(
@@ -581,7 +577,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
         'desc': '성격 유형별 조언',
         'badge': 'NEW')
         'route': '/fortune/mbti',
-        'color': FortuneColors.spiritualPrimary)
+        'color': TossDesignSystem.tossBlue
       })
       {
         'icon': Icons.star,
@@ -589,7 +585,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
         'desc': '별이 알려주는 흐름',
         'badge': '인기')
         'route': '/fortune/zodiac',
-        'color': AppColors.primary)
+        'color': TossDesignSystem.tossBlue
       })
       {
         'icon': Icons.pets,
@@ -597,7 +593,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
         'desc': '12간지로 보는 이달의 운세',
         'badge': '전통',
         'route': '/fortune/zodiac-animal',
-        'color': AppColors.success
+        'color': TossDesignSystem.successGreen
       }
     ];
 
@@ -640,7 +636,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                             ),
                             SizedBox(width: AppSpacing.spacing2),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xSmall, vertical: AppSpacing.xxxSmall),
+                              padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS, vertical: AppSpacing.xxxSmall),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [

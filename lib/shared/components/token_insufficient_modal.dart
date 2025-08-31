@@ -1,5 +1,6 @@
 // This modal is used for premium features that require souls
 // Premium fortunes consume souls while regular fortunes give souls
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
@@ -197,7 +198,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                       child: _buildActionButton(
                         icon: Icons.card_giftcard_rounded,
                         label: '무료 영혼',
-                        color: AppColors.success,
+                        color: TossDesignSystem.gray600,
                         onTap: () async {
                           final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
                           if (result && mounted) {

@@ -43,14 +43,14 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
       height: widget.size * 1.2, // Slightly taller for traditional talisman shape,
     decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: widget.result.design.primaryColor.withOpacity(0.3),
             blurRadius: 30,
             offset: const Offset(0, 10)]),
       child: ClipRRect(
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
             // Background gradient
@@ -119,7 +119,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
         const SizedBox(height: AppSpacing.spacing1),
         Container(
           width: widget.size * 0.5,
-          height: AppSpacing.spacing0 * 0.5,
+          height: 4 * 0.5,
           color: Colors.white.withOpacity(0.6))]);
   }
   
@@ -170,7 +170,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.8),
-              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+              borderRadius: BorderRadius.circular(20)),
             child: Text(
               widget.result.design.personalText!,
               style: TextStyle(

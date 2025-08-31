@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -106,7 +105,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
@@ -150,7 +149,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? Colors.white : AppColors.textSecondary,
+                color: isSelected ? Colors.white : TossDesignSystem.gray600,
               ),
               if (MediaQuery.of(context).size.width > 360) ...[
                 const SizedBox(width: 4),
@@ -159,7 +158,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                    color: isSelected ? Colors.white : TossDesignSystem.gray600,
                   ),
                 ),
               ],
@@ -200,13 +199,13 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                 end: Alignment.bottomRight,
                 colors: isSelected
                     ? [const Color(0xFFFF4081), const Color(0xFFFF80AB)]
-                    : [AppColors.surface, AppColors.surface],
+                    : [TossDesignSystem.gray50, TossDesignSystem.gray50],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFFF4081) 
-                    : AppColors.divider,
+                    : TossDesignSystem.gray200,
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: isSelected
@@ -245,7 +244,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : TossDesignSystem.gray900,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -255,7 +254,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                       fontSize: 11,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.8)
-                          : AppColors.textSecondary,
+                          : TossDesignSystem.gray600,
                     ),
                   ),
                   Text(
@@ -264,7 +263,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                       fontSize: 10,
                       color: isSelected 
                           ? Colors.white.withOpacity(0.7)
-                          : AppColors.textLight,
+                          : TossDesignSystem.gray400,
                     ),
                   ),
                 ],
@@ -341,7 +340,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
         maxChildSize: 0.95,
         builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: AppColors.background,
+            color: TossDesignSystem.gray50,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: ListView(
@@ -353,7 +352,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.divider,
+                    color: TossDesignSystem.gray200,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -492,7 +491,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFFF4081).withOpacity(0.3)),
       ),

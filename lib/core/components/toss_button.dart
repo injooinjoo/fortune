@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import 'package:flutter/services.dart';
+import '../theme/toss_design_system.dart';
 
 /// TOSS 스타일 버튼 컴포넌트
-/// Master Policy 기반으로 구현된 버튼
 class TossButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -42,18 +40,11 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100), // Will be set in didChangeDependencies
+      duration: TossDesignSystem.durationMedium,
     );
-  }
-  
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final tossTheme = context.toss;
-    _animationController.duration = tossTheme.animationDurations.fast;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: tossTheme.microInteractions.buttonPressScale,
+      end: 0.98,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
@@ -71,9 +62,8 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     
     _animationController.forward();
     
-    // Haptic feedback from policy
     if (widget.enableHaptic) {
-      HapticPatterns.execute(context.toss.hapticPatterns.buttonTap);
+      HapticFeedback.lightImpact();
     }
   }
 
@@ -91,6 +81,8 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: _handleTapUp,
@@ -104,24 +96,24 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
             width: widget.width,
             height: _getHeight(),
             decoration: BoxDecoration(
-              color: _getBackgroundColor(context),
+              color: _getBackgroundColor(context, isDark),
               borderRadius: BorderRadius.circular(_getBorderRadius()),
-              border: _getBorder(context),
-              boxShadow: _getBoxShadow(),
+              border: _getBorder(context, isDark),
+              boxShadow: _getBoxShadow(isDark),
             ),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: widget.isLoading ? null : widget.onPressed,
                 borderRadius: BorderRadius.circular(_getBorderRadius()),
-                splashColor: _getSplashColor(context),
+                splashColor: _getSplashColor(context, isDark),
                 highlightColor: Colors.transparent,
                 child: Padding(
                   padding: _getPadding(),
                   child: Center(
                     child: widget.isLoading
-                        ? _buildLoadingIndicator(context)
-                        : _buildContent(context),
+                        ? _buildLoadingIndicator(context, isDark)
+                        : _buildContent(context, isDark),
                   ),
                 ),
               ),
@@ -132,10 +124,10 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, bool isDark) {
     final textWidget = Text(
       widget.text,
-      style: _getTextStyle(context),
+      style: _getTextStyle(context, isDark),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -152,19 +144,19 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
           IconTheme(
             data: IconThemeData(
               size: _getIconSize(),
-              color: _getTextColor(context),
+              color: _getTextColor(context, isDark),
             ),
             child: widget.leadingIcon!,
           ),
-          SizedBox(width: context.toss.cardStyles.itemSpacing * (widget.size == TossButtonSize.small ? 0.375 : 0.5)),
+          SizedBox(width: widget.size == TossButtonSize.small ? 6 : 8),
         ],
         Flexible(child: textWidget),
         if (widget.trailingIcon != null) ...[
-          SizedBox(width: context.toss.cardStyles.itemSpacing * (widget.size == TossButtonSize.small ? 0.375 : 0.5)),
+          SizedBox(width: widget.size == TossButtonSize.small ? 6 : 8),
           IconTheme(
             data: IconThemeData(
               size: _getIconSize(),
-              color: _getTextColor(context),
+              color: _getTextColor(context, isDark),
             ),
             child: widget.trailingIcon!,
           ),
@@ -173,72 +165,68 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildLoadingIndicator(BuildContext context) {
+  Widget _buildLoadingIndicator(BuildContext context, bool isDark) {
     return SizedBox(
       width: _getIconSize(),
       height: _getIconSize(),
       child: CircularProgressIndicator(
-        strokeWidth: context.toss.loadingStates.progressStrokeWidth,
-        valueColor: AlwaysStoppedAnimation<Color>(_getTextColor(context)),
+        strokeWidth: 2,
+        valueColor: AlwaysStoppedAnimation<Color>(_getTextColor(context, isDark)),
       ),
     );
   }
 
   double _getHeight() {
-    final formStyles = context.toss.formStyles;
     switch (widget.size) {
       case TossButtonSize.small:
-        return formStyles.inputHeight * 0.71; // 40
+        return 40;
       case TossButtonSize.medium:
-        return formStyles.inputHeight * 0.86; // 48
+        return 48;
       case TossButtonSize.large:
-        return formStyles.inputHeight; // 56
+        return 56;
     }
   }
 
   double _getBorderRadius() {
-    final formStyles = context.toss.formStyles;
     switch (widget.size) {
       case TossButtonSize.small:
-        return formStyles.inputBorderRadius;
+        return TossDesignSystem.radiusS;
       case TossButtonSize.medium:
-        return formStyles.inputBorderRadius * 1.17; // 14
+        return TossDesignSystem.radiusM;
       case TossButtonSize.large:
-        return formStyles.inputBorderRadius * 1.33; // 16
+        return TossDesignSystem.radiusL;
     }
   }
 
   EdgeInsets _getPadding() {
-    final padding = context.toss.formStyles.inputPadding;
     switch (widget.size) {
       case TossButtonSize.small:
-        return EdgeInsets.symmetric(horizontal: padding.horizontal);
+        return EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM);
       case TossButtonSize.medium:
-        return EdgeInsets.symmetric(horizontal: padding.horizontal * 1.5);
+        return EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM);
       case TossButtonSize.large:
-        return EdgeInsets.symmetric(horizontal: padding.horizontal * 2);
+        return EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingL);
     }
   }
 
   double _getIconSize() {
-    final iconSize = context.toss.socialSharing.shareIconSize;
     switch (widget.size) {
       case TossButtonSize.small:
-        return iconSize * 0.67; // 16
+        return 16;
       case TossButtonSize.medium:
-        return iconSize * 0.83; // 20
+        return 20;
       case TossButtonSize.large:
-        return iconSize; // 24
+        return 24;
     }
   }
 
-  Color _getBackgroundColor(BuildContext context) {
+  Color _getBackgroundColor(BuildContext context, bool isDark) {
     final isDisabled = widget.onPressed == null;
     
     switch (widget.style) {
       case TossButtonStyle.primary:
-        if (isDisabled) return context.toss.dividerColor;
-        return context.toss.primaryText;
+        if (isDisabled) return TossDesignSystem.gray200;
+        return isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
             
       case TossButtonStyle.secondary:
         return Colors.transparent;
@@ -247,72 +235,80 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
         return Colors.transparent;
         
       case TossButtonStyle.danger:
-        if (isDisabled) return context.toss.errorColor.withOpacity(0.3);
-        return context.toss.errorColor;
+        if (isDisabled) return TossDesignSystem.errorRed.withOpacity(0.3);
+        return TossDesignSystem.errorRed;
     }
   }
 
-  Color _getTextColor(BuildContext context) {
+  Color _getTextColor(BuildContext context, bool isDark) {
     final isDisabled = widget.onPressed == null;
     
     switch (widget.style) {
       case TossButtonStyle.primary:
-        if (isDisabled) return context.toss.secondaryText;
-        return context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark;
+        if (isDisabled) return TossDesignSystem.gray400;
+        return isDark ? TossDesignSystem.gray900 : TossDesignSystem.white;
             
       case TossButtonStyle.secondary:
       case TossButtonStyle.tertiary:
-        if (isDisabled) return context.toss.secondaryText;
-        return context.toss.primaryText;
+        if (isDisabled) return TossDesignSystem.gray400;
+        return isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
             
       case TossButtonStyle.danger:
-        if (isDisabled) return context.toss.errorColor.withOpacity(0.5);
-        return AppColors.textPrimaryDark;
+        if (isDisabled) return TossDesignSystem.errorRed.withOpacity(0.5);
+        return TossDesignSystem.white;
     }
   }
 
-  TextStyle _getTextStyle(BuildContext context) {
-    return Theme.of(context).textTheme.titleSmall?.copyWith(color: _getTextColor(context),
-      fontFamily: 'TossProductSans') ?? TextStyle(color: _getTextColor(context), fontFamily: 'TossProductSans');
+  TextStyle _getTextStyle(BuildContext context, bool isDark) {
+    final baseStyle = widget.size == TossButtonSize.small 
+        ? TossDesignSystem.body3
+        : widget.size == TossButtonSize.medium
+            ? TossDesignSystem.body2
+            : TossDesignSystem.body1;
+    
+    return baseStyle.copyWith(
+      color: _getTextColor(context, isDark),
+      fontWeight: FontWeight.w600,
+    );
   }
 
-  Color _getSplashColor(BuildContext context) {
+  Color _getSplashColor(BuildContext context, bool isDark) {
     switch (widget.style) {
       case TossButtonStyle.primary:
-        return AppColors.textPrimaryDark.withOpacity(0.1);
+        return TossDesignSystem.white.withOpacity(0.1);
       case TossButtonStyle.secondary:
       case TossButtonStyle.tertiary:
-        return context.toss.primaryText.withOpacity(0.05);
+        return (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withOpacity(0.05);
       case TossButtonStyle.danger:
-        return AppColors.textPrimaryDark.withOpacity(0.1);
+        return TossDesignSystem.white.withOpacity(0.1);
     }
   }
 
-  BoxBorder? _getBorder(BuildContext context) {
+  BoxBorder? _getBorder(BuildContext context, bool isDark) {
     final isDisabled = widget.onPressed == null;
     
     switch (widget.style) {
       case TossButtonStyle.secondary:
         return Border.all(
           color: isDisabled
-              ? context.toss.dividerColor
-              : context.toss.primaryText,
-          width: context.toss.cardStyles.borderWidth,
+              ? TossDesignSystem.gray200
+              : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+          width: 1,
         );
       default:
         return null;
     }
   }
 
-  List<BoxShadow>? _getBoxShadow() {
+  List<BoxShadow>? _getBoxShadow(bool isDark) {
     if (widget.style != TossButtonStyle.primary || widget.onPressed == null) {
       return null;
     }
     
     return [
       BoxShadow(
-        color: context.toss.shadowColor,
-        blurRadius: context.toss.cardStyles.elevation,
+        color: Colors.black.withOpacity(0.08),
+        blurRadius: 8,
         offset: const Offset(0, 2),
       ),
     ];
@@ -363,18 +359,11 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100), // Will be set in didChangeDependencies
+      duration: TossDesignSystem.durationMedium,
     );
-  }
-  
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final tossTheme = context.toss;
-    _animationController.duration = tossTheme.animationDurations.fast;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: tossTheme.microInteractions.fabPressScale,
+      end: 0.95,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
@@ -389,14 +378,15 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
 
   @override
   Widget build(BuildContext context) {
-    final size = widget.mini ? context.toss.formStyles.inputHeight * 0.71 : context.toss.formStyles.inputHeight;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final size = widget.mini ? 40.0 : 56.0;
 
     return GestureDetector(
       onTapDown: (_) {
         if (widget.onPressed == null) return;
         _animationController.forward();
         if (widget.enableHaptic) {
-          HapticPatterns.execute(context.toss.hapticPatterns.buttonTap);
+          HapticFeedback.lightImpact();
         }
       },
       onTapUp: (_) {
@@ -415,12 +405,12 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: context.toss.primaryText,
-              borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius),
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
               boxShadow: [
                 BoxShadow(
-                  color: context.toss.shadowColor.withOpacity(0.8),
-                  blurRadius: context.toss.cardStyles.itemSpacing * 0.75,
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
               ],
@@ -429,12 +419,12 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
               color: Colors.transparent,
               child: InkWell(
                 onTap: widget.onPressed,
-                borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius),
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                 child: Center(
                   child: IconTheme(
                     data: IconThemeData(
-                      size: widget.mini ? context.toss.socialSharing.shareIconSize * 0.83 : context.toss.socialSharing.shareIconSize,
-                      color: context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark,
+                      size: widget.mini ? 20 : 24,
+                      color: isDark ? TossDesignSystem.gray900 : TossDesignSystem.white,
                     ),
                     child: widget.icon,
                   ),

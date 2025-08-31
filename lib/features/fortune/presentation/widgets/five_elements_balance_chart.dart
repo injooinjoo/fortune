@@ -5,7 +5,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsBalanceChart extends StatefulWidget {
@@ -31,7 +31,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
   // 오행 정보
   static const Map<String, Map<String, dynamic>> elementInfo = {
     '목': {
-      'color': AppColors.success,
+      'color': TossDesignSystem.successGreen,
       'icon': Icons.park,
       'meaning': '성장, 발전, 인자함',
       'season': '봄',
@@ -39,7 +39,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       'organ': '간, 담',
     },
     '화': {
-      'color': AppColors.warning,
+      'color': TossDesignSystem.warningOrange,
       'icon': Icons.local_fire_department,
       'meaning': '열정, 활력, 예의',
       'season': '여름',
@@ -55,7 +55,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       'organ': '비장, 위',
     },
     '금': {
-      'color': AppColors.textSecondary,
+      'color': TossDesignSystem.gray600,
       'icon': Icons.diamond,
       'meaning': '결단, 정의, 수렴',
       'season': '가을',
@@ -63,7 +63,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       'organ': '폐, 대장',
     },
     '수': {
-      'color': AppColors.primary,
+      'color': TossDesignSystem.tossBlue,
       'icon': Icons.water_drop,
       'meaning': '지혜, 유연성, 겸손',
       'season': '겨울',
@@ -76,7 +76,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     _animation = CurvedAnimation(
@@ -143,7 +143,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
         color: Colors.purple.withOpacity(0.2),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: Colors.purple.withOpacity(0.3),
           width: 1,
@@ -299,7 +299,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               children: [
                 Container(
                   width: 40,
-                  height: AppDimensions.buttonHeightSmall,
+                  height: 32,
                   decoration: BoxDecoration(
                     color: (info['color'] as Color).withOpacity(0.2),
                     borderRadius: AppDimensions.borderRadiusSmall,
@@ -325,7 +325,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                           if (isStrongest) Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.spacing2,
-                                vertical: AppSpacing.spacing0 * 0.5,
+                                vertical: 4 * 0.5,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.green.withOpacity(0.2),
@@ -339,7 +339,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                           if (isWeakest) Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.spacing2,
-                                vertical: AppSpacing.spacing0 * 0.5,
+                                vertical: 4 * 0.5,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.orange.withOpacity(0.2),
@@ -510,7 +510,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+                borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
             const SizedBox(height: AppSpacing.spacing5),

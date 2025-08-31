@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../domain/models/talisman_models.dart';
 import 'talisman_steps/talisman_type_selection_step.dart';
@@ -158,7 +158,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     final state = ref.watch(talismanCreationProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppHeader(
         title: '부적 만들기',
         showBackButton: true,
@@ -237,9 +237,9 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     required bool isCompleted
   }) {
     final color = isCompleted 
-        ? AppColors.primary 
+        ? TossDesignSystem.tossBlue 
         : isActive 
-            ? AppColors.primary.withOpacity(0.6)
+            ? TossDesignSystem.tossBlue.withOpacity(0.6)
             : Colors.grey[400]!;
 
     return Expanded(
@@ -277,18 +277,22 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
             style: TextStyle(
               fontSize: 12,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              color: isActive ? AppColors.textPrimary : Colors.grey[500]))]);
+              color: isActive ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900 : Colors.grey[500]),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildProgressConnector({required bool isActive}) {
     return Container(
       height: 2,
       width: 24,
-      color: isActive ? AppColors.primary : Colors.grey[300]).animate(target: isActive ? 1 : 0).scaleX(
+      color: isActive ? TossDesignSystem.tossBlue : Colors.grey[300],
+    ).animate(target: isActive ? 1 : 0).scaleX(
       begin: 0,
-      end: 1);
-      duration: 300.ms),
-    curve: Curves.easeOut
-    );
+      end: 1,
+      duration: 300.ms,
+      curve: Curves.easeOut);
   }
 }

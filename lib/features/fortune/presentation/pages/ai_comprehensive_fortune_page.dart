@@ -1,4 +1,3 @@
-import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,10 +6,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class AiComprehensiveFortunePage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -48,7 +44,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
       vsync: this)..repeat();
     
     _pulseController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this)..repeat(reverse: true);
     
     // Auto-start analysis if requested
@@ -79,7 +75,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
       setState(() {
         _currentStage = _analysisStages[i];
       });
-      await Future.delayed(AppAnimations.durationSkeleton);
+      await Future.delayed(const Duration(milliseconds: 1500));
       HapticUtils.lightImpact();
     }
 
@@ -165,7 +161,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     
     return Center(
       child: SingleChildScrollView(
-        padding: AppSpacing.paddingAll24,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -176,7 +172,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             ).animate()
               .fadeIn(duration: 600.ms)
               .scaleXY(delay: 300.ms),
-            SizedBox(height: AppSpacing.spacing8),
+            const SizedBox(height: 16),
             Text(
               'AI 종합 운세 분석',
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -185,7 +181,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               textAlign: TextAlign.center,
             ).animate()
               .fadeIn(delay: 400.ms),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: 8),
             Text(
               '인공지능이 당신의 모든 정보를 종합하여\n가장 정확한 운세를 제공합니다',
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -194,13 +190,13 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               textAlign: TextAlign.center,
             ).animate()
               .fadeIn(delay: 600.ms),
-            SizedBox(height: AppSpacing.spacing12),
+            const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _startAnalysis,
               icon: const Icon(Icons.auto_awesome),
               label: const Text('AI 분석 시작'),
               style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing8, vertical: AppSpacing.spacing4),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),
             ).animate()
               .fadeIn(delay: 800.ms)
@@ -216,7 +212,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     
     return Center(
       child: Padding(
-        padding: AppSpacing.paddingAll24,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -225,7 +221,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               children: [
                 Container(
                   width: 150,
-                  height: AppSpacing.spacing24 * 1.56,
+                  height: 84 * 1.56,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -247,7 +243,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.spacing12),
+            const SizedBox(height: 24),
             Text(
               _currentStage,
               style: theme.textTheme.titleLarge,
@@ -255,7 +251,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             ).animate()
               .fadeIn()
               .slideY(begin: 0.2, end: 0),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: 8),
             LinearProgressIndicator(
               backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
               valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
@@ -272,17 +268,17 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     final scoreColor = _getScoreColor(score);
     
     return SingleChildScrollView(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           // Score Card
           GlassCard(
-            padding: AppSpacing.paddingAll24,
+            padding: const EdgeInsets.all(24),
             child: Column(
               children: [
                 Container(
                   width: 120,
-                  height: AppSpacing.spacing24 * 1.25,
+                  height: 84 * 1.25,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -306,7 +302,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                     ),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing4),
+                const SizedBox(height: 8),
                 Text(
                   _getScoreMessage(score),
                   style: theme.textTheme.headlineSmall,
@@ -318,12 +314,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             .fadeIn()
             .scaleXY(begin: 0.8, end: 1.0),
           
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 8),
           
           // Description
           if (_generatedFortune?.description != null) ...[
             GlassCard(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -333,14 +329,14 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                         Icons.auto_awesome,
                         color: theme.colorScheme.primary,
                       ),
-                      SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: 8),
                       Text(
                         'AI 종합 분석',
                         style: theme.textTheme.titleLarge,
                       ),
                     ],
                   ),
-                  SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: 8),
                   Text(
                     _generatedFortune!.description!,
                     style: theme.textTheme.bodyLarge,
@@ -352,12 +348,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               .slideY(begin: 0.1, end: 0),
           ],
           
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 8),
           
           // Lucky Items
           if (_generatedFortune?.luckyItems != null) ...[
             GlassCard(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -367,14 +363,14 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                         Icons.star,
                         color: Colors.amber,
                       ),
-                      SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: 8),
                       Text(
                         '행운의 아이템',
                         style: theme.textTheme.titleLarge,
                       ),
                     ],
                   ),
-                  SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: 8),
                   _buildLuckyItems(_generatedFortune!.luckyItems!),
                 ],
               ),
@@ -383,7 +379,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               .slideY(begin: 0.1, end: 0),
           ],
           
-          SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: 16),
           
           // Action Buttons
           Row(
@@ -394,7 +390,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                 icon: const Icon(Icons.refresh),
                 label: const Text('다시 분석'),
               ),
-              SizedBox(width: AppSpacing.spacing4),
+              const SizedBox(width: 8),
               FilledButton.icon(
                 onPressed: () {
                   // Share functionality
@@ -406,7 +402,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
           ).animate()
             .fadeIn(delay: 600.ms),
           
-          SizedBox(height: AppSpacing.spacing8),
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -417,7 +413,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     
     return Center(
       child: Padding(
-        padding: AppSpacing.paddingAll24,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -426,12 +422,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               size: 80,
               color: theme.colorScheme.error,
             ),
-            SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: 16),
             Text(
               '분석 중 오류가 발생했습니다',
               style: theme.textTheme.titleLarge,
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: 8),
             Text(
               _error ?? '알 수 없는 오류',
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -439,7 +435,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: _reset,
               icon: const Icon(Icons.refresh),
@@ -452,10 +448,10 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.success;
-    if (score >= 60) return AppColors.primary;
-    if (score >= 40) return AppColors.warning;
-    return AppColors.error;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getScoreMessage(int score) {

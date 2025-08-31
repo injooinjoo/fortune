@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 토스 스타일의 만세력 사주 표시 위젯

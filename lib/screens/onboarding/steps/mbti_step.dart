@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../widgets/bottom_sheet_mbti_picker.dart';
 import '../../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -147,7 +149,7 @@ class _MbtiStepState extends State<MbtiStep> {
                     onPressed: _showMbtiPicker,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: AppColors.textPrimaryDark,
+                      foregroundColor: TossDesignSystem.grayDark900,
                       padding: EdgeInsets.symmetric(
                         horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 3,
                         vertical: context.fortuneTheme.formStyles.inputPadding.horizontal
@@ -230,7 +232,7 @@ class _MbtiStepState extends State<MbtiStep> {
                     onPressed: isComplete && !widget.isLoading ? widget.onComplete : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.fortuneTheme.primaryText,
-                      foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
+                      foregroundColor: context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)
                       ),
@@ -238,7 +240,7 @@ class _MbtiStepState extends State<MbtiStep> {
                     ),
                     child: widget.isLoading
                         ? CircularProgressIndicator(
-                            color: AppColors.textPrimaryDark,
+                            color: TossDesignSystem.grayDark900,
                             strokeWidth: 2
                           )
                         : Text(
@@ -272,7 +274,7 @@ class _MbtiStepState extends State<MbtiStep> {
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
     fontWeight: FontWeight.bold),
-    color: letter != null ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText.withOpacity(0.7))
+    color: letter != null ? TossDesignSystem.grayDark900 : context.fortuneTheme.subtitleText.withOpacity(0.7))
           ))
         ))
       )

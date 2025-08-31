@@ -1,4 +1,6 @@
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lottie/lottie.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -45,7 +47,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -85,13 +87,13 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: AppColors.success.withOpacity(0.1),
+          color: TossDesignSystem.successGreen.withOpacity(0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.check_circle,
           size: 80,
-          color: AppColors.success,
+          color: TossDesignSystem.successGreen,
         ),
       ).animate()
         .scale(duration: const Duration(milliseconds: 500))
@@ -102,13 +104,13 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.1),
+          color: TossDesignSystem.errorRed.withOpacity(0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.error_outline,
           size: 80,
-          color: AppColors.error,
+          color: TossDesignSystem.errorRed,
         ),
       ).animate()
         .shake(duration: const Duration(milliseconds: 500))
@@ -119,9 +121,9 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
   Widget _buildTitle() {
     return Text(
       widget.isSuccess ? '결제 완료!' : '결제 실패',
-      style: AppTextStyles.headlineLarge.copyWith(
+      style: TossDesignSystem.heading1.copyWith(
         fontWeight: FontWeight.bold,
-        color: widget.isSuccess ? AppColors.success : AppColors.error,
+        color: widget.isSuccess ? TossDesignSystem.successGreen : TossDesignSystem.errorRed,
       ),
     );
   }
@@ -140,8 +142,8 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     
     return Text(
       displayMessage,
-      style: AppTextStyles.bodyLarge.copyWith(
-        color: AppColors.textSecondary,
+      style: TossDesignSystem.body1.copyWith(
+        color: TossDesignSystem.gray600,
       ),
       textAlign: TextAlign.center,
     );
@@ -151,10 +153,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: TossDesignSystem.tossBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3),
+          color: TossDesignSystem.tossBlue.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -162,7 +164,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         children: [
           Icon(
             Icons.account_balance_wallet,
-            color: AppColors.primary,
+            color: TossDesignSystem.tossBlue,
             size: 32,
           ),
           const SizedBox(width: 12),
@@ -171,15 +173,15 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             children: [
               Text(
                 '충전된 토큰',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary,
+                style: TossDesignSystem.caption.copyWith(
+                  color: TossDesignSystem.tossBlue,
                 ),
               ),
               Text(
                 '${widget.tokenAmount}개',
-                style: AppTextStyles.headlineMedium.copyWith(
+                style: TossDesignSystem.heading2.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  color: TossDesignSystem.tossBlue,
                 ),
               ),
             ],
@@ -195,7 +197,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -203,13 +205,13 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         children: [
           Text(
             '거래번호: ',
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary,
+            style: TossDesignSystem.caption.copyWith(
+              color: TossDesignSystem.gray600,
             ),
           ),
           Text(
             widget.transactionId!,
-            style: AppTextStyles.caption.copyWith(
+            style: TossDesignSystem.caption.copyWith(
               fontFamily: 'monospace',
             ),
           ),
@@ -219,7 +221,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             child: Icon(
               Icons.copy,
               size: 16,
-              color: AppColors.textSecondary,
+              color: TossDesignSystem.gray600,
             ),
           ),
         ],
@@ -235,7 +237,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
             ),
           ),
           const SizedBox(height: 12),
@@ -243,7 +245,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             onPressed: _navigateToFortuneList,
             text: '운세 보러가기',
             backgroundColor: Colors.transparent,
-            textColor: AppColors.primary,
+            textColor: TossDesignSystem.tossBlue,
           ),
         ],
       );
@@ -254,7 +256,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             onPressed: _retry,
             text: '다시 시도',
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
             ),
           ),
           const SizedBox(height: 12),
@@ -262,7 +264,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
             backgroundColor: Colors.transparent,
-            textColor: AppColors.textPrimary,
+            textColor: TossDesignSystem.gray900,
           ),
         ],
       );
@@ -292,22 +294,22 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1),
+        color: TossDesignSystem.infoBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline,
-            color: AppColors.info,
+            color: TossDesignSystem.infoBlue,
             size: 20,
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               helpText,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.info,
+              style: TossDesignSystem.caption.copyWith(
+                color: TossDesignSystem.infoBlue,
               ),
             ),
           ),

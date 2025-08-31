@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/app_theme_extensions.dart';
+import '../theme/toss_design_system.dart';
 import 'toss_button.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 /// TOSS 스타일 Dialog
 class TossDialog {
@@ -23,7 +21,9 @@ class TossDialog {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      barrierColor: AppColors.textPrimary.withValues(alpha: context.toss.dialogStyles.barrierOpacity),
+      barrierColor: (Theme.of(context).brightness == Brightness.light
+          ? TossDesignSystem.gray900
+          : TossDesignSystem.white).withOpacity(0.5),
       builder: (context) => _TossDialogWrapper(
         padding: padding,
         child: child,
@@ -144,7 +144,9 @@ class TossDialog {
     showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
-      barrierColor: AppColors.textPrimary.withValues(alpha: context.toss.dialogStyles.barrierOpacity),
+      barrierColor: (Theme.of(context).brightness == Brightness.light
+          ? TossDesignSystem.gray900
+          : TossDesignSystem.white).withOpacity(0.5),
       builder: (context) => _TossLoadingDialog(
         message: message,
       ),
@@ -173,14 +175,14 @@ class _TossDialogWrapper extends StatelessWidget {
     
     return Center(
       child: Padding(
-        padding: context.toss.dialogStyles.wrapperPadding,
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Material(
           color: theme.brightness == Brightness.light
-              ? AppColors.textPrimaryDark
-              : const Color(0xFF1C1C1C),
-          borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius),
+              ? TossDesignSystem.white
+              : TossDesignSystem.grayDark100,
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
           child: Padding(
-            padding: padding ?? context.toss.dialogStyles.contentPadding,
+            padding: padding ?? const EdgeInsets.all(24),
             child: child,
           ),
         )
@@ -188,10 +190,10 @@ class _TossDialogWrapper extends StatelessWidget {
             .scale(
               begin: const Offset(0.9, 0.9),
               end: const Offset(1.0, 1.0),
-              duration: context.toss.dialogStyles.scaleAnimationDuration,
+              duration: TossDesignSystem.durationShort,
               curve: Curves.easeOutCubic,
             )
-            .fadeIn(duration: context.toss.dialogStyles.fadeAnimationDuration),
+            .fadeIn(duration: TossDesignSystem.durationShort),
       ),
     );
   }
@@ -223,19 +225,16 @@ class _TossConfirmationDialog extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        SizedBox(height: context.toss.dialogStyles.spacing),
+        SizedBox(height: TossDesignSystem.spacingM),
         Text(
           message,
-          style: TextStyle(
-            fontSize: context.toss.dialogStyles.messageFontSize,
+          style: TossDesignSystem.body2.copyWith(
             color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.textSecondary.withOpacity(0.7)
-                : AppColors.textSecondary.withOpacity(0.3),
-            fontFamily: 'TossProductSans',
-            height: 1.5,
+                ? TossDesignSystem.gray600
+                : TossDesignSystem.grayDark400,
           ),
         ),
-        SizedBox(height: context.toss.dialogStyles.largeSpacing),
+        SizedBox(height: TossDesignSystem.spacingL),
         Row(
           children: [
             Expanded(
@@ -246,7 +245,7 @@ class _TossConfirmationDialog extends StatelessWidget {
                 size: TossButtonSize.medium,
               ),
             ),
-            SizedBox(width: context.toss.dialogStyles.spacing),
+            SizedBox(width: TossDesignSystem.spacingM),
             Expanded(
               child: TossButton(
                 text: confirmText,
@@ -286,19 +285,16 @@ class _TossAlertDialog extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        SizedBox(height: context.toss.dialogStyles.spacing),
+        SizedBox(height: TossDesignSystem.spacingM),
         Text(
           message,
-          style: TextStyle(
-            fontSize: context.toss.dialogStyles.messageFontSize,
+          style: TossDesignSystem.body2.copyWith(
             color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.textSecondary.withOpacity(0.7)
-                : AppColors.textSecondary.withOpacity(0.3),
-            fontFamily: 'TossProductSans',
-            height: 1.5,
+                ? TossDesignSystem.gray600
+                : TossDesignSystem.grayDark400,
           ),
         ),
-        SizedBox(height: context.toss.dialogStyles.largeSpacing),
+        SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
           child: TossButton(
@@ -331,47 +327,51 @@ class _TossSuccessDialog extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: context.toss.dialogStyles.iconContainerSize,
-          height: context.toss.dialogStyles.iconContainerSize,
+          width: 72,
+          height: 72,
           decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.1),
+            color: (Theme.of(context).brightness == Brightness.light
+                ? TossDesignSystem.successGreen
+                : TossDesignSystem.successGreenDark).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             Icons.check_circle,
-            size: context.toss.dialogStyles.iconSize,
-            color: AppColors.success,
+            size: 48,
+            color: Theme.of(context).brightness == Brightness.light
+                ? TossDesignSystem.successGreen
+                : TossDesignSystem.successGreenDark,
           ),
         )
             .animate()
             .scale(
               begin: const Offset(0, 0),
               end: const Offset(1, 1),
-              duration: context.toss.animationDurations.long,
+              duration: TossDesignSystem.durationLong,
               curve: Curves.elasticOut,
             ),
-        SizedBox(height: context.toss.dialogStyles.largeSpacing),
+        SizedBox(height: TossDesignSystem.spacingL),
         Text(
           title,
           style: Theme.of(context).textTheme.titleSmall,
           textAlign: TextAlign.center,
         ),
         if (message != null) ...[
-          SizedBox(height: context.toss.dialogStyles.spacing),
+          SizedBox(height: TossDesignSystem.spacingM),
           Text(
             message!,
             style: TextStyle(
               fontSize: context.toss.dialogStyles.messageFontSize,
               color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.textSecondary.withOpacity(0.7)
-                  : AppColors.textSecondary.withOpacity(0.3),
+                  ? TossDesignSystem.gray600.withOpacity(0.7)
+                  : TossDesignSystem.gray600.withOpacity(0.3),
               fontFamily: 'TossProductSans',
               height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
         ],
-        SizedBox(height: context.toss.dialogStyles.largeSpacing),
+        SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
           child: TossButton(
@@ -404,40 +404,41 @@ class _TossErrorDialog extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: context.toss.dialogStyles.iconContainerSize,
-          height: context.toss.dialogStyles.iconContainerSize,
+          width: 72,
+          height: 72,
           decoration: BoxDecoration(
-            color: AppColors.error.withOpacity(0.1),
+            color: (Theme.of(context).brightness == Brightness.light
+                ? TossDesignSystem.errorRed
+                : TossDesignSystem.errorRedDark).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             Icons.error_outline,
-            size: context.toss.dialogStyles.iconSize,
-            color: AppColors.error,
+            size: 48,
+            color: Theme.of(context).brightness == Brightness.light
+                ? TossDesignSystem.errorRed
+                : TossDesignSystem.errorRedDark,
           ),
         )
             .animate()
-            .shake(duration: context.toss.dialogStyles.shakeAnimationDuration, hz: 2, offset: const Offset(4, 0)),
-        SizedBox(height: context.toss.dialogStyles.largeSpacing),
+            .shake(duration: TossDesignSystem.durationMedium, hz: 2, offset: const Offset(4, 0)),
+        SizedBox(height: TossDesignSystem.spacingL),
         Text(
           title,
           style: Theme.of(context).textTheme.titleSmall,
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: context.toss.dialogStyles.spacing),
+        SizedBox(height: TossDesignSystem.spacingM),
         Text(
           message,
-          style: TextStyle(
-            fontSize: context.toss.dialogStyles.messageFontSize,
+          style: TossDesignSystem.body2.copyWith(
             color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.textSecondary.withOpacity(0.7)
-                : AppColors.textSecondary.withOpacity(0.3),
-            fontFamily: 'TossProductSans',
-            height: 1.5,
+                ? TossDesignSystem.gray600
+                : TossDesignSystem.grayDark400,
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: context.toss.dialogStyles.largeSpacing),
+        SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
           child: TossButton(
@@ -466,36 +467,33 @@ class _TossLoadingDialog extends StatelessWidget {
     
     return Center(
       child: Container(
-        padding: EdgeInsets.all(context.toss.dialogStyles.largeSpacing + context.toss.dialogStyles.spacing / 2),
+        padding: const EdgeInsets.all(36),
         decoration: BoxDecoration(
           color: theme.brightness == Brightness.light
-              ? AppColors.textPrimaryDark
-              : const Color(0xFF1C1C1C),
-          borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius),
+              ? TossDesignSystem.white
+              : TossDesignSystem.grayDark100,
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: context.toss.dialogStyles.loadingSize,
-              height: context.toss.dialogStyles.loadingSize,
+              width: 48,
+              height: 48,
               child: CircularProgressIndicator(
-                strokeWidth: context.toss.dialogStyles.loadingStrokeWidth,
+                strokeWidth: 3,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   theme.brightness == Brightness.light
-                      ? AppColors.textPrimary
-                      : AppColors.textPrimaryDark,
+                      ? TossDesignSystem.gray900
+                      : TossDesignSystem.white,
                 ),
               ),
             ),
             if (message != null) ...[
-              SizedBox(height: context.toss.dialogStyles.largeSpacing),
+              SizedBox(height: TossDesignSystem.spacingL),
               Text(
                 message!,
-                style: TextStyle(
-                  fontSize: context.toss.dialogStyles.messageFontSize,
-                  fontFamily: 'TossProductSans',
-                ),
+                style: TossDesignSystem.body2,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -505,7 +503,7 @@ class _TossLoadingDialog extends StatelessWidget {
           .animate(
             onPlay: (controller) => controller.repeat(),
           )
-          .shimmer(duration: context.toss.dialogStyles.shimmerDuration),
+          .shimmer(duration: const Duration(milliseconds: 1500)),
     );
   }
 }

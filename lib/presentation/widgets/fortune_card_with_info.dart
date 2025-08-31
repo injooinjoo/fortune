@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fortune_card.dart';
 import 'fortune_explanation_bottom_sheet.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 
 class FortuneCardWithInfo extends StatelessWidget {
@@ -73,11 +73,11 @@ class FortuneCardWithInfo extends StatelessWidget {
                   width: 36);
                   height: AppSpacing.spacing9),
     decoration: BoxDecoration(
-                    color: AppColors.textPrimaryDark.withOpacity(0.9)),
+                    color: TossDesignSystem.grayDark900.withOpacity(0.9)),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     boxShadow: [
                       BoxShadow(
-                        color: AppColors.textPrimary.withOpacity(0.1)),
+                        color: TossDesignSystem.gray900.withOpacity(0.1)),
     blurRadius: 8),
     offset: const Offset(0, 2))
                       ))

@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme_extensions.dart';
 
@@ -16,12 +18,19 @@ class ThemeUtils {
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         colors: [
-          AppColors.primaryDarkMode.withOpacity(0.8),
-          AppColors.primaryLightDarkMode.withOpacity(0.6),
-          AppColors.primaryDarkDarkMode.withOpacity(0.4)]
+          TossDesignSystem.tossBlueDark.withOpacity(0.8),
+          TossDesignSystem.tossBlueDark.withOpacity(0.6),
+          TossDesignSystem.tossBlueDark.withOpacity(0.4)]
       );
     }
-    return AppColors.primaryGradient;
+    return LinearGradient(
+      begin: Alignment.topRight,
+      end: Alignment.bottomLeft,
+      colors: [
+        TossDesignSystem.tossBlue.withOpacity(0.8),
+        TossDesignSystem.tossBlue.withOpacity(0.6),
+        TossDesignSystem.tossBlue.withOpacity(0.4)]
+    );
   }
 
   /// Get theme-aware shadow
@@ -44,8 +53,8 @@ class ThemeUtils {
   static Border getCardBorder(BuildContext context) {
     return Border.all(
       color: isDarkMode(context) 
-        ? AppColors.dividerDark.withOpacity(0.3)
-        : AppColors.divider.withOpacity(0.5),
+        ? TossDesignSystem.grayDark200.withOpacity(0.3)
+        : TossDesignSystem.gray200.withOpacity(0.5),
       width: 1);
   }
 
@@ -56,19 +65,24 @@ class ThemeUtils {
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         colors: [
-          AppColors.mysticalPurpleDarkMode,
-          AppColors.mysticalPurpleLightDarkMode,
-          AppColors.mysticalPurpleDarkDarkMode]
+          TossDesignSystem.purple.withOpacity(0.8),
+          TossDesignSystem.purple.withOpacity(0.6),
+          TossDesignSystem.purple.withOpacity(0.4)]
       );
     }
-    return AppColors.mysticalGradient;
+    return LinearGradient(
+      begin: Alignment.topRight,
+      end: Alignment.bottomLeft,
+      colors: [
+        TossDesignSystem.purple.withOpacity(0.8),
+        TossDesignSystem.purple.withOpacity(0.6),
+        TossDesignSystem.purple.withOpacity(0.4)]
+    );
   }
 
   /// Convert hardcoded colors to theme-aware colors
   static Color getThemedPurple(BuildContext context, {double opacity = 1.0}) {
-    final baseColor = isDarkMode(context) 
-      ? AppColors.mysticalPurpleDarkMode 
-      : AppColors.mysticalPurple;
+    final baseColor = TossDesignSystem.purple;
     return opacity < 1.0 ? baseColor.withOpacity(opacity) : baseColor;
   }
 
@@ -76,13 +90,13 @@ class ThemeUtils {
   static Color getStatusColor(BuildContext context, StatusType type) {
     switch (type) {
       case StatusType.success:
-        return isDarkMode(context) ? AppColors.successDark : AppColors.success;
+        return isDarkMode(context) ? TossDesignSystem.successGreenDark : TossDesignSystem.successGreen;
       case StatusType.error:
-        return isDarkMode(context) ? AppColors.errorDark : AppColors.error;
+        return isDarkMode(context) ? TossDesignSystem.errorRedDark : TossDesignSystem.errorRed;
       case StatusType.warning:
-        return isDarkMode(context) ? AppColors.warningDark : AppColors.warning;
+        return isDarkMode(context) ? TossDesignSystem.warningOrangeDark : TossDesignSystem.warningOrange;
       case StatusType.info:
-        return isDarkMode(context) ? AppColors.infoDark : AppColors.info;
+        return isDarkMode(context) ? TossDesignSystem.infoBlueDark : TossDesignSystem.infoBlue;
     }
   }
 
@@ -90,8 +104,8 @@ class ThemeUtils {
   static ShimmerColors getShimmerColors(BuildContext context) {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return ShimmerColors(
-      baseColor: fortuneTheme?.shimmerBase ?? AppColors.divider,
-      highlightColor: fortuneTheme?.shimmerHighlight ?? AppColors.divider.withOpacity(0.3));
+      baseColor: fortuneTheme?.shimmerBase ?? TossDesignSystem.gray200,
+      highlightColor: fortuneTheme?.shimmerHighlight ?? TossDesignSystem.gray200.withOpacity(0.3));
   }
 
   /// Get glass morphism colors

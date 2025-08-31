@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 
@@ -15,8 +15,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        AppColors.textPrimaryDark.withOpacity(opacity),
-        AppColors.textPrimaryDark.withOpacity(opacity * 0.5)],
+        TossDesignSystem.grayDark900.withOpacity(opacity),
+        TossDesignSystem.grayDark900.withOpacity(opacity * 0.5)],
     );
   }
 
@@ -25,8 +25,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        AppColors.textPrimaryDark.withOpacity(opacity),
-        AppColors.textPrimaryDark.withOpacity(opacity * 0.5)],
+        TossDesignSystem.grayDark900.withOpacity(opacity),
+        TossDesignSystem.grayDark900.withOpacity(opacity * 0.5)],
     );
   }
 
@@ -61,12 +61,12 @@ class GlassEffects {
     double spread = 0}) {
     return [
       BoxShadow(
-        color: (color ?? AppColors.textPrimary).withOpacity(0.1),
+        color: (color ?? TossDesignSystem.gray900).withOpacity(0.1),
         blurRadius: elevation * 2,
         offset: Offset(0, elevation),
         spreadRadius: spread),
       BoxShadow(
-        color: (color ?? AppColors.textPrimary).withOpacity(0.05),
+        color: (color ?? TossDesignSystem.gray900).withOpacity(0.05),
         blurRadius: elevation,
         offset: Offset(0, elevation * 0.5),
         spreadRadius: spread * 0.5)];
@@ -77,7 +77,7 @@ class GlassEffects {
     double width = 1.5,
     double opacity = 0.2}) {
     return Border.all(
-      color: (color ?? AppColors.textPrimaryDark).withOpacity(opacity),
+      color: (color ?? TossDesignSystem.grayDark900).withOpacity(opacity),
       width: width);
   }
 
@@ -107,7 +107,7 @@ class LiquidGlassContainer extends StatefulWidget {
     this.animationDuration = const Duration(seconds: 3),
     this.liquidColors = const [
       Color(0xFF7C3AED),
-      AppColors.primary,
+      TossDesignSystem.gray600,
       Color(0xFF06B6D4)]
   }) : super(key: key);
 
@@ -189,7 +189,7 @@ class ShimmerGlass extends StatefulWidget {
     this.width,
     this.height,
     this.borderRadius,
-    this.shimmerColor = AppColors.textPrimaryDark}) : super(key: key);
+    this.shimmerColor = TossDesignSystem.gray900}) : super(key: key);
 
   @override
   State<ShimmerGlass> createState() => _ShimmerGlassState();

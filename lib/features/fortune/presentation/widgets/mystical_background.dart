@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:fortune/core/theme/fortune_colors.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class MysticalBackground extends StatefulWidget {
   final Widget child;
@@ -116,7 +116,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
       Colors.white,
       Colors.blue.withOpacity(0.9),
       Colors.purple.withOpacity(0.9),
-      AppColors.background]; // Warm white
+      TossDesignSystem.white]; // Warm white
     return colors[_random.nextInt(colors.length)];
   }
   

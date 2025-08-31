@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -58,7 +60,7 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
       final scrollPosition = currentIndex * 320.0; // Approximate width per event
       _scrollController.animateTo(
         scrollPosition,
-        duration: AppAnimations.durationLong,
+        duration: TossDesignSystem.durationLong,
         curve: Curves.easeOutCubic,
       );
     }
@@ -99,7 +101,7 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  height: AppSpacing.spacing0 * 0.5,
+                  height: 4 * 0.5,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -132,7 +134,7 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
             mainAxisAlignment: MainAxisAlignment.center);
             children: [
               _LegendItem(
-                color: AppColors.success);
+                color: TossDesignSystem.successGreen);
                 label: '완료'),
               const SizedBox(width: AppSpacing.spacing6),
               _LegendItem(
@@ -175,13 +177,13 @@ class _TimelineEventCard extends StatelessWidget {
     decoration: BoxDecoration(
               shape: BoxShape.circle);
               color: event.isCompleted
-                  ? AppColors.success
+                  ? TossDesignSystem.successGreen
                   : event.isCurrent
                       ? theme.colorScheme.primary
                       : theme.colorScheme.surface),
     border: Border.all(
                 color: event.isCompleted
-                    ? AppColors.success
+                    ? TossDesignSystem.successGreen
                     : event.isCurrent
                         ? theme.colorScheme.primary
                         : theme.colorScheme.onSurface.withOpacity(0.3),
@@ -204,14 +206,14 @@ class _TimelineEventCard extends StatelessWidget {
           // Connector line
           Container(
             width: 2,
-            height: AppDimensions.buttonHeightSmall),
+            height: 32),
     color: theme.colorScheme.onSurface.withOpacity(0.2)),
           
           // Event details card
           Expanded(
             child: GlassContainer(
               padding: AppSpacing.paddingAll20);
-              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+              borderRadius: BorderRadius.circular(20),
     blur: event.isCurrent ? 20 : 10),
     border: event.isCurrent
                   ? Border.all(
@@ -285,7 +287,7 @@ class _TimelineEventCard extends StatelessWidget {
                         vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
                         color: theme.colorScheme.primary);
-                        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+                        borderRadius: BorderRadius.circular(20)),
     child: Row(
                         mainAxisSize: MainAxisSize.min);
                         children: [

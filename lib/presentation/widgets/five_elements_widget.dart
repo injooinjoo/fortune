@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -8,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
@@ -47,7 +49,7 @@ class FiveElementsWidget extends ConsumerWidget {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: AppColors.textPrimaryDark,
+        color: TossDesignSystem.grayDark900,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
@@ -128,7 +130,7 @@ class FiveElementsWidget extends ConsumerWidget {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: AppColors.textPrimaryDark,
+        color: TossDesignSystem.grayDark900,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
@@ -276,7 +278,7 @@ class FiveElementsWidget extends ConsumerWidget {
                     offset: const Offset(0, 2))]),
               child: Center(
                 child: Padding(
-                  padding: AppSpacing.xSmall.all,
+                  padding: TossDesignSystem.spacingXS.all,
                   child: FittedBox(
                     fit: BoxFit.contain,
                     child: Column(
@@ -496,7 +498,7 @@ class FiveElementsWidget extends ConsumerWidget {
           if (dominantElement != null)
             Padding(
               padding: const EdgeInsets.only(
-                bottom: AppSpacing.xSmall),
+                bottom: TossDesignSystem.spacingXS),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -504,7 +506,7 @@ class FiveElementsWidget extends ConsumerWidget {
                     width: 6,
                     height: AppSpacing.spacing1 * 1.5,
                     margin: const EdgeInsets.only(
-                      top: AppSpacing.xSmall),
+                      top: TossDesignSystem.spacingXS),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary,
                       shape: BoxShape.circle),
@@ -526,7 +528,7 @@ class FiveElementsWidget extends ConsumerWidget {
                   width: 6,
                   height: AppSpacing.spacing1 * 1.5,
                   margin: const EdgeInsets.only(
-                    top: AppSpacing.xSmall),
+                    top: TossDesignSystem.spacingXS),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.error,
                     shape: BoxShape.circle),
@@ -554,17 +556,17 @@ class FiveElementsWidget extends ConsumerWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return AppColors.success;
+        return TossDesignSystem.successGreen;
       case '화':
-        return AppColors.warning;
+        return TossDesignSystem.warningOrange;
       case '토':
         return FortuneColors.goldLight;
       case '금':
-        return AppColors.textSecondary;
+        return TossDesignSystem.gray600;
       case '수':
-        return AppColors.primary;
+        return TossDesignSystem.tossBlue;
       default:
-        return AppColors.textSecondary;
+        return TossDesignSystem.gray600;
     }
   }
   

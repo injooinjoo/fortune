@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/blood_type_analysis_service.dart';
@@ -36,7 +38,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     
@@ -154,7 +156,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     final tabs = ['성격 분석', '바이오리듬', '특성 강도'];
     
     return GlassContainer(
-      padding: AppSpacing.paddingAll4,
+      padding: const EdgeInsets.all(4),
       child: Row(
         children: tabs.asMap().entries.map((entry) {
           final index = entry.key;
@@ -165,7 +167,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             child: GestureDetector(
               onTap: () => setState(() => _selectedTab = index),
               child: AnimatedContainer(
-                duration: AppAnimations.durationShort,
+                duration: TossDesignSystem.durationShort,
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
                 decoration: BoxDecoration(
                   gradient: isSelected
@@ -262,7 +264,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
           Row(
             children: [
               Container(
-                padding: AppSpacing.paddingAll8,
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
                   borderRadius: AppDimensions.borderRadiusSmall),
@@ -330,7 +332,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: AppSpacing.paddingAll8,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: color.withOpacity(0.2),
             borderRadius: AppDimensions.borderRadiusSmall),
@@ -394,7 +396,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
                   color: Colors.purple.withOpacity(0.2),
-                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: Colors.purple.withOpacity(0.4),
                     width: 1)),
@@ -470,7 +472,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
                       width: 1)),

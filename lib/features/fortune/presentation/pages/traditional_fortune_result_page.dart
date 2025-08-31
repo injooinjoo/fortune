@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/base_card.dart';
 import 'dart:math' as math;
 
@@ -40,7 +40,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             end: Alignment.bottomCenter,
             colors: [
               Color(0xFFEF4444).withOpacity(0.1),
-              AppColors.background])),
+              TossDesignSystem.white])),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -169,7 +169,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 height: 1.6),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
               textAlign: TextAlign.center));
 }
 
@@ -203,7 +203,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     '오늘의 주제'),
                   style: TextStyle(
                       fontSize: 14),
-                  color: AppColors.textSecondary),
+                  color: TossDesignSystem.gray600),
                   Text(
                     theme['title'] ?? ''$1',
                   style: TextStyle(
@@ -227,16 +227,16 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 15,
     height: 1.6),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
                 if (theme['hexagram'] != null) ...[
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.surface),
+                      color: TossDesignSystem.gray50),
                   borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: AppColors.divider),
+                        color: TossDesignSystem.gray200),
                     child: Row(
                       children: [
                         Text(
@@ -254,13 +254,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                                   fontSize: 16,
     fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
                               const SizedBox(height: 4),
                               Text(
                                 theme['hexagram']['meaning'] ?? ''$1',
                   style: TextStyle(
                                   fontSize: 14,
-    color: AppColors.textSecondary)));
+    color: TossDesignSystem.gray600)));
 }
 
   Widget _buildCoreReadingCard(Map<String, dynamic> reading) {
@@ -283,7 +283,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         initiallyExpanded: _expandedSections['coreReading'],
         onExpansionChanged: (expanded) {
           setState(() {
@@ -340,7 +340,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                           style: TextStyle(
                             fontSize: 15,
                             height: 1.6),
-                  color: AppColors.textPrimary)));
+                  color: TossDesignSystem.gray900)));
 }
 
   Widget _buildSajuSection(Map<String, dynamic> saju) {
@@ -359,7 +359,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         const SizedBox(height: 12),
         
         // Four Pillars
@@ -384,17 +384,17 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.surface),
+        color: TossDesignSystem.gray50),
                   borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.divider),
+          color: TossDesignSystem.gray200),
       child: Column(
         children: [
           Text(
             title),
                   style: TextStyle(
               fontSize: 12),
-                  color: AppColors.textSecondary),
+                  color: TossDesignSystem.gray600),
           const SizedBox(height: 4),
           Text(
             '${pillar['stem'] ?? ''}${pillar['branch'] ?? ''}'),
@@ -424,7 +424,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
           style: TextStyle(
             fontSize: 14),
                   fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
         const SizedBox(height: 8),
         ...List.generate(elements.length, (index) {
           final element = elements[index];
@@ -455,7 +455,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   '${value.toInt()}%',
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary)),;
+                    color: TossDesignSystem.gray600)),;
 });
 }
 
@@ -475,7 +475,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(16),
@@ -498,7 +498,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 tojeong['combinedMeaning'] ?? ''$1',
                   style: TextStyle(
                   fontSize: 14,
-    color: AppColors.textPrimary),
+    color: TossDesignSystem.gray900),
               if (tojeong['monthlyMessage'] != null) ...[
                 const SizedBox(height: 12),
                 Text(
@@ -506,14 +506,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
                 const SizedBox(height: 4),
                 Text(
                   tojeong['monthlyMessage'],
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5),
-                  color: AppColors.textPrimary));
+                  color: TossDesignSystem.gray900));
 }
 
   Widget _buildLifeAspectsCard(List<dynamic> aspects) {
@@ -536,7 +536,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -598,13 +598,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             style: TextStyle(
               fontSize: 14,
     height: 1.5),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
           if (aspect['advice'] != null) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.surface),
+                color: TossDesignSystem.gray50),
                   borderRadius: BorderRadius.circular(8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -619,7 +619,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       aspect['advice'],
                   style: TextStyle(
                         fontSize: 13),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
           if (aspect['luckyFactors'] != null && (aspect['luckyFactors'] as List).isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
@@ -666,7 +666,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -683,10 +683,10 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface),
+                  color: TossDesignSystem.gray50),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.divider),
+                    color: TossDesignSystem.gray200),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -695,20 +695,20 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       style: TextStyle(
                         fontSize: 16),
                   fontStyle: FontStyle.italic),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
                     const SizedBox(height: 8),
                     Text(
                       wisdom['translation'] ?? ''$1',
                   style: TextStyle(
                         fontSize: 14,
-    color: AppColors.textSecondary)),
+    color: TossDesignSystem.gray600)),
               const SizedBox(height: 12),
             Text(
               wisdom['modernInterpretation'] ?? '',
               style: TextStyle(
                 fontSize: 14,
     height: 1.5),
-                  color: AppColors.textPrimary),
+                  color: TossDesignSystem.gray900),
             if (wisdom['personalApplication'] != null) ...[
               const SizedBox(height: 12),
               Container(
@@ -729,7 +729,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                         wisdom['personalApplication'],
                   style: TextStyle(
                           fontSize: 13),
-                  color: AppColors.textPrimary)));
+                  color: TossDesignSystem.gray900)));
 }
 
   Widget _buildRemediesCard(Map<String, dynamic> remedies) {
@@ -752,7 +752,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -804,7 +804,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         const SizedBox(height: 8),
         ...items.entries.map((entry) {
           final key = entry.key;
@@ -866,7 +866,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary)),
+                  color: TossDesignSystem.gray900)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -883,12 +883,12 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   decoration: BoxDecoration(
                     color: isWeekend 
                       ? Color(0xFF06B6D4).withOpacity(0.05)
-                      : AppColors.surface,
+                      : TossDesignSystem.gray50,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isWeekend
                         ? Color(0xFF06B6D4).withOpacity(0.3)
-                        : AppColors.divider),
+                        : TossDesignSystem.gray200),
                   child: Row(
                     children: [
                       Container(
@@ -897,7 +897,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   decoration: BoxDecoration(
                           color: isWeekend
                             ? Color(0xFF06B6D4).withOpacity(0.2)
-                            : AppColors.divider.withOpacity(0.3),
+                            : TossDesignSystem.gray200.withOpacity(0.3),
                           shape: BoxShape.circle),
                         child: Center(
                           child: Text(
@@ -905,7 +905,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                             style: TextStyle(
                               fontSize: 14),
                   fontWeight: FontWeight.bold),
-                  color: isWeekend ? Color(0xFF06B6D4) : AppColors.textPrimary
+                  color: isWeekend ? Color(0xFF06B6D4) : TossDesignSystem.gray900
                             )),
                       const SizedBox(width: 12),
                       Expanded(
@@ -913,7 +913,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                           fortune),
                   style: TextStyle(
                             fontSize: 14),
-                  color: AppColors.textPrimary));
+                  color: TossDesignSystem.gray900));
 }));
 }
 
@@ -939,7 +939,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 height: 1.6,
-                color: AppColors.textPrimary),
+                color: TossDesignSystem.gray900),
                   fontWeight: FontWeight.w500),
               textAlign: TextAlign.center));
 }
@@ -1001,7 +1001,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         return Color(0xFFF59E0B);
       case , '하': return Color(0xFFEF4444);
       default:
-        return AppColors.textSecondary;}
+        return TossDesignSystem.gray600;}
 }
   }}
 

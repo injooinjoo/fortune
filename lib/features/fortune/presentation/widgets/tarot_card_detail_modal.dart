@@ -111,7 +111,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       height: 4,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+                        borderRadius: BorderRadius.circular(4 * 0.5),
                       ),
                     ),
                     
@@ -147,7 +147,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                               child: Center(
                                 child: IconButton(
                                   icon: Container(
-                                    padding: AppSpacing.paddingAll8,
+                                    padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: Colors.black.withOpacity(0.5),
                                       shape: BoxShape.circle),
@@ -172,7 +172,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                               child: Center(
                                 child: IconButton(
                                   icon: Container(
-                                    padding: AppSpacing.paddingAll8,
+                                    padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: Colors.black.withOpacity(0.5),
                                       shape: BoxShape.circle),
@@ -251,7 +251,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing1 * 1.5),
               decoration: BoxDecoration(
                 color: Colors.purple.withOpacity(0.3),
-                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+                borderRadius: BorderRadius.circular(20)),
               child: Text(
                 widget.position!,
                 style: Theme.of(context).textTheme.bodyLarge))],
@@ -347,7 +347,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
                   decoration: BoxDecoration(
                     color: Colors.purple.withOpacity(0.2),
-                    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.purple.withOpacity(0.3),
                       width: 1)),
@@ -631,7 +631,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             color: Colors.white.withOpacity(0.7),
             fontSize: Theme.of(context).textTheme.bodySmall!.fontSize),
         ),
-        const SizedBox(height: AppSpacing.spacing0 * 0.5),
+        const SizedBox(height: 4 * 0.5),
         Text(
           value,
           style: Theme.of(context).textTheme.bodyLarge),

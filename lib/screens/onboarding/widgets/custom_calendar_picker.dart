@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -213,7 +215,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                   day,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: day == '일' ? AppColors.error : (day == '토' ? AppColors.primary : null)))).toList()),
+                    color: day == '일' ? TossDesignSystem.gray600 : (day == '토' ? TossDesignSystem.gray600 : null)))).toList()),
           
           SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 0.625),
           
@@ -264,11 +266,11 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected 
-                              ? (context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark)
+                              ? (context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900)
                               : isSunday 
-                                  ? AppColors.error 
+                                  ? TossDesignSystem.gray600 
                                   : isSaturday 
-                                      ? AppColors.primary 
+                                      ? TossDesignSystem.gray600 
                                       : null
                         )));
                 })),
@@ -296,7 +298,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                     onPressed: () => widget.onDateSelected(_selectedDate),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
+                      foregroundColor: context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight / 2)),
                       elevation: 0),

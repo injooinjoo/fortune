@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../pages/fortune_list_page.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+
+
+import '../../../../core/theme/toss_design_system.dart';
 
 class FortuneListTile extends ConsumerWidget {
   final FortuneCategory category;
@@ -23,20 +23,20 @@ class FortuneListTile extends ConsumerWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+        padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingS),
         child: Row(
           children: [
             // Small gradient thumbnail instead of image
             Container(
               width: 48,
-              height: AppDimensions.buttonHeightMedium,
+              height: 48,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: gradientColors,
                 ),
-                borderRadius: AppDimensions.borderRadiusMedium,
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                 boxShadow: [
                   BoxShadow(
                     color: gradientColors.first.withOpacity(0.25),
@@ -70,7 +70,7 @@ class FortuneListTile extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(width: AppSpacing.spacing4),
+            const SizedBox(width: TossDesignSystem.spacingM),
             // Title and description
             Expanded(
               child: Column(
@@ -87,11 +87,11 @@ class FortuneListTile extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis),
                       ),
                       if (category.isNew) Container(
-                          margin: const EdgeInsets.only(left: AppSpacing.spacing2),
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0 * 0.5),
+                          margin: const EdgeInsets.only(left: TossDesignSystem.spacingS),
+                          padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: 4 * 0.5),
                           decoration: BoxDecoration(
-                            color: AppColors.error,
-                            borderRadius: AppDimensions.borderRadiusSmall),
+                            color: TossDesignSystem.errorRed,
+                            borderRadius: BorderRadius.circular(TossDesignSystem.radiusS)),
                           child: Text(
                             'NEW',
                             style: TextStyle(
@@ -100,11 +100,11 @@ class FortuneListTile extends ConsumerWidget {
                               fontWeight: FontWeight.bold)),
                         ),
                       if (category.isPremium) Container(
-                          margin: const EdgeInsets.only(left: AppSpacing.spacing2),
-                          padding: AppSpacing.paddingAll4,
+                          margin: const EdgeInsets.only(left: TossDesignSystem.spacingS),
+                          padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: AppColors.warning,
-                            borderRadius: AppDimensions.borderRadiusMedium),
+                            color: TossDesignSystem.warningOrange,
+                            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
                           child: const Icon(
                             Icons.star_rounded,
                             size: 12,
@@ -112,20 +112,20 @@ class FortuneListTile extends ConsumerWidget {
                         ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.spacing1),
+                  const SizedBox(height: TossDesignSystem.spacingXS),
                   Text(
                     category.description,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                      color: theme.colorScheme.onSurface.withOpacity( 0.7)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
-            const SizedBox(width: AppSpacing.spacing2),
+            const SizedBox(width: TossDesignSystem.spacingS),
             Icon(
               Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              color: theme.colorScheme.onSurface.withOpacity( 0.3),
               size: 24),
           ],
         ),

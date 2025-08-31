@@ -9,7 +9,7 @@ import '../../core/utils/logger.dart';
 import '../../constants/fortune_constants.dart';
 import '../../utils/date_utils.dart';
 import 'profile_edit_dialogs/index.dart';
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../shared/components/base_card.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 
@@ -72,7 +72,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필이 업데이트되었습니다'),
-            backgroundColor: AppColors.success));
+            backgroundColor: TossDesignSystem.successGreen));
       }
     } catch (e) {
       Logger.error('Failed to update profile field', e);
@@ -80,7 +80,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('실패: ${e.toString()}'),
-            backgroundColor: AppColors.error));
+            backgroundColor: TossDesignSystem.errorRed));
       }
     }
   }
@@ -302,7 +302,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             right: items.indexOf(item) == 0 ? 6 : 0,
             left: items.indexOf(item) == 1 ? 6 : 0),
           decoration: BoxDecoration(
-            color: AppColors.textPrimaryDark,
+            color: TossDesignSystem.grayDark900,
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [

@@ -1,10 +1,8 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../presentation/widgets/social_accounts_section.dart';
 
@@ -97,12 +95,12 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: AppColors.textPrimaryDark,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -117,24 +115,24 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: AppSpacing.paddingAll16,
-                    padding: AppSpacing.paddingAll16,
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.info_outline,
-                          color: AppColors.primary,
-                          size: AppDimensions.iconSizeMedium),
-                        SizedBox(width: AppSpacing.spacing3),
+                          color: TossDesignSystem.tossBlue,
+                          size: 24.0),
+                        SizedBox(width: 12.0),
                         Expanded(
                           child: Text(
                             '여러 소셜 계정을 연동하면 어떤 방법으로든 로그인할 수 있습니다.',
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                               height: 1.5,
                             ),
                           ),
@@ -189,7 +187,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                     ),
                   ),
                   Padding(
-                    padding: AppSpacing.paddingHorizontal16,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SocialAccountsSection(
                       linkedProviders:
                           userIdentities.map((identity) => identity.provider).toList(),
@@ -201,7 +199,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                       socialAuthService: _socialAuthService,
                     ),
                   ),
-                  SizedBox(height: AppSpacing.spacing8),
+                  SizedBox(height: 32.0),
                 ],
               ),
             ),
@@ -216,32 +214,32 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
   }) {
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: AppSpacing.spacing4,
-        vertical: AppSpacing.spacing1),
-      padding: AppSpacing.paddingAll16,
+        horizontal: 16.0,
+        vertical: 4.0),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.textPrimaryDark,
-        borderRadius: AppDimensions.borderRadiusMedium,
+        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isPrimary ? AppColors.primary : AppColors.divider,
+          color: isPrimary ? TossDesignSystem.tossBlue : Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
           width: isPrimary ? 2 : 1,
         ),
       ),
       child: Row(
         children: [
           Container(
-            width: AppDimensions.buttonHeightSmall,
-            height: AppDimensions.buttonHeightSmall,
+            width: 40.0,
+            height: 40.0,
             decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+              borderRadius: BorderRadius.circular(20.0)),
             child: Icon(
               _getProviderIcon(provider),
-              color: AppColors.textSecondary,
-              size: AppDimensions.iconSizeMedium,
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+              size: 24.0,
             ),
           ),
-          SizedBox(width: AppSpacing.spacing3),
+          SizedBox(width: 12.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,11 +248,11 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                   _getProviderName(provider),
                   style: Theme.of(context).textTheme.titleMedium),
                 if (email.isNotEmpty) ...[
-                  SizedBox(height: AppSpacing.spacing1),
+                  SizedBox(height: 4.0),
                   Text(
                     email,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                     ),
                   ),
                 ],
@@ -264,11 +262,11 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
           if (isPrimary)
             Container(
               padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.spacing2,
-                vertical: AppSpacing.spacing1),
+                horizontal: 8.0,
+                vertical: 4.0),
               decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: AppDimensions.borderRadiusMedium),
+                color: TossDesignSystem.tossBlue,
+                borderRadius: BorderRadius.circular(12)),
               child: Text(
                 '주 계정',
                 style: Theme.of(context).textTheme.labelSmall,
@@ -282,7 +280,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
-                    ?.copyWith(color: AppColors.error),
+                    ?.copyWith(color: TossDesignSystem.errorRed),
               ),
             ),
         ],
@@ -308,7 +306,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             },
             child: const Text('연동 해제'),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
+              foregroundColor: TossDesignSystem.errorRed,
             ),
           ),
         ],
@@ -324,7 +322,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('계정 연동이 해제되었습니다'),
-            backgroundColor: AppColors.success));
+            backgroundColor: TossDesignSystem.successGreen));
         _loadUserData();
       }
     } catch (e) {
@@ -334,7 +332,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             content: Text(
               e.toString().replaceAll('Exception: ', '')
             ),
-            backgroundColor: AppColors.error));
+            backgroundColor: TossDesignSystem.errorRed));
       }
     }
   }

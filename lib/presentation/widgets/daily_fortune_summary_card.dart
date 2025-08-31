@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,7 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/entities/fortune.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class DailyFortuneSummaryCard extends StatelessWidget {
@@ -46,8 +48,8 @@ class DailyFortuneSummaryCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.textPrimaryDark,
-              AppColors.textPrimaryDark.withOpacity(0.98)]),
+              TossDesignSystem.grayDark900,
+              TossDesignSystem.grayDark900.withOpacity(0.98)]),
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
           border: Border.all(color: context.fortuneTheme.dividerColor.withOpacity(0.5)),
           boxShadow: [
@@ -109,7 +111,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                                           Icons.refresh,
                                           size: 18,
                                           color: Theme.of(context).colorScheme.primary),
-                                  SizedBox(width: AppSpacing.xSmall),
+                                  SizedBox(width: TossDesignSystem.spacingXS),
                                   Text(
                                     '$refreshCount/$maxRefreshCount',
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -183,7 +185,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                     _getScoreIcon(score),
                     size: 16,
                     color: scoreColor),
-                  SizedBox(width: AppSpacing.xSmall),
+                  SizedBox(width: TossDesignSystem.spacingXS),
                   Text(
                     '$score점',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class HexagonChart extends StatelessWidget {
   final Map<String, int> scores;
@@ -25,7 +25,7 @@ class HexagonChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
-    final effectiveBackgroundColor = backgroundColor ?? AppColors.textSecondary.withValues(alpha: 0.1);
+    final effectiveBackgroundColor = backgroundColor ?? TossDesignSystem.gray600.withValues(alpha: 0.1);
     final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall ?? const TextStyle(fontSize: 12);
 
     return SizedBox(

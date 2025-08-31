@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../theme/app_spacing.dart';
-import '../theme/app_dimensions.dart';
-import '../theme/app_typography.dart';
+import '../theme/toss_design_system.dart';
 
 /// TOSS 스타일 Toast
 class TossToast {
@@ -178,9 +176,9 @@ class _TossToastOverlay extends StatelessWidget {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     
     return Positioned(
-      left: AppSpacing.spacing4,
-      right: AppSpacing.spacing4,
-      bottom: bottomPadding + AppSpacing.bottomNavPadding,
+      left: TossDesignSystem.spacingM,
+      right: TossDesignSystem.spacingM,
+      bottom: bottomPadding + TossDesignSystem.spacingL,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: entries
@@ -188,7 +186,7 @@ class _TossToastOverlay extends StatelessWidget {
             .entries
             .map((entry) => Padding(
                   padding: EdgeInsets.only(
-                    bottom: entry.key < entries.length - 1 ? AppSpacing.spacing2 : 0,
+                    bottom: entry.key < entries.length - 1 ? TossDesignSystem.spacingS : 0,
                   ),
                   child: _TossToastItem(
                     key: entry.value.key,
@@ -292,11 +290,11 @@ class _TossToastItemState extends State<_TossToastItem>
           child: Container(
             decoration: BoxDecoration(
               color: colors.backgroundColor,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  blurRadius: AppDimensions.shadowBlurLight,
+                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -304,42 +302,42 @@ class _TossToastItemState extends State<_TossToastItem>
             child: Material(
               color: Colors.transparent,
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.spacing4,
-                  vertical: AppSpacing.spacing3,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: TossDesignSystem.spacingM,
+                  vertical: TossDesignSystem.spacingM,
                 ),
                 child: Row(
                   children: [
                     Icon(
                       icon,
-                      size: AppDimensions.iconSizeSmall,
+                      size: 20,
                       color: colors.iconColor,
                     ),
-                    SizedBox(width: AppSpacing.spacing3),
+                    SizedBox(width: TossDesignSystem.spacingM),
                     Expanded(
                       child: Text(
                         widget.entry.message,
-                        style: AppTypography.bodySmall.copyWith(
+                        style: TossDesignSystem.body3.copyWith(
                           color: colors.textColor,
                         ),
                       ),
                     ),
                     if (widget.entry.actionText != null) ...[
-                      SizedBox(width: AppSpacing.spacing3),
+                      SizedBox(width: TossDesignSystem.spacingM),
                       InkWell(
                         onTap: () {
                           widget.entry.onAction?.call();
                           _dismiss();
                         },
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusXxSmall),
+                        borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppSpacing.spacing2,
-                            vertical: AppSpacing.spacing1,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: TossDesignSystem.spacingS,
+                            vertical: TossDesignSystem.spacingXS,
                           ),
                           child: Text(
                             widget.entry.actionText!,
-                            style: AppTypography.labelMedium.copyWith(
+                            style: TossDesignSystem.caption.copyWith(
                               color: colors.actionColor,
                             ),
                           ),

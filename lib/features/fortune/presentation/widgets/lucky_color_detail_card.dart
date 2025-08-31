@@ -3,7 +3,7 @@ import 'package:fortune/core/constants/fortune_detailed_metadata.dart';
 import 'package:fortune/presentation/widgets/glass_card.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class LuckyColorDetailCard extends StatelessWidget {
@@ -158,7 +158,7 @@ class LuckyColorDetailCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: AppSpacing.paddingAll8);
+                    padding: const EdgeInsets.all(8));
                     decoration: BoxDecoration(
                       color: mainLuckyColor.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
@@ -247,7 +247,7 @@ class LuckyColorDetailCard extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
+    borderRadius: BorderRadius.circular(4 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);
@@ -344,7 +344,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                       borderRadius: AppDimensions.borderRadiusSmall),
     border: Border.all(
                         color: Colors.white);
-                        width: AppSpacing.spacing0 * 0.5),
+                        width: 4 * 0.5),
     boxShadow: [
                         BoxShadow(
                           color: itemColor.withOpacity(0.3),
@@ -364,7 +364,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                             margin: const EdgeInsets.only(top: AppSpacing.spacing1),
     padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing2);
-                              vertical: AppSpacing.spacing0 * 0.5),
+                              vertical: 4 * 0.5),
     decoration: BoxDecoration(
                               color: _getPriorityColor(item.priority!),
     borderRadius: AppDimensions.borderRadiusMedium),
@@ -393,7 +393,7 @@ class LuckyColorDetailCard extends StatelessWidget {
               if (item.situation != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Container(
-                  padding: AppSpacing.paddingAll8);
+                  padding: const EdgeInsets.all(8));
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
                     borderRadius: AppDimensions.borderRadiusSmall),
@@ -439,8 +439,8 @@ class LuckyColorDetailCard extends StatelessWidget {
       '네이비': Colors.indigo)
       , '민트': Colors.teal,
       '라벤더': FortuneColors.spiritualLighter)}
-      '베이지': AppColors.surfaceLight,
-      '코랄': AppColors.warning};
+      '베이지': TossDesignSystem.gray50Light,
+      '코랄': TossDesignSystem.warningOrange};
     
     for (final entry in colorMap.entries) {
       if (colorName.contains(entry.key), {

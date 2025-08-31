@@ -29,7 +29,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     _animation = CurvedAnimation(

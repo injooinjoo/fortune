@@ -7,7 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/widgets/social_share_bottom_sheet.dart';
 import '../../domain/models/talisman_models.dart';
@@ -99,7 +99,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppHeader(
         title: '부적 완성',
         showBackButton: true,
@@ -207,7 +207,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             content,
             style: theme.textTheme.bodyLarge?.copyWith(
             height: 1.6,
-              color: AppColors.textSecondary)]);
+              color: TossDesignSystem.gray600)]);
   }
   
   Widget _buildPrecautionsCard() {

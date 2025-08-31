@@ -12,7 +12,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../shared/components/fortune_result_display.dart';
 import '../../../../shared/glassmorphism/glass_container.dart' as glass;
 import '../../../../shared/glassmorphism/glass_effects.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 

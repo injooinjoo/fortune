@@ -24,7 +24,7 @@ import '../../../../presentation/providers/user_statistics_provider.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../shared/components/soul_earn_animation.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/components/toss_button.dart';
 
@@ -783,7 +783,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.backgroundColor ?? AppColors.cardBackground,
+      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
       appBar: AppHeader(
         title: widget.title,
         showShareButton: widget.showShareButton,

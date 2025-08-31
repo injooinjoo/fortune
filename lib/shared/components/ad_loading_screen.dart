@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:async';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -132,7 +134,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                           value: _progressAnimation.value,
                           backgroundColor: Colors.grey.withOpacity(0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.primary.withOpacity(0.5),
+                            TossDesignSystem.gray600.withOpacity(0.5),
                           ),
                         ),
                       );
@@ -143,7 +145,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     _countdown > 0 ? '$_countdown초' : '',
                     style: TextStyle(
                       fontSize: 11,
-                      color: (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary).withOpacity(0.4),
+                      color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withOpacity(0.4),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -179,7 +181,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                   '건너뛰기',
                   style: TextStyle(
                     fontSize: 13,
-                    color: (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary).withOpacity(0.6),
+                    color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withOpacity(0.6),
                   ),
                 ),
               ).animate().fadeIn(duration: 300.ms),

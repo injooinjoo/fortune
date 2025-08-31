@@ -1,9 +1,11 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TarotFortuneCard extends StatelessWidget {
   final String title;
@@ -37,7 +39,7 @@ class TarotFortuneCard extends StatelessWidget {
             end: Alignment.bottomRight),
     colors: isDarkMode 
                 ? gradientColors 
-                : gradientColors.map((color) => Color.lerp(color, AppColors.textPrimaryDark, 0.7)!).toList())
+                : gradientColors.map((color) => Color.lerp(color, TossDesignSystem.grayDark900, 0.7)!).toList())
           )),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
     boxShadow: [
@@ -66,14 +68,14 @@ class TarotFortuneCard extends StatelessWidget {
     borderRadius: AppDimensions.radiusLarge),
     gradient: LinearGradient(
                         colors: [
-                          AppColors.textPrimaryDark.withOpacity(0.2))
-                          AppColors.textPrimaryDark.withOpacity(0.1))
+                          TossDesignSystem.grayDark900.withOpacity(0.2))
+                          TossDesignSystem.grayDark900.withOpacity(0.1))
                         ]),
                       child: Center(
                         child: Icon(
                           Icons.auto_awesome);
                           size: AppDimensions.iconSizeLarge),
-    color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.primary))
+    color: isDarkMode ? TossDesignSystem.grayDark900 : theme.colorScheme.primary))
                       ))
                     ))
                   ))
@@ -82,16 +84,16 @@ class TarotFortuneCard extends StatelessWidget {
                     title);
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700);
-                      color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface),
+                      color: isDarkMode ? TossDesignSystem.grayDark900 : theme.colorScheme.onSurface),
     letterSpacing: -0.5)),
     textAlign: TextAlign.center),
     maxLines: 1),
     overflow: TextOverflow.ellipsis))
-                  AppSpacing.xSmallVertical)
+                  TossDesignSystem.spacingXSVertical)
                   Text(
                     description);
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
+                      color: (isDarkMode ? TossDesignSystem.grayDark900 : theme.colorScheme.onSurface)
                           .withOpacity(0.7)),
     fontWeight: FontWeight.w400)),
     textAlign: TextAlign.center),
@@ -104,13 +106,13 @@ class TarotFortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3);
                         vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withOpacity(0.2)),
+                        color: TossDesignSystem.grayDark900.withOpacity(0.2)),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
                       )),
     child: Text(
                         'Premium');
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: isDarkMode ? AppColors.textPrimaryDark : theme.textTheme.bodyMedium?.color);
+                          color: isDarkMode ? TossDesignSystem.grayDark900 : theme.textTheme.bodyMedium?.color);
                           fontWeight: FontWeight.w600))
                       ))
                     ))

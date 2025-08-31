@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
@@ -86,12 +88,12 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
   
   Color _getColorForType(String type) {
     switch (type) {
-      case 'A': return AppColors.primary; // Blue
+      case 'A': return TossDesignSystem.tossBlue; // Blue
       case 'B':
-        return AppColors.success; // Green
-      case 'O': return AppColors.warning; // Amber
+        return TossDesignSystem.successGreen; // Green
+      case 'O': return TossDesignSystem.warningOrange; // Amber
       case 'AB':
-        return FortuneColors.spiritualPrimary; // Purple
+        return TossDesignSystem.purple; // Purple
       default:
         return Colors.grey;
     }
@@ -140,7 +142,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: AnimatedContainer(
-              duration: AppAnimations.durationMedium,
+              duration: TossDesignSystem.durationMedium,
               height: AppSpacing.spacing1 * 35.0,
     decoration: BoxDecoration(
                 gradient: widget.isSelected
@@ -149,7 +151,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         end: Alignment.bottomRight,
                         colors: [
                           color,
-                          color.withValues(alpha: 0.8)])
+                          color.withOpacity(0.8)])
                     : null,
                 color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -180,7 +182,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       child: Icon(
                         Icons.water_drop,
                         size: 80,
-                        color: Colors.white.withValues(alpha: 0.1)),
+                        color: Colors.white.withOpacity(0.1)),
                   
                   // Content
                   Padding(
@@ -190,11 +192,11 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       children: [
                         Container(
                           width: 48,
-                          height: AppDimensions.buttonHeightMedium,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: widget.isSelected
                                 ? Colors.white.withValues(alpha:(0.2)
-                                : color.withValues(alpha: 0.1),
+                                : color.withOpacity(0.1),
                             shape: BoxShape.circle),
                           child: Icon(
                             icon,

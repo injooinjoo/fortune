@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import 'dart:math' as math;
@@ -136,7 +136,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.tossBackground,
+      backgroundColor: TossDesignSystem.gray600,
       appBar: _buildAppBar(),
       body: _showPaper ? _buildResultView() : _buildMainView(),
     );
@@ -151,13 +151,13 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         statusBarIconBrightness: Brightness.dark,
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: AppColors.tossTextPrimary),
+        icon: const Icon(Icons.arrow_back_ios, color: TossDesignSystem.gray600),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: const Text(
         '포춘 쿠키',
         style: TextStyle(
-          color: AppColors.tossTextPrimary,
+          color: TossDesignSystem.gray600,
           fontSize: 18,
           fontWeight: FontWeight.w600,
           letterSpacing: -0.3,
@@ -167,7 +167,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       actions: [
         if (_showPaper)
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.tossBlue),
+            icon: const Icon(Icons.refresh, color: TossDesignSystem.gray600),
             onPressed: _resetCookie,
           ),
       ],
@@ -208,7 +208,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: AppColors.tossTextPrimary,
+            color: TossDesignSystem.gray600,
             letterSpacing: -0.5,
           ),
         ).animate()
@@ -221,7 +221,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             : '특별한 메시지가 당신을 기다리고 있어요',
           style: const TextStyle(
             fontSize: 15,
-            color: AppColors.tossTextSecondary,
+            color: TossDesignSystem.gray600,
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -264,7 +264,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? cookie.color : AppColors.tossBorder,
+            color: isSelected ? cookie.color : TossDesignSystem.gray600,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -303,7 +303,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.tossTextPrimary,
+                      color: TossDesignSystem.gray600,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -312,7 +312,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     cookie.description,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: AppColors.tossTextSecondary,
+                      color: TossDesignSystem.gray600,
                       height: 1.4,
                     ),
                   ),
@@ -472,7 +472,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           '탭하여 쿠키 깨뜨리기',
           style: TextStyle(
             fontSize: 15,
-            color: AppColors.tossTextSecondary,
+            color: TossDesignSystem.gray600,
             fontWeight: FontWeight.w500,
           ),
         ).animate(
@@ -528,7 +528,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: AppColors.tossTextPrimary,
+            color: TossDesignSystem.gray600,
             letterSpacing: -0.5,
           ),
         ),
@@ -595,7 +595,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.tossTextPrimary,
+                          color: TossDesignSystem.gray600,
                           height: 1.6,
                           letterSpacing: -0.3,
                         ),
@@ -622,7 +622,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.gray50,
+                    color: TossDesignSystem.gray50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -632,7 +632,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.tossTextPrimary,
+                          color: TossDesignSystem.gray600,
                           letterSpacing: 2,
                         ),
                       ),
@@ -641,7 +641,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         _chineseProverbMeaning,
                         style: const TextStyle(
                           fontSize: 14,
-                          color: AppColors.tossTextSecondary,
+                          color: TossDesignSystem.gray600,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -658,7 +658,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: AppColors.tossBorder,
+                      color: TossDesignSystem.gray600,
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -669,12 +669,12 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.tossBlue.withValues(alpha: 0.1),
+                          color: TossDesignSystem.gray600.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.lightbulb_outline,
-                          color: AppColors.tossBlue,
+                          color: TossDesignSystem.gray600,
                           size: 20,
                         ),
                       ),
@@ -688,7 +688,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.tossTextSecondary,
+                                color: TossDesignSystem.gray600,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -696,7 +696,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                               _advice,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: AppColors.tossTextPrimary,
+                                color: TossDesignSystem.gray600,
                                 height: 1.4,
                               ),
                             ),
@@ -722,7 +722,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             '행운의 숫자',
             _luckyNumbers.join(', '),
             Icons.casino_outlined,
-            AppColors.tossBlue,
+            TossDesignSystem.gray600,
           ),
         ),
         const SizedBox(width: 12),
@@ -767,7 +767,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: AppColors.tossTextSecondary,
+              color: TossDesignSystem.gray600,
             ),
           ),
           const SizedBox(height: 4),
@@ -793,7 +793,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           child: ElevatedButton(
             onPressed: _shareFortune,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.tossBlue,
+              backgroundColor: TossDesignSystem.gray600,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -823,8 +823,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           child: OutlinedButton(
             onPressed: _resetCookie,
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.tossTextPrimary,
-              side: const BorderSide(color: AppColors.tossBorder),
+              foregroundColor: TossDesignSystem.gray600,
+              side: const BorderSide(color: TossDesignSystem.gray600),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -852,7 +852,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: AppColors.tossTextPrimary,
+          color: TossDesignSystem.gray600,
         ),
       ),
     );

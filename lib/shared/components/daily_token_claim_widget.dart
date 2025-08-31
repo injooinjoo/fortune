@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../glassmorphism/glass_container.dart';
@@ -146,13 +148,13 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
             Icon(
               Icons.toll,
               size: 48,
-              color: _canClaim ? AppColors.primary : AppColors.textSecondary,
+              color: _canClaim ? TossDesignSystem.gray600 : TossDesignSystem.gray400,
             ),
             SizedBox(height: AppSpacing.spacing2),
             Text(
               '일일 토큰',
               style: AppTypography.titleMedium.copyWith(
-                color: AppColors.textPrimary,
+                color: TossDesignSystem.gray900,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -160,7 +162,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
             Text(
               _canClaim ? '오늘의 토큰을 받아보세요!' : '내일 다시 받을 수 있어요',
               style: AppTypography.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+                color: TossDesignSystem.gray400,
               ),
               textAlign: TextAlign.center,
             ),
@@ -190,9 +192,9 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
       child: ElevatedButton(
         onPressed: _canClaim && !_isLoading ? _claimDailyTokens : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _canClaim ? AppColors.primary : AppColors.surface,
-          disabledBackgroundColor: AppColors.surface,
-          foregroundColor: _canClaim ? Colors.white : AppColors.textSecondary,
+          backgroundColor: _canClaim ? TossDesignSystem.gray600 : TossDesignSystem.gray600,
+          disabledBackgroundColor: TossDesignSystem.gray600,
+          foregroundColor: _canClaim ? Colors.white : TossDesignSystem.gray400,
           padding: EdgeInsets.symmetric(
             vertical: widget.showCompact ? AppSpacing.spacing2 : AppSpacing.spacing3,
           ),
@@ -208,7 +210,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    _canClaim ? Colors.white : AppColors.textSecondary,
+                    _canClaim ? Colors.white : TossDesignSystem.gray400,
                   ),
                 ),
               )

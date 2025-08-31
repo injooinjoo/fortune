@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,7 +52,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
       'id': 'card',
       'name': '신용/체크카드',
       'icon': Icons.credit_card,
-      'color': AppColors.primary,
+      'color': TossDesignSystem.gray600,
       'available': true,
     },
     {
@@ -179,14 +181,14 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
-                                colors: [Colors.amber.withOpacity(0.6), AppColors.warning.withOpacity(0.6)]
+                                colors: [Colors.amber.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.6)]
                               )
                             ),
                             child: Center(
                               child: Text(
                                 '${widget.package.tokens}',
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  color: AppColors.textPrimaryDark,
+                                  color: TossDesignSystem.grayDark900,
                                   fontWeight: FontWeight.bold
                                 )
                               )
@@ -208,7 +210,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                                   Text(
                                     '+ ${widget.package.bonusTokens} 보너스',
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: AppColors.success
+                                      color: TossDesignSystem.gray600
                                     )
                                   )
                               ]
@@ -230,7 +232,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                             vertical: AppSpacing.spacing1 * 1.5
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.error.withOpacity(0.1),
+                            color: TossDesignSystem.gray600.withOpacity(0.1),
                             borderRadius: AppDimensions.borderRadiusSmall
                           ),
                           child: Row(
@@ -239,13 +241,13 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                               const Icon(
                                 Icons.local_offer,
                                 size: AppDimensions.iconSizeXSmall,
-                                color: AppColors.error
+                                color: TossDesignSystem.gray600
                               ),
                               SizedBox(width: AppSpacing.spacing1),
                               Text(
                                 '${((1 - widget.package.price / widget.package.originalPrice!) * 100).round()}% 할인 적용',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.error,
+                                  color: TossDesignSystem.gray600,
                                   fontWeight: FontWeight.bold
                                 )
                               )
@@ -325,7 +327,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.textPrimaryDark
+                                    TossDesignSystem.grayDark900
                                   )
                                 )
                               )
@@ -349,7 +351,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
     final isAvailable = method['available'] as bool;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+      margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
       child: InkWell(
         onTap: isAvailable
             ? () {
@@ -386,7 +388,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                   method['icon'] as IconData,
                   color: isAvailable
                       ? method['color'] as Color
-                      : AppColors.textSecondary,
+                      : TossDesignSystem.gray400,
                   size: AppDimensions.iconSizeMedium
                 )
               ),
@@ -450,7 +452,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('발생했습니다: $e'),
-            backgroundColor: AppColors.error)
+            backgroundColor: TossDesignSystem.gray600)
         );
       }
     }

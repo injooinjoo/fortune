@@ -462,34 +462,34 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
       title: '특수 정보',
       child: Column(
         children: [
-          TossListItemCard(
+          TossListCard(
             leading: Icon(
               Icons.stars,
               color: Colors.amber,
               size: 24,
             ),
-            title: '공망',
-            subtitle: '허무함을 나타내는 요소',
+            title: Text('공망'),
+            subtitle: Text('허무함을 나타내는 요소'),
           ),
           const SizedBox(height: TossTheme.spacingS),
-          TossListItemCard(
+          TossListCard(
             leading: Icon(
               Icons.flash_on,
               color: Colors.orange,
               size: 24,
             ),
-            title: '역마살',
-            subtitle: '이동과 변화를 나타냄',
+            title: Text('역마살'),
+            subtitle: Text('이동과 변화를 나타냄'),
           ),
           const SizedBox(height: TossTheme.spacingS),
-          TossListItemCard(
+          TossListCard(
             leading: Icon(
               Icons.auto_awesome,
               color: Colors.purple,
               size: 24,
             ),
-            title: '화개살',
-            subtitle: '예술적 재능과 종교성',
+            title: Text('화개살'),
+            subtitle: Text('예술적 재능과 종교성'),
           ),
         ],
       ),

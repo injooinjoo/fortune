@@ -266,7 +266,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
+                borderRadius: BorderRadius.circular(4 * 0.5)),
             ),
             Expanded(
               child: SingleChildScrollView(

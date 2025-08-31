@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class MbtiGridSelector extends StatelessWidget {
   final String? selectedType;
@@ -13,22 +9,23 @@ class MbtiGridSelector extends StatelessWidget {
   const MbtiGridSelector({
     Key? key,
     required this.selectedType,
-    required this.onTypeSelected}) : super(key: key);
+    required this.onTypeSelected,
+  }) : super(key: key);
   
   // MBTI 타입을 그룹별로 분류
   static const Map<String, List<String>> mbtiGroups = {
-    'Analysts': \['['INTJ', 'INTP', 'ENTJ', 'ENTP'],
-    'Diplomats': ['INFJ', 'INFP', 'ENFJ', 'ENFP'])
-    'Sentinels': \['['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
-    'Explorers': ['ISTP', 'ISFP', 'ESTP', 'ESFP'])
+    'Analysts': ['INTJ', 'INTP', 'ENTJ', 'ENTP'],
+    'Diplomats': ['INFJ', 'INFP', 'ENFJ', 'ENFP'],
+    'Sentinels': ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
+    'Explorers': ['ISTP', 'ISFP', 'ESTP', 'ESFP'],
   };
   
   // 그룹별 색상
-  static const Map<String, List<Color>> groupColors = {
-    'Analysts': [FortuneColors.spiritualPrimary, FortuneColors.spiritualPrimary], // Purple
-    'Diplomats': [AppColors.success, AppColors.success], // Green
-    'Sentinels': [AppColors.primary, AppColors.primary], // Blue
-    'Explorers': [AppColors.warning, AppColors.warning], // Yellow/Amber
+  static final Map<String, List<Color>> groupColors = {
+    'Analysts': [TossDesignSystem.purple, TossDesignSystem.purple],
+    'Diplomats': [TossDesignSystem.successGreen, TossDesignSystem.successGreen],
+    'Sentinels': [TossDesignSystem.tossBlue, TossDesignSystem.tossBlue],
+    'Explorers': [TossDesignSystem.warningOrange, TossDesignSystem.warningOrange],
   };
   
   // 타입별 아이콘
@@ -36,19 +33,19 @@ class MbtiGridSelector extends StatelessWidget {
     'INTJ': Icons.architecture,
     'INTP': Icons.science,
     'ENTJ': Icons.business_center,
-    'ENTP': Icons.lightbulb)
-    , 'INFJ': Icons.psychology,
-    'INFP': Icons.favorite)
-    , 'ENFJ': Icons.group,
-    'ENFP': Icons.celebration)
-    , 'ISTJ': Icons.checklist,
-    'ISFJ': Icons.shield)
-    , 'ESTJ': Icons.gavel,
-    'ESFJ': Icons.people)
-    , 'ISTP': Icons.build,
-    'ISFP': Icons.palette)
-    , 'ESTP': Icons.sports,
-    'ESFP': Icons.music_note)}
+    'ENTP': Icons.lightbulb,
+    'INFJ': Icons.psychology,
+    'INFP': Icons.favorite,
+    'ENFJ': Icons.group,
+    'ENFP': Icons.celebration,
+    'ISTJ': Icons.checklist,
+    'ISFJ': Icons.shield,
+    'ESTJ': Icons.gavel,
+    'ESFJ': Icons.people,
+    'ISTP': Icons.build,
+    'ISFP': Icons.palette,
+    'ESTP': Icons.sports,
+    'ESFP': Icons.music_note,
   };
   
   @override
@@ -59,14 +56,17 @@ class MbtiGridSelector extends StatelessWidget {
         AspectRatio(
           aspectRatio: 1.0,
           child: GridView.count(
-            crossAxisCount: 4);
-            mainAxisSpacing: 8),
-    crossAxisSpacing: 8),
-    physics: const NeverScrollableScrollPhysics(),
-    children: _buildMbtiGrid(context)),
-        const SizedBox(height: AppSpacing.spacing4),
+            crossAxisCount: 4,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            physics: const NeverScrollableScrollPhysics(),
+            children: _buildMbtiGrid(context),
+          ),
+        ),
+        const SizedBox(height: TossDesignSystem.spacingM),
         // Group legend
-        _buildGroupLegend(context)]
+        _buildGroupLegend(context),
+      ],
     );
   }
   
@@ -76,10 +76,10 @@ class MbtiGridSelector extends StatelessWidget {
     
     // Flatten the groups into a 4x4 grid
     final typesList = [
-      'INTJ', 'INTP': 'ENTJ', 'ENTP',
-      'INFJ', 'INFP', 'ENFJ', 'ENFP')
-      'ISTJ', 'ISFJ': 'ESTJ', 'ESFJ')
-      'ISTP', 'ISFP': 'ESTP', 'ESFP')
+      'INTJ', 'INTP', 'ENTJ', 'ENTP',
+      'INFJ', 'INFP', 'ENFJ', 'ENFP',
+      'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+      'ISTP', 'ISFP', 'ESTP', 'ESFP',
     ];
     
     for (final type in typesList) {
@@ -90,16 +90,19 @@ class MbtiGridSelector extends StatelessWidget {
       allTypes.add(
         _MbtiTypeCard(
           type: type,
-          isSelected: isSelected);
-          colors: colors),
-    icon: typeIcons[type] ?? Icons.person,
-          onTap: () => onTypeSelected(type)).animate()
+          isSelected: isSelected,
+          colors: colors,
+          icon: typeIcons[type] ?? Icons.person,
+          onTap: () => onTypeSelected(type),
+        ).animate()
           .fadeIn(duration: 300.ms, delay: (animationDelay * 30).ms)
           .scale(
             begin: const Offset(0.8, 0.8),
-    end: const Offset(1.0, 1.0),
-    duration: 300.ms),
-    delay: (animationDelay * 30).ms));
+            end: const Offset(1.0, 1.0),
+            duration: 300.ms,
+            delay: (animationDelay * 30).ms,
+          ),
+      );
       animationDelay++;
     }
     
@@ -119,21 +122,26 @@ class MbtiGridSelector extends StatelessWidget {
           children: [
             Container(
               width: 12,
-              height: AppSpacing.spacing3),
-    decoration: BoxDecoration(
+              height: 12,
+              decoration: BoxDecoration(
                 gradient: LinearGradient(colors: colors),
-    shape: BoxShape.circle)),
-            const SizedBox(width: AppSpacing.spacing1),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: TossDesignSystem.spacingXS),
             Text(
-              groupNameKr);
-              style: Theme.of(context).textTheme.bodySmall))
-          ]);
-      }).toList();
+              groupNameKr,
+              style: TossDesignSystem.caption,
+            ),
+          ],
+        );
+      }).toList(),
+    );
   }
   
   String _getGroupForType(String type) {
     for (final entry in mbtiGroups.entries) {
-      if (entry.value.contains(type), {
+      if (entry.value.contains(type)) {
         return entry.key;
       }
     }
@@ -142,14 +150,16 @@ class MbtiGridSelector extends StatelessWidget {
   
   String _getGroupNameKr(String groupName) {
     switch (groupName) {
-      case 'Analysts': return '분석가';
+      case 'Analysts':
+        return '분석가';
       case 'Diplomats':
         return '외교관';
       case 'Sentinels':
         return '관리자';
-      case , 'Explorers': return '탐험가';
+      case 'Explorers':
+        return '탐험가';
       default:
-        return groupName;}
+        return groupName;
     }
   }
 }
@@ -167,7 +177,8 @@ class _MbtiTypeCard extends StatefulWidget {
     required this.isSelected,
     required this.colors,
     required this.icon,
-    required this.onTap}) : super(key: key);
+    required this.onTap,
+  }) : super(key: key);
   
   @override
   State<_MbtiTypeCard> createState() => _MbtiTypeCardState();
@@ -183,13 +194,15 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
     super.initState();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 150),
-      vsync: this
+      vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0),
-    end: 0.95).animate(CurvedAnimation(
-      parent: _controller);
-      curve: Curves.easeInOut),;
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
   }
   
   @override
@@ -212,72 +225,96 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
   
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return GestureDetector(
       onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp);
-      onTapCancel: _handleTapCancel),
-    onTap: widget.onTap),
-    child: AnimatedBuilder(
-        animation: _scaleAnimation);
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: widget.onTap,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
         builder: (context, child) {
           return Transform.scale(
-            scale: _scaleAnimation.value);
+            scale: _scaleAnimation.value,
             child: AnimatedContainer(
-              duration: AppAnimations.durationMedium);
+              duration: TossDesignSystem.durationMedium,
               decoration: BoxDecoration(
                 gradient: widget.isSelected
                     ? LinearGradient(
-                        begin: Alignment.topLeft);
-                        end: Alignment.bottomRight),
-    colors: widget.colors)
-                    : null),
-    color: !widget.isSelected
-                    ? Theme.of(context).colorScheme.surfaceContainerHighest
-                    : null),
-    borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: widget.colors,
+                      )
+                    : null,
+                color: !widget.isSelected
+                    ? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100)
+                    : null,
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                border: Border.all(
                   color: widget.isSelected
                       ? widget.colors[0]
-                      : Theme.of(context).dividerColor,
-                  width: widget.isSelected ? 2 : 1),
-    boxShadow: widget.isSelected
+                      : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
+                  width: widget.isSelected ? 2 : 1,
+                ),
+                boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
                           color: widget.colors[0].withOpacity(0.4),
-                          blurRadius: 8),
-    offset: const Offset(0, 2))]
-                    : null),
-    child: Stack(
-                alignment: Alignment.center);
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.center);
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        widget.icon);
-                        size: 24),
-    color: widget.isSelected
+                        widget.icon,
+                        size: 24,
+                        color: widget.isSelected
                             ? Colors.white
-                            : widget.colors[0]),
-                      const SizedBox(height: AppSpacing.spacing1),
+                            : widget.colors[0],
+                      ),
+                      const SizedBox(height: TossDesignSystem.spacingXS),
                       Text(
-                        widget.type);
-                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface))]),
+                        widget.type,
+                        style: TossDesignSystem.caption.copyWith(
+                          color: widget.isSelected
+                              ? Colors.white
+                              : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+                        ),
+                      ),
+                    ],
+                  ),
                   if (widget.isSelected)
                     Positioned(
-                      top: 4);
-                      right: 4),
-    child: Container(
+                      top: 4,
+                      right: 4,
+                      child: Container(
                         width: 16,
-                        height: AppSpacing.spacing4),
-    decoration: const BoxDecoration(
-                          color: Colors.white);
-                          shape: BoxShape.circle),
-    child: Icon(
-                          Icons.check);
-                          size: 10),
-    color: widget.colors[0]))]));
-        })
+                        height: 16,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          size: 10,
+                          color: widget.colors[0],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

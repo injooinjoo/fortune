@@ -1,5 +1,5 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
@@ -7,7 +7,7 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class CareerCrisisFortunePage extends BaseFortunePage {
   const CareerCrisisFortunePage({
@@ -101,14 +101,14 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
     final theme = Theme.of(context);
     
     return SingleChildScrollView(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Card(
             color: theme.colorScheme.errorContainer.withOpacity(0.5),
             child: Padding(
-              padding: AppSpacing.paddingAll16,
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -118,14 +118,14 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                         Icons.healing,
                         color: theme.colorScheme.error,
                       ),
-                      SizedBox(width: AppSpacing.spacing2),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       Text(
                         '커리어 위기 진단',
                         style: theme.textTheme.titleLarge,
                       ),
                     ],
                   ),
-                  SizedBox(height: AppSpacing.spacing2),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     '현재의 어려움을 극복할 방법을 찾아드립니다',
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -136,11 +136,11 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               ),
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Situation Description
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -148,7 +148,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                   '현재 상황',
                   style: theme.textTheme.titleMedium,
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 TextField(
                   controller: _situationController,
                   maxLines: 3,
@@ -157,11 +157,11 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                     hintText: '어떤 어려움을 겪고 계신가요?',
                     prefixIcon: const Icon(Icons.description),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     ),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing4),
+                SizedBox(height: TossDesignSystem.spacingM),
                 TextField(
                   controller: _durationController,
                   decoration: InputDecoration(
@@ -169,18 +169,18 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                     hintText: '예: 3개월, 1년',
                     prefixIcon: const Icon(Icons.timer),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Crisis Type
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -188,7 +188,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                   '위기 유형',
                   style: theme.textTheme.titleMedium,
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -208,11 +208,11 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Severity Level
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -220,7 +220,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                   '심각도',
                   style: theme.textTheme.titleMedium,
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 ...(_severityLevels.map((level) {
                   final isSelected = _severity == level;
                   return InkWell(
@@ -229,15 +229,15 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                         _severity = level;
                       });
                     },
-                    borderRadius: AppDimensions.borderRadiusMedium,
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     child: Container(
-                      padding: AppSpacing.paddingAll16,
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withOpacity(0.1)
                             : theme.colorScheme.surface.withOpacity(0.3),
-                        borderRadius: AppDimensions.borderRadiusMedium,
+                        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
@@ -254,7 +254,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                                 ? theme.colorScheme.primary
                                 : theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
-                          SizedBox(width: AppSpacing.spacing3),
+                          SizedBox(width: TossDesignSystem.spacingS),
                           Text(
                             level,
                             style: theme.textTheme.bodyLarge,
@@ -267,32 +267,32 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Symptoms
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.checklist, color: AppColors.error),
-                    SizedBox(width: AppSpacing.spacing2),
+                    const Icon(Icons.checklist, color: TossDesignSystem.errorRed),
+                    SizedBox(width: TossDesignSystem.spacingS),
                     Text(
                       '겪고 있는 증상 (2개 이상)',
                       style: theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.spacing2),
+                SizedBox(height: TossDesignSystem.spacingS),
                 Text(
                   '최대 5개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -316,7 +316,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing8),
+          SizedBox(height: TossDesignSystem.spacingXL),
         ],
       ),
     );

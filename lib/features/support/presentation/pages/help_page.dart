@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class HelpPage extends ConsumerWidget {
   const HelpPage({super.key});
@@ -11,18 +11,18 @@ class HelpPage extends ConsumerWidget {
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           '도움말',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: TossDesignSystem.gray900,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -37,14 +37,14 @@ class HelpPage extends ConsumerWidget {
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: AppColors.primary,
+                    color: TossDesignSystem.tossBlue,
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -52,7 +52,7 @@ class HelpPage extends ConsumerWidget {
                     child: Text(
                       'Fortune 앱을 더 잘 활용하는 방법을 알아보세요!',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: TossDesignSystem.gray600,
                         fontSize: 14,
                         height: 1.5,
                       ),
@@ -190,12 +190,12 @@ class HelpPage extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: TossDesignSystem.tossBlue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         Icons.support_agent,
-                        color: AppColors.primary,
+                        color: TossDesignSystem.tossBlue,
                         size: 22,
                       ),
                     ),
@@ -204,7 +204,7 @@ class HelpPage extends ConsumerWidget {
                     trailing: const Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: AppColors.textSecondary,
+                      color: TossDesignSystem.gray600,
                     ),
                     onTap: () => context.push('/support'),
                   ),
@@ -214,12 +214,12 @@ class HelpPage extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: TossDesignSystem.tossBlue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         Icons.email_outlined,
-                        color: AppColors.primary,
+                        color: TossDesignSystem.tossBlue,
                         size: 22,
                       ),
                     ),
@@ -228,7 +228,7 @@ class HelpPage extends ConsumerWidget {
                     trailing: const Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: AppColors.textSecondary,
+                      color: TossDesignSystem.gray600,
                     ),
                     onTap: () {
                       // TODO: Open email client
@@ -271,7 +271,7 @@ class HelpPage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withOpacity(0.05),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -279,7 +279,7 @@ class HelpPage extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(icon, color: AppColors.primary, size: 24),
+                Icon(icon, color: TossDesignSystem.tossBlue, size: 24),
                 const SizedBox(width: 12),
                 Text(
                   title,
@@ -320,7 +320,7 @@ class HelpPage extends ConsumerWidget {
             child: Text(
               answer,
               style: TextStyle(
-                color: AppColors.textSecondary,
+                color: TossDesignSystem.gray600,
                 fontSize: 14,
                 height: 1.5,
               ),
@@ -356,7 +356,7 @@ class HelpPage extends ConsumerWidget {
                 Text(
                   '${entry.key + 1}. ',
                   style: TextStyle(
-                    color: AppColors.primary,
+                    color: TossDesignSystem.tossBlue,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -364,7 +364,7 @@ class HelpPage extends ConsumerWidget {
                   child: Text(
                     entry.value,
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: TossDesignSystem.gray600,
                       fontSize: 14,
                     ),
                   ),
@@ -386,12 +386,12 @@ class HelpPage extends ConsumerWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.secondary.withOpacity(0.1),
+              color: TossDesignSystem.gray600.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               icon,
-              color: AppColors.secondary,
+              color: TossDesignSystem.gray600,
               size: 18,
             ),
           ),

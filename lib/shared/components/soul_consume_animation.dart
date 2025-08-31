@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -190,11 +192,11 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withOpacity(0.8),
+                      color: TossDesignSystem.gray600.withOpacity(0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.warning.withOpacity(0.4),
+                          color: TossDesignSystem.gray600.withOpacity(0.4),
                           blurRadius: 3,
                           spreadRadius: 1),
                       ],
@@ -225,14 +227,14 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                       children: [
                         Icon(
                           Icons.auto_awesome_rounded,
-                          color: AppColors.warning,
+                          color: TossDesignSystem.gray600,
                           size: AppDimensions.iconSizeMedium).animate(onPlay: (controller) => controller.repeat())
                           .rotate(duration: 1500.ms, end: -2 * math.pi),
                         SizedBox(width: AppSpacing.spacing2),
                         Text(
                           '-${widget.soulAmount}',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: AppColors.warning,
+                            color: TossDesignSystem.gray600,
                             fontWeight: FontWeight.bold),
                         ),
                       ],

@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_theme_extensions.dart';
@@ -93,7 +95,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                   textAlign: TextAlign.center).animate().fadeIn(
                   duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: AppColors.textPrimaryDark.withOpacity(0.3)),
+                  color: TossDesignSystem.grayDark900.withOpacity(0.3)),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 
@@ -124,7 +126,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                     onPressed: _selectedDate != null ? widget.onNext : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.fortuneTheme.primaryText,
-                      foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
+                      foregroundColor: context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
                       elevation: 0),

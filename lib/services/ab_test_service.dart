@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/utils/logger.dart';
 import '../models/ab_test_experiment.dart';
 import '../models/ab_test_variant.dart';
+import '../models/ab_test_result.dart';
 import 'analytics_service.dart';
 import 'remote_config_service.dart';
 
@@ -20,10 +21,16 @@ class ABTestService {
   final AnalyticsService _analytics = AnalyticsService.instance;
   final Map<String, ABTestVariant> _activeVariants = {};
   final Map<String, ABTestExperiment> _experiments = {};
+  final Map<String, ABTestResult> _experimentResults = {};
+  final Map<String, List<ConversionEvent>> _conversionEvents = {};
   
   late SharedPreferences _prefs;
   bool _isInitialized = false;
   String? _userId;
+  
+  // 실험 결과 추적을 위한 변수들
+  final Map<String, int> _impressions = {};
+  final Map<String, int> _conversions = {};
 
   /// 서비스 초기화
   Future<void> initialize({
@@ -339,6 +346,13 @@ class ABTestService {
 
   /// 변형 노출 추적
   Future<void> _trackVariantExposure(String experimentId, ABTestVariant variant) async {
+    // 노출 카운트 증가
+    final key = '${experimentId}_${variant.id}';
+    _impressions[key] = (_impressions[key] ?? 0) + 1;
+    
+    // 실험 결과 업데이트
+    _updateExperimentResult(experimentId);
+    
     await _analytics.logEvent(
       'ab_test_exposure',
       parameters: {
@@ -361,6 +375,25 @@ class ABTestService {
       Logger.warning('No active variant for experiment: $experimentId');
       return;
     }
+
+    // 전환 카운트 증가
+    final key = '${experimentId}_${variant.id}';
+    _conversions[key] = (_conversions[key] ?? 0) + 1;
+    
+    // 전환 이벤트 저장
+    _conversionEvents[experimentId] ??= [];
+    _conversionEvents[experimentId]!.add(
+      ConversionEvent(
+        variantId: variant.id,
+        conversionType: conversionType ?? 'default',
+        timestamp: DateTime.now(),
+        value: additionalData?['value'],
+        metadata: additionalData,
+      ),
+    );
+    
+    // 실험 결과 업데이트
+    _updateExperimentResult(experimentId);
 
     await _analytics.logEvent(
       'ab_test_conversion',
@@ -428,6 +461,10 @@ class ABTestService {
   /// 모든 실험 데이터 초기화
   Future<void> reset() async {
     _activeVariants.clear();
+    _experimentResults.clear();
+    _conversionEvents.clear();
+    _impressions.clear();
+    _conversions.clear();
     
     // SharedPreferences에서 모든 A/B 테스트 데이터 삭제
     final keys = _prefs.getKeys().where((key) => key.startsWith('ab_'));
@@ -436,6 +473,145 @@ class ABTestService {
     }
     
     Logger.info('ABTestService reset completed');
+  }
+  
+  // ============ 실험 결과 분석 기능 ============
+  
+  /// 실험 결과 업데이트
+  void _updateExperimentResult(String experimentId) {
+    final experiment = _experiments[experimentId];
+    if (experiment == null) return;
+    
+    final variantResults = <String, VariantResult>{};
+    
+    for (final variant in experiment.variants) {
+      final key = '${experimentId}_${variant.id}';
+      final impressions = _impressions[key] ?? 0;
+      final conversions = _conversions[key] ?? 0;
+      final conversionRate = impressions > 0 ? conversions / impressions : 0.0;
+      
+      variantResults[variant.id] = VariantResult(
+        variantId: variant.id,
+        variantName: variant.name,
+        impressions: impressions,
+        conversions: conversions,
+        conversionRate: conversionRate,
+      );
+    }
+    
+    // 통계적 유의성 계산
+    final controlResult = variantResults['control'];
+    double? pValue;
+    double? confidenceLevel;
+    
+    if (controlResult != null && variantResults.length > 1) {
+      // 간단한 Z-test 구현 (실제로는 더 정교한 통계 계산 필요)
+      final testVariant = variantResults.values.firstWhere(
+        (v) => v.variantId != 'control',
+        orElse: () => controlResult,
+      );
+      
+      if (controlResult.impressions >= 30 && testVariant.impressions >= 30) {
+        final z = _calculateZScore(
+          controlResult.conversionRate,
+          testVariant.conversionRate,
+          controlResult.impressions,
+          testVariant.impressions,
+        );
+        pValue = _calculatePValue(z);
+        confidenceLevel = 1 - pValue;
+      }
+    }
+    
+    _experimentResults[experimentId] = ABTestResult(
+      experimentId: experimentId,
+      experimentName: experiment.name,
+      startDate: experiment.startDate,
+      variantResults: variantResults,
+      winningVariantId: _determineWinner(variantResults),
+      statisticalSignificance: pValue,
+      confidenceLevel: confidenceLevel,
+      lastUpdated: DateTime.now(),
+    );
+  }
+  
+  /// Z-score 계산
+  double _calculateZScore(
+    double p1, double p2, int n1, int n2,
+  ) {
+    final pooledP = ((p1 * n1) + (p2 * n2)) / (n1 + n2);
+    final se = sqrt(pooledP * (1 - pooledP) * ((1 / n1) + (1 / n2)));
+    return se > 0 ? (p2 - p1) / se : 0;
+  }
+  
+  /// P-value 계산 (간단한 근사치)
+  double _calculatePValue(double z) {
+    // 표준정규분포의 CDF를 사용한 간단한 근사
+    final absZ = z.abs();
+    if (absZ > 3.5) return 0.0005;
+    if (absZ > 3.0) return 0.003;
+    if (absZ > 2.5) return 0.012;
+    if (absZ > 2.0) return 0.046;
+    if (absZ > 1.96) return 0.05;
+    if (absZ > 1.5) return 0.134;
+    return 0.5;
+  }
+  
+  /// 승자 변형 결정
+  String? _determineWinner(Map<String, VariantResult> results) {
+    if (results.isEmpty) return null;
+    
+    String? winner;
+    double maxRate = -1;
+    
+    for (final result in results.values) {
+      // 최소 30개 이상의 노출이 있어야 유효
+      if (result.impressions >= 30 && result.conversionRate > maxRate) {
+        maxRate = result.conversionRate;
+        winner = result.variantId;
+      }
+    }
+    
+    return winner;
+  }
+  
+  /// 실험 결과 가져오기
+  ABTestResult? getExperimentResult(String experimentId) {
+    return _experimentResults[experimentId];
+  }
+  
+  /// 모든 실험 결과 가져오기
+  Map<String, ABTestResult> getAllResults() {
+    return Map.from(_experimentResults);
+  }
+  
+  /// 실험 자동 종료 (승자가 명확한 경우)
+  Future<void> concludeExperiment(String experimentId) async {
+    final result = _experimentResults[experimentId];
+    if (result == null) return;
+    
+    // 통계적 유의성이 95% 이상이고 충분한 샘플이 있는 경우
+    if ((result.confidenceLevel ?? 0) >= 0.95) {
+      final experiment = _experiments[experimentId];
+      if (experiment != null && result.winningVariantId != null) {
+        // 승자 변형을 100% 트래픽으로 설정
+        await forceVariant(experimentId, result.winningVariantId!);
+        
+        // Analytics에 실험 종료 이벤트 로그
+        await _analytics.logEvent(
+          'ab_test_concluded',
+          parameters: {
+            'experiment_id': experimentId,
+            'winning_variant': result.winningVariantId!,
+            'confidence_level': result.confidenceLevel!,
+            'total_impressions': result.totalImpressions,
+            'total_conversions': result.totalConversions,
+          },
+        );
+        
+        Logger.info('Experiment $experimentId concluded. Winner: ${result.winningVariantId}');
+      }
+    }
   }
 }
 

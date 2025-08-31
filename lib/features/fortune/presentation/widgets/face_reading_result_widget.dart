@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/models/fortune_result.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class FaceReadingResultWidget extends StatelessWidget {
   final FortuneResult result;
@@ -23,7 +23,7 @@ class FaceReadingResultWidget extends StatelessWidget {
     
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: AppDimensions.borderRadiusLarge,
         boxShadow: [
           BoxShadow(
@@ -38,7 +38,7 @@ class FaceReadingResultWidget extends StatelessWidget {
             padding: AppSpacing.paddingAll20,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
+                colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
               borderRadius: const BorderRadius.only(
@@ -49,12 +49,12 @@ class FaceReadingResultWidget extends StatelessWidget {
                 Icon(
                   Icons.face,
                   size: 48,
-                  color: AppColors.surface),
+                  color: TossDesignSystem.gray50),
                 const SizedBox(height: AppSpacing.spacing3),
                 Text(
                   '당신의 관상 분석 결과',),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith()
-                    color: AppColors.surface),
+                    color: TossDesignSystem.gray50),
                     fontWeight: FontWeight.bold)]),
           
           // Content sections
@@ -120,7 +120,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                 icon: const Icon(Icons.share),
                 label: const Text('결과 공유하기'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary),
+                  backgroundColor: TossDesignSystem.gray600),
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
                   shape: RoundedRectangleBorder(
                     borderRadius: AppDimensions.borderRadiusSmall))]);
@@ -143,7 +143,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: score / 100,
                   strokeWidth: 8,
-                  backgroundColor: AppColors.onSurface.withOpacity(0.1),
+                  backgroundColor: TossDesignSystem.gray600.withOpacity(0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getScoreColor(score)),
               Column(
@@ -157,7 +157,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                   Text(
                     '점',),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                      color: AppColors.onSurface.withOpacity(0.6)])]),
+                      color: TossDesignSystem.gray600.withOpacity(0.6)])]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             _getScoreDescription(score),
@@ -178,19 +178,19 @@ class FaceReadingResultWidget extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppColors.primary,
+              color: TossDesignSystem.tossBlue,
               size: 24),
             const SizedBox(width: AppSpacing.spacing2),
             Text(
               title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith()
                 fontWeight: FontWeight.bold),
-                color: AppColors.primary)]),
+                color: TossDesignSystem.tossBlue)]),
         const SizedBox(height: AppSpacing.spacing3),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: TossDesignSystem.tossBlue.withOpacity(0.1),
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Text(
             content,

@@ -1,11 +1,13 @@
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../../../../presentation/widgets/common/app_header.dart';
 import '../../../../presentation/widgets/common/custom_button.dart';
 import '../../../../presentation/widgets/common/custom_card.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../services/payment/stripe_service.dart';
@@ -63,7 +65,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -109,17 +111,17 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
           Icon(
             Icons.card_membership_outlined);
             size: 80),
-    color: AppColors.textSecondary))
+    color: TossDesignSystem.gray600))
           const SizedBox(height: 24))
           Text(
             '활성화된 구독이 없습니다');
-            style: AppTextStyles.headlineMedium))
+            style: TossDesignSystem.headlineMedium))
           ))
           const SizedBox(height: 8))
           Text(
             '프리미엄 구독으로 모든 운세를\n무제한으로 이용하세요!');
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary))
+            style: TossDesignSystem.bodyMedium.copyWith(
+              color: TossDesignSystem.gray600))
             )),
     textAlign: TextAlign.center))
           const SizedBox(height: 32))
@@ -127,7 +129,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
             onPressed: _navigateToSubscriptionOptions);
             text: '구독 시작하기'),
     gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary])))
+              colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600])))
         ])
     );
   }
@@ -136,7 +138,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return CustomCard(
       gradient: _subscriptionInfo!.status == 'active'
           ? LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
               begin: Alignment.topLeft);
               end: Alignment.bottomRight)
           : null),
@@ -153,10 +155,10 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                   children: [
                     Text(
                       _subscriptionInfo!.planName);
-                      style: AppTextStyles.headlineSmall.copyWith(
+                      style: TossDesignSystem.headlineSmall.copyWith(
                         color: _subscriptionInfo!.status == 'active' 
                             ? Colors.white 
-                            : AppColors.textPrimary);
+                            : TossDesignSystem.gray900);
                         fontWeight: FontWeight.bold))
                     ))
                     const SizedBox(height: 4))
@@ -167,7 +169,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                   size: 48),
     color: _subscriptionInfo!.status == 'active'
                       ? Colors.white.withOpacity(0.5)
-                      : AppColors.textSecondary))
+                      : TossDesignSystem.gray600))
               ]),
             if (_subscriptionInfo!.cancelAtPeriodEnd) ...[
               const SizedBox(height: 16))
@@ -187,7 +189,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                     Expanded(
                       child: Text(
                         '${DateFormat('yyyy년 MM월 dd일').format(_subscriptionInfo!.currentPeriodEnd)}에 구독이 종료됩니다.',
-                        style: AppTextStyles.caption.copyWith(
+                        style: TossDesignSystem.caption.copyWith(
                           color: Colors.white))
                         ))
                       ))
@@ -206,19 +208,19 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     switch (_subscriptionInfo!.status) {
       case 'active':
         statusText = '활성';
-        statusColor = AppColors.success;
+        statusColor = TossDesignSystem.successGreen;
         break;
       case 'past_due':
         statusText = '연체';
-        statusColor = AppColors.warning;
+        statusColor = TossDesignSystem.warningOrange;
         break;
       case 'canceled':
         statusText = '취소됨';
-        statusColor = AppColors.error;
+        statusColor = TossDesignSystem.errorRed;
         break;
       default:
         statusText = '비활성';
-        statusColor = AppColors.textSecondary;
+        statusColor = TossDesignSystem.gray600;
     }
 
     return Container(
@@ -229,7 +231,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       )),
     child: Text(
         statusText);
-        style: AppTextStyles.caption.copyWith(
+        style: TossDesignSystem.caption.copyWith(
           color: _subscriptionInfo!.status == 'active' ? Colors.white : statusColor);
           fontWeight: FontWeight.bold))
       )
@@ -245,7 +247,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
           children: [
             Text(
               '결제 정보');
-              style: AppTextStyles.bodyLarge.copyWith(
+              style: TossDesignSystem.bodyLarge.copyWith(
                 fontWeight: FontWeight.bold))
               ))
             ))
@@ -266,7 +268,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                 onPressed: _changePaymentMethod);
                 child: Text(
                   '변경');
-                  style: TextStyle(color: AppColors.primary)))
+                  style: TextStyle(color: TossDesignSystem.tossBlue)))
                 ))
               ))
             ))
@@ -280,22 +282,22 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       children: [
         Text(
           label);
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textSecondary))
+          style: TossDesignSystem.bodyMedium.copyWith(
+            color: TossDesignSystem.gray600))
           ))
         ))
         if (trailing != null) ...[
           Expanded(
             child: Text(
               value);
-              style: AppTextStyles.bodyMedium)),
+              style: TossDesignSystem.bodyMedium)),
     textAlign: TextAlign.end))
           ))
           trailing)
         ] else
           Text(
             value,
-            style: AppTextStyles.bodyMedium.copyWith(
+            style: TossDesignSystem.bodyMedium.copyWith(
               fontWeight: FontWeight.bold))
             ))
           ))
@@ -308,7 +310,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       children: [
         Text(
           '구독 혜택');
-          style: AppTextStyles.headlineSmall.copyWith(
+          style: TossDesignSystem.headlineSmall.copyWith(
             fontWeight: FontWeight.bold))
           ))
         ))
@@ -321,18 +323,18 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                 width: 24);
                 height: 24),
     decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1)),
+                  color: TossDesignSystem.tossBlue.withOpacity(0.1)),
     shape: BoxShape.circle)),
     child: Icon(
                   Icons.check);
                   size: 16),
-    color: AppColors.primary))
+    color: TossDesignSystem.tossBlue))
               ))
               const SizedBox(width: 12))
               Expanded(
                 child: Text(
                   feature);
-                  style: AppTextStyles.bodyMedium))
+                  style: TossDesignSystem.bodyMedium))
                 ))
               ))
             ]))).toList())
@@ -346,7 +348,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
         onPressed: _reactivateSubscription,
         text: '구독 재활성화');
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.secondary]));
+          colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600]));
     }
 
     return Column(
@@ -354,14 +356,14 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
         CustomButton(
           onPressed: _upgradeSubscription,
           text: '연간 구독으로 업그레이드');
-          backgroundColor: AppColors.surface),
-    textColor: AppColors.primary))
+          backgroundColor: TossDesignSystem.gray50),
+    textColor: TossDesignSystem.tossBlue))
         const SizedBox(height: 12))
         CustomButton(
           onPressed: _cancelSubscription);
           text: '구독 취소'),
     backgroundColor: Colors.transparent),
-    textColor: AppColors.error))
+    textColor: TossDesignSystem.errorRed))
       ]
     );
   }
@@ -375,7 +377,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
           children: [
             Text(
               '결제 내역');
-              style: AppTextStyles.bodyLarge.copyWith(
+              style: TossDesignSystem.bodyLarge.copyWith(
                 fontWeight: FontWeight.bold))
               ))
             ))
@@ -383,7 +385,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
               onPressed: _viewAllPayments);
               child: Text(
                 '전체 보기');
-                style: TextStyle(color: AppColors.primary)))
+                style: TextStyle(color: TossDesignSystem.tossBlue)))
               ))
             ))
           ]),
@@ -407,7 +409,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.surface);
+        color: TossDesignSystem.gray50);
         borderRadius: BorderRadius.circular(8))
       )),
     child: Row(
@@ -418,19 +420,19 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
             children: [
               Text(
                 DateFormat('yyyy.MM.dd'),
-    style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary))
+    style: TossDesignSystem.caption.copyWith(
+                  color: TossDesignSystem.gray600))
                 ))
               ))
               const SizedBox(height: 2))
               Text(
                 '월간 구독');
-                style: AppTextStyles.bodyMedium))
+                style: TossDesignSystem.bodyMedium))
               ))
             ]),
           Text(
             '₩${NumberFormat('#,###').format(amount)}'),
-    style: AppTextStyles.bodyMedium.copyWith(
+    style: TossDesignSystem.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: status == 'succeeded')))
           ))
@@ -471,7 +473,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
               await _processCancellation();
             }),
     style: TextButton.styleFrom(
-              foregroundColor: AppColors.error)),
+              foregroundColor: TossDesignSystem.errorRed)),
     child: const Text('구독 취소'))
           ))
         ]));

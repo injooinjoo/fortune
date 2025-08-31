@@ -7,7 +7,7 @@ import 'dart:ui';
 // import '../../../../routes/app_router.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/widgets/animated_tarot_card_widget.dart';
 import '../../../interactive/presentation/widgets/bottom_tarot_deck_widget.dart';
 

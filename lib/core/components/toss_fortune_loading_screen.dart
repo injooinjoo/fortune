@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_typography.dart';
-import '../theme/app_spacing.dart';
-import '../theme/app_dimensions.dart';
+import '../theme/toss_design_system.dart';
 
 class TossFortuneLoadingScreen extends StatefulWidget {
   final String fortuneType;
@@ -179,9 +176,9 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? AppColors.backgroundDark : AppColors.background;
-    final textColor = isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final logoColor = AppColors.primary;
+    final backgroundColor = isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white;
+    final textColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
+    final logoColor = TossDesignSystem.tossBlue;
     
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -230,7 +227,7 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
                   curve: Curves.easeOutBack,
                 ),
               
-              SizedBox(height: AppSpacing.spacing8),
+              SizedBox(height: TossDesignSystem.spacing4XL),
               
               // 감성 메시지 (롤링 애니메이션)
               Container(
@@ -245,12 +242,8 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
                         position: _slideAnimation,
                         child: Text(
                           _messages[_currentMessageIndex],
-                          style: TextStyle(
-                            fontSize: 15,
+                          style: TossDesignSystem.body2.copyWith(
                             color: textColor.withOpacity(0.7),
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: -0.3,
-                            height: 1.4,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -266,16 +259,14 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
               // 아주 작은 부가 텍스트 (선택적)
               Text(
                 'Fortune',
-                style: TextStyle(
-                  fontSize: 11,
+                style: TossDesignSystem.small.copyWith(
                   color: textColor.withOpacity(0.3),
-                  fontWeight: FontWeight.w300,
                   letterSpacing: 1.5,
                 ),
               ).animate()
                 .fadeIn(delay: 1000.ms, duration: 800.ms),
               
-              SizedBox(height: AppSpacing.spacing12),
+              SizedBox(height: TossDesignSystem.spacing4XL),
             ],
           ),
         ),
@@ -321,7 +312,7 @@ class _TossFortuneLoadingWidgetState extends State<TossFortuneLoadingWidget>
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
     
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -334,19 +325,17 @@ class _TossFortuneLoadingWidgetState extends State<TossFortuneLoadingWidget>
               child: Icon(
                 Icons.auto_awesome,
                 size: widget.size,
-                color: AppColors.primary,
+                color: TossDesignSystem.tossBlue,
               ),
             );
           },
         ),
         if (widget.message != null) ...[
-          SizedBox(height: AppSpacing.spacing3),
+          SizedBox(height: TossDesignSystem.spacingM),
           Text(
             widget.message!,
-            style: TextStyle(
-              fontSize: 13,
+            style: TossDesignSystem.caption.copyWith(
               color: textColor.withOpacity(0.6),
-              fontWeight: FontWeight.w400,
             ),
           ),
         ],

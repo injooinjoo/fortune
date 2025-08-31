@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/components/toss_bottom_sheet.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_dimensions.dart';
+import '../../../../core/theme/toss_design_system.dart';
+
+
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';

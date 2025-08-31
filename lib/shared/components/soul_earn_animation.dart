@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -207,7 +209,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                 ),
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(duration: 1000.ms, color: AppColors.textPrimaryDark.withOpacity(0.3))
+                  .shimmer(duration: 1000.ms, color: TossDesignSystem.grayDark900.withOpacity(0.3))
                   .fadeOut(delay: particle.delay, duration: 400.ms)),
             
             // Main soul animation
@@ -233,7 +235,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                           color: Colors.amber,
                           size: AppDimensions.iconSizeMedium).animate(onPlay: (controller) => controller.repeat())
                           .rotate(duration: 2000.ms)
-                          .shimmer(duration: 1500.ms, color: AppColors.textPrimaryDark),
+                          .shimmer(duration: 1500.ms, color: TossDesignSystem.grayDark900),
                         SizedBox(width: AppSpacing.spacing2),
                         Text(
                           '+${widget.soulAmount}',

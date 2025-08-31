@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/blood_type_analysis_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -203,7 +205,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                   _hoveredCol = null;
                 }),
                 child: AnimatedContainer(
-                  duration: AppAnimations.durationShort,
+                  duration: TossDesignSystem.durationShort,
                   height: AppDimensions.buttonHeightSmall,
                   margin: const EdgeInsets.all(1),
                   decoration: BoxDecoration(
@@ -465,7 +467,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: AppDimensions.borderRadius(TossDesignSystem.radiusXL),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.1),
           width: 1,

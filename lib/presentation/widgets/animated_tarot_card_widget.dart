@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 
 class AnimatedTarotCardWidget extends StatefulWidget {
@@ -122,7 +122,7 @@ class _TarotCardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Draw mystical symbols
     final symbolPaint = Paint()
-      ..color = AppColors.textPrimaryDark.withOpacity(0.1)
+      ..color = TossDesignSystem.grayDark900.withOpacity(0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     
@@ -181,7 +181,7 @@ class _TarotCardPainter extends CustomPainter {
       final opacity = math.sin(progress * math.pi).abs() * 0.8; // Use abs() to ensure positive value
       
       if (opacity > 0) {
-        sparklePaint.color = AppColors.textPrimaryDark.withOpacity(opacity);
+        sparklePaint.color = TossDesignSystem.grayDark900.withOpacity(opacity);
         
         final x = size.width * sparkle.x;
         final y = size.height * sparkle.y + floatOffset * 0.5;

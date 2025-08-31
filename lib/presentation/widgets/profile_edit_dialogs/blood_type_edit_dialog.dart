@@ -1,7 +1,7 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'profile_field_edit_dialog.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 
@@ -42,7 +42,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error));
+            backgroundColor: TossDesignSystem.errorRed));
       }
     } finally {
       if (mounted) {
@@ -63,7 +63,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                         Text(
                           '혈액형을 선택해주세요',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.textSecondary)),
+                            color: TossDesignSystem.gray600)),
           SizedBox(height: AppSpacing.spacing5),
           GridView.builder(
             shrinkWrap: true,
@@ -99,10 +99,10 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.divider,
+              color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
               width: isSelected ? 2 : 1),
             borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? AppColors.primary.withOpacity(0.1) : null),
+            color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.1) : null),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +110,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                 Icon(
                   Icons.water_drop,
                   size: AppDimensions.iconSizeSmall,
-                  color: isSelected ? AppColors.textPrimaryDark : AppColors.textSecondary),
+                  color: isSelected ? TossDesignSystem.grayDark900 : TossDesignSystem.gray600),
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
                   label,

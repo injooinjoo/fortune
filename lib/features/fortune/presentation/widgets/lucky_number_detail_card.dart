@@ -126,7 +126,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: AppSpacing.paddingAll8);
+                    padding: const EdgeInsets.all(8));
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
@@ -203,7 +203,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
+    borderRadius: BorderRadius.circular(4 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);

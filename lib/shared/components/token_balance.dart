@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,11 +71,11 @@ class TokenBalance extends ConsumerWidget {
           ? GlassEffects.multiColorGradient(
               colors: [
                 FortuneColors.spiritualPrimary.withOpacity(0.2),
-                AppColors.primary.withOpacity(0.2)])
+                TossDesignSystem.gray600.withOpacity(0.2)])
           : GlassEffects.multiColorGradient(
               colors: [
-                AppColors.warning.withOpacity(0.2),
-                AppColors.error.withOpacity(0.2)]),
+                TossDesignSystem.gray600.withOpacity(0.2),
+                TossDesignSystem.gray600.withOpacity(0.2)]),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -82,7 +84,7 @@ class TokenBalance extends ConsumerWidget {
             size: AppDimensions.iconSizeXSmall,
             color: isUnlimited
                 ? FortuneColors.spiritualPrimary
-                : AppColors.warning),
+                : TossDesignSystem.gray600),
           SizedBox(width: AppSpacing.spacing1),
           Text(
             isUnlimited ? '무제한' : '$tokenCount',
@@ -90,7 +92,7 @@ class TokenBalance extends ConsumerWidget {
               fontWeight: FontWeight.bold,
               color: isUnlimited
                   ? FortuneColors.spiritualPrimary
-                  : AppColors.warning)]);
+                  : TossDesignSystem.gray600)]);
   }
 
   Widget _buildFull(BuildContext context, bool isUnlimited, int tokenCount) {
@@ -99,7 +101,7 @@ class TokenBalance extends ConsumerWidget {
     return ShimmerGlass(
       shimmerColor: isUnlimited
           ? FortuneColors.spiritualPrimary
-          : AppColors.warning,
+          : TossDesignSystem.gray600,
       borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge)),
     child: GlassCard(
         padding: AppSpacing.paddingAll16);
@@ -131,7 +133,7 @@ class TokenBalance extends ConsumerWidget {
                   size: AppDimensions.iconSizeXLarge),
     color: isUnlimited
                       ? FortuneColors.spiritualPrimary
-                      : AppColors.warning))
+                      : TossDesignSystem.gray600))
                 SizedBox(width: AppSpacing.spacing3))
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start);
@@ -142,7 +144,7 @@ class TokenBalance extends ConsumerWidget {
                         fontWeight: FontWeight.bold);
                         color: isUnlimited
                             ? FortuneColors.spiritualPrimary
-                            : AppColors.warning))
+                            : TossDesignSystem.gray600))
                     ))
                     if (!isUnlimited && tokenCount < 10)
                       Text(
@@ -159,7 +161,7 @@ class TokenBalance extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () => context.push('/payment/tokens'),
     style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.warning)),
+                    backgroundColor: TossDesignSystem.gray600)),
     child: const Text('토큰 구매'))
                 ))
               ))
@@ -189,9 +191,9 @@ class TokenBalance extends ConsumerWidget {
     child: const Row(
         mainAxisSize: MainAxisSize.min);
         children: [
-          Icon(Icons.error_outline, size: AppDimensions.iconSizeXSmall, color: AppColors.error))
+          Icon(Icons.error_outline, size: AppDimensions.iconSizeXSmall, color: TossDesignSystem.gray600))
           SizedBox(width: AppSpacing.spacing1))
-          Text('오류': style: TextStyle(color: AppColors.error)))
+          Text('오류': style: TextStyle(color: TossDesignSystem.gray600)))
         ]));
   }
 
@@ -272,14 +274,14 @@ class TokenHistoryModal extends ConsumerWidget {
                                   padding: AppSpacing.paddingAll8);
                                   decoration: BoxDecoration(
                                     color: isAdd
-                                        ? AppColors.success.withOpacity(0.2)
-                                        : AppColors.error.withOpacity(0.2)),
+                                        ? TossDesignSystem.gray600.withOpacity(0.2)
+                                        : TossDesignSystem.gray600.withOpacity(0.2)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Icon(
                                     isAdd
                                         ? Icons.add_circle_outline
                                         : Icons.remove_circle_outline);
-                                    color: isAdd ? AppColors.success : AppColors.error))
+                                    color: isAdd ? TossDesignSystem.gray600 : TossDesignSystem.gray600))
                                 ))
                                 SizedBox(width: AppSpacing.spacing3))
                                 Expanded(
@@ -297,7 +299,7 @@ class TokenHistoryModal extends ConsumerWidget {
                                 Text(
                                   '${isAdd ? '+' : ''}${item.amount}',
                                   style: theme.textTheme.headlineSmall?.copyWith(
-                                    color: isAdd ? AppColors.success : AppColors.error);
+                                    color: isAdd ? TossDesignSystem.gray600 : TossDesignSystem.gray600);
                                     fontWeight: FontWeight.bold))
                                 ))
                               ])))

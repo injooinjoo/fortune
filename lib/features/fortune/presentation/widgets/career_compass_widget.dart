@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/toss_design_system.dart';
+
+
 
 class CareerCompassData {
   final String direction;
@@ -158,52 +158,52 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
           color: theme.colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: AppSpacing.paddingAll24,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40,
-              height: AppSpacing.spacing1,
+              height: TossDesignSystem.spacingXS,
               decoration: BoxDecoration(
                 color: theme.colorScheme.onSurface.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+                borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingL),
             Icon(
               data.icon,
               size: 48,
               color: data.color),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             Text(
               data.label,
               style: theme.textTheme.headlineSmall),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossDesignSystem.spacingS),
             Text(
               '${data.direction} 방향',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingL),
             LinearProgressIndicator(
               value: data.value / 100,
               backgroundColor: data.color.withOpacity(0.2),
               valueColor: AlwaysStoppedAnimation<Color>(data.color),
               minHeight: 8),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossDesignSystem.spacingS),
             Text(
               '${data.value.toInt()}%',
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: data.color,
                 fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             Text(
               _getDescription(data),
               style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.spacing8),
+            const SizedBox(height: TossDesignSystem.spacingXL),
           ],
         ),
       ),

@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -204,7 +206,7 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                     borderRadius: AppDimensions.borderRadiusMedium,
                     child: Container(
                       padding: AppSpacing.paddingAll16,
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+                      margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withOpacity(0.1)

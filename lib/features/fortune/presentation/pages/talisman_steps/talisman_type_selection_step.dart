@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -48,7 +50,7 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                 Text(
                   '당신의 소원에 맞는 부적을 선택해주세요',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textSecondary),
+                    color: TossDesignSystem.gray600),
                   textAlign: TextAlign.center).animate().fadeIn(duration: 600.ms, delay: 400.ms)])),
           const SizedBox(height: 32),
 
@@ -130,7 +132,7 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                 type.description,
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColors.textSecondary,
+                  color: TossDesignSystem.gray600,
                   height: 1.2),
                 textAlign: TextAlign.center,
                 maxLines: 2,

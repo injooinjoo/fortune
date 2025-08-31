@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -87,7 +89,7 @@ class GlassLoadingOverlay extends StatelessWidget {
             child: GestureDetector(
               onTap: () {}, // Prevent taps from passing through
               child: Container(
-                color: AppColors.textPrimary.withOpacity(0.3),
+                color: TossDesignSystem.gray900.withOpacity(0.3),
                 child: Center(
                   child: GlassContainer(
                     padding: AppSpacing.paddingAll24,
@@ -136,17 +138,17 @@ class SkeletonLoader extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: isDark 
-        ? AppColors.textSecondary.withOpacity(0.8) 
-        : AppColors.textSecondary.withOpacity(0.3),
+        ? TossDesignSystem.gray400.withOpacity(0.8) 
+        : TossDesignSystem.gray400.withOpacity(0.3),
       highlightColor: isDark 
-        ? AppColors.textSecondary.withOpacity(0.7) 
-        : AppColors.textSecondary.withOpacity(0.1),
+        ? TossDesignSystem.gray400.withOpacity(0.7) 
+        : TossDesignSystem.gray400.withOpacity(0.1),
       child: Container(
         width: width,
         height: height ?? 20,
         margin: margin,
         decoration: BoxDecoration(
-          color: AppColors.textPrimaryDark,
+          color: TossDesignSystem.grayDark900,
           borderRadius: borderRadius ?? AppDimensions.borderRadiusSmall,
         ),
       ),
@@ -297,7 +299,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                 ...List.generate(
                   5,
                   (index) => const Padding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.xSmall),
+                    padding: EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                     child: SkeletonLoader(height: 16),
                   ),
                 ),

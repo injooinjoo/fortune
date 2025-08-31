@@ -7,7 +7,7 @@ import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'saju_loading_widget.dart';
 // import 'saju_element_explanation_bottom_sheet.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class SajuChartWidget extends ConsumerStatefulWidget {
@@ -145,7 +145,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       return Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: AppColors.textPrimaryDark,
+          color: TossDesignSystem.grayDark900,
           borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
             color: theme.colorScheme.outline.withOpacity(0.1),
@@ -175,7 +175,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: AppColors.textPrimaryDark,
+        color: TossDesignSystem.grayDark900,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
@@ -432,21 +432,21 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     switch (element?.toLowerCase()) {
       case 'wood':
       case '목':
-        return AppColors.success; // Green for wood
+        return TossDesignSystem.successGreen; // Green for wood
       case 'fire':
       case '화':
-        return AppColors.warning; // Red/orange for fire
+        return TossDesignSystem.warningOrange; // Red/orange for fire
       case 'earth':
       case '토':
         return FortuneColors.goldLight; // Yellow/gold for earth
       case 'metal':
       case '금':
-        return AppColors.textSecondary; // Gray/silver for metal
+        return TossDesignSystem.gray600; // Gray/silver for metal
       case 'water':
       case '수':
-        return AppColors.primary; // Blue for water
+        return TossDesignSystem.tossBlue; // Blue for water
       default:
-        return AppColors.textSecondary;
+        return TossDesignSystem.gray600;
     }
   }
 }

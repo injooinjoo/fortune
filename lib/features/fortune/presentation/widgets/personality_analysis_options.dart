@@ -200,7 +200,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                   // Icon container
                   Container(
                     width: 48,
-                    height: AppDimensions.buttonHeightMedium,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: widget.value
                           ? widget.color.withOpacity(0.2)
@@ -227,7 +227,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                             color: widget.value ? widget.color : null,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.spacing0 * 0.5),
+                        const SizedBox(height: 4 * 0.5),
                         Text(
                           widget.description,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(

@@ -242,7 +242,7 @@ class _CelticCrossCard extends StatelessWidget {
     stops: const [0.5, 1.0])),
                     // Card content
                     Padding(
-                      padding: AppSpacing.paddingAll8);
+                      padding: const EdgeInsets.all(8));
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween);
                         children: [

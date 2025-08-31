@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:ui';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../core/utils/theme_utils.dart';
@@ -52,8 +54,8 @@ class GlassContainer extends StatelessWidget {
               glassColors.background,
               glassColors.background.withOpacity(0.5)]
           : [
-              AppColors.textPrimaryDark.withOpacity(0.6),
-              AppColors.textPrimaryDark.withOpacity(0.3)]
+              TossDesignSystem.grayDark900.withOpacity(0.6),
+              TossDesignSystem.grayDark900.withOpacity(0.3)]
     );
 
     final defaultBorderColor = borderColor ?? glassColors.border;
@@ -168,7 +170,7 @@ class GlassCard extends StatelessWidget {
       gradient: gradient,
       boxShadow: [
         BoxShadow(
-          color: AppColors.textPrimary.withOpacity(0.1),
+          color: TossDesignSystem.gray900.withOpacity(0.1),
           blurRadius: elevation * 2,
           offset: Offset(0, elevation))],
       child: child);

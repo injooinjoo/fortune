@@ -2,7 +2,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../shared/components/custom_calendar_date_picker.dart';
 import 'profile_field_edit_dialog.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -43,7 +43,7 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error));
+            backgroundColor: TossDesignSystem.errorRed));
       }
     } finally {
       if (mounted) {
@@ -64,16 +64,16 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
           Container(
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: TossDesignSystem.white,
               borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
-            color: AppColors.divider)),
+            color: TossDesignSystem.gray200)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.cake,
-                  color: AppColors.primary,
+                  color: TossDesignSystem.tossBlue,
                   size: AppDimensions.iconSizeSmall),
                 SizedBox(width: AppSpacing.spacing2),
                 Text(

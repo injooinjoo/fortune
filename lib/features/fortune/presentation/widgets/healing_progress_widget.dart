@@ -35,7 +35,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
@@ -165,7 +165,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                     child: AnimatedContainer(
                       duration: AppAnimations.durationMedium,
                       width: 40,
-                      height: AppDimensions.buttonHeightSmall,
+                      height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isCompleted || isCurrent

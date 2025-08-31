@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/date_utils.dart';
-import '../../../core/theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class BirthDatePreview extends StatelessWidget {
   final String birthYear;
@@ -39,10 +36,10 @@ class BirthDatePreview extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.vertical * 0.75),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.2)),
       ),
       child: Column(
@@ -55,7 +52,7 @@ class BirthDatePreview extends StatelessWidget {
             ),
             textAlign: TextAlign.center),
           if (selectedTimePeriod != null) ...[
-            SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.25),
+            const SizedBox(height: 4),
             Text(
               selectedTimePeriod.label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(

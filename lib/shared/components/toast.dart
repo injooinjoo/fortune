@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -149,13 +151,13 @@ class _ToastWidgetState extends State<_ToastWidget>
   Color get _color {
     switch (widget.type) {
       case ToastType.success:
-        return AppColors.success;
+        return TossDesignSystem.gray600;
       case ToastType.error:
-        return AppColors.error;
+        return TossDesignSystem.gray600;
       case ToastType.warning:
-        return AppColors.warning;
+        return TossDesignSystem.gray600;
       case ToastType.info:
-        return AppColors.primary;
+        return TossDesignSystem.gray600;
     }
   }
 
@@ -248,19 +250,19 @@ class _ToastWidgetState extends State<_ToastWidget>
 
 class SnackBarHelper {
   static void showSuccess(BuildContext context, String message) {
-    _showSnackBar(context, message, AppColors.success, Icons.check_circle_rounded);
+    _showSnackBar(context, message, TossDesignSystem.gray600, Icons.check_circle_rounded);
   }
 
   static void showError(BuildContext context, String message) {
-    _showSnackBar(context, message, AppColors.error, Icons.error_rounded);
+    _showSnackBar(context, message, TossDesignSystem.gray600, Icons.error_rounded);
   }
 
   static void showWarning(BuildContext context, String message) {
-    _showSnackBar(context, message, AppColors.warning, Icons.warning_rounded);
+    _showSnackBar(context, message, TossDesignSystem.gray600, Icons.warning_rounded);
   }
 
   static void showInfo(BuildContext context, String message) {
-    _showSnackBar(context, message, AppColors.primary, Icons.info_rounded);
+    _showSnackBar(context, message, TossDesignSystem.gray600, Icons.info_rounded);
   }
 
   static void _showSnackBar(
@@ -276,12 +278,12 @@ class SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: AppColors.textPrimaryDark, size: AppDimensions.iconSizeSmall),
+            Icon(icon, color: TossDesignSystem.grayDark900, size: AppDimensions.iconSizeSmall),
             SizedBox(width: AppSpacing.spacing3),
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(color: AppColors.textPrimaryDark),
+                style: const TextStyle(color: TossDesignSystem.grayDark900),
               ),
             ),
           ],

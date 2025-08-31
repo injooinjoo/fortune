@@ -5,7 +5,7 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'dart:math' as math;
 
 class CareerSeekerFortunePage extends BaseFortunePage {
@@ -742,10 +742,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
             const SizedBox(height: 16),
             ...actions.map((action) {
               final urgencyColor = action.urgency == 'high'
-                  ? AppColors.error
+                  ? TossDesignSystem.errorRed
                   : action.urgency == 'medium'
-                      ? AppColors.warning
-                      : AppColors.success;
+                      ? TossDesignSystem.warningOrange
+                      : TossDesignSystem.successGreen;
               
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),

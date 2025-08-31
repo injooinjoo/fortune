@@ -111,10 +111,10 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             top: 12,
             right: 12,
             child: Container(
-              padding: AppSpacing.paddingAll8,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.amber.withOpacity(0.9),
-                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.amber.withOpacity(0.5),

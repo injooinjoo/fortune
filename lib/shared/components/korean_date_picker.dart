@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -96,7 +98,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
       children: [
         if (widget.label != null)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+            padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
             child: Text(
               widget.label!,
               style: theme.textTheme.bodyLarge?.copyWith(

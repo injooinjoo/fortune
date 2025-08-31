@@ -1,7 +1,7 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../constants/fortune_constants.dart';
 import 'profile_field_edit_dialog.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -42,7 +42,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -65,7 +65,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
           Text(
             'MBTI 성격 유형을 선택해주세요',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textSecondary,
+              color: TossDesignSystem.gray600,
             ),
           ),
           SizedBox(height: AppSpacing.spacing2),
@@ -76,7 +76,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
             child: Text(
               'MBTI를 모르시나요? 테스트 하러 가기 →',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.primary,
+                color: TossDesignSystem.tossBlue,
                 decoration: TextDecoration.underline,
               ),
             ),
@@ -128,15 +128,15 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
           padding: AppSpacing.paddingVertical8,
           decoration: BoxDecoration(
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.divider,
+              color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
               width: isSelected ? 2 : 1),
             borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent),
+            color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.1) : Colors.transparent),
           child: Center(
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: isSelected ? AppColors.textDark : AppColors.textPrimary,
+                color: isSelected ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

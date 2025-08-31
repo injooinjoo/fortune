@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,7 +79,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                     const Color(0xFF0F172A)]
                 : [
                     Colors.amber.withOpacity(0.08),
-                    AppColors.textPrimaryDark])),
+                    TossDesignSystem.grayDark900])),
         child: SafeArea(
           child: Column(
             children: [
@@ -121,7 +123,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
           
           return Padding(
             padding: const EdgeInsets.only(
-              right: AppSpacing.xSmall),
+              right: TossDesignSystem.spacingXS),
             child: FilterChip(
               label: Text(entry.value),
               selected: isSelected,
@@ -185,7 +187,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
     
     return Container(
       margin: const EdgeInsets.only(
-        bottom: AppSpacing.xSmall),
+        bottom: TossDesignSystem.spacingXS),
       child: GlassContainer(
         padding: AppSpacing.paddingAll16,
         borderRadius: AppDimensions.borderRadiusLarge,
@@ -341,16 +343,16 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
   Color _getTransactionColor(String type, bool isAddition) {
     switch (type) {
       case 'purchase':
-        return AppColors.primary;
+        return TossDesignSystem.gray600;
       case 'usage':
       case 'consumption':
-        return AppColors.warning;
+        return TossDesignSystem.gray600;
       case 'bonus':
-        return AppColors.success;
+        return TossDesignSystem.gray600;
       case 'refund':
         return Colors.purple;
       default:
-        return isAddition ? AppColors.success : AppColors.error;
+        return isAddition ? TossDesignSystem.gray600 : TossDesignSystem.gray600;
     }
   }
 

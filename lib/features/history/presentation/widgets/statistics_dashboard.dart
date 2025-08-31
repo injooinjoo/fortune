@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 // import 'package:fortune/core/utils/formatters.dart';
 import 'package:intl/intl.dart';
@@ -71,28 +71,28 @@ class StatisticsDashboard extends StatelessWidget {
                 icon: Icons.calendar_today,
                 title: '총 운세 횟수',
                 value: '${statistics.totalCount}회',
-                color: AppColors.primary,
+                color: TossDesignSystem.tossBlue,
                 fontScale: fontScale),
               _buildStatCard(
                 context: context,
                 icon: Icons.calendar_month,
                 title: '이번 달',
                 value: '${statistics.monthlyCount}회',
-                color: AppColors.secondary,
+                color: TossDesignSystem.gray600,
                 fontScale: fontScale),
               _buildStatCard(
                 context: context,
                 icon: Icons.star,
                 title: '평균 점수',
                 value: '${statistics.averageScore.toStringAsFixed(1)}점',
-                color: AppColors.success,
+                color: TossDesignSystem.successGreen,
                 fontScale: fontScale),
               _buildStatCard(
                 context: context,
                 icon: Icons.favorite,
                 title: '자주 본 운세',
                 value: statistics.mostFrequentCategory,
-                color: AppColors.error,
+                color: TossDesignSystem.errorRed,
                 fontScale: fontScale)]),
           const SizedBox(height: 20),
           

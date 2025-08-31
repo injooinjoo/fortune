@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -221,7 +223,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
   
   Widget _buildSectionHeader(String title, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xSmall, bottom: AppSpacing.xSmall),
+      padding: const EdgeInsets.only(top: TossDesignSystem.spacingXS, bottom: TossDesignSystem.spacingXS),
       child: Row(
         children: [
           Icon(icon, size: AppDimensions.iconSizeSmall, color: Theme.of(context).colorScheme.primary))

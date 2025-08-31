@@ -348,7 +348,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.6),
-                            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: FortuneColors.spiritualPrimary.withOpacity(0.3),
                               width: 1)),
@@ -379,7 +379,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                     decoration: BoxDecoration(
                       borderRadius: AppDimensions.borderRadiusMedium,
                       border: Border.all(
-                        width: AppSpacing.spacing0 * 0.5,
+                        width: 4 * 0.5,
                         color: Colors.transparent),
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,

@@ -127,7 +127,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this);
     
     _fadeAnimation = Tween<double>(
@@ -418,7 +418,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                   ),
                   const SizedBox(height: AppSpacing.spacing1),
                   ...functions1.map((func) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.spacing0 * 0.5),
+                    padding: const EdgeInsets.only(bottom: 4 * 0.5),
                     child: Text(
                       func,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -446,7 +446,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                   ),
                   const SizedBox(height: AppSpacing.spacing1),
                   ...functions2.map((func) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.spacing0 * 0.5),
+                    padding: const EdgeInsets.only(bottom: 4 * 0.5),
                     child: Text(
                       func,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -498,7 +498,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: Colors.white.withOpacity(0.1),
           width: 1)),

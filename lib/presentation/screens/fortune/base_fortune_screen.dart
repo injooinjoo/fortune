@@ -15,7 +15,7 @@ import '../../../features/fortune/presentation/mixins/screenshot_detection_mixin
 import '../../../services/screenshot_detection_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// Fortune 화면의 기본 템플릿
 /// 웹 디자인과 동일한 레이아웃 유지
@@ -176,7 +176,7 @@ https://fortune.app
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
         backgroundColor: Colors.white);
         elevation: 0),

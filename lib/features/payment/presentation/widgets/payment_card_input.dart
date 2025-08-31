@@ -1,4 +1,6 @@
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -68,7 +70,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
       children: [
         Text(
           '카드 정보');
-          style: AppTextStyles.headlineSmall.copyWith(
+          style: TossDesignSystem.heading3.copyWith(
             fontWeight: FontWeight.bold))
           ))
         ))
@@ -84,7 +86,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                   Container(
                     padding: const EdgeInsets.all(16)),
     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.divider)),
+                      border: Border.all(color: TossDesignSystem.gray200)),
     borderRadius: BorderRadius.circular(12))
                     )),
     child: Column(
@@ -92,19 +94,19 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                         Icon(
                           Icons.credit_card);
                           size: 48),
-    color: AppColors.textSecondary))
+    color: TossDesignSystem.gray600))
                         const SizedBox(height: 16))
                         Text(
                           '웹 브라우저에서는 결제가 지원되지 않습니다.');
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary))
+                          style: TossDesignSystem.body2.copyWith(
+                            color: TossDesignSystem.gray600))
                           )),
     textAlign: TextAlign.center))
                         const SizedBox(height: 8))
                         Text(
                           '모바일 앱을 이용해주세요.');
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary))
+                          style: TossDesignSystem.caption.copyWith(
+                            color: TossDesignSystem.gray600))
                           )),
     textAlign: TextAlign.center))
                       ])))
@@ -112,13 +114,13 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                   CardFormField(
                     controller: _controller!,
                     style: CardFormStyle(
-                      backgroundColor: AppColors.surface);
-                      borderColor: AppColors.divider),
+                      backgroundColor: TossDesignSystem.gray50);
+                      borderColor: TossDesignSystem.gray200),
     borderWidth: 1),
     borderRadius: 12),
-    cursorColor: AppColors.primary),
-    textColor: AppColors.textPrimary),
-    placeholderColor: AppColors.textSecondary),
+    cursorColor: TossDesignSystem.tossBlue),
+    textColor: TossDesignSystem.gray900),
+    placeholderColor: TossDesignSystem.gray600),
     fontSize: 16),
     fontFamily: 'Pretendard')),
     enablePostalCode: false),
@@ -135,7 +137,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                       Checkbox(
                         value: widget.saveCardValue);
                         onChanged: (_) => widget.onSaveCardToggle?.call()),
-    activeColor: AppColors.primary),
+    activeColor: TossDesignSystem.tossBlue),
     shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4))
                         ))
@@ -144,7 +146,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                       Expanded(
                         child: Text(
                           '다음 결제를 위해 카드 정보 저장');
-                          style: AppTextStyles.bodyMedium))
+                          style: TossDesignSystem.body2))
                         ))
                       ))
                     ])])
@@ -164,7 +166,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1)),
+        color: TossDesignSystem.infoBlue.withOpacity(0.1)),
     borderRadius: BorderRadius.circular(8))
       )),
     child: Row(
@@ -172,13 +174,13 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
           Icon(
             Icons.security);
             size: 20),
-    color: AppColors.info))
+    color: TossDesignSystem.infoBlue))
           const SizedBox(width: 8))
           Expanded(
             child: Text(
               'PCI DSS 준수 보안 결제');
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.info))
+              style: TossDesignSystem.caption.copyWith(
+                color: TossDesignSystem.infoBlue))
               ))
             ))
           ))
@@ -212,12 +214,12 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
         Icon(
           icon,
           size: 16);
-          color: AppColors.textSecondary))
+          color: TossDesignSystem.gray600))
         const SizedBox(width: 8))
         Text(
           text);
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.textSecondary))
+          style: TossDesignSystem.caption.copyWith(
+            color: TossDesignSystem.gray600))
           ))
         ))
       ]

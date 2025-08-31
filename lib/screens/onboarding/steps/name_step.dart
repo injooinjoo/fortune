@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -79,7 +81,7 @@ class _NameStepState extends State<NameStep> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: Color.lerp(
-                              context.isDarkMode ? context.fortuneTheme.primaryText : AppColors.textPrimary, Colors.transparent)
+                              context.isDarkMode ? context.fortuneTheme.primaryText : TossDesignSystem.gray900, Colors.transparent)
                               animation.value),
                             borderRadius: BorderRadius.circular(
                               (context.fortuneTheme.bottomSheetStyles.borderRadius + 4) * (1 - animation.value)),
@@ -91,7 +93,7 @@ class _NameStepState extends State<NameStep> {
                               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Color.lerp(
-                                  context.isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary, context.fortuneTheme.primaryText)
+                                  context.isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900, context.fortuneTheme.primaryText)
                                   animation.value)),
                               child: const Text('이름이 뭐예요?'))));
                     });
@@ -106,7 +108,7 @@ class _NameStepState extends State<NameStep> {
                     textAlign: TextAlign.center).animate().fadeIn(
                     duration: const Duration(milliseconds: 600)).shimmer(
                     duration: const Duration(milliseconds: 1200),
-                    color: AppColors.textPrimaryDark.withOpacity(0.3)),
+                    color: TossDesignSystem.grayDark900.withOpacity(0.3)),
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               Text(
                 '운세의 주인공이 되어주세요',
@@ -151,7 +153,7 @@ class _NameStepState extends State<NameStep> {
                   onPressed: _isValid ? widget.onNext : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.fortuneTheme.primaryText,
-                    foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
+                    foregroundColor: context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
                     elevation: 0),
@@ -168,7 +170,7 @@ class _NameStepState extends State<NameStep> {
                   child: Text(
                     '잠깐, 저 아이디 있어요',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.textPrimary))).animate(
+                      color: TossDesignSystem.gray900))).animate(
                   delay: const Duration(milliseconds: 800)).fadeIn(
                   duration: const Duration(milliseconds: 600)),
               // Add padding to account for keyboard

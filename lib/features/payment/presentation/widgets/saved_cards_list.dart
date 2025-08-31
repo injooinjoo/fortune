@@ -1,4 +1,6 @@
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -51,22 +53,22 @@ class SavedCardsList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.divider,
+          color: TossDesignSystem.gray200,
           style: BorderStyle.solid)),
       child: Column(
         children: [
           Icon(
             Icons.credit_card_off,
             size: 48,
-            color: AppColors.textSecondary),
+            color: TossDesignSystem.gray600),
           const SizedBox(height: 12),
           Text(
             '저장된 결제 수단이 없습니다',
-            style: AppTextStyles.bodyLarge.copyWith(
-              color: AppColors.textSecondary))
+            style: TossDesignSystem.body1.copyWith(
+              color: TossDesignSystem.gray600))
         ])
     );
   }
@@ -91,11 +93,11 @@ class SavedCardsList extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider,
+            color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
             width: isSelected ? 2 : 1),
           color: isSelected 
-              ? AppColors.primary.withOpacity(0.05) 
-              : AppColors.surface),
+              ? TossDesignSystem.tossBlue.withOpacity(0.05) 
+              : TossDesignSystem.gray50),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -107,9 +109,9 @@ class SavedCardsList extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                     width: 2),
-                  color: isSelected ? AppColors.primary : Colors.transparent),
+                  color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent),
                 child: isSelected
                     ? const Icon(
                         Icons.check,
@@ -122,7 +124,7 @@ class SavedCardsList extends StatelessWidget {
               Icon(
                 cardBrand,
                 size: 32,
-                color: AppColors.textPrimary),
+                color: TossDesignSystem.gray900),
               const SizedBox(width: 12),
               
               // 카드 정보
@@ -132,13 +134,13 @@ class SavedCardsList extends StatelessWidget {
                   children: [
                     Text(
                       _getCardBrandName(card.brand ?? ''),
-                      style: AppTextStyles.bodyLarge.copyWith(
+                      style: TossDesignSystem.body1.copyWith(
                         fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       '•••• ${card.last4}',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary))
+                      style: TossDesignSystem.body2.copyWith(
+                        color: TossDesignSystem.gray600))
                   ])),
               
               // 만료일
@@ -147,11 +149,11 @@ class SavedCardsList extends StatelessWidget {
                 children: [
                   Text(
                     '만료일',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary)),
+                    style: TossDesignSystem.caption.copyWith(
+                      color: TossDesignSystem.gray600)),
                   Text(
                     '${card.expMonth?.toString().padLeft(2, '0')}/${card.expYear?.toString().substring(2)}',
-                    style: AppTextStyles.bodyMedium)
+                    style: TossDesignSystem.body2)
                 ]),
               
               // 삭제 버튼
@@ -160,7 +162,7 @@ class SavedCardsList extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.delete_outline,
-                    color: AppColors.error,
+                    color: TossDesignSystem.errorRed,
                     size: 20),
                   onPressed: () => _showDeleteConfirmation(
                     context,
@@ -228,7 +230,7 @@ class SavedCardsList extends StatelessWidget {
               onDeletePaymentMethod?.call(paymentMethodId);
             },
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.error),
+              foregroundColor: TossDesignSystem.errorRed),
             child: const Text('삭제'))
         ])
     );

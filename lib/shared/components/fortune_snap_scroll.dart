@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/utils/haptic_utils.dart';
@@ -310,8 +312,8 @@ class FortuneSnapCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      AppColors.textPrimary.withOpacity(0.3),
-                      AppColors.textPrimary.withOpacity(0.7),
+                      TossDesignSystem.gray900.withOpacity(0.3),
+                      TossDesignSystem.gray900.withOpacity(0.7),
                     ],
                     stops: const [0.5, 0.8, 1.0],
                   ),
@@ -325,20 +327,20 @@ class FortuneSnapCard extends StatelessWidget {
                     Text(
                       title,
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        color: AppColors.textPrimaryDark,
+                        color: TossDesignSystem.grayDark900,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
-                            color: AppColors.textPrimary.withOpacity(0.8),
+                            color: TossDesignSystem.gray900.withOpacity(0.8),
                             blurRadius: 8)])),
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       description,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textPrimaryDark.withOpacity(0.9),
+                        color: TossDesignSystem.grayDark900.withOpacity(0.9),
                         shadows: [
                           Shadow(
-                            color: AppColors.textPrimary.withOpacity(0.8),
+                            color: TossDesignSystem.gray900.withOpacity(0.8),
                             blurRadius: 6,
                           ),
                         ],

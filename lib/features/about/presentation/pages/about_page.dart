@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
@@ -33,9 +35,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: TossDesignSystem.gray50,
       body: Container(
-        decoration: BoxDecoration(color: AppColors.surface),
+        decoration: BoxDecoration(color: TossDesignSystem.gray50),
         child: SafeArea(
           child: Column(
             children: [

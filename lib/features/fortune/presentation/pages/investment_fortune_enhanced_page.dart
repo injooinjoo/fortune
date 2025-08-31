@@ -9,8 +9,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_button.dart';
 
 // Step 관리를 위한 StateNotifier
@@ -165,7 +164,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       body: SafeArea(
         child: Column(
           children: [

@@ -2,7 +2,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -46,7 +46,7 @@ class SimpleLoadingIndicator extends StatelessWidget {
       child: CircularProgressIndicator(
         strokeWidth: 2.5,
         valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? AppColors.primary),
+          color ?? TossDesignSystem.tossBlue),
       ),
     );
   }
@@ -96,7 +96,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
             Container(
               height: AppSpacing.spacing24 * 2.08,
               decoration: BoxDecoration(
-                color: AppColors.textSecondary.withOpacity(_animation.value),
+                color: TossDesignSystem.gray600.withOpacity(_animation.value),
                 borderRadius: AppDimensions.borderRadiusMedium,
               ),
             ),
@@ -105,7 +105,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: AppSpacing.spacing5,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppColors.textSecondary.withOpacity(_animation.value),
+                color: TossDesignSystem.gray600.withOpacity(_animation.value),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),
@@ -114,7 +114,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: 20,
               width: AppSpacing.spacing24 * 2.08,
               decoration: BoxDecoration(
-                color: AppColors.textSecondary.withOpacity(_animation.value),
+                color: TossDesignSystem.gray600.withOpacity(_animation.value),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),

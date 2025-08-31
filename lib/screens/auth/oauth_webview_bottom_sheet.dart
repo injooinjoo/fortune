@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../core/utils/logger.dart';
 
 class OAuthWebViewBottomSheet extends StatefulWidget {
@@ -87,7 +87,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
             LinearProgressIndicator(
               value: progress,
               backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
             ),
           
           // WebView
@@ -185,7 +185,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(
-                            color: AppColors.primary,
+                            color: TossDesignSystem.tossBlue,
                           ),
                           const SizedBox(height: 16),
                           Text(

@@ -1,5 +1,6 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -135,7 +136,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   if (title != null)
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.only(right: AppSpacing.xSmall),
+                        padding: EdgeInsets.only(right: TossDesignSystem.spacingXS),
                         child: Text(
                           title!,
                           style: theme.textTheme.headlineSmall?.copyWith(

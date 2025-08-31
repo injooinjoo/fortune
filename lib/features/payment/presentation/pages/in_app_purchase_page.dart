@@ -1,4 +1,6 @@
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -77,7 +79,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -138,12 +140,12 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           Icon(
             Icons.shopping_cart_outlined,
             size: 64,
-            color: AppColors.textSecondary,
+            color: TossDesignSystem.gray600,
           ),
           const SizedBox(height: 16),
           Text(
             '상품을 불러올 수 없습니다',
-            style: AppTextStyles.bodyLarge,
+            style: TossDesignSystem.body1,
           ),
           const SizedBox(height: 8),
           TextButton(
@@ -162,7 +164,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.secondary],
+          colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -178,14 +180,14 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
               children: [
                 Text(
                   '현재 보유 토큰',
-                  style: AppTextStyles.caption.copyWith(
+                  style: TossDesignSystem.caption.copyWith(
                     color: Colors.white70,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${currentTokens}개',
-                  style: AppTextStyles.headlineLarge.copyWith(
+                  style: TossDesignSystem.heading1.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -209,7 +211,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       children: [
         Text(
           '토큰 패키지 선택',
-          style: AppTextStyles.headlineMedium,
+          style: TossDesignSystem.heading2,
         ),
         const SizedBox(height: 16),
         ...List.generate(_products.length, (index) {
@@ -242,12 +244,12 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.surface,
+              color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray50,
               width: isSelected ? 2 : 1,
             ),
             color: isSelected 
-                ? AppColors.primary.withOpacity(0.1) 
-                : AppColors.surface,
+                ? TossDesignSystem.tossBlue.withOpacity(0.1) 
+                : TossDesignSystem.gray50,
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -260,10 +262,10 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                       width: 2,
                     ),
-                    color: isSelected ? AppColors.primary : Colors.transparent,
+                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
                   ),
                   child: isSelected
                       ? const Icon(
@@ -284,7 +286,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                         children: [
                           Text(
                             product.title,
-                            style: AppTextStyles.bodyLarge.copyWith(
+                            style: TossDesignSystem.body1.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -296,12 +298,12 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.secondary,
+                                color: TossDesignSystem.gray600,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 _getBadge(product.id)!,
-                                style: AppTextStyles.caption.copyWith(
+                                style: TossDesignSystem.caption.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -313,8 +315,8 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       const SizedBox(height: 4),
                       Text(
                         '${tokenAmount}개',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
+                        style: TossDesignSystem.body2.copyWith(
+                          color: TossDesignSystem.gray600,
                         ),
                       ),
                     ],
@@ -326,7 +328,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   product.price,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray900,
                   ),
                 ),
               ],
@@ -355,20 +357,20 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.surface,
+              color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray50,
               width: isSelected ? 2 : 1,
             ),
             gradient: isSelected
                 ? LinearGradient(
                     colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.secondary.withOpacity(0.1),
+                      TossDesignSystem.tossBlue.withOpacity(0.1),
+                      TossDesignSystem.gray600.withOpacity(0.1),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
                 : null,
-            color: !isSelected ? AppColors.surface : null,
+            color: !isSelected ? TossDesignSystem.gray50 : null,
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -381,10 +383,10 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                       width: 2,
                     ),
-                    color: isSelected ? AppColors.primary : Colors.transparent,
+                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
                   ),
                   child: isSelected
                       ? const Icon(
@@ -406,12 +408,12 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                           const Icon(
                             Icons.workspace_premium,
                             size: 20,
-                            color: AppColors.primary,
+                            color: TossDesignSystem.tossBlue,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '무제한 구독',
-                            style: AppTextStyles.bodyLarge.copyWith(
+                            style: TossDesignSystem.body1.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -422,7 +424,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary,
+                              color: TossDesignSystem.tossBlue,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -439,8 +441,8 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       const SizedBox(height: 4),
                       Text(
                         '모든 운세 무제한 이용',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
+                        style: TossDesignSystem.body2.copyWith(
+                          color: TossDesignSystem.gray600,
                         ),
                       ),
                     ],
@@ -455,13 +457,13 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       product.price,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                        color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray900,
                       ),
                     ),
                     Text(
                       isMonthly ? '/월' : '/년',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
+                      style: TossDesignSystem.caption.copyWith(
+                        color: TossDesignSystem.gray600,
                       ),
                     ),
                   ],
@@ -483,7 +485,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       isLoading: _isProcessing,
       gradient: isEnabled
           ? LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
             )
           : null,
     );
@@ -494,8 +496,8 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       onPressed: _isProcessing ? null : _restorePurchases,
       child: Text(
         '이전 구매 복원',
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.primary,
+        style: TossDesignSystem.body2.copyWith(
+          color: TossDesignSystem.tossBlue,
         ),
       ),
     );
@@ -505,22 +507,22 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1),
+        color: TossDesignSystem.infoBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Icon(
             Icons.lock,
-            color: AppColors.info,
+            color: TossDesignSystem.infoBlue,
             size: 20,
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               '모든 결제는 Apple/Google을 통해 안전하게 처리됩니다.',
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.info,
+              style: TossDesignSystem.caption.copyWith(
+                color: TossDesignSystem.infoBlue,
               ),
             ),
           ),
@@ -604,7 +606,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.error,
+        backgroundColor: TossDesignSystem.errorRed,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -614,7 +616,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.success,
+        backgroundColor: TossDesignSystem.successGreen,
         behavior: SnackBarBehavior.floating,
       ),
     );

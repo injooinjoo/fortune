@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
@@ -76,7 +76,7 @@ class CareerFortuneSelector extends StatelessWidget {
       subtitle: '도전의 길',
       description: '새로운 사업을 시작하려는 분들을 위한 운세',
       icon: Icons.rocket_launch_rounded,
-      gradientColors: [AppColors.negative, AppColors.negativeDark],
+      gradientColors: [TossDesignSystem.gray600, TossDesignSystem.gray600],
       route: '/fortune/career/startup',
       targetAudience: ['예비 창업자', '스타트업', '사업가']),
     CareerFortuneType(
@@ -96,7 +96,7 @@ class CareerFortuneSelector extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
         title: const Text('커리어 운세'),
         backgroundColor: Colors.transparent,
@@ -165,10 +165,10 @@ class _CareerTypeCard extends StatelessWidget {
     
     return InkWell(
       onTap: () => context.push(careerType.route),
-      borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+      borderRadius: BorderRadius.circular(20),
       child: GlassContainer(
         padding: AppSpacing.paddingAll20,
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -196,7 +196,7 @@ class _CareerTypeCard extends StatelessWidget {
                       horizontal: AppSpacing.spacing2,
                       vertical: AppSpacing.spacing1),
                     decoration: BoxDecoration(
-                      color: AppColors.negative,
+                      color: TossDesignSystem.gray600,
                       borderRadius: AppDimensions.borderRadiusMedium),
                     child: Text(
                       'NEW',
@@ -231,7 +231,7 @@ class _CareerTypeCard extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.spacing2,
-                    vertical: AppSpacing.spacing0 * 0.5),
+                    vertical: 4 * 0.5),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withOpacity(0.1),
                     borderRadius: AppDimensions.borderRadiusSmall),

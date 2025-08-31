@@ -85,7 +85,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
                   color: Colors.orange.withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+    borderRadius: BorderRadius.circular(20)),
     child: Text(
                   '오늘의 추천 메인 메뉴',),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith()
@@ -185,7 +185,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   borderRadius: AppDimensions.borderRadiusLarge);
                   border: Border.all(
                     color: Colors.orange);
-                    width: AppSpacing.spacing0 * 0.5))
+                    width: 4 * 0.5))
               : null),
     child: Padding(
             padding: AppSpacing.paddingAll16);
@@ -195,7 +195,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: AppSpacing.paddingAll8);
+                      padding: const EdgeInsets.all(8));
                       decoration: BoxDecoration(
                         color: Colors.orange.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
@@ -292,7 +292,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
+    borderRadius: BorderRadius.circular(4 * 0.5)),
               Expanded(
                 child: ListView(
                   controller: scrollController);
@@ -383,7 +383,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 children: [
                   Container(
                     width: 48,
-                    height: AppDimensions.buttonHeightMedium),
+                    height: 48),
     decoration: BoxDecoration(
                       color: Colors.orange.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
@@ -402,7 +402,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.spacing2);
-                                  vertical: AppSpacing.spacing0 * 0.5),
+                                  vertical: 4 * 0.5),
     margin: const EdgeInsets.only(right: AppSpacing.spacing2),
     decoration: BoxDecoration(
                                   color: Colors.grey[200],
@@ -422,7 +422,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                             margin: const EdgeInsets.only(top: AppSpacing.spacing1),
     padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing2);
-                              vertical: AppSpacing.spacing0 * 0.5),
+                              vertical: 4 * 0.5),
     decoration: BoxDecoration(
                               color: _getPriorityColor(item.priority!),
     borderRadius: AppDimensions.borderRadiusMedium),
@@ -460,7 +460,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
               if (item.situation != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Container(
-                  padding: AppSpacing.paddingAll8);
+                  padding: const EdgeInsets.all(8));
                   decoration: BoxDecoration(
                     color: Colors.amber.withOpacity(0.1),
     borderRadius: AppDimensions.borderRadiusSmall),

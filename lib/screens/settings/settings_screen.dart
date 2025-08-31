@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_theme_extensions.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../services/storage_service.dart';
@@ -29,20 +28,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         (themeMode == ThemeMode.system && 
          MediaQuery.of(context).platformBrightness == Brightness.dark);
     
-    final fortuneTheme = context.fortuneTheme;
     
     return Scaffold(
-      backgroundColor: AppColors.getTossBackground(context),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: fortuneTheme.primaryText),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
           onPressed: () => context.pop()),
         title: Text(
           '설정',
           style: TextStyle(
-            color: fortuneTheme.primaryText,
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             fontSize: 18,
             fontWeight: FontWeight.w600),
         ),
@@ -56,10 +54,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.getTossCardBackground(context),
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.getTossBorder(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                   width: 1,
                 ),
                 boxShadow: [
@@ -80,7 +78,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 20,
-                        color: AppColors.getTossTextPrimary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -117,10 +115,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.getTossCardBackground(context),
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.getTossBorder(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                   width: 1,
                 ),
                 boxShadow: [
@@ -141,7 +139,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 20,
-                        color: AppColors.getTossTextPrimary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -155,7 +153,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ref.read(themeModeProvider.notifier).setThemeMode(
                           value ? ThemeMode.dark : ThemeMode.light);
                       },
-                      activeColor: AppColors.tossBlue),
+                      activeColor: TossDesignSystem.tossBlue),
                     isFirst: true),
                   _buildSettingItem(
                     icon: Icons.language_outlined,
@@ -171,10 +169,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.getTossCardBackground(context),
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.getTossBorder(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                   width: 1,
                 ),
                 boxShadow: [
@@ -195,7 +193,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 20,
-                        color: AppColors.getTossTextPrimary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -222,10 +220,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.getTossCardBackground(context),
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.getTossBorder(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                   width: 1,
                 ),
                 boxShadow: [
@@ -246,7 +244,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 20,
-                        color: AppColors.getTossTextPrimary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -293,7 +291,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           Icon(
                             Icons.developer_mode,
                             size: 20,
-                            color: fortuneTheme.secondaryText,
+                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -301,7 +299,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: fortuneTheme.primaryText,
+                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             ),
                           ),
                         ],
@@ -374,7 +372,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Text(
                 'Fortune v1.0.0',
                 style: TextStyle(
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                   fontSize: 12)),
             ),
             const SizedBox(height: 32),
@@ -402,8 +400,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           border: Border(
-            bottom: isLast ? BorderSide.none : const BorderSide(
-              color: AppColors.divider,
+            bottom: isLast ? BorderSide.none : BorderSide(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
               width: 1)),
         ),
         child: Row(
@@ -429,9 +427,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
-                          color: AppColors.textPrimary,
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                           fontWeight: FontWeight.w500)),
                       if (showBadge) ...[
                         const SizedBox(width: 8),
@@ -440,7 +438,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             horizontal: 6,
                             vertical: 2),
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: TossDesignSystem.tossBlue,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
@@ -457,17 +455,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary)),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600)),
                   ],
                 ],
               ),
             ),
-            trailing ?? (onTap != null ? const Icon(
+            trailing ?? (onTap != null ? Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary) : const SizedBox.shrink()),
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600) : const SizedBox.shrink()),
           ],
         ),
       ),

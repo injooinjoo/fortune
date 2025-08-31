@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +28,8 @@ class DailyTokenBanner extends ConsumerWidget {
             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
             gradient: LinearGradient(
               colors: [
-                AppColors.success.withValues(alpha: 0.3),
-                AppColors.success.withValues(alpha: 0.2),
+                TossDesignSystem.gray600.withValues(alpha: 0.3),
+                TossDesignSystem.gray600.withValues(alpha: 0.2),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -141,7 +143,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          foregroundColor: AppColors.success,
+          foregroundColor: TossDesignSystem.gray600,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),

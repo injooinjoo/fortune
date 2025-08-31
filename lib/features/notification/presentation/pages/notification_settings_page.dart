@@ -6,7 +6,7 @@ import '../../../../services/notification/fcm_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class NotificationSettingsPage extends ConsumerStatefulWidget {
   const NotificationSettingsPage({super.key});
@@ -154,12 +154,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.notifications,
-              color: AppColors.primary,
+              color: TossDesignSystem.tossBlue,
               size: 28,
             ),
           ),
@@ -199,7 +199,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               });
               _saveSettings();
             },
-            activeColor: AppColors.primary,
+            activeColor: TossDesignSystem.tossBlue,
           ),
         ],
       ),
@@ -230,7 +230,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 onChanged: _settings.enabled ? (value) {
                   // Handle push notification toggle
                 } : null,
-                activeColor: AppColors.primary,
+                activeColor: TossDesignSystem.tossBlue,
               ),
             ],
           ),
@@ -264,7 +264,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               Switch(
                 value: false,
                 onChanged: null,
-                activeColor: AppColors.primary,
+                activeColor: TossDesignSystem.tossBlue,
               ),
             ],
           ),
@@ -289,7 +289,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 onChanged: _settings.enabled ? (value) {
                   // Handle email notification toggle
                 } : null,
-                activeColor: AppColors.primary,
+                activeColor: TossDesignSystem.tossBlue,
               ),
             ],
           ),
@@ -416,8 +416,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         });
       } : null,
       backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      selectedColor: AppColors.primary.withValues(alpha: 0.2),
-      checkmarkColor: AppColors.primary,
+      selectedColor: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+      checkmarkColor: TossDesignSystem.tossBlue,
     );
   }
 
@@ -434,12 +434,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withValues(alpha: 0.1),
+                  color: TossDesignSystem.gray600.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.wb_sunny,
-                  color: AppColors.secondary,
+                  color: TossDesignSystem.gray600,
                 ),
               ),
               const SizedBox(width: 16),
@@ -481,12 +481,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withValues(alpha: 0.1),
+                  color: TossDesignSystem.gray600.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.nightlight_round,
-                  color: AppColors.secondary,
+                  color: TossDesignSystem.gray600,
                 ),
               ),
               const SizedBox(width: 16),
@@ -515,7 +515,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                   Switch(
                     value: false,
                     onChanged: _settings.enabled ? (value) {} : null,
-                    activeColor: AppColors.primary,
+                    activeColor: TossDesignSystem.tossBlue,
                   ),
                   TextButton(
                     onPressed: null,
@@ -562,7 +562,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       value: label,
       groupValue: isSelected ? label : null,
       onChanged: _settings.enabled ? (value) {} : null,
-      activeColor: AppColors.primary,
+      activeColor: TossDesignSystem.tossBlue,
       contentPadding: EdgeInsets.zero,
     );
   }
@@ -584,12 +584,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.secondary.withValues(alpha: 0.1),
+              color: TossDesignSystem.gray600.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               icon,
-              color: AppColors.secondary,
+              color: TossDesignSystem.gray600,
               size: 20,
             ),
           ),
@@ -617,7 +617,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           Switch(
             value: value && _settings.enabled,
             onChanged: _settings.enabled ? onChanged : null,
-            activeColor: AppColors.secondary,
+            activeColor: TossDesignSystem.gray600,
           ),
         ],
       ),
@@ -631,7 +631,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         icon: const Icon(Icons.notifications_active),
         label: const Text('테스트 알림 보내기'),
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
+          foregroundColor: TossDesignSystem.tossBlue,
         ),
       ),
     );
@@ -647,8 +647,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: AppColors.primary,
-              secondary: AppColors.secondary,
+              primary: TossDesignSystem.tossBlue,
+              secondary: TossDesignSystem.gray600,
             ),
           ),
           child: child!,

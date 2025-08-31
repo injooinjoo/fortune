@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// Collection of infographic widgets for fortune completion page
 class FortuneInfographicWidgets {
@@ -29,7 +29,7 @@ class FortuneInfographicWidgets {
           Text(
             '$score',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: size * 0.3,
               fontWeight: FontWeight.w300,
               letterSpacing: -4,
@@ -45,7 +45,7 @@ class FortuneInfographicWidgets {
           Text(
             message,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 18,
               fontWeight: FontWeight.w400,
               height: 1.4,
@@ -93,8 +93,8 @@ class FortuneInfographicWidgets {
                 child: CircularProgressIndicator(
                   value: score / 100,
                   strokeWidth: 8,
-                  backgroundColor: AppColors.gray100,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.tossBlue),
+                  backgroundColor: TossDesignSystem.gray100,
+                  valueColor: const AlwaysStoppedAnimation<Color>(TossDesignSystem.gray600),
                 ),
               ).animate()
                 .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
@@ -108,7 +108,7 @@ class FortuneInfographicWidgets {
                     Text(
                       '$score',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: TossDesignSystem.gray900,
                         fontSize: size * 0.18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -119,7 +119,7 @@ class FortuneInfographicWidgets {
                     Text(
                       '점',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: TossDesignSystem.gray600,
                         fontSize: size * 0.06,
                         fontWeight: FontWeight.w400,
                       ),
@@ -178,7 +178,7 @@ class FortuneInfographicWidgets {
                 radarBorderData: const BorderSide(color: Colors.transparent),
                 titlePositionPercentageOffset: 0.15, // 텍스트를 차트에서 더 멀리
                 titleTextStyle: const TextStyle(
-                  color: AppColors.textSecondary,
+                  color: TossDesignSystem.gray600,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -266,7 +266,7 @@ class FortuneInfographicWidgets {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.gray200,
+          color: TossDesignSystem.gray200,
           width: 1,
         ),
         boxShadow: [
@@ -282,8 +282,8 @@ class FortuneInfographicWidgets {
           radarTouchData: RadarTouchData(enabled: false),
           dataSets: [
             RadarDataSet(
-              fillColor: AppColors.tossBlue.withOpacity(0.1),
-              borderColor: AppColors.tossBlue,
+              fillColor: TossDesignSystem.gray600.withOpacity(0.1),
+              borderColor: TossDesignSystem.gray600,
               entryRadius: 3,
               dataEntries: scores.entries.map((entry) {
                 return RadarEntry(value: entry.value.toDouble());
@@ -293,10 +293,10 @@ class FortuneInfographicWidgets {
           ],
           radarBackgroundColor: Colors.transparent,
           borderData: FlBorderData(show: false),
-          radarBorderData: BorderSide(color: AppColors.gray200, width: 1),
+          radarBorderData: BorderSide(color: TossDesignSystem.gray200, width: 1),
           titlePositionPercentageOffset: 0.2,
           titleTextStyle: const TextStyle(
-            color: AppColors.textSecondary,
+            color: TossDesignSystem.gray600,
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -309,11 +309,11 @@ class FortuneInfographicWidgets {
           },
           tickCount: 5,
           ticksTextStyle: const TextStyle(
-            color: AppColors.textSecondary,
+            color: TossDesignSystem.gray600,
             fontSize: 9,
           ),
-          tickBorderData: BorderSide(color: AppColors.gray300, width: 1),
-          gridBorderData: BorderSide(color: AppColors.gray200, width: 1),
+          tickBorderData: BorderSide(color: TossDesignSystem.gray300, width: 1),
+          gridBorderData: BorderSide(color: TossDesignSystem.gray200, width: 1),
         ),
       ),
     ).animate()
@@ -466,7 +466,7 @@ class FortuneInfographicWidgets {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppColors.gray200,
+              color: TossDesignSystem.gray200,
               width: 1,
             ),
             boxShadow: [
@@ -483,7 +483,7 @@ class FortuneInfographicWidgets {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppColors.tossBlue,
+                  color: TossDesignSystem.gray600,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
@@ -507,7 +507,7 @@ class FortuneInfographicWidgets {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: TossDesignSystem.gray900,
                         height: 1.3,
                       ),
                     ),
@@ -518,7 +518,7 @@ class FortuneInfographicWidgets {
                         decoration: const BoxDecoration(
                           border: Border(
                             left: BorderSide(
-                              color: AppColors.gray300,
+                              color: TossDesignSystem.gray300,
                               width: 2,
                             ),
                           ),
@@ -527,7 +527,7 @@ class FortuneInfographicWidgets {
                           why,
                           style: const TextStyle(
                             fontSize: 13,
-                            color: AppColors.textSecondary,
+                            color: TossDesignSystem.gray600,
                             height: 1.4,
                           ),
                         ),
@@ -560,7 +560,7 @@ class FortuneInfographicWidgets {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.gray200,
+          color: TossDesignSystem.gray200,
           width: 1,
         ),
         boxShadow: [
@@ -579,12 +579,12 @@ class FortuneInfographicWidgets {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.gray100,
+                  color: TossDesignSystem.gray100,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.auto_awesome_rounded,
-                  color: AppColors.gray600,
+                  color: TossDesignSystem.gray600,
                   size: 20,
                 ),
               ),
@@ -592,7 +592,7 @@ class FortuneInfographicWidgets {
               const Text(
                 '행운 요소',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: TossDesignSystem.gray900,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -625,10 +625,10 @@ class FortuneInfographicWidgets {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.gray50,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.gray200,
+          color: TossDesignSystem.gray200,
           width: 1,
         ),
       ),
@@ -641,7 +641,7 @@ class FortuneInfographicWidgets {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: AppColors.gray200,
+                  color: TossDesignSystem.gray200,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -654,7 +654,7 @@ class FortuneInfographicWidgets {
                 child: Text(
                   title,
                   style: const TextStyle(
-                    color: AppColors.textSecondary,
+                    color: TossDesignSystem.gray600,
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -666,7 +666,7 @@ class FortuneInfographicWidgets {
           Text(
             value,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -952,7 +952,7 @@ class FortuneInfographicWidgets {
               const Text(
                 '일별 운세',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: TossDesignSystem.gray900,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -983,7 +983,7 @@ class FortuneInfographicWidgets {
                               style: TextStyle(
                                 color: index == today 
                                     ? const Color(0xFF4ECDC4)
-                                    : AppColors.textSecondary,
+                                    : TossDesignSystem.gray600,
                                 fontSize: 12,
                                 fontWeight: index == today 
                                     ? FontWeight.w600 
@@ -1089,7 +1089,7 @@ class FortuneInfographicWidgets {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.gray200,
+          color: TossDesignSystem.gray200,
           width: 1,
         ),
         boxShadow: [
@@ -1117,7 +1117,7 @@ class FortuneInfographicWidgets {
                     return Text(
                       '${value.toInt()}',
                       style: const TextStyle(
-                        color: AppColors.textSecondary,
+                        color: TossDesignSystem.gray600,
                         fontSize: 9,
                       ),
                     );
@@ -1140,7 +1140,7 @@ class FortuneInfographicWidgets {
               barRods: [
                 BarChartRodData(
                   toY: score.toDouble(),
-                  color: isCurrent ? AppColors.tossBlue : AppColors.gray300,
+                  color: isCurrent ? TossDesignSystem.gray600 : TossDesignSystem.gray300,
                   width: 3,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
                 ),
@@ -1236,7 +1236,7 @@ class FortuneInfographicWidgets {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.gray200,
+          color: TossDesignSystem.gray200,
           width: 1,
         ),
         boxShadow: [
@@ -1255,12 +1255,12 @@ class FortuneInfographicWidgets {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.gray100,
+                  color: TossDesignSystem.gray100,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.psychology,
-                  color: AppColors.gray600,
+                  color: TossDesignSystem.gray600,
                   size: 20,
                 ),
               ),
@@ -1268,7 +1268,7 @@ class FortuneInfographicWidgets {
               const Text(
                 'AI 인사이트',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: TossDesignSystem.gray900,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1279,7 +1279,7 @@ class FortuneInfographicWidgets {
           Text(
             insight,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 15,
               height: 1.6,
             ),
@@ -1296,7 +1296,7 @@ class FortuneInfographicWidgets {
                     width: 4,
                     height: 4,
                     decoration: const BoxDecoration(
-                      color: AppColors.gray400,
+                      color: TossDesignSystem.gray400,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1305,7 +1305,7 @@ class FortuneInfographicWidgets {
                     child: Text(
                       tip,
                       style: const TextStyle(
-                        color: AppColors.textSecondary,
+                        color: TossDesignSystem.gray600,
                         fontSize: 14,
                         height: 1.5,
                       ),
@@ -1333,7 +1333,7 @@ class FortuneInfographicWidgets {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.gray200,
+          color: TossDesignSystem.gray200,
           width: 1,
         ),
         boxShadow: [
@@ -1384,12 +1384,12 @@ class FortuneInfographicWidgets {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: AppColors.gray100,
+            color: TossDesignSystem.gray100,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(
             icon,
-            color: AppColors.gray600,
+            color: TossDesignSystem.gray600,
             size: 16,
           ),
         ),
@@ -1397,7 +1397,7 @@ class FortuneInfographicWidgets {
         Text(
           value,
           style: const TextStyle(
-            color: AppColors.textPrimary,
+            color: TossDesignSystem.gray900,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -1406,7 +1406,7 @@ class FortuneInfographicWidgets {
         Text(
           label,
           style: const TextStyle(
-            color: AppColors.textSecondary,
+            color: TossDesignSystem.gray600,
             fontSize: 11,
           ),
         ),
@@ -1530,7 +1530,7 @@ class FortuneInfographicWidgets {
           const Text(
             '행운을 가져오는 것들',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 18,
               fontWeight: FontWeight.w700, // 토스 스타일 굵은 제목
             ),
@@ -1555,7 +1555,7 @@ class FortuneInfographicWidgets {
                   Text(
                     item['label']!,
                     style: const TextStyle(
-                      color: AppColors.textSecondary,
+                      color: TossDesignSystem.gray600,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1565,7 +1565,7 @@ class FortuneInfographicWidgets {
                     child: Text(
                       item['value']!,
                       style: const TextStyle(
-                        color: AppColors.textPrimary,
+                        color: TossDesignSystem.gray900,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1609,7 +1609,7 @@ class FortuneInfographicWidgets {
           Text(
             title,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -1618,7 +1618,7 @@ class FortuneInfographicWidgets {
           Text(
             description,
             style: const TextStyle(
-              color: AppColors.textSecondary,
+              color: TossDesignSystem.gray600,
               fontSize: 14,
               height: 1.5,
             ),
@@ -1633,7 +1633,7 @@ class FortuneInfographicWidgets {
                     width: 6,
                     height: 6,
                     decoration: const BoxDecoration(
-                      color: AppColors.tossBlue,
+                      color: TossDesignSystem.gray600,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1642,7 +1642,7 @@ class FortuneInfographicWidgets {
                     child: Text(
                       item,
                       style: const TextStyle(
-                        color: AppColors.textPrimary,
+                        color: TossDesignSystem.gray900,
                         fontSize: 14,
                         height: 1.4,
                       ),
@@ -1684,7 +1684,7 @@ class FortuneInfographicWidgets {
           Text(
             title,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -1694,7 +1694,7 @@ class FortuneInfographicWidgets {
             Text(
               subtitle,
               style: const TextStyle(
-                color: AppColors.textSecondary,
+                color: TossDesignSystem.gray600,
                 fontSize: 14,
               ),
             ),
@@ -1704,10 +1704,10 @@ class FortuneInfographicWidgets {
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.gray50,
+              color: TossDesignSystem.gray50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppColors.gray200,
+                color: TossDesignSystem.gray200,
                 width: 1,
               ),
             ),
@@ -1717,14 +1717,14 @@ class FortuneInfographicWidgets {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.gray300,
+                    color: TossDesignSystem.gray300,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
                     child: Text(
                       celeb['year'] ?? '',
                       style: const TextStyle(
-                        color: AppColors.textPrimary,
+                        color: TossDesignSystem.gray900,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1739,7 +1739,7 @@ class FortuneInfographicWidgets {
                       Text(
                         celeb['name'] ?? '',
                         style: const TextStyle(
-                          color: AppColors.textPrimary,
+                          color: TossDesignSystem.gray900,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1749,7 +1749,7 @@ class FortuneInfographicWidgets {
                         Text(
                           celeb['description']!,
                           style: const TextStyle(
-                            color: AppColors.textSecondary,
+                            color: TossDesignSystem.gray600,
                             fontSize: 12,
                           ),
                         ),
@@ -1795,7 +1795,7 @@ class FortuneInfographicWidgets {
               Text(
                 ageGroup,
                 style: const TextStyle(
-                  color: AppColors.textPrimary,
+                  color: TossDesignSystem.gray900,
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1805,13 +1805,13 @@ class FortuneInfographicWidgets {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.gray100,
+                    color: TossDesignSystem.gray100,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     zodiacAnimal,
                     style: const TextStyle(
-                      color: AppColors.textSecondary,
+                      color: TossDesignSystem.gray600,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1824,7 +1824,7 @@ class FortuneInfographicWidgets {
           Text(
             title,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: TossDesignSystem.gray900,
               fontSize: 16,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -1834,7 +1834,7 @@ class FortuneInfographicWidgets {
           Text(
             description,
             style: const TextStyle(
-              color: AppColors.textSecondary,
+              color: TossDesignSystem.gray600,
               fontSize: 14,
               height: 1.5,
             ),

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
@@ -134,24 +134,24 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
     final statsAsync = ref.watch(userStatisticsProvider);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
           onPressed: () => context.pop()),
         title: Text(
           '상세 통계',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: TossDesignSystem.gray900,
             fontSize: 18 * fontScale,
             fontWeight: FontWeight.w600)),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textSecondary,
-          indicatorColor: AppColors.primary,
+          labelColor: TossDesignSystem.tossBlue,
+          unselectedLabelColor: TossDesignSystem.gray600,
+          indicatorColor: TossDesignSystem.tossBlue,
           indicatorWeight: 3,
           tabs: const [
             Tab(text: '개요'),
@@ -159,7 +159,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             Tab(text: '성과 지표')])),
       body: statsAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary)),
+          child: CircularProgressIndicator(color: TossDesignSystem.tossBlue)),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -256,21 +256,21 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                       style: TextStyle(
                         fontSize: 16 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary))]),
+                        color: TossDesignSystem.tossBlue))]),
                 const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
                     value: stats.profileCompletion,
-                    backgroundColor: AppColors.divider,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    backgroundColor: TossDesignSystem.gray200,
+                    valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
                     minHeight: 8)),
                 const SizedBox(height: 8),
                 Text(
                   '프로필을 완성하면 더 정확한 운세를 받을 수 있어요',
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: AppColors.textSecondary)]),
+                    color: TossDesignSystem.gray600)]),
           
           // Token Statistics
           const SizedBox(height: 24),
@@ -306,7 +306,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           '획득',
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: AppColors.textSecondary)),
+                            color: TossDesignSystem.gray600)),
                         const SizedBox(height: 4),
                         Text(
                           '${stats.totalTokensEarned}',
@@ -317,14 +317,14 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                     Container(
                       width: 1,
                       height: 40,
-                      color: AppColors.divider),
+                      color: TossDesignSystem.gray200),
                     Column(
                       children: [
                         Text(
                           '사용',
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: AppColors.textSecondary)),
+                            color: TossDesignSystem.gray600)),
                         const SizedBox(height: 4),
                         Text(
                           '${stats.totalTokensSpent}',
@@ -335,21 +335,21 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                     Container(
                       width: 1,
                       height: 40,
-                      color: AppColors.divider),
+                      color: TossDesignSystem.gray200),
                     Column(
                       children: [
                         Text(
                           '잔액',
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: AppColors.textSecondary)),
+                            color: TossDesignSystem.gray600)),
                         const SizedBox(height: 4),
                         Text(
                           '${stats.totalTokensEarned - stats.totalTokensSpent}',
                           style: TextStyle(
                             fontSize: 20 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary))])])])),
+                            color: TossDesignSystem.tossBlue))])])])),
           
           // Achievements
           const SizedBox(height: 24),
@@ -383,7 +383,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                       style: TextStyle(
                         fontSize: 16 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary))]),
+                        color: TossDesignSystem.tossBlue))]),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
@@ -453,7 +453,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                 weekDays[value.toInt()],
                                 style: TextStyle(
                                   fontSize: 12 * fontScale,
-                                  color: AppColors.textSecondary));
+                                  color: TossDesignSystem.gray600));
                             })),
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -463,7 +463,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                 value.toInt().toString(),
                                 style: TextStyle(
                                   fontSize: 10 * fontScale,
-                                  color: AppColors.textSecondary));
+                                  color: TossDesignSystem.gray600));
                             })),
                       borderData: FlBorderData(show: false),
                       barGroups: stats.weeklyActivity
@@ -476,8 +476,8 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                     toY: entry.value.count.toDouble(),
                                     gradient: LinearGradient(
                                       colors: [
-                                        AppColors.primary,
-                                        AppColors.primary.withOpacity(0.7)],
+                                        TossDesignSystem.tossBlue,
+                                        TossDesignSystem.tossBlue.withOpacity(0.7)],
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter),
                                     width: 24,
@@ -520,19 +520,19 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                               entry.key,
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: AppColors.textPrimary)),
+                                color: TossDesignSystem.gray900)),
                             Text(
                               '$percentage%',
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary))]),
+                                color: TossDesignSystem.gray900))]),
                         const SizedBox(height: 8),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
                             value: entry.value,
-                            backgroundColor: AppColors.divider,
+                            backgroundColor: TossDesignSystem.gray200,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               _getCategoryColor(entry.key)),
                             minHeight: 6)]);
@@ -576,7 +576,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                     ? Colors.grey[400] 
                                     : index == 2 
                                         ? Colors.orange[700] 
-                                        : AppColors.divider,
+                                        : TossDesignSystem.gray200,
                             shape: BoxShape.circle),
                           child: Center(
                             child: Text(
@@ -584,7 +584,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: index < 3 ? Colors.white : AppColors.textSecondary)),
+                                color: index < 3 ? Colors.white : TossDesignSystem.gray600)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -597,7 +597,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           style: TextStyle(
                             fontSize: 14 * fontScale,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.primary)]);
+                            color: TossDesignSystem.tossBlue)]);
                 })])]);
   }
   
@@ -632,14 +632,14 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: TossDesignSystem.tossBlue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       child: Text(
                         '평균 ${stats.averageFortuneScore.toStringAsFixed(1)}점',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.primary)))]),
+                          color: TossDesignSystem.tossBlue)))]),
                 const SizedBox(height: 24),
                 SizedBox(
                   height: 200,
@@ -651,7 +651,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                         horizontalInterval: 20,
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: AppColors.divider,
+                            color: TossDesignSystem.gray200,
                             strokeWidth: 1);
                         }),
                       titlesData: FlTitlesData(
@@ -669,7 +669,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                   '${value.toInt()}일',
                                   style: TextStyle(
                                     fontSize: 10 * fontScale,
-                                    color: AppColors.textSecondary));
+                                    color: TossDesignSystem.gray600));
                               }
                               return const SizedBox.shrink();
                             })),
@@ -683,7 +683,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                 value.toInt().toString(),
                                 style: TextStyle(
                                   fontSize: 10 * fontScale,
-                                  color: AppColors.textSecondary));
+                                  color: TossDesignSystem.gray600));
                             })),
                       borderData: FlBorderData(show: false),
                       minX: 0,
@@ -702,16 +702,16 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           isCurved: true,
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primary,
-                              AppColors.primary.withOpacity(0.7)]),
+                              TossDesignSystem.tossBlue,
+                              TossDesignSystem.tossBlue.withOpacity(0.7)]),
                           barWidth: 3,
                           dotData: FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.primary.withOpacity(0.3),
-                                AppColors.primary.withOpacity(0.1)],
+                                TossDesignSystem.tossBlue.withOpacity(0.3),
+                                TossDesignSystem.tossBlue.withOpacity(0.1)],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter))]))])),
           
@@ -764,24 +764,24 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.1),
-                  AppColors.primary.withOpacity(0.05)]),
+                  TossDesignSystem.tossBlue.withOpacity(0.1),
+                  TossDesignSystem.tossBlue.withOpacity(0.05)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.2)),
+                color: TossDesignSystem.tossBlue.withOpacity(0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.insights, color: AppColors.primary),
+                    const Icon(Icons.insights, color: TossDesignSystem.tossBlue),
                     const SizedBox(width: 8),
                     Text(
                       'AI 인사이트',
                       style: TextStyle(
                         fontSize: 16 * fontScale,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primary))]),
+                        color: TossDesignSystem.tossBlue))]),
                 const SizedBox(height: 16),
                 _buildInsightItem(
                   '운세 점수가 꾸준히 상승하고 있어요! 긍정적인 마인드가 좋은 운을 불러오는 것 같네요.',
@@ -827,37 +827,37 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   title,
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: AppColors.textSecondary)))]),
+                    color: TossDesignSystem.gray600)))]),
           const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
               fontSize: 20 * fontScale,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary)]);
+              color: TossDesignSystem.gray900)]);
   }
   
   Widget _buildAchievementBadge(String name, bool isUnlocked, double fontScale) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isUnlocked ? Colors.amber.withOpacity(0.2) : AppColors.divider,
+        color: isUnlocked ? Colors.amber.withOpacity(0.2) : TossDesignSystem.gray200,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isUnlocked ? Colors.amber : AppColors.divider)),
+          color: isUnlocked ? Colors.amber : TossDesignSystem.gray200)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             isUnlocked ? Icons.emoji_events : Icons.lock_outline,
             size: 16,
-            color: isUnlocked ? Colors.amber : AppColors.textSecondary),
+            color: isUnlocked ? Colors.amber : TossDesignSystem.gray600),
           const SizedBox(width: 4),
           Text(
             name,
             style: TextStyle(
               fontSize: 12 * fontScale,
-              color: isUnlocked ? Colors.amber[800] : AppColors.textSecondary,
+              color: isUnlocked ? Colors.amber[800] : TossDesignSystem.gray600,
               fontWeight: isUnlocked ? FontWeight.w600 : FontWeight.normal)]);
   }
   
@@ -873,15 +873,15 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.white,
+          color: isSelected ? TossDesignSystem.tossBlue : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider)),
+            color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200)),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 14 * fontScale,
-            color: isSelected ? Colors.white : AppColors.textSecondary,
+            color: isSelected ? Colors.white : TossDesignSystem.gray600,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal)));
   }
   
@@ -914,7 +914,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   title,
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: AppColors.textSecondary)))]),
+                    color: TossDesignSystem.gray600)))]),
           const SizedBox(height: 8),
           Text(
             value,
@@ -927,7 +927,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             subtitle,
             style: TextStyle(
               fontSize: 11 * fontScale,
-              color: AppColors.textSecondary)]);
+              color: TossDesignSystem.gray600)]);
   }
   
   Widget _buildInsightItem(String text, double fontScale) {
@@ -941,7 +941,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: TossDesignSystem.tossBlue,
               borderRadius: BorderRadius.circular(3),
           const SizedBox(width: 12),
           Expanded(
@@ -949,7 +949,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               text,
               style: TextStyle(
                 fontSize: 14 * fontScale,
-                color: AppColors.textPrimary,
+                color: TossDesignSystem.gray900,
                 height: 1.5))]);
   }
   
@@ -966,7 +966,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
       case '성격/심리':
         return Colors.purple;
       default:
-        return AppColors.primary;
+        return TossDesignSystem.tossBlue;
     }
   }
 }

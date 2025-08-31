@@ -3,7 +3,7 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class FortuneCard extends StatelessWidget {
   final IconData icon;
@@ -48,7 +48,7 @@ class FortuneCard extends StatelessWidget {
     if (gradient != null && !isDarkMode) {
       // Light mode에서는 밝은 색상으로 변경
       adjustedGradient = lightModeGradients[gradient!.first.value] ?? 
-          gradient!.map((color) => Color.lerp(color, AppColors.textPrimaryDark, 0.85)!).toList();
+          gradient!.map((color) => Color.lerp(color, TossDesignSystem.grayDark900, 0.85)!).toList();
     } else {
       adjustedGradient = gradient;
     }
@@ -65,7 +65,7 @@ class FortuneCard extends StatelessWidget {
                   colors: adjustedGradient)
               : null,
           color: adjustedGradient == null 
-              ? (backgroundColor ?? (isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark)) 
+              ? (backgroundColor ?? (isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900)) 
               : null,
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
           boxShadow: [
@@ -95,13 +95,13 @@ class FortuneCard extends StatelessWidget {
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withOpacity(0.2),
+                        color: TossDesignSystem.grayDark900.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge)),
                       child: Icon(
                         icon,
                         size: AppDimensions.iconSizeLarge,
                         color: adjustedGradient != null 
-                            ? (isDarkMode ? AppColors.textPrimaryDark : (iconColor ?? theme.colorScheme.primary))
+                            ? (isDarkMode ? TossDesignSystem.grayDark900 : (iconColor ?? theme.colorScheme.primary))
                             : (iconColor ?? theme.colorScheme.primary),
                       ),
                     ),
@@ -111,7 +111,7 @@ class FortuneCard extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: adjustedGradient != null 
-                          ? (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
+                          ? (isDarkMode ? TossDesignSystem.grayDark900 : theme.colorScheme.onSurface)
                           : theme.colorScheme.onSurface,
                       letterSpacing: -0.5),
                     textAlign: TextAlign.center,
@@ -123,7 +123,7 @@ class FortuneCard extends StatelessWidget {
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: adjustedGradient != null 
                           ? (isDarkMode 
-                              ? AppColors.textPrimaryDark.withOpacity(0.9) 
+                              ? TossDesignSystem.grayDark900.withOpacity(0.9) 
                               : theme.colorScheme.onSurface.withOpacity(0.6))
                           : theme.colorScheme.onSurface.withOpacity(0.6),
                       fontWeight: FontWeight.w400),
@@ -137,13 +137,13 @@ class FortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3,
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withOpacity(0.2),
+                        color: TossDesignSystem.grayDark900.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                       child: Text(
                         badge!,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: adjustedGradient != null 
-                              ? (isDarkMode ? AppColors.textPrimaryDark : theme.textTheme.bodyMedium?.color)
+                              ? (isDarkMode ? TossDesignSystem.grayDark900 : theme.textTheme.bodyMedium?.color)
                               : theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w600)),
                     ),

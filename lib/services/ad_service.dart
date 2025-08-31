@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:io';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter/material.dart' show VoidCallback;
@@ -320,20 +322,20 @@ class AdService {
             mainBackgroundColor: const material.Color(0xFFF5F5F5),
             cornerRadius: 8.0,
             callToActionTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimaryDark,
+              textColor: TossDesignSystem.gray900,
               backgroundColor: const material.Color(0xFF4285F4),
               style: NativeTemplateFontStyle.bold,
               size: 16.0),
             primaryTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimary.withOpacity(0.87),
+              textColor: TossDesignSystem.gray900.withOpacity(0.87),
               style: NativeTemplateFontStyle.normal,
               size: 16.0),
             secondaryTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimary.withOpacity(0.54),
+              textColor: TossDesignSystem.gray900.withOpacity(0.54),
               style: NativeTemplateFontStyle.normal,
               size: 14.0),
             tertiaryTextStyle: NativeTemplateTextStyle(
-              textColor: AppColors.textPrimary.withOpacity(0.54),
+              textColor: TossDesignSystem.gray900.withOpacity(0.54),
               style: NativeTemplateFontStyle.normal,
               size: 12.0)));
   }

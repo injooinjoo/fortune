@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class FortuneContentCard extends StatelessWidget {
   final Fortune fortune;
@@ -13,7 +11,7 @@ class FortuneContentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: AppSpacing.paddingAll20,
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -25,7 +23,7 @@ class FortuneContentCard extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: AppSpacing.spacing3),
+              const SizedBox(height: TossDesignSystem.spacingS),
               Text(
                 fortune.content,
                 style: Theme.of(context)
@@ -33,7 +31,7 @@ class FortuneContentCard extends StatelessWidget {
                     .bodyLarge
                     ?.copyWith(height: 1.6),
               ),
-              const SizedBox(height: AppSpacing.spacing6),
+              const SizedBox(height: TossDesignSystem.spacingL),
             ],
 
             if (fortune.scoreBreakdown != null &&
@@ -45,9 +43,9 @@ class FortuneContentCard extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: AppSpacing.spacing4),
+              const SizedBox(height: TossDesignSystem.spacingM),
               ..._buildScoreBreakdown(context),
-              const SizedBox(height: AppSpacing.spacing6),
+              const SizedBox(height: TossDesignSystem.spacingL),
             ],
 
             if (fortune.luckyItems != null &&
@@ -59,9 +57,9 @@ class FortuneContentCard extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: AppSpacing.spacing4),
+              const SizedBox(height: TossDesignSystem.spacingM),
               _buildLuckyItems(context),
-              const SizedBox(height: AppSpacing.spacing6),
+              const SizedBox(height: TossDesignSystem.spacingL),
             ],
 
             if (fortune.recommendations != null &&
@@ -73,20 +71,20 @@ class FortuneContentCard extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: AppSpacing.spacing3),
+              const SizedBox(height: TossDesignSystem.spacingS),
               ...fortune.recommendations!.map(
                 (rec) => Padding(
                   padding:
-                      const EdgeInsets.only(bottom: AppSpacing.spacing2),
+                      const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: context.fortuneTheme.successColor,
+                        color: TossDesignSystem.successGreen,
                       ),
-                      const SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
                         child: Text(
                           rec,
@@ -97,7 +95,7 @@ class FortuneContentCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.spacing4),
+              const SizedBox(height: TossDesignSystem.spacingM),
             ],
 
             if (fortune.warnings != null &&
@@ -109,20 +107,20 @@ class FortuneContentCard extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: AppSpacing.spacing3),
+              const SizedBox(height: TossDesignSystem.spacingS),
               ...fortune.warnings!.map(
                 (warning) => Padding(
                   padding:
-                      const EdgeInsets.only(bottom: AppSpacing.spacing2),
+                      const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(
                         Icons.warning_amber,
                         size: 20,
-                        color: context.fortuneTheme.warningColor,
+                        color: TossDesignSystem.warningOrange,
                       ),
-                      const SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
                         child: Text(
                           warning,
@@ -142,11 +140,12 @@ class FortuneContentCard extends StatelessWidget {
 
   List<Widget> _buildScoreBreakdown(BuildContext context) {
     final scoreBreakdown = fortune.scoreBreakdown!;
-    final categories = <(String, String, IconData, Color)>[
-      ('love', '연애운', Icons.favorite_border, Colors.pink),
-      ('career', '직장운', Icons.work, Colors.blue),
-      ('money', '금전운', Icons.monetization_on, Colors.amber),
-      ('health', '건강운', Icons.favorite_border, Colors.green),
+    final categories = [
+      ('총운', '종합적인 운세', Icons.stars, TossDesignSystem.tossBlue),
+      ('애정운', '연애와 인간관계', Icons.favorite, Colors.pink),
+      ('금전운', '재물과 금전', Icons.attach_money, TossDesignSystem.warningOrange),
+      ('직장운', '직장과 업무', Icons.work, TossDesignSystem.purple),
+      ('건강운', '건강과 체력', Icons.favorite_border, TossDesignSystem.successGreen),
     ];
 
     return categories.map((category) {
@@ -155,20 +154,19 @@ class FortuneContentCard extends StatelessWidget {
       if (score == null) return const SizedBox.shrink();
 
       return Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.spacing3),
+        padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
         child: Row(
           children: [
             Container(
               width: 40,
-              height: AppDimensions.buttonHeightSmall,
+              height: 40,
               decoration: BoxDecoration(
-                color: category.$4.withValues(alpha: 0.1),
-                borderRadius:
-                    BorderRadius.circular(AppSpacing.spacing2 * 1.25),
+                color: category.$4.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
               ),
               child: Icon(category.$3, size: 20, color: category.$4),
             ),
-            const SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: TossDesignSystem.spacingS),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,11 +175,8 @@ class FortuneContentCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        category.$2,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        category.$1,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
                         '$score/100',
@@ -192,14 +187,13 @@ class FortuneContentCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.spacing1),
+                  const SizedBox(height: TossDesignSystem.spacingXS),
                   ClipRRect(
-                    borderRadius: AppDimensions.borderRadiusSmall,
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
                     child: LinearProgressIndicator(
                       value: score.toDouble() / 100,
-                      backgroundColor: category.$4.withValues(alpha: 0.2),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(category.$4),
+                      backgroundColor: category.$4.withOpacity(0.2),
+                      valueColor: AlwaysStoppedAnimation<Color>(category.$4),
                       minHeight: 8,
                     ),
                   ),
@@ -214,60 +208,32 @@ class FortuneContentCard extends StatelessWidget {
 
   Widget _buildLuckyItems(BuildContext context) {
     final luckyItems = fortune.luckyItems!;
-    final items = <Widget>[];
-
-    final colorName = luckyItems['color'] as String?;
-    if (colorName != null && colorName.isNotEmpty) {
-      items.add(_buildLuckyItem(
-        context,
-        '행운의 색',
-        Icons.palette,
-        colorName,
-        _getColorFromName(colorName),
-      ));
-    }
-
-    final number = luckyItems['number'];
-    if (number != null) {
-      items.add(_buildLuckyItem(
-        context,
-        '행운의 숫자',
-        Icons.filter_9_plus,
-        number.toString(),
-        Theme.of(context).colorScheme.primary,
-      ));
-    }
-
-    final direction = luckyItems['direction'] as String?;
-    if (direction != null && direction.isNotEmpty) {
-      items.add(_buildLuckyItem(
-        context,
-        '행운의 방향',
-        Icons.explore,
-        direction,
-        Colors.blue,
-      ));
-    }
-
-    final time = luckyItems['time'] as String?;
-    if (time != null && time.isNotEmpty) {
-      items.add(_buildLuckyItem(
-        context,
-        '행운의 시간',
-        Icons.access_time,
-        time,
-        Colors.orange,
-      ));
-    }
+    final itemTypes = [
+      ('색상', Icons.palette, TossDesignSystem.purple),
+      ('숫자', Icons.looks_one, TossDesignSystem.tossBlue),
+      ('방향', Icons.explore, TossDesignSystem.successGreen),
+      ('음식', Icons.restaurant, TossDesignSystem.warningOrange),
+    ];
 
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: items,
+      spacing: TossDesignSystem.spacingS,
+      runSpacing: TossDesignSystem.spacingS,
+      children: itemTypes.map((type) {
+        final value = luckyItems[type.$1];
+        if (value == null) return const SizedBox.shrink();
+
+        return _buildLuckyItemChip(
+          context,
+          type.$1,
+          type.$2,
+          value.toString(),
+          type.$3,
+        );
+      }).toList(),
     );
   }
 
-  Widget _buildLuckyItem(
+  Widget _buildLuckyItemChip(
     BuildContext context,
     String label,
     IconData icon,
@@ -276,26 +242,26 @@ class FortuneContentCard extends StatelessWidget {
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.spacing4,
-        vertical: AppSpacing.spacing3,
+        horizontal: TossDesignSystem.spacingM,
+        vertical: TossDesignSystem.spacingS,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 20, color: color),
-          const SizedBox(width: AppSpacing.spacing2),
+          const SizedBox(width: TossDesignSystem.spacingS),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: context.fortuneTheme.subtitleText,
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                     ),
               ),
               Text(
@@ -303,30 +269,12 @@ class FortuneContentCard extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.bold, color: color),
+                    ?.copyWith(fontWeight: FontWeight.w600, color: color),
               ),
             ],
           ),
         ],
       ),
     );
-  }
-
-  Color _getColorFromName(String colorName) {
-    final colorMap = <String, Color>{
-      '빨강': Colors.red,
-      '파랑': Colors.blue,
-      '노랑': Colors.yellow,
-      '초록': Colors.green,
-      '보라': Colors.purple,
-      '주황': Colors.orange,
-      '분홍': Colors.pink,
-      '하늘': Colors.lightBlue,
-      '검정': Colors.black,
-      '흰색': Colors.white,
-      '회색': Colors.grey,
-    };
-
-    return colorMap[colorName] ?? Colors.grey;
   }
 }

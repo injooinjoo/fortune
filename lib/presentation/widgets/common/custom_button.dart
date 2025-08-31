@@ -2,7 +2,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 enum ButtonVariant {
   
@@ -49,7 +49,7 @@ class CustomButton extends StatelessWidget {
     switch (variant) {
       case ButtonVariant.primary:
         bgColor = backgroundColor ?? theme.primaryColor;
-        fgColor = textColor ?? AppColors.textPrimaryDark;
+        fgColor = textColor ?? TossDesignSystem.grayDark900;
         break;
       case ButtonVariant.secondary:
         bgColor = backgroundColor ?? theme.primaryColor.withOpacity(0.1);
@@ -78,7 +78,7 @@ class CustomButton extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  variant == ButtonVariant.primary ? AppColors.textPrimaryDark : theme.primaryColor)))
+                  variant == ButtonVariant.primary ? TossDesignSystem.grayDark900 : theme.primaryColor)))
           : Text(
               text,
               style: Theme.of(context).textTheme.titleMedium));

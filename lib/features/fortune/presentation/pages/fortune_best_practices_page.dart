@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
 
@@ -123,26 +123,26 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           '운세 활용법',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: TossDesignSystem.gray900,
             fontSize: 18,
             fontWeight: FontWeight.w600),
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textSecondary,
-          indicatorColor: AppColors.primary,
+          labelColor: TossDesignSystem.tossBlue,
+          unselectedLabelColor: TossDesignSystem.gray600,
+          indicatorColor: TossDesignSystem.tossBlue,
           indicatorWeight: 3,
           tabs: const [
             Tab(text: '기본 가이드'),
@@ -166,13 +166,13 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary.withOpacity(0.1),
-                        AppColors.primary.withOpacity(0.05)],
+                        TossDesignSystem.tossBlue.withOpacity(0.1),
+                        TossDesignSystem.tossBlue.withOpacity(0.05)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppColors.primary.withOpacity(0.2)),
+                      color: TossDesignSystem.tossBlue.withOpacity(0.2)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,12 +182,12 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.2),
+                              color: TossDesignSystem.tossBlue.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
                               Icons.auto_awesome,
-                              color: AppColors.primary,
+                              color: TossDesignSystem.tossBlue,
                               size: 24),
                           ),
                           const SizedBox(width: 12),
@@ -196,7 +196,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                             style: TextStyle(
                               fontSize: 18 * fontScale,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary)),
+                              color: TossDesignSystem.gray900)),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -204,7 +204,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',
                         style: TextStyle(
                           fontSize: 14 * fontScale,
-                          color: AppColors.textSecondary,
+                          color: TossDesignSystem.gray600,
                           height: 1.5),
                       ),
                     ],
@@ -299,14 +299,14 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             style: TextStyle(
               fontSize: 16 * fontScale,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary),
+              color: TossDesignSystem.gray900),
           ),
           trailing: AnimatedRotation(
             turns: isExpanded ? 0.5 : 0,
             duration: const Duration(milliseconds: 200),
             child: Icon(
               Icons.expand_more,
-              color: AppColors.textSecondary),
+              color: TossDesignSystem.gray600),
           ),
           children: [
             Container(
@@ -326,10 +326,10 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.divider)),
+          color: TossDesignSystem.gray200)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -338,14 +338,14 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
             style: TextStyle(
               fontSize: 15 * fontScale,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary),
+              color: TossDesignSystem.gray900),
           ),
           const SizedBox(height: 8),
           Text(
             item.content,
             style: TextStyle(
               fontSize: 14 * fontScale,
-              color: AppColors.textSecondary,
+              color: TossDesignSystem.gray600,
               height: 1.5),
           ),
         ],
@@ -379,12 +379,12 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.verified_user,
-                  color: AppColors.primary,
+                  color: TossDesignSystem.tossBlue,
                   size: 20),
               ),
               const SizedBox(width: 12),
@@ -397,14 +397,14 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                       style: TextStyle(
                         fontSize: 16 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary),
+                        color: TossDesignSystem.gray900),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       content,
                       style: TextStyle(
                         fontSize: 13 * fontScale,
-                        color: AppColors.textSecondary),
+                        color: TossDesignSystem.gray600),
                     ),
                   ],
                 ),
@@ -422,7 +422,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                       width: 6,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: TossDesignSystem.tossBlue,
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
@@ -432,7 +432,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                         tip,
                         style: TextStyle(
                           fontSize: 14 * fontScale,
-                          color: AppColors.textPrimary,
+                          color: TossDesignSystem.gray900,
                           height: 1.5),
                       ),
                     ),

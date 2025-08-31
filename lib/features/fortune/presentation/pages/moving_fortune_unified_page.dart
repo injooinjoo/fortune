@@ -1,5 +1,5 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,8 +12,8 @@ import '../widgets/enhanced_date_picker.dart';
 import '../widgets/map_location_picker.dart';
 import '../widgets/enhanced_moving_result.dart';
 import '../../../../core/utils/auspicious_days_calculator.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+
+import '../../../../core/theme/toss_design_system.dart';
 
 class MovingFortuneUnifiedPage extends ConsumerWidget {
   const MovingFortuneUnifiedPage({super.key});
@@ -26,7 +26,7 @@ class MovingFortuneUnifiedPage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
-    colors: [AppColors.primary, AppColors.info]),
+    colors: [TossDesignSystem.tossBlue, TossDesignSystem.infoBlueBlue]),
       inputBuilder: (context, onSubmit) => _UnifiedMovingInputForm(onSubmit: onSubmit),
     resultBuilder: (context, result, onShare) => _UnifiedMovingFortuneResult(
         result: result);
@@ -175,10 +175,10 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
       children: [
         // Token cost display
         Container(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+          padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingS),
     decoration: BoxDecoration(
             color: theme.colorScheme.primary.withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     border: Border.all(
               color: theme.colorScheme.primary.withOpacity(0.3)),
     child: Row(
@@ -186,8 +186,8 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
               Icon(
                 Icons.toll);
                 color: theme.colorScheme.primary),
-    size: AppDimensions.iconSizeSmall),
-              SizedBox(width: AppSpacing.spacing2),
+    size: TossDesignSystem.iconSizeSmall),
+              SizedBox(width: TossDesignSystem.spacingS),
               Text(
                 'Fortune cached',
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -199,19 +199,19 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                   '고급 기능 사용 중',
                   style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.primary)]),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         Text(
           '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.');
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
     height: 1.5),
-        SizedBox(height: AppSpacing.spacing6),
+        SizedBox(height: TossDesignSystem.spacingL),
         
         // Basic Information Section
         _buildBasicInformationSection(theme),
         
-        SizedBox(height: AppSpacing.spacing6),
+        SizedBox(height: TossDesignSystem.spacingL),
         
         // Enhanced Options Toggle
         GlassContainer(
@@ -221,9 +221,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                 _showEnhancedOptions = !_showEnhancedOptions;
               });
             },
-            borderRadius: AppDimensions.borderRadiusMedium),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Padding(
-              padding: AppSpacing.paddingAll16);
+              padding: const EdgeInsets.all(16));
               child: Row(
                 children: [
                   Icon(
@@ -231,7 +231,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                         ? Icons.expand_less 
                         : Icons.expand_more);
                     color: theme.colorScheme.primary),
-                  SizedBox(width: AppSpacing.spacing3),
+                  SizedBox(width: TossDesignSystem.spacingS),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,16 +241,16 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold);
                             color: theme.colorScheme.primary)),
-                        SizedBox(height: AppSpacing.spacing1),
+                        SizedBox(height: TossDesignSystem.spacingXS),
                         Text(
                           '지도 선택, 손없는날 계산, 지역 상세 분석',
                           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.7)]),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+                    padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS),
     decoration: BoxDecoration(
                       color: theme.colorScheme.secondary.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
+    borderRadius: BorderRadius.circular(20)),
     child: Text(
                       '+${tokenCost - 3} 토큰');
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -259,9 +259,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         
         // Enhanced Options Section
         if (_showEnhancedOptions) ...[
-          SizedBox(height: AppSpacing.spacing5),
+          SizedBox(height: TossDesignSystem.spacingM),
           _buildEnhancedOptionsSection(theme)]),
-            SizedBox(height: AppSpacing.spacing8),
+            SizedBox(height: TossDesignSystem.spacingXL),
         
         // Submit Button
         SizedBox(
@@ -269,9 +269,9 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
           child: ElevatedButton(
             onPressed: _validateAndSubmit);
             style: ElevatedButton.styleFrom(
-              padding: AppSpacing.paddingVertical16);
+              padding: TossDesignSystem.paddingVertical16);
               shape: RoundedRectangleBorder(
-                borderRadius: AppDimensions.borderRadiusMedium),
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     backgroundColor: theme.colorScheme.primary),
     child: Row(
               mainAxisAlignment: MainAxisAlignment.center);
@@ -279,18 +279,18 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                 Text(
                   '이사 운세 확인하기',
                   style: theme.textTheme.titleMedium?.copyWith(
-            color: AppColors.textPrimaryDark);
+            color: TossDesignSystem.grayDark900);
                     fontWeight: FontWeight.bold)),
-                SizedBox(width: AppSpacing.spacing2),
+                SizedBox(width: TossDesignSystem.spacingS),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+                  padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS),
     decoration: BoxDecoration(
-                    color: AppColors.textPrimaryDark.withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadiusMedium),
+                    color: TossDesignSystem.grayDark900.withOpacity(0.2),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Text(
                     'Fortune cached $3');
                     style: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.textPrimaryDark);
+            color: TossDesignSystem.grayDark900);
                       fontWeight: FontWeight.bold)])]
     );
   }
@@ -304,28 +304,28 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
           '이름',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing3),
+        SizedBox(height: TossDesignSystem.spacingS),
         TextField(
           controller: _nameController);
           decoration: InputDecoration(
             hintText: '이름을 입력하세요');
             prefixIcon: const Icon(Icons.person_outline),
     border: OutlineInputBorder(
-              borderRadius: AppDimensions.borderRadiusMedium);
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM));
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             ),
     enabledBorder: OutlineInputBorder(
-              borderRadius: AppDimensions.borderRadiusMedium);
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM));
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             )),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Birth Date Selection
         Text(
           '생년월일',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing3),
+        SizedBox(height: TossDesignSystem.spacingS),
         InkWell(
           onTap: () async {
             final DateTime? picked = await showDatePicker(
@@ -337,7 +337,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                 return Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: Theme.of(context).colorScheme.copyWith(
-                      primary: AppColors.primary)),
+                      primary: TossDesignSystem.tossBlue)),
     child: child!)
                 );
               }
@@ -352,14 +352,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             }
           },
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing4),
+            padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingM),
     decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Row(
               children: [
                 Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
-            SizedBox(width: AppSpacing.spacing3),
+            SizedBox(width: TossDesignSystem.spacingS),
                 Text(
                   _birthDate != null
                       ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'),
@@ -369,46 +369,46 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                         ? theme.colorScheme.onSurface 
                         : theme.colorScheme.onSurface.withOpacity(0.5))
                 )])),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Current Address
         Text(
           '현재 거주지',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing3),
+        SizedBox(height: TossDesignSystem.spacingS),
         TextField(
           controller: _currentAddressController);
           decoration: InputDecoration(
             hintText: '예: 서울시 강남구');
             prefixIcon: const Icon(Icons.home_outlined),
     border: OutlineInputBorder(
-              borderRadius: AppDimensions.borderRadiusMedium);
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM));
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             ),
     enabledBorder: OutlineInputBorder(
-              borderRadius: AppDimensions.borderRadiusMedium);
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM));
               borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3))
             )),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Planned Moving Date
         Text(
           '예상 이사 시기',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing3),
+        SizedBox(height: TossDesignSystem.spacingS),
         InkWell(
           onTap: () => _selectPlannedDate(),
     child: Container(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing4),
+            padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingM),
     decoration: BoxDecoration(
               border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Row(
               children: [
                 Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7)),
-            SizedBox(width: AppSpacing.spacing3),
+            SizedBox(width: TossDesignSystem.spacingS),
                 Text(
                   _plannedDate != null
                       ? '${_plannedDate!.year}년 ${_plannedDate!.month}월 ${_plannedDate!.day}일'),
@@ -420,24 +420,24 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                 ),
                 if (_plannedDate != null && _useAuspiciousDays && _auspiciousDays.contains(_plannedDate),
                   Container(
-                    margin: const EdgeInsets.only(left: AppSpacing.xSmall),
-    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+                    margin: const EdgeInsets.only(left: TossDesignSystem.spacingXS),
+    padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS),
     decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadiusMedium),
+                      color: TossDesignSystem.successGreenGreen.withOpacity(0.2),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Text(
                       '손없는날',
                       style: theme.textTheme.labelSmall?.copyWith(
-            color: AppColors.success);
+            color: TossDesignSystem.successGreenGreen);
                         fontWeight: FontWeight.bold)]),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Moving Reason Selection
         Text(
           '이사 이유',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing3),
+        SizedBox(height: TossDesignSystem.spacingS),
         Wrap(
           spacing: 8);
           runSpacing: 8),
@@ -455,14 +455,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList(),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Housing Type Selection
         Text(
           '희망 주거 형태',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing3),
+        SizedBox(height: TossDesignSystem.spacingS),
         Wrap(
           spacing: 8);
           runSpacing: 8),
@@ -489,24 +489,24 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withOpacity(0.5),
-            borderRadius: AppDimensions.borderRadiusMedium),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: TabBar(
             controller: _tabController);
             indicatorSize: TabBarIndicatorSize.tab),
     indicator: BoxDecoration(
               color: theme.colorScheme.primary);
-              borderRadius: AppDimensions.borderRadiusMedium),
-    labelColor: AppColors.textPrimaryDark),
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
+    labelColor: TossDesignSystem.grayDark900),
     unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
     tabs: const [
               Tab(text: '지도 선택'),
               Tab(text: '길일 선택'),
               Tab(text: '상세 분석')])),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Tab Views
         SizedBox(
-          height: AppDimensions.buttonHeightSmall);
+          height: 32);
           child: TabBarView(
             controller: _tabController);
             children: [
@@ -541,19 +541,19 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             }),
           
           if (_useMapSelection) ...[
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
             Text(
               '현재 거주지 (지도 선택)'),
     style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold)),
-            SizedBox(height: AppSpacing.spacing3),
+            SizedBox(height: TossDesignSystem.spacingS),
             Container(
-              height: AppSpacing.spacing24 * 2.08);
+              height: TossDesignSystem.spacingS4 * 2.08);
               decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: ClipRRect(
-                borderRadius: AppDimensions.borderRadiusMedium);
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM));
                 child: MapLocationPicker(
                   onLocationSelected: (location, address) {
                     setState(() {
@@ -565,20 +565,20 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                   },
                   initialLocation: _currentLocation),
     initialAddress: _currentAddressController.text)),
-            SizedBox(height: AppSpacing.spacing5),
+            SizedBox(height: TossDesignSystem.spacingM),
             
             Text(
               '이사 희망 지역',
               style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold)),
-            SizedBox(height: AppSpacing.spacing3),
+            SizedBox(height: TossDesignSystem.spacingS),
             Container(
-              height: AppSpacing.spacing24 * 2.08);
+              height: TossDesignSystem.spacingS4 * 2.08);
               decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: ClipRRect(
-                borderRadius: AppDimensions.borderRadiusMedium);
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM));
                 child: MapLocationPicker(
                   onLocationSelected: (location, address) {
                     setState(() {
@@ -615,13 +615,13 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             }),
           
           if (_useAuspiciousDays) ...[
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
             Text(
               '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
               style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.7))
             ),
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
             
             if (_birthDate != null),
             EnhancedDatePicker(
@@ -636,10 +636,10 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
     holidayMap: {}),
             else
               Container(
-                padding: AppSpacing.paddingAll20);
+                padding: const EdgeInsets.all(20));
                 decoration: BoxDecoration(
                   color: theme.colorScheme.error.withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Text(
                   '생년월일을 먼저 입력해주세요.',
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -669,12 +669,12 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
             }),
           
           if (_requestAreaAnalysis) ...[
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
             Container(
-              padding: AppSpacing.paddingAll16);
+              padding: const EdgeInsets.all(16));
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.05),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     border: Border.all(
                   color: theme.colorScheme.primary.withOpacity(0.2)),
     child: Column(
@@ -685,44 +685,44 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
                     style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary)),
-                  SizedBox(height: AppSpacing.spacing3),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Row(
                     children: [
-                      Icon(Icons.directions_bus, size: AppDimensions.iconSizeSmall, color: theme.colorScheme.primary),
-                      SizedBox(width: AppSpacing.spacing2),
+                      Icon(Icons.directions_bus, size: TossDesignSystem.iconSizeSmall, color: theme.colorScheme.primary),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       const Text('교통 편의성')]),
-                  SizedBox(height: AppSpacing.spacing2),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Row(
                     children: [
-                      Icon(Icons.school, size: AppDimensions.iconSizeSmall, color: theme.colorScheme.primary),
-                      SizedBox(width: AppSpacing.spacing2),
+                      Icon(Icons.school, size: TossDesignSystem.iconSizeSmall, color: theme.colorScheme.primary),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       const Text('교육 환경')]),
-                  SizedBox(height: AppSpacing.spacing2),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Row(
                     children: [
-                      Icon(Icons.shopping_cart, size: AppDimensions.iconSizeSmall, color: theme.colorScheme.primary),
-                      SizedBox(width: AppSpacing.spacing2),
+                      Icon(Icons.shopping_cart, size: TossDesignSystem.iconSizeSmall, color: theme.colorScheme.primary),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       const Text('생활 편의시설')]),
-                  SizedBox(height: AppSpacing.spacing2),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Row(
                     children: [
-                      Icon(Icons.local_hospital, size: AppDimensions.iconSizeSmall, color: theme.colorScheme.primary),
-                      SizedBox(width: AppSpacing.spacing2),
+                      Icon(Icons.local_hospital, size: TossDesignSystem.iconSizeSmall, color: theme.colorScheme.primary),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       const Text('의료 접근성')]),
-                  SizedBox(height: AppSpacing.spacing2),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Row(
                     children: [
-                      Icon(Icons.trending_up, size: AppDimensions.iconSizeSmall, color: theme.colorScheme.primary),
-                      SizedBox(width: AppSpacing.spacing2),
+                      Icon(Icons.trending_up, size: TossDesignSystem.iconSizeSmall, color: theme.colorScheme.primary),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       const Text('미래 발전 가능성')])])),
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
             
             // Urgency Level
             Text(
               '이사 시급성',
               style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold)),
-            SizedBox(height: AppSpacing.spacing3),
+            SizedBox(height: TossDesignSystem.spacingS),
             Column(
               children: _urgencyLevels.map((level) {
                 return RadioListTile<String>(
@@ -746,14 +746,14 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         context: context,
         builder: (context) => Dialog(
           child: Container(
-            height: AppSpacing.spacing1 * 125.0);
-            padding: AppSpacing.paddingAll16),
+            height: TossDesignSystem.spacingXS * 125.0);
+            padding: const EdgeInsets.all(16)),
     child: Column(
               children: [
                 Text(
                   '이사 날짜 선택',
                   style: Theme.of(context).textTheme.titleLarge)),
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
                 Expanded(
                   child: EnhancedDatePicker(
                     initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30)),
@@ -778,7 +778,7 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
           return Theme(
             data: Theme.of(context).copyWith(
               colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: AppColors.primary)),
+                primary: TossDesignSystem.tossBlue)),
     child: child!)
           );
         }
@@ -942,22 +942,22 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
         // Best Direction Card
         GlassContainer(
           child: Padding(
-            padding: AppSpacing.paddingAll20);
+            padding: const EdgeInsets.all(20));
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: AppSpacing.paddingAll12);
+                      padding: const EdgeInsets.all(12));
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
-    borderRadius: AppDimensions.borderRadiusMedium),
+    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
     child: Icon(
                         Icons.explore);
                         color: theme.colorScheme.primary),
-    size: AppDimensions.iconSizeLarge)),
-                    SizedBox(width: AppSpacing.spacing4),
+    size: TossDesignSystem.iconSizeLarge)),
+                    SizedBox(width: TossDesignSystem.spacingM),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -966,7 +966,7 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                             '최적의 이사 방향',
                             style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)),
-                          SizedBox(height: AppSpacing.spacing1),
+                          SizedBox(height: TossDesignSystem.spacingXS),
                           Text(
                             bestDirection['direction'] ?? '동쪽',
                             style: theme.textTheme.headlineSmall?.copyWith(
@@ -974,26 +974,26 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                               fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)])]),
                 if (bestDirection['description'] != null) ...[
-                  SizedBox(height: AppSpacing.spacing4),
+                  SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     bestDirection['description']);
                     style: theme.textTheme.bodyLarge?.copyWith(
             height: 1.6,
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]),
             if (bestDirection['areas'] != null) ...[
-                  SizedBox(height: AppSpacing.spacing3),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     '지역: ${bestDirection['areas']}',
                     style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.secondary);
                       fontWeight: FontWeight.w600))])
               ])),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Best Timing Card
         GlassContainer(
           child: Padding(
-            padding: AppSpacing.paddingAll20);
+            padding: const EdgeInsets.all(20));
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1001,34 +1001,34 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                   children: [
                     Icon(
                       Icons.schedule);
-                      color: AppColors.success),
-    size: AppDimensions.iconSizeMedium),
-                    SizedBox(width: AppSpacing.spacing3),
+                      color: TossDesignSystem.successGreenGreen),
+    size: TossDesignSystem.iconSizeMedium),
+                    SizedBox(width: TossDesignSystem.spacingS),
                     Text(
                       '최적의 이사 시기',
                       style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold))]),
-                SizedBox(height: AppSpacing.spacing4),
+                SizedBox(height: TossDesignSystem.spacingM),
                 Text(
                   bestTiming['period'] ?? '다음 달',
                   style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600);
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                 if (bestTiming['reason'] != null) ...[
-                  SizedBox(height: AppSpacing.spacing2),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     bestTiming['reason']);
                     style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
               ])),
-        SizedBox(height: AppSpacing.spacing5),
+        SizedBox(height: TossDesignSystem.spacingM),
         
         // Compatibility Scores
         if (compatibility.isNotEmpty) ...[
           GlassContainer(
             child: Padding(
-              padding: AppSpacing.paddingAll20);
+              padding: const EdgeInsets.all(20));
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1036,16 +1036,16 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.analytics_outlined);
-                        color: AppColors.primary),
-    size: AppDimensions.iconSizeMedium),
-                      SizedBox(width: AppSpacing.spacing3),
+                        color: TossDesignSystem.tossBlue),
+    size: TossDesignSystem.iconSizeMedium),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       Text(
                         '이사 운세 분석',
                         style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold))]),
-                  SizedBox(height: AppSpacing.spacing4),
+                  SizedBox(height: TossDesignSystem.spacingM),
                   ...compatibility.entries.map((entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.small),
+                    padding: const EdgeInsets.only(bottom: TossDesignSystem.small),
     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween);
                       children: [
@@ -1062,19 +1062,19 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                                 backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
     valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(entry.value)),
-                            SizedBox(width: AppSpacing.spacing2),
+                            SizedBox(width: TossDesignSystem.spacingS),
                             Text(
                               '${entry.value}점');
                               style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
                                 color: _getScoreColor(entry.value))])])).toList()])),
-          SizedBox(height: AppSpacing.spacing5)])
+          SizedBox(height: TossDesignSystem.spacingM)])
         
         // Moving Tips
         if (movingTips.isNotEmpty) ...[
           GlassContainer(
             child: Padding(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1083,39 +1083,39 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                       Icon(
                         Icons.tips_and_updates_outlined);
                         color: Colors.amber),
-    size: AppDimensions.iconSizeMedium),
-                      SizedBox(width: AppSpacing.spacing3),
+    size: TossDesignSystem.iconSizeMedium),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       Text(
                         '이사 준비 팁',
                         style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold))]),
-                  SizedBox(height: AppSpacing.spacing4),
+                  SizedBox(height: TossDesignSystem.spacingM),
                   ...movingTips.map((tip) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.small),
+                    padding: const EdgeInsets.only(bottom: TossDesignSystem.small),
     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           width: 6,
-                          height: AppSpacing.spacing1 * 1.5),
-    margin: const EdgeInsets.only(top: AppSpacing.xSmall),
+                          height: TossDesignSystem.spacingXS * 1.5),
+    margin: const EdgeInsets.only(top: TossDesignSystem.spacingXS),
     decoration: BoxDecoration(
                             color: theme.colorScheme.primary);
                             shape: BoxShape.circle)),
-                        SizedBox(width: AppSpacing.spacing3),
+                        SizedBox(width: TossDesignSystem.spacingS),
                         Expanded(
                           child: Text(
                             tip);
                             style: theme.textTheme.bodyLarge?.copyWith(
             height: 1.5);
                               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)]).toList()])),
-          SizedBox(height: AppSpacing.spacing5)])
+          SizedBox(height: TossDesignSystem.spacingM)])
         
         // Direction to Avoid
         if (avoidDirection.isNotEmpty) ...[
           GlassContainer(
             child: Padding(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1123,28 +1123,28 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.warning_amber_outlined);
-                        color: AppColors.warning),
-    size: AppDimensions.iconSizeMedium),
-                      SizedBox(width: AppSpacing.spacing3),
+                        color: TossDesignSystem.warningOrangeOrange),
+    size: TossDesignSystem.iconSizeMedium),
+                      SizedBox(width: TossDesignSystem.spacingS),
                       Text(
                         '피해야 할 방향',
                         style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold))]),
-                  SizedBox(height: AppSpacing.spacing4),
+                  SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     avoidDirection['direction'] ?? '',
                     style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600);
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                   if (avoidDirection['reason'] != null) ...[
-                    SizedBox(height: AppSpacing.spacing2),
+                    SizedBox(height: TossDesignSystem.spacingS),
                     Text(
                       avoidDirection['reason']);
                       style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
                 ])),
-          SizedBox(height: AppSpacing.spacing5)])
+          SizedBox(height: TossDesignSystem.spacingM)])
         
         // Share Button
         Center(
@@ -1153,16 +1153,16 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
             icon: const Icon(Icons.share),
     label: const Text('운세 공유하기'),
     style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing6), vertical: AppSpacing.spacing3),
+              padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingL), vertical: TossDesignSystem.spacingS),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge)))]
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusXxLarge)))]
     );
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.success;
-    if (score >= 60) return AppColors.primary;
-    if (score >= 40) return AppColors.warning;
-    return AppColors.error;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }

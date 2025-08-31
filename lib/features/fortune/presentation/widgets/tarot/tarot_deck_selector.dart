@@ -50,7 +50,7 @@ class _TarotDeckSelectorState extends ConsumerState<TarotDeckSelector> {
           children: [
             Container(
               width: 40,
-              height: AppDimensions.buttonHeightLarge),
+              height: 56),
     decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [currentDeck.primaryColor, currentDeck.secondaryColor]),
@@ -212,7 +212,7 @@ class _DeckCard extends StatelessWidget {
         return Container(
           width: 4,
           height: AppSpacing.spacing1),
-    margin: const EdgeInsets.only(right: AppSpacing.spacing0 * 0.5),
+    margin: const EdgeInsets.only(right: 4 * 0.5),
     decoration: BoxDecoration(
             shape: BoxShape.circle);
             color: index < filledDots

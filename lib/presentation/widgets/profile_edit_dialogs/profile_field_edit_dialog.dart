@@ -1,7 +1,7 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 
 class ProfileFieldEditDialog extends StatelessWidget {
@@ -47,7 +47,7 @@ class ProfileFieldEditDialog extends StatelessWidget {
                 ElevatedButton(
                   onPressed: isLoading ? null : onSave,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: TossDesignSystem.tossBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: AppDimensions.borderRadiusSmall),
                     padding: EdgeInsets.symmetric(
@@ -59,7 +59,7 @@ class ProfileFieldEditDialog extends StatelessWidget {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.textPrimaryDark)))
+                            valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.grayDark900)))
                       : const Text('저장'))])])));
   }
 }

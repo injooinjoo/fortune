@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../../constants/fortune_constants.dart';
 import '../../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
@@ -64,7 +66,7 @@ class OnboardingStepThree extends StatelessWidget {
                   child: CircularProgressIndicator(
                     strokeWidth: formStyle.inputBorderWidth * 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark)))
+                      context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900)))
               : const Text('완료'))]);
   }
 }

@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -93,7 +95,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   child: Text(
                     '${fortune.overallScore}점',
                     style: theme.textTheme.headlineMedium?.copyWith(
-                      color: AppColors.textPrimaryDark,
+                      color: TossDesignSystem.grayDark900,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -186,13 +188,13 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primary.withOpacity(0.6), AppColors.primary.withOpacity(0.8)],
+                      colors: [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)],
                     ),
                     borderRadius: AppDimensions.borderRadiusMedium,
                   ),
                   child: const Icon(
                     Icons.analytics_rounded,
-                    color: AppColors.textPrimaryDark,
+                    color: TossDesignSystem.grayDark900,
                     size: AppDimensions.iconSizeMedium,
                   ),
                 ),
@@ -227,7 +229,7 @@ class FortuneResultDisplay extends StatelessWidget {
                                 Container(
                                   height: AppSpacing.spacing5,
                                   decoration: BoxDecoration(
-                                    color: AppColors.textSecondary.withOpacity(0.3),
+                                    color: TossDesignSystem.gray400.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                                   ),
                                 ),
@@ -293,7 +295,7 @@ class FortuneResultDisplay extends StatelessWidget {
                     ),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
-                      color: AppColors.textPrimaryDark,
+                      color: TossDesignSystem.grayDark900,
                       size: AppDimensions.iconSizeMedium,
                     ),
                   ),
@@ -398,13 +400,13 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.success.withOpacity(0.6), AppColors.success.withOpacity(0.8)],
+                      colors: [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)],
                     ),
                     borderRadius: AppDimensions.borderRadiusMedium,
                   ),
                   child: const Icon(
                     Icons.tips_and_updates_rounded,
-                    color: AppColors.textPrimaryDark,
+                    color: TossDesignSystem.grayDark900,
                     size: AppDimensions.iconSizeMedium,
                   ),
                 ),
@@ -494,21 +496,21 @@ class FortuneResultDisplay extends StatelessWidget {
 
   List<Color> _getScoreGradientColors(int score) {
     if (score >= 80) {
-      return [AppColors.success.withOpacity(0.6), AppColors.success.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
     } else if (score >= 60) {
-      return [AppColors.primary.withOpacity(0.6), AppColors.primary.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
     } else if (score >= 40) {
-      return [AppColors.warning.withOpacity(0.6), AppColors.warning.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
     } else {
-      return [AppColors.error.withOpacity(0.6), AppColors.error.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
     }
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.success.withOpacity(0.8);
-    if (score >= 60) return AppColors.primary.withOpacity(0.8);
-    if (score >= 40) return AppColors.warning.withOpacity(0.8);
-    return AppColors.error.withOpacity(0.8);
+    if (score >= 80) return TossDesignSystem.gray600.withOpacity(0.8);
+    if (score >= 60) return TossDesignSystem.gray600.withOpacity(0.8);
+    if (score >= 40) return TossDesignSystem.gray600.withOpacity(0.8);
+    return TossDesignSystem.gray600.withOpacity(0.8);
   }
 
   IconData _getLuckyItemIcon(String type) {

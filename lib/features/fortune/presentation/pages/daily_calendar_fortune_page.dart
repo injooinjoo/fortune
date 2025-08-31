@@ -6,9 +6,9 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
-import '../../../../core/theme/app_theme_extensions.dart';
+import '../../../../core/theme/toss_design_system.dart';
+
+
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/services/personalized_fortune_service.dart';
 
@@ -116,16 +116,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         children: [
           Text(
             _formatDate(_selectedDate),
-            style: AppTypography.displayMedium.copyWith(
-              color: AppColors.getTossTextPrimary(context),
+            style: TossDesignSystem.heading1.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _getLunarDate(_selectedDate),
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.getTossTextSecondary(context),
+            style: TossDesignSystem.body2.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
           ),
           if (_holidayName != null || _specialName != null) ...[
@@ -133,17 +133,17 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.tossBlue.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.tossBlue.withOpacity(0.3),
+                  color: TossDesignSystem.tossBlue.withOpacity(0.3),
                   width: 1,
                 ),
               ),
               child: Text(
                 _holidayName ?? _specialName!,
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.tossBlue,
+                style: TossDesignSystem.body3.copyWith(
+                  color: TossDesignSystem.tossBlue,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -166,8 +166,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         children: [
           Text(
             '$overallScore',
-            style: AppTypography.displayLarge.copyWith(
-              color: AppColors.getTossTextPrimary(context),
+            style: TossDesignSystem.heading1.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -180,7 +180,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             ),
             child: Text(
               gradeText,
-              style: AppTypography.bodyMedium.copyWith(
+              style: TossDesignSystem.body2.copyWith(
                 color: _getScoreColor(overallScore),
                 fontWeight: FontWeight.w600,
               ),
@@ -189,8 +189,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           const SizedBox(height: 12),
           Text(
             summaryText,
-            style: AppTypography.bodyLarge.copyWith(
-              color: AppColors.getTossTextPrimary(context),
+            style: TossDesignSystem.body1.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
             textAlign: TextAlign.center,
           ),
@@ -209,9 +209,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCoreItem('✅', '할 일', todos, AppColors.positive),
+          _buildCoreItem('✅', '할 일', todos, TossDesignSystem.successGreen),
           const SizedBox(height: 16),
-          _buildCoreItem('❌', '피할 일', avoids, AppColors.negative),
+          _buildCoreItem('❌', '피할 일', avoids, TossDesignSystem.errorRed),
           const SizedBox(height: 16),
           _buildAdviceBox(),
         ],
@@ -229,8 +229,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             const SizedBox(width: 8),
             Text(
               title,
-              style: AppTypography.titleMedium.copyWith(
-                color: AppColors.getTossTextPrimary(context),
+              style: TossDesignSystem.heading3.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -241,8 +241,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           padding: const EdgeInsets.only(left: 24, bottom: 4),
           child: Text(
             '• $item',
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.getTossTextSecondary(context),
+            style: TossDesignSystem.body2.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
           ),
         )),
@@ -256,7 +256,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.getTossIconBackground(context),
+        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -266,8 +266,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           Expanded(
             child: Text(
               advice,
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.getTossTextPrimary(context),
+              style: TossDesignSystem.body2.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
           ),
@@ -303,7 +303,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             ),
             child: Text(
               hour['time'] as String,
-              style: AppTypography.bodySmall.copyWith(
+              style: TossDesignSystem.body3.copyWith(
                 color: _getScoreColor(score),
                 fontWeight: FontWeight.w600,
               ),
@@ -314,14 +314,14 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           Expanded(
             child: Text(
               hour['activity'] as String,
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.getTossTextPrimary(context),
+              style: TossDesignSystem.body2.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
           ),
           Text(
             '${score}점',
-            style: AppTypography.titleSmall.copyWith(
+            style: TossDesignSystem.heading4.copyWith(
               color: _getScoreColor(score),
               fontWeight: FontWeight.w700,
             ),
@@ -372,7 +372,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.getTossIconBackground(context),
+        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -384,16 +384,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           const SizedBox(height: 8),
           Text(
             element['title'] as String,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.getTossTextSecondary(context),
+            style: TossDesignSystem.body3.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             element['value'] as String,
-            style: AppTypography.titleSmall.copyWith(
-              color: AppColors.getTossTextPrimary(context),
+            style: TossDesignSystem.heading4.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
@@ -414,10 +414,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.tossBlue.withOpacity(0.1),
+          color: TossDesignSystem.tossBlue.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: AppColors.tossBlue.withOpacity(0.3),
+            color: TossDesignSystem.tossBlue.withOpacity(0.3),
             width: 1,
           ),
         ),
@@ -426,16 +426,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           children: [
             Text(
               _holidayName ?? _specialName ?? '',
-              style: AppTypography.titleMedium.copyWith(
-                color: AppColors.tossBlue,
+              style: TossDesignSystem.heading3.copyWith(
+                color: TossDesignSystem.tossBlue,
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               '특별한 날에는 평소보다 더 좋은 기운이 함께합니다. 새로운 시작이나 중요한 일을 계획해보세요.',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.getTossTextPrimary(context),
+              style: TossDesignSystem.body2.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
           ],
@@ -469,10 +469,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 90) return AppColors.positive;
-    if (score >= 80) return AppColors.tossBlue;
-    if (score >= 70) return AppColors.caution;
-    return AppColors.negative;
+    if (score >= 90) return TossDesignSystem.successGreen;
+    if (score >= 80) return TossDesignSystem.tossBlue;
+    if (score >= 70) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   Widget _buildRelationshipSection() {
@@ -487,21 +487,21 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             '👥',
             '귀인운',
             relationships['lucky'] ?? '나이가 많은 동료나 선배',
-            AppColors.positive,
+            TossDesignSystem.successGreen,
           ),
           const SizedBox(height: 12),
           _buildRelationshipItem(
             '⚠️',
             '주의할 사람',
             relationships['careful'] ?? '감정적인 성향이 강한 사람',
-            AppColors.caution,
+            TossDesignSystem.warningOrange,
           ),
           const SizedBox(height: 12),
           _buildRelationshipItem(
             '💕',
             '연애운',
             relationships['love'] ?? '진솔한 대화가 관계를 발전시킴',
-            AppColors.tossBlue,
+            TossDesignSystem.tossBlue,
           ),
         ],
       ),
@@ -529,16 +529,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             children: [
               Text(
                 title,
-                style: AppTypography.titleSmall.copyWith(
-                  color: AppColors.getTossTextPrimary(context),
+                style: TossDesignSystem.heading4.copyWith(
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.getTossTextSecondary(context),
+                style: TossDesignSystem.body2.copyWith(
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                 ),
               ),
             ],
@@ -568,16 +568,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
                   children: [
                     Text(
                       '투자/소비 조언',
-                      style: AppTypography.titleSmall.copyWith(
-                        color: AppColors.getTossTextPrimary(context),
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       PersonalizedFortuneService.getPersonalizedMoneyAdvice(userProfile),
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.getTossTextSecondary(context),
+                      style: TossDesignSystem.body3.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                       ),
                     ),
                   ],
@@ -594,7 +594,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.getTossIconBackground(context),
+        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -606,7 +606,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           const SizedBox(height: 8),
           Text(
             '$score점',
-            style: AppTypography.titleLarge.copyWith(
+            style: TossDesignSystem.heading2.copyWith(
               color: _getScoreColor(score),
               fontWeight: FontWeight.w700,
             ),
@@ -614,8 +614,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           const SizedBox(height: 4),
           Text(
             '재물운',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.getTossTextSecondary(context),
+            style: TossDesignSystem.body3.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
           ),
         ],
@@ -643,16 +643,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
                   children: [
                     Text(
                       '건강 조언',
-                      style: AppTypography.titleSmall.copyWith(
-                        color: AppColors.getTossTextPrimary(context),
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       PersonalizedFortuneService.getPersonalizedHealthAdvice(userProfile),
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.getTossTextSecondary(context),
+                      style: TossDesignSystem.body3.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                       ),
                     ),
                   ],
@@ -669,7 +669,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.getTossIconBackground(context),
+        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -681,7 +681,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           const SizedBox(height: 8),
           Text(
             '$score점',
-            style: AppTypography.titleLarge.copyWith(
+            style: TossDesignSystem.heading2.copyWith(
               color: _getScoreColor(score),
               fontWeight: FontWeight.w700,
             ),
@@ -689,8 +689,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           const SizedBox(height: 4),
           Text(
             '건강운',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.getTossTextSecondary(context),
+            style: TossDesignSystem.body3.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
           ),
         ],

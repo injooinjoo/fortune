@@ -15,7 +15,7 @@ import '../../../../core/config/environment.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
 import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../data/models/fortune_card_score.dart';

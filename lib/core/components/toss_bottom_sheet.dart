@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../theme/toss_design_system.dart';
+import 'toss_button.dart';
 
 /// TOSS 스타일 Bottom Sheet
 class TossBottomSheet {
@@ -19,13 +16,11 @@ class TossBottomSheet {
     double? height,
     bool isScrollControlled = false,
     Color? backgroundColor,
-    bool enableHaptic = true}) {
+    bool enableHaptic = true,
+  }) {
     if (enableHaptic) {
-      HapticPatterns.execute(context.toss.hapticPatterns.success);
+      HapticFeedback.mediumImpact();
     }
-
-    final tossTheme = context.toss;
-    final bottomSheetStyles = tossTheme.bottomSheetStyles;
     
     return showModalBottomSheet<T>(
       context: context,
@@ -33,10 +28,10 @@ class TossBottomSheet {
       enableDrag: enableDrag,
       isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
-      barrierColor: AppColors.textPrimary.withValues(alpha: bottomSheetStyles.barrierOpacity),
+      barrierColor: Colors.black.withOpacity(0.5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius),
+          top: Radius.circular(TossDesignSystem.radiusXL),
         ),
       ),
       builder: (context) => _TossBottomSheetWrapper(
@@ -55,7 +50,8 @@ class TossBottomSheet {
     required List<TossBottomSheetOption<T>> options,
     String? subtitle,
     bool showHandle = true,
-    bool enableHaptic = true}) {
+    bool enableHaptic = true,
+  }) {
     return show<T>(
       context: context,
       enableHaptic: enableHaptic,
@@ -77,43 +73,18 @@ class TossBottomSheet {
     String cancelText = '취소',
     bool isDanger = false,
     bool showHandle = true,
-    bool enableHaptic = true}) {
+    bool enableHaptic = true,
+  }) {
     return show<bool>(
       context: context,
       enableHaptic: enableHaptic,
       showHandle: showHandle,
-      isDismissible: false,
-      enableDrag: false,
       builder: (context) => _TossConfirmationBottomSheet(
         title: title,
         message: message,
         confirmText: confirmText,
         cancelText: cancelText,
         isDanger: isDanger,
-      ),
-    );
-  }
-
-  /// 정보 Bottom Sheet
-  static Future<void> showInfo({
-    required BuildContext context,
-    required String title,
-    required String message,
-    String? actionText,
-    VoidCallback? onAction,
-    Widget? content,
-    bool showHandle = true,
-    bool enableHaptic = true}) {
-    return show<void>(
-      context: context,
-      enableHaptic: enableHaptic,
-      showHandle: showHandle,
-      builder: (context) => _TossInfoBottomSheet(
-        title: title,
-        message: message,
-        actionText: actionText,
-        onAction: onAction,
-        content: content,
       ),
     );
   }
@@ -128,46 +99,47 @@ class _TossBottomSheetWrapper extends StatelessWidget {
 
   const _TossBottomSheetWrapper({
     required this.child,
-    required this.showHandle,
+    this.showHandle = true,
     this.height,
-    this.backgroundColor});
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final tossTheme = context.toss;
-    final bottomSheetStyles = tossTheme.bottomSheetStyles;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? context.toss.cardSurface,
+        color: backgroundColor ?? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius),
+          top: Radius.circular(TossDesignSystem.radiusXL),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showHandle)
+          if (showHandle) ...[
+            SizedBox(height: TossDesignSystem.spacingS),
             Container(
-              margin: EdgeInsets.only(top: AppSpacing.spacing2),
-              width: bottomSheetStyles.handleWidth,
-              height: bottomSheetStyles.handleHeight,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
-                color: context.toss.dividerColor.withValues(alpha: bottomSheetStyles.handleOpacity),
-                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2),
+                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
+            SizedBox(height: TossDesignSystem.spacingS),
+          ],
           Flexible(child: child),
         ],
-      ),)
-        .animate()
-        .slideY(
-          begin: 1,
-          end: 0,
-          duration: bottomSheetStyles.slideAnimationDuration,
-          curve: Curves.easeOutCubic)
-        .fadeIn(duration: bottomSheetStyles.fadeAnimationDuration);
+      ),
+    ).animate().slideY(
+      begin: 1,
+      end: 0,
+      duration: TossDesignSystem.durationMedium,
+      curve: Curves.easeOutCubic,
+    );
   }
 }
 
@@ -179,121 +151,42 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
 
   const _TossSelectionBottomSheet({
     required this.title,
+    this.subtitle,
     required this.options,
-    this.subtitle});
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.all(TossDesignSystem.spacingL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                context.toss.bottomSheetStyles.contentPadding.left,
-                context.toss.bottomSheetStyles.contentPadding.top,
-                context.toss.bottomSheetStyles.contentPadding.right,
-                context.toss.bottomSheetStyles.contentPadding.bottom - context.toss.bottomSheetStyles.spacing / 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall),
-                  if (subtitle != null) ...[
-                    SizedBox(height: AppSpacing.spacing2),
-                    Text(
-                      subtitle!,
-                      style: TextStyle(
-                        fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
-                        color: context.toss.secondaryText,
-                        fontFamily: 'TossProductSans',
-                      ),
-                    ),
-                  ],
-                ],
+            Text(
+              title,
+              style: TossDesignSystem.heading4.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
-            Divider(height: context.toss.cardStyles.borderWidth, color: context.toss.dividerColor),
-            ...options.map((option) => _OptionTile(option: option)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 옵션 타일
-class _OptionTile<T> extends StatelessWidget {
-  final TossBottomSheetOption<T> option;
-
-  const _OptionTile({required this.option});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return InkWell(
-      onTap: option.isEnabled
-          ? () {
-              HapticFeedback.lightImpact();
-              Navigator.of(context).pop(option.value);
-            }
-          : null,
-      child: Opacity(
-        opacity: option.isEnabled ? 1.0 : 0.4,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.toss.bottomSheetStyles.contentPadding.left,
-            vertical: AppSpacing.spacing3),
-          child: Row(
-            children: [
-              if (option.icon != null) ...[
-                Icon(
-                  option.icon,
-                  size: context.toss.bottomSheetStyles.iconSize,
-                  color: option.isDestructive
-                      ? AppColors.error
-                      : (theme.brightness == Brightness.light
-                          ? AppColors.textPrimary
-                          : AppColors.textPrimaryDark)),
-                SizedBox(width: AppSpacing.spacing3)],
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      option.title,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: option.isDestructive
-                            ? AppColors.error
-                            : (theme.brightness == Brightness.light
-                                ? AppColors.textPrimary
-                                : AppColors.textPrimaryDark),
-                        fontFamily: 'TossProductSans')),
-                    if (option.subtitle != null) ...[
-                      SizedBox(height: AppSpacing.spacing1),
-                      Text(
-                        option.subtitle!,
-                        style: TextStyle(
-                          fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
-                          color: theme.brightness == Brightness.light
-                              ? AppColors.textSecondary.withValues(alpha: 0.6)
-                              : AppColors.textSecondary.withValues(alpha: 0.4),
-                          fontFamily: 'TossProductSans',
-                        ),
-                      ),
-                    ],
-                  ],
+            if (subtitle != null) ...[
+              SizedBox(height: TossDesignSystem.spacingS),
+              Text(
+                subtitle!,
+                style: TossDesignSystem.body3.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
                 ),
               ),
-              if (option.trailing != null)
-                option.trailing!,
             ],
-          ),
+            SizedBox(height: TossDesignSystem.spacingM),
+            ...options.map((option) => _OptionItem(
+              option: option,
+              onTap: () => Navigator.of(context).pop(option.value),
+            )),
+          ],
         ),
       ),
     );
@@ -313,44 +206,49 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
     required this.message,
     required this.confirmText,
     required this.cancelText,
-    required this.isDanger});
+    this.isDanger = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return SafeArea(
       child: Padding(
-        padding: context.toss.bottomSheetStyles.contentPadding,
+        padding: EdgeInsets.all(TossDesignSystem.spacingL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleSmall),
-            SizedBox(height: context.toss.bottomSheetStyles.spacing),
+              style: TossDesignSystem.heading4.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              ),
+            ),
+            SizedBox(height: TossDesignSystem.spacingM),
             Text(
               message,
-              style: TextStyle(
-                fontSize: context.toss.bottomSheetStyles.messageFontSize,
-                color: context.toss.secondaryText,
-                fontFamily: 'TossProductSans',
-                height: context.toss.cardStyles.borderWidth * 1.5)),
-            SizedBox(height: context.toss.bottomSheetStyles.largeSpacing),
+              style: TossDesignSystem.body2.copyWith(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              ),
+            ),
+            SizedBox(height: TossDesignSystem.spacingL),
             Row(
               children: [
                 Expanded(
-                  child: _TossBottomSheetButton(
+                  child: TossButton(
                     text: cancelText,
+                    style: TossButtonStyle.secondary,
                     onPressed: () => Navigator.of(context).pop(false),
-                    style: TossBottomSheetButtonStyle.secondary)),
-                SizedBox(width: context.toss.bottomSheetStyles.spacing),
+                  ),
+                ),
+                SizedBox(width: TossDesignSystem.spacingM),
                 Expanded(
-                  child: _TossBottomSheetButton(
+                  child: TossButton(
                     text: confirmText,
+                    style: isDanger ? TossButtonStyle.danger : TossButtonStyle.primary,
                     onPressed: () => Navigator.of(context).pop(true),
-                    style: isDanger
-                        ? TossBottomSheetButtonStyle.danger
-                        : TossBottomSheetButtonStyle.primary,
                   ),
                 ),
               ],
@@ -362,57 +260,70 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
   }
 }
 
-/// 정보 Bottom Sheet
-class _TossInfoBottomSheet extends StatelessWidget {
-  final String title;
-  final String message;
-  final String? actionText;
-  final VoidCallback? onAction;
-  final Widget? content;
+/// Option Item
+class _OptionItem<T> extends StatelessWidget {
+  final TossBottomSheetOption<T> option;
+  final VoidCallback onTap;
 
-  const _TossInfoBottomSheet({
-    required this.title,
-    required this.message,
-    this.actionText,
-    this.onAction,
-    this.content});
+  const _OptionItem({
+    required this.option,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
       child: Padding(
-        padding: context.toss.bottomSheetStyles.contentPadding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.symmetric(
+          vertical: TossDesignSystem.spacingM,
+        ),
+        child: Row(
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleSmall),
-            SizedBox(height: context.toss.bottomSheetStyles.spacing),
-            Text(
-              message,
-              style: TextStyle(
-                fontSize: context.toss.bottomSheetStyles.messageFontSize,
-                color: context.toss.secondaryText,
-                fontFamily: 'TossProductSans',
-                height: context.toss.cardStyles.borderWidth * 1.5)),
-            if (content != null) ...[
-              SizedBox(height: AppSpacing.spacing5),
-              content!],
-            if (actionText != null) ...[
-              SizedBox(height: context.toss.bottomSheetStyles.largeSpacing),
-              SizedBox(
-                width: double.infinity,
-                child: _TossBottomSheetButton(
-                  text: actionText!,
-                  onPressed: () {
-                    onAction?.call();
-                    Navigator.of(context).pop();
-                  },
-                  style: TossBottomSheetButtonStyle.primary,
-                ),
+            if (option.icon != null) ...[
+              Icon(
+                option.icon,
+                size: 24,
+                color: option.isDanger
+                    ? TossDesignSystem.errorRed
+                    : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
               ),
+              SizedBox(width: TossDesignSystem.spacingM),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    option.label,
+                    style: TossDesignSystem.body1.copyWith(
+                      color: option.isDanger
+                          ? TossDesignSystem.errorRed
+                          : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (option.description != null) ...[
+                    SizedBox(height: TossDesignSystem.spacingXS),
+                    Text(
+                      option.description!,
+                      style: TossDesignSystem.body3.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (option.trailing != null) ...[
+              SizedBox(width: TossDesignSystem.spacingM),
+              option.trailing!,
             ],
           ],
         ),
@@ -421,83 +332,21 @@ class _TossInfoBottomSheet extends StatelessWidget {
   }
 }
 
-/// Bottom Sheet 버튼
-class _TossBottomSheetButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final TossBottomSheetButtonStyle style;
-
-  const _TossBottomSheetButton({
-    required this.text,
-    required this.onPressed,
-    required this.style});
-
-  @override
-  Widget build(BuildContext context) {
-    Color backgroundColor;
-    Color textColor;
-    
-    switch (style) {
-      case TossBottomSheetButtonStyle.primary:
-        backgroundColor = context.toss.primaryText;
-        textColor = context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark;
-        break;
-      case TossBottomSheetButtonStyle.secondary:
-        backgroundColor = context.toss.glassBackground.withValues(alpha: 0.5);
-        textColor = context.toss.primaryText;
-        break;
-      case TossBottomSheetButtonStyle.danger:
-        backgroundColor = context.toss.errorColor;
-        textColor = AppColors.textPrimaryDark;
-        break;
-    }
-    
-    return Material(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(context.toss.bottomSheetStyles.buttonBorderRadius),
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          onPressed();
-        },
-        borderRadius: BorderRadius.circular(context.toss.bottomSheetStyles.buttonBorderRadius),
-        child: Container(
-          height: context.toss.bottomSheetStyles.buttonHeight,
-          alignment: Alignment.center,
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Bottom Sheet 옵션
+/// Bottom Sheet Option
 class TossBottomSheetOption<T> {
-  final String title;
-  final String? subtitle;
+  final String label;
+  final T value;
+  final String? description;
   final IconData? icon;
   final Widget? trailing;
-  final T value;
-  final bool isEnabled;
-  final bool isDestructive;
+  final bool isDanger;
 
   const TossBottomSheetOption({
-    required this.title,
+    required this.label,
     required this.value,
-    this.subtitle,
+    this.description,
     this.icon,
     this.trailing,
-    this.isEnabled = true,
-    this.isDestructive = false});
+    this.isDanger = false,
+  });
 }
-
-/// Bottom Sheet 버튼 스타일
-enum TossBottomSheetButtonStyle {
-  
-  
-  primary,
-  secondary,
-  danger}

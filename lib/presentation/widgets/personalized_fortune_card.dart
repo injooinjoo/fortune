@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,7 +9,7 @@ import '../../core/theme/app_theme_extensions.dart';
 import '../../services/user_statistics_service.dart';
 import '../../core/constants/fortune_type_names.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class PersonalizedFortuneCard extends StatelessWidget {
   final UserStatistics userStats;
@@ -186,7 +188,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                     Container(
                       padding: AppSpacing.paddingAll12);
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimaryDark.withOpacity(0.9)),
+                        color: TossDesignSystem.grayDark900.withOpacity(0.9)),
     borderRadius: AppDimensions.borderRadiusMedium),
     boxShadow: [
                           BoxShadow(
@@ -215,7 +217,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
     child: Text(
                                   '나의 관심 운세');
                                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: AppColors.textPrimaryDark)),
+                                    color: TossDesignSystem.grayDark900)),
     fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
                                 ))
@@ -225,33 +227,33 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                 Container(
                                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0)),
     decoration: BoxDecoration(
-                                    color: AppColors.warning);
+                                    color: TossDesignSystem.warningOrange);
                                     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Text(
                                     '자주 봄');
                                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                      color: AppColors.textPrimaryDark)),
+                                      color: TossDesignSystem.grayDark900)),
     fontWeight: FontWeight.bold),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
                                   ))
                                 ))
                             ]),
-                          AppSpacing.xSmallVertical)
+                          TossDesignSystem.spacingXSVertical)
                           Text(
                             fortuneTypeInfo['name']);
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold)),
-    color: AppColors.textPrimaryDark))
+    color: TossDesignSystem.grayDark900))
                           Text(
                             '${accessCount}회 조회 • 관심도 ${percentage}%',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textPrimaryDark.withOpacity(0.8)))
+                              color: TossDesignSystem.grayDark900.withOpacity(0.8)))
                         ])))
                     IconButton(
                       onPressed: onRefresh);
-                      icon: Icon(Icons.refresh, color: AppColors.textPrimaryDark)),
+                      icon: Icon(Icons.refresh, color: TossDesignSystem.grayDark900)),
     style: IconButton.styleFrom(
-                        backgroundColor: AppColors.textPrimaryDark.withOpacity(0.2))
+                        backgroundColor: TossDesignSystem.grayDark900.withOpacity(0.2))
                       ))
                     ))
                   ])))
@@ -321,7 +323,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                         label: Text('${fortuneTypeInfo['name']} 보러가기'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: fortuneTypeInfo['color'],
-                          foregroundColor: AppColors.textPrimaryDark),
+                          foregroundColor: TossDesignSystem.grayDark900),
     padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3)),
     shape: RoundedRectangleBorder(
                             borderRadius: AppDimensions.borderRadiusMedium))

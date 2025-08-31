@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/cache_service.dart';
 import '../../data/services/fortune_api_service.dart';
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class CacheSettingsWidget extends ConsumerStatefulWidget {
   const CacheSettingsWidget({super.key});
@@ -49,7 +49,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.error),
+              foregroundColor: TossDesignSystem.errorRed),
             child: const Text('삭제'))
         ]));
 
@@ -110,7 +110,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           children: [
             Row(
               children: [
-                Icon(Icons.storage, color: AppColors.primary),
+                Icon(Icons.storage, color: TossDesignSystem.tossBlue),
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '캐시 관리',
@@ -141,21 +141,21 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
               icon: Icons.cloud_download,
               label: '오프라인용 운세 준비',
               onPressed: _isLoading ? null : _preloadForOffline,
-              color: AppColors.primary,
+              color: TossDesignSystem.tossBlue,
             ),
             SizedBox(height: AppSpacing.spacing2),
             _buildActionButton(
               icon: Icons.cleaning_services,
               label: '만료된 캐시 정리',
               onPressed: _isLoading ? null : _cleanExpiredCache,
-              color: AppColors.warning,
+              color: TossDesignSystem.warningOrange,
             ),
             SizedBox(height: AppSpacing.spacing2),
             _buildActionButton(
               icon: Icons.delete_outline,
               label: '모든 캐시 삭제',
               onPressed: _isLoading ? null : _clearCache,
-              color: AppColors.error,
+              color: TossDesignSystem.errorRed,
             ),
           ],
         ),
@@ -171,7 +171,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
         children: [
           Text(
             label,
-            style: const TextStyle(color: AppColors.textSecondary),
+            style: const TextStyle(color: TossDesignSystem.gray600),
           ),
           Text(
             value,

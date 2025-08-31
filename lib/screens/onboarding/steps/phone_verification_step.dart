@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import '../../../core/theme/app_theme_extensions.dart';
@@ -240,7 +242,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.fortuneTheme.primaryText,
-                    foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
+                    foregroundColor: context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
                     elevation: 0),
@@ -249,7 +251,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                           width: context.fortuneTheme.socialSharing.shareIconSize,
                           height: context.fortuneTheme.socialSharing.shareIconSize,
                           child: const CircularProgressIndicator(
-                            color: AppColors.textPrimaryDark,
+                            color: TossDesignSystem.grayDark900,
                             strokeWidth: 2),
                         )
                       : Text(

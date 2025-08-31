@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../core/theme/app_colors.dart';
+import '../core/theme/toss_design_system.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: TossDesignSystem.tossBlue.withOpacity(0.2),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Icon(
                   Icons.auto_awesome,
                   size: 40,
-                  color: AppColors.primary,
+                  color: TossDesignSystem.tossBlue,
                 ),
               ),
             );

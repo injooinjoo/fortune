@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -178,18 +180,18 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
     }
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.gray600,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           '전화번호 관리',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: TossDesignSystem.gray900,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -206,14 +208,14 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: TossDesignSystem.gray600.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.info_outline,
-                          color: AppColors.primary,
+                          color: TossDesignSystem.gray600,
                           size: 24,
                         ),
                         const SizedBox(width: 12),
@@ -221,7 +223,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                           child: Text(
                             '전화번호는 계정 보안과 다른 소셜 계정 연동에 사용됩니다.',
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: TossDesignSystem.gray400,
                               fontSize: 14,
                               height: 1.5,
                             ),
@@ -238,7 +240,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.divider),
+                      border: Border.all(color: TossDesignSystem.gray600),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,7 +249,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                           children: [
                             Icon(
                               Icons.phone_outlined,
-                              color: AppColors.textSecondary,
+                              color: TossDesignSystem.gray400,
                               size: 24,
                             ),
                             const SizedBox(width: 12),
@@ -266,7 +268,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                   Text(
                                     _formatDisplayPhone(userProfile?['phone']),
                                     style: TextStyle(
-                                      color: AppColors.textSecondary,
+                                      color: TossDesignSystem.gray400,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -314,7 +316,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
+                              backgroundColor: TossDesignSystem.gray600,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -393,12 +395,12 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: TossDesignSystem.gray600.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(
               icon,
-              color: AppColors.primary,
+              color: TossDesignSystem.gray600,
               size: 20,
             ),
           ),
@@ -418,7 +420,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: TossDesignSystem.gray400,
                     fontSize: 13,
                     height: 1.4,
                   ),

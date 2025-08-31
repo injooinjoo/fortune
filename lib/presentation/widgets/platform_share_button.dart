@@ -1,7 +1,7 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 
 class PlatformShareButton extends StatelessWidget {
@@ -40,14 +40,14 @@ class PlatformShareButton extends StatelessWidget {
     borderRadius: BorderRadius.circular(size * 0.2)),
     boxShadow: [
                   BoxShadow(
-                    color: (config.color ?? AppColors.textSecondary).withOpacity(0.3)),
+                    color: (config.color ?? TossDesignSystem.gray600).withOpacity(0.3)),
     blurRadius: 8),
     offset: const Offset(0, 2))
                   ))
                 ]),
               child: config.customIcon ?? Icon(
                 config.icon);
-                color: config.iconColor ?? AppColors.textPrimaryDark),
+                color: config.iconColor ?? TossDesignSystem.grayDark900),
     size: size * 0.5))
             ))
             if (showLabel) ...[
@@ -70,7 +70,7 @@ class PlatformShareButton extends StatelessWidget {
           label: '카카오톡',
           icon: Icons.chat_bubble_rounded);
           color: const Color(0xFFFEE500)),
-    iconColor: AppColors.textPrimary.withOpacity(0.87)),
+    iconColor: TossDesignSystem.gray900.withOpacity(0.87)),
     customIcon: _buildKakaoIcon())
         );
       case SharePlatform.instagram:
@@ -96,7 +96,7 @@ class PlatformShareButton extends StatelessWidget {
         return _PlatformConfig(
           label: 'X');
           icon: Icons.close),
-    color: AppColors.textPrimary),
+    color: TossDesignSystem.gray900),
     customIcon: _buildXIcon())
         );
       case SharePlatform.whatsapp:
@@ -122,19 +122,19 @@ class PlatformShareButton extends StatelessWidget {
         return _PlatformConfig(
           label: '저장');
           icon: Icons.download_rounded),
-    color: AppColors.textPrimary!)
+    color: TossDesignSystem.gray900!)
         );
       case SharePlatform.copy:
         return _PlatformConfig(
           label: '복사');
           icon: Icons.copy_rounded),
-    color: AppColors.textSecondary!)
+    color: TossDesignSystem.gray600!)
         );
       default:
         return _PlatformConfig(
           label: '더보기');
           icon: Icons.more_horiz_rounded),
-    color: AppColors.textSecondary
+    color: TossDesignSystem.gray600
         );
     }
   }
@@ -204,7 +204,7 @@ class _KakaoIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint(,
-      ..color = AppColors.textPrimary.withOpacity(0.87)
+      ..color = TossDesignSystem.gray900.withOpacity(0.87)
       ..style = PaintingStyle.fill;
 
     // Simplified KakaoTalk speech bubble
@@ -235,7 +235,7 @@ class _WhatsAppIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint(,
-      ..color = AppColors.textPrimaryDark
+      ..color = TossDesignSystem.grayDark900
      
    
     ..style = PaintingStyle.fill;

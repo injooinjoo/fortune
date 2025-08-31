@@ -1,6 +1,8 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -40,7 +42,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       name: 'Apple',
       iconType: SocialIconType.icon,
       iconData: Icons.apple,
-      color: AppColors.textPrimary,
+      color: TossDesignSystem.gray900,
     ),
     'kakao': SocialProviderInfo(
       name: 'Kakao',
@@ -99,7 +101,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${_providers[provider]?.name} 계정이 연결되었습니다.'),
-              backgroundColor: AppColors.success,
+              backgroundColor: TossDesignSystem.successGreen,
             ),
           );
         }
@@ -110,7 +112,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결에 실패했습니다.'),
-            backgroundColor: AppColors.error,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -130,7 +132,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('기본 로그인 계정은 연결을 해제할 수 없습니다.'),
-          backgroundColor: AppColors.warning,
+          backgroundColor: TossDesignSystem.warningOrange,
         ),
       );
       return;
@@ -184,7 +186,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결이 해제되었습니다.'),
-            backgroundColor: AppColors.success,
+            backgroundColor: TossDesignSystem.successGreen,
           ),
         );
       }
@@ -194,7 +196,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결 해제에 실패했습니다.'),
-            backgroundColor: AppColors.error,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -251,13 +253,13 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                       Icon(
                         Icons.check_circle,
                         size: 14,
-                        color: AppColors.success,
+                        color: TossDesignSystem.successGreen,
                       ),
                       SizedBox(width: AppSpacing.spacing1),
                       Text(
                         isPrimary ? '기본 계정' : '연결됨',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.success,
+                          color: TossDesignSystem.successGreen,
                         ),
                       ),
                     ],
@@ -310,7 +312,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
           color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple' 
-              ? (Theme.of(context).brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary)
+              ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
               : providerInfo.color,
         );
       case SocialIconType.text:
@@ -356,7 +358,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ),
         SizedBox(height: AppSpacing.spacing4),
         ...(_providers.keys.map((provider) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+          padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
           child: _buildProviderButton(provider),
         )).toList()),
       ],

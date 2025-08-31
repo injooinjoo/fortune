@@ -1,5 +1,6 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -102,8 +103,8 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.primary.withOpacity(0.1),
-              AppColors.secondary.withOpacity(0.1)]),
+              TossDesignSystem.gray600.withOpacity(0.1),
+              TossDesignSystem.gray600.withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
           border: Border.all(
             color: theme.colorScheme.primary.withOpacity(0.2),
@@ -227,7 +228,7 @@ class TokenBalanceStats extends ConsumerWidget {
           //   context: context,
           //   label: '오늘 사용',
           //   value: '${tokenState.todayUsed ?? 0}',
-          //   color: AppColors.error,
+          //   color: TossDesignSystem.gray600,
           //   icon: Icons.arrow_downward,
           // ),
           // SizedBox(height: AppSpacing.spacing2),
@@ -235,7 +236,7 @@ class TokenBalanceStats extends ConsumerWidget {
           //   context: context,
           //   label: '오늘 획득',
           //   value: '${tokenState.todayEarned ?? 0}',
-          //   color: AppColors.success,
+          //   color: TossDesignSystem.gray600,
           //   icon: Icons.arrow_upward,
           // ),
           // SizedBox(height: AppSpacing.spacing2),

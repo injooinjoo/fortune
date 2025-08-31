@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -79,7 +81,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
           decoration: BoxDecoration(
             color: Colors.deepPurple.withOpacity(0.2),
-            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+            borderRadius: AppDimensions.borderRadius(TossDesignSystem.radiusXL),
             border: Border.all(
               color: Colors.deepPurple.withOpacity(0.3),
               width: 1,

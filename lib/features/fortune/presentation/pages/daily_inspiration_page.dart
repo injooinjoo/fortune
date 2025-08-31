@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
@@ -264,18 +264,18 @@ ${inspiration.affirmation}
     final dateFormat = DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR');
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '오늘의 영감',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             fontSize: 18 * fontScale,
             fontWeight: FontWeight.w600,
           ),
@@ -283,7 +283,7 @@ ${inspiration.affirmation}
         actions: [
           inspirationAsync.when(
             data: (inspiration) => IconButton(
-              icon: const Icon(Icons.share_outlined, color: AppColors.textPrimary),
+              icon: Icon(Icons.share_outlined, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
               onPressed: () => _shareInspiration(inspiration),
             ),
             loading: () => const SizedBox.shrink(),
@@ -293,7 +293,7 @@ ${inspiration.affirmation}
       ),
       body: inspirationAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+          child: CircularProgressIndicator(color: TossDesignSystem.tossBlue),
         ),
         error: (error, stack) => Center(
           child: Column(
@@ -317,7 +317,7 @@ ${inspiration.affirmation}
                 '잠시 후 다시 시도해주세요',
                 style: TextStyle(
                   fontSize: 14 * fontScale,
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                 ),
               ),
             ],
@@ -423,12 +423,12 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
                                 Icons.person,
-                                color: AppColors.primary,
+                                color: TossDesignSystem.tossBlue,
                                 size: 20,
                               ),
                             ),
@@ -438,7 +438,7 @@ ${inspiration.affirmation}
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                               ),
                             ),
                           ],
@@ -448,7 +448,7 @@ ${inspiration.affirmation}
                           inspiration.personalMessage,
                           style: TextStyle(
                             fontSize: 15 * fontScale,
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             height: 1.5,
                           ),
                           textAlign: TextAlign.center,
@@ -505,7 +505,7 @@ ${inspiration.affirmation}
                           style: TextStyle(
                             fontSize: 18 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                           ),
                         ),
                       ],
@@ -555,7 +555,7 @@ ${inspiration.affirmation}
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                               ),
                             ),
                           ],
@@ -581,7 +581,7 @@ ${inspiration.affirmation}
                                   tip,
                                   style: TextStyle(
                                     fontSize: 14 * fontScale,
-                                    color: AppColors.textPrimary,
+                                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                     height: 1.4,
                                   ),
                                 ),
@@ -605,22 +605,22 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.primary.withValues(alpha: 0.1),
-                          AppColors.primary.withValues(alpha: 0.05),
+                          TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                          TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.2),
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
                       children: [
                         const Icon(
                           Icons.favorite,
-                          color: AppColors.primary,
+                          color: TossDesignSystem.tossBlue,
                           size: 32,
                         ),
                         const SizedBox(height: 16),
@@ -628,7 +628,7 @@ ${inspiration.affirmation}
                           '오늘의 긍정 확언',
                           style: TextStyle(
                             fontSize: 14 * fontScale,
-                            color: AppColors.primary,
+                            color: TossDesignSystem.tossBlue,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -638,7 +638,7 @@ ${inspiration.affirmation}
                           style: TextStyle(
                             fontSize: 18 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             height: 1.4,
                           ),
                           textAlign: TextAlign.center,

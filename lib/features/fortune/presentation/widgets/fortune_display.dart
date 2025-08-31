@@ -69,8 +69,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          scoreColor.withValues(alpha: 0.2),
-          scoreColor.withValues(alpha: 0.1),
+          scoreColor.withOpacity(0.2),
+          scoreColor.withOpacity(0.1),
         ],
       ),
       child: Row(
@@ -171,7 +171,7 @@ class FortuneDisplay extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: color.withOpacity(0.3),
           width: 1)),

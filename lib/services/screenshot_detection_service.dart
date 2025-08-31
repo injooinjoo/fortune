@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:async';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
@@ -380,7 +382,7 @@ class ScreenshotDetectionService {
               result['isSuccess'] == true 
                 ? '이미지가 저장되었습니다'
                 : '저장 중 오류가 발생했습니다'),
-            backgroundColor: result['isSuccess'] == true ? AppColors.success : AppColors.error));
+            backgroundColor: result['isSuccess'] == true ? TossDesignSystem.gray600 : TossDesignSystem.gray600));
       }
     } catch (e) {
       Logger.error('Failed to save to gallery', e);
@@ -397,7 +399,7 @@ class ScreenshotDetectionService {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('운세가 클립보드에 복사되었습니다'),
-            backgroundColor: AppColors.success));
+            backgroundColor: TossDesignSystem.gray600));
       }
     } catch (e) {
       Logger.error('Failed to copy to clipboard', e);

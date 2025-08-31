@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../constants/fortune_constants.dart';
 import '../../../core/theme/app_theme_extensions.dart';
@@ -67,7 +69,7 @@ class _GenderStepState extends State<GenderStep> {
                   textAlign: TextAlign.center).animate().fadeIn(
                   duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: AppColors.textPrimaryDark.withOpacity(0.3)),
+                  color: TossDesignSystem.grayDark900.withOpacity(0.3)),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 
@@ -130,12 +132,12 @@ class _GenderStepState extends State<GenderStep> {
             Icon(
               gender == Gender.female ? Icons.female : Icons.male,
               size: context.fortuneTheme.socialSharing.shareButtonSize - 8,
-              color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText),
+              color: isSelected ? TossDesignSystem.grayDark900 : context.fortuneTheme.subtitleText),
             SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
             Text(
               label,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.secondaryText)]));
+                color: isSelected ? TossDesignSystem.grayDark900 : context.fortuneTheme.secondaryText)]));
   }
 }

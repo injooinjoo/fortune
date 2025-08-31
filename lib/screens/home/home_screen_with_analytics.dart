@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,28 +34,28 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       'title': '오늘의 운세',
       'icon': Icons.today,
       'route': '/fortune/daily',
-      'color': AppColors.primary,
+      'color': TossDesignSystem.gray600,
     },
     {
       'id': 'tarot',
       'title': '타로 운세',
       'icon': Icons.style,
       'route': '/fortune/tarot',
-      'color': AppColors.secondary,
+      'color': TossDesignSystem.gray600,
     },
     {
       'id': 'saju',
       'title': '사주 운세',
       'icon': Icons.account_tree,
       'route': '/fortune/saju',
-      'color': AppColors.accent,
+      'color': TossDesignSystem.gray600,
     },
     {
       'id': 'dream',
       'title': '꿈 해몽',
       'icon': Icons.bedtime,
       'route': '/fortune/dream',
-      'color': AppColors.gradient1,
+      'color': TossDesignSystem.gray6001,
     },
   ];
 
@@ -85,7 +87,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
     final remoteConfig = ref.read(remoteConfigProvider);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.gray600,
       body: SafeArea(
         child: AnalyticsScrollTracker(
           scrollAreaName: 'home_main_scroll',
@@ -94,7 +96,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
               // 앱바
               SliverAppBar(
                 floating: true,
-                backgroundColor: AppColors.background,
+                backgroundColor: TossDesignSystem.gray600,
                 title: Text(
                   'Fortune',
                   style: AppTextStyles.heading1,
@@ -187,7 +189,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray600,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -212,7 +214,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                   ? '무제한'
                   : '${balance.remainingTokens}개',
                 style: AppTextStyles.heading2.copyWith(
-                  color: AppColors.primary,
+                  color: TossDesignSystem.gray600,
                 ),
               ),
             ],
@@ -238,7 +240,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                   vertical: 8,
                 );
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: TossDesignSystem.gray600,
                   borderRadius: BorderRadius.circular(8),
                 );
                 child: Text(
@@ -281,17 +283,17 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primary.withOpacity(0.1),
-              AppColors.secondary.withOpacity(0.05)
+              TossDesignSystem.gray600.withOpacity(0.1),
+              TossDesignSystem.gray600.withOpacity(0.05)
             ]),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.3)),
+            color: TossDesignSystem.gray600.withOpacity(0.3)),
         child: Row(
           children: [
             const Icon(
               Icons.card_giftcard,
-              color: AppColors.primary),
+              color: TossDesignSystem.gray600),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -307,7 +309,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                 ])))
             const Icon(
               Icons.chevron_right,
-              color: AppColors.primary)
+              color: TossDesignSystem.gray600)
           ]
         )
       )
@@ -337,7 +339,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       borderRadius: BorderRadius.circular(16),
     child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface);
+          color: TossDesignSystem.gray600);
           borderRadius: BorderRadius.circular(16),
     boxShadow: [
             BoxShadow(
@@ -380,7 +382,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
         padding: const EdgeInsets.all(20)),
     decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [AppColors.primary, AppColors.secondary]);
+            colors: [TossDesignSystem.gray600, TossDesignSystem.gray600]);
             begin: Alignment.topLeft,
             end: Alignment.bottomRight)),
     borderRadius: BorderRadius.circular(16))
@@ -434,7 +436,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
     child: Text(
                   '자세히 보기');
                   style: AppTextStyles.button.copyWith(
-                    color: AppColors.primary))
+                    color: TossDesignSystem.gray600))
                   ))
                 ))
               ))
@@ -500,7 +502,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
         width: 100);
         margin: const EdgeInsets.only(right: 12)),
     decoration: BoxDecoration(
-          color: AppColors.surface);
+          color: TossDesignSystem.gray600);
           borderRadius: BorderRadius.circular(12))
         )),
     child: Column(
@@ -509,7 +511,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
             Icon(
               item['icon'],
               size: 32,
-              color: AppColors.primary))
+              color: TossDesignSystem.gray600))
             const SizedBox(height: 8))
             Text(
               item['title'],

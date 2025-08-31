@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../data/models/fortune_card_score.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 /// Badge widget to display recommendation type on fortune cards
@@ -84,32 +84,32 @@ class FortuneRecommendationBadge extends StatelessWidget {
         return _BadgeData(
           icon: Icons.trending_up_rounded,
           gradientColors: [
-            AppColors.error,
-            AppColors.error,
+            TossDesignSystem.errorRed,
+            TossDesignSystem.errorRed,
           ],
         );
       case RecommendationType.trending:
         return _BadgeData(
           icon: Icons.local_fire_department_rounded,
           gradientColors: [
-            AppColors.warning,
-            AppColors.warning,
+            TossDesignSystem.warningOrange,
+            TossDesignSystem.warningOrange,
           ],
         );
       case RecommendationType.newFortune:
         return _BadgeData(
           icon: Icons.new_releases_rounded,
           gradientColors: [
-            AppColors.success,
-            AppColors.success,
+            TossDesignSystem.successGreen,
+            TossDesignSystem.successGreen,
           ],
         );
       case RecommendationType.seasonal:
         return _BadgeData(
           icon: Icons.calendar_today_rounded,
           gradientColors: [
-            AppColors.primary,
-            AppColors.primary,
+            TossDesignSystem.tossBlue,
+            TossDesignSystem.tossBlue,
           ],
         );
       case RecommendationType.collaborative:
@@ -125,8 +125,8 @@ class FortuneRecommendationBadge extends StatelessWidget {
         return _BadgeData(
           icon: Icons.star_rounded,
           gradientColors: [
-            AppColors.textTertiary,
-            AppColors.textSecondary,
+            TossDesignSystem.gray900Tertiary,
+            TossDesignSystem.gray600,
           ],
         );
     }
@@ -164,7 +164,7 @@ class FortuneRecommendationChip extends StatelessWidget {
     final color = _getChipColor(type);
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5, vertical: AppSpacing.spacing0 * 0.5),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5, vertical: 4 * 0.5),
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
         borderRadius: AppDimensions.borderRadiusSmall,
@@ -189,18 +189,18 @@ class FortuneRecommendationChip extends StatelessWidget {
       case RecommendationType.personalized:
         return FortuneColors.spiritualPrimary;
       case RecommendationType.popular:
-        return AppColors.error;
+        return TossDesignSystem.errorRed;
       case RecommendationType.trending:
-        return AppColors.warning;
+        return TossDesignSystem.warningOrange;
       case RecommendationType.newFortune:
-        return AppColors.success;
+        return TossDesignSystem.successGreen;
       case RecommendationType.seasonal:
-        return AppColors.primary;
+        return TossDesignSystem.tossBlue;
       case RecommendationType.collaborative:
         return FortuneColors.love;
       case RecommendationType.general:
       default:
-        return AppColors.textTertiary;
+        return TossDesignSystem.gray900Tertiary;
     }
   }
 }

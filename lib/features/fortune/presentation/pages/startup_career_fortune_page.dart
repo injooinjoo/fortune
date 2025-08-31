@@ -1,5 +1,5 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/toss_design_system.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
@@ -7,7 +7,6 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
 
 class StartupCareerFortunePage extends BaseFortunePage {
   const StartupCareerFortunePage({
@@ -101,12 +100,12 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
     final theme = Theme.of(context);
     
     return SingleChildScrollView(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -116,14 +115,14 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                       Icons.rocket,
                       color: theme.colorScheme.primary,
                     ),
-                    SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: 8),
                     Text(
                       '스타트업 전직 분석',
                       style: theme.textTheme.titleLarge,
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.spacing5),
+                const SizedBox(height: 20),
                 
                 // Current Position
                 TextField(
@@ -133,11 +132,11 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                     hintText: '예: 삼성전자 과장, 네이버 시니어 개발자',
                     prefixIcon: const Icon(Icons.business),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     ),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing4),
+                const SizedBox(height: 16),
                 
                 // Startup Interest (Optional)
                 TextField(
@@ -147,18 +146,18 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                     hintText: '예: 핀테크, 헬스케어, AI, 이커머스',
                     prefixIcon: const Icon(Icons.lightbulb),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 16),
           
           // Motivation
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -166,7 +165,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                   '스타트업 전직 동기',
                   style: theme.textTheme.titleMedium,
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -186,11 +185,11 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 16),
           
           // Readiness Level
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -198,7 +197,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                   '준비 상태',
                   style: theme.textTheme.titleMedium,
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 ...(_readinessLevels.map((level) {
                   final isSelected = _readiness == level;
                   return InkWell(
@@ -207,15 +206,15 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                         _readiness = level;
                       });
                     },
-                    borderRadius: AppDimensions.borderRadiusMedium,
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     child: Container(
-                      padding: AppSpacing.paddingAll16,
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 8),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withOpacity(0.1)
                             : theme.colorScheme.surface.withOpacity(0.3),
-                        borderRadius: AppDimensions.borderRadiusMedium,
+                        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
@@ -232,7 +231,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                                 ? theme.colorScheme.primary
                                 : theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
-                          SizedBox(width: AppSpacing.spacing3),
+                          const SizedBox(width: 12),
                           Text(
                             level,
                             style: theme.textTheme.bodyLarge,
@@ -245,32 +244,32 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 16),
           
           // Concerns
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     const Icon(Icons.warning_amber, color: Colors.amber),
-                    SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: 8),
                     Text(
                       '주요 고민/우려사항 (2개 이상)',
                       style: theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.spacing2),
+                const SizedBox(height: 8),
                 Text(
                   '최대 4개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -294,7 +293,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing8),
+          const SizedBox(height: 32),
         ],
       ),
     );

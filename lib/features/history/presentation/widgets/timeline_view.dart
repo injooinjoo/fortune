@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../domain/models/fortune_history.dart';
@@ -265,9 +265,9 @@ class TimelineView extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.success;
-    if (score >= 60) return AppColors.primary;
-    if (score >= 40) return AppColors.warning;
-    return AppColors.error;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }

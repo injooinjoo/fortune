@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
@@ -35,7 +37,7 @@ class AppText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final defaultColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
     
     final textStyle = (style ?? AppTypography.bodyMedium).copyWith(
       color: color ?? style?.color ?? defaultColor,

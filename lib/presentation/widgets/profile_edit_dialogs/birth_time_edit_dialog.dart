@@ -1,11 +1,13 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../constants/fortune_constants.dart';
 import 'profile_field_edit_dialog.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TimePeriod {
   final String value;
@@ -69,7 +71,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -92,7 +94,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                         Text(
                           '정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.textSecondary),
+                            color: TossDesignSystem.gray600),
                           textAlign: TextAlign.center),
           SizedBox(height: AppSpacing.spacing4),
           Container(
@@ -123,7 +125,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
     final isSelected = _selectedTime == value;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+      margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -139,11 +141,11 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
               vertical: AppSpacing.spacing3),
             decoration: BoxDecoration(
               border: Border.all(
-                color: isSelected ? AppColors.primary : AppColors.divider,
+                color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: AppDimensions.borderRadiusSmall,
-              color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
+              color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.1) : null,
             ),
             child: Row(
               children: [
@@ -153,7 +155,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                       width: 1,
                     ),
                   ),
@@ -164,7 +166,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                             height: 12,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.primary,
+                              color: TossDesignSystem.tossBlue,
                             ),
                           ),
                         )
@@ -178,13 +180,13 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                       Text(
                         label,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: isSelected ? AppColors.primary : AppColors.textPrimary)),
+                          color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray900)),
                       if (description != null) ...[
                         SizedBox(height: AppSpacing.xxxSmall),
                         Text(
                           description,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary),
+                            color: TossDesignSystem.gray600),
                         ),
                       ],
                     ],

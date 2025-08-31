@@ -137,7 +137,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
   Widget _buildCardFront(TarotCardInfo card) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),
@@ -233,7 +233,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                           colors: [
                             _getTarotColor(card).withOpacity(0.3),
                             _getTarotColor(card).withOpacity(0.1)]),
-                        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                        borderRadius: BorderRadius.circular(20),
     border: Border.all(
                           color: _getTarotColor(card).withOpacity(0.5)),
     child: Text(
@@ -250,7 +250,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
-    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+    borderRadius: BorderRadius.circular(20),
     border: Border.all(
                     color: Colors.white.withOpacity(0.3)),
     child: Text(
@@ -261,7 +261,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
   Widget _buildCardBack() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),

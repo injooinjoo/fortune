@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -221,17 +221,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
           onPressed: () => context.pop(),),
         title: Text(
           '프로필 인증',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: TossDesignSystem.gray900,
             fontSize: 18 * fontScale,
             fontWeight: FontWeight.w600,
           ),
@@ -277,7 +277,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               '현재 인증 상태',
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: AppColors.textSecondary)),
+                                color: TossDesignSystem.gray600)),
                             const SizedBox(height: 4),
                             Row(
                               children: [
@@ -313,7 +313,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             '인증 진행도',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
-                              color: AppColors.textSecondary)),
+                              color: TossDesignSystem.gray600)),
                           Text(
                             '$verificationLevel/3',
                             style: TextStyle(
@@ -325,7 +325,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         borderRadius: BorderRadius.circular(8),
                         child: LinearProgressIndicator(
                           value: verificationLevel / 3,
-                          backgroundColor: AppColors.divider,
+                          backgroundColor: TossDesignSystem.gray200,
                           valueColor: AlwaysStoppedAnimation<Color>(verificationColor),
                           minHeight: 8,),],),],),),
             
@@ -340,7 +340,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     style: TextStyle(
                       fontSize: 18 * fontScale,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary)),
+                      color: TossDesignSystem.gray900)),
                   const SizedBox(height: 16),
                   _buildBenefitItem(
                     icon: Icons.security,
@@ -376,7 +376,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     style: TextStyle(
                       fontSize: 18 * fontScale,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary)),
+                      color: TossDesignSystem.gray900)),
                   const SizedBox(height: 16),
                   
                   // Phone Verification
@@ -400,24 +400,24 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             hintText: '010-0000-0000',
                             hintStyle: TextStyle(
                               fontSize: 14 * fontScale,
-                              color: AppColors.textSecondary),
+                              color: TossDesignSystem.gray600),
                             prefixIcon: const Icon(Icons.phone, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.primary)),
+                              borderSide: const BorderSide(color: TossDesignSystem.tossBlue)),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _sendPhoneVerification,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
+                              backgroundColor: TossDesignSystem.tossBlue,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -441,10 +441,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.05),
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.2),),
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -453,7 +453,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             style: TextStyle(
                               fontSize: 14 * fontScale,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary)),
+                              color: TossDesignSystem.gray900)),
                           const SizedBox(height: 12),
                           TextField(
                             controller: _verificationCodeController,
@@ -464,17 +464,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               hintText: '6자리 인증번호',
                               hintStyle: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: AppColors.textSecondary),
+                                color: TossDesignSystem.gray600),
                               counterText: '',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: AppColors.divider)),
+                                borderSide: const BorderSide(color: TossDesignSystem.gray200)),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: AppColors.divider)),
+                                borderSide: const BorderSide(color: TossDesignSystem.gray200)),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: AppColors.primary)),
+                                borderSide: const BorderSide(color: TossDesignSystem.tossBlue)),
                           const SizedBox(height: 12),
                           Row(
                             children: [
@@ -487,20 +487,20 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   },
                                   style: OutlinedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(vertical: 12),
-                                    side: const BorderSide(color: AppColors.divider),
+                                    side: const BorderSide(color: TossDesignSystem.gray200),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                   child: Text(
                                     '취소',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: AppColors.textSecondary)),
+                                      color: TossDesignSystem.gray600)),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: _isLoading ? null : _verifyPhone,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primary,
+                                    backgroundColor: TossDesignSystem.tossBlue,
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -540,24 +540,24 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             hintText: 'example@email.com',
                             hintStyle: TextStyle(
                               fontSize: 14 * fontScale,
-                              color: AppColors.textSecondary),
+                              color: TossDesignSystem.gray600),
                             prefixIcon: const Icon(Icons.email, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.primary)),
+                              borderSide: const BorderSide(color: TossDesignSystem.tossBlue)),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _sendEmailVerification,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
+                              backgroundColor: TossDesignSystem.tossBlue,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -609,11 +609,11 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),),
             child: Icon(
               icon,
-              color: AppColors.primary,
+              color: TossDesignSystem.tossBlue,
               size: 20,)),
           const SizedBox(width: 12),
           Expanded(
@@ -625,13 +625,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                   style: TextStyle(
                     fontSize: 14 * fontScale,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary)),
+                    color: TossDesignSystem.gray900)),
                 const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: AppColors.textSecondary,
+                    color: TossDesignSystem.gray600,
                     height: 1.4,)],),],),),
   }
   
@@ -653,8 +653,8 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
           color: isCompleted 
               ? Colors.green.withValues(alpha: 0.3)
               : isLocked 
-                  ? AppColors.divider
-                  : AppColors.primary.withValues(alpha: 0.2)),
+                  ? TossDesignSystem.gray200
+                  : TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -676,8 +676,8 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       color: isCompleted
                           ? Colors.green.withValues(alpha: 0.1)
                           : isLocked
-                              ? AppColors.divider
-                              : AppColors.primary.withValues(alpha: 0.1),
+                              ? TossDesignSystem.gray200
+                              : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                       shape: BoxShape.circle),
                     child: Icon(
                       isCompleted
@@ -688,8 +688,8 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       color: isCompleted
                           ? Colors.green
                           : isLocked
-                              ? AppColors.textSecondary
-                              : AppColors.primary,
+                              ? TossDesignSystem.gray600
+                              : TossDesignSystem.tossBlue,
                       size: 24)),
                   const SizedBox(width: 16),
                   Expanded(
@@ -701,13 +701,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           style: TextStyle(
                             fontSize: 16 * fontScale,
                             fontWeight: FontWeight.w600,
-                            color: isLocked ? AppColors.textSecondary : AppColors.textPrimary)),
+                            color: isLocked ? TossDesignSystem.gray600 : TossDesignSystem.gray900)),
                         const SizedBox(height: 4),
                         Text(
                           description,
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: AppColors.textSecondary)]),
+                            color: TossDesignSystem.gray600)]),
                   if (isCompleted)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -723,7 +723,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                   else if (!isLocked && onTap != null)
                     Icon(
                       isExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: AppColors.textSecondary)]),
+                      color: TossDesignSystem.gray600)]),
               if (isExpanded && content != null) ...[
                 const SizedBox(height: 16),
                 content]])));

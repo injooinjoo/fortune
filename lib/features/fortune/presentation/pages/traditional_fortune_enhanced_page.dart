@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/base_card.dart';
 // import '../../../../presentation/widgets/simple_fortune_info_sheet.dart';
 
@@ -52,7 +52,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             end: Alignment.bottomCenter,
             colors: [
               Color(0xFFEF4444).withOpacity(0.05),
-              AppColors.background,
+              TossDesignSystem.white,
             ],
           ),
         ),
@@ -237,7 +237,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
               style: TextStyle(
                 fontSize: 16,
                 height: 1.6,
-                color: AppColors.textPrimary,
+                color: TossDesignSystem.gray900,
               ),
               textAlign: TextAlign.center,
             ),
@@ -311,7 +311,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -319,7 +319,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   feature['description'] as String,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: TossDesignSystem.gray600,
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,
@@ -450,7 +450,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: TossDesignSystem.gray900,
                   ),
                 ),
               ],
@@ -477,10 +477,10 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.divider,
+          color: TossDesignSystem.gray200,
         ),
       ),
       child: Row(
@@ -507,14 +507,14 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: TossDesignSystem.gray900,
                   ),
                 ),
                 Text(
                   description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
               ],

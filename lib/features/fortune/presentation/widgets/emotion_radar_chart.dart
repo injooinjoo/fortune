@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
+
 
 class EmotionRadarChart extends StatelessWidget {
   final Map<String, double> emotions;
@@ -13,8 +13,8 @@ class EmotionRadarChart extends StatelessWidget {
     Key? key,
     required this.emotions,
     this.size = 200,
-    this.primaryColor = FortuneColors.spiritualPrimary,
-    this.backgroundColor = AppColors.divider}) : super(key: key);
+    this.primaryColor = TossDesignSystem.purple,
+    this.backgroundColor = TossDesignSystem.gray200}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

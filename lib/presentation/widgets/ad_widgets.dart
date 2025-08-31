@@ -2,10 +2,10 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../core/theme/app_theme.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class AdDialog extends ConsumerWidget {
   final VoidCallback onComplete;
@@ -31,7 +31,7 @@ class AdDialog extends ConsumerWidget {
             Icon(
               Icons.play_circle_outline,
               size: 64,
-              color: AppColors.primary,
+              color: TossDesignSystem.tossBlue,
             ),
             SizedBox(height: AppSpacing.spacing4),
             Text(
@@ -44,7 +44,7 @@ class AdDialog extends ConsumerWidget {
             Text(
               '짧은 광고를 시청하고 운세를 확인하세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.onSurface.withOpacity(0.7),
+                color: TossDesignSystem.gray600.withOpacity(0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -94,17 +94,17 @@ class AdBanner extends StatelessWidget {
       height: height,
       width: width ?? double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.divider,
+        color: TossDesignSystem.gray200,
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: AppColors.textSecondary!,
+          color: TossDesignSystem.gray600!,
         ),
       ),
       child: Center(
         child: Text(
           'Advertisement',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
+            color: TossDesignSystem.gray600,
           ),
         ),
       ),
@@ -124,11 +124,11 @@ class NativeAdWidget extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: TossDesignSystem.gray50,
         borderRadius: AppDimensions.borderRadiusMedium,
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.05),
+            color: TossDesignSystem.gray900.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))
         ]),
@@ -141,7 +141,7 @@ class NativeAdWidget extends StatelessWidget {
                 width: AppDimensions.buttonHeightSmall,
                 height: AppDimensions.buttonHeightSmall,
                 decoration: BoxDecoration(
-                  color: AppColors.textSecondary,
+                  color: TossDesignSystem.gray600,
                   borderRadius: AppDimensions.borderRadiusSmall)),
               SizedBox(width: AppSpacing.spacing3),
               Expanded(
@@ -157,14 +157,14 @@ class NativeAdWidget extends StatelessWidget {
                     Text(
                       'Learn more',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.primary))
+                        color: TossDesignSystem.tossBlue))
                   ]
                 )
               ),
               Icon(
                 Icons.ad_units,
                 size: AppDimensions.iconSizeSmall,
-                color: AppColors.textSecondary)
+                color: TossDesignSystem.gray600)
             ],
           ),
           SizedBox(height: AppSpacing.spacing3),

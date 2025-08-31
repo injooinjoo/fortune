@@ -6,7 +6,7 @@ import '../../services/storage_service.dart';
 import 'package:intl/intl.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../presentation/providers/theme_provider.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../presentation/widgets/saju_chart_widget.dart';
 import '../../presentation/widgets/user_info_card.dart';
@@ -214,7 +214,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.getTossBackground(context),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
@@ -230,7 +230,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Text(
                         '내 프로필',
                         style: TextStyle(
-                          color: AppColors.getTossTextPrimary(context),
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.5,
@@ -240,7 +240,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     IconButton(
                       icon: Icon(
                         isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                        color: AppColors.getTossTextSecondary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                         size: 24,
                       ),
                       onPressed: () {
@@ -250,7 +250,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     IconButton(
                       icon: Icon(
                         Icons.settings_outlined, 
-                        color: AppColors.getTossTextSecondary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                         size: 24,
                       ),
                       onPressed: () => context.push('/settings'),
@@ -283,10 +283,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
-                            color: AppColors.getTossCardBackground(context),
+                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: AppColors.getTossBorder(context),
+                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                               width: 1,
                             ),
                             boxShadow: [
@@ -306,7 +306,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     children: [
                                       Icon(
                                         Icons.bug_report,
-                                        color: AppColors.tossBlue,
+                                        color: TossDesignSystem.tossBlue,
                                         size: 24,
                                       ),
                                       const SizedBox(width: 12),
@@ -315,7 +315,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 20,
-                                          color: AppColors.getTossTextPrimary(context),
+                                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                           letterSpacing: -0.3,
                                         ),
                                       ),
@@ -335,7 +335,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColors.getTossTextPrimary(context),
+                                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                             ),
                                           ),
                                           Container(
@@ -362,7 +362,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       Text(
                                         '모든 운세를 토큰 제한 없이 이용할 수 있습니다.',
                                         style: TextStyle(
-                                          color: AppColors.getTossTextSecondary(context),
+                                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -375,7 +375,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColors.getTossTextPrimary(context),
+                                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                             ),
                                           ),
                                           Switch(
@@ -414,14 +414,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                 }
                                               }
                                             },
-                                            activeColor: AppColors.tossBlue,
+                                            activeColor: TossDesignSystem.tossBlue,
                                           ),
                                         ],
                                       ),
                                       Text(
                                         '프리미엄 기능을 즉시 켜고 끌 수 있습니다.',
                                         style: TextStyle(
-                                          color: AppColors.getTossTextSecondary(context),
+                                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -429,17 +429,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: AppColors.tossBluePale,
+                                          color: TossDesignSystem.tossBlue.withOpacity(0.1),
                                           borderRadius: BorderRadius.circular(8),
                                           border: Border.all(
-                                            color: AppColors.getTossBorder(context),
+                                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                                           ),
                                         ),
                                         child: Row(
                                           children: [
                                             Icon(
                                               Icons.info_outline,
-                                              color: AppColors.tossBlue,
+                                              color: TossDesignSystem.tossBlue,
                                               size: 20,
                                             ),
                                             const SizedBox(width: 8),
@@ -447,7 +447,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               child: Text(
                                                 '계정: ${profile.email}',
                                                 style: TextStyle(
-                                                  color: AppColors.tossBlue,
+                                                  color: TossDesignSystem.tossBlue,
                                                   fontSize: 14,
                                                 ),
                                               ),
@@ -504,7 +504,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: AppColors.getTossCardBackground(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -528,7 +528,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Text(
                                 '활동 통계',
                                 style: TextStyle(
-                                  color: AppColors.getTossTextPrimary(context),
+                                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 20,
                                   letterSpacing: -0.3,
@@ -538,7 +538,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Text(
                                 _getDateRange(),
                                 style: TextStyle(
-                                  color: AppColors.getTossTextSecondary(context),
+                                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                                   fontSize: 14,
                                 ),
                               ),
@@ -549,12 +549,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             icon: const Icon(
                               Icons.bar_chart,
                               size: 16,
-                              color: AppColors.tossBlue,
+                              color: TossDesignSystem.tossBlue,
                             ),
                             label: const Text(
                               '상세 분석',
                               style: TextStyle(
-                                color: AppColors.tossBlue,
+                                color: TossDesignSystem.tossBlue,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -601,7 +601,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: AppColors.getTossCardBackground(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -619,7 +619,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       Text(
                         '추천 활동',
                         style: TextStyle(
-                          color: AppColors.getTossTextPrimary(context),
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.3,
@@ -665,7 +665,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: AppColors.getTossCardBackground(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -683,7 +683,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Text(
                         '내 도구',
                         style: TextStyle(
-                          color: AppColors.getTossTextPrimary(context),
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                           fontWeight: FontWeight.w700,
                           fontSize: 20,
                           letterSpacing: -0.3,
@@ -733,10 +733,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: AppColors.getTossCardBackground(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.getTossBorder(context),
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                     width: 1,
                   ),
                   boxShadow: [
@@ -759,7 +759,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         '계정 설정',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppColors.getTossTextPrimary(context),
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                         ),
@@ -871,7 +871,7 @@ https://fortune.app''';
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: AppColors.getTossBorder(context),
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                     width: 1,
                   ),
           ),
@@ -886,13 +886,13 @@ https://fortune.app''';
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.getTossIconBackground(context),
+                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       icon,
                       size: 22,
-                      color: AppColors.tossBlue,
+                      color: TossDesignSystem.tossBlue,
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -901,7 +901,7 @@ https://fortune.app''';
                   title,
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppColors.getTossTextPrimary(context),
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -915,15 +915,15 @@ https://fortune.app''';
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: isText && value == '없음'
-                        ? AppColors.getTossTextSecondary(context)
-                        : AppColors.getTossTextPrimary(context),
+                        ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600
+                        : Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: AppColors.getTossArrow(context),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                 ),
               ],
             ),
@@ -946,7 +946,7 @@ https://fortune.app''';
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.getTossIconBackground(context),
+          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -955,12 +955,12 @@ https://fortune.app''';
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.tossBluePale,
+                color: TossDesignSystem.tossBlue.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon, 
-                color: AppColors.tossBlue,
+                color: TossDesignSystem.tossBlue,
                 size: 24,
               ),
             ),
@@ -974,7 +974,7 @@ https://fortune.app''';
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.getTossTextPrimary(context),
+                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -982,7 +982,7 @@ https://fortune.app''';
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.getTossTextSecondary(context),
+                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                     ),
                   ),
                 ],
@@ -991,7 +991,7 @@ https://fortune.app''';
             Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.getTossArrow(context),
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
             ),
           ],
         ),
@@ -1024,7 +1024,7 @@ https://fortune.app''';
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: AppColors.getTossBorder(context),
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
                     width: 1,
                   ),
           ),
@@ -1035,12 +1035,12 @@ https://fortune.app''';
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: AppColors.getTossIconBackground(context),
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
-                color: AppColors.tossBlue,
+                color: TossDesignSystem.tossBlue,
                 size: 24,
               ),
             ),
@@ -1056,7 +1056,7 @@ https://fortune.app''';
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.getTossTextPrimary(context),
+                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                         ),
                       ),
                       if (isNew) ...[
@@ -1064,7 +1064,7 @@ https://fortune.app''';
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: AppColors.tossBlue,
+                            color: TossDesignSystem.tossBlue,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
@@ -1085,7 +1085,7 @@ https://fortune.app''';
                       subtitle,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.getTossTextSecondary(context),
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                       ),
                     ),
                   ],
@@ -1095,7 +1095,7 @@ https://fortune.app''';
             Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.getTossArrow(context),
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
             ),
           ],
         ),

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/utils/logger.dart';
+import '../../../../widgets/multi_photo_selector.dart';
+import '../../../../services/vision_api_service.dart';
 
 class BlindDateFortunePage extends BaseFortunePage {
   const BlindDateFortunePage({Key? key})
@@ -22,7 +26,8 @@ class BlindDateFortunePage extends BaseFortunePage {
   ConsumerState<BlindDateFortunePage> createState() => _BlindDateFortunePageState();
 }
 
-class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePage> {
+class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePage> 
+    with TickerProviderStateMixin {
   // Meeting Info
   DateTime? _meetingDate;
   String? _meetingTime;
@@ -39,6 +44,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   List<String> _concerns = [];
   String? _pastExperience;
   bool _isFirstBlindDate = false;
+  
+  // Photo Analysis
+  List<XFile> _myPhotos = [];
+  List<XFile> _partnerPhotos = [];
+  BlindDateAnalysis? _photoAnalysis;
+  bool _isAnalyzingPhotos = false;
+  
+  // Tab Controller
+  late TabController _tabController;
+  int _selectedTabIndex = 0;
   
   final Map<String, String> _meetingTimes = {
     'morning': '아침 (7-11시)',
@@ -113,6 +128,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   void initState() {
     super.initState();
     
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        _selectedTabIndex = _tabController.index;
+      });
+    });
+    
     // Pre-fill user data with profile if available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (userProfile != null) {
@@ -129,6 +151,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   @override
   void dispose() {
     _nameController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -280,6 +303,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     final userInfo = await getUserInfo();
     if (userInfo == null) return null;
 
+    // 사진 분석이 있는 경우
+    if (_myPhotos.isNotEmpty) {
+      await _analyzePhotos();
+    }
+
     if (_meetingDate == null || _meetingTime == null || 
         _meetingType == null || _introducer == null ||
         _importantQualities.isEmpty || _agePreference == null ||
@@ -301,7 +329,37 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       'concerns': _concerns,
       'pastExperience': _pastExperience,
       'isFirstBlindDate': _isFirstBlindDate,
+      // 사진 분석 결과 추가
+      if (_photoAnalysis != null) ...{
+        'photoAnalysis': {
+          'myStyle': _photoAnalysis!.myStyle,
+          'myPersonality': _photoAnalysis!.myPersonality,
+          'partnerStyle': _photoAnalysis!.partnerStyle,
+          'partnerPersonality': _photoAnalysis!.partnerPersonality,
+          'matchingScore': _photoAnalysis!.matchingScore,
+        },
+      },
     };
+  }
+
+  /// 사진 분석 실행
+  Future<void> _analyzePhotos() async {
+    if (_myPhotos.isEmpty && _partnerPhotos.isEmpty) return;
+    
+    setState(() => _isAnalyzingPhotos = true);
+    
+    try {
+      final visionService = VisionApiService();
+      _photoAnalysis = await visionService.analyzeForBlindDate(
+        myPhotos: _myPhotos,
+        partnerPhotos: _partnerPhotos.isNotEmpty ? _partnerPhotos : null,
+      );
+    } catch (e) {
+      Logger.error('Photo analysis failed', e);
+      Toast.error(context, '사진 분석에 실패했습니다');
+    } finally {
+      setState(() => _isAnalyzingPhotos = false);
+    }
   }
 
   @override
@@ -310,9 +368,44 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
     return Column(
       children: [
-        // User Info Form
-        buildUserInfoForm(),
-        const SizedBox(height: 16),
+        // Tab Bar for Input Method Selection
+        Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: TabBar(
+            controller: _tabController,
+            indicator: BoxDecoration(
+              color: theme.colorScheme.primary,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            labelColor: Colors.white,
+            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
+            tabs: [
+              Tab(
+                icon: Icon(Icons.edit),
+                text: '기본 정보',
+              ),
+              Tab(
+                icon: Icon(Icons.photo_camera),
+                text: '사진 분석',
+              ),
+            ],
+          ),
+        ),
+        
+        // Tab Views
+        if (_selectedTabIndex == 0) ...[
+          // Original Form
+          buildUserInfoForm(),
+          const SizedBox(height: 16),
+        ] else ...[
+          // Photo Analysis Section
+          _buildPhotoAnalysisSection(),
+          const SizedBox(height: 16),
+        ],
         // Meeting Details
         GlassCard(
           child: Padding(
@@ -794,6 +887,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     return Column(
       children: [
         super.buildFortuneResult(),
+        if (_photoAnalysis != null) _buildPhotoAnalysisResult(),
         _buildSuccessPrediction(),
         _buildFirstImpressionGuide(),
         _buildConversationTopics(),
@@ -801,6 +895,345 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         _buildDateLocationAdvice(),
         _buildDosDonts(),
       ],
+    );
+  }
+
+  /// 사진 분석 섹션 빌드
+  Widget _buildPhotoAnalysisSection() {
+    final theme = Theme.of(context);
+    
+    return Column(
+      children: [
+        // My Photos Section
+        GlassCard(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '내 사진 분석',
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                MultiPhotoSelector(
+                  title: '내 사진 선택',
+                  maxPhotos: 5,
+                  onPhotosSelected: (photos) {
+                    setState(() {
+                      _myPhotos = photos;
+                    });
+                  },
+                  initialPhotos: _myPhotos,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Partner Photos Section (Optional)
+        GlassCard(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '상대방 정보 (선택)',
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '상대방 사진이 있으면 매칭 확률을 더 정확하게 분석할 수 있습니다',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                MultiPhotoSelector(
+                  title: '상대방 사진 선택',
+                  maxPhotos: 3,
+                  onPhotosSelected: (photos) {
+                    setState(() {
+                      _partnerPhotos = photos;
+                    });
+                  },
+                  initialPhotos: _partnerPhotos,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Analysis Button
+        if (_myPhotos.isNotEmpty)
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isAnalyzingPhotos ? null : _analyzePhotos,
+              icon: _isAnalyzingPhotos
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Icon(Icons.auto_awesome),
+              label: Text(
+                _isAnalyzingPhotos ? 'AI가 분석 중...' : 'AI 사진 분석 시작',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        
+        // Basic User Info (still required)
+        const SizedBox(height: 24),
+        buildUserInfoForm(),
+      ],
+    );
+  }
+
+  /// 사진 분석 결과 표시
+  Widget _buildPhotoAnalysisResult() {
+    if (_photoAnalysis == null) return const SizedBox.shrink();
+    
+    final theme = Theme.of(context);
+    final analysis = _photoAnalysis!;
+    
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: GlassCard(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'AI 사진 분석 결과',
+                    style: theme.textTheme.headlineSmall,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              
+              // Matching Score
+              if (analysis.partnerStyle != null)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.colorScheme.primary.withOpacity(0.1),
+                        theme.colorScheme.secondary.withOpacity(0.1),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '매칭 확률',
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${analysis.matchingScore}%',
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          color: _getSuccessColor(analysis.matchingScore),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              
+              const SizedBox(height: 16),
+              
+              // My Analysis
+              _buildAnalysisCard(
+                title: '내 이미지 분석',
+                style: analysis.myStyle,
+                personality: analysis.myPersonality,
+                icon: Icons.person,
+              ),
+              
+              // Partner Analysis (if available)
+              if (analysis.partnerStyle != null) ...[
+                const SizedBox(height: 16),
+                _buildAnalysisCard(
+                  title: '상대방 이미지 분석',
+                  style: analysis.partnerStyle!,
+                  personality: analysis.partnerPersonality!,
+                  icon: Icons.favorite,
+                ),
+              ],
+              
+              const SizedBox(height: 16),
+              
+              // AI Tips
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.blue.withOpacity(0.3),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.tips_and_updates,
+                          size: 16,
+                          color: Colors.blue,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'AI 추천 포인트',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ...analysis.firstImpressionTips.take(3).map((tip) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('• '),
+                          Expanded(
+                            child: Text(
+                              tip,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )).toList(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 분석 카드 위젯
+  Widget _buildAnalysisCard({
+    required String title,
+    required String style,
+    required String personality,
+    required IconData icon,
+  }) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '스타일',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    Text(
+                      style,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '성격',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    Text(
+                      personality,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

@@ -33,7 +33,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     _animation = CurvedAnimation(
@@ -102,7 +102,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
           decoration: BoxDecoration(
             color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.2),
-            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.5),
               width: 1,
@@ -270,7 +270,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               children: [
                 Container(
                   width: 40,
-                  height: AppDimensions.buttonHeightSmall,
+                  height: 32,
                   decoration: BoxDecoration(
                     color: _getFunctionColor(function).withOpacity(0.2),
                     borderRadius: AppDimensions.borderRadiusSmall,
@@ -297,7 +297,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing2,
-                              vertical: AppSpacing.spacing0 * 0.5,
+                              vertical: 4 * 0.5,
                             ),
                             decoration: BoxDecoration(
                               color: _getStackPositionColor(stackIndex).withOpacity(0.2),
@@ -452,7 +452,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+                borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
             const SizedBox(height: AppSpacing.spacing5),

@@ -341,7 +341,7 @@ class EnhancedMovingResult extends StatelessWidget {
       child: RadarChart(
         RadarChartData(
           radarShape: RadarShape.polygon,
-          radarBorderData: const BorderSide(color: Colors.grey, width: AppSpacing.spacing0 * 0.5),
+          radarBorderData: const BorderSide(color: Colors.grey, width: 4 * 0.5),
           gridBorderData: const BorderSide(color: Colors.grey, width: 0.5),
           titlePositionPercentageOffset: 0.2,
           radarBackgroundColor: Colors.transparent,
@@ -381,7 +381,7 @@ class EnhancedMovingResult extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: AppSpacing.paddingAll8,
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: AppDimensions.borderRadiusSmall,

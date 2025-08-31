@@ -1,4 +1,6 @@
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -149,7 +151,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                   Text(
                     '부적에 담을 정보를 입력해주세요',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary)).animate()
+                      color: TossDesignSystem.gray600)).animate()
                   .fadeIn(duration: 600.ms, delay: 400.ms)])),
             const SizedBox(height: 32),
             
@@ -398,20 +400,20 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primary : Colors.white,
+              color: isSelected ? TossDesignSystem.tossBlue : Colors.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? AppColors.primary : Colors.grey[300]!),
+                color: isSelected ? TossDesignSystem.tossBlue : Colors.grey[300]!),
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2))]),
             child: Text(
               entry.value,
               style: TextStyle(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
+                color: isSelected ? Colors.white : TossDesignSystem.gray900,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
       }).toList()).animate()
         .fadeIn(duration: 400.ms, delay: 1200.ms);

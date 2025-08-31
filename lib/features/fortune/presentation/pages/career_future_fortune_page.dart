@@ -1,5 +1,5 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
@@ -7,7 +7,7 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class CareerFutureFortunePage extends BaseFortunePage {
   const CareerFutureFortunePage({
@@ -92,12 +92,12 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
     final theme = Theme.of(context);
     
     return SingleChildScrollView(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -107,14 +107,14 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                       Icons.rocket_launch,
                       color: theme.colorScheme.primary,
                     ),
-                    SizedBox(width: AppSpacing.spacing2),
+                    SizedBox(width: TossDesignSystem.spacingS),
                     Text(
                       '커리어 미래 계획',
                       style: theme.textTheme.titleLarge,
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.spacing5),
+                SizedBox(height: TossDesignSystem.spacingM),
                 
                 // Current Role
                 TextField(
@@ -124,11 +124,11 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     hintText: '예: 프로덕트 매니저, 시니어 개발자',
                     prefixIcon: const Icon(Icons.badge),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     ),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing4),
+                SizedBox(height: TossDesignSystem.spacingM),
                 
                 // Career Goal (Optional)
                 TextField(
@@ -139,25 +139,25 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     hintText: '예: CTO, 스타트업 창업, 글로벌 기업 진출',
                     prefixIcon: const Icon(Icons.flag),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Time Horizon
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '예측 시점',
                   style: theme.textTheme.titleMedium),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -177,18 +177,18 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Career Path
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '희망 커리어 경로',
                   style: theme.textTheme.titleMedium),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 ...(_careerPaths.map((path) {
                   final isSelected = _careerPath == path;
                   return InkWell(
@@ -197,15 +197,15 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                         _careerPath = path;
                       });
                     },
-                    borderRadius: AppDimensions.borderRadiusMedium,
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                     child: Container(
-                      padding: AppSpacing.paddingAll16,
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withOpacity(0.1)
                             : theme.colorScheme.surface.withOpacity(0.3),
-                        borderRadius: AppDimensions.borderRadiusMedium,
+                        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
@@ -222,7 +222,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                                 ? theme.colorScheme.primary
                                 : theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
-                          SizedBox(width: AppSpacing.spacing3),
+                          SizedBox(width: TossDesignSystem.spacingS),
                           Expanded(
                             child: Text(
                               path,
@@ -237,32 +237,32 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           
           // Skills to Develop
           GlassCard(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     const Icon(Icons.star, color: Colors.amber),
-                    SizedBox(width: AppSpacing.spacing2),
+                    SizedBox(width: TossDesignSystem.spacingS),
                     Text(
                       '개발하고 싶은 역량 (2개 이상)',
                       style: theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.spacing2),
+                SizedBox(height: TossDesignSystem.spacingS),
                 Text(
                   '최대 5개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing3),
+                SizedBox(height: TossDesignSystem.spacingS),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -286,7 +286,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing8),
+          SizedBox(height: TossDesignSystem.spacingXL),
         ],
       ),
     );

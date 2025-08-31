@@ -323,7 +323,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                 children: [
                   Container(
                     width: 40,
-                    height: AppDimensions.buttonHeightSmall,
+                    height: 32,
                     decoration: BoxDecoration(
                       color: _getEmotionColor(emotion).withOpacity(0.2),
                       borderRadius: AppDimensions.borderRadiusSmall,
@@ -448,7 +448,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
           label,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: AppSpacing.spacing0 * 0.5),
+        const SizedBox(height: 4 * 0.5),
         Text(
           '${(value * 100).toInt()}%',
           style: TextStyle(

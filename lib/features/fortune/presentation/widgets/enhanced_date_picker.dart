@@ -258,7 +258,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                                    day.weekday == DateTime.sunday;
                   
                   return Container(
-                    margin: AppSpacing.paddingAll4,
+                    margin: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.3),
                       shape: BoxShape.circle,

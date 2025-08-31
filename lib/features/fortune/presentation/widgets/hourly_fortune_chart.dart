@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
+
+
+
+import '../../../../core/theme/toss_design_system.dart';
+
 
 class HourlyFortuneChart extends StatefulWidget {
   final Map<String, dynamic> sajuData;
@@ -34,17 +34,17 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
 
   // 오행 색상
   static const Map<String, Color> elementColors = {
-    '목': AppColors.success,
-    '화': AppColors.warning,
-    '토': FortuneColors.goldLight,
-    '금': AppColors.secondary,
-    '수': AppColors.primary};
+    '목': TossDesignSystem.successGreen,
+    '화': TossDesignSystem.warningOrange,
+    '토': TossDesignSystem.warningOrange,
+    '금': TossDesignSystem.gray600,
+    '수': TossDesignSystem.tossBlue};
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
+      duration: const Duration(milliseconds: 1500),
       vsync: this);
     _animation = CurvedAnimation(
       parent: _animationController,
@@ -64,11 +64,11 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: TossDesignSystem.spacingM),
         _buildChart(),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: TossDesignSystem.spacingM),
         _buildLegend(),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: TossDesignSystem.spacingM),
         _buildCurrentTimeInfo()]);
 }
 
@@ -82,7 +82,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             Text(
               '시간별 운기',
               style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(height: AppSpacing.spacing1),
+            const SizedBox(height: TossDesignSystem.spacingXS),
             Text(
               '오늘의 시간대별 운세 흐름',
               style: Theme.of(context).textTheme.bodyMedium)]),
@@ -97,8 +97,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125,
-          padding: AppSpacing.paddingAll20,
+          height: TossDesignSystem.spacingS4 * 3.125,
+          padding: const EdgeInsets.all(20),
           child: LineChart(
             _mainChartData()));
       });
@@ -144,7 +144,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
               final hour = value.toInt();
               if (hour % 2 == 0 && hour < 24) {
                 return Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.spacing2),
+                  padding: const EdgeInsets.only(top: TossDesignSystem.spacingS),
                   child: Text(
                     timeNames[hour ~/ 2],
                     style: Theme.of(context).textTheme.bodyMedium)
@@ -255,11 +255,11 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       children: [
         Container(
           width: 16,
-          height: AppSpacing.spacing4,
+          height: TossDesignSystem.spacingM,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: AppDimensions.borderRadiusSmall)),
-        const SizedBox(width: AppSpacing.spacing1),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusS))),
+        const SizedBox(width: TossDesignSystem.spacingXS),
         Text(
           label,
           style: Theme.of(context).textTheme.bodyMedium)]
@@ -288,22 +288,22 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
                 '현재 시간 운세',
                 style: Theme.of(context).textTheme.bodyMedium),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
+                padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS * 1.5),
                 decoration: BoxDecoration(
                   color: _getFortuneColor(currentFortune),
-                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+                  borderRadius: BorderRadius.circular(20)),
                 child: Text(
                   '${(currentFortune * 100).toInt()}%',
                   style: Theme.of(context).textTheme.bodyMedium))]),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: TossDesignSystem.spacingS),
           Text(
             '${currentHour.toString().padLeft(2, '0')}:00 - $timeName (${currentElement}원소)',
             style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: TossDesignSystem.spacingS),
           Text(
             _getFortuneDescription(currentFortune, currentElement),
             style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: TossDesignSystem.spacingS),
           _buildFortuneAdvice(currentFortune, currentElement)]));
   }
 
@@ -331,7 +331,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           icon,
           color: _getFortuneColor(fortune),
           size: 20),
-        const SizedBox(width: AppSpacing.spacing2),
+        const SizedBox(width: TossDesignSystem.spacingS),
         Expanded(
           child: Text(
             advice,

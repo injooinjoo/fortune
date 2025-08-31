@@ -1,10 +1,7 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../theme/toss_design_system.dart';
 
 /// TOSS 스타일 텍스트 입력 필드
 class TossTextField extends StatefulWidget {
@@ -61,33 +58,27 @@ class _TossTextFieldState extends State<TossTextField>
     with SingleTickerProviderStateMixin {
   late FocusNode _focusNode;
   late AnimationController _animationController;
-  late Animation<double> _labelAnimation;
-  bool _isFocused = false;
-  bool _hasText = false;
+  late Animation<double> _focusAnimation;
+  bool _hasFocus = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode = widget.focusNode ?? FocusNode();
-    _focusNode.addListener(_handleFocusChange);
+    _focusNode.addListener(_onFocusChange);
     
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: TossDesignSystem.durationShort,
     );
     
-    _labelAnimation = Tween<double>(
+    _focusAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
     ));
-    
-    _hasText = widget.controller?.text.isNotEmpty ?? false;
-    if (_hasText) {
-      _animationController.value = 1.0;
-    }
   }
 
   @override
@@ -95,52 +86,64 @@ class _TossTextFieldState extends State<TossTextField>
     if (widget.focusNode == null) {
       _focusNode.dispose();
     }
+    _focusNode.removeListener(_onFocusChange);
     _animationController.dispose();
     super.dispose();
   }
 
-  void _handleFocusChange() {
+  void _onFocusChange() {
     setState(() {
-      _isFocused = _focusNode.hasFocus;
+      _hasFocus = _focusNode.hasFocus;
     });
     
-    if (_isFocused || _hasText) {
+    if (_hasFocus) {
       _animationController.forward();
+      if (widget.enableHaptic) {
+        HapticFeedback.selectionClick();
+      }
     } else {
       _animationController.reverse();
-    }
-    
-    if (_isFocused && widget.enableHaptic) {
-      HapticFeedback.selectionClick();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final tossTheme = context.toss;
-    final formStyles = tossTheme.formStyles;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = widget.errorText != null;
-    final borderColor = hasError
-        ? formStyles.errorBorderColor
-        : _isFocused
-            ? formStyles.focusedBorderColor
-            : formStyles.borderColor;
-    
-    final borderWidth = _isFocused
-        ? formStyles.focusBorderWidth
-        : formStyles.inputBorderWidth;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          height: formStyles.inputHeight,
-          child: Stack(
-            children: [
-              // Input field
-              TextFormField(
+        if (widget.labelText != null) ...[
+          Text(
+            widget.labelText!,
+            style: TossDesignSystem.body3.copyWith(
+              color: hasError 
+                  ? TossDesignSystem.errorRed
+                  : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: TossDesignSystem.spacingS),
+        ],
+        AnimatedBuilder(
+          animation: _focusAnimation,
+          builder: (context, child) {
+            return Container(
+              decoration: BoxDecoration(
+                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+                border: Border.all(
+                  color: hasError
+                      ? TossDesignSystem.errorRed
+                      : _hasFocus
+                          ? TossDesignSystem.tossBlue
+                          : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
+                  width: _hasFocus ? 2 : 1,
+                ),
+              ),
+              child: TextField(
                 controller: widget.controller,
                 focusNode: _focusNode,
                 keyboardType: widget.keyboardType,
@@ -148,363 +151,208 @@ class _TossTextFieldState extends State<TossTextField>
                 obscureText: widget.obscureText,
                 maxLines: widget.maxLines,
                 maxLength: widget.maxLength,
-                onChanged: (value) {
-                  setState(() {
-                    _hasText = value.isNotEmpty;
-                  });
-                  widget.onChanged?.call(value);
-                },
+                onChanged: widget.onChanged,
                 onEditingComplete: widget.onEditingComplete,
-                onFieldSubmitted: widget.onSubmitted,
+                onSubmitted: widget.onSubmitted,
                 enabled: widget.enabled,
                 inputFormatters: widget.inputFormatters,
                 autofocus: widget.autofocus,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: theme.brightness == Brightness.light
-                      ? AppColors.textPrimary
-                      : AppColors.textPrimaryDark,
+                style: TossDesignSystem.body2.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 ),
                 decoration: InputDecoration(
                   hintText: widget.hintText,
-                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: theme.brightness == Brightness.light
-                        ? AppColors.textSecondary.withValues(alpha: 0.4)
-                        : AppColors.textSecondary.withValues(alpha: 0.6),
+                  hintStyle: TossDesignSystem.body2.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
                   ),
+                  prefixIcon: widget.prefixIcon,
+                  suffixIcon: widget.suffixIcon,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: TossDesignSystem.spacingM,
+                    vertical: TossDesignSystem.spacingM,
+                  ),
+                  border: InputBorder.none,
                   counterText: '',
-                  contentPadding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: 16,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
-                    borderSide: BorderSide(
-                      color: borderColor,
-                      width: borderWidth,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
-                    borderSide: BorderSide(
-                      color: borderColor,
-                      width: borderWidth,
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
-                    borderSide: BorderSide(
-                      color: formStyles.errorBorderColor,
-                      width: formStyles.focusBorderWidth,
-                    ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(formStyles.inputBorderRadius),
-                    borderSide: BorderSide(
-                      color: formStyles.errorBorderColor,
-                      width: formStyles.focusBorderWidth,
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: theme.brightness == Brightness.light
-                      ? AppColors.textPrimaryDark
-                      : const Color(0xFF1C1C1C),
                 ),
               ),
-              
-              // Floating label
-              if (widget.labelText != null)
-                AnimatedBuilder(
-                  animation: _labelAnimation,
-                  builder: (context, child) {
-                    return Positioned(
-                      left: 16,
-                      top: Tween<double>(
-                        begin: 16,
-                        end: 8,
-                      ).evaluate(_labelAnimation),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        color: theme.brightness == Brightness.light
-                            ? AppColors.textPrimaryDark
-                            : const Color(0xFF1C1C1C),
-                        child: Text(
-                          widget.labelText!,
-                          style: TextStyle(
-                            fontSize: Tween<double>(
-                              begin: 15,
-                              end: 12,
-                            ).evaluate(_labelAnimation),
-                            color: hasError
-                                ? formStyles.errorBorderColor
-                                : _isFocused
-                                    ? formStyles.focusedBorderColor
-                                    : theme.brightness == Brightness.light
-                                        ? AppColors.textSecondary.withValues(alpha: 0.6)
-                                        : AppColors.textSecondary.withValues(alpha: 0.4),
-                            fontFamily: 'TossProductSans',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              
-              // Prefix icon
-              if (widget.prefixIcon != null)
-                Positioned(
-                  left: 12,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: IconTheme(
-                      data: IconThemeData(
-                        size: AppDimensions.iconSizeSmall,
-                        color: theme.brightness == Brightness.light
-                            ? AppColors.textSecondary.withValues(alpha: 0.6)
-                            : AppColors.textSecondary.withValues(alpha: 0.4),
-                      ),
-                      child: widget.prefixIcon!,
-                    ),
-                  ),
-                ),
-              
-              // Suffix icon
-              if (widget.suffixIcon != null)
-                Positioned(
-                  right: 12,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: IconTheme(
-                      data: IconThemeData(
-                        size: AppDimensions.iconSizeSmall,
-                        color: theme.brightness == Brightness.light
-                            ? AppColors.textSecondary.withValues(alpha: 0.6)
-                            : AppColors.textSecondary.withValues(alpha: 0.4),
-                      ),
-                      child: widget.suffixIcon!,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+            );
+          },
         ),
-        
-        // Error or helper text
-        if (widget.errorText != null || widget.helperText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xSmall, left: AppSpacing.medium),
-            child: Row(
-              children: [
-                if (widget.errorText != null)
-                  Icon(
-                    Icons.error_outline,
-                    size: AppDimensions.iconSizeXSmall,
-                    color: formStyles.errorBorderColor,
-                  ),
-                if (widget.errorText != null)
-                  const SizedBox(width: AppSpacing.spacing1),
-                Expanded(
-                  child: Text(
-                    widget.errorText ?? widget.helperText!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: widget.errorText != null
-                          ? formStyles.errorBorderColor
-                          : theme.brightness == Brightness.light
-                              ? AppColors.textSecondary.withValues(alpha: 0.6)
-                              : AppColors.textSecondary.withValues(alpha: 0.4),
-                    ),
-                  ),
-                ),
-              ],
+        if (widget.errorText != null || widget.helperText != null) ...[
+          SizedBox(height: TossDesignSystem.spacingXS),
+          Text(
+            widget.errorText ?? widget.helperText ?? '',
+            style: TossDesignSystem.caption1.copyWith(
+              color: hasError
+                  ? TossDesignSystem.errorRed
+                  : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
             ),
-          )
-              .animate()
-              .fadeIn(duration: 200.ms)
-              .slideY(begin: -0.2, end: 0),
+          ).animate().fadeIn(duration: TossDesignSystem.durationShort),
+        ],
       ],
     );
   }
 }
 
-/// 전화번호 입력 필드
-class TossPhoneTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final String? errorText;
+/// TOSS 스타일 선택 필드
+class TossSelectField<T> extends StatelessWidget {
+  final String? labelText;
+  final String? hintText;
+  final T? value;
+  final List<TossSelectOption<T>> options;
+  final ValueChanged<T?>? onChanged;
   final bool enabled;
 
-  const TossPhoneTextField({
+  const TossSelectField({
     super.key,
-    this.controller,
+    this.labelText,
+    this.hintText,
+    this.value,
+    required this.options,
     this.onChanged,
-    this.errorText,
     this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TossTextField(
-      controller: controller,
-      labelText: '전화번호',
-      hintText: '010-0000-0000',
-      keyboardType: TextInputType.phone,
-      onChanged: onChanged,
-      errorText: errorText,
-      enabled: enabled,
-      prefixIcon: Text(
-        '+82',
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        _PhoneNumberFormatter(),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (labelText != null) ...[
+          Text(
+            labelText!,
+            style: TossDesignSystem.body3.copyWith(
+              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: TossDesignSystem.spacingS),
+        ],
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<T>(
+              value: value,
+              hint: hintText != null
+                  ? Text(
+                      hintText!,
+                      style: TossDesignSystem.body2.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                      ),
+                    )
+                  : null,
+              items: options.map((option) {
+                return DropdownMenuItem<T>(
+                  value: option.value,
+                  child: Text(
+                    option.label,
+                    style: TossDesignSystem.body2.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: enabled ? onChanged : null,
+              isExpanded: true,
+              padding: EdgeInsets.symmetric(
+                horizontal: TossDesignSystem.spacingM,
+                vertical: TossDesignSystem.spacingM,
+              ),
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
 }
 
-/// 전화번호 포맷터
-class _PhoneNumberFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final text = newValue.text.replaceAll('-', '');
-    final buffer = StringBuffer();
-    
-    for (int i = 0; i < text.length; i++) {
-      if (i == 3 || i == 7) {
-        buffer.write('-');
-      }
-      buffer.write(text[i]);
-    }
-    
-    final formatted = buffer.toString();
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
+class TossSelectOption<T> {
+  final String label;
+  final T value;
+
+  const TossSelectOption({
+    required this.label,
+    required this.value,
+  });
 }
 
-/// 검색 입력 필드
-class TossSearchField extends StatelessWidget {
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final VoidCallback? onSubmitted;
-  final String? hintText;
-  final bool autofocus;
+/// TOSS 스타일 체크박스
+class TossCheckbox extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool?>? onChanged;
+  final String? label;
+  final bool enabled;
 
-  const TossSearchField({
+  const TossCheckbox({
     super.key,
-    this.controller,
+    required this.value,
     this.onChanged,
-    this.onSubmitted,
-    this.hintText,
-    this.autofocus = false,
+    this.label,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TossTextField(
-      controller: controller,
-      hintText: hintText ?? '검색어를 입력하세요',
-      onChanged: onChanged,
-      onEditingComplete: onSubmitted,
-      autofocus: autofocus,
-      textInputAction: TextInputAction.search,
-      prefixIcon: const Icon(Icons.search),
-      suffixIcon: controller != null && controller!.text.isNotEmpty
-          ? IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                controller!.clear();
-                onChanged?.call('');
-              },
-            )
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return InkWell(
+      onTap: enabled
+          ? () {
+              HapticFeedback.selectionClick();
+              onChanged?.call(!value);
+            }
           : null,
-    );
-  }
-}
-
-/// 금액 입력 필드
-class TossAmountTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final String? errorText;
-  final String currency;
-
-  const TossAmountTextField({
-    super.key,
-    this.controller,
-    this.onChanged,
-    this.errorText,
-    this.currency = '원',
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TossTextField(
-      controller: controller,
-      labelText: '금액',
-      hintText: '0',
-      keyboardType: TextInputType.number,
-      onChanged: onChanged,
-      errorText: errorText,
-      suffixIcon: Text(
-        currency,
-        style: Theme.of(context).textTheme.bodyLarge,
+      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: value
+                  ? TossDesignSystem.tossBlue
+                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
+              border: Border.all(
+                color: value
+                    ? TossDesignSystem.tossBlue
+                    : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+                width: 2,
+              ),
+            ),
+            child: value
+                ? Icon(
+                    Icons.check,
+                    size: 14,
+                    color: TossDesignSystem.white,
+                  ).animate().scale(duration: TossDesignSystem.durationShort)
+                : null,
+          ),
+          if (label != null) ...[
+            SizedBox(width: TossDesignSystem.spacingS),
+            Text(
+              label!,
+              style: TossDesignSystem.body2.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              ),
+            ),
+          ],
+        ],
       ),
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        _ThousandsSeparatorFormatter(),
-      ],
     );
-  }
-}
-
-/// 천단위 구분 포맷터
-class _ThousandsSeparatorFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final text = newValue.text.replaceAll(',', '');
-    final number = int.tryParse(text);
-    
-    if (number == null) {
-      return newValue;
-    }
-    
-    final formatted = _formatNumber(number);
-    
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
-  
-  String _formatNumber(int number) {
-    final str = number.toString();
-    final buffer = StringBuffer();
-    
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && (str.length - i) % 3 == 0) {
-        buffer.write(',');
-      }
-      buffer.write(str[i]);
-    }
-    
-    return buffer.toString();
   }
 }

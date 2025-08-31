@@ -1,5 +1,6 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,7 +10,7 @@ import 'package:intl/intl.dart';
 import '../providers/providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/haptic_utils.dart';
-import 'package:fortune/core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/services/holiday_service.dart';
 import '../../core/models/holiday_models.dart';
@@ -457,15 +458,15 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             height: screenHeight * 0.82,
             decoration: BoxDecoration(
               color: theme.brightness == Brightness.dark 
-                  ? AppColors.textPrimary 
-                  : AppColors.textPrimaryDark,
+                  ? TossDesignSystem.gray900 
+                  : TossDesignSystem.grayDark900,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.textPrimary.withOpacity(0.1),
+                  color: TossDesignSystem.gray900.withOpacity(0.1),
                   blurRadius: 20,
                   offset: const Offset(0, -5),
                 ),
@@ -499,12 +500,12 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     return Container(
       margin: const EdgeInsets.only(
         top: AppSpacing.small, 
-        bottom: AppSpacing.xSmall,
+        bottom: TossDesignSystem.spacingXS,
       ),
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: AppColors.textSecondary,
+        color: TossDesignSystem.gray600,
         borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
       ),
     );
@@ -610,7 +611,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         color: theme.scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.05),
+            color: TossDesignSystem.gray900.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -619,14 +620,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       child: ElevatedButton(
         onPressed: (canGetFortune && !_isLoadingFortune) ? _onFortuneButtonPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: canGetFortune ? AppColors.tossBlue : Colors.grey.shade400,
+          backgroundColor: canGetFortune ? TossDesignSystem.gray600 : Colors.grey.shade400,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(56),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: canGetFortune ? 4 : 0,
-          shadowColor: AppColors.tossBlue.withOpacity(0.3),
+          shadowColor: TossDesignSystem.gray600.withOpacity(0.3),
         ),
         child: _isLoadingFortune
             ? Row(

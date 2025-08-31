@@ -13,7 +13,7 @@ import '../../presentation/providers/fortune_history_provider.dart';
 import '../../presentation/providers/fortune_cache_provider.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../services/celebrity_service.dart';
 import '../../services/fortune_history_service.dart';
 
@@ -158,8 +158,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   // Header
                   Text(
                     '$displayUserName님의 오늘 운세',
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
@@ -185,8 +185,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           if (widget.fortune?.metadata?['greeting'] != null) ...[
                             Text(
                               widget.fortune!.metadata!['greeting'],
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
+                              style: TextStyle(
+                                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 height: 1.5,
@@ -197,8 +197,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           if (widget.fortune?.metadata?['description'] != null) ...[
                             Text(
                               widget.fortune!.metadata!['description'],
-                              style: const TextStyle(
-                                color: AppColors.textSecondary,
+                              style: TextStyle(
+                                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                                 fontSize: 14,
                                 height: 1.6,
                               ),
@@ -299,8 +299,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         
                         Text(
                           '5대 영역별 운세',
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -347,12 +347,12 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
-                              const Text(
+                              Text(
                                 '오늘의 조언',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                 ),
                               ),
                             ],
@@ -360,10 +360,10 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           const SizedBox(height: 16),
                           Text(
                             widget.fortune!.metadata!['advice'],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
-                              color: AppColors.textPrimary,
+                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                               height: 1.6,
                             ),
                           ),

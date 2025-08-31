@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/talisman_models.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
+
+
 
 class TalismanPreviewWidget extends StatefulWidget {
   final TalismanType type;
@@ -52,7 +52,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
       width: widget.size,
       height: widget.size,
       decoration: BoxDecoration(
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: widget.primaryColor.withOpacity(0.3),
@@ -64,7 +64,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           // Background with gradient
           Container(
             decoration: BoxDecoration(
-              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+              borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -75,7 +75,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           // Pattern overlay
           Container(
             decoration: BoxDecoration(
-              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+              borderRadius: BorderRadius.circular(20),
               color: Colors.black.withOpacity(0.1)),
             child: CustomPaint(
               size: Size(widget.size, widget.size),
@@ -111,10 +111,10 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           Positioned(
             bottom: 20,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+              padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingS),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.9),
-                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
