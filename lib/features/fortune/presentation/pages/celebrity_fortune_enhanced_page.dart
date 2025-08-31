@@ -207,7 +207,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundGray100,
+                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -297,7 +297,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundGray100,
+              color: TossTheme.backgroundSecondary,
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(

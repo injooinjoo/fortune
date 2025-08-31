@@ -395,6 +395,15 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   }
   
   Widget _buildBasicSajuInfo(Map<String, dynamic> sajuData) {
+    // 오행 균형 데이터 생성
+    final elementBalance = {
+      '목': sajuData['elementBalance']?['목'] ?? 0,
+      '화': sajuData['elementBalance']?['화'] ?? 0,
+      '토': sajuData['elementBalance']?['토'] ?? 0,
+      '금': sajuData['elementBalance']?['금'] ?? 0,
+      '수': sajuData['elementBalance']?['수'] ?? 0,
+    };
+    
     return Column(
       children: [
         // 사주 명식 표시 (만세력 스타일)
@@ -402,7 +411,10 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
         const SizedBox(height: TossTheme.spacingL),
         
         // 오행 차트
-        SajuElementChart(sajuData: sajuData),
+        SajuElementChart(
+          elementBalance: elementBalance,
+          animationController: _resultAnimationController,
+        ),
       ],
     );
   }
