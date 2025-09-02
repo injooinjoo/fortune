@@ -1,145 +1,53 @@
-import '../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import '../../core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:ui';
 
-/// Typography system using Toss Product Sans font
-/// Based on Toss design system principles
+/// Typography system mapped to TossDesignSystem for consistency
 class AppTypography {
-  // Font family
-  static const String fontFamily = 'Toss Product Sans';
+  // Font family - using system font
+  static const String fontFamily = 'SF Pro Display';
 
-  // Display styles - for large headlines
-  static const TextStyle displayLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 48,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
-    letterSpacing: -0.02);
+  // Display styles - mapped to TossDesignSystem
+  static const TextStyle displayLarge = TossDesignSystem.heading1;
 
-  static const TextStyle displayMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 36,
-    fontWeight: FontWeight.w700,
-    height: 1.25,
-    letterSpacing: -0.02);
+  static const TextStyle displayMedium = TossDesignSystem.heading1;
 
-  static const TextStyle displaySmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 28,
-    fontWeight: FontWeight.w600,
-    height: 1.3,
-    letterSpacing: -0.01);
+  static const TextStyle displaySmall = TossDesignSystem.heading2;
 
-  // Headline styles - for section headers
-  static const TextStyle headlineLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    height: 1.35,
-    letterSpacing: -0.01);
+  // Headline styles - mapped to TossDesignSystem
+  static const TextStyle headlineLarge = TossDesignSystem.heading2;
 
-  static const TextStyle headlineMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: -0.005);
+  static const TextStyle headlineMedium = TossDesignSystem.heading3;
 
-  static const TextStyle headlineSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0);
+  static const TextStyle headlineSmall = TossDesignSystem.heading4;
 
-  // Title styles - for cards and list items
-  static const TextStyle titleLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
-    height: 1.45,
-    letterSpacing: 0);
+  // Title styles - mapped to TossDesignSystem
+  static const TextStyle titleLarge = TossDesignSystem.heading4;
 
-  static const TextStyle titleMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.5,
-    letterSpacing: 0);
+  static const TextStyle titleMedium = TossDesignSystem.body1;
 
-  static const TextStyle titleSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 15,
-    fontWeight: FontWeight.w500,
-    height: 1.5,
-    letterSpacing: 0);
+  static const TextStyle titleSmall = TossDesignSystem.body2;
 
-  // Body styles - for main content
-  static const TextStyle bodyLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    height: 1.6,
-    letterSpacing: 0);
+  // Body styles - mapped to TossDesignSystem
+  static const TextStyle bodyLarge = TossDesignSystem.body3;
 
-  static const TextStyle bodyMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
-    height: 1.6,
-    letterSpacing: 0);
+  static const TextStyle bodyMedium = TossDesignSystem.body3;
 
-  static const TextStyle bodySmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    height: 1.55,
-    letterSpacing: 0);
+  static const TextStyle bodySmall = TossDesignSystem.caption;
 
-  // Label styles - for buttons and form fields
-  static const TextStyle labelLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 15,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0);
+  // Label styles - mapped to TossDesignSystem
+  static const TextStyle labelLarge = TossDesignSystem.button;
 
-  static const TextStyle labelMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0);
+  static const TextStyle labelMedium = TossDesignSystem.button;
 
-  static const TextStyle labelSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0);
+  static const TextStyle labelSmall = TossDesignSystem.caption;
 
-  // Caption styles - for helper text
-  static const TextStyle captionLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-    letterSpacing: 0);
+  // Caption styles - mapped to TossDesignSystem
+  static const TextStyle captionLarge = TossDesignSystem.caption;
 
-  static const TextStyle captionMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-    letterSpacing: 0);
+  static const TextStyle captionMedium = TossDesignSystem.caption;
 
-  static const TextStyle captionSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
-    height: 1.45,
-    letterSpacing: 0);
+  static const TextStyle captionSmall = TossDesignSystem.caption;
 
   // Extra small label for tiny UI elements
   static const TextStyle labelXSmall = TextStyle(

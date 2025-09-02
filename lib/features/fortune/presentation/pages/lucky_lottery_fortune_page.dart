@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../core/components/toss_button.dart';
+import '../constants/fortune_button_spacing.dart';
 
 class LuckyLotteryFortunePage extends ConsumerWidget {
   const LuckyLotteryFortunePage({super.key});
@@ -82,19 +84,14 @@ class _LotteryInputForm extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
         
         Center(
-          child: ElevatedButton.icon(
+          child: TossButton(
             onPressed: () => onSubmit({}),
-            icon: const Icon(Icons.casino_rounded),
-            label: const Text('행운 번호 확인하기'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
+            leadingIcon: const Icon(Icons.casino_rounded),
+            text: '행운 번호 확인하기',
+            size: TossButtonSize.large,
           ),
         ),
       ],

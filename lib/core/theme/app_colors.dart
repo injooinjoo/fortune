@@ -1,67 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class AppColors {
-  // Toss-inspired color system with clear semantic meanings
+  // Redirect all colors to TossDesignSystem for consistency
   
-  // Primary brand colors - Toss Blue inspired
-  static const Color tossBlue = Color(0xFF0064FF); // Toss signature blue
-  static const Color tossBlueDark = Color(0xFF0050CC); // Darker for emphasis
-  static const Color tossBlueLight = Color(0xFF3384FF); // Lighter for hover states
-  static const Color tossBlueBackground = Color(0xFFE6F1FF); // Very light blue for backgrounds
-  static const Color tossBluePale = Color(0xFFEBF4FF); // Very pale blue for icon backgrounds
+  // Primary brand colors - Using Toss Design System
+  static const Color tossBlue = TossDesignSystem.tossBlue;
+  static const Color tossBlueDark = TossDesignSystem.tossBlue; // Use same blue
+  static const Color tossBlueLight = TossDesignSystem.tossBlue;
+  static const Color tossBlueBackground = TossDesignSystem.gray50;
+  static const Color tossBluePale = TossDesignSystem.gray50;
   
-  // Toss-style UI colors
-  static const Color tossBackground = Color(0xFFF7F8FA); // Toss main background
-  static const Color tossBackgroundDark = Color(0xFF17171C); // Dark mode background
-  static const Color tossCardBackground = Color(0xFFFFFFFF); // Card background
-  static const Color tossCardBackgroundDark = Color(0xFF26262E); // Dark mode card
-  static const Color tossTextPrimary = Color(0xFF191F28); // Primary text
-  static const Color tossTextPrimaryDark = Color(0xFFFFFFFF); // Dark mode primary text
-  static const Color tossTextSecondary = Color(0xFF8B95A1); // Secondary text
-  static const Color tossTextSecondaryDark = Color(0xFF9CA3AF); // Dark mode secondary text
-  static const Color tossIconBackground = Color(0xFFF2F4F6); // Icon background
-  static const Color tossIconBackgroundDark = Color(0xFF3A3A42); // Dark mode icon background
-  static const Color tossBorder = Color(0xFFE5E8EB); // Border color
-  static const Color tossBorderDark = Color(0xFF404048); // Dark mode border
-  static const Color tossArrow = Color(0xFFC1C8CE); // Arrow icon color
-  static const Color tossArrowDark = Color(0xFF6B7280); // Dark mode arrow
+  // Toss-style UI colors - Using Toss Design System
+  static const Color tossBackground = TossDesignSystem.gray50;
+  static const Color tossBackgroundDark = TossDesignSystem.grayDark900;
+  static const Color tossCardBackground = TossDesignSystem.surfacePrimary;
+  static const Color tossCardBackgroundDark = TossDesignSystem.grayDark800;
+  static const Color tossTextPrimary = TossDesignSystem.gray900;
+  static const Color tossTextPrimaryDark = TossDesignSystem.surfacePrimary;
+  static const Color tossTextSecondary = TossDesignSystem.gray600;
+  static const Color tossTextSecondaryDark = TossDesignSystem.gray400;
+  static const Color tossIconBackground = TossDesignSystem.gray100;
+  static const Color tossIconBackgroundDark = TossDesignSystem.grayDark700;
+  static const Color tossBorder = TossDesignSystem.gray200;
+  static const Color tossBorderDark = TossDesignSystem.grayDark600;
+  static const Color tossArrow = TossDesignSystem.gray400;
+  static const Color tossArrowDark = TossDesignSystem.gray600;
   
-  // Primary colors - Black and white theme
-  static const Color primary = Color(0xFF000000); // Pure black
-  static const Color primaryLight = Color(0xFF333333); // Dark gray
-  static const Color primaryDark = Color(0xFF1A1A1A); // Very dark gray
+  // Primary colors - Using Toss Design System
+  static const Color primary = TossDesignSystem.tossBlue;
+  static const Color primaryLight = TossDesignSystem.tossBlue;
+  static const Color primaryDark = TossDesignSystem.tossBlue;
   
   // Primary colors for dark mode
-  static const Color primaryDarkMode = Color(0xFFFFFFFF); // Pure white for dark mode
-  static const Color primaryLightDarkMode = Color(0xFFE0E0E0); // Light gray for dark mode
-  static const Color primaryDarkDarkMode = Color(0xFFCCCCCC); // Lighter gray for dark mode
+  static const Color primaryDarkMode = TossDesignSystem.tossBlue;
+  static const Color primaryLightDarkMode = TossDesignSystem.tossBlue;
+  static const Color primaryDarkDarkMode = TossDesignSystem.tossBlue;
   
   // Secondary colors - Instagram accent colors (same for both themes,
   static const Color secondary = Color(0xFFF56040); // Instagram orange
   static const Color secondaryLight = Color(0xFFFD1D1D); // Instagram red
   static const Color secondaryDark = Color(0xFFE1306C); // Instagram magenta
   
-  // Background colors - Clean Instagram style
-  static const Color background = Color(0xFFFAFAFA); // Light gray background
-  static const Color backgroundDark = Color(0xFF000000); // Pure black for dark mode
-  static const Color surface = Color(0xFFFFFFFF); // Pure white
-  static const Color surfaceDark = Color(0xFF121212); // Dark surface
+  // Background colors - Using Toss Design System
+  static const Color background = TossDesignSystem.gray50;
+  static const Color backgroundDark = TossDesignSystem.grayDark900;
+  static const Color surface = TossDesignSystem.surfacePrimary;
+  static const Color surfaceDark = TossDesignSystem.grayDark800;
   
   // Card design system colors
-  static const Color cardBackground = Color(0xFFF6F6F6); // Light gray background for screens with cards
-  static const Color cardBackgroundDark = Color(0xFF0A0A0A); // Very dark background for dark mode
-  static const Color cardSurface = Color(0xFFFFFFFF); // White card surface
-  static const Color cardSurfaceDark = Color(0xFF1C1C1C); // Dark card surface
+  static const Color cardBackground = TossDesignSystem.gray50;
+  static const Color cardBackgroundDark = TossDesignSystem.grayDark900;
+  static const Color cardSurface = TossDesignSystem.surfacePrimary;
+  static const Color cardSurfaceDark = TossDesignSystem.grayDark800;
   
-  // Text colors - Instagram typography
-  static const Color textPrimary = Color(0xFF262626); // Instagram black
-  static const Color textPrimaryDark = Color(0xFFF5F5F5); // Off-white for dark mode
-  static const Color textPrimaryDark70 = Color(0xB3F5F5F5); // 70% opacity of textPrimaryDark
-  static const Color textSecondary = Color(0xFF8E8E8E); // Instagram gray
-  static const Color textSecondaryDark = Color(0xFFB0B0B0); // Light gray for dark mode
-  static const Color textLight = Color(0xFFC7C7C7); // Light gray
-  static const Color textLightDark = Color(0xFF808080); // Medium gray for dark mode
-  static const Color textDark = Color(0xFFFFFFFF); // Pure white
+  // Text colors - Using Toss Design System
+  static const Color textPrimary = TossDesignSystem.gray900;
+  static const Color textPrimaryDark = TossDesignSystem.gray50;
+  static const Color textPrimaryDark70 = TossDesignSystem.gray200;
+  static const Color textSecondary = TossDesignSystem.gray600;
+  static const Color textSecondaryDark = TossDesignSystem.gray400;
+  static const Color textLight = TossDesignSystem.gray400;
+  static const Color textLightDark = TossDesignSystem.gray500;
+  static const Color textDark = TossDesignSystem.surfacePrimary;
   static const Color onSurface = textPrimary; // Alias for Material compatibility
   static const Color onSurfaceDark = textPrimaryDark; // Alias for dark mode
   
@@ -75,17 +76,17 @@ class AppColors {
   static const Color info = Color(0xFF17A2B8);
   static const Color infoDark = Color(0xFF60A5FA); // Lighter blue for dark mode
   
-  // Gray scale - Toss-inspired fine-grained grays
-  static const Color gray50 = Color(0xFFF9FAFB);
-  static const Color gray100 = Color(0xFFF3F4F6);
-  static const Color gray200 = Color(0xFFE5E7EB);
-  static const Color gray300 = Color(0xFFD1D5DB);
-  static const Color gray400 = Color(0xFF9CA3AF);
-  static const Color gray500 = Color(0xFF6B7280);
-  static const Color gray600 = Color(0xFF4B5563);
-  static const Color gray700 = Color(0xFF374151);
-  static const Color gray800 = Color(0xFF1F2937);
-  static const Color gray900 = Color(0xFF111827);
+  // Gray scale - Using Toss Design System
+  static const Color gray50 = TossDesignSystem.gray50;
+  static const Color gray100 = TossDesignSystem.gray100;
+  static const Color gray200 = TossDesignSystem.gray200;
+  static const Color gray300 = TossDesignSystem.gray300;
+  static const Color gray400 = TossDesignSystem.gray400;
+  static const Color gray500 = TossDesignSystem.gray500;
+  static const Color gray600 = TossDesignSystem.gray600;
+  static const Color gray700 = TossDesignSystem.gray700;
+  static const Color gray800 = TossDesignSystem.gray800;
+  static const Color gray900 = TossDesignSystem.gray900;
   
   // Semantic colors - Clear purpose-driven colors
   static const Color positive = Color(0xFF00D67A); // Success green
@@ -98,21 +99,21 @@ class AppColors {
   static const Color informativeDark = Color(0xFF3384FF);
   
   // Other colors
-  static const Color divider = Color(0xFFE9ECEF);
-  static const Color dividerDark = Color(0xFF2D2D2D); // Dark divider
+  static const Color divider = TossDesignSystem.gray200;
+  static const Color dividerDark = TossDesignSystem.grayDark700;
   static const Color shadow = Color(0x1A000000);
-  static const Color shadowDark = Color(0x66000000); // Stronger shadow for dark mode
+  static const Color shadowDark = Color(0x33000000);
   static const Color transparent = Colors.transparent;
   
-  // Monochrome theme colors
-  static const Color mysticalPurple = Color(0xFF4A4A4A); // Medium gray (replacing purple,
-  static const Color mysticalPurpleLight = Color(0xFF666666); // Light gray (replacing light purple,
-  static const Color mysticalPurpleDark = Color(0xFF2C2C2C); // Dark gray (replacing dark purple,
-  static const Color mysticalPurpleDarkMode = Color(0xFF999999); // Light gray for dark mode
-  static const Color mysticalPurpleLightDarkMode = Color(0xFFB3B3B3); // Lighter gray for dark mode
-  static const Color mysticalPurpleDarkDarkMode = Color(0xFF808080); // Medium gray for dark mode
-  static const Color starGold = Color(0xFFE0E0E0); // Light gray (replacing gold)
-  static const Color starGoldDark = Color(0xFF666666); // Darker gray for dark mode
+  // Monochrome theme colors - Using Toss grays
+  static const Color mysticalPurple = TossDesignSystem.gray600;
+  static const Color mysticalPurpleLight = TossDesignSystem.gray500;
+  static const Color mysticalPurpleDark = TossDesignSystem.gray700;
+  static const Color mysticalPurpleDarkMode = TossDesignSystem.gray400;
+  static const Color mysticalPurpleLightDarkMode = TossDesignSystem.gray300;
+  static const Color mysticalPurpleDarkDarkMode = TossDesignSystem.gray500;
+  static const Color starGold = TossDesignSystem.warningOrange;
+  static const Color starGoldDark = TossDesignSystem.warningOrange;
   
   // Monochrome gradients
   static const LinearGradient primaryGradient = LinearGradient(

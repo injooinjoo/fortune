@@ -9,6 +9,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../constants/fortune_button_spacing.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -94,9 +95,33 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   }
 
   Future<void> _analyzeCompatibility() async {
-    if (!_formKey.currentState!.validate() || 
-        _person1BirthDate == null || 
-        _person2BirthDate == null) {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('이름을 입력해주세요'),
+          backgroundColor: TossTheme.warning,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
+    
+    if (_person1BirthDate == null || _person2BirthDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('생년월일을 선택해주세요'),
+          backgroundColor: TossTheme.warning,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
       return;
     }
 
@@ -122,16 +147,32 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         person2: params['person2'] as Map<String, dynamic>,
       );
       
+      // Parse scores from fortune response
+      Map<String, double> scores = {};
+      
+      // Extract overall score
+      double overallScore = (fortune.overallScore ?? 75) / 100.0;
+      scores['전체 궁합'] = overallScore;
+      
+      // Parse detailed scores from fortune content or metadata
+      if (fortune.metadata != null && fortune.metadata!['scores'] != null) {
+        final detailedScores = fortune.metadata!['scores'] as Map<String, dynamic>;
+        scores['사랑 궁합'] = (detailedScores['love'] ?? 80) / 100.0;
+        scores['결혼 궁합'] = (detailedScores['marriage'] ?? 75) / 100.0;
+        scores['일상 궁합'] = (detailedScores['daily'] ?? 70) / 100.0;
+        scores['소통 궁합'] = (detailedScores['communication'] ?? 78) / 100.0;
+      } else {
+        // Calculate based on overall score with slight variations
+        scores['사랑 궁합'] = (overallScore + 0.05).clamp(0.0, 1.0);
+        scores['결혼 궁합'] = (overallScore - 0.03).clamp(0.0, 1.0);
+        scores['일상 궁합'] = (overallScore - 0.07).clamp(0.0, 1.0);
+        scores['소통 궁합'] = overallScore;
+      }
+      
       setState(() {
         _compatibilityData = {
           'fortune': fortune,
-          'scores': {
-            '전체 궁합': (fortune.overallScore ?? 85) / 100,
-            '사랑 궁합': 0.90,
-            '결혼 궁합': 0.82,
-            '일상 궁합': 0.78,
-            '소통 궁합': 0.85,
-          },
+          'scores': scores,
         };
         _isLoading = false;
       });
@@ -142,10 +183,22 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         _isLoading = false;
       });
       if (mounted) {
+        String errorMessage = '궁합 분석 중 오류가 발생했습니다';
+        if (e.toString().contains('404')) {
+          errorMessage = '궁합 분석 서비스를 사용할 수 없습니다';
+        } else if (e.toString().contains('network')) {
+          errorMessage = '네트워크 연결을 확인해주세요';
+        }
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('궁합 분석 중 오류가 발생했습니다: $e'),
+            content: Text(errorMessage),
             backgroundColor: TossTheme.error,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -462,19 +515,20 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
               ),
             ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
 
             // 분석 버튼
-            SizedBox(
-              width: double.infinity,
+            FortuneButtonPositionHelper.inline(
               child: TossButton(
                 text: '궁합 분석하기',
                 isLoading: _isLoading,
                 onPressed: _analyzeCompatibility,
+                size: TossButtonSize.large,
+                width: double.infinity,
               ),
+              topSpacing: 0,
+              bottomSpacing: 16,
             ),
-
-            const SizedBox(height: 16),
 
             Text(
               '분석 결과는 참고용으로만 활용해 주세요',
@@ -729,12 +783,12 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             ).animate(delay: 600.ms).fadeIn().slideY(begin: 0.3),
           ],
 
-          const SizedBox(height: 32),
+          const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
 
           // 다시 분석하기 버튼
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
+          FortuneButtonPositionHelper.inline(
+            child: TossButton(
+              text: '다른 사람과 궁합 보기',
               onPressed: () {
                 setState(() {
                   _compatibilityData = null;
@@ -742,24 +796,12 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   _person2BirthDate = null;
                 });
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                foregroundColor: TossTheme.primaryBlue,
-                side: BorderSide(color: TossTheme.primaryBlue),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                '다른 사람과 궁합 보기',
-                style: TossTheme.body1.copyWith(
-                  color: TossTheme.primaryBlue,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              style: TossButtonStyle.secondary,
+              size: TossButtonSize.large,
+              width: double.infinity,
             ),
+            topSpacing: 0,
+            bottomSpacing: FortuneButtonSpacing.buttonBottomSpacing,
           ),
         ],
       ),

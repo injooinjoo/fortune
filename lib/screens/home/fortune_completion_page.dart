@@ -243,7 +243,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           if (dailyScores.isNotEmpty && dailyScores.last == 0 && score != null) {
                             dailyScores[dailyScores.length - 1] = score;
                           }
-                          print('📊 Daily scores from fortune_cache: $dailyScores');
+                          // print('📊 Daily scores from fortune_cache: $dailyScores');
                           
                           return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
                             dailyScores: dailyScores,

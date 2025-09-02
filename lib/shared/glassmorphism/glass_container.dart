@@ -1,13 +1,8 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:ui';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../core/utils/theme_utils.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class GlassContainer extends StatelessWidget {
   final Widget child;
@@ -72,13 +67,13 @@ class GlassContainer extends StatelessWidget {
       margin: margin,
       alignment: alignment,
       child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.circular(AppDimensions.radiusXLarge),
+        borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusXL),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
           child: Container(
             decoration: BoxDecoration(
               gradient: gradient ?? defaultGradient,
-              borderRadius: borderRadius ?? BorderRadius.circular(AppDimensions.radiusXLarge),
+              borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusXL),
               border: border ?? Border.all(
                 color: borderColor ?? defaultBorderColor,
                 width: borderWidth),
@@ -123,13 +118,13 @@ class GlassButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: borderRadius as BorderRadius? ?? AppDimensions.borderRadiusLarge,
+        borderRadius: borderRadius as BorderRadius? ?? BorderRadius.circular(TossDesignSystem.radiusL),
         splashColor: splashColor ?? Theme.of(context).primaryColor.withOpacity(0.2),
         child: GlassContainer(
           width: width,
           height: height,
-          padding: padding ?? EdgeInsets.symmetric(horizontal: AppSpacing.xLarge, vertical: AppSpacing.small),
-          borderRadius: borderRadius ?? AppDimensions.borderRadiusLarge,
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXL, vertical: TossDesignSystem.spacingXS),
+          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),
           blur: blur,
           gradient: gradient,
           border: border,
@@ -163,9 +158,9 @@ class GlassCard extends StatelessWidget {
     final card = GlassContainer(
       width: width,
       height: height,
-      padding: padding ?? AppSpacing.paddingAll20,
+      padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingL),
       margin: margin,
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
       blur: 20,
       gradient: gradient,
       boxShadow: [
@@ -180,7 +175,7 @@ class GlassCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
           child: card));
     }
 

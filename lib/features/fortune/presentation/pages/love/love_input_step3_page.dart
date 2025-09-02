@@ -238,7 +238,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 2.2,
+            childAspectRatio: 2.5,
             children: MeetingPlace.values.map((place) {
               return _buildMeetingPlaceChip(place);
             }).toList(),
@@ -357,13 +357,17 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 4),
-            Text(
-              _getMeetingPlaceText(place),
-              style: TossTheme.body2.copyWith(
-                color: isSelected ? Colors.white : TossTheme.textBlack,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                _getMeetingPlaceText(place),
+                style: TossTheme.body2.copyWith(
+                  color: isSelected ? Colors.white : TossTheme.textBlack,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

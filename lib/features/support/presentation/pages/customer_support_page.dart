@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
-import 'package:fortune/core/theme/app_theme.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class CustomerSupportPage extends ConsumerWidget {
@@ -12,9 +12,9 @@ class CustomerSupportPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: TossDesignSystem.gray50,
       body: Container(
-        decoration: BoxDecoration(color: AppTheme.backgroundColor),
+        decoration: BoxDecoration(color: TossDesignSystem.gray50),
         child: SafeArea(
           child: Column(
             children: [

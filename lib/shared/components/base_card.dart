@@ -1,10 +1,7 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../core/utils/theme_utils.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 /// Base card widget that enforces consistent design guidelines
 /// Light mode: Background #f6f6f6, Card #ffffff
@@ -50,13 +47,13 @@ class BaseCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: gradient != null ? null : cardColor,
         gradient: gradient,
-        borderRadius: borderRadius ?? AppDimensions.borderRadiusMedium,
+        borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusM),
         boxShadow: boxShadow ?? defaultShadow,
         border: border ?? Border.all(
           color: fortuneTheme.dividerColor.withOpacity(0.1),
           width: 1)),
       child: Padding(
-        padding: padding ?? AppSpacing.paddingAll16,
+        padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingM),
         child: child));
     
     if (onTap != null) {
@@ -64,7 +61,7 @@ class BaseCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: borderRadius ?? AppDimensions.borderRadiusMedium,
+          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusM),
           child: content));
     }
     
@@ -139,7 +136,7 @@ class InfoCard extends StatelessWidget {
         children: [
           if (leading != null) ...[
             leading!,
-            SizedBox(width: AppSpacing.spacing4)],
+            SizedBox(width: TossDesignSystem.spacingM)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +146,7 @@ class InfoCard extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold)),
                 if (subtitle != null) ...[
-                  SizedBox(height: AppSpacing.spacing1),
+                  SizedBox(height: TossDesignSystem.spacingXXS),
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(

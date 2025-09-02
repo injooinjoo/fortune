@@ -5,9 +5,7 @@ import 'dart:math';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/constants/tarot_minor_arcana.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TarotCardDetailModal extends StatefulWidget {
   final int cardIndex;
@@ -49,7 +47,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     super.initState();
     
     _animationController = AnimationController(
-      duration: AppAnimations.durationMedium,
+      duration: TossDesignSystem.durationMedium,
       vsync: this
     );
     
@@ -106,7 +104,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   children: [
                     // Handle
                     Container(
-                      margin: const EdgeInsets.only(top: AppSpacing.spacing3),
+                      margin: const EdgeInsets.only(top: TossDesignSystem.spacingS),
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
@@ -157,7 +155,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                       size: 20)),
                                   onPressed: () {
                                     _pageController.previousPage(
-                                      duration: AppAnimations.durationMedium,
+                                      duration: TossDesignSystem.durationMedium,
                                       curve: Curves.easeInOut);
                                   },
                                 ),
@@ -182,7 +180,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                       size: 20)),
                                   onPressed: () {
                                     _pageController.nextPage(
-                                      duration: AppAnimations.durationMedium,
+                                      duration: TossDesignSystem.durationMedium,
                                       curve: Curves.easeInOut);
                                   },
                                 ),
@@ -199,16 +197,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     SafeArea(
                       top: false,
                       child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.spacing4),
+                        padding: const EdgeInsets.all(TossDesignSystem.spacingM),
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () => Navigator.of(context).pop(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.purple,
-                              padding: AppSpacing.paddingVertical16,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: AppDimensions.borderRadiusMedium)),
+                                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM))),
                             child: Text(
                               '닫기',
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -239,23 +237,23 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       '조언'];
     
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.medium),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
       child: Column(
         children: [
           Text(
             cardInfo['name'] ?? 'Unknown Card',
             style: Theme.of(context).textTheme.bodyLarge),
           if (widget.position != null) ...[
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossDesignSystem.spacingXS),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing1 * 1.5),
+              padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingXXS * 1.5),
               decoration: BoxDecoration(
                 color: Colors.purple.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(20)),
               child: Text(
                 widget.position!,
                 style: Theme.of(context).textTheme.bodyLarge))],
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: TossDesignSystem.spacingXS),
           Text(
             pageNames[_currentPage],
             style: Theme.of(context).textTheme.titleMedium)]));
@@ -267,7 +265,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.spacing5),
+        padding: const EdgeInsets.all(TossDesignSystem.spacingL),
         child: Column(
           children: [
             // Card image
@@ -276,14 +274,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 300),
                   decoration: BoxDecoration(
-                    borderRadius: AppDimensions.borderRadiusLarge,
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.purple.withOpacity(0.3),
                         blurRadius: 20,
                         spreadRadius: 5)]),
                   child: ClipRRect(
-                    borderRadius: AppDimensions.borderRadiusLarge,
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                     child: Image.asset(
                       'assets/images/tarot/$imagePath',
                       fit: BoxFit.contain)),
@@ -291,11 +289,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               ),
             ),
             
-            const SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: TossDesignSystem.spacingL),
             
             // Basic info
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing3),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingS),
               gradient: LinearGradient(
                 colors: [
                   Colors.purple.withOpacity(0.1),
@@ -326,25 +324,25 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
 
   Widget _buildSymbolismPage(Map<String, dynamic> cardInfo) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '카드의 상징',
             style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: TossDesignSystem.spacingM),
           
           // Keywords
           if (cardInfo['keywords'] != null) ...[
             _buildSectionTitle('핵심 키워드'),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossDesignSystem.spacingXS),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: (cardInfo['keywords'] as List).map((keyword) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+                  padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingXS),
                   decoration: BoxDecoration(
                     color: Colors.purple.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -355,35 +353,35 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     keyword,
                     style: Theme.of(context).textTheme.bodyLarge));
               }).toList()),
-            const SizedBox(height: AppSpacing.spacing6)],
+            const SizedBox(height: TossDesignSystem.spacingXL)],
           
           // Imagery
           if (cardInfo['imagery'] != null) ...[
             _buildSectionTitle('이미지 해석'),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossDesignSystem.spacingXS),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing3),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingS),
               child: Text(
                 cardInfo['imagery'],
                 style: Theme.of(context).textTheme.bodyLarge)),
-            const SizedBox(height: AppSpacing.spacing6)],
+            const SizedBox(height: TossDesignSystem.spacingXL)],
           
           // Element meaning
           _buildSectionTitle('원소의 의미'),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: TossDesignSystem.spacingXS),
           _buildElementMeaning(cardInfo['element'])]));
   }
 
   Widget _buildMeaningsPage(Map<String, dynamic> cardInfo) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '카드의 의미',
             style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: TossDesignSystem.spacingM),
           
           // Upright meaning
           if (cardInfo['uprightMeaning'] != null) ...[
@@ -392,7 +390,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               meaning: cardInfo['uprightMeaning'],
               icon: Icons.arrow_upward,
               color: Colors.green),
-            const SizedBox(height: AppSpacing.spacing4)],
+            const SizedBox(height: TossDesignSystem.spacingM)],
           
           // Reversed meaning
           if (cardInfo['reversedMeaning'] != null) ...[
@@ -401,19 +399,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               meaning: cardInfo['reversedMeaning'],
               icon: Icons.arrow_downward,
               color: Colors.orange),
-            const SizedBox(height: AppSpacing.spacing4)],
+            const SizedBox(height: TossDesignSystem.spacingM)],
           
           // Related cards
           if (cardInfo['relatedCards'] != null) ...[
             _buildSectionTitle('관련 카드'),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: TossDesignSystem.spacingXS),
             ...cardInfo['relatedCards'].map<Widget>((card) => 
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.spacing2),
+                padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                 child: Row(
                   children: [
                     const Icon(Icons.link, size: 16, color: Colors.purple),
-                    const SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: TossDesignSystem.spacingXS),
                     Text(
                       card,
                       style: const TextStyle(color: Colors.white70),
@@ -430,19 +428,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
 
   Widget _buildAdvicePage(Map<String, dynamic> cardInfo) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '실천 조언',
             style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: TossDesignSystem.spacingM),
           
           // Main advice
           if (cardInfo['advice'] != null) ...[
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.amber.withOpacity(0.1),
@@ -453,24 +451,24 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     Icons.lightbulb,
                     size: 48,
                     color: Colors.amber),
-                  const SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     cardInfo['advice'],
                     style: Theme.of(context).textTheme.bodyLarge,
                     textAlign: TextAlign.center)])),
-            const SizedBox(height: AppSpacing.spacing6)],
+            const SizedBox(height: TossDesignSystem.spacingXL)],
           
           // Questions for reflection
           if (cardInfo['questions'] != null) ...[
             _buildSectionTitle('성찰을 위한 질문'),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             ...(cardInfo['questions'] as List).map((question) {
               return Container(
-                margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
-                padding: const EdgeInsets.all(AppSpacing.spacing3),
+                margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
+                padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                 decoration: BoxDecoration(
                   color: Colors.indigo.withOpacity(0.1),
-                  borderRadius: AppDimensions.borderRadiusMedium,
+                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                   border: Border.all(
                     color: Colors.indigo.withOpacity(0.3),
                     width: 1)),
@@ -481,7 +479,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       Icons.help_outline,
                       size: 20,
                       color: Colors.indigo),
-                    const SizedBox(width: AppSpacing.spacing3),
+                    const SizedBox(width: TossDesignSystem.spacingS),
                     Expanded(
                       child: Text(
                         question,
@@ -510,7 +508,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       '조언'];
     
     return Container(
-      padding: AppSpacing.paddingVertical16,
+      padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -531,15 +529,15 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   onTap: () {
                     _pageController.animateToPage(
                       index,
-                      duration: AppAnimations.durationMedium,
+                      duration: TossDesignSystem.durationMedium,
                       curve: Curves.easeInOut);
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5),
+                    margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXXS * 1.5),
                     child: Column(
                       children: [
                         AnimatedContainer(
-                          duration: AppAnimations.durationShort,
+                          duration: TossDesignSystem.durationShort,
                           width: isActive ? 40 : 32,
                           height: isActive ? 40 : 32,
                           decoration: BoxDecoration(
@@ -569,7 +567,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                             ),
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.spacing1),
+                        const SizedBox(height: TossDesignSystem.spacingXXS),
                         Text(
                           pageNames[index],
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -585,7 +583,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           
           // Swipe hint with animation
           if (_currentPage == 0) ...[
-            const SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: TossDesignSystem.spacingS),
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: 1),
               duration: const Duration(seconds: 2),
@@ -601,7 +599,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         size: 20,
                         color: Colors.white.withOpacity(0.7)),
                     ),
-                    const SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: TossDesignSystem.spacingXS),
                     Text(
                       '좌우로 스와이프하거나 숫자를 탭하세요',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -624,7 +622,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     return Column(
       children: [
         Icon(icon, color: Colors.purple, size: 24),
-        const SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: TossDesignSystem.spacingXXS),
         Text(
           label,
           style: TextStyle(
@@ -652,20 +650,20 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     required IconData icon,
     required Color color}) {
     return GlassContainer(
-      padding: const EdgeInsets.all(AppSpacing.spacing2),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingXS),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(icon, color: color, size: 20),
-              const SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: TossDesignSystem.spacingXS),
               Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: TossDesignSystem.spacingS),
           Text(
             meaning,
             style: Theme.of(context).textTheme.bodyLarge),
@@ -699,7 +697,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       'description': '이 카드는 특별한 에너지를 담고 있습니다.'};
 
     return GlassContainer(
-      padding: const EdgeInsets.all(AppSpacing.spacing2),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingXS),
       gradient: LinearGradient(
         colors: [
           (data['color'] as Color).withOpacity(0.1),
@@ -713,17 +711,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 TarotHelper.getElementIcon(element ?? ''),
                 color: data['color'] as Color,
                 size: 24),
-              const SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: TossDesignSystem.spacingXS),
               Text(
                 element ?? '특별한 원소',
                 style: Theme.of(context).textTheme.titleMedium),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: TossDesignSystem.spacingXS),
           Text(
             data['meaning'] as String,
             style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: AppSpacing.spacing1),
+          const SizedBox(height: TossDesignSystem.spacingXXS),
           Text(
             data['description'] as String,
             style: TextStyle(
@@ -873,17 +871,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     }
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '카드의 이야기',
             style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: TossDesignSystem.spacingL),
           
           GlassContainer(
-            padding: const EdgeInsets.all(AppSpacing.spacing5),
+            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
             gradient: LinearGradient(
               colors: [
                 Colors.deepPurple.withOpacity(0.1),
@@ -893,13 +891,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               style: Theme.of(context).textTheme.bodyLarge)),
           
           if (tarotCardInfo.mythology != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '신화적 연결',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.amber.withOpacity(0.1),
@@ -909,13 +907,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 style: Theme.of(context).textTheme.bodyLarge))],
           
           if (tarotCardInfo.historicalContext != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '역사적 배경',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.teal.withOpacity(0.1),
@@ -936,7 +934,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     }
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -944,9 +942,9 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             Text(
               '심리학적 해석',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.purple.withOpacity(0.1),
@@ -957,7 +955,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     Icons.psychology,
                     size: 48,
                     color: Colors.purple),
-                  const SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     tarotCardInfo!.psychologicalMeaning!,
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -968,13 +966,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           ],
           
           if (tarotCardInfo?.spiritualMeaning != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '영적 의미',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.indigo.withOpacity(0.1),
@@ -985,7 +983,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     Icons.self_improvement,
                     size: 48,
                     color: Colors.indigo),
-                  const SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     tarotCardInfo!.spiritualMeaning!,
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -1011,7 +1009,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     }
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1019,12 +1017,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             Text(
               '일상 적용법',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             ...tarotCardInfo!.dailyApplications!.map((application) => 
               Container(
-                margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
+                margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
                 child: GlassContainer(
-                  padding: const EdgeInsets.all(AppSpacing.spacing3),
+                  padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                   gradient: LinearGradient(
                     colors: [
                       Colors.green.withOpacity(0.1),
@@ -1036,7 +1034,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         Icons.check_circle,
                         color: Colors.green,
                         size: 20),
-                      const SizedBox(width: AppSpacing.spacing3),
+                      const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
                         child: Text(
                           application,
@@ -1051,13 +1049,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           ],
           
           if (tarotCardInfo?.meditation != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '명상 가이드',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.blue.withOpacity(0.1),
@@ -1068,7 +1066,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     Icons.spa,
                     size: 48,
                     color: Colors.blue),
-                  const SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     tarotCardInfo!.meditation!,
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -1079,16 +1077,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           ],
           
           if (tarotCardInfo?.affirmations != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '확언문',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             ...tarotCardInfo!.affirmations!.map((affirmation) => 
               Container(
-                margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
+                margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
                 child: GlassContainer(
-                  padding: const EdgeInsets.all(AppSpacing.spacing3),
+                  padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                   gradient: LinearGradient(
                     colors: [
                       Colors.pink.withOpacity(0.1),
@@ -1119,20 +1117,20 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     }
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.spacing5),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '다른 카드와의 조합',
             style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: TossDesignSystem.spacingL),
           
           ...tarotCardInfo!.cardCombinations!.entries.map((entry) => 
             Container(
-              margin: const EdgeInsets.only(bottom: AppSpacing.spacing4),
+              margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingM),
               child: GlassContainer(
-                padding: const EdgeInsets.all(AppSpacing.spacing5),
+                padding: const EdgeInsets.all(TossDesignSystem.spacingL),
                 gradient: LinearGradient(
                   colors: [
                     Colors.deepPurple.withOpacity(0.1),
@@ -1146,7 +1144,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                           Icons.link,
                           color: Colors.purple,
                           size: 24),
-                        const SizedBox(width: AppSpacing.spacing3),
+                        const SizedBox(width: TossDesignSystem.spacingS),
                         Expanded(
                           child: Text(
                             entry.key,
@@ -1155,7 +1153,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.spacing3),
+                    const SizedBox(height: TossDesignSystem.spacingS),
                     Text(
                       entry.value,
                       style: Theme.of(context).textTheme.bodyLarge,
@@ -1167,13 +1165,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           ).toList(),
           
           if (tarotCardInfo.colorSymbolism != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '색채 상징',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             GlassContainer(
-              padding: const EdgeInsets.all(AppSpacing.spacing5),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
                   Colors.orange.withOpacity(0.1),
@@ -1186,16 +1184,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           ],
           
           if (tarotCardInfo.crystals != null) ...[
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: TossDesignSystem.spacingXL),
             Text(
               '연관 크리스탈',
               style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: TossDesignSystem.spacingM),
             ...tarotCardInfo.crystals!.map((crystal) => 
               Container(
-                margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
+                margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
                 child: GlassContainer(
-                  padding: const EdgeInsets.all(AppSpacing.spacing3),
+                  padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                   gradient: LinearGradient(
                     colors: [
                       Colors.cyan.withOpacity(0.1),
@@ -1206,7 +1204,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         Icons.diamond,
                         color: Colors.cyan,
                         size: 20),
-                      const SizedBox(width: AppSpacing.spacing3),
+                      const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
                         child: Text(
                           crystal,
@@ -1233,11 +1231,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             Icons.hourglass_empty,
             size: 64,
             color: Colors.purple),
-          const SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: TossDesignSystem.spacingXL),
           Text(
             title,
             style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: TossDesignSystem.spacingM),
           Text(
             message,
             style: Theme.of(context).textTheme.titleMedium,

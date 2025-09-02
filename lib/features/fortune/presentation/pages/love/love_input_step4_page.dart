@@ -277,7 +277,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 2.5,
+            childAspectRatio: 3,
             children: LifestyleType.values.map((lifestyle) {
               return _buildLifestyleChip(lifestyle);
             }).toList(),
@@ -300,7 +300,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             crossAxisCount: 3,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 2,
+            childAspectRatio: 2.2,
             children: HobbyType.values.map((hobby) {
               return _buildHobbyChip(hobby);
             }).toList(),
@@ -396,13 +396,17 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             ),
             const SizedBox(width: 8),
             Flexible(
-              child: Text(
-                _getLifestyleText(lifestyle),
-                style: TossTheme.body1.copyWith(
-                  color: isSelected ? Colors.white : TossTheme.textBlack,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _getLifestyleText(lifestyle),
+                  style: TossTheme.body1.copyWith(
+                    color: isSelected ? Colors.white : TossTheme.textBlack,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -441,13 +445,17 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 2),
-            Text(
-              _getHobbyText(hobby),
-              style: TossTheme.caption.copyWith(
-                color: isSelected ? Colors.white : TossTheme.textBlack,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                _getHobbyText(hobby),
+                style: TossTheme.caption.copyWith(
+                  color: isSelected ? Colors.white : TossTheme.textBlack,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

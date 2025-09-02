@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
-/// Spacing system based on 8px grid following Toss design system
-/// All spacing values are multiples of 4px for consistency
+/// Spacing system mapped to TossDesignSystem for consistency
 class AppSpacing {
   // Base unit
   static const double unit = 4.0;
 
-  // Spacing scale (multiplier of base unit,
+  // Spacing scale - mapped to TossDesignSystem
   static const double spacing0 = 0; // 0px
-  static const double spacing1 = unit * 1; // 4px
-  static const double spacing2 = unit * 2; // 8px
-  static const double spacing3 = unit * 3; // 12px
-  static const double spacing4 = unit * 4; // 16px
-  static const double spacing5 = unit * 5; // 20px
-  static const double spacing6 = unit * 6; // 24px
-  static const double spacing7 = unit * 7; // 28px
-  static const double spacing8 = unit * 8; // 32px
-  static const double spacing9 = unit * 9; // 36px
-  static const double spacing10 = unit * 10; // 40px
-  static const double spacing12 = unit * 12; // 48px
-  static const double spacing14 = unit * 14; // 56px
-  static const double spacing15 = unit * 15; // 60px
-  static const double spacing16 = unit * 16; // 64px
-  static const double spacing20 = unit * 20; // 80px
-  static const double spacing24 = unit * 24; // 96px
+  static const double spacing1 = TossDesignSystem.spacingXXS; // 4px
+  static const double spacing2 = TossDesignSystem.spacingXS; // 8px
+  static const double spacing3 = TossDesignSystem.spacingS; // 12px
+  static const double spacing4 = TossDesignSystem.spacingM; // 16px
+  static const double spacing5 = TossDesignSystem.spacingL; // 20px
+  static const double spacing6 = TossDesignSystem.spacingXL; // 24px
+  static const double spacing7 = 28; // 28px - not in TossDesignSystem
+  static const double spacing8 = TossDesignSystem.spacingXXL; // 32px
+  static const double spacing9 = 36; // 36px - not in TossDesignSystem
+  static const double spacing10 = 40; // 40px
+  static const double spacing12 = 48; // 48px
+  static const double spacing14 = 56; // 56px
+  static const double spacing15 = 60; // 60px
+  static const double spacing16 = 64; // 64px
+  static const double spacing20 = 80; // 80px
+  static const double spacing24 = 96; // 96px
 
   // Additional common spacing values
-  static const double spacing60 = spacing15; // 60px (alias for spacing15,
-  static const double spacing80 = spacing20; // 80px (alias for spacing20,
+  static const double spacing60 = spacing15; // 60px
+  static const double spacing80 = spacing20; // 80px
 
-  // Semantic spacing
-  static const double none = spacing0;
-  static const double xxxSmall = spacing1; // 4px
-  static const double xxSmall = spacing2; // 8px
-  static const double xSmall = spacing3; // 12px
-  static const double small = spacing4; // 16px
-  static const double medium = spacing5; // 20px
-  static const double large = spacing6; // 24px
-  static const double xLarge = spacing8; // 32px
-  static const double xxLarge = spacing10; // 40px
-  static const double xxxLarge = spacing12; // 48px
+  // Semantic spacing - mapped to TossDesignSystem
+  static const double none = 0;
+  static const double xxxSmall = TossDesignSystem.spacingXXS; // 4px
+  static const double xxSmall = TossDesignSystem.spacingXS; // 8px
+  static const double xSmall = TossDesignSystem.spacingS; // 12px
+  static const double small = TossDesignSystem.spacingM; // 16px
+  static const double medium = TossDesignSystem.spacingL; // 20px
+  static const double large = TossDesignSystem.spacingXL; // 24px
+  static const double xLarge = TossDesignSystem.spacingXXL; // 32px
+  static const double xxLarge = 40; // 40px
+  static const double xxxLarge = 48; // 48px
 
   // Component-specific spacing
   static const double cardPadding = spacing4; // 16px

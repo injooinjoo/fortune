@@ -20,8 +20,7 @@ import 'core/config/feature_flags.dart';
 import 'core/utils/logger.dart';
 import 'core/utils/secure_storage.dart';
 import 'routes/route_config.dart';
-import 'core/theme/app_theme.dart';
-import 'core/theme/app_theme_extensions.dart';
+import 'core/theme/toss_design_system.dart';
 import 'services/cache_service.dart';
 // // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
@@ -102,8 +101,8 @@ class MyApp extends ConsumerWidget {
     
     return MaterialApp.router(
       title: 'Fortune - 운세 서비스',
-      theme: AppTheme.lightTheme(),
-      darkTheme: AppTheme.darkTheme(),
+      theme: TossDesignSystem.lightTheme(),
+      darkTheme: TossDesignSystem.darkTheme(),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routerConfig: router,

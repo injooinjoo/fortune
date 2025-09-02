@@ -1,5 +1,3 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../presentation/providers/soul_animation_provider.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 class TokenBalanceWidget extends ConsumerWidget {
   const TokenBalanceWidget({Key? key}) : super(key: key);
@@ -28,34 +24,34 @@ class TokenBalanceWidget extends ConsumerWidget {
       child: GlassContainer(
         key: tokenBalanceGlobalKey,
         padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.spacing3, 
-          vertical: AppSpacing.spacing1
+          horizontal: TossDesignSystem.spacingS, 
+          vertical: TossDesignSystem.spacingXXS
         ),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
         blur: 10,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Soul Icon
             Container(
-              padding: AppSpacing.paddingAll4,
+              padding: const EdgeInsets.all(TossDesignSystem.spacingXXS),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.auto_awesome_rounded,
-                size: AppDimensions.iconSizeXSmall,
+                size: 16,
                 color: theme.colorScheme.primary,
               ),
             ),
-            SizedBox(width: AppSpacing.spacing2),
+            SizedBox(width: TossDesignSystem.spacingXS),
             
             // Balance or Loading
             if (tokenState.isLoading)
               SizedBox(
-                width: AppDimensions.iconSizeXSmall,
-                height: AppDimensions.iconSizeXSmall,
+                width: 16,
+                height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -70,7 +66,7 @@ class TokenBalanceWidget extends ConsumerWidget {
                 children: [
                   Text(
                     balance?.toString() ?? '0',
-                    style: AppTypography.bodySmall.copyWith(
+                    style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onSurface,
                     ),
@@ -97,7 +93,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
       onTap: () => context.push('/payment/token-purchase'),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(AppSpacing.spacing5),
+        padding: EdgeInsets.all(TossDesignSystem.spacingL),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -105,7 +101,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             colors: [
               TossDesignSystem.gray600.withOpacity(0.1),
               TossDesignSystem.gray600.withOpacity(0.1)]),
-          borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
           border: Border.all(
             color: theme.colorScheme.primary.withOpacity(0.2),
             width: 1)),
@@ -117,14 +113,14 @@ class FullTokenBalanceWidget extends ConsumerWidget {
               children: [
                 Text(
                   '영혼 잔액',
-                  style: AppTypography.bodyLarge.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface)),
                 Icon(
                   Icons.add_circle_outline,
                   color: theme.colorScheme.primary,
-                  size: AppDimensions.iconSizeMedium)]),
-            SizedBox(height: AppSpacing.spacing3),
+                  size: 24)]),
+            SizedBox(height: TossDesignSystem.spacingS),
             
             // Balance Display
             if (tokenState.isLoading)
@@ -143,44 +139,44 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(AppSpacing.spacing3),
+                    padding: EdgeInsets.all(TossDesignSystem.spacingS),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.1),
                       shape: BoxShape.circle),
                     child: Icon(
                       Icons.auto_awesome,
-                      size: AppDimensions.iconSizeLarge,
+                      size: 32,
                       color: theme.colorScheme.primary,
                     ),
                   ),
-                  SizedBox(width: AppSpacing.spacing3),
+                  SizedBox(width: TossDesignSystem.spacingS),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         balance?.toString() ?? '0',
-                        style: AppTypography.headlineMedium.copyWith(
+                        style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.onSurface)),
                       Text(
                         '영혼',
-                        style: AppTypography.bodySmall.copyWith(
+                        style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurface.withOpacity(0.7)))])]),
             
-            SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: TossDesignSystem.spacingM),
             
             // Action Button
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
-                vertical: AppSpacing.spacing3),
+                vertical: TossDesignSystem.spacingS),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
+                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
               child: Center(
                 child: Text(
                   '영혼 충전하기',
-                  style: AppTypography.bodyMedium.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
@@ -204,10 +200,10 @@ class TokenBalanceStats extends ConsumerWidget {
     final tokenState = ref.watch(tokenProvider);
     
     return Container(
-      padding: EdgeInsets.all(AppSpacing.spacing4),
+      padding: EdgeInsets.all(TossDesignSystem.spacingM),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -218,10 +214,10 @@ class TokenBalanceStats extends ConsumerWidget {
         children: [
           Text(
             '영혼 사용 통계',
-            style: AppTypography.bodyLarge.copyWith(
+            style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.onSurface)),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: TossDesignSystem.spacingS),
           
           // Stats rows - TODO: Add these fields to TokenState
           // _buildTokenStat(
@@ -231,7 +227,7 @@ class TokenBalanceStats extends ConsumerWidget {
           //   color: TossDesignSystem.gray600,
           //   icon: Icons.arrow_downward,
           // ),
-          // SizedBox(height: AppSpacing.spacing2),
+          // SizedBox(height: TossDesignSystem.spacingXS),
           // _buildTokenStat(
           //   context: context,
           //   label: '오늘 획득',
@@ -239,7 +235,7 @@ class TokenBalanceStats extends ConsumerWidget {
           //   color: TossDesignSystem.gray600,
           //   icon: Icons.arrow_upward,
           // ),
-          // SizedBox(height: AppSpacing.spacing2),
+          // SizedBox(height: TossDesignSystem.spacingXS),
           // _buildTokenStat(
           //   context: context,
           //   label: '이번 달 사용',
@@ -267,16 +263,16 @@ class TokenBalanceStats extends ConsumerWidget {
           children: [
             Icon(
               icon,
-              size: AppDimensions.iconSizeSmall,
+              size: 20,
               color: color),
-            SizedBox(width: AppSpacing.spacing2),
+            SizedBox(width: TossDesignSystem.spacingXS),
             Text(
               label,
-              style: AppTypography.bodySmall.copyWith(
+              style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7)))]),
         Text(
           value,
-          style: AppTypography.bodyMedium.copyWith(
+          style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: color))]);
   }

@@ -272,7 +272,7 @@ class FortuneApiService {
         ApiEndpoints.compatibilityFortune,
         data: {
           'person1': person1,
-          'person2': null});
+          'person2': person2});
       Logger.endTimer('API Call - compatibility', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {

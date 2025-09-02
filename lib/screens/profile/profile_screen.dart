@@ -64,25 +64,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   
   void _onScroll() {
     final currentScrollOffset = _scrollController.offset;
-    const scrollThreshold = 100.0; // Minimum scroll distance before hiding/showing nav
+    const scrollThreshold = 10.0; // 매우 민감하게 반응하도록 임계값 감소
     
-    // Only trigger if we've scrolled more than the threshold
-    if ((currentScrollOffset - _lastScrollOffset).abs() > scrollThreshold) {
-      final isScrollingDown = currentScrollOffset > _lastScrollOffset;
+    // 스크롤 방향 감지
+    final scrollDelta = currentScrollOffset - _lastScrollOffset;
+    
+    // 임계값 이상 스크롤했을 때만 처리
+    if (scrollDelta.abs() > scrollThreshold) {
+      final isScrollingDown = scrollDelta > 0;
       
-      // Only update if direction changed
-      if (isScrollingDown != _isScrollingDown) {
+      // 방향이 바뀌었거나, 같은 방향으로 계속 스크롤 중일 때
+      if (isScrollingDown != _isScrollingDown || scrollDelta.abs() > scrollThreshold) {
         _isScrollingDown = isScrollingDown;
         _lastScrollOffset = currentScrollOffset;
         
         // Update navigation visibility
         final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
-        if (isScrollingDown) {
+        if (isScrollingDown && currentScrollOffset > 50) {
+          // 최소 50픽셀은 스크롤해야 숨김
           navigationNotifier.hide();
-        } else {
+        } else if (!isScrollingDown) {
+          // 위로 스크롤하면 즉시 보임
           navigationNotifier.show();
         }
       }
+    }
+    
+    // 최상단에 도달하면 항상 네비게이션 표시
+    if (currentScrollOffset <= 0) {
+      ref.read(navigationVisibilityProvider.notifier).show();
     }
   }
 

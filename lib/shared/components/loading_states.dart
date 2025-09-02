@@ -1,11 +1,7 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final double size;
@@ -56,7 +52,7 @@ class LoadingStateWidget extends StatelessWidget {
       children: [
         LoadingIndicator(size: size),
         if (message != null) ...[
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
           Text(
             message!,
             style: Theme.of(context).textTheme.bodyMedium,
@@ -92,7 +88,7 @@ class GlassLoadingOverlay extends StatelessWidget {
                 color: TossDesignSystem.gray900.withOpacity(0.3),
                 child: Center(
                   child: GlassContainer(
-                    padding: AppSpacing.paddingAll24,
+                    padding: const EdgeInsets.all(TossDesignSystem.spacingL),
                     borderRadius: const BorderRadius.all(Radius.circular(24)),
                     blur: 20,
                     child: Column(
@@ -100,7 +96,7 @@ class GlassLoadingOverlay extends StatelessWidget {
                       children: [
                         const LoadingIndicator(),
                         if (message != null) ...[
-                          SizedBox(height: AppSpacing.spacing4),
+                          SizedBox(height: TossDesignSystem.spacingM),
                           Text(
                             message!,
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -149,7 +145,7 @@ class SkeletonLoader extends StatelessWidget {
         margin: margin,
         decoration: BoxDecoration(
           color: TossDesignSystem.grayDark900,
-          borderRadius: borderRadius ?? AppDimensions.borderRadiusSmall,
+          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusS),
         ),
       ),
     );
@@ -171,16 +167,16 @@ class CardSkeleton extends StatelessWidget {
     return GlassContainer(
       height: height ?? 120,
       margin: margin,
-      padding: AppSpacing.paddingAll16,
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
       blur: 10,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SkeletonLoader(width: 150, height: 20),
-          SizedBox(height: AppSpacing.spacing3),
+          SizedBox(height: TossDesignSystem.spacingS),
           const SkeletonLoader(height: 16),
-          SizedBox(height: AppSpacing.spacing2),
+          SizedBox(height: TossDesignSystem.spacingXS),
           const SkeletonLoader(height: 16),
           const Spacer(),
           Row(
@@ -202,51 +198,51 @@ class FortuneResultSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
       child: Column(
         children: [
           // Overall Score Skeleton
           GlassContainer(
-            padding: AppSpacing.paddingAll24,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
             blur: 20,
             child: Column(
               children: [
                 SkeletonLoader(
                   width: 120,
                   height: 120,
-                  borderRadius: BorderRadius.circular(AppSpacing.spacing15)),
-                SizedBox(height: AppSpacing.spacing4),
+                  borderRadius: BorderRadius.circular(TossDesignSystem.spacingM)),
+                SizedBox(height: TossDesignSystem.spacingM),
                 const SkeletonLoader(width: 200, height: 24),
-                SizedBox(height: AppSpacing.spacing2),
+                SizedBox(height: TossDesignSystem.spacingXS),
                 const SkeletonLoader(width: 150, height: 16),
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
 
           // Score Breakdown Skeleton
           GlassContainer(
-            padding: AppSpacing.paddingAll20,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
             blur: 15,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SkeletonLoader(width: 100, height: 20),
-                SizedBox(height: AppSpacing.spacing4),
+                SizedBox(height: TossDesignSystem.spacingM),
                 ...List.generate(
                   4,
                   (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.small),
+                    padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                     child: Row(
                       children: [
                         const SkeletonLoader(width: 80, height: 16),
-                        SizedBox(width: AppSpacing.spacing3),
+                        SizedBox(width: TossDesignSystem.spacingS),
                         const Expanded(
                           child: SkeletonLoader(height: 8),
                         ),
-                        SizedBox(width: AppSpacing.spacing3),
+                        SizedBox(width: TossDesignSystem.spacingS),
                         const SkeletonLoader(width: 40, height: 16),
                       ],
                     ),
@@ -255,18 +251,18 @@ class FortuneResultSkeleton extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
 
           // Lucky Items Skeleton
           GlassContainer(
-            padding: AppSpacing.paddingAll20,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
             blur: 15,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SkeletonLoader(width: 100, height: 20),
-                SizedBox(height: AppSpacing.spacing4),
+                SizedBox(height: TossDesignSystem.spacingM),
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -284,18 +280,18 @@ class FortuneResultSkeleton extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          SizedBox(height: TossDesignSystem.spacingM),
 
           // Description Skeleton
           GlassContainer(
-            padding: AppSpacing.paddingAll20,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
             blur: 15,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SkeletonLoader(width: 100, height: 20),
-                SizedBox(height: AppSpacing.spacing4),
+                SizedBox(height: TossDesignSystem.spacingM),
                 ...List.generate(
                   5,
                   (index) => const Padding(
@@ -328,31 +324,31 @@ class ListItemSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: padding ?? AppSpacing.paddingAll16,
+      padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingM),
       itemCount: itemCount,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.small),
+          padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
           child: GlassContainer(
             height: itemHeight,
-            padding: AppSpacing.paddingAll16,
-            borderRadius: AppDimensions.borderRadiusLarge,
+            padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
             blur: 10,
             child: Row(
               children: [
                 const SkeletonLoader(
-                  width: AppDimensions.buttonHeightMedium,
-                  height: AppDimensions.buttonHeightMedium,
+                  width: 48,
+                  height: 48,
                   borderRadius: BorderRadius.all(Radius.circular(24)),
                 ),
-                SizedBox(width: AppSpacing.spacing4),
+                SizedBox(width: TossDesignSystem.spacingM),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       SkeletonLoader(width: 150, height: 16),
-                      SizedBox(height: AppSpacing.spacing2),
+                      SizedBox(height: TossDesignSystem.spacingXS),
                       SkeletonLoader(height: 14),
                     ],
                   ),
@@ -384,7 +380,7 @@ class GridSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: padding ?? AppSpacing.paddingAll16,
+      padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingM),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         childAspectRatio: childAspectRatio,
@@ -393,8 +389,8 @@ class GridSkeleton extends StatelessWidget {
       itemCount: itemCount,
       itemBuilder: (context, index) {
         return GlassContainer(
-          padding: AppSpacing.paddingAll16,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+          padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
           blur: 10,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -404,7 +400,7 @@ class GridSkeleton extends StatelessWidget {
                 height: 60,
                 borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
-              SizedBox(height: AppSpacing.spacing3),
+              SizedBox(height: TossDesignSystem.spacingS),
               SkeletonLoader(width: 80, height: 16),
             ],
           ),

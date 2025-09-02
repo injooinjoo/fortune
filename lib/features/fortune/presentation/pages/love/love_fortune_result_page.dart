@@ -46,33 +46,61 @@ class _LoveFortuneResultPageState extends State<LoveFortuneResultPage> with Tick
 
   void _generateLoveScore() {
     // 입력된 데이터를 바탕으로 점수 계산
-    int baseScore = 65;
+    int baseScore = 50;
     
     // 나이 요소 (20-30세가 가장 높은 점수)
     int age = widget.data['age'] ?? 25;
     if (age >= 20 && age <= 30) {
-      baseScore += 10;
+      baseScore += 8;
     } else if (age >= 18 && age <= 35) {
       baseScore += 5;
     }
     
     // 연애 스타일 요소
     List<String> styles = widget.data['datingStyles'] ?? [];
-    baseScore += styles.length * 2;
+    if (styles.isNotEmpty) {
+      baseScore += (styles.length * 3).clamp(3, 12);
+    }
     
     // 매력 포인트 요소
     List<String> charmPoints = widget.data['charmPoints'] ?? [];
-    baseScore += charmPoints.length * 3;
+    if (charmPoints.isNotEmpty) {
+      baseScore += (charmPoints.length * 4).clamp(4, 12);
+    }
     
-    // 외모 자신감 요소
+    // 외모 자신감 요소 (1-10 점수)
     double appearanceConf = widget.data['appearanceConfidence'] ?? 5.0;
-    baseScore += (appearanceConf * 2).round();
+    baseScore += ((appearanceConf - 1) * 1.5).round();
     
     // 취미 활동 요소
     List<String> hobbies = widget.data['hobbies'] ?? [];
-    baseScore += hobbies.length * 2;
+    if (hobbies.isNotEmpty) {
+      baseScore += (hobbies.length * 2).clamp(2, 10);
+    }
     
-    _loveScore = (baseScore).clamp(60, 98);
+    // 관계 목표 요소
+    String relationshipGoal = widget.data['relationshipGoal'] ?? '';
+    if (relationshipGoal == 'marriage') {
+      baseScore += 5;
+    } else if (relationshipGoal == 'serious') {
+      baseScore += 4;
+    } else if (relationshipGoal == 'casual') {
+      baseScore += 2;
+    }
+    
+    // 라이프스타일 요소
+    String lifestyle = widget.data['lifestyle'] ?? '';
+    if (lifestyle.isNotEmpty) {
+      baseScore += 3;
+    }
+    
+    // 선호 만남 장소 요소
+    List<String> meetingPlaces = widget.data['preferredMeetingPlaces'] ?? [];
+    if (meetingPlaces.isNotEmpty) {
+      baseScore += (meetingPlaces.length * 1.5).round().clamp(2, 8);
+    }
+    
+    _loveScore = (baseScore).clamp(40, 95);
   }
 
   String _getScoreDescription(int score) {

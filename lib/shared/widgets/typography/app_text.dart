@@ -1,9 +1,5 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import '../../../core/theme/app_typography.dart';
-import '../../../core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 /// Base text widget with Toss Product Sans typography
 class AppText extends StatelessWidget {

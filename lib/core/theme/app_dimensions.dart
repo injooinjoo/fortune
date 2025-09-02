@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
-/// Dimension constants following Toss design system
-/// All dimensions are carefully selected for visual consistency
+/// Dimension constants mapped to TossDesignSystem for consistency
 class AppDimensions {
-  // Border radius values (Toss uses less rounded corners,
+  // Border radius values - mapped to TossDesignSystem
   static const double radiusXxSmall = 4.0; // Very subtle rounding
   static const double radiusXSmall = 6.0; // Minimal rounding
-  static const double radiusSmall = 8.0; // Standard small radius
-  static const double radiusMedium = 12.0; // Medium radius
-  static const double radiusLarge = 16.0; // Large radius (default for cards,
-  static const double radiusXLarge = 20.0; // Extra large
-  static const double radiusXxLarge =
-      24.0; // Maximum radius (for bottom sheets,
+  static const double radiusSmall = TossDesignSystem.radiusS; // 8.0
+  static const double radiusMedium = TossDesignSystem.radiusM; // 12.0
+  static const double radiusLarge = TossDesignSystem.radiusL; // 16.0
+  static const double radiusXLarge = TossDesignSystem.radiusXL; // 20.0
+  static const double radiusXxLarge = TossDesignSystem.radiusXL; // Use XL for max
   static const double radiusCircle = 9999.0; // Full circle
+
+  // BorderRadius helpers for backward compatibility
+  static BorderRadius get borderRadiusSmall => BorderRadius.circular(radiusSmall);
+  static BorderRadius get borderRadiusMedium => BorderRadius.circular(radiusMedium);
+  static BorderRadius get borderRadiusLarge => BorderRadius.circular(radiusLarge);
 
   // Component heights
   static const double buttonHeightLarge = 56.0; // Primary buttons
@@ -113,9 +117,9 @@ class AppDimensions {
   // Helper methods
   static BorderRadius borderRadius(double radius) =>
       BorderRadius.circular(radius);
-  static BorderRadius borderRadiusSmall = BorderRadius.circular(radiusSmall);
-  static BorderRadius borderRadiusMedium = BorderRadius.circular(radiusMedium);
-  static BorderRadius borderRadiusLarge = BorderRadius.circular(radiusLarge);
+  static BorderRadius borderRadiusS = BorderRadius.circular(radiusSmall);
+  static BorderRadius borderRadiusM = BorderRadius.circular(radiusMedium);
+  static BorderRadius borderRadiusL = BorderRadius.circular(radiusLarge);
 
   static BorderRadius borderRadiusTop(double radius) => BorderRadius.only(
         topLeft: Radius.circular(radius),

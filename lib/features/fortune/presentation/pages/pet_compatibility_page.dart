@@ -10,6 +10,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../constants/fortune_button_spacing.dart';
 
 class PetCompatibilityPage extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -377,11 +378,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 height: 1.4,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
             TossButton(
               text: '반려동물 등록하기',
               onPressed: () => _showAddPetBottomSheet(),
               style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
             ),
           ],
         ),
@@ -544,6 +546,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                       text: '등록하기',
                       onPressed: _canRegisterPet() ? () => _registerPet(context) : null,
                       isLoading: petState.isCreating,
+                      size: TossButtonSize.large,
+                      width: double.infinity,
                     );
                   },
                 ),
@@ -815,35 +819,31 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
 
           // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: TossButton(
-                  text: '다른 반려동물',
-                  style: TossButtonStyle.secondary,
-                  onPressed: () {
-                    setState(() => _fortune = null);
-                    ref.read(petProvider.notifier).clearSelectedPet();
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TossButton(
-                  text: '공유하기',
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('공유 기능이 곧 추가될 예정입니다'),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+          FortuneButtonPositionHelper.parallel(
+            leftButton: TossButton(
+              text: '다른 반려동물',
+              style: TossButtonStyle.secondary,
+              size: TossButtonSize.large,
+              onPressed: () {
+                setState(() => _fortune = null);
+                ref.read(petProvider.notifier).clearSelectedPet();
+              },
+            ),
+            rightButton: TossButton(
+              text: '공유하기',
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('공유 기능이 곧 추가될 예정입니다'),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

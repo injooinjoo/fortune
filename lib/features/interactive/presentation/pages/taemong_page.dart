@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -44,7 +44,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: TossDesignSystem.gray50,
       body: SafeArea(
         child: Column(
           children: [
@@ -82,7 +82,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           const Icon(
             Icons.nights_stay,
             size: 48,
-            color: AppTheme.primaryColor,
+            color: TossDesignSystem.tossBlue,
           ),
           const SizedBox(height: 16),
           Text(
@@ -96,7 +96,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             '임신 중 꾼 특별한 꿈을 입력하면\n'
             '아기의 미래와 성향을 예측해드립니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.textSecondaryColor,
+              color: TossDesignSystem.gray600,
             ),
             textAlign: TextAlign.center,
           ),
@@ -104,7 +104,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
+              color: TossDesignSystem.tossBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -113,13 +113,13 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 const Icon(
                   Icons.toll,
                   size: 16,
-                  color: AppTheme.primaryColor,
+                  color: TossDesignSystem.tossBlue,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryColor,
+                    color: TossDesignSystem.tossBlue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -149,18 +149,18 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             maxLength: 500,
             decoration: InputDecoration(
               hintText: '꿈에서 본 내용을 자세히 적어주세요...',
-              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withOpacity(0.5)),
+              hintStyle: TextStyle(color: TossDesignSystem.gray600.withOpacity(0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppTheme.borderColor)),
+                borderSide: BorderSide(color: TossDesignSystem.gray200)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppTheme.borderColor)),
+                borderSide: BorderSide(color: TossDesignSystem.gray200)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2)),
+                borderSide: const BorderSide(color: TossDesignSystem.tossBlue, width: 2)),
               filled: true,
-              fillColor: AppTheme.surfaceColor),
+              fillColor: TossDesignSystem.surfacePrimary),
             style: Theme.of(context).textTheme.bodyLarge)])).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
       .slideY(begin: 0.1, end: 0.0);
@@ -181,7 +181,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           Text(
             '꿈에 나온 주요 상징을 선택하면 더 정확한 해석이 가능합니다',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.textSecondaryColor,
+              color: TossDesignSystem.gray600,
             ),
           ),
           const SizedBox(height: 16),
@@ -191,7 +191,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               Text(
                 entry.key,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.primaryColor,
+                  color: TossDesignSystem.tossBlue,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -230,16 +230,16 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor : AppTheme.surfaceColor,
+          color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.surfacePrimary,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : AppTheme.borderColor,
+            color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
           ),
         ),
         child: Text(
           keyword,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: isSelected ? Colors.white : AppTheme.textColor,
+            color: isSelected ? Colors.white : TossDesignSystem.gray900,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -255,7 +255,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
       child: ElevatedButton(
         onPressed: canAnalyze && !_isAnalyzing ? _analyzeDream : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryColor,
+          backgroundColor: TossDesignSystem.tossBlue,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -290,7 +290,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             children: [
               const Icon(
                 Icons.auto_awesome,
-                color: AppTheme.primaryColor,
+                color: TossDesignSystem.tossBlue,
                 size: 24,
               ),
               const SizedBox(width: 8),
@@ -317,7 +317,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   onPressed: _resetAnalysis,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    side: BorderSide(color: AppTheme.primaryColor),
+                    side: BorderSide(color: TossDesignSystem.tossBlue),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -332,7 +332,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   icon: const Icon(Icons.share, size: 16),
                   label: const Text('결과 공유'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
+                    backgroundColor: TossDesignSystem.tossBlue,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

@@ -1,5 +1,3 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +6,6 @@ import 'package:share_plus/share_plus.dart';
 import '../glassmorphism/glass_container.dart';
 import '../glassmorphism/glass_effects.dart';
 import 'token_balance_widget.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 enum FontSize {
   
@@ -117,14 +113,14 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     return PreferredSize(
       preferredSize: preferredSize,
       child: AnimatedContainer(
-        duration: AppAnimations.durationShort,
+        duration: const Duration(milliseconds: 200),
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor ?? Colors.transparent,
           ),
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2),
+              padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS),
               child: Row(
                 children: [
                   if (showBackButton)
@@ -149,7 +145,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     _FontSizeSelector(
                       currentSize: currentFontSize,
                       onSizeChanged: onFontSizeChanged),
-                    SizedBox(width: AppSpacing.spacing2)],
+                    const SizedBox(width: TossDesignSystem.spacingXS)],
                   if (showShareButton)
                     IconButton(
                       icon: Icon(
@@ -158,7 +154,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: () => _handleShare(context)),
                   if (showTokenBalance) ...[
                     const TokenBalanceWidget(),
-                    SizedBox(width: AppSpacing.spacing2)],
+                    const SizedBox(width: TossDesignSystem.spacingXS)],
                   if (showActions && actions != null) ...actions!,
                 ],
               ),
@@ -181,10 +177,10 @@ class _FontSizeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.spacing3, 
-        vertical: AppSpacing.spacing1),
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossDesignSystem.spacingS, 
+        vertical: TossDesignSystem.spacingXXS),
+      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
       blur: 10,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -194,13 +190,13 @@ class _FontSizeSelector extends StatelessWidget {
             size: FontSize.small,
             isSelected: currentSize == FontSize.small,
             onTap: () => onSizeChanged?.call(FontSize.small)),
-          SizedBox(width: AppSpacing.spacing2),
+          const SizedBox(width: TossDesignSystem.spacingXS),
           _SizeButton(
             label: '가',
             size: FontSize.medium,
             isSelected: currentSize == FontSize.medium,
             onTap: () => onSizeChanged?.call(FontSize.medium)),
-          SizedBox(width: AppSpacing.spacing2),
+          const SizedBox(width: TossDesignSystem.spacingXS),
           _SizeButton(
             label: '가',
             size: FontSize.large,
@@ -242,16 +238,16 @@ class _SizeButton extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: AppDimensions.borderRadiusMedium,
+      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.spacing2, 
-          vertical: AppSpacing.spacing1),
+        padding: const EdgeInsets.symmetric(
+          horizontal: TossDesignSystem.spacingXS, 
+          vertical: TossDesignSystem.spacingXXS),
         decoration: BoxDecoration(
           color: isSelected
               ? theme.primaryColor.withValues(alpha: 0.2)
               : Colors.transparent,
-          borderRadius: AppDimensions.borderRadiusMedium),
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
         child: Text(
           label,
           style: TextStyle(
