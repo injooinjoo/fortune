@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import 'biorhythm_loading_page.dart';
 

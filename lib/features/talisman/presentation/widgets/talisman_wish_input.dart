@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_input.dart';
 
 class TalismanWishInput extends StatefulWidget {

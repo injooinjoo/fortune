@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 
 class TalismanResultCard extends StatefulWidget {
   final TalismanDesign talismanDesign;
@@ -322,7 +322,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                     });
                     widget.onSave?.call();
                   },
-                  leadingIcon: Icon(
+                  icon: Icon(
                     _isSaved ? Icons.check : Icons.download,
                     size: 20,
                   ),
@@ -338,7 +338,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                       text: '배경화면 설정',
                       onPressed: widget.onSetWallpaper,
                       style: TossButtonStyle.secondary,
-                      leadingIcon: const Icon(Icons.wallpaper, size: 20),
+                      icon: const Icon(Icons.wallpaper, size: 20),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -347,7 +347,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                       text: '공유하기',
                       onPressed: widget.onShare,
                       style: TossButtonStyle.secondary,
-                      leadingIcon: const Icon(Icons.share, size: 20),
+                      icon: const Icon(Icons.share, size: 20),
                     ),
                   ),
                 ],

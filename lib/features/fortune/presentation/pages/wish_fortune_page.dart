@@ -10,7 +10,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 소원 빌기 페이지 - 분수대에 동전을 던지는 새로운 경험

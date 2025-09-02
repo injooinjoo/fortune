@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
-import 'toss_button.dart';
+import '../../shared/components/toss_button.dart';
 
 /// TOSS 스타일 Bottom Sheet
 class TossBottomSheet {
@@ -247,7 +247,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
                 Expanded(
                   child: TossButton(
                     text: confirmText,
-                    style: isDanger ? TossButtonStyle.danger : TossButtonStyle.primary,
+                    style: TossButtonStyle.primary,
                     onPressed: () => Navigator.of(context).pop(true),
                   ),
                 ),

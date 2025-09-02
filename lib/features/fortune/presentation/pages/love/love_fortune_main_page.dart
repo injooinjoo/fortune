@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/components/toss_button.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
 import 'love_input_step3_page.dart';

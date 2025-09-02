@@ -36,9 +36,10 @@ class BaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fortuneTheme = context.fortuneTheme;
-    final defaultShadow = ThemeUtils.getCardShadow(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     
-    final cardColor = backgroundColor ?? fortuneTheme.cardSurface;
+    final cardColor = backgroundColor ?? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white);
     
     Widget content = Container(
       width: width,
@@ -47,13 +48,11 @@ class BaseCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: gradient != null ? null : cardColor,
         gradient: gradient,
-        borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusM),
-        boxShadow: boxShadow ?? defaultShadow,
-        border: border ?? Border.all(
-          color: fortuneTheme.dividerColor.withOpacity(0.1),
-          width: 1)),
+        borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),
+        boxShadow: boxShadow ?? (isDark ? null : TossDesignSystem.shadowXS),
+        border: border),
       child: Padding(
-        padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingM),
+        padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingL),
         child: child));
     
     if (onTap != null) {
@@ -61,7 +60,7 @@ class BaseCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusM),
+          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),
           child: content));
     }
     
@@ -129,28 +128,31 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     
     return BaseCard(
       onTap: onTap,
+      backgroundColor: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
       child: Row(
         children: [
           if (leading != null) ...[
             leading!,
-            SizedBox(width: TossDesignSystem.spacingM)],
+            const SizedBox(width: TossDesignSystem.spacingM)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold)),
+                  style: TossDesignSystem.body1.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    fontWeight: FontWeight.w600)),
                 if (subtitle != null) ...[
-                  SizedBox(height: TossDesignSystem.spacingXXS),
+                  const SizedBox(height: TossDesignSystem.spacingXXS),
                   Text(
                     subtitle!,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    style: TossDesignSystem.body3.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
                     ),
                   ),
                 ],

@@ -458,7 +458,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true),
     FortuneCategory(
       title: '헤어진 애인',
-      route: '/ex-lover-enhanced',
+      route: '/ex-lover-simple',
       type: 'ex-lover',
       icon: Icons.heart_broken_rounded,
       gradientColors: [Color(0xFF6B7280), Color(0xFF374151)],

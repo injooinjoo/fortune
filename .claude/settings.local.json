@@ -130,7 +130,8 @@
       "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_gray900_references.sh)",
       "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_gray900dark_references.sh)",
       "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_gray900secondary.sh:*)",
-      "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_infographic_colors.sh)"
+      "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_infographic_colors.sh)",
+      "Bash(/tmp/fix_toss_references.sh:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

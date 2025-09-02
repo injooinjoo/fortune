@@ -6,7 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/bottom_navigation_bar.dart';

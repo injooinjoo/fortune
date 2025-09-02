@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../presentation/providers/celebrity_provider.dart';
 import '../../../services/celebrity_crawling_service.dart';
 import '../../../core/components/toss_card.dart';
-import '../../../core/components/toss_button.dart';
+import '../../../shared/components/toss_button.dart';
 import '../../../core/theme/toss_theme.dart';
 
 class CelebrityCrawlingPage extends ConsumerStatefulWidget {

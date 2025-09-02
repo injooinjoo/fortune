@@ -37,6 +37,12 @@ import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
 import '../features/fortune/presentation/pages/love/love_fortune_main_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_fortune_enhanced_page.dart';
+import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart';
+import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
+import '../features/fortune/domain/models/ex_lover_simple_model.dart';
+import '../features/fortune/presentation/pages/blind_date_instagram_page.dart';
+import '../features/fortune/presentation/pages/blind_date_coaching_page.dart';
+import '../features/fortune/domain/models/blind_date_instagram_model.dart';
 import '../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
 import '../screens/subscription/subscription_page.dart';
 
@@ -45,7 +51,12 @@ import '../features/health/presentation/pages/health_fortune_toss_page.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
 import '../features/fortune/presentation/pages/compatibility_page.dart';
 import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
+import '../features/fortune/presentation/pages/avoid_people_result_page.dart';
+import '../features/fortune/domain/models/avoid_person_analysis.dart';
 import '../features/fortune/presentation/pages/career_fortune_page.dart';
+import '../features/fortune/presentation/pages/career_coaching_input_page.dart';
+import '../features/fortune/presentation/pages/career_coaching_result_page.dart';
+import '../features/fortune/domain/models/career_coaching_model.dart';
 import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
 import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
 import '../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
@@ -196,9 +207,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AvoidPeopleFortunePage(),
       ),
       GoRoute(
+        path: '/avoid-people-result',
+        name: 'fortune-avoid-people-result',
+        builder: (context, state) {
+          final input = state.extra as AvoidPersonInput?;
+          if (input == null) {
+            return const AvoidPeopleFortunePage();
+          }
+          return AvoidPeopleResultPage(input: input);
+        },
+      ),
+      GoRoute(
         path: '/career',
         name: 'fortune-career',
-        builder: (context, state) => const CareerFortunePage(),
+        builder: (context, state) => const CareerCoachingInputPage(),
+      ),
+      GoRoute(
+        path: '/career-coaching-result',
+        name: 'career-coaching-result',
+        builder: (context, state) {
+          final input = state.extra as CareerCoachingInput?;
+          if (input == null) {
+            return const CareerCoachingInputPage();
+          }
+          return CareerCoachingResultPage(input: input);
+        },
       ),
       GoRoute(
         path: '/lucky-exam',
@@ -309,6 +342,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/ex-lover-enhanced',
         name: 'fortune-ex-lover-enhanced',
         builder: (context, state) => const ExLoverFortuneEnhancedPage(),
+      ),
+      GoRoute(
+        path: '/ex-lover-simple',
+        name: 'fortune-ex-lover-simple',
+        builder: (context, state) => const ExLoverFortuneSimplePage(),
+      ),
+      GoRoute(
+        path: '/ex-lover-emotional-result',
+        name: 'fortune-ex-lover-emotional-result',
+        builder: (context, state) {
+          final input = state.extra as ExLoverSimpleInput?;
+          if (input == null) {
+            return const ExLoverFortuneSimplePage();
+          }
+          return ExLoverEmotionalResultPage(input: input);
+        },
       ),
       GoRoute(
         path: '/investment-enhanced',

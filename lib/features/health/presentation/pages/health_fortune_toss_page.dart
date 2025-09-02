@@ -8,7 +8,7 @@ import '../widgets/health_timeline_chart.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../data/services/health_fortune_service.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toast.dart';
 
 class HealthFortuneTossPage extends StatefulWidget {
@@ -198,7 +198,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
             child: TossButton(
               text: '건강 분석 시작하기',
               onPressed: _goToNextStep,
-              leadingIcon: const Icon(Icons.auto_awesome_rounded, size: 20),
+              icon: const Icon(Icons.auto_awesome_rounded, size: 20),
             ),
           ).animate()
             .fadeIn(delay: 800.ms, duration: 600.ms)
@@ -565,7 +565,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                   text: '건강 분석하기',
                   onPressed: _generateHealthFortune,
                   isLoading: _isLoading,
-                  leadingIcon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20),
+                  icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20),
                 ),
               ),
               const SizedBox(height: 12),
@@ -642,7 +642,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                     text: '결과 공유하기',
                     onPressed: _shareResult,
                     style: TossButtonStyle.secondary,
-                    leadingIcon: const Icon(Icons.share, size: 20),
+                    icon: const Icon(Icons.share, size: 20),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -651,7 +651,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                   child: TossButton(
                     text: '다시 분석하기',
                     onPressed: _restartAnalysis,
-                    leadingIcon: const Icon(Icons.refresh, size: 20),
+                    icon: const Icon(Icons.refresh, size: 20),
                   ),
                 ),
               ],

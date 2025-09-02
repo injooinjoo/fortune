@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 
@@ -399,7 +399,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
         onPressed: hasText ? _onStartInterpretation : null,
         style: TossButtonStyle.primary,
         size: TossButtonSize.large,
-        leadingIcon: const Icon(Icons.auto_awesome),
+        icon: const Icon(Icons.auto_awesome),
       ),
     );
   }

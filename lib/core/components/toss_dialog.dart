@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
-import 'toss_button.dart';
+import '../../shared/components/toss_button.dart';
 
 /// TOSS 스타일 Dialog
 class TossDialog {
@@ -250,9 +250,7 @@ class _TossConfirmationDialog extends StatelessWidget {
               child: TossButton(
                 text: confirmText,
                 onPressed: () => Navigator.of(context).pop(true),
-                style: isDanger
-                    ? TossButtonStyle.danger
-                    : TossButtonStyle.primary,
+                style: TossButtonStyle.primary,
                 size: TossButtonSize.medium,
               ),
             ),

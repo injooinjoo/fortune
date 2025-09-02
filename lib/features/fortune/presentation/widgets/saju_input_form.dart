@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_input.dart';
 
 /// 사주팔자 정보 입력 폼 위젯
@@ -183,7 +183,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                           onPressed: _onSubmit,
                           style: TossButtonStyle.primary,
                           width: double.infinity,
-                          leadingIcon: const Icon(Icons.auto_awesome),
+                          icon: const Icon(Icons.auto_awesome),
                         ),
                         
                         const SizedBox(height: TossTheme.spacingXL),

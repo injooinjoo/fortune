@@ -6,7 +6,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 
 class PhysiognomyEnhancedPage extends ConsumerWidget {
   const PhysiognomyEnhancedPage({Key? key}) : super(key: key);

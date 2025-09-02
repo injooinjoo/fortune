@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/components/toss_button.dart';
+import '../../../../../shared/components/toss_button.dart';
 
 enum LifestyleType { employee, student, freelancer, business }
 enum HobbyType { exercise, reading, travel, cooking, gaming, movie }

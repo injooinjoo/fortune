@@ -12,7 +12,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'ex_lover_fortune_result_page.dart';
 
 // Step 관리를 위한 StateNotifier

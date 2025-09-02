@@ -1340,6 +1340,30 @@ class FortuneApiService {
       'moving_date': 'moving-date'};
     return mapping[type] ?? 'health';
   }
+
+  // Exam Fortune
+  Future<Fortune> getLuckyExamFortune({
+    required String userId,
+    Map<String, dynamic>? examData,
+  }) async {
+    return getFortune(
+      fortuneType: 'lucky-exam',
+      userId: userId,
+      params: examData,
+    );
+  }
+
+  // Career Coaching Fortune
+  Future<Fortune> getCareerCoachingFortune({
+    required String userId,
+    Map<String, dynamic>? careerData,
+  }) async {
+    return getFortune(
+      fortuneType: 'career-coaching',
+      userId: userId,
+      params: careerData,
+    );
+  }
 }
 
 // Provider

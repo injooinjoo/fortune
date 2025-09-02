@@ -10,7 +10,9 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../shared/components/toss_button.dart';
+import '../widgets/fortune_button.dart';
+import '../constants/fortune_button_spacing.dart';
 
 // Step 관리를 위한 StateNotifier
 class InvestmentStepNotifier extends StateNotifier<int> {
@@ -318,47 +320,36 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           ),
         ],
       ),
-      child: Row(
-        children: [
-          if (currentStep > 0)
-            Expanded(
-              child: TossButton(
-                text: '이전',
-                onPressed: () {
-                  ref.read(investmentStepProvider.notifier).previousStep();
-                  _pageController.previousPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                  );
-                },
-                style: TossButtonStyle.secondary,
-                size: TossButtonSize.large,
-              ),
-            ),
-          if (currentStep > 0) const SizedBox(width: 16),
-          Expanded(
-            flex: currentStep == 0 ? 1 : 2,
-            child: TossButton(
-              text: currentStep == 3 ? '운세 보기' : '다음',
-              onPressed: isValid
+      child: currentStep == 3
+          ? FortuneButton.viewFortune(
+              onPressed: isValid ? _generateFortune : null,
+              isEnabled: isValid,
+              isLoading: false,
+            )
+          : FortuneButtonGroup.navigation(
+              onPrevious: currentStep > 0
                   ? () {
-                      if (currentStep < 3) {
-                        ref.read(investmentStepProvider.notifier).nextStep();
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut
-                        );
-                      } else {
-                        _generateFortune();
-                      }
+                      ref.read(investmentStepProvider.notifier).previousStep();
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
                     }
                   : null,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
+              onNext: isValid
+                  ? () {
+                      ref.read(investmentStepProvider.notifier).nextStep();
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    }
+                  : null,
+              showPrevious: currentStep > 0,
+              isNextEnabled: isValid,
+              nextText: '다음',
+              position: FortuneButtonPosition.inline,
             ),
-          ),
-        ],
-      ),
     );
   }
   

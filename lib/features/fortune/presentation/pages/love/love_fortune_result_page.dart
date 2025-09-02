@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/components/toss_button.dart';
+import '../../../../../shared/components/toss_button.dart';
 import '../../widgets/love/love_score_circle.dart';
 import '../../widgets/love/love_trend_chart.dart';
 import '../../widgets/love/love_mission_card.dart';

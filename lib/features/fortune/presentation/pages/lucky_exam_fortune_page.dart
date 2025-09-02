@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_button.dart';
+import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/toss_button.dart';
+import '../widgets/fortune_button.dart';
+import '../constants/fortune_button_spacing.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../data/services/fortune_api_service.dart';
+import 'dart:math' as math;
 
 class LuckyExamFortunePage extends ConsumerStatefulWidget {
   const LuckyExamFortunePage({super.key});
@@ -15,7 +20,7 @@ class LuckyExamFortunePage extends ConsumerStatefulWidget {
 }
 
 class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
-  Map<String, dynamic>? _examData;
+  Fortune? _fortuneResult;
   bool _isLoading = false;
   
   String _examType = '';
@@ -30,40 +35,28 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            style: IconButton.styleFrom(
-              backgroundColor: TossTheme.backgroundSecondary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: TossTheme.textBlack,
-              size: 20,
-            ),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, 
+            color: isDark ? Colors.white : Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           '시험 운세',
-          style: TossTheme.heading3.copyWith(
-            color: TossTheme.textBlack,
-          ),
+          style: TossDesignSystem.heading3,
         ),
         centerTitle: true,
       ),
-      body: _examData != null 
-          ? _buildResultView()
-          : _buildInputView(),
+      body: _fortuneResult != null 
+          ? _buildResultView(isDark)
+          : _buildInputView(isDark),
     );
   }
 
@@ -72,7 +65,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('시험 종류와 예정일을 입력해주세요'),
-          backgroundColor: TossTheme.error,
+          backgroundColor: TossDesignSystem.errorRed,
         ),
       );
       return;
@@ -83,8 +76,15 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     });
 
     try {
-      final fortuneService = ref.read(fortuneServiceProvider);
-      final params = {
+      // Get current user
+      final user = Supabase.instance.client.auth.currentUser;
+      final userId = user?.id ?? 'anonymous';
+      
+      // Get FortuneApiService
+      final fortuneApiService = ref.read(fortuneApiServiceProvider);
+      
+      // Prepare exam data
+      final examData = {
         'examType': _examType,
         'examDate': _examDate,
         'studyPeriod': _studyPeriod,
@@ -92,32 +92,87 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
         'difficulty': _difficulty,
       };
       
-      final fortune = await fortuneService.getFortune(
-        userId: 'user123', // 임시 사용자 ID
-        fortuneType: 'lucky-exam',
-        params: params,
+      // Call API
+      final fortune = await fortuneApiService.getLuckyExamFortune(
+        userId: userId,
+        examData: examData,
       );
       
       setState(() {
-        _examData = {
-          'fortune': fortune,
-          'examInfo': params,
-        };
+        _fortuneResult = fortune;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
+      
+      // Generate mock data on error
+      _generateMockResult();
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('분석 중 오류가 발생했습니다: $e')),
+          SnackBar(
+            content: Text('서버 연결 중 오류가 발생했습니다. 샘플 데이터를 표시합니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
         );
       }
     }
   }
 
-  Widget _buildInputView() {
+  void _generateMockResult() {
+    // Generate mock fortune result for testing
+    final random = math.Random();
+    final overallScore = 70 + random.nextInt(25);
+    
+    setState(() {
+      _fortuneResult = Fortune(
+        id: 'mock_${DateTime.now().millisecondsSinceEpoch}',
+        userId: 'user',
+        type: 'lucky-exam',
+        content: _generateMockContent(overallScore),
+        overallScore: overallScore,
+        scoreBreakdown: {
+          '합격 가능성': overallScore,
+          '준비도': 65 + random.nextInt(30),
+          '시험 당일 운': 60 + random.nextInt(35),
+          '집중력': 70 + random.nextInt(25),
+        },
+        recommendations: _generateMockRecommendations(),
+        luckyItems: {
+          'color': ['파란색', '흰색'],
+          'number': ['7', '3'],
+          'item': ['샤프펜슬', '시계'],
+          'food': ['초콜릿', '바나나'],
+        },
+        createdAt: DateTime.now(),
+      );
+      _isLoading = false;
+    });
+  }
+
+  String _generateMockContent(int score) {
+    if (score >= 85) {
+      return '${_examType} 시험에서 좋은 결과가 예상됩니다! 지금까지의 노력이 빛을 발할 때입니다. 자신감을 가지고 차분하게 준비하세요. 시험 당일 컨디션 관리가 중요합니다.';
+    } else if (score >= 70) {
+      return '${_examType} 시험 준비가 순조롭게 진행되고 있습니다. 남은 기간 동안 약점 보완에 집중하면 좋은 결과를 얻을 수 있을 것입니다. 긍정적인 마음가짐을 유지하세요.';
+    } else {
+      return '${_examType} 시험을 위해 조금 더 집중이 필요한 시기입니다. 기본기를 다시 한번 점검하고, 실전 연습을 늘려보세요. 포기하지 않는다면 충분히 좋은 결과를 얻을 수 있습니다.';
+    }
+  }
+
+  List<String> _generateMockRecommendations() {
+    return [
+      '오전 시간을 활용한 집중 학습을 추천합니다',
+      '시험 일주일 전부터는 새로운 내용보다 복습에 집중하세요',
+      '충분한 수면과 규칙적인 생활 패턴을 유지하세요',
+      '시험장에 일찍 도착하여 마음을 안정시키세요',
+      '자신감을 갖되 겸손한 마음으로 임하세요',
+    ];
+  }
+
+  Widget _buildInputView(bool isDark) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -134,25 +189,18 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF10B981),
-                        const Color(0xFF34D399),
+                        TossDesignSystem.successGreen,
+                        TossDesignSystem.successGreen.withOpacity(0.7),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF10B981).withOpacity(0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
                   ),
                   child: const Icon(
                     Icons.school_rounded,
                     color: Colors.white,
-                    size: 36,
+                    size: 40,
                   ),
                 ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
                 
@@ -160,18 +208,16 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 
                 Text(
                   '시험 운세',
-                  style: TossTheme.heading2.copyWith(
-                    color: TossTheme.textBlack,
-                  ),
+                  style: TossDesignSystem.heading2,
                   textAlign: TextAlign.center,
                 ),
                 
                 const SizedBox(height: 12),
                 
                 Text(
-                  '시험 정보를 입력하고\\n맞춤형 합격 운세를 확인하세요!',
-                  style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                  '시험 정보를 입력하고\n맞춤형 합격 운세를 확인하세요!',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: TossDesignSystem.gray600,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -185,9 +231,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           // 시험 정보 입력
           Text(
             '시험 정보를 입력해주세요',
-            style: TossTheme.heading4.copyWith(
-              color: TossTheme.textBlack,
-              fontWeight: FontWeight.w700,
+            style: TossDesignSystem.body1.copyWith(
+              fontWeight: FontWeight.bold,
             ),
           ),
           
@@ -198,54 +243,56 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 시험 종류
                 Text(
                   '시험 종류',
-                  style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                  style: TossDesignSystem.caption.copyWith(
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  onChanged: (value) => setState(() => _examType = value),
+                  onChanged: (value) => _examType = value,
                   decoration: InputDecoration(
-                    hintText: '예: 수능, 공무원, 토익, 자격증',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    hintText: '예: 수능, 토익, 자격증 시험',
+                    hintStyle: TossDesignSystem.body2.copyWith(
+                      color: TossDesignSystem.gray400,
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TossTheme.borderGray300),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: TossDesignSystem.gray300),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TossTheme.primaryBlue),
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: TossDesignSystem.tossBlue),
                     ),
                   ),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 
+                // 시험 예정일
                 Text(
                   '시험 예정일',
-                  style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                  style: TossDesignSystem.caption.copyWith(
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  onChanged: (value) => setState(() => _examDate = value),
+                  onChanged: (value) => _examDate = value,
                   decoration: InputDecoration(
-                    hintText: '예: 다음주, 1개월 후, 2024년 11월',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    hintText: '예: 2024년 3월 15일',
+                    hintStyle: TossDesignSystem.body2.copyWith(
+                      color: TossDesignSystem.gray400,
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TossTheme.borderGray300),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: TossDesignSystem.gray300),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TossTheme.primaryBlue),
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: TossDesignSystem.tossBlue),
                     ),
                   ),
                 ),
@@ -253,21 +300,30 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             ),
           ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
           // 준비 상황
+          Text(
+            '준비 상황',
+            style: TossDesignSystem.body1.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
           TossCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 공부 기간
                 Text(
                   '공부 기간',
-                  style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                  style: TossDesignSystem.caption.copyWith(
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -278,22 +334,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: _studyPeriod == period 
-                              ? const Color(0xFF10B981).withOpacity(0.1)
-                              : TossTheme.backgroundSecondary,
+                              ? TossDesignSystem.tossBlue
+                              : TossDesignSystem.gray100,
                           borderRadius: BorderRadius.circular(20),
-                          border: _studyPeriod == period
-                              ? Border.all(color: const Color(0xFF10B981))
-                              : null,
                         ),
                         child: Text(
                           period,
-                          style: TossTheme.body2.copyWith(
+                          style: TossDesignSystem.caption.copyWith(
                             color: _studyPeriod == period 
-                                ? const Color(0xFF10B981)
-                                : TossTheme.textBlack,
+                                ? Colors.white 
+                                : TossDesignSystem.gray700,
                             fontWeight: _studyPeriod == period 
-                                ? FontWeight.w600 
-                                : FontWeight.w400,
+                                ? FontWeight.bold 
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -301,15 +354,16 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   ).toList(),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 
+                // 자신감
                 Text(
-                  '현재 자신감',
-                  style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                  '자신감',
+                  style: TossDesignSystem.caption.copyWith(
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -317,25 +371,62 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     GestureDetector(
                       onTap: () => setState(() => _confidence = level),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
                           color: _confidence == level 
-                              ? TossTheme.primaryBlue.withOpacity(0.1)
-                              : TossTheme.backgroundSecondary,
-                          borderRadius: BorderRadius.circular(16),
-                          border: _confidence == level
-                              ? Border.all(color: TossTheme.primaryBlue)
-                              : null,
+                              ? TossDesignSystem.successGreen
+                              : TossDesignSystem.gray100,
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           level,
-                          style: TossTheme.caption.copyWith(
+                          style: TossDesignSystem.caption.copyWith(
                             color: _confidence == level 
-                                ? TossTheme.primaryBlue
-                                : TossTheme.textBlack,
+                                ? Colors.white 
+                                : TossDesignSystem.gray700,
                             fontWeight: _confidence == level 
-                                ? FontWeight.w600 
-                                : FontWeight.w400,
+                                ? FontWeight.bold 
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ).toList(),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // 난이도
+                Text(
+                  '예상 난이도',
+                  style: TossDesignSystem.caption.copyWith(
+                    color: TossDesignSystem.gray600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _difficultyLevels.map((level) => 
+                    GestureDetector(
+                      onTap: () => setState(() => _difficulty = level),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _difficulty == level 
+                              ? TossDesignSystem.warningOrange
+                              : TossDesignSystem.gray100,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          level,
+                          style: TossDesignSystem.caption.copyWith(
+                            color: _difficulty == level 
+                                ? Colors.white 
+                                : TossDesignSystem.gray700,
+                            fontWeight: _difficulty == level 
+                                ? FontWeight.bold 
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -346,200 +437,368 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             ),
           ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
 
           // 분석 버튼
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '시험 합격 운세 보기',
-              isLoading: _isLoading,
-              onPressed: _analyzeExam,
-            ),
+          FortuneButton.analyze(
+            onPressed: _analyzeExam,
+            isLoading: _isLoading,
+            text: '운세 분석하기',
           ),
 
-          const SizedBox(height: 16),
-
-          Text(
-            '분석 결과는 참고용으로만 활용해 주세요',
-            style: TossTheme.caption.copyWith(
-              color: TossTheme.textGray600,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          const SizedBox(height: 40),
         ],
       ),
     );
   }
 
-  Widget _buildResultView() {
-    final fortune = _examData?['fortune'] as Fortune?;
-    if (fortune == null) return const SizedBox.shrink();
+  Widget _buildResultView(bool isDark) {
+    if (_fortuneResult == null) return const SizedBox.shrink();
     
-    return _buildResultViewWithData(context, fortune, () {
-      // Share functionality
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('공유 기능은 곧 추가될 예정입니다'),
-          backgroundColor: TossTheme.primaryBlue,
-        ),
-      );
-    });
-  }
-
-  Widget _buildResultViewWithData(BuildContext context, Fortune result, VoidCallback onShare) {
-    final sections = result.categories ?? {};
+    final fortune = _fortuneResult!;
+    final score = fortune.overallScore ?? 75;
     
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _buildResultSummaryCard(result.summary ?? '시험 합격을 위한 운세입니다.'),
-            const SizedBox(height: 20),
-            _buildResultCard(
-              title: '합격 가능성',
-              content: sections['pass_probability'] ?? '합격 가능성을 분석 중입니다.',
-              icon: Icons.emoji_events,
-              color: TossTheme.primaryBlue,
-            ),
-            const SizedBox(height: 16),
-            _buildResultCard(
-              title: '공부 전략',
-              content: sections['study_strategy'] ?? '효과적인 공부 전략을 준비 중입니다.',
-              icon: Icons.menu_book,
-              color: TossTheme.primaryBlue,
-            ),
-            const SizedBox(height: 16),
-            _buildResultCard(
-              title: '시험 당일 팁',
-              content: sections['exam_day_tips'] ?? '시험 당일 주의사항을 확인 중입니다.',
-              icon: Icons.lightbulb,
-              color: TossTheme.primaryBlue,
-            ),
-            const SizedBox(height: 16),
-            _buildResultCard(
-              title: '집중력 향상법',
-              content: sections['concentration'] ?? '집중력 향상 방법을 제공 중입니다.',
-              icon: Icons.psychology,
-              color: TossTheme.primaryBlue,
-            ),
-            const SizedBox(height: 16),
-            if (sections['lucky_study_time'] != null)
-              _buildResultCard(
-                title: '최적의 공부 시간',
-                content: sections['lucky_study_time']!,
-                icon: Icons.access_time,
-                color: TossTheme.primaryBlue,
-              ),
-            if (sections['lucky_study_time'] != null) const SizedBox(height: 16),
-            if (sections['weekly_plan'] != null)
-              _buildResultCard(
-                title: '주간 학습 계획',
-                content: sections['weekly_plan']!,
-                icon: Icons.calendar_view_week,
-                color: TossTheme.primaryBlue,
-              ),
-            if (sections['weekly_plan'] != null) const SizedBox(height: 24),
-            TossButton(
-              text: '운세 공유하기',
-              onPressed: onShare,
-              width: double.infinity,
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildResultSummaryCard(String summary) {
-    return TossCard(
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              Icons.school,
-              size: 40,
-              color: TossTheme.primaryBlue,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            '시험 운세 결과',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: TossTheme.textBlack,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            summary,
-            style: TextStyle(
-              fontSize: 16,
-              height: 1.6,
-              color: TossTheme.textGray600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResultCard({
-    required String title,
-    required String content,
-    required IconData icon,
-    required Color color}) {
-    return TossCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
+          // 메인 결과 카드
+          TossCard(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                // 점수 시각화
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CustomPaint(
+                        size: const Size(150, 150),
+                        painter: CircularScorePainter(
+                          score: score,
+                          gradientColors: [
+                            TossDesignSystem.successGreen,
+                            TossDesignSystem.tossBlue,
+                          ],
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '$score',
+                            style: TossDesignSystem.heading1.copyWith(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: TossDesignSystem.successGreen,
+                            ),
+                          ),
+                          Text(
+                            '합격 가능성',
+                            style: TossDesignSystem.caption.copyWith(
+                              color: TossDesignSystem.gray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                
+                const SizedBox(height: 24),
+                
+                Text(
+                  _examType,
+                  style: TossDesignSystem.heading3.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: TossTheme.textBlack,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            content,
-            style: TextStyle(
-              fontSize: 15,
-              height: 1.6,
-              color: TossTheme.textGray600,
+                
+                const SizedBox(height: 16),
+                
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.successGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    fortune.content,
+                    style: TossDesignSystem.body2.copyWith(
+                      height: 1.6,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
-          ),
+          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
+          
+          const SizedBox(height: 20),
+          
+          // 세부 점수
+          if (fortune.scoreBreakdown != null) ...[
+            TossCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.analytics, 
+                        color: TossDesignSystem.tossBlue, size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        '세부 분석',
+                        style: TossDesignSystem.body1.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  ...fortune.scoreBreakdown!.entries.map((entry) => 
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                entry.key,
+                                style: TossDesignSystem.body2.copyWith(
+                                  color: TossDesignSystem.gray700,
+                                ),
+                              ),
+                              Text(
+                                '${entry.value}점',
+                                style: TossDesignSystem.body2.copyWith(
+                                  color: TossDesignSystem.tossBlue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(
+                            value: entry.value / 100,
+                            backgroundColor: TossDesignSystem.gray200,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              _getScoreColor(entry.value),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ).toList(),
+                ],
+              ),
+            ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+            
+            const SizedBox(height: 20),
+          ],
+          
+          // 추천 사항
+          if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
+            TossCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.tips_and_updates, 
+                        color: TossDesignSystem.warningOrange, size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        '합격 전략',
+                        style: TossDesignSystem.body1.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  ...fortune.recommendations!.map((rec) => 
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            margin: const EdgeInsets.only(top: 8, right: 12),
+                            decoration: BoxDecoration(
+                              color: TossDesignSystem.warningOrange,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              rec,
+                              style: TossDesignSystem.body2.copyWith(
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ).toList(),
+                ],
+              ),
+            ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+            
+            const SizedBox(height: 20),
+          ],
+          
+          // 행운 아이템
+          if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
+            TossCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.star, 
+                        color: Colors.amber, size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        '행운 아이템',
+                        style: TossDesignSystem.body1.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      if (fortune.luckyItems!['color'] != null)
+                        ...fortune.luckyItems!['color']!.map((color) => 
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.palette, size: 16, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                Text(
+                                  color,
+                                  style: TossDesignSystem.caption.copyWith(
+                                    color: Colors.amber[800],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ).toList(),
+                      if (fortune.luckyItems!['number'] != null)
+                        ...fortune.luckyItems!['number']!.map((number) => 
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.tag, size: 16, color: Colors.blue),
+                                const SizedBox(width: 4),
+                                Text(
+                                  number,
+                                  style: TossDesignSystem.caption.copyWith(
+                                    color: Colors.blue[800],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ).toList(),
+                    ],
+                  ),
+                ],
+              ),
+            ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
+          ],
+          
+          const SizedBox(height: 40),
         ],
       ),
     );
   }
 
+  Color _getScoreColor(int score) {
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
+  }
+}
 
+// Custom Painter for Circular Score
+class CircularScorePainter extends CustomPainter {
+  final int score;
+  final List<Color> gradientColors;
+
+  CircularScorePainter({
+    required this.score,
+    required this.gradientColors,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // Background circle
+    final backgroundPaint = Paint()
+      ..color = TossDesignSystem.gray200
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 12;
+
+    canvas.drawCircle(center, radius - 6, backgroundPaint);
+
+    // Progress arc
+    final progressPaint = Paint()
+      ..shader = SweepGradient(
+        colors: gradientColors,
+        startAngle: -math.pi / 2,
+        endAngle: -math.pi / 2 + (2 * math.pi * score / 100),
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 12
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - 6),
+      -math.pi / 2,
+      2 * math.pi * score / 100,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
