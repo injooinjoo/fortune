@@ -71,7 +71,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
             _buildMotivationalMessage(result, isDark),
             
             // Action Button
-            _buildActionButton(isDark),
+            _buildActionButton(context, isDark),
             
             const SizedBox(height: 40),
           ],
@@ -96,8 +96,8 @@ class BlindDateCoachingPage extends ConsumerWidget {
                   painter: CircularProgressPainter(
                     progress: result.compatibilityScore / 100,
                     gradientColors: [
-                      TossDesignSystem.tossPink,
-                      Colors.purple,
+                      TossDesignSystem.purple,
+                      TossDesignSystem.tossBlue,
                     ],
                   ),
                 ),
@@ -107,7 +107,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
                   Text(
                     '${result.compatibilityScore}%',
                     style: TossDesignSystem.heading1.copyWith(
-                      color: TossDesignSystem.tossPink,
+                      color: TossDesignSystem.purple,
                       fontWeight: FontWeight.bold,
                     ),
                   ).animate().scale(duration: 800.ms, curve: Curves.elasticOut),
@@ -131,13 +131,13 @@ class BlindDateCoachingPage extends ConsumerWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.tossPink.withOpacity(0.1),
+                  TossDesignSystem.purple.withOpacity(0.1),
                   Colors.purple.withOpacity(0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: TossDesignSystem.tossPink.withOpacity(0.3),
+                color: TossDesignSystem.purple.withOpacity(0.3),
               ),
             ),
             child: Row(
@@ -151,7 +151,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
                 Text(
                   result.luckyCharm,
                   style: TossDesignSystem.body2.copyWith(
-                    color: TossDesignSystem.tossPink,
+                    color: TossDesignSystem.purple,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -286,16 +286,16 @@ class BlindDateCoachingPage extends ConsumerWidget {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossPink.withOpacity(0.1),
+                        color: TossDesignSystem.purple.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: TossDesignSystem.tossPink.withOpacity(0.3),
+                          color: TossDesignSystem.purple.withOpacity(0.3),
                         ),
                       ),
                       child: Text(
                         interest,
                         style: TossDesignSystem.body3.copyWith(
-                          color: TossDesignSystem.tossPink,
+                          color: TossDesignSystem.purple,
                         ),
                       ),
                     );
@@ -346,7 +346,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
                       width: 6,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossPink,
+                        color: TossDesignSystem.purple,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -490,7 +490,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
                         Text(
                           '•',
                           style: TossDesignSystem.body3.copyWith(
-                            color: TossDesignSystem.tossPink,
+                            color: TossDesignSystem.purple,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -922,7 +922,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
                           children: [
                             Icon(
                               Icons.access_time,
-                              color: TossDesignSystem.tossPink,
+                              color: TossDesignSystem.purple,
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -961,7 +961,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
                           children: [
                             Icon(
                               Icons.restaurant,
-                              color: TossDesignSystem.tossPink,
+                              color: TossDesignSystem.purple,
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -1124,20 +1124,20 @@ class BlindDateCoachingPage extends ConsumerWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              TossDesignSystem.tossPink.withOpacity(0.1),
+              TossDesignSystem.purple.withOpacity(0.1),
               Colors.purple.withOpacity(0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: TossDesignSystem.tossPink.withOpacity(0.3),
+            color: TossDesignSystem.purple.withOpacity(0.3),
           ),
         ),
         child: Column(
           children: [
             Icon(
               Icons.auto_awesome,
-              color: TossDesignSystem.tossPink,
+              color: TossDesignSystem.purple,
               size: 32,
             ),
             const SizedBox(height: 12),
@@ -1155,7 +1155,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButton(bool isDark) {
+  Widget _buildActionButton(BuildContext context, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -1222,7 +1222,7 @@ class BlindDateCoachingPage extends ConsumerWidget {
               Icon(
                 icon,
                 size: 14,
-                color: TossDesignSystem.tossPink,
+                color: TossDesignSystem.purple,
               ),
               const SizedBox(width: 4),
               Text(

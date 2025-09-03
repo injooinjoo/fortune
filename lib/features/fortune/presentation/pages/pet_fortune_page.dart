@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/user_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../core/theme/toss_design_system.dart';
+import '../widgets/fortune_card.dart';
+import '../widgets/fortune_button.dart';
+import '../widgets/fortune_loading_skeleton.dart';
+import '../widgets/pet_fortune_result_card.dart';
 
 class PetFortunePage extends BaseFortunePage {
   final String? petType;
@@ -70,17 +76,34 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
   @override
   Widget build(BuildContext context) {
     final userProfile = ref.watch(userProvider).value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
-        title: Text(_getPageTitle()),
+        backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        elevation: 0,
+        title: Text(
+          _getPageTitle(),
+          style: TossDesignSystem.heading3.copyWith(
+            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline),
-            onPressed: () {
-              // Show help dialog
-              _showHelpDialog(context);
-            },
+            icon: Icon(
+              Icons.help_outline,
+              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+            ),
+            onPressed: () => _showHelpDialog(context),
           ),
         ],
       ),
@@ -88,14 +111,30 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
         children: [
           SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 100),
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 if (userProfile == null)
-                  _buildLoginPrompt(),
-                _buildPetInfoForm(),
+                  _buildLoginPrompt(isDark),
+                _buildPetInfoForm(isDark),
                 const SizedBox(height: 16),
-                buildFortuneResult(),
-                _buildPetCareTips(),
+                if (isLoading)
+                  const FortuneLoadingSkeleton(
+                    itemCount: 3,
+                    showHeader: true,
+                    loadingMessage: '반려동물 운세를 분석하고 있어요...',
+                  )
+                else if (fortuneResult != null)
+                  PetFortuneResultCard(
+                    fortune: fortuneResult!,
+                    petName: _petName ?? '반려동물',
+                    petSpecies: _selectedPetType == 'dog' ? '강아지' : 
+                               _selectedPetType == 'cat' ? '고양이' : '반려동물',
+                    petAge: _petAge ?? 1,
+                    onRetry: () => generateFortuneAction(),
+                  ),
+                if (!isLoading && fortuneResult == null)
+                  _buildPetCareTips(isDark),
               ],
             ),
           ),
@@ -103,51 +142,59 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: _buildGenerateButton(),
+            child: _buildGenerateButton(isDark),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLoginPrompt() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
+  Widget _buildLoginPrompt(bool isDark) {
+    return FortuneCard(
+      margin: const EdgeInsets.all(20),
       child: Column(
         children: [
-          const Icon(Icons.pets, size: 48),
-          const SizedBox(height: 8),
-          const Text(
-            '로그인하고 반려동물과의 특별한 운세를 확인해보세요!',
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.center),
-          const SizedBox(height: 12),
-          ElevatedButton(
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.pets,
+              size: 40,
+              color: TossDesignSystem.tossBlue,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '로그인하고 반려동물과의\n특별한 운세를 확인해보세요!',
+            style: TossDesignSystem.body2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          FortuneButton(
+            text: '로그인하기',
             onPressed: () => context.push('/onboarding'),
-            child: const Text('로그인하기'),
+            type: FortuneButtonType.primary,
+            width: double.infinity,
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0);
   }
 
-  Widget _buildPetInfoForm() {
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '반려동물 정보',
-              style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 16),
+  Widget _buildPetInfoForm(bool isDark) {
+    return FortuneCard(
+      title: '반려동물 정보',
+      margin: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             if (_selectedPetType == 'general') ...[
               SegmentedButton<String>(
                 segments: const [
@@ -244,31 +291,14 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
     }
   }
 
-  Widget _buildPetCareTips() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
+  Widget _buildPetCareTips(bool isDark) {
+    return FortuneCard(
+      title: '💡 반려동물 케어 팁',
+      margin: const EdgeInsets.all(20),
+      backgroundColor: TossDesignSystem.tossBlue.withOpacity(0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.tips_and_updates,
-                color: Theme.of(context).colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                '반려동물 케어 팁',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold),
-                ),
-            ],
-          ),
           const SizedBox(height: 12),
           ..._getPetCareTips().map((tip) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -279,7 +309,10 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 Expanded(
                   child: Text(
                     tip,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: TossDesignSystem.body3.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ],
@@ -316,45 +349,26 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
     }
   }
 
-  Widget _buildGenerateButton() {
-    // isLoading is already available from BaseFortunePageState
-    
+  Widget _buildGenerateButton(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, -5)),
+            offset: const Offset(0, -5),
+          ),
         ],
       ),
       child: SafeArea(
-        child: ElevatedButton(
+        child: FortuneButton.analyze(
           onPressed: isLoading ? null : () async {
             await generateFortuneAction();
           },
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: isLoading
-              ? const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-                )
-              : const Text(
-                  '운세 보기',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-                ),
+          isLoading: isLoading,
+          text: '반려동물 운세 보기',
         ),
       ),
     );

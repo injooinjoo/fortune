@@ -96,7 +96,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                 TossButton(
                   text: '취소',
                   onPressed: () => Navigator.of(context).pop(),
-                  style: TossButtonStyle.tertiary,
+                  style: TossButtonStyle.secondary,
                   size: TossButtonSize.small,
                 ),
                 Text(

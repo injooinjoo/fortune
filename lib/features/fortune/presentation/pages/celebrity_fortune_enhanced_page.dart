@@ -10,6 +10,10 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/models/celebrity.dart';
 import '../../../../core/utils/logger.dart';
+import '../widgets/fortune_card.dart';
+import '../widgets/fortune_result_card.dart';
+import '../widgets/fortune_loading_skeleton.dart';
+import '../widgets/fortune_button.dart';
 
 class CelebrityFortuneEnhancedPage extends ConsumerStatefulWidget {
   const CelebrityFortuneEnhancedPage({super.key});
@@ -28,6 +32,11 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   bool _isLoading = false;
   Fortune? _fortune;
   late PageController _pageController;
+  
+  // Search related
+  final _searchController = TextEditingController();
+  List<Celebrity> _searchResults = [];
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -38,6 +47,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   @override
   void dispose() {
     _pageController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -264,8 +274,42 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     );
   }
   
+  // 검색 수행 메소드
+  Future<void> _performSearch(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults = [];
+        _isSearching = false;
+      });
+      return;
+    }
+    
+    setState(() => _isSearching = true);
+    
+    final searchNotifier = ref.read(celebritySearchProvider.notifier);
+    await searchNotifier.search(query: query, limit: 20);
+    
+    final searchResults = ref.read(celebritySearchProvider);
+    searchResults.when(
+      data: (results) {
+        setState(() {
+          _searchResults = results;
+          _isSearching = false;
+        });
+      },
+      loading: () => setState(() => _isSearching = true),
+      error: (error, stack) {
+        setState(() => _isSearching = false);
+        Logger.error('Celebrity search failed', error);
+      },
+    );
+  }
+
   Widget _buildCelebritySelectionContent(List<Celebrity> celebrities) {
-    final displayCelebrities = celebrities.take(20).toList(); // 최대 20개만 표시
+    // 검색 결과가 있으면 검색 결과를 표시, 없으면 전체 목록 표시
+    final displayCelebrities = _searchResults.isNotEmpty 
+        ? _searchResults.take(20).toList()
+        : celebrities.take(20).toList();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -319,7 +363,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 border: InputBorder.none,
               ),
               onChanged: (value) {
-                // TODO: 검색 기능 구현
+                _performSearch(value);
               },
             ),
           ),
@@ -1037,62 +1081,57 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildLoadingState() {
-    return Container(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(color: TossTheme.primaryBlue),
-          const SizedBox(height: 24),
-          Text(
-            '유명인 정보를 불러오고 있어요...',
-            style: TextStyle(
-              fontSize: 16,
-              color: TossTheme.textGray600,
-            ),
-          ),
-        ],
-      ),
+    return FortuneLoadingSkeleton(
+      itemCount: 2,
+      showHeader: false,
+      loadingMessages: [
+        '유명인 정보를 불러오고 있어요...',
+        '데이터베이스에서 검색 중...',
+        '인기 유명인을 찾는 중...',
+      ],
     );
   }
 
   Widget _buildErrorState(dynamic error) {
-    return Container(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: TossTheme.textGray600,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            '유명인 정보를 불러올 수 없어요',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '잠시 후 다시 시도해주세요',
-            style: TextStyle(
-              fontSize: 14,
+    return Center(
+      child: FortuneCard(
+        margin: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
               color: TossTheme.textGray600,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          TossButton(
-            text: '다시 시도',
-            style: TossButtonStyle.secondary,
-            onPressed: () => setState(() {}),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Text(
+              '유명인 정보를 불러올 수 없어요',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: TossTheme.textBlack,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '잠시 후 다시 시도해주세요',
+              style: TextStyle(
+                fontSize: 14,
+                color: TossTheme.textGray500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            FortuneButton.retry(
+              onPressed: () {
+                // Refresh the provider
+                ref.refresh(allCelebritiesProvider);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

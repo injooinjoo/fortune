@@ -660,6 +660,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     await _generateFortune(pet);
   }
 
+  void _resetFortune() {
+    setState(() {
+      _fortune = null;
+    });
+  }
+
   Future<void> _generateFortune(PetProfile pet) async {
     try {
       final user = ref.read(userProvider).value;

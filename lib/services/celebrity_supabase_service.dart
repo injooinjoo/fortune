@@ -20,10 +20,19 @@ class CelebritySupabaseService {
           .order('popularity_score', ascending: false)
           .order('name');
 
-      return _mapToCelebrities(response);
+      final celebrities = _mapToCelebrities(response);
+      
+      // If no celebrities found, return fallback data
+      if (celebrities.isEmpty) {
+        Logger.warning('No celebrities found in database, using fallback data');
+        return _getDefaultCelebrities();
+      }
+      
+      return celebrities;
     } catch (e) {
-      Logger.error('Failed to fetch all celebrities', e);
-      throw Exception('유명인 목록을 불러오는데 실패했습니다: $e');
+      Logger.error('Failed to fetch all celebrities: $e');
+      // Return fallback data on error instead of throwing
+      return _getDefaultCelebrities();
     }
   }
 
@@ -38,10 +47,23 @@ class CelebritySupabaseService {
           .order('popularity_score', ascending: false)
           .order('name');
 
-      return _mapToCelebrities(response);
+      final celebrities = _mapToCelebrities(response);
+      
+      // If no celebrities found for category, return filtered fallback data
+      if (celebrities.isEmpty) {
+        Logger.warning('No celebrities found for category ${category.name}, using fallback data');
+        return _getDefaultCelebrities()
+            .where((c) => c.category == category)
+            .toList();
+      }
+      
+      return celebrities;
     } catch (e) {
-      Logger.error('Failed to fetch celebrities by category: ${category.name}', e);
-      throw Exception('카테고리별 유명인 목록을 불러오는데 실패했습니다: $e');
+      Logger.error('Failed to fetch celebrities by category: ${category.name}, error: $e');
+      // Return filtered fallback data on error
+      return _getDefaultCelebrities()
+          .where((c) => c.category == category)
+          .toList();
     }
   }
 
@@ -390,6 +412,48 @@ class CelebritySupabaseService {
       Logger.error('Failed to deactivate celebrity: $id', e);
       throw Exception('유명인 비활성화에 실패했습니다: $e');
     }
+  }
+
+  /// 기본 유명인 데이터 (데이터베이스 연결 실패 시 사용)
+  List<Celebrity> _getDefaultCelebrities() {
+    final defaultData = [
+      // 배우
+      {'id': '1', 'name': '김태희', 'name_en': 'Kim Tae Hee', 'category': 'actor', 'gender': 'female', 'birth_date': '1980-03-29'},
+      {'id': '2', 'name': '송중기', 'name_en': 'Song Joong Ki', 'category': 'actor', 'gender': 'male', 'birth_date': '1985-09-19'},
+      {'id': '3', 'name': '전지현', 'name_en': 'Jun Ji Hyun', 'category': 'actor', 'gender': 'female', 'birth_date': '1981-10-30'},
+      {'id': '4', 'name': '현빈', 'name_en': 'Hyun Bin', 'category': 'actor', 'gender': 'male', 'birth_date': '1982-09-25'},
+      {'id': '5', 'name': '손예진', 'name_en': 'Son Ye Jin', 'category': 'actor', 'gender': 'female', 'birth_date': '1982-01-11'},
+      
+      // 가수
+      {'id': '6', 'name': '아이유', 'name_en': 'IU', 'category': 'singer', 'gender': 'female', 'birth_date': '1993-05-16'},
+      {'id': '7', 'name': '박재범', 'name_en': 'Jay Park', 'category': 'singer', 'gender': 'male', 'birth_date': '1987-04-25'},
+      {'id': '8', 'name': '태연', 'name_en': 'Taeyeon', 'category': 'singer', 'gender': 'female', 'birth_date': '1989-03-09'},
+      {'id': '9', 'name': '지드래곤', 'name_en': 'G-Dragon', 'category': 'singer', 'gender': 'male', 'birth_date': '1988-08-18'},
+      {'id': '10', 'name': '제니', 'name_en': 'Jennie', 'category': 'singer', 'gender': 'female', 'birth_date': '1996-01-16'},
+      
+      // 스포츠
+      {'id': '11', 'name': '손흥민', 'name_en': 'Son Heung Min', 'category': 'athlete', 'gender': 'male', 'birth_date': '1992-07-08'},
+      {'id': '12', 'name': '김연아', 'name_en': 'Kim Yuna', 'category': 'athlete', 'gender': 'female', 'birth_date': '1990-09-05'},
+      {'id': '13', 'name': '류현진', 'name_en': 'Ryu Hyun Jin', 'category': 'athlete', 'gender': 'male', 'birth_date': '1987-03-25'},
+      
+      // 방송인
+      {'id': '14', 'name': '유재석', 'name_en': 'Yoo Jae Suk', 'category': 'broadcaster', 'gender': 'male', 'birth_date': '1972-08-14'},
+      {'id': '15', 'name': '박나래', 'name_en': 'Park Na Rae', 'category': 'broadcaster', 'gender': 'female', 'birth_date': '1985-10-25'},
+    ];
+    
+    return defaultData.map((data) {
+      return Celebrity(
+        id: data['id'] as String,
+        name: data['name'] as String,
+        nameEn: data['name_en'] as String,
+        category: _parseCelebrityCategory(data['category'] as String),
+        gender: _parseGender(data['gender'] as String),
+        birthDate: DateTime.parse(data['birth_date'] as String),
+        description: '${data['name']}의 운세를 확인해보세요',
+        nationality: '한국',
+        keywords: [data['category'] as String],
+      );
+    }).toList();
   }
 
   /// Response를 Celebrity 리스트로 매핑

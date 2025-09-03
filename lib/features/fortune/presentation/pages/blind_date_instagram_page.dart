@@ -235,7 +235,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                 child: Container(
                   height: 4,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossPink,
+                    color: TossDesignSystem.purple,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -246,7 +246,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                   height: 4,
                   decoration: BoxDecoration(
                     color: _currentStep >= 1
-                        ? TossDesignSystem.tossPink
+                        ? TossDesignSystem.purple
                         : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -345,7 +345,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: TossDesignSystem.tossPink,
+                        color: TossDesignSystem.purple,
                         width: 2,
                       ),
                     ),
@@ -368,7 +368,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                   children: [
                     Icon(
                       Icons.person,
-                      color: TossDesignSystem.tossPink,
+                      color: TossDesignSystem.purple,
                     ),
                     const SizedBox(width: 12),
                     Text(
@@ -408,7 +408,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: TossDesignSystem.tossPink,
+                        color: TossDesignSystem.purple,
                         width: 2,
                       ),
                     ),
@@ -442,7 +442,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                   return Theme(
                     data: Theme.of(context).copyWith(
                       colorScheme: ColorScheme.light(
-                        primary: TossDesignSystem.tossPink,
+                        primary: TossDesignSystem.purple,
                       ),
                     ),
                     child: child!,
@@ -468,7 +468,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                 children: [
                   Icon(
                     Icons.calendar_today,
-                    color: TossDesignSystem.tossPink,
+                    color: TossDesignSystem.purple,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -606,12 +606,12 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? TossDesignSystem.tossPink.withOpacity(0.1)
+                        ? TossDesignSystem.purple.withOpacity(0.1)
                         : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? TossDesignSystem.tossPink
+                          ? TossDesignSystem.purple
                           : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
                       width: isSelected ? 2 : 1,
                     ),
@@ -628,7 +628,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                         interest.title,
                         style: TossDesignSystem.body2.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.tossPink
+                              ? TossDesignSystem.purple
                               : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700),
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                         ),
@@ -672,7 +672,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                         height: 48,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? TossDesignSystem.tossPink.withOpacity(0.1)
+                              ? TossDesignSystem.purple.withOpacity(0.1)
                               : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -710,7 +710,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                           width: 24,
                           height: 24,
                           decoration: BoxDecoration(
-                            color: TossDesignSystem.tossPink,
+                            color: TossDesignSystem.purple,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -739,7 +739,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                   children: [
                     Icon(
                       Icons.edit_note,
-                      color: TossDesignSystem.tossPink,
+                      color: TossDesignSystem.purple,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -775,7 +775,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: TossDesignSystem.tossPink,
+                        color: TossDesignSystem.purple,
                         width: 2,
                       ),
                     ),
@@ -826,12 +826,12 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossPink.withOpacity(0.1)
+              ? TossDesignSystem.purple.withOpacity(0.1)
               : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? TossDesignSystem.tossPink
+                ? TossDesignSystem.purple
                 : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
             width: isSelected ? 2 : 1,
           ),
@@ -845,7 +845,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
               label,
               style: TossDesignSystem.body2.copyWith(
                 color: isSelected
-                    ? TossDesignSystem.tossPink
+                    ? TossDesignSystem.purple
                     : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
@@ -869,12 +869,12 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossPink.withOpacity(0.1)
+              ? TossDesignSystem.purple.withOpacity(0.1)
               : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? TossDesignSystem.tossPink
+                ? TossDesignSystem.purple
                 : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
             width: isSelected ? 2 : 1,
           ),
@@ -888,7 +888,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
               label,
               style: TossDesignSystem.body2.copyWith(
                 color: isSelected
-                    ? TossDesignSystem.tossPink
+                    ? TossDesignSystem.purple
                     : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
