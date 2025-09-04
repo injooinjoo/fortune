@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -335,48 +336,22 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
   }
 
   Widget _buildGenerateButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _onGenerateFortune,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: _selectedType.gradientColors[0],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _selectedType.icon,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '${_selectedType.label} 확인하기',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return TossButton(
+      text: '${_selectedType.label} 확인하기',
+      onPressed: _onGenerateFortune,
+      style: TossButtonStyle.primary,
+      size: TossButtonSize.large,
     );
   }
 
   Widget _buildRefreshButton() {
     return Center(
-      child: TextButton.icon(
+      child: TossButton(
+        text: '다시 보기',
         onPressed: _onGenerateFortune,
-        icon: const Icon(Icons.refresh),
-        label: const Text('다시 보기'),
-        style: TextButton.styleFrom(
-          foregroundColor: _selectedType.gradientColors[0],
-        ),
+        style: TossButtonStyle.text,
+        size: TossButtonSize.medium,
+        icon: Icons.refresh,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -139,24 +140,11 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
             ),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: TossButton(
+                text: _canGenerate() ? '재능 분석하기' : '모든 질문에 답해주세요',
                 onPressed: _canGenerate() ? _generateFortune : null,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: _canGenerate() 
-                      ? theme.colorScheme.primary 
-                      : Colors.grey[300],
-                  foregroundColor: _canGenerate() 
-                      ? Colors.white 
-                      : Colors.grey[600],
-                ),
-                child: Text(
-                  _canGenerate() ? '재능 분석하기' : '모든 질문에 답해주세요',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
               ),
             ),
           ),

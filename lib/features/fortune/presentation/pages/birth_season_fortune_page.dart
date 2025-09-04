@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -122,33 +123,11 @@ class BirthSeasonFortunePage extends StatelessWidget {
             },
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: () => onSubmit({}),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.eco, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '내 계절 운세 확인하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          TossButton(
+            text: '내 계절 운세 확인하기',
+            onPressed: () => onSubmit({}),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ],
       ),

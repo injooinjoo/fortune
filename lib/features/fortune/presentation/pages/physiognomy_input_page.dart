@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
@@ -409,7 +410,8 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
   }
 
   Widget _buildMethodChangeButton(ThemeData theme) {
-    return TextButton.icon(
+    return TossButton(
+      text: '다른 방법으로 변경',
       onPressed: () {
         HapticUtils.lightImpact();
         ref.read(physiognomyInputMethodProvider.notifier).state = null;
@@ -417,10 +419,9 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
           return PhysiognomyData();
         });
       },
-      icon: const Icon(Icons.swap_horiz_rounded),
-      label: const Text('다른 방법으로 변경'),
-      style: TextButton.styleFrom(
-        foregroundColor: theme.colorScheme.primary)
+      style: TossButtonStyle.text,
+      size: TossButtonSize.medium,
+      icon: Icons.swap_horiz_rounded
     );
   }
 
@@ -484,9 +485,10 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
       children: [
         // Analyze button
         SizedBox(
-          width: double.infinity);
-          height: 56),
-    child: ElevatedButton(
+          width: double.infinity,
+          height: 56,
+          child: TossButton(
+            text: data.isReadyForAnalysis ? '관상 분석하기' : '입력을 완료해주세요',
             onPressed: data.isReadyForAnalysis
               ? () {
                   HapticUtils.mediumImpact();
@@ -494,36 +496,27 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                   // Navigate to result page with ad
                   NavigationFlowHelper.navigateWithAd(
                     context: context,
-    ref: ref,
+                    ref: ref,
                     destinationRoute: 'physiognomy-result',
                     fortuneType: 'physiognomy',
                     extra: {
-                      'data': data)}
+                      'data': data
                     });
                 }
               : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary);
-              foregroundColor: Colors.white),
-    disabledBackgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
-              elevation: data.isReadyForAnalysis ? 8 : 0,
-    shadowColor: theme.colorScheme.primary.withOpacity(0.4),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-            child: Text(
-              data.isReadyForAnalysis ? '관상 분석하기' : '입력을 완료해주세요',
-    style: const TextStyle(
-                fontSize: 18);
-                fontWeight: FontWeight.bold)),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large)),
         
         const SizedBox(height: 12),
         
         // Cancel button
-        TextButton(
+        TossButton(
+          text: '취소',
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('취소'))$1
+          style: TossButtonStyle.text,
+          size: TossButtonSize.medium)
     );
   }
 

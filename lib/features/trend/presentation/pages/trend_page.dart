@@ -65,6 +65,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     // Initialize scroll controller with navigation bar hiding logic
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
+    
+    // Ensure navigation bar is visible when page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navigationVisibilityProvider.notifier).show();
+    });
   }
   
   @override
@@ -76,27 +81,35 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   
   void _onScroll() {
     final currentScrollPosition = _scrollController.offset;
-    const scrollDownThreshold = 10.0; // Minimum scroll down distance
-    const scrollUpThreshold = 3.0; // Ultra sensitive scroll up detection
+    const scrollDownThreshold = 5.0; // Reduced for quicker hide
+    const scrollUpThreshold = 1.0; // Ultra sensitive - immediately show on any upward scroll
     
     // Always show navigation when at the top
     if (currentScrollPosition <= 10.0) {
       if (_isScrollingDown) {
         _isScrollingDown = false;
+        print('🔼 Showing nav bar - at top');
         ref.read(navigationVisibilityProvider.notifier).show();
       }
       _lastScrollOffset = currentScrollPosition;
       return;
     }
     
-    if (currentScrollPosition > _lastScrollOffset + scrollDownThreshold && !_isScrollingDown) {
+    // Check scroll direction
+    final scrollDelta = currentScrollPosition - _lastScrollOffset;
+    
+    if (scrollDelta > scrollDownThreshold && !_isScrollingDown) {
       // Scrolling down - hide navigation
       _isScrollingDown = true;
+      print('🔽 Hiding nav bar - scrolling down');
       ref.read(navigationVisibilityProvider.notifier).hide();
-    } else if (currentScrollPosition < _lastScrollOffset - scrollUpThreshold && _isScrollingDown) {
-      // Scrolling up - show navigation (very sensitive)
-      _isScrollingDown = false;
-      ref.read(navigationVisibilityProvider.notifier).show();
+    } else if (scrollDelta < -scrollUpThreshold) {
+      // Scrolling up - immediately show navigation (any upward movement)
+      if (_isScrollingDown) {
+        _isScrollingDown = false;
+        print('🔼 Showing nav bar - scrolling up');
+        ref.read(navigationVisibilityProvider.notifier).show();
+      }
     }
     
     _lastScrollOffset = currentScrollPosition;
@@ -104,6 +117,10 @@ class _TrendPageState extends ConsumerState<TrendPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the navigation visibility state for debugging
+    final navState = ref.watch(navigationVisibilityProvider);
+    print('🎯 Navigation state - isVisible: ${navState.isVisible}, isAnimating: ${navState.isAnimating}');
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

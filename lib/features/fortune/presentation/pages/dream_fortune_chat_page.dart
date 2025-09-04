@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../shared/components/app_header.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';

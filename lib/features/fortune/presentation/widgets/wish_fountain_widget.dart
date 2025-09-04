@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
 
 /// 소원 빌기 분수대 위젯
@@ -210,25 +211,12 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
           // 소원 작성하기 버튼
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: TossButton(
+              text: widget.hasWish ? '소원 수정하기' : '소원 작성하기',
               onPressed: widget.onWriteWish,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF1E3A8A),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 8,
-              ),
-              icon: const Icon(Icons.edit, size: 24),
-              label: Text(
-                widget.hasWish ? '소원 수정하기' : '소원 작성하기',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: Icons.edit,
             ),
           ),
           
@@ -238,38 +226,12 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
             // 동전 던지기 버튼
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: TossButton(
+                text: widget.isThrowingCoin ? '동전 던지는 중...' : '행운의 동전 던지기 (남은 동전: ${widget.coinCount}개)',
                 onPressed: widget.isThrowingCoin ? null : widget.onThrowCoin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.isThrowingCoin 
-                    ? const Color(0xFFFFD700).withOpacity(0.6)
-                    : const Color(0xFFFFD700),
-                  foregroundColor: const Color(0xFF1E3A8A),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: widget.isThrowingCoin ? 4 : 8,
-                ),
-                icon: widget.isThrowingCoin
-                  ? SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          const Color(0xFF1E3A8A),
-                        ),
-                      ),
-                    )
-                  : const Icon(Icons.toll, size: 24),
-                label: Text(
-                  widget.isThrowingCoin ? '동전을 던지는 중...' : '동전 던지기',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                icon: widget.isThrowingCoin ? null : Icons.toll,
               ),
             ),
           ],

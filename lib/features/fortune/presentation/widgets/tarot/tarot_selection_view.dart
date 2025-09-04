@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../presentation/providers/font_size_provider.dart';
@@ -222,40 +223,26 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton.icon(
+            child: TossButton(
+              text: '카드 섞기',
               onPressed: _isShuffling ? null : _shuffleCards,
-              icon: const Icon(Icons.shuffle),
-              label: Text(
-                '카드 섞기',
-                style: TextStyle(fontSize: 16 * fontScale),
-              ),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              style: TossButtonStyle.outlined,
+              size: TossButtonSize.medium,
+              icon: Icons.shuffle,
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: FilledButton.icon(
+            child: TossButton(
+              text: '다시 선택',
               onPressed: _selectedCards.isEmpty ? null : () {
                 setState(() {
                   _selectedCards.clear();
                 });
               },
-              icon: const Icon(Icons.refresh),
-              label: Text(
-                '다시 선택',
-                style: TextStyle(fontSize: 16 * fontScale),
-              ),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.medium,
+              icon: Icons.refresh,
             ),
           ),
         ],

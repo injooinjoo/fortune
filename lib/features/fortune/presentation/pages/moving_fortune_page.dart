@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:fortune/shared/components/app_header.dart' show FontSize;
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -478,7 +479,8 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
         // Submit Button
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: TossButton(
+            text: '이사 운세 확인하기',
             onPressed: () {
               if (_nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -526,17 +528,8 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
                 'isAdvancedMode': _showAdvanced,
               });
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: theme.colorScheme.primary),
-            child: Text(
-              '이사 운세 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ),
       ],

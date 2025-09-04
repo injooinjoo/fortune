@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/components/app_header.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
@@ -104,8 +105,8 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
         // Submit Button
         SizedBox(
           width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
+          child: TossButton(
+            text: '투자 운세 보기',
             onPressed: () {
               widget.onSubmit({
                 'investmentType': _investmentType,
@@ -114,21 +115,8 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 'timeHorizon': _timeHorizon,
               });
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF59E0B),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
-            child: const Text(
-              '투자 운세 보기',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ),
       ],

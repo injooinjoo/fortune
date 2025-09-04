@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
@@ -139,24 +140,11 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             child: SizedBox(
               width: double.infinity,
               height: 56,
-              child: ElevatedButton(
+              child: TossButton(
+                text: '소원 빌기',
                 onPressed: _canSubmit() ? _submitWish : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _canSubmit() ? const Color(0xFF1F4EF5) : const Color(0xFFE5E5E5),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text(
-                  '소원 빌기',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'TossProductSans',
-                  ),
-                ),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
               ),
             ),
           ),

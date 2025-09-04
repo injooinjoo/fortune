@@ -124,16 +124,16 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                     showHeader: true,
                     loadingMessage: '반려동물 운세를 분석하고 있어요...',
                   )
-                else if (fortuneResult != null)
+                else if (fortune != null)
                   PetFortuneResultCard(
-                    fortune: fortuneResult!,
+                    fortune: fortune!,
                     petName: _petName ?? '반려동물',
                     petSpecies: _selectedPetType == 'dog' ? '강아지' : 
                                _selectedPetType == 'cat' ? '고양이' : '반려동물',
                     petAge: _petAge ?? 1,
                     onRetry: () => generateFortuneAction(),
                   ),
-                if (!isLoading && fortuneResult == null)
+                if (!isLoading && fortune == null)
                   _buildPetCareTips(isDark),
               ],
             ),
@@ -185,7 +185,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0);
+    );
   }
 
   Widget _buildPetInfoForm(bool isDark) {
@@ -266,8 +266,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   Map<String, dynamic> _buildAdditionalData() {

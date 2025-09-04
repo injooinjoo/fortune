@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
@@ -777,66 +778,40 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       children: [
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton.icon(
+          child: TossButton(
+            text: '새로운 리딩 시작하기',
             onPressed: () {
               context.goNamed('interactive-tarot');
             },
-            icon: const Icon(Icons.refresh),
-            label: Text(
-              '새로운 리딩 시작하기',
-              style: TextStyle(fontSize: 16 * fontScale),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            icon: Icons.refresh,
           ),
         ),
         const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
-              child: OutlinedButton.icon(
+              child: TossButton(
+                text: '과거 리딩',
                 onPressed: () {
                   context.pushNamed('history');
                 },
-                icon: const Icon(Icons.history),
-                label: Text(
-                  '과거 리딩',
-                  style: TextStyle(fontSize: 14 * fontScale),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                style: TossButtonStyle.outlined,
+                size: TossButtonSize.medium,
+                icon: Icons.history,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: OutlinedButton.icon(
+              child: TossButton(
+                text: '홈으로',
                 onPressed: () {
                   context.go('/');
                 },
-                icon: const Icon(Icons.home),
-                label: Text(
-                  '홈으로',
-                  style: TextStyle(fontSize: 14 * fontScale),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                style: TossButtonStyle.outlined,
+                size: TossButtonSize.medium,
+                icon: Icons.home,
               ),
             ),
           ],

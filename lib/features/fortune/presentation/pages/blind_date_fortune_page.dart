@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'base_fortune_page.dart';
@@ -989,30 +990,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         if (_myPhotos.isNotEmpty)
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: TossButton(
+              text: _isAnalyzingPhotos ? 'AI가 분석 중...' : 'AI 사진 분석 시작',
               onPressed: _isAnalyzingPhotos ? null : _analyzePhotos,
-              icon: _isAnalyzingPhotos
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Icon(Icons.auto_awesome),
-              label: Text(
-                _isAnalyzingPhotos ? 'AI가 분석 중...' : 'AI 사진 분석 시작',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: _isAnalyzingPhotos ? null : Icons.auto_awesome,
             ),
           ),
         

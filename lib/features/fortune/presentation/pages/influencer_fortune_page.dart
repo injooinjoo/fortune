@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
@@ -81,14 +82,16 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
         if (selectedInfluencer != null) ...[
           const SizedBox(height: 24),
           Center(
-            child: ElevatedButton(
+            child: TossButton(
+              text: '운세 확인하기',
               onPressed: () {
                 widget.onSubmit({
                   'platform': selectedPlatform,
                   'influencer': selectedInfluencer,
                 });
               },
-              child: const Text('운세 확인하기'),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
             ),
           ),
         ],

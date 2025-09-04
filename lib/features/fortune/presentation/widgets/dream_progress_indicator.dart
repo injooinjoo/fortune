@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -112,12 +113,11 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
             children: [
               // Previous Button
               if (widget.currentStep > 0 && widget.onPrevious != null)
-                OutlinedButton(
+                TossButton(
+                  text: '이전',
                   onPressed: widget.onPrevious,
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  ),
-                  child: const Text('이전'),
+                  style: TossButtonStyle.outlined,
+                  size: TossButtonSize.medium,
                 )
               else
                 const SizedBox(width: 80),
@@ -132,12 +132,11 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
               
               // Next Button
               if (widget.currentStep < widget.totalSteps - 1 && widget.onNext != null)
-                ElevatedButton(
+                TossButton(
+                  text: '다음',
                   onPressed: widget.onNext,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  ),
-                  child: const Text('다음'),
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.medium,
                 )
               else
                 const SizedBox(width: 80),

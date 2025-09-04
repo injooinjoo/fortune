@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../data/services/fortune_batch_service.dart';
 import '../providers/batch_fortune_provider.dart';
 import '../widgets/batch_fortune_package_card.dart';

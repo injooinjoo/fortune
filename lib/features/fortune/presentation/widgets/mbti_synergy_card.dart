@@ -2,65 +2,162 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_button.dart';
 
-/// MBTI 시너지 카드 위젯 (토스 스타일)
 class MbtiSynergyCard extends StatelessWidget {
-  final Map<String, dynamic> synergyData;
-  final String myMbtiType;
+  final Map<String, dynamic> synergyMap;
+  final bool isDark;
+
   const MbtiSynergyCard({
     super.key,
-    required this.synergyData,
-    required this.myMbtiType,
+    required this.synergyMap,
+    required this.isDark,
   });
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bestMatches = synergyData['bestMatches'] as List<dynamic>;
-    final worstMatches = synergyData['worstMatches'] as List<dynamic>;
-    final todaySpecial = synergyData['todaySpecial'] as Map<String, dynamic>;
-    final communicationTip = synergyData['communicationTip'] as String;
-    return TossSectionCard(
-      title: 'MBTI 시너지 매칭',
-      subtitle: '오늘 당신과 잘 맞는 MBTI 유형을 확인하세요',
-      style: TossCardStyle.elevated,
-      child: Column(
-        children: [
-          // 오늘의 특별 시너지
-          _buildSpecialSynergy(todaySpecial, isDark),
-          
-          SizedBox(height: TossDesignSystem.spacingL),
-          // 베스트 매치
-          _buildMatchSection(
-            title: '최고의 궁합',
-            icon: Icons.favorite_rounded,
-            iconColor: TossDesignSystem.errorRed,
-            matches: bestMatches,
-            isPositive: true,
-            isDark: isDark,
+    final bestMatch = synergyMap['bestMatch'] as Map<String, dynamic>? ?? {};
+    final worstMatch = synergyMap['worstMatch'] as Map<String, dynamic>? ?? {};
+    final todaySpecial = synergyMap['todaySpecial'] as Map<String, dynamic>? ?? {};
+    final communicationTip = synergyMap['communicationTip'] as String? ?? '';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isDark 
+              ? Colors.black.withOpacity(0.2)
+              : Colors.grey.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          SizedBox(height: TossDesignSystem.spacingM),
-          // 주의할 매치
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      TossDesignSystem.purple,
+                      TossDesignSystem.tossBlue,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.people,
+                  color: TossDesignSystem.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'MBTI 시너지',
+                style: TossDesignSystem.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          
+          // Today's Special
+          if (todaySpecial.isNotEmpty) ...[
+            _buildSpecialCard(todaySpecial),
+            const SizedBox(height: 20),
+          ],
+          
+          // Best Match
+          _buildMatchCard(
+            title: '최고의 궁합',
+            mbti: bestMatch['type'] as String? ?? '',
+            score: bestMatch['score'] as int? ?? 0,
+            reason: bestMatch['reason'] as String? ?? '',
+            color: TossDesignSystem.green,
+            icon: Icons.favorite,
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Worst Match
+          _buildMatchCard(
             title: '주의가 필요한 궁합',
-            icon: Icons.warning_rounded,
-            iconColor: TossDesignSystem.warningOrange,
-            matches: worstMatches,
-            isPositive: false,
-          // 커뮤니케이션 팁
-          _buildCommunicationTip(communicationTip, isDark),
+            mbti: worstMatch['type'] as String? ?? '',
+            score: worstMatch['score'] as int? ?? 0,
+            reason: worstMatch['reason'] as String? ?? '',
+            color: TossDesignSystem.orange,
+            icon: Icons.warning_amber_outlined,
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Communication Tip
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: TossDesignSystem.tossBlue.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.tips_and_updates,
+                  color: TossDesignSystem.tossBlue,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '오늘의 소통 팁',
+                        style: TossDesignSystem.body3.copyWith(
+                          color: TossDesignSystem.tossBlue,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        communicationTip,
+                        style: TossDesignSystem.caption.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ).animate()
-      .fadeIn(duration: 500.ms)
-      .slideY(begin: 0.1, end: 0);
+      .fadeIn(duration: 600.ms, curve: Curves.easeOutQuart)
+      .slideY(begin: 0.1, end: 0, duration: 600.ms, curve: Curves.easeOutQuart);
   }
-  Widget _buildSpecialSynergy(Map<String, dynamic> special, bool isDark) {
-    final type = special['type'] as String;
-    final score = special['score'] as int;
-    final message = special['message'] as String;
+
+  Widget _buildSpecialCard(Map<String, dynamic> special) {
+    final type = special['type'] as String? ?? '';
+    final score = special['score'] as int? ?? 0;
+    final message = special['message'] as String? ?? '';
+    
     return Container(
-      padding: EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -70,198 +167,179 @@ class MbtiSynergyCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.auto_awesome_rounded,
+                Icons.auto_awesome,
                 color: TossDesignSystem.white,
-                size: 24,
+                size: 20,
               ),
-              SizedBox(width: TossDesignSystem.spacingS),
+              const SizedBox(width: 8),
               Text(
                 '오늘의 특별 시너지',
-                style: TossDesignSystem.body1.copyWith(
+                style: TossDesignSystem.body2.copyWith(
                   color: TossDesignSystem.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
             ],
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: TossDesignSystem.spacingL,
-              vertical: TossDesignSystem.spacingM,
-            ),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
                   type,
-                  style: TossDesignSystem.heading2.copyWith(
+                  style: TossDesignSystem.body1.copyWith(
                     color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                   ),
-                SizedBox(width: TossDesignSystem.spacingM),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.spacingM,
-                    vertical: TossDesignSystem.spacingS,
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
-                  child: Text(
-                    '$score%',
-                    style: TossDesignSystem.body1.copyWith(
-                      color: TossDesignSystem.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$score%',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: TossDesignSystem.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
           Text(
             message,
             style: TossDesignSystem.body3.copyWith(
               color: TossDesignSystem.white.withOpacity(0.95),
+              height: 1.4,
+            ),
             textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate()
       .scale(delay: 300.ms, duration: 500.ms)
       .shimmer(delay: 800.ms, duration: 1500.ms);
-  Widget _buildMatchSection({
-    required String title,
-    required IconData icon,
-    required Color iconColor,
-    required List<dynamic> matches,
-    required bool isPositive,
-    required bool isDark,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: iconColor, size: 20),
-            SizedBox(width: TossDesignSystem.spacingS),
-            Text(
-              title,
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark 
-                    ? TossDesignSystem.grayDark900
-                    : TossDesignSystem.gray900,
-                fontWeight: FontWeight.w600,
-        
-        SizedBox(height: TossDesignSystem.spacingM),
-        ...matches.asMap().entries.map((entry) {
-          final index = entry.key;
-          final match = entry.value as Map<String, dynamic>;
-          final type = match['type'] as String;
-          final score = match['score'] as int;
-          final reason = match['reason'] as String;
-          return _buildMatchCard(
-            type: type,
-            score: score,
-            reason: reason,
-            isPositive: isPositive,
-            index: index,
-          );
-        }).toList(),
-      ],
-    );
+  }
+
   Widget _buildMatchCard({
-    required String type,
+    required String title,
+    required String mbti,
     required int score,
     required String reason,
-    required int index,
-    final color = isPositive 
-        ? TossDesignSystem.successGreen
-        : TossDesignSystem.warningOrange;
-      margin: EdgeInsets.only(bottom: TossDesignSystem.spacingS),
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-        },
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-        child: Container(
-          padding: EdgeInsets.all(TossDesignSystem.spacingM),
-          decoration: BoxDecoration(
-            color: isDark 
-                ? TossDesignSystem.grayDark200
-                : TossDesignSystem.gray50,
-            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-            border: Border.all(
-              color: color.withOpacity(0.2),
-              width: 1,
-          child: Row(
-              // MBTI 타입
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark 
+          ? TossDesignSystem.grayDark50
+          : TossDesignSystem.gray50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TossDesignSystem.body3.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Center(
-                    type,
+                  child: Text(
+                    mbti,
+                    style: TossDesignSystem.body2.copyWith(
                       color: color,
-              
-              SizedBox(width: TossDesignSystem.spacingM),
-              // 설명
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _getMbtiTitle(type),
+                      _getMbtiTitle(mbti),
                       style: TossDesignSystem.body2.copyWith(
-                        color: isDark 
-                            ? TossDesignSystem.grayDark900
-                            : TossDesignSystem.gray900,
-                        fontWeight: FontWeight.w600,
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        fontWeight: FontWeight.w500,
                       ),
-                    SizedBox(height: TossDesignSystem.spacingXS),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
                       reason,
                       style: TossDesignSystem.caption.copyWith(
-                            ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray600,
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        height: 1.3,
+                      ),
+                    ),
                   ],
-              // 점수
-                padding: EdgeInsets.symmetric(
-                  horizontal: TossDesignSystem.spacingM,
-                  vertical: TossDesignSystem.spacingS,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Text(
                   '$score%',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: color,
-      .fadeIn(
-        delay: Duration(milliseconds: 100 * index),
-        duration: 400.ms,
-      )
-      .slideX(
-        begin: isPositive ? -0.05 : 0.05,
-        end: 0,
-      );
-  Widget _buildCommunicationTip(String tip, bool isDark) {
-      padding: EdgeInsets.all(TossDesignSystem.spacingM),
-        color: TossDesignSystem.tossBlue.withOpacity(0.05),
-        border: Border.all(
-          color: TossDesignSystem.tossBlue.withOpacity(0.2),
-          width: 1,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-          Icon(
-            Icons.tips_and_updates_rounded,
-            color: TossDesignSystem.tossBlue,
-            size: 20,
-          SizedBox(width: TossDesignSystem.spacingM),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-                  '오늘의 소통 팁',
-                    color: TossDesignSystem.tossBlue,
-                SizedBox(height: TossDesignSystem.spacingXS),
-                  tip,
                   style: TossDesignSystem.body3.copyWith(
-                    color: isDark 
-                        ? TossDesignSystem.grayDark600
-                        : TossDesignSystem.gray600,
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   String _getMbtiTitle(String type) {
     final titles = {
       'INTJ': '전략가',
@@ -282,4 +360,5 @@ class MbtiSynergyCard extends StatelessWidget {
       'ESFP': '연예인',
     };
     return titles[type] ?? type;
+  }
 }

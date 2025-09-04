@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'dart:math' as dart_math;
 
 class TarotLoadingButton extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -234,8 +235,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           // Submit button
           SizedBox(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
+            child: TossButton(
+              text: '천직 찾기',
               onPressed: _canSubmit()
                   ? () => onSubmit({
                         'name': _name,
@@ -244,26 +245,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         'interests': _interests,
                       })
                   : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.work_outline, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '천직 찾기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: Icons.work_outline,
             ),
           ),
         ],

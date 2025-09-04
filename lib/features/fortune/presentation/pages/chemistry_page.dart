@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -119,7 +120,8 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
         // Submit Button
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: TossButton(
+            text: '궁합 확인하기',
             onPressed: () {
               if (_person1Controller.text.isEmpty || _person2Controller.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -141,17 +143,8 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
                 }
               });
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: theme.colorScheme.primary),
-            child: Text(
-              '궁합 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ),
       ],
@@ -540,16 +533,12 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
         
         // Share Button
         Center(
-          child: OutlinedButton.icon(
+          child: TossButton(
+            text: '궁합 결과 공유하기',
             onPressed: widget.onShare,
-            icon: const Icon(Icons.share),
-            label: const Text('궁합 결과 공유하기'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
+            style: TossButtonStyle.outlined,
+            size: TossButtonSize.medium,
+            icon: Icons.share,
           ),
         ),
       ],

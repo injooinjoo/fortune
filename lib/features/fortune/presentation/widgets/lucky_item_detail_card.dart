@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:fortune/core/constants/fortune_detailed_metadata.dart';
 import 'package:fortune/presentation/widgets/glass_card.dart';
 import 'package:fortune/core/theme/app_spacing.dart';

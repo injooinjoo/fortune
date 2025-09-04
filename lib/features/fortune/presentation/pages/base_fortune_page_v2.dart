@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
@@ -285,14 +286,16 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              TossButton(
+                text: '다시 시도',
                 onPressed: () {
                   setState(() {
                     _error = null;
                     _fortuneResult = null;
                   });
                 },
-                child: const Text('다시 시도'),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.medium,
               ),
             ],
           ),

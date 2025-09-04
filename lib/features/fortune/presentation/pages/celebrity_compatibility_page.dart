@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -90,9 +91,11 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
             if (selectedCelebrity != null)
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
+                child: TossButton(
+                  text: '운세 보기',
                   onPressed: () => _generateFortune(context),
-                  child: const Text('운세 보기'),
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.large,
                 ),
               ),
           ],

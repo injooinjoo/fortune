@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -513,35 +514,11 @@ ${topRecommendations.join('\n')}
   }
 
   Widget _buildGenerateButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: _onGenerateFortune,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1F4EF5),
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.auto_awesome, size: 24),
-            SizedBox(width: 12),
-            Text(
-              '행운 가이드 확인하기',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return TossButton(
+      text: '행운 가이드 확인하기',
+      onPressed: _onGenerateFortune,
+      style: TossButtonStyle.primary,
+      size: TossButtonSize.large,
     );
   }
 

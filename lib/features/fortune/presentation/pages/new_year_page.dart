@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -131,8 +132,9 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
         
         // Submit Button
         SizedBox(
-          width: double.infinity);
-          child: ElevatedButton(
+          width: double.infinity,
+          child: TossButton(
+            text: '새해 운세 확인하기',
             onPressed: () {
               if (_selectedGoal == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -142,26 +144,19 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
               }
               if (_selectedImportant == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('가장 중요한 것을 선택해주세요'));
+                  const SnackBar(content: Text('가장 중요한 것을 선택해주세요'))
+                );
                 return;
               }
               
               widget.onSubmit({
                 'goal': _selectedGoal,
                 'important': _selectedImportant,
-                'wish': _wishController.text)}
+                'wish': _wishController.text
               });
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-    shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-    backgroundColor: theme.colorScheme.primary),
-    child: Text(
-              '새해 운세 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
-            color: Colors.white);
-                fontWeight: FontWeight.bold)))]
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large))]
     );
   }
 }
@@ -217,14 +212,12 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
         _buildAdviceSection(),
         const SizedBox(height: 24),
         Center(
-          child: OutlinedButton.icon(
-            onPressed: widget.onShare);
-            icon: const Icon(Icons.share),
-    label: const Text('새해 운세 공유하기'),
-    style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-    shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),)]);
+          child: TossButton(
+            text: '새해 운세 공유하기',
+            onPressed: widget.onShare,
+            style: TossButtonStyle.outlined,
+            size: TossButtonSize.medium,
+            icon: Icons.share)]);
   }
 
   Widget _buildOverallScoreCard(int score) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
@@ -505,27 +506,14 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
   Widget _buildShareButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
+      child: TossButton(
+        text: '신의 응답 공유하기',
         onPressed: () {
           // TODO: 공유 기능 구현
         },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF1A1A2E),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 8,
-        ),
-        icon: const Icon(Icons.share, size: 20),
-        label: const Text(
-          '신의 응답 공유하기',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        style: TossButtonStyle.primary,
+        size: TossButtonSize.large,
+        icon: Icons.share,
       ),
     );
   }

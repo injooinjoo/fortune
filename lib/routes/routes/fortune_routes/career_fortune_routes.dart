@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/career_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/career_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/career_seeker_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/business_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/startup_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/business_fortune_page.dart'; // Removed - unused
+// import '../../../features/fortune/presentation/pages/startup_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/employment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/talent_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_investment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_stock_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/lucky_crypto_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/lucky_lottery_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/lucky_realestate_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/lucky_crypto_fortune_page.dart'; // Removed - unused
+// import '../../../features/fortune/presentation/pages/lucky_lottery_fortune_page.dart'; // Removed - unused
+// import '../../../features/fortune/presentation/pages/lucky_realestate_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/career_change_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/career_crisis_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/career_crisis_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/career_future_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/freelance_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/startup_career_fortune_page.dart';
@@ -28,17 +28,17 @@ final careerFortuneRoutes = [
     name: 'fortune-career-seeker',
     builder: (context, state) => const CareerSeekerFortunePage()),
   
-  // Business
-  GoRoute(
-    path: '/business',
-    name: 'fortune-business',
-    builder: (context, state) => const BusinessFortunePage()),
+  // Business - Removed (page deleted)
+  // GoRoute(
+  //   path: '/business',
+  //   name: 'fortune-business',
+  //   builder: (context, state) => const BusinessFortunePage()),
   
-  // Startup
-  GoRoute(
-    path: '/startup',
-    name: 'fortune-startup',
-    builder: (context, state) => const StartupFortunePage()),
+  // Startup - Removed (page deleted)
+  // GoRoute(
+  //   path: '/startup',
+  //   name: 'fortune-startup',
+  //   builder: (context, state) => const StartupFortunePage()),
   
   // Employment
   GoRoute(
@@ -73,23 +73,23 @@ final careerFortuneRoutes = [
     name: 'fortune-lucky-stock',
     builder: (context, state) => const LuckyStockFortunePage()),
   
-  // Lucky Crypto
-  GoRoute(
-    path: '/lucky-crypto',
-    name: 'fortune-lucky-crypto',
-    builder: (context, state) => const LuckyCryptoFortunePage()),
+  // Lucky Crypto - Removed (page deleted)
+  // GoRoute(
+  //   path: '/lucky-crypto',
+  //   name: 'fortune-lucky-crypto',
+  //   builder: (context, state) => const LuckyCryptoFortunePage()),
   
-  // Lucky Lottery
-  GoRoute(
-    path: '/lucky-lottery',
-    name: 'fortune-lucky-lottery',
-    builder: (context, state) => const LuckyLotteryFortunePage()),
+  // Lucky Lottery - Removed (page deleted)
+  // GoRoute(
+  //   path: '/lucky-lottery',
+  //   name: 'fortune-lucky-lottery',
+  //   builder: (context, state) => const LuckyLotteryFortunePage()),
   
-  // Lucky Real Estate
-  GoRoute(
-    path: '/lucky-realestate',
-    name: 'fortune-lucky-realestate',
-    builder: (context, state) => const LuckyRealEstateFortunePage()),
+  // Lucky Real Estate - Removed (page deleted)
+  // GoRoute(
+  //   path: '/lucky-realestate',
+  //   name: 'fortune-lucky-realestate',
+  //   builder: (context, state) => const LuckyRealEstateFortunePage()),
   
   // Career Change
   GoRoute(
@@ -97,11 +97,11 @@ final careerFortuneRoutes = [
     name: 'fortune-career-change',
     builder: (context, state) => const CareerChangeFortunePage()),
   
-  // Career Crisis
-  GoRoute(
-    path: '/career-crisis',
-    name: 'fortune-career-crisis',
-    builder: (context, state) => const CareerCrisisFortunePage()),
+  // Career Crisis - Removed (page deleted)
+  // GoRoute(
+  //   path: '/career-crisis',
+  //   name: 'fortune-career-crisis',
+  //   builder: (context, state) => const CareerCrisisFortunePage()),
   
   // Career Future
   GoRoute(

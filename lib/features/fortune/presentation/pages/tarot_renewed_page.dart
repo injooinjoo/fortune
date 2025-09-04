@@ -5,6 +5,7 @@ import 'dart:math' as dart_math;
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_loading_button.dart';
 import '../widgets/tarot/tarot_result_card.dart';
@@ -263,31 +264,15 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               const SizedBox(height: 60),
               
               // 시작하기 버튼
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentState = TarotFlowState.questioning;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3182F6),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    '타로 운세 보기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+              TossButton(
+                text: '타로 운세 보기',
+                onPressed: () {
+                  setState(() {
+                    _currentState = TarotFlowState.questioning;
+                  });
+                },
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
               ),
               
               const SizedBox(height: 40),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/models/fortune_result.dart';
@@ -115,16 +116,18 @@ class FaceReadingResultWidget extends StatelessWidget {
           // Share button
           if (onShare != null) Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: ElevatedButton.icon(
+              child: TossButton(
+                text: '결과 공유하기',
                 onPressed: onShare,
-                icon: const Icon(Icons.share),
-                label: const Text('결과 공유하기'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TossDesignSystem.gray600),
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppDimensions.borderRadiusSmall))]);
-}
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                icon: Icons.share,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
   
   Widget _buildScoreSection(BuildContext context, String scoreText) {
     // Try to extract numeric score

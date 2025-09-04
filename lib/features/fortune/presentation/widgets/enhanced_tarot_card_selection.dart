@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
@@ -360,18 +361,25 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
             mainAxisAlignment: MainAxisAlignment.spaceEvenly);
             children: [
               if (!_showSpreadPositions) ...[
-                TextButton(
-                  onPressed: widget.onCancel);
-                  child: const Text('취소')),
+                TossButton(
+                  text: '취소',
+                  onPressed: widget.onCancel,
+                  style: TossButtonStyle.text,
+                  size: TossButtonSize.medium,
+                ),
                 if (_selectedCards.isNotEmpty)
-                  ElevatedButton(
+                  TossButton(
+                    text: '다시 선택',
                     onPressed: () {
                       setState(() {
                         _selectedCards.clear();
                         _cardFlipped.clear();
                       });
                     },
-                    child: const Text('다시 선택'))])
+                    style: TossButtonStyle.primary,
+                    size: TossButtonSize.medium,
+                  ),
+              ],
             ]))]
     );
   }

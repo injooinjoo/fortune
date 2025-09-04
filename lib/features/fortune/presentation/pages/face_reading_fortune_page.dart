@@ -2,10 +2,13 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/image_upload_selector.dart';
+import '../../../../shared/components/toss_button.dart';
+import '../../../../core/components/toss_card.dart';
 import 'package:fortune/data/services/fortune_api_service.dart';
 import 'package:fortune/presentation/providers/providers.dart';
 
@@ -17,435 +20,382 @@ class FaceReadingFortunePage extends ConsumerStatefulWidget {
 }
 
 class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage> {
-  File? _selectedImage;
-  final ImagePicker _picker = ImagePicker();
+  final PageController _pageController = PageController();
+  int _currentStep = 0;
+  ImageUploadResult? _uploadResult;
   bool _isAnalyzing = false;
   
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+  
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return BaseFortunePageV2(
       title: 'AI 관상 분석',
       fortuneType: 'face-reading',
-      headerGradient: const LinearGradient(
+      headerGradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF6A11CB), Color(0xFF2575FC)]
+        colors: [
+          TossDesignSystem.purple,
+          TossDesignSystem.tossBlue,
+        ],
       ),
-      inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result)
+      inputBuilder: (context, onSubmit) => _buildTossStyleInputSection(context, onSubmit, isDark),
+      resultBuilder: (context, result, onShare) => _buildTossStyleResult(context, result, isDark)
     );
   }
   
-  Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
-    return GlassContainer(
+  Widget _buildTossStyleInputSection(BuildContext context, Function(Map<String, dynamic>) onSubmit, bool isDark) {
+    return Column(
+      children: [
+        // Progress Indicator
+        _buildProgressIndicator(isDark),
+        const SizedBox(height: 24),
+        
+        // Page View for Steps
+        SizedBox(
+          height: 600,
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildStep1(context, isDark),
+              _buildStep2(context, onSubmit, isDark),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildProgressIndicator(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.purple,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: _currentStep >= 1
+                        ? TossDesignSystem.purple
+                        : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _currentStep == 0 ? '사진 선택' : 'AI 분석',
+            style: TossDesignSystem.body3.copyWith(
+              color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildStep1(BuildContext context, bool isDark) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'AI 관상 분석',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold
+          // Title
+          Text(
+            'AI가 당신의\n관상을 분석합니다',
+            style: TossDesignSystem.heading2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
-          ),
+          ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
+          
           const SizedBox(height: 8),
-          const Text(
-            'AI가 당신의 얼굴에서 숨겨진 운명과 성격을 분석해드립니다.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey
-            ),
-          ),
-          const SizedBox(height: 24),
-          // Image selection area
-          GestureDetector(
-            onTap: _showImageSourceDialog,
-            child: Container(
-              width: double.infinity,
-              height: 300,
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.grey[300]!,
-                  width: 2,
-                  style: BorderStyle.solid
-                ),
-              ),
-              child: _selectedImage != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.file(
-                            _selectedImage!,
-                            fit: BoxFit.cover
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: IconButton(
-                              icon: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
-                                  shape: BoxShape.circle
-                                ),
-                                child: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                  size: 20
-                                ),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedImage = null;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.camera_alt_outlined,
-                          size: 64,
-                          color: Colors.grey[400]
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          '탭하여 사진 선택',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '카메라 또는 갤러리에서 선택할 수 있습니다',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500]
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
-          ),
           
-          const SizedBox(height: 24),
-          // Guidelines
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue[200]!)
+          Text(
+            '사진이나 인스타그램 프로필로\n숨겨진 운명과 성격을 알아보세요',
+            style: TossDesignSystem.body2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue[700]),
-                    const SizedBox(width: 8),
-                    Text(
-                      '좋은 사진을 위한 가이드',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[700]
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                _buildGuidelineItem('정면을 바라보는 사진을 사용해주세요'),
-                _buildGuidelineItem('밝은 조명에서 촬영된 사진이 좋습니다'),
-                _buildGuidelineItem('선글라스나 마스크는 제거해주세요'),
-                _buildGuidelineItem('한 명만 나온 사진을 사용해주세요'),
-              ],
-            ),
-          ),
+          ).animate().fadeIn(duration: 600.ms, delay: 100.ms),
           
-          const SizedBox(height: 24),
-          // Privacy notice
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.lock_outline, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '사진은 분석 후 즉시 삭제되며 저장되지 않습니다',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600]
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 32),
           
-          const SizedBox(height: 24),
-          // Submit button
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _selectedImage != null && !_isAnalyzing
-                  ? () async {
-                      setState(() {
-                        _isAnalyzing = true;
-                      });
-                      
-                      try {
-                        // Convert image to base64
-                        final bytes = await _selectedImage!.readAsBytes();
-                        final base64Image = base64Encode(bytes);
-                        
-                        // Pass image data for API processing
-                        onSubmit({
-                          'image': base64Image,
-                          'analysis_type': 'comprehensive',
-                          'include_character': true,
-                          'include_fortune': true
-                        });
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('에러가 발생했습니다: $e'),
-                              backgroundColor: Colors.red
-                            ),
-                          );
-                        }
-                      } finally {
-                        if (mounted) {
-                          setState(() {
-                            _isAnalyzing = false;
-                          });
-                        }
-                      }
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6A11CB),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: _isAnalyzing
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Text(
-                          'AI가 분석 중입니다...',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ],
-                    )
-                  : const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.psychology, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          'AI 관상 분석 시작',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
+          // Image Upload Selector
+          ImageUploadSelector(
+            title: '분석 방법 선택',
+            description: '원하는 방법으로 사진을 제공해주세요',
+            onImageSelected: (result) {
+              setState(() {
+                _uploadResult = result;
+                if (result.imageFile != null || result.instagramUrl != null) {
+                  _currentStep = 1;
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              });
+            },
+            showInstagramOption: true,
+            guidelines: const [
+              '정면을 바라보는 사진을 사용해주세요',
+              '밝은 조명에서 촬영된 사진이 좋습니다',
+              '선글라스나 마스크는 제거해주세요',
+              '한 명만 나온 사진을 사용해주세요',
+            ],
           ),
         ],
       ),
     );
   }
   
-  Widget _buildGuidelineItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
+  Widget _buildStep2(BuildContext context, Function(Map<String, dynamic>) onSubmit, bool isDark) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title
           Text(
-            '• ',
-            style: TextStyle(
-              color: Colors.blue[600],
-              fontSize: 14
+            '분석을 시작할\n준비가 되었습니다',
+            style: TossDesignSystem.heading2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.blue[600],
-                fontSize: 14
-              ),
+          ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
+          
+          const SizedBox(height: 8),
+          
+          Text(
+            'AI가 당신의 관상을 상세하게 분석합니다',
+            style: TossDesignSystem.body2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  void _showImageSourceDialog() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20)
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
+          ).animate().fadeIn(duration: 600.ms, delay: 100.ms),
+          
+          const SizedBox(height: 32),
+          
+          // Preview Card
+          if (_uploadResult != null)
+            TossCard(
+              style: TossCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const Text(
-                    '사진 선택',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildImageSourceOption(
-                        icon: Icons.camera_alt,
-                        label: '카메라',
-                        color: Colors.blue,
-                        onTap: () {
-                          Navigator.pop(context);
-                          _pickImage(ImageSource.camera);
-                        }
+                      Icon(
+                        _uploadResult!.type == ImageUploadType.instagram
+                            ? Icons.link
+                            : Icons.check_circle,
+                        color: TossDesignSystem.successGreen,
                       ),
-                      _buildImageSourceOption(
-                        icon: Icons.photo_library,
-                        label: '갤러리',
-                        color: Colors.green,
-                        onTap: () {
-                          Navigator.pop(context);
-                          _pickImage(ImageSource.gallery);
-                        }
+                      const SizedBox(width: 12),
+                      Text(
+                        _uploadResult!.type == ImageUploadType.instagram
+                            ? '인스타그램 프로필 준비됨'
+                            : '사진 준비됨',
+                        style: TossDesignSystem.body1.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
+                  if (_uploadResult!.imageFile != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        _uploadResult!.imageFile!,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  else if (_uploadResult!.instagramUrl != null)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Colors.purple, Colors.pink, Colors.orange],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _uploadResult!.instagramUrl!,
+                            style: TossDesignSystem.body2.copyWith(
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
+            ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
+          
+          const SizedBox(height: 24),
+          
+          // Analysis Features
+          TossCard(
+            style: TossCardStyle.outlined,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'AI가 분석할 내용',
+                  style: TossDesignSystem.heading4.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildFeatureItem('얼굴형과 이목구비 특징', Icons.face, isDark),
+                _buildFeatureItem('성격과 기질 분석', Icons.psychology, isDark),
+                _buildFeatureItem('재물운과 사업운', Icons.attach_money, isDark),
+                _buildFeatureItem('연애운과 결혼운', Icons.favorite, isDark),
+                _buildFeatureItem('종합 운세와 조언', Icons.auto_awesome, isDark),
+              ],
+            ),
+          ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
+          
+          const SizedBox(height: 32),
+          
+          // Action Buttons
+          SizedBox(
+            width: double.infinity,
+            child: TossButton.primary(
+              text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
+              onPressed: _isAnalyzing ? null : () => _startAnalysis(onSubmit),
+              isEnabled: !_isAnalyzing,
+              isLoading: _isAnalyzing,
+              icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: Colors.white),
             ),
           ),
-        );
-      }
-    );
-  }
-  
-  Widget _buildImageSourceOption({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 48, color: color),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: color
-              ),
+          
+          const SizedBox(height: 12),
+          
+          SizedBox(
+            width: double.infinity,
+            child: TossButton.secondary(
+              text: '다시 선택',
+              onPressed: _isAnalyzing ? null : () {
+                setState(() {
+                  _currentStep = 0;
+                  _uploadResult = null;
+                });
+                _pageController.previousPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
   
-  Future<void> _pickImage(ImageSource source) async {
+  Widget _buildFeatureItem(String text, IconData icon, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: TossDesignSystem.purple.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: TossDesignSystem.purple,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: TossDesignSystem.body2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> _startAnalysis(Function(Map<String, dynamic>) onSubmit) async {
+    setState(() {
+      _isAnalyzing = true;
+    });
+    
     try {
-      final XFile? image = await _picker.pickImage(
-        source: source,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85
-      );
+      Map<String, dynamic> data = {
+        'analysis_type': 'comprehensive',
+        'include_character': true,
+        'include_fortune': true,
+      };
       
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-        });
+      if (_uploadResult?.imageFile != null) {
+        final bytes = await _uploadResult!.imageFile!.readAsBytes();
+        data['image'] = base64Encode(bytes);
+      } else if (_uploadResult?.instagramUrl != null) {
+        data['instagram_url'] = _uploadResult!.instagramUrl;
+        data['analysis_source'] = 'instagram';
       }
+      
+      onSubmit(data);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('에러가 발생했습니다: $e'),
-            backgroundColor: Colors.red
+            content: Text('오류가 발생했습니다: $e'),
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAnalyzing = false;
+        });
       }
     }
   }
   
-  Widget _buildResult(BuildContext context, FortuneResult result) {
+  Widget _buildTossStyleResult(BuildContext context, FortuneResult result, bool isDark) {
     final data = result.details ?? {};
     
     return Column(
@@ -456,63 +406,56 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.purple[100]!,
-                Colors.blue[100]!
-              ]
+                TossDesignSystem.purple.withOpacity(0.1),
+                TossDesignSystem.tossBlue.withOpacity(0.1),
+              ],
             ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             children: [
-              const Icon(
+              Icon(
                 Icons.face,
                 size: 64,
-                color: Colors.deepPurple
+                color: TossDesignSystem.purple,
               ),
               const SizedBox(height: 16),
               Text(
                 data['face_type'] ?? '관상 분석 완료',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold
+                style: TossDesignSystem.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 ),
               ),
               const SizedBox(height: 8),
               if (data['overall_fortune'] != null)
                 Text(
                   data['overall_fortune'],
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700]
+                  style: TossDesignSystem.body2.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
                   ),
                   textAlign: TextAlign.center,
                 ),
             ],
           ),
-        ),
+        ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.95, 0.95)),
         
         const SizedBox(height: 20),
         // Main Fortune
         if (result.mainFortune != null) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)
-            ),
+          TossCard(
+            style: TossCardStyle.filled,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.auto_awesome, color: Colors.deepPurple),
-                    SizedBox(width: 8),
+                    Icon(Icons.auto_awesome, color: TossDesignSystem.purple),
+                    const SizedBox(width: 8),
                     Text(
                       '종합 관상 분석',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                       ),
                     ),
                   ],
@@ -520,38 +463,33 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 const SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    height: 1.6
+                  style: TossDesignSystem.body1.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    height: 1.6,
                   ),
                 ),
               ],
             ),
-          ),
+          ).animate().fadeIn(duration: 500.ms, delay: 100.ms),
           const SizedBox(height: 20),
         ],
         
         // Face Parts Analysis
         if (result.sections != null && result.sections!.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)
-            ),
+          TossCard(
+            style: TossCardStyle.filled,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.face_retouching_natural, color: Colors.blue),
-                    SizedBox(width: 8),
+                    Icon(Icons.face_retouching_natural, color: TossDesignSystem.tossBlue),
+                    const SizedBox(width: 8),
                     Text(
                       '부위별 분석',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                       ),
                     ),
                   ],
@@ -560,35 +498,31 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 ...result.sections!.entries.map((entry) => _buildFacePartAnalysis(
                   _translateFacePart(entry.key),
                   entry.value,
-                  _getFacePartIcon(entry.key)
+                  _getFacePartIcon(entry.key),
+                  isDark
                 )),
               ],
             ),
-          ),
+          ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
           const SizedBox(height: 20),
         ],
         
         // Character Analysis
         if (data['character_traits'] != null) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)
-            ),
+          TossCard(
+            style: TossCardStyle.filled,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.psychology, color: Colors.orange),
-                    SizedBox(width: 8),
+                    Icon(Icons.psychology, color: TossDesignSystem.warningOrange),
+                    const SizedBox(width: 8),
                     Text(
                       '성격 분석',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                       ),
                     ),
                   ],
@@ -601,15 +535,16 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.orange[50],
+                        color: TossDesignSystem.warningOrange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.orange[200]!)
+                        border: Border.all(
+                          color: TossDesignSystem.warningOrange.withOpacity(0.3),
+                        ),
                       ),
                       child: Text(
                         trait.toString(),
-                        style: TextStyle(
-                          color: Colors.orange[700],
-                          fontSize: 14
+                        style: TossDesignSystem.body3.copyWith(
+                          color: TossDesignSystem.warningOrange,
                         ),
                       ),
                     )
@@ -617,35 +552,34 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 ),
               ],
             ),
-          ),
+          ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
           const SizedBox(height: 20),
         ],
         
         // Recommendations
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.green[50]!,
-                  Colors.blue[50]!
-                ]
+                  TossDesignSystem.successGreen.withOpacity(0.1),
+                  TossDesignSystem.tossBlue.withOpacity(0.1),
+                ],
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.tips_and_updates, color: Colors.green),
-                    SizedBox(width: 8),
+                    Icon(Icons.tips_and_updates, color: TossDesignSystem.successGreen),
+                    const SizedBox(width: 8),
                     Text(
                       '운세 개선 조언',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                       ),
                     ),
                   ],
@@ -656,16 +590,18 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: Colors.green
+                        color: TossDesignSystem.successGreen,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           rec,
-                          style: const TextStyle(fontSize: 14)
+                          style: TossDesignSystem.body2.copyWith(
+                            color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                          ),
                         ),
                       ),
                     ],
@@ -673,13 +609,13 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 )),
               ],
             ),
-          ),
+          ).animate().fadeIn(duration: 500.ms, delay: 400.ms),
         ],
       ],
     );
   }
   
-  Widget _buildFacePartAnalysis(String part, String analysis, IconData icon) {
+  Widget _buildFacePartAnalysis(String part, String analysis, IconData icon, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -688,13 +624,13 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
-              shape: BoxShape.circle
+              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
               size: 20,
-              color: Colors.blue[700]
+              color: TossDesignSystem.tossBlue,
             ),
           ),
           const SizedBox(width: 12),
@@ -704,17 +640,17 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               children: [
                 Text(
                   part,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
+                  style: TossDesignSystem.body1.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   analysis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.4
+                  style: TossDesignSystem.body2.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    height: 1.4,
                   ),
                 ),
               ],

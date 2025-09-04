@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
@@ -209,42 +210,11 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                     scale: _buttonAnimation.value,
                     child: SizedBox(
                       width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
+                      child: TossButton(
+                        text: _isLoading ? '이사운 분석중...' : '이사운 보기',
                         onPressed: _canContinue() ? _handleComplete : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _canContinue() 
-                              ? TossTheme.primaryBlue 
-                              : TossTheme.disabledGray,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
-                                  ),
-                                  const SizedBox(width: TossTheme.spacingS),
-                                  Text(
-                                    '이사운 분석중...',
-                                    style: TossTheme.button.copyWith(color: Colors.white),
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                '이사운 보기',
-                                style: TossTheme.button.copyWith(color: Colors.white),
-                              ),
+                        style: TossButtonStyle.primary,
+                        size: TossButtonSize.large,
                       ),
                     ),
                   );

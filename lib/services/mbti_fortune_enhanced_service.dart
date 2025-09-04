@@ -1,8 +1,98 @@
 import 'dart:math' as math;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'mbti_cognitive_functions_service.dart';
+import '../core/utils/logger.dart';
 
 /// MBTI 운세 강화 서비스 - 특별한 MBTI 운세 기능
 class MbtiFortuneEnhancedService {
+  static final _supabase = Supabase.instance.client;
+  
+  /// Supabase Edge Function으로 MBTI 에너지 데이터 가져오기
+  static Future<Map<String, dynamic>> getMbtiEnergyData({
+    required String mbtiType,
+    String? userId,
+  }) async {
+    try {
+      final response = await _supabase.functions.invoke(
+        'mbti-energy-tracker',
+        body: {
+          'mbtiType': mbtiType,
+          'userId': userId,
+          'date': DateTime.now().toIso8601String(),
+        },
+      );
+      
+      if (response.data != null) {
+        return response.data as Map<String, dynamic>;
+      }
+      
+      // Fallback to local calculation
+      Logger.warning('Using local MBTI energy calculation as fallback');
+      return _calculateLocalEnergyData(mbtiType, DateTime.now());
+    } catch (e) {
+      Logger.error('Error fetching MBTI energy data', e);
+      // Fallback to local calculation
+      return _calculateLocalEnergyData(mbtiType, DateTime.now());
+    }
+  }
+  
+  /// 로컬 에너지 데이터 계산 (fallback)
+  static Map<String, dynamic> _calculateLocalEnergyData(String mbtiType, DateTime date) {
+    final energyData = calculateDailyEnergy(mbtiType, date);
+    final quests = generateCognitiveQuests(mbtiType, date);
+    final synergy = analyzeDailySynergy(mbtiType, date);
+    final weather = getCognitiveFunctionWeather(mbtiType, date);
+    
+    return {
+      'mbtiType': mbtiType,
+      'date': date.toIso8601String(),
+      'energyLevels': energyData,
+      'cognitiveWeather': weather,
+      'synergyMap': synergy,
+      'dailyQuests': quests,
+      'moodInsights': {
+        'currentMood': 'balanced',
+        'stressLevel': energyData['burnoutRisk']['percentage'],
+        'stressSignals': _getStressSignals(mbtiType),
+        'recoveryMethods': [energyData['burnoutRisk']['rechargeMethod']],
+      },
+      'timeBasedAdvice': {
+        'morning': energyData['peakTime']['pattern']['morning'] ?? 50,
+        'afternoon': energyData['peakTime']['pattern']['afternoon'] ?? 50,
+        'evening': energyData['peakTime']['pattern']['evening'] ?? 50,
+        'night': energyData['peakTime']['pattern']['night'] ?? 50,
+        'bestTimeForWork': energyData['peakTime']['bestTime'],
+        'bestTimeForSocial': energyData['socialBattery'] > 60 ? 'afternoon' : 'evening',
+        'bestTimeForCreative': 'evening',
+        'currentAdvice': energyData['peakTime']['schedule'],
+      },
+    };
+  }
+  
+  static List<String> _getStressSignals(String mbtiType) {
+    final signals = {
+      'INTJ': ['완벽주의 증가', '비효율에 대한 과민반응', '고립감'],
+      'INTP': ['과도한 분석', '결정 회피', '감정 무시'],
+      'ENTJ': ['과도한 통제', '인내심 부족', '비판적 태도'],
+      'ENTP': ['집중력 저하', '과도한 논쟁', '무책임한 행동'],
+      'INFJ': ['과도한 걱정', '번아웃', '현실 도피'],
+      'INFP': ['감정 기복', '자기 비판', '의욕 상실'],
+      'ENFJ': ['과도한 책임감', '자기 희생', '감정적 소진'],
+      'ENFP': ['산만함', '충동적 행동', '깊이 부족'],
+      'ISTJ': ['융통성 부족', '변화 거부', '과도한 규칙 집착'],
+      'ISFJ': ['과도한 걱정', '자기 희생', '비판에 민감'],
+      'ESTJ': ['과도한 통제', '감정 무시', '경직된 사고'],
+      'ESFJ': ['과도한 순응', '갈등 회피', '자기 무시'],
+      'ISTP': ['감정 차단', '무관심', '고립'],
+      'ISFP': ['과도한 감수성', '자기 의심', '갈등 회피'],
+      'ESTP': ['충동성', '무모함', '장기 계획 무시'],
+      'ESFP': ['주의 산만', '책임 회피', '깊이 부족'],
+    };
+    
+    return signals[mbtiType] ?? ['스트레스 증가', '집중력 저하', '피로감'];
+  }
   
   // ==========================================
   // 1. 오늘의 에너지 레벨 계산

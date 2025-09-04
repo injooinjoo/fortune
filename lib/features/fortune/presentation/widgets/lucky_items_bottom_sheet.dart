@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -363,50 +364,12 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
           ),
           child: SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: TossButton(
+              text: _isLoadingAd ? '광고 로딩 중...' : '운세보기',
               onPressed: _isLoadingAd ? null : _handleFortuneView,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _isLoadingAd ? Colors.grey[400] : Color(0xFF1F4EF5),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (_isLoadingAd) ...[
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '광고 로딩 중...',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ] else ...[
-                    Icon(Icons.auto_awesome, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      '운세보기',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: _isLoadingAd ? null : Icons.auto_awesome,
             ),
           ),
         ),

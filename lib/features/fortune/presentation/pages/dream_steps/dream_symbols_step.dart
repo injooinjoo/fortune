@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
@@ -427,9 +428,11 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                   }).toList())])
             ])),
     actions: [
-          TextButton(
+          TossButton(
+            text: '닫기',
             onPressed: () => Navigator.pop(context),
-    child: const Text('닫기'))])
+            style: TossButtonStyle.text,
+            size: TossButtonSize.medium)])
     );
   }
   

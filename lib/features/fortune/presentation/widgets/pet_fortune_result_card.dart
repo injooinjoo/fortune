@@ -33,13 +33,13 @@ class PetFortuneResultCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // Extract pet-specific data from fortune
-    final petInfo = fortune.rawData?['pet_info'] ?? {};
-    final healthFortune = fortune.rawData?['health_fortune'] ?? {};
-    final activityFortune = fortune.rawData?['activity_fortune'] ?? {};
-    final emotionalState = fortune.rawData?['emotional_state'] ?? {};
-    final specialEvents = fortune.rawData?['special_events'] ?? {};
-    final carePoints = fortune.rawData?['care_points'] ?? [];
-    final luckyItems = fortune.rawData?['lucky_items'] ?? {};
+    final petInfo = fortune.additionalInfo?['pet_info'] ?? {};
+    final healthFortune = fortune.additionalInfo?['health_fortune'] ?? {};
+    final activityFortune = fortune.additionalInfo?['activity_fortune'] ?? {};
+    final emotionalState = fortune.additionalInfo?['emotional_state'] ?? {};
+    final specialEvents = fortune.additionalInfo?['special_events'] ?? {};
+    final carePoints = fortune.additionalInfo?['care_points'] ?? [];
+    final luckyItems = fortune.additionalInfo?['lucky_items'] ?? {};
     
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -151,7 +151,7 @@ class PetFortuneResultCard extends StatelessWidget {
   Widget _buildMainScoreCard(BuildContext context, bool isDark) {
     final score = fortune.overallScore ?? 0;
     final scoreColor = _getScoreColor(score);
-    final compatibilityResult = fortune.rawData?['compatibility_result'] ?? {};
+    final compatibilityResult = fortune.additionalInfo?['compatibility_result'] ?? {};
     
     return FortuneCard(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

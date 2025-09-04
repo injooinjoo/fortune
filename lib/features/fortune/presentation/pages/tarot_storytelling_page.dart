@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
@@ -597,43 +598,16 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
         top: false,
         child: SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: TossButton(
+            text: buttonText,
             onPressed: onPressed,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_isRevealing) Container(
-                    width: 20,
-                    height: 20,
-                  margin: const EdgeInsets.only(right: 8),
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                if (onPressed != null) 
-                  Icon(
-                    _currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
-                        ? Icons.auto_awesome
-                        : Icons.arrow_forward,
-                    size: 20,
-                  ),
-                const SizedBox(width: 8),
-                Text(
-                  buttonText,
-                  style: TextStyle(
-                    fontSize: 16 * fontScale,
-                    fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            icon: onPressed != null && !_isRevealing
+                ? (_currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
+                    ? Icons.auto_awesome
+                    : Icons.arrow_forward)
+                : null,
           ),
         ),
       ),

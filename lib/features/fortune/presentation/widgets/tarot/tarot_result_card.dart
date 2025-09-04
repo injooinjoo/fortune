@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
@@ -307,25 +308,11 @@ class _TarotResultCardState extends State<TarotResultCard>
                   // 다시 보기 버튼
                   SizedBox(
                     width: double.infinity,
-                    height: 48,
-                    child: OutlinedButton(
+                    child: TossButton(
+                      text: '다른 질문하기',
                       onPressed: widget.onRetry,
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: Color(0xFF3182F6),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        '다른 질문하기',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3182F6),
-                        ),
-                      ),
+                      style: TossButtonStyle.outlined,
+                      size: TossButtonSize.large,
                     ),
                   ),
                   
@@ -334,31 +321,12 @@ class _TarotResultCardState extends State<TarotResultCard>
                   // 공유 버튼
                   SizedBox(
                     width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
+                    child: TossButton(
+                      text: '결과 공유하기',
                       onPressed: _shareResult,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF3F4F6),
-                        foregroundColor: const Color(0xFF6B7280),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.share, size: 18),
-                          SizedBox(width: 8),
-                          Text(
-                            '결과 공유하기',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
+                      style: TossButtonStyle.primary,
+                      size: TossButtonSize.large,
+                      icon: Icons.share,
                     ),
                   ),
                 ],

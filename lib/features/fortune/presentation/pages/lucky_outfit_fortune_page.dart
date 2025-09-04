@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -337,8 +338,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           // Submit button
           SizedBox(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
+            child: TossButton(
+              text: '행운의 스타일 확인하기',
               onPressed: _occasion != null && _personalStyle != null
                   ? () => onSubmit({
                         'date': _selectedDate!.toIso8601String(),
@@ -347,26 +348,9 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         'zodiac_sign': _zodiacSign,
                       })
                   : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.checkroom, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '행운의 스타일 확인하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: Icons.checkroom,
             ),
           ),
         ],

@@ -1,10 +1,10 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:math' as math;
+import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/haptic_utils.dart';
@@ -271,15 +271,12 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                           color: TossDesignSystem.gray600)])),
               
               // Bottom actions
-              if (!_isGenerating) OutlinedButton(
+              if (!_isGenerating) TossButton(
+                  text: '다시 만들기',
                   onPressed: widget.onBack,
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                  child: const Text('다시 만들기')])),;
+                  style: TossButtonStyle.outlined,
+                  size: TossButtonSize.large,
+                ),
 }
 }
 

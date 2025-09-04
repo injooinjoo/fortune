@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -101,31 +102,14 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           // Submit button
           SizedBox(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
+            child: TossButton(
+              text: '손금 운세 확인하기',
               onPressed: _canSubmit() 
                 ? () => onSubmit(_getSubmitData())
                 : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF9C27B0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.pan_tool, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '손금 운세 확인하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: Icons.pan_tool,
             ),
           ),
         ],
@@ -195,24 +179,22 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
+                child: TossButton(
+                  text: '사진 촬영',
                   onPressed: _takePicture,
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text('사진 촬영'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(12),
-                  ),
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.medium,
+                  icon: Icons.camera_alt,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton.icon(
+                child: TossButton(
+                  text: '갤러리',
                   onPressed: _pickFromGallery,
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text('갤러리'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(12),
-                  ),
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.medium,
+                  icon: Icons.photo_library,
                 ),
               ),
             ],

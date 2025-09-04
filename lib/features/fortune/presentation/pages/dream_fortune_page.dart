@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../widgets/dream_elements_chart.dart';
@@ -434,9 +435,11 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
         ]
       ),
       actions: [
-        TextButton(
+        TossButton(
+          text: '닫기',
           onPressed: () => Navigator.pop(context),
-          child: const Text('닫기')
+          style: TossButtonStyle.text,
+          size: TossButtonSize.medium
         )
       ]
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
@@ -147,28 +148,12 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         // Proceed button
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: TossButton(
+            text: '계속하기',
             onPressed: _handleProceed,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.auto_awesome, size: 20 * fontScale),
-                const SizedBox(width: 8),
-                Text(
-                  '계속하기',
-                  style: TextStyle(
-                    fontSize: 18 * fontScale,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            icon: Icons.auto_awesome,
           ),
         ),
       ],

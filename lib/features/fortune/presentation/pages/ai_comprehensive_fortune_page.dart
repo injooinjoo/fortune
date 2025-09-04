@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -191,13 +192,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             ).animate()
               .fadeIn(delay: 600.ms),
             const SizedBox(height: 24),
-            FilledButton.icon(
+            TossButton(
+              text: 'AI 분석 시작',
               onPressed: _startAnalysis,
-              icon: const Icon(Icons.auto_awesome),
-              label: const Text('AI 분석 시작'),
-              style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: Icons.auto_awesome,
             ).animate()
               .fadeIn(delay: 800.ms)
               .scaleXY(delay: 800.ms),
@@ -385,18 +385,22 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              OutlinedButton.icon(
+              TossButton(
+                text: '다시 분석',
                 onPressed: _reset,
-                icon: const Icon(Icons.refresh),
-                label: const Text('다시 분석'),
+                style: TossButtonStyle.outlined,
+                size: TossButtonSize.medium,
+                icon: Icons.refresh,
               ),
               const SizedBox(width: 8),
-              FilledButton.icon(
+              TossButton(
+                text: '공유하기',
                 onPressed: () {
                   // Share functionality
                 },
-                icon: const Icon(Icons.share),
-                label: const Text('공유하기'),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.medium,
+                icon: Icons.share,
               ),
             ],
           ).animate()
@@ -436,10 +440,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            FilledButton.icon(
+            TossButton(
+              text: '다시 시도',
               onPressed: _reset,
-              icon: const Icon(Icons.refresh),
-              label: const Text('다시 시도'),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.medium,
+              icon: Icons.refresh,
             ),
           ],
         ),

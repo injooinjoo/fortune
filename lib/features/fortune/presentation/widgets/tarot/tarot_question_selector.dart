@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 
 class TarotQuestionSelector extends StatefulWidget {
   final Function(String) onQuestionSelected;
@@ -242,28 +243,11 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
               // 운세 보기 버튼
               SizedBox(
                 width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
+                child: TossButton(
+                  text: '운세 보기',
                   onPressed: hasSelection ? widget.onStartReading : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: hasSelection 
-                        ? const Color(0xFF3182F6) 
-                        : const Color(0xFFF3F4F6),
-                    foregroundColor: hasSelection 
-                        ? Colors.white 
-                        : const Color(0xFF9CA3AF),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    '운세 보기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.large,
                 ),
               ),
               

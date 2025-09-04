@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../shared/components/toss_button.dart';
 // Adjusted const usage for gradient button
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
@@ -780,10 +781,12 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
           // Back button
           Align(
             alignment: Alignment.centerLeft,
-            child: TextButton.icon(
+            child: TossButton(
+              text: '스프레드 다시 선택',
               onPressed: widget.onBack,
-              icon: Icon(Icons.arrow_back),
-              label: Text('스프레드 다시 선택'),
+              style: TossButtonStyle.text,
+              size: TossButtonSize.medium,
+              icon: Icons.arrow_back,
             ),
           ),
           const SizedBox(height: 16),

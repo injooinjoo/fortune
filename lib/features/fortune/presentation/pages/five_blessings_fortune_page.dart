@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -269,34 +270,17 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
           // Submit button
           SizedBox(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
+            child: TossButton(
+              text: '오복 운세 확인하기',
               onPressed: _selectedGoal != null && _birthdate != null
                   ? () => onSubmit({
                         'blessing_type': _selectedGoal,
                         'birthdate': _birthdate?.toIso8601String(),
                       })
                   : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.auto_awesome, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '오복 운세 확인하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+              icon: Icons.auto_awesome,
             ),
           ),
         ],

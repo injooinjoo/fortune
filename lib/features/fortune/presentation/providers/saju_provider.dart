@@ -195,50 +195,66 @@ class SajuNotifier extends StateNotifier<SajuState> {
 
   // Format Saju data for display
   Map<String, dynamic> _formatSajuData(Map<String, dynamic> rawData) {
+    // Support both naming conventions (from API and from database)
+    final yearStem = rawData['year_stem'] ?? rawData['year_cheongan'];
+    final yearBranch = rawData['year_branch'] ?? rawData['year_jiji'];
+    final monthStem = rawData['month_stem'] ?? rawData['month_cheongan'];
+    final monthBranch = rawData['month_branch'] ?? rawData['month_jiji'];
+    final dayStem = rawData['day_stem'] ?? rawData['day_cheongan'];
+    final dayBranch = rawData['day_branch'] ?? rawData['day_jiji'];
+    final hourStem = rawData['hour_stem'] ?? rawData['hour_cheongan'];
+    final hourBranch = rawData['hour_branch'] ?? rawData['hour_jiji'];
+    
     return {
       'year': {
         'cheongan': {
-          'char': rawData['year_stem'],
-          'hanja': rawData['year_stem_hanja'] ?? _getHanjaForStem(rawData['year_stem']),
-          'element': _getElementForStem(rawData['year_stem'])},
+          'char': yearStem,
+          'hanja': rawData['year_stem_hanja'] ?? _getHanjaForStem(yearStem),
+          'element': _getElementForStem(yearStem)},
         'jiji': {
-          'char': rawData['year_branch'],
-          'hanja': rawData['year_branch_hanja'] ?? _getHanjaForBranch(rawData['year_branch']),
-          'animal': _getAnimalForBranch(rawData['year_branch']),
-          'element': _getElementForBranch(rawData['year_branch'])}},
+          'char': yearBranch,
+          'hanja': rawData['year_branch_hanja'] ?? _getHanjaForBranch(yearBranch),
+          'animal': _getAnimalForBranch(yearBranch),
+          'element': _getElementForBranch(yearBranch)}},
       'month': {
         'cheongan': {
-          'char': rawData['month_stem'],
-          'hanja': rawData['month_stem_hanja'] ?? _getHanjaForStem(rawData['month_stem']),
-          'element': _getElementForStem(rawData['month_stem'])},
+          'char': monthStem,
+          'hanja': rawData['month_stem_hanja'] ?? _getHanjaForStem(monthStem),
+          'element': _getElementForStem(monthStem)},
         'jiji': {
-          'char': rawData['month_branch'],
-          'hanja': rawData['month_branch_hanja'] ?? _getHanjaForBranch(rawData['month_branch']),
-          'animal': _getAnimalForBranch(rawData['month_branch']),
-          'element': _getElementForBranch(rawData['month_branch'])}},
+          'char': monthBranch,
+          'hanja': rawData['month_branch_hanja'] ?? _getHanjaForBranch(monthBranch),
+          'animal': _getAnimalForBranch(monthBranch),
+          'element': _getElementForBranch(monthBranch)}},
       'day': {
         'cheongan': {
-          'char': rawData['day_stem'],
-          'hanja': rawData['day_stem_hanja'] ?? _getHanjaForStem(rawData['day_stem']),
-          'element': _getElementForStem(rawData['day_stem'])},
+          'char': dayStem,
+          'hanja': rawData['day_stem_hanja'] ?? _getHanjaForStem(dayStem),
+          'element': _getElementForStem(dayStem)},
         'jiji': {
-          'char': rawData['day_branch'],
-          'hanja': rawData['day_branch_hanja'] ?? _getHanjaForBranch(rawData['day_branch']),
-          'animal': _getAnimalForBranch(rawData['day_branch']),
-          'element': _getElementForBranch(rawData['day_branch'])}},
-      'hour': rawData['hour_stem'] != null
+          'char': dayBranch,
+          'hanja': rawData['day_branch_hanja'] ?? _getHanjaForBranch(dayBranch),
+          'animal': _getAnimalForBranch(dayBranch),
+          'element': _getElementForBranch(dayBranch)}},
+      'hour': hourStem != null
           ? {
               'cheongan': {
-                'char': rawData['hour_stem'],
-                'hanja': rawData['hour_stem_hanja'] ?? _getHanjaForStem(rawData['hour_stem']),
-                'element': _getElementForStem(rawData['hour_stem'])},
+                'char': hourStem,
+                'hanja': rawData['hour_stem_hanja'] ?? _getHanjaForStem(hourStem),
+                'element': _getElementForStem(hourStem)},
               'jiji': {
-                'char': rawData['hour_branch'],
-                'hanja': rawData['hour_branch_hanja'] ?? _getHanjaForBranch(rawData['hour_branch']),
-                'animal': _getAnimalForBranch(rawData['hour_branch']),
-                'element': _getElementForBranch(rawData['hour_branch'])}}
+                'char': hourBranch,
+                'hanja': rawData['hour_branch_hanja'] ?? _getHanjaForBranch(hourBranch),
+                'animal': _getAnimalForBranch(hourBranch),
+                'element': _getElementForBranch(hourBranch)}}
           : null,
-      'elements': rawData['element_balance'] ?? {},
+      'elements': rawData['element_balance'] ?? {
+        '목': rawData['element_wood'] ?? 0,
+        '화': rawData['element_fire'] ?? 0,
+        '토': rawData['element_earth'] ?? 0,
+        '금': rawData['element_metal'] ?? 0,
+        '수': rawData['element_water'] ?? 0,
+      },
       'daeun': {
         'current': rawData['current_daeun'] ?? '',
         'currentHanja': _getDaeunHanja(rawData['current_daeun']),

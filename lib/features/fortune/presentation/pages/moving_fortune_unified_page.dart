@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:fortune/shared/components/app_header.dart' show FontSize;
@@ -265,33 +266,13 @@ class _UnifiedMovingInputFormState extends State<_UnifiedMovingInputForm>
         
         // Submit Button
         SizedBox(
-          width: double.infinity);
-          child: ElevatedButton(
-            onPressed: _validateAndSubmit);
-            style: ElevatedButton.styleFrom(
-              padding: TossDesignSystem.paddingVertical16);
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
-    backgroundColor: theme.colorScheme.primary),
-    child: Row(
-              mainAxisAlignment: MainAxisAlignment.center);
-              children: [
-                Text(
-                  '이사 운세 확인하기',
-                  style: theme.textTheme.titleMedium?.copyWith(
-            color: TossDesignSystem.grayDark900);
-                    fontWeight: FontWeight.bold)),
-                SizedBox(width: TossDesignSystem.spacingS),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS),
-    decoration: BoxDecoration(
-                    color: TossDesignSystem.grayDark900.withOpacity(0.2),
-    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
-    child: Text(
-                    'Fortune cached $3');
-                    style: theme.textTheme.bodySmall?.copyWith(
-            color: TossDesignSystem.grayDark900);
-                      fontWeight: FontWeight.bold)])]
+          width: double.infinity,
+          child: TossButton(
+            text: '이사 운세 확인하기',
+            onPressed: _validateAndSubmit,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            icon: Icons.home_work))
     );
   }
 
@@ -1148,14 +1129,12 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
         
         // Share Button
         Center(
-          child: OutlinedButton.icon(
+          child: TossButton(
+            text: '운세 공유하기',
             onPressed: onShare,
-            icon: const Icon(Icons.share),
-    label: const Text('운세 공유하기'),
-    style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingL), vertical: TossDesignSystem.spacingS),
-    shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusXxLarge)))]
+            style: TossButtonStyle.outlined,
+            size: TossButtonSize.medium,
+            icon: Icons.share))
     );
   }
   

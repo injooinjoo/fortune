@@ -1,9 +1,9 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/haptic_utils.dart';
@@ -253,23 +253,25 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: TossButton(
+                    text: '이전',
                     onPressed: widget.onBack,
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                    child: const Text('이전')),
+                    style: TossButtonStyle.outlined,
+                    size: TossButtonSize.large,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   flex: 2,
-                  child: ElevatedButton(
+                  child: TossButton(
+                    text: '다음',
                     onPressed: _handleNext,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                    child: const Text('다음')))]).animate()
+                    style: TossButtonStyle.primary,
+                    size: TossButtonSize.large,
+                  ),
+                ),
+              ],
+            ).animate()
               .fadeIn(duration: 400.ms, delay: 1200.ms),
             
             const SizedBox(height: 20)])));

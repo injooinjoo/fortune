@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 
@@ -158,22 +159,11 @@ class _MovingInputStep3State extends State<MovingInputStep3> {
           SafeArea(
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: TossButton(
+                text: '이사운 확인하기',
                 onPressed: _canContinue() ? _handleNext : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _canContinue() 
-                      ? TossTheme.primaryBlue 
-                      : TossTheme.disabledGray,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  '이사운 확인하기',
-                  style: TossTheme.button.copyWith(color: Colors.white),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
                 ),
               ),
             ),

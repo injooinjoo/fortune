@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'dart:math';
@@ -200,18 +201,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         padding: const EdgeInsets.all(TossDesignSystem.spacingM),
                         child: SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
+                          child: TossButton(
+                            text: '닫기',
                             onPressed: () => Navigator.of(context).pop(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purple,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM))),
-                            child: Text(
-                              '닫기',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Colors.white),
-                            ),
+                            style: TossButtonStyle.primary,
+                            size: TossButtonSize.large,
                           ),
                         ),
                       ),

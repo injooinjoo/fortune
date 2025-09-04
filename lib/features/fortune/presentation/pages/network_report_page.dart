@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -162,8 +163,9 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         
         // Submit Button
         SizedBox(
-          width: double.infinity);
-          child: ElevatedButton(
+          width: double.infinity,
+          child: TossButton(
+            text: '인맥 리포트 확인하기',
             onPressed: () {
               if (_selectedInterestArea == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -173,26 +175,20 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               }
               if (_selectedNetworkStatus == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('인맥 상태를 선택해주세요'));
+                  const SnackBar(content: Text('인맥 상태를 선택해주세요'))
+                );
                 return;
               }
               
               widget.onSubmit({
                 'interestArea': _selectedInterestArea,
                 'networkStatus': _selectedNetworkStatus,
-                'goal': _selectedGoal ?? '새로운 인맥 확장': 'challenge': _challengeController.text)}
+                'goal': _selectedGoal ?? '새로운 인맥 확장',
+                'challenge': _challengeController.text
               });
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-    shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-    backgroundColor: theme.colorScheme.primary),
-    child: Text(
-              '인맥 리포트 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
-            color: Colors.white);
-                fontWeight: FontWeight.bold)))]
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large))]
     );
   }
 }
@@ -485,14 +481,12 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
         
         // Share Button
         Center(
-          child: OutlinedButton.icon(
+          child: TossButton(
+            text: '리포트 공유하기',
             onPressed: widget.onShare,
-            icon: const Icon(Icons.share),
-    label: const Text('리포트 공유하기'),
-    style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-    shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),)]
+            style: TossButtonStyle.outlined,
+            size: TossButtonSize.medium,
+            icon: Icons.share))]
     );
   }
   

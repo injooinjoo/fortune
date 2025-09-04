@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../presentation/providers/font_size_provider.dart';
@@ -340,37 +341,23 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
         children: [
           if (widget.onNewReading != null)
             Expanded(
-              child: OutlinedButton.icon(
+              child: TossButton(
+                text: '새로운 리딩',
                 onPressed: widget.onNewReading,
-                icon: const Icon(Icons.refresh),
-                label: Text(
-                  '새로운 리딩',
-                  style: TextStyle(fontSize: 16 * fontScale),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                style: TossButtonStyle.outlined,
+                size: TossButtonSize.medium,
+                icon: Icons.refresh,
               ),
             ),
           if (widget.onShare != null) ...[
             const SizedBox(width: 16),
             Expanded(
-              child: FilledButton.icon(
+              child: TossButton(
+                text: '공유하기',
                 onPressed: widget.onShare,
-                icon: const Icon(Icons.share),
-                label: Text(
-                  '공유하기',
-                  style: TextStyle(fontSize: 16 * fontScale),
-                ),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.medium,
+                icon: Icons.share,
               ),
             ),
           ],

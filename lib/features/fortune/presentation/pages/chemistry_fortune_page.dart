@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../../../presentation/providers/providers.dart';
 
 class ChemistryFortunePage extends ConsumerStatefulWidget {
@@ -243,35 +244,25 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           const SizedBox(height: 24),
           
           // Submit button
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _canSubmit()
-                  ? () => onSubmit({
-                        'person1': {}
-                          'name': _name1Controller.text),
-                          'birthdate': _birthdate1!.toIso8601String(),
-                          'gender': null},
-                        'person2': {
-                          , 'name': _name2Controller.text,
-                          'birthdate': _birthdate2!.toIso8601String(),
-                          'gender': null}})
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.favorite, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '케미스트리 분석하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)])]));
+          TossButton(
+            text: '케미스트리 분석하기',
+            onPressed: _canSubmit()
+                ? () => onSubmit({
+                      'person1': {
+                        'name': _name1Controller.text,
+                        'birthdate': _birthdate1!.toIso8601String(),
+                        'gender': null
+                      },
+                      'person2': {
+                        'name': _name2Controller.text,
+                        'birthdate': _birthdate2!.toIso8601String(),
+                        'gender': null
+                      }
+                    })
+                : null,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+          ));
   }
   
   bool _canSubmit() {

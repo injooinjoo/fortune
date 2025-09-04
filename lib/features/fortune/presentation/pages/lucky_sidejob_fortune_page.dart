@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../shared/components/toss_button.dart';
 import '../../domain/models/fortune_result.dart';
 import 'base_fortune_page_v2.dart';
 
@@ -81,7 +82,8 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: TossButton(
+                text: '부업 운세 확인하기',
                 onPressed: () {
                   if (currentJobController.text.isNotEmpty &&
                       availableTimeController.text.isNotEmpty &&
@@ -100,17 +102,8 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor: const Color(0xFFFF6B6B),
-                ),
-                child: const Text(
-                  '부업 운세 확인하기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
               ),
             ),
           ],
@@ -159,16 +152,12 @@ class LuckySideJobFortunePage extends ConsumerWidget {
           const SizedBox(height: 16),
           _buildGrowthPotential(sections['growth_potential']),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
+          TossButton(
+            text: '운세 공유하기',
             onPressed: onShare,
-            icon: const Icon(Icons.share),
-            label: const Text('운세 공유하기'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.medium,
+            icon: Icons.share,
           ),
           const SizedBox(height: 24),
         ],

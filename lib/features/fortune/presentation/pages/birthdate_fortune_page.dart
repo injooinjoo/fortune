@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -270,37 +271,16 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           
           const SizedBox(height: 24),
           // Submit button
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _selectedDate != null 
-                ? () => onSubmit({
-                    'birthdate': _selectedDate!.toIso8601String(),
-                    'isLunar': _isLunar,
-                  })
-                : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEC4899),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.cake, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    '생일 운세 확인하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          TossButton(
+            text: '생일 운세 확인하기',
+            onPressed: _selectedDate != null 
+              ? () => onSubmit({
+                  'birthdate': _selectedDate!.toIso8601String(),
+                  'isLunar': _isLunar,
+                })
+              : null,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ],
       ),

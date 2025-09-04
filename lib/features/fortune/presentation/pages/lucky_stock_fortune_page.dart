@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -58,16 +59,12 @@ class _LuckyStockInputForm extends StatelessWidget {
         const SizedBox(height: 32),
         
         Center(
-          child: ElevatedButton.icon(
+          child: TossButton(
+            text: '투자 운세 확인하기',
             onPressed: () => onSubmit({}),
-            icon: const Icon(Icons.trending_up),
-            label: const Text('투자 운세 확인하기'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            icon: Icons.trending_up,
           ),
         ),
       ],

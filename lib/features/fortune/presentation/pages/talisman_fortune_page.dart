@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../talisman/domain/models/talisman_wish.dart';
@@ -320,16 +321,20 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
         title: const Text('로그인이 필요합니다'),
         content: const Text('부적을 생성하려면 로그인이 필요합니다.'),
         actions: [
-          TextButton(
+          TossButton(
+            text: '취소',
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
+            style: TossButtonStyle.text,
+            size: TossButtonSize.medium,
           ),
-          TextButton(
+          TossButton(
+            text: '로그인',
             onPressed: () {
               Navigator.of(context).pop();
               // TODO: 로그인 페이지로 이동
             },
-            child: const Text('로그인'),
+            style: TossButtonStyle.text,
+            size: TossButtonSize.medium,
           ),
         ],
       ),

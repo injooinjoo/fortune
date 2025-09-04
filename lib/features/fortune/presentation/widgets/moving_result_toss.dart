@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
@@ -179,21 +180,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                 // 공유하기 버튼
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton(
+                  child: TossButton(
+                    text: '결과 공유하기',
                     onPressed: _shareResult,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: TossTheme.primaryBlue),
-                      minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                      ),
-                    ),
-                    child: Text(
-                      '결과 공유하기',
-                      style: TossTheme.button.copyWith(
-                        color: TossTheme.primaryBlue,
-                      ),
-                    ),
+                    style: TossButtonStyle.outlined,
+                    size: TossButtonSize.large,
                   ),
                 ),
                 
@@ -202,21 +193,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                 // 다시 보기 버튼
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: TossButton(
+                    text: '다시 보기',
                     onPressed: widget.onRetry,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TossTheme.primaryBlue,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      '다른 조건으로 다시 보기',
-                      style: TossTheme.button.copyWith(color: Colors.white),
-                    ),
+                    style: TossButtonStyle.primary,
+                    size: TossButtonSize.large,
                   ),
                 ),
               ],

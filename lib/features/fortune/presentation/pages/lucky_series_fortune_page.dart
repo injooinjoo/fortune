@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/shared/components/app_header.dart' show FontSize;
+import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -221,7 +222,8 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
         // Submit Button
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: TossButton(
+            text: '행운의 시리즈 확인하기',
             onPressed: () {
               if (_nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -243,20 +245,8 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                 'platform': _selectedPlatform ?? '전체',
               });
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: theme.colorScheme.primary,
-            ),
-            child: Text(
-              '행운의 시리즈 확인하기',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ),
       ],
@@ -519,16 +509,12 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
         
         // Share Button
         Center(
-          child: OutlinedButton.icon(
+          child: TossButton(
+            text: '운세 공유하기',
             onPressed: onShare,
-            icon: const Icon(Icons.share),
-            label: const Text('운세 공유하기'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
+            style: TossButtonStyle.outlined,
+            size: TossButtonSize.medium,
+            icon: Icons.share,
           ),
         ),
       ],
