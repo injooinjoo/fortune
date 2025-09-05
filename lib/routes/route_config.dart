@@ -53,7 +53,7 @@ import '../features/fortune/presentation/pages/compatibility_page.dart';
 import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
 import '../features/fortune/presentation/pages/avoid_people_result_page.dart';
 import '../features/fortune/domain/models/avoid_person_analysis.dart';
-import '../features/fortune/presentation/pages/career_fortune_page.dart';
+// import '../features/fortune/presentation/pages/career_fortune_page.dart'; // Removed - unused
 import '../features/fortune/presentation/pages/career_coaching_input_page.dart';
 import '../features/fortune/presentation/pages/career_coaching_result_page.dart';
 import '../features/fortune/domain/models/career_coaching_model.dart';
@@ -363,6 +363,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/investment-enhanced',
         name: 'fortune-investment-enhanced',
         builder: (context, state) => const InvestmentFortuneEnhancedPage(),
+      ),
+      
+      // Blind Date pages (outside shell - no navigation bar)
+      GoRoute(
+        path: '/blind-date',
+        name: 'fortune-blind-date',
+        builder: (context, state) => const BlindDateInstagramPage(),
+      ),
+      GoRoute(
+        path: '/blind-date-coaching',
+        name: 'fortune-blind-date-coaching',
+        builder: (context, state) {
+          final input = state.extra as BlindDateInstagramInput?;
+          if (input == null) {
+            return const BlindDateInstagramPage();
+          }
+          return BlindDateCoachingPage(input: input);
+        },
       ),
 
       // Admin routes (outside shell - no navigation bar)

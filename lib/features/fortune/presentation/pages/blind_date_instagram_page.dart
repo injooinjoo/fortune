@@ -6,6 +6,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/blind_date_instagram_model.dart';
+import '../../../../services/ad_service.dart';
 
 class BlindDateInstagramPage extends ConsumerStatefulWidget {
   const BlindDateInstagramPage({super.key});
@@ -112,25 +113,25 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: TossDesignSystem.warningOrange,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: TossDesignSystem.warningOrange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Future<void> _analyzeAndShowResult() async {
     setState(() {
       _isAnalyzing = true;
     });
-
-    // 3초 후 결과 페이지로 이동 (실제로는 API 호출)
-    await Future.delayed(const Duration(seconds: 3));
 
     final input = BlindDateInstagramInput(
       partnerInstagramUrl: _partnerInstagramController.text,
@@ -147,16 +148,39 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
           : null,
     );
 
-    if (mounted) {
-      context.pushNamed(
-        'fortune-blind-date-coaching',
-        extra: input,
-      );
-    }
-
-    setState(() {
-      _isAnalyzing = false;
-    });
+    // Show AdMob interstitial ad before showing results
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        // Add a small delay for better UX after ad
+        await Future.delayed(const Duration(seconds: 1));
+        
+        if (mounted) {
+          setState(() {
+            _isAnalyzing = false;
+          });
+          
+          context.push(
+            '/blind-date-coaching',
+            extra: input,
+          );
+        }
+      },
+      onAdFailed: () async {
+        // Even if ad fails, still show results after a delay
+        await Future.delayed(const Duration(seconds: 2));
+        
+        if (mounted) {
+          setState(() {
+            _isAnalyzing = false;
+          });
+          
+          context.push(
+            '/blind-date-coaching',
+            extra: input,
+          );
+        }
+      },
+    );
   }
 
   @override

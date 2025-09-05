@@ -7,6 +7,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
+import '../../../../services/ad_service.dart';
 
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
@@ -82,19 +83,22 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: TossDesignSystem.warningOrange,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: TossDesignSystem.warningOrange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  void _analyzeAndShowResult() {
+  void _analyzeAndShowResult() async {
     final input = ExLoverSimpleInput(
       timeSinceBreakup: _timeSinceBreakup!,
       currentEmotion: _currentEmotion!,
@@ -103,9 +107,56 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
       breakupReason: _breakupReason,
     );
     
-    context.pushNamed(
-      'ex-lover-emotional-result',
-      extra: input,
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(
+                color: TossDesignSystem.purple,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '분석 중...',
+                style: TossDesignSystem.body2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    
+    // Show AdMob interstitial ad
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        // Close loading dialog
+        Navigator.pop(context);
+        
+        // Navigate to result page
+        context.push(
+          '/ex-lover-emotional-result',
+          extra: input,
+        );
+      },
+      onAdFailed: () {
+        // Close loading dialog even if ad fails
+        Navigator.pop(context);
+        
+        // Navigate to result page anyway
+        context.push(
+          '/ex-lover-emotional-result',
+          extra: input,
+        );
+      },
     );
   }
 
