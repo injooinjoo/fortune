@@ -11,6 +11,7 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../constants/fortune_button_spacing.dart';
+import '../../../../services/ad_service.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -541,7 +542,17 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     FloatingBottomButton(
       text: '궁합 분석하기',
       isLoading: _isLoading,
-      onPressed: _analyzeCompatibility,
+      onPressed: () async {
+        await AdService.instance.showInterstitialAdWithCallback(
+          onAdCompleted: () {
+            _analyzeCompatibility();
+          },
+          onAdFailed: () {
+            // Still allow compatibility analysis even if ad fails
+            _analyzeCompatibility();
+          },
+        );
+      },
       style: TossButtonStyle.primary,
       size: TossButtonSize.large,
     ),

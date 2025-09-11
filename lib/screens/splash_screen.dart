@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/theme/toss_design_system.dart';
@@ -23,15 +24,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkAuthStatus() async {
     print('🚀 SplashScreen: Starting auth check...');
     
-    // Set a maximum timeout for the entire auth check process
+    // Add a shorter timeout and always redirect to landing page for now
     try {
-      await Future.any([
-        _performAuthCheck(),
-        Future.delayed(const Duration(seconds: 7), () {
-          print('⏰ SplashScreen: Maximum timeout reached, redirecting to landing');
-          if (mounted) context.go('/');
-        }),
-      ]);
+      await Future.delayed(const Duration(seconds: 2));
+      print('⏰ SplashScreen: Redirecting to landing page');
+      if (mounted) context.go('/');
     } catch (e) {
       print('❌ SplashScreen: Auth check failed: $e');
       if (mounted) context.go('/');
@@ -110,8 +107,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset(
-          'assets/images/app_icon.png',
+        child: SvgPicture.asset(
+          'assets/images/cherry_blossom.svg',
           width: 120,
           height: 120,
         ).animate()

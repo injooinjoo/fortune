@@ -138,7 +138,12 @@
       "Bash(pip3 install:*)",
       "Bash(xcrun simctl openurl:*)",
       "Bash(nc localhost 54624)",
-      "Bash(nc localhost 51696)"
+      "Bash(nc localhost 51696)",
+      "Bash(nc localhost 52790)",
+      "Bash(xcrun devicectl device uninstall app:*)",
+      "Bash(xargs:*)",
+      "Bash(while read file)",
+      "Bash(then if ! grep -q \"showInterstitialAdWithCallback\\|showRewardedAdWithCallback\" \"$file\")"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

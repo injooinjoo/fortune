@@ -61,7 +61,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         final needsOnboarding = await ProfileValidation.needsOnboarding();
         if (needsOnboarding && mounted) {
           debugPrint('Profile incomplete, redirecting to onboarding...');
-          context.go('/onboarding/flow');
+          context.go('/onboarding');
         } else if (mounted) {
           debugPrint('Profile complete, redirecting to home...');
           context.go('/home');

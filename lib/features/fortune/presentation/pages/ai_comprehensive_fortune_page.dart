@@ -8,6 +8,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../services/ad_service.dart';
 
 class AiComprehensiveFortunePage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -194,7 +195,17 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             const SizedBox(height: 24),
             TossButton(
               text: 'AI 분석 시작',
-              onPressed: _startAnalysis,
+              onPressed: () async {
+                await AdService.instance.showInterstitialAdWithCallback(
+                  onAdCompleted: () {
+                    _startAnalysis();
+                  },
+                  onAdFailed: () {
+                    // Still allow analysis even if ad fails
+                    _startAnalysis();
+                  },
+                );
+              },
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,
               icon: Icon(Icons.auto_awesome),

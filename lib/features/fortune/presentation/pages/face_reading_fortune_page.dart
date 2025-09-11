@@ -11,6 +11,7 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import 'package:fortune/data/services/fortune_api_service.dart';
 import 'package:fortune/presentation/providers/providers.dart';
+import '../../../../services/ad_service.dart';
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -297,7 +298,17 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             width: double.infinity,
             child: TossButton.primary(
               text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
-              onPressed: _isAnalyzing ? null : () => _startAnalysis(onSubmit),
+              onPressed: _isAnalyzing ? null : () async {
+                await AdService.instance.showInterstitialAdWithCallback(
+                  onAdCompleted: () {
+                    _startAnalysis(onSubmit);
+                  },
+                  onAdFailed: () {
+                    // Still allow fortune generation even if ad fails
+                    _startAnalysis(onSubmit);
+                  },
+                );
+              },
               isEnabled: !_isAnalyzing,
               isLoading: _isAnalyzing,
               icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: Colors.white),

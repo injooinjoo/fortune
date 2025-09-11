@@ -1,0 +1,33 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pink background circle -->
+  <circle cx="60" cy="60" r="60" fill="#FFB6C1"/>
+  
+  <!-- Cherry blossom flower -->
+  <g transform="translate(60, 60)">
+    <!-- Five petals -->
+    <g stroke="#2D2D2D" stroke-width="2" fill="none">
+      <!-- Top petal -->
+      <path d="M 0,-25 C -8,-20 -8,-10 0,-5 C 8,-10 8,-20 0,-25 Z"/>
+      
+      <!-- Top-right petal -->
+      <path d="M 0,-25 C -8,-20 -8,-10 0,-5 C 8,-10 8,-20 0,-25 Z" transform="rotate(72)"/>
+      
+      <!-- Bottom-right petal -->
+      <path d="M 0,-25 C -8,-20 -8,-10 0,-5 C 8,-10 8,-20 0,-25 Z" transform="rotate(144)"/>
+      
+      <!-- Bottom-left petal -->
+      <path d="M 0,-25 C -8,-20 -8,-10 0,-5 C 8,-10 8,-20 0,-25 Z" transform="rotate(216)"/>
+      
+      <!-- Top-left petal -->
+      <path d="M 0,-25 C -8,-20 -8,-10 0,-5 C 8,-10 8,-20 0,-25 Z" transform="rotate(288)"/>
+      
+      <!-- Center circle -->
+      <circle cx="0" cy="0" r="6" fill="#2D2D2D"/>
+      
+      <!-- Center details -->
+      <circle cx="0" cy="-3" r="1" fill="#FFB6C1"/>
+      <circle cx="-2.5" cy="1.5" r="1" fill="#FFB6C1"/>
+      <circle cx="2.5" cy="1.5" r="1" fill="#FFB6C1"/>
+    </g>
+  </g>
+</svg>

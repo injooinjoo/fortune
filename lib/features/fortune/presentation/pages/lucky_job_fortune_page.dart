@@ -6,6 +6,7 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../services/ad_service.dart';
 
 class LuckyJobFortunePage extends ConsumerStatefulWidget {
   const LuckyJobFortunePage({super.key});
@@ -245,12 +246,27 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
         FloatingBottomButton(
           text: '천직 찾기',
           onPressed: _canSubmit()
-              ? () => onSubmit({
-                    'name': _name,
-                    'birthdate': _birthdate!.toIso8601String(),
-                    'current_status': _currentStatus,
-                    'interests': _interests,
-                  })
+              ? () async {
+                  await AdService.instance.showInterstitialAdWithCallback(
+                    onAdCompleted: () {
+                      onSubmit({
+                        'name': _name,
+                        'birthdate': _birthdate!.toIso8601String(),
+                        'current_status': _currentStatus,
+                        'interests': _interests,
+                      });
+                    },
+                    onAdFailed: () {
+                      // Still allow fortune generation even if ad fails
+                      onSubmit({
+                        'name': _name,
+                        'birthdate': _birthdate!.toIso8601String(),
+                        'current_status': _currentStatus,
+                        'interests': _interests,
+                      });
+                    },
+                  );
+                }
               : null,
           style: TossButtonStyle.primary,
           size: TossButtonSize.large,

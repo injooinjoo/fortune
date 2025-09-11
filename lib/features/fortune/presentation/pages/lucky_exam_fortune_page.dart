@@ -12,6 +12,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import 'dart:math' as math;
+import '../../../../services/ad_service.dart';
 
 class LuckyExamFortunePage extends ConsumerStatefulWidget {
   const LuckyExamFortunePage({super.key});
@@ -451,7 +452,17 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
         // Floating 버튼
         FloatingBottomButton(
           text: '운세 분석하기',
-          onPressed: _analyzeExam,
+          onPressed: () async {
+            await AdService.instance.showInterstitialAdWithCallback(
+              onAdCompleted: () {
+                _analyzeExam();
+              },
+              onAdFailed: () {
+                // Still allow fortune generation even if ad fails
+                _analyzeExam();
+              },
+            );
+          },
           isLoading: _isLoading,
           style: TossButtonStyle.primary,
           size: TossButtonSize.large,

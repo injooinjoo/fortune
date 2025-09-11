@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../services/ad_service.dart';
 
 enum LifestyleType { employee, student, freelancer, business }
 enum HobbyType { exercise, reading, travel, cooking, gaming, movie }
@@ -116,15 +117,28 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
     }
   }
 
-  void _handleNext() {
+  void _handleNext() async {
     if (!_canProceed) return;
     
-    widget.onNext({
-      'appearanceConfidence': _appearanceConfidence,
-      'charmPoints': _charmPoints.toList(),
-      'lifestyle': _lifestyle.toString().split('.').last,
-      'hobbies': _hobbies.map((h) => h.toString().split('.').last).toList(),
-    });
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        widget.onNext({
+          'appearanceConfidence': _appearanceConfidence,
+          'charmPoints': _charmPoints.toList(),
+          'lifestyle': _lifestyle.toString().split('.').last,
+          'hobbies': _hobbies.map((h) => h.toString().split('.').last).toList(),
+        });
+      },
+      onAdFailed: () {
+        // Still allow fortune generation even if ad fails
+        widget.onNext({
+          'appearanceConfidence': _appearanceConfidence,
+          'charmPoints': _charmPoints.toList(),
+          'lifestyle': _lifestyle.toString().split('.').last,
+          'hobbies': _hobbies.map((h) => h.toString().split('.').last).toList(),
+        });
+      },
+    );
   }
 
   @override

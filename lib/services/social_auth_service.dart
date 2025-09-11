@@ -171,29 +171,21 @@ class SocialAuthService {
     try {
       Logger.info('Starting Apple Sign-In process');
       
-      // Use native Sign in with Apple on iOS/macOS, OAuth on other platforms
-      if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-        // Check if native Apple Sign-In is available
+      // Use native Sign in with Apple on iOS, OAuth on other platforms
+      if (!kIsWeb && Platform.isIOS) {
+        // On real iOS devices, always use native Sign-In
+        // Don't fall back to OAuth - if native fails, show proper error
+        Logger.info('Using native Apple Sign-In for iOS');
+        return await _signInWithAppleNative();
+      } else if (!kIsWeb && Platform.isMacOS) {
+        // On macOS, check availability first
         final isAvailable = await SignInWithApple.isAvailable();
-        if (!isAvailable) {
-          // Fall back to OAuth if native is not available (usually simulator)
-          Logger.info('Native Apple Sign-In not available (likely simulator), using OAuth');
-          return await _signInWithAppleOAuth();
-        }
-        
-        // Try native Sign-In first
-        try {
-          Logger.info('Attempting native Apple Sign-In');
+        if (isAvailable) {
+          Logger.info('Using native Apple Sign-In for macOS');
           return await _signInWithAppleNative();
-        } catch (nativeError) {
-          // If native fails with specific simulator error, use OAuth
-          if (nativeError.toString().contains('AuthorizationErrorCode') ||
-              nativeError.toString().contains('error 1000')) {
-            Logger.info('Native Apple Sign-In failed (simulator detected), falling back to OAuth');
-            return await _signInWithAppleOAuth();
-          }
-          // For other errors, rethrow
-          rethrow;
+        } else {
+          Logger.info('Native Apple Sign-In not available on macOS, using OAuth');
+          return await _signInWithAppleOAuth();
         }
       } else {
         // Use Supabase OAuth for web and Android
@@ -211,7 +203,7 @@ class SocialAuthService {
     try {
       Logger.info('Using native Apple Sign-In');
       
-      // Apple Sign-In 요청
+      // Apple Sign-In 요청 - 네이티브 시스템 UI가 표시됨
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -243,8 +235,35 @@ class SocialAuthService {
       }
       
       return response;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      // Apple Sign-In specific errors
+      if (e.code == AuthorizationErrorCode.canceled) {
+        Logger.info('User canceled Apple Sign-In');
+        // Return null for user cancellation - don't throw error
+        return null;
+      } else if (e.code == AuthorizationErrorCode.failed) {
+        Logger.error('Apple Sign-In authorization failed', e);
+        throw Exception('Apple 로그인 인증에 실패했습니다. 다시 시도해주세요.');
+      } else if (e.code == AuthorizationErrorCode.invalidResponse) {
+        Logger.error('Invalid response from Apple Sign-In', e);
+        throw Exception('Apple 서버 응답 오류가 발생했습니다.');
+      } else if (e.code == AuthorizationErrorCode.notHandled) {
+        Logger.error('Apple Sign-In not handled', e);
+        throw Exception('Apple 로그인을 처리할 수 없습니다.');
+      } else if (e.code == AuthorizationErrorCode.unknown) {
+        Logger.error('Unknown Apple Sign-In error', e);
+        throw Exception('알 수 없는 오류가 발생했습니다.');
+      } else {
+        Logger.error('Apple Sign-In error', e);
+        throw Exception('Apple 로그인 중 오류가 발생했습니다.');
+      }
     } catch (error) {
       Logger.error('Native Apple Sign-In failed', error);
+      // Check if it's a simulator-specific error
+      if (error.toString().contains('not available') || 
+          error.toString().contains('simulator')) {
+        throw Exception('Apple 로그인은 실제 기기에서만 사용 가능합니다.');
+      }
       rethrow;
     }
   }

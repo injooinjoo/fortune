@@ -11,6 +11,7 @@ import '../../../../core/constants/tarot_metadata.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_loading_button.dart';
 import '../widgets/tarot/tarot_result_card.dart';
+import '../../../../services/ad_service.dart';
 
 enum TarotFlowState {
   initial,      // 초기 화면
@@ -268,10 +269,20 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               // 시작하기 버튼
               TossButton(
                 text: '타로 운세 보기',
-                onPressed: () {
-                  setState(() {
-                    _currentState = TarotFlowState.questioning;
-                  });
+                onPressed: () async {
+                  await AdService.instance.showInterstitialAdWithCallback(
+                    onAdCompleted: () {
+                      setState(() {
+                        _currentState = TarotFlowState.questioning;
+                      });
+                    },
+                    onAdFailed: () {
+                      // Still allow tarot reading even if ad fails
+                      setState(() {
+                        _currentState = TarotFlowState.questioning;
+                      });
+                    },
+                  );
                 },
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.large,

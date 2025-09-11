@@ -36,59 +36,114 @@ import 'presentation/providers/font_size_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.dotenv.load(fileName: ".env");
+  
+  try {
+    // Load environment variables
+    await dotenv.dotenv.load(fileName: ".env");
+  } catch (e) {
+    print('Warning: Could not load .env file: $e');
+  }
+  
   await initializeDateFormatting('ko_KR', null);
   
   // Initialize Hive
-  await Hive.initFlutter();
-  Logger.info('Hive initialized successfully');
+  try {
+    await Hive.initFlutter();
+    Logger.info('Hive initialized successfully');
+  } catch (e) {
+    Logger.error('Hive initialization failed', e);
+  }
   
-  // Initialize Firebase
+  // Initialize Firebase - wrapped in try-catch to prevent crash
   try {
     await Firebase.initializeApp(
       options: SecureFirebaseOptions.currentPlatform,
     );
+    Logger.info('Firebase initialized successfully');
   } catch (e) {
     Logger.error('Firebase initialization failed', e);
+    // Continue without Firebase
   }
   
-  // Initialize Supabase
-  await Supabase.initialize(
-    url: dotenv.dotenv.env['SUPABASE_URL'] ?? '',
-    anonKey: dotenv.dotenv.env['SUPABASE_ANON_KEY'] ?? '',
-  );
-  
-  // Initialize Social Login SDKs
-  if (!kIsWeb) {
-    // Kakao SDK
-    kakao.KakaoSdk.init(
-      nativeAppKey: '79a067e199f5984dd47438d057ecb0c5', // TODO: Move to .env
-    );
+  // Initialize Supabase with error handling
+  try {
+    final supabaseUrl = dotenv.dotenv.env['SUPABASE_URL'];
+    final supabaseAnonKey = dotenv.dotenv.env['SUPABASE_ANON_KEY'];
     
-    // Naver SDK - Skip for now as initSdk might not be available
-    // TODO: Initialize Naver SDK when proper method is available
+    if (supabaseUrl != null && supabaseAnonKey != null && 
+        supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty) {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseAnonKey,
+      );
+      Logger.info('Supabase initialized successfully');
+    } else {
+      Logger.error('Supabase credentials not found in environment');
+    }
+  } catch (e) {
+    Logger.error('Supabase initialization failed', e);
   }
   
-  // Initialize Analytics
-  await AnalyticsService.instance.initialize();
-  
-  // Initialize Remote Config for A/B Testing
-  await RemoteConfigService().initialize();
-  
-  // Initialize Ad Service
+  // Initialize Social Login SDKs with error handling
   if (!kIsWeb) {
-    await AdService.instance.initialize();
+    try {
+      // Kakao SDK
+      kakao.KakaoSdk.init(
+        nativeAppKey: '79a067e199f5984dd47438d057ecb0c5',
+      );
+      Logger.info('Kakao SDK initialized');
+    } catch (e) {
+      Logger.error('Kakao SDK initialization failed', e);
+    }
+  }
+  
+  // Initialize Analytics with error handling
+  try {
+    await AnalyticsService.instance.initialize();
+    Logger.info('Analytics initialized');
+  } catch (e) {
+    Logger.error('Analytics initialization failed', e);
+  }
+  
+  // Initialize Remote Config with error handling
+  try {
+    await RemoteConfigService().initialize();
+    Logger.info('Remote Config initialized');
+  } catch (e) {
+    Logger.error('Remote Config initialization failed', e);
+  }
+  
+  // Initialize Ad Service with error handling
+  if (!kIsWeb) {
+    try {
+      await AdService.instance.initialize();
+      Logger.info('Ad Service initialized');
+    } catch (e) {
+      Logger.error('Ad Service initialization failed', e);
+    }
   }
   
   // Initialize SharedPreferences
-  final sharedPreferences = await SharedPreferences.getInstance();
+  SharedPreferences? sharedPreferences;
+  try {
+    sharedPreferences = await SharedPreferences.getInstance();
+  } catch (e) {
+    Logger.error('SharedPreferences initialization failed', e);
+  }
   
-  runApp(
-    ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-      ],
-      child: const MyApp()));
+  if (sharedPreferences != null) {
+    runApp(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+        ],
+        child: const MyApp()));
+  } else {
+    // Run without SharedPreferences override if it failed
+    runApp(
+      const ProviderScope(
+        child: MyApp()));
+  }
 }
 
 class MyApp extends ConsumerWidget {

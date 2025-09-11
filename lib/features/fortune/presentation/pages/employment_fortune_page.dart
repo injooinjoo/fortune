@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../services/ad_service.dart';
 
 class EmploymentFortunePage extends ConsumerWidget {
   const EmploymentFortunePage({super.key});
@@ -64,7 +65,17 @@ class _EmploymentInputForm extends StatelessWidget {
         // Floating 버튼
         FloatingBottomButton(
           text: '운세 확인하기',
-          onPressed: () => onSubmit({}),
+          onPressed: () async {
+            await AdService.instance.showInterstitialAdWithCallback(
+              onAdCompleted: () {
+                onSubmit({});
+              },
+              onAdFailed: () {
+                // Still allow fortune generation even if ad fails
+                onSubmit({});
+              },
+            );
+          },
           style: TossButtonStyle.primary,
           size: TossButtonSize.large,
           icon: Icon(Icons.work),
