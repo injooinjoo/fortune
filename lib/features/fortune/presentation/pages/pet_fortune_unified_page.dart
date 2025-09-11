@@ -351,7 +351,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
         onPressed: _onGenerateFortune,
         style: TossButtonStyle.text,
         size: TossButtonSize.medium,
-        icon: Icons.refresh,
+        icon: Icon(Icons.refresh),
       ),
     );
   }

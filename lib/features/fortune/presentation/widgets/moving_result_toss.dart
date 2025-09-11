@@ -183,7 +183,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   child: TossButton(
                     text: '결과 공유하기',
                     onPressed: _shareResult,
-                    style: TossButtonStyle.outlined,
+                    style: TossButtonStyle.ghost,
                     size: TossButtonSize.large,
                   ),
                 ),

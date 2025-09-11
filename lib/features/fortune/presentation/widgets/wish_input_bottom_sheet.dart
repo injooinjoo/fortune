@@ -136,7 +136,12 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
           
           // Submit button
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              12, // 상단 패딩 추가
+              20,
+              16 + MediaQuery.of(context).padding.bottom, // 하단 패딩 조정
+            ),
             child: SizedBox(
               width: double.infinity,
               height: 56,

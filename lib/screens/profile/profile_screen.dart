@@ -224,7 +224,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
@@ -294,16 +294,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
                             color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                              width: 1,
+                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                              width: 0.5,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 6,
+                                offset: const Offset(0, 1),
                               ),
                             ],
                           ),
@@ -354,13 +354,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Colors.green.shade100,
+                                              color: TossDesignSystem.successGreen.withOpacity(0.1),
                                               borderRadius: BorderRadius.circular(20),
                                             ),
                                             child: const Text(
                                               '활성화됨',
                                               style: TextStyle(
-                                                color: Colors.green,
+                                                color: TossDesignSystem.successGreen,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -409,7 +409,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                           ? '프리미엄 기능이 활성화되었습니다.'
                                                           : '프리미엄 기능이 비활성화되었습니다.',
                                                       ),
-                                                      backgroundColor: value ? Colors.green : Colors.grey,
+                                                      backgroundColor: value ? TossDesignSystem.successGreen : TossDesignSystem.gray600,
                                                     ),
                                                   );
                                                 }
@@ -418,7 +418,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                     const SnackBar(
                                                       content: Text('프리미엄 상태 변경에 실패했습니다.'),
-                                                      backgroundColor: Colors.red,
+                                                      backgroundColor: TossDesignSystem.errorRed,
                                                     ),
                                                   );
                                                 }
@@ -439,11 +439,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: TossDesignSystem.tossBlue.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                                          ),
+                                          color: TossDesignSystem.tossBlue.withOpacity(0.08),
+                                          borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Row(
                                           children: [
@@ -515,12 +512,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withValues(alpha: 0.02),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
@@ -612,12 +609,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withValues(alpha: 0.02),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
@@ -676,12 +673,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withValues(alpha: 0.02),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
@@ -743,25 +740,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                    width: 1,
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+                    width: 0.5,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () => context.push('/settings'),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 18),
@@ -881,8 +871,8 @@ https://fortune.app''';
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                    width: 1,
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                    width: 0.5,
                   ),
           ),
         ),
@@ -896,7 +886,7 @@ https://fortune.app''';
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -1034,8 +1024,8 @@ https://fortune.app''';
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                    width: 1,
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                    width: 0.5,
                   ),
           ),
         ),

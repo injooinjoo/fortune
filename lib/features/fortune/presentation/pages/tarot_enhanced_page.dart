@@ -287,13 +287,26 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                   controller: _questionController,
                   style: TextStyle(fontSize: 16 * widget.fontScale),
                   maxLines: 3,
+                  autofocus: false,
+                  enableInteractiveSelection: true,
                   decoration: InputDecoration(
                     hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
-    filled: true,
+                    filled: true,
                     fillColor: theme.colorScheme.surface.withOpacity(0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
@@ -786,7 +799,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
               onPressed: widget.onBack,
               style: TossButtonStyle.text,
               size: TossButtonSize.medium,
-              icon: Icons.arrow_back,
+              icon: Icon(Icons.arrow_back),
             ),
           ),
           const SizedBox(height: 16),

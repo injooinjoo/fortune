@@ -536,9 +536,9 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
           child: TossButton(
             text: '궁합 결과 공유하기',
             onPressed: widget.onShare,
-            style: TossButtonStyle.outlined,
+            style: TossButtonStyle.ghost,
             size: TossButtonSize.medium,
-            icon: Icons.share,
+            icon: Icon(Icons.share),
           ),
         ),
       ],

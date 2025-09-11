@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/components/loading_elevated_button.dart';
+import '../../shared/components/toss_button.dart';
 import '../../services/ad_service.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
@@ -161,42 +162,16 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
               ),
             ),
             child: SafeArea(
-              child: SizedBox(
+              child: TossButton(
+                text: '성격 DNA 분석하기',
+                onPressed: _canGenerate && !_isLoading
+                    ? _generatePersonalityDNA
+                    : null,
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                isLoading: _isLoading,
+                isEnabled: _canGenerate && !_isLoading,
                 width: double.infinity,
-                height: 56, // 토스 버튼 높이
-                child: ElevatedButton(
-                  onPressed: _canGenerate && !_isLoading
-                      ? _generatePersonalityDNA
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _canGenerate && !_isLoading
-                        ? const Color(0xFF1F4EF5) // 토스 블루
-                        : const Color(0xFFE5E5E5),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text(
-                          '성격 DNA 분석하기',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            height: 1.2,
-                          ),
-                        ),
-                ),
               ),
             ),
           ),

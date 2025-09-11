@@ -132,7 +132,13 @@
       "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_gray900secondary.sh:*)",
       "Bash(/Users/jacobmac/Desktop/Dev/fortune/fix_infographic_colors.sh)",
       "Bash(/tmp/fix_toss_references.sh:*)",
-      "Bash(if [ -f \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$file\" ])"
+      "Bash(if [ -f \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$file\" ])",
+      "Bash(if grep -q \"TossButton\" \"$file\")",
+      "Bash(! grep -q \"FloatingBottomButton\" \"$file\")",
+      "Bash(pip3 install:*)",
+      "Bash(xcrun simctl openurl:*)",
+      "Bash(nc localhost 54624)",
+      "Bash(nc localhost 51696)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

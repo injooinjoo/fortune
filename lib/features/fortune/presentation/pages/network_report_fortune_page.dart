@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -108,10 +109,12 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           Text(
             '당신의 인맥 운세를 분석하고\n네트워킹 전략을 제시해드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
@@ -317,47 +320,50 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 32),
-          // Submit Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '인맥 리포트 확인하기',
-              onPressed: () {
-                if (_nameController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('이름을 입력해주세요')),
-                  );
-                  return;
-                }
-                if (_birthDate == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('생년월일을 선택해주세요')),
-                  );
-                  return;
-                }
-                if (_jobController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('직업을 입력해주세요')),
-                  );
-                  return;
-                }
-                
-                widget.onSubmit({
-                  'name': _nameController.text,
-                  'birthDate': _birthDate!.toIso8601String(),
-                  'job': _jobController.text,
-                  'mbti': _selectedMbti ?? 'INFP',
-                  'networkingStyle': _selectedNetworkingStyle ?? '자연스러운 만남 선호',
-                  'interests': _selectedInterests.isEmpty ? ['비즈니스'] : _selectedInterests,
-                });
-              },
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-            ),
+              const SizedBox(height: 32),
+              
+              // 하단 버튼 공간만큼 여백 추가
+              const BottomButtonSpacing(),
+            ],
           ),
-        ],
-      ),
+        ),
+        
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '인맥 리포트 확인하기',
+          onPressed: () {
+            if (_nameController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('이름을 입력해주세요')),
+              );
+              return;
+            }
+            if (_birthDate == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('생년월일을 선택해주세요')),
+              );
+              return;
+            }
+            if (_jobController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('직업을 입력해주세요')),
+              );
+              return;
+            }
+            
+            widget.onSubmit({
+              'name': _nameController.text,
+              'birthDate': _birthDate!.toIso8601String(),
+              'job': _jobController.text,
+              'mbti': _selectedMbti ?? 'INFP',
+              'networkingStyle': _selectedNetworkingStyle ?? '자연스러운 만남 선호',
+              'interests': _selectedInterests.isEmpty ? ['비즈니스'] : _selectedInterests,
+            });
+          },
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+        ),
+      ],
     );
   }
 }
@@ -706,9 +712,9 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           child: TossButton(
             text: '운세 공유하기',
             onPressed: onShare,
-            style: TossButtonStyle.outlined,
+            style: TossButtonStyle.ghost,
             size: TossButtonSize.medium,
-            icon: Icons.share,
+            icon: Icon(Icons.share),
           ),
         ),
       ],

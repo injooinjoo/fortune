@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
@@ -245,11 +246,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   }
 
   Widget _buildInputView() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Form(
-        key: _formKey,
-        child: Column(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 헤더 카드
@@ -515,32 +518,35 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
               ),
             ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
-            const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
+            const SizedBox(height: 16),
 
-            // 분석 버튼
-            FortuneButtonPositionHelper.inline(
-              child: TossButton(
-                text: '궁합 분석하기',
-                isLoading: _isLoading,
-                onPressed: _analyzeCompatibility,
-                size: TossButtonSize.large,
-                width: double.infinity,
+            Center(
+              child: Text(
+                '분석 결과는 참고용으로만 활용해 주세요',
+                style: TossTheme.caption.copyWith(
+                  color: TossTheme.textGray600,
+                ),
+                textAlign: TextAlign.center,
               ),
-              topSpacing: 0,
-              bottomSpacing: 16,
             ),
-
-            Text(
-              '분석 결과는 참고용으로만 활용해 주세요',
-              style: TossTheme.caption.copyWith(
-                color: TossTheme.textGray600,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            
+            // 하단 버튼 공간만큼 여백 추가
+            const BottomButtonSpacing(),
           ],
         ),
       ),
-    );
+    ),
+    
+    // Floating 버튼
+    FloatingBottomButton(
+      text: '궁합 분석하기',
+      isLoading: _isLoading,
+      onPressed: _analyzeCompatibility,
+      style: TossButtonStyle.primary,
+      size: TossButtonSize.large,
+    ),
+    ],
+  );
   }
 
   Widget _buildResultView() {

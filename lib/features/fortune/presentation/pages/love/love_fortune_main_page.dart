@@ -7,7 +7,7 @@ import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
 import 'love_input_step3_page.dart';
 import 'love_input_step4_page.dart';
-import 'love_fortune_result_page.dart';
+// import 'love_fortune_result_page.dart'; // Removed - unused
 
 class LoveFortuneMainPage extends StatefulWidget {
   const LoveFortuneMainPage({super.key});
@@ -62,11 +62,21 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
   }
 
   void _showResults() {
-    // 결과 페이지로 이동
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoveFortuneResultPage(data: _loveFortuneData),
+    // 결과 표시 - 현재 페이지에서 처리하거나 다이얼로그로 표시
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('연애운세 결과'),
+        content: Text('결과가 저장되었습니다.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text('확인'),
+          ),
+        ],
       ),
     );
   }

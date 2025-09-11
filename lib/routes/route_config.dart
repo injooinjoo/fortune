@@ -92,7 +92,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/toss-style',
         name: 'onboarding-toss-style',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, state) {
+          final isPartial = state.uri.queryParameters['partial'] == 'true';
+          return OnboardingPage(isPartialCompletion: isPartial);
+        },
       ),
       
       // Shell route that provides persistent navigation

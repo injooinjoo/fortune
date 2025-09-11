@@ -512,9 +512,9 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
           child: TossButton(
             text: '운세 공유하기',
             onPressed: onShare,
-            style: TossButtonStyle.outlined,
+            style: TossButtonStyle.ghost,
             size: TossButtonSize.medium,
-            icon: Icons.share,
+            icon: Icon(Icons.share),
           ),
         ),
       ],

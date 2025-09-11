@@ -153,7 +153,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
             onPressed: _handleProceed,
             style: TossButtonStyle.primary,
             size: TossButtonSize.large,
-            icon: Icons.auto_awesome,
+            icon: Icon(Icons.auto_awesome),
           ),
         ),
       ],

@@ -12,8 +12,9 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
-import 'ex_lover_fortune_result_page.dart';
+// import 'ex_lover_fortune_result_page.dart'; // Removed - unused
 
 // Step 관리를 위한 StateNotifier
 class ExLoverStepNotifier extends StateNotifier<int> {
@@ -1898,14 +1899,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       
       // 결과 페이지로 이동
       if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ExLoverFortuneResultPage(
-              fortuneData: fortune.toJson(),
-            ),
+        // 결과 표시 - 현재 페이지에서 처리하거나 다른 페이지로 이동
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('운세가 생성되었습니다'),
+            backgroundColor: TossTheme.success,
           ),
         );
+        // TODO: 결과 표시 로직 추가
       }
       
     } catch (e) {

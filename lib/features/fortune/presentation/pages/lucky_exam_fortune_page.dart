@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/fortune_button.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../../../../core/components/toss_card.dart';
@@ -173,11 +174,13 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   }
 
   Widget _buildInputView(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           // 헤더 카드
           TossCard(
             padding: const EdgeInsets.all(24),
@@ -437,18 +440,24 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             ),
           ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
-          const SizedBox(height: 32),
+              const SizedBox(height: 32),
 
-          // 분석 버튼
-          FortuneButton.analyze(
-            onPressed: _analyzeExam,
-            isLoading: _isLoading,
-            text: '운세 분석하기',
+              // 하단 버튼 공간만큼 여백 추가
+              const BottomButtonSpacing(),
+            ],
           ),
-
-          const SizedBox(height: 40),
-        ],
-      ),
+        ),
+        
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '운세 분석하기',
+          onPressed: _analyzeExam,
+          isLoading: _isLoading,
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.auto_awesome),
+        ),
+      ],
     );
   }
 

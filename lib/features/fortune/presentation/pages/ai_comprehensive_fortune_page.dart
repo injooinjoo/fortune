@@ -197,7 +197,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               onPressed: _startAnalysis,
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,
-              icon: Icons.auto_awesome,
+              icon: Icon(Icons.auto_awesome),
             ).animate()
               .fadeIn(delay: 800.ms)
               .scaleXY(delay: 800.ms),
@@ -388,9 +388,9 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               TossButton(
                 text: '다시 분석',
                 onPressed: _reset,
-                style: TossButtonStyle.outlined,
+                style: TossButtonStyle.ghost,
                 size: TossButtonSize.medium,
-                icon: Icons.refresh,
+                icon: Icon(Icons.refresh),
               ),
               const SizedBox(width: 8),
               TossButton(
@@ -400,7 +400,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                 },
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.medium,
-                icon: Icons.share,
+                icon: Icon(Icons.share),
               ),
             ],
           ).animate()
@@ -445,7 +445,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               onPressed: _reset,
               style: TossButtonStyle.primary,
               size: TossButtonSize.medium,
-              icon: Icons.refresh,
+              icon: Icon(Icons.refresh),
             ),
           ],
         ),

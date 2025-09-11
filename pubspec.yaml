@@ -46,7 +46,7 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   
   # WebView for OAuth
-  flutter_inappwebview: ^6.0.0
+  flutter_inappwebview: ^6.1.5
   
   # In-App Purchase
   in_app_purchase: ^3.2.0
@@ -258,31 +258,31 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icons/app_icon.png"
+  image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
   adaptive_icon_background: "#FFD700"  # Gold color for Fortune app
-  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+  adaptive_icon_foreground: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
   min_sdk_android: 21
   web:
     generate: true
-    image_path: "assets/icons/app_icon.png"
+    image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
   windows:
     generate: true
-    image_path: "assets/icons/app_icon.png"
+    image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
   macos:
     generate: true
-    image_path: "assets/icons/app_icon.png"
+    image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#000000"  # Black background
-  color_dark: "#000000"  # Black background for dark mode too
+  color: "#FFFFFF"  # White background
+  color_dark: "#121212"  # Dark gray for dark mode
   
   # Android 12+ specific
   android_12:
-    color: "#000000"
-    color_dark: "#000000"
-    icon_background_color: "#000000"
-    icon_background_color_dark: "#000000"
+    color: "#FFFFFF"
+    color_dark: "#121212"
+    icon_background_color: "#FFFFFF"
+    icon_background_color_dark: "#121212"
     
   # Platform specific options
   android: true

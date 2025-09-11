@@ -344,12 +344,12 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
           ),
         ),
         
-        // 하단 버튼
+        // 하단 버튼 (FloatingBottomButton과 동일한 위치)
         Container(
           padding: EdgeInsets.only(
             left: 20,
             right: 20,
-            top: 16,
+            top: 0, // FloatingBottomButton과 동일하게 상단 패딩 제거
             bottom: MediaQuery.of(context).padding.bottom + 16,
           ),
           decoration: BoxDecoration(
@@ -365,11 +365,12 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
           child: SizedBox(
             width: double.infinity,
             child: TossButton(
-              text: _isLoadingAd ? '광고 로딩 중...' : '운세보기',
+              text: '운세보기',
               onPressed: _isLoadingAd ? null : _handleFortuneView,
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,
-              icon: _isLoadingAd ? null : Icons.auto_awesome,
+              icon: _isLoadingAd ? null : Icon(Icons.auto_awesome),
+              isLoading: _isLoadingAd,
             ),
           ),
         ),

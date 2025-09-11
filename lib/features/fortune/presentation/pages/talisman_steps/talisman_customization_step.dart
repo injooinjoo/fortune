@@ -256,7 +256,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                   child: TossButton(
                     text: '이전',
                     onPressed: widget.onBack,
-                    style: TossButtonStyle.outlined,
+                    style: TossButtonStyle.ghost,
                     size: TossButtonSize.large,
                   ),
                 ),

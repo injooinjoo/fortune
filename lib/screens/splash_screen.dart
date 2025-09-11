@@ -11,19 +11,10 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _rotationController;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // 로고 회전 애니메이션
-    _rotationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
     
     // 2초 후 인증 확인
     _checkAuthStatus();
@@ -31,6 +22,23 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkAuthStatus() async {
     print('🚀 SplashScreen: Starting auth check...');
+    
+    // Set a maximum timeout for the entire auth check process
+    try {
+      await Future.any([
+        _performAuthCheck(),
+        Future.delayed(const Duration(seconds: 7), () {
+          print('⏰ SplashScreen: Maximum timeout reached, redirecting to landing');
+          if (mounted) context.go('/');
+        }),
+      ]);
+    } catch (e) {
+      print('❌ SplashScreen: Auth check failed: $e');
+      if (mounted) context.go('/');
+    }
+  }
+
+  Future<void> _performAuthCheck() async {
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) {
@@ -38,46 +46,63 @@ class _SplashScreenState extends State<SplashScreen>
       return;
     }
 
-    final supabase = Supabase.instance.client;
-    final session = supabase.auth.currentSession;
-    print('🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
+    try {
+      final supabase = Supabase.instance.client;
+      final session = supabase.auth.currentSession;
+      print('🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
 
-    if (session != null) {
-      try {
-        print('👤 SplashScreen: Checking user profile for user ${session.user.id}');
-        final profileResponse = await supabase
-            .from('user_profiles')
-            .select()
-            .eq('id', session.user.id)
-            .maybeSingle();
+      if (session != null) {
+        try {
+          print('👤 SplashScreen: Checking user profile for user ${session.user.id}');
+          
+          // Add timeout to prevent hanging
+          final profileResponse = await supabase
+              .from('user_profiles')
+              .select()
+              .eq('id', session.user.id)
+              .maybeSingle()
+              .timeout(
+                const Duration(seconds: 3),
+                onTimeout: () {
+                  print('⏱️ SplashScreen: Profile fetch timeout');
+                  return null;
+                },
+              );
 
-        print('📋 SplashScreen: Profile response - $profileResponse');
+          print('📋 SplashScreen: Profile response - $profileResponse');
 
-        if (profileResponse == null ||
-            profileResponse['onboarding_completed'] != true ||
-            profileResponse['name'] == null ||
-            profileResponse['birth_date'] == null ||
-            profileResponse['gender'] == null) {
-          print('➡️ SplashScreen: Redirecting to onboarding');
-          context.go('/onboarding');
-        } else {
-          print('➡️ SplashScreen: Redirecting to home');
-          context.go('/home');
+          if (!mounted) return;
+
+          if (profileResponse == null ||
+              profileResponse['onboarding_completed'] != true) {
+            // No profile or onboarding not completed - go to full onboarding
+            print('➡️ SplashScreen: Redirecting to onboarding');
+            context.go('/onboarding/toss-style');
+          } else if (profileResponse['name'] == null ||
+                     profileResponse['birth_date'] == null) {
+            // Has profile but missing essential fields - go to partial onboarding
+            print('➡️ SplashScreen: Missing essential fields, redirecting to partial onboarding');
+            context.go('/onboarding/toss-style?partial=true');
+          } else {
+            // Profile complete - go to home
+            print('➡️ SplashScreen: Redirecting to home');
+            context.go('/home');
+          }
+        } catch (e) {
+          print('❌ SplashScreen: Error checking profile: $e');
+          // If error while logged in, still go to landing for clean start
+          if (mounted) context.go('/');
         }
-      } catch (e) {
-        print('❌ SplashScreen: Error checking profile: $e');
-        context.go('/onboarding');
+      } else {
+        // Always redirect non-logged-in users to landing page
+        print('➡️ SplashScreen: No session, redirecting to landing page');
+        if (mounted) context.go('/');
       }
-    } else {
-      print('➡️ SplashScreen: No session, redirecting to landing');
-      context.go('/');
+    } catch (e) {
+      print('❌ SplashScreen: Critical error in auth check: $e');
+      // On any critical error, go to landing page
+      if (mounted) context.go('/');
     }
-  }
-
-  @override
-  void dispose() {
-    _rotationController.dispose();
-    super.dispose();
   }
 
   @override
@@ -85,33 +110,10 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: AnimatedBuilder(
-          animation: _rotationController,
-          builder: (context, child) {
-            return Transform.rotate(
-              angle: _rotationController.value * 2 * 3.14159,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.tossBlue.withOpacity(0.2),
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.auto_awesome,
-                  size: 40,
-                  color: TossDesignSystem.tossBlue,
-                ),
-              ),
-            );
-          },
+        child: Image.asset(
+          'assets/images/app_icon.png',
+          width: 120,
+          height: 120,
         ).animate()
           .fadeIn(duration: 600.ms)
           .scale(

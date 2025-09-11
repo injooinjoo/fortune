@@ -1747,7 +1747,7 @@ class FortuneInfographicWidgets {
                       if ((celeb['description'] ?? '').isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Text(
-                          celeb['description']!,
+                          celeb['description'] ?? '',
                           style: const TextStyle(
                             color: TossDesignSystem.gray600,
                             fontSize: 12,

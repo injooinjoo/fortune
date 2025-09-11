@@ -604,7 +604,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
             style: TossButtonStyle.primary,
             size: TossButtonSize.large,
             icon: onPressed != null && !_isRevealing
-                ? (_currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
+                ? Icon(_currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
                     ? Icons.auto_awesome
                     : Icons.arrow_forward)
                 : null,

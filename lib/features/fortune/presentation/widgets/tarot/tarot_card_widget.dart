@@ -15,6 +15,7 @@ class TarotCardWidget extends StatefulWidget {
   final bool showFront;
   final bool isSelected;
   final bool isHovered;
+  final int? selectionOrder; // 선택 순서 표시
   final VoidCallback? onTap;
   final Duration flipDuration;
   final bool enableFlipAnimation;
@@ -28,6 +29,7 @@ class TarotCardWidget extends StatefulWidget {
     this.showFront = false,
     this.isSelected = false,
     this.isHovered = false,
+    this.selectionOrder,
     this.onTap,
     this.flipDuration = AppAnimations.durationXLong,
     this.enableFlipAnimation = true,
@@ -195,10 +197,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 Icon(
                   Icons.auto_awesome,
                   size: widget.width * 0.33,
-                  color: (() {
-                    print('alpha: 0.8');
-                    return Colors.white.withOpacity(0.8);
-                  })()),
+                  color: Colors.white.withOpacity(0.8),
+                ),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   widget.deck.koreanName,
@@ -212,6 +212,37 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
               ],
             ),
           ),
+          // 선택 순서 표시
+          if (widget.selectionOrder != null)
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    '${widget.selectionOrder}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: widget.deck.primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

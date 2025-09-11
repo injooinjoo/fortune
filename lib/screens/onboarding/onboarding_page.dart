@@ -9,7 +9,12 @@ import 'steps/toss_style_name_step.dart';
 import 'steps/toss_style_birth_step.dart';
 
 class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key});
+  final bool isPartialCompletion;
+  
+  const OnboardingPage({
+    super.key,
+    this.isPartialCompletion = false,
+  });
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -40,15 +45,44 @@ class _OnboardingPageState extends State<OnboardingPage> {
     
     // Load existing profile if available
     try {
-      final existingProfile = await _storageService.getUserProfile();
+      // First try to get profile from database for authenticated users
+      Map<String, dynamic>? existingProfile;
+      
+      if (_currentUser != null) {
+        try {
+          final dbProfile = await Supabase.instance.client
+              .from('user_profiles')
+              .select()
+              .eq('id', _currentUser!.id)
+              .maybeSingle();
+          
+          if (dbProfile != null) {
+            existingProfile = dbProfile;
+          }
+        } catch (e) {
+          debugPrint('Error loading profile from database: $e');
+        }
+      }
+      
+      // Fall back to local storage if no database profile
+      if (existingProfile == null) {
+        existingProfile = await _storageService.getUserProfile();
+      }
+      
       if (existingProfile != null) {
         setState(() {
           // Pre-fill name
-          _name = existingProfile['name'] ?? 
+          // Kakao 사용자의 경우 email.split('@')[0]를 사용하지 않음
+          String defaultName = '';
+          if (_currentUser?.email != null && 
+              !_currentUser!.email!.contains('kakao_')) {
+            defaultName = _currentUser!.email!.split('@')[0];
+          }
+          
+          _name = existingProfile!['name'] ?? 
               _currentUser?.userMetadata?['full_name'] ??
               _currentUser?.userMetadata?['name'] ??
-              _currentUser?.email?.split('@')[0] ??
-              '';
+              defaultName;
           
           // Pre-fill birth date if available
           if (existingProfile['birth_date'] != null) {
@@ -58,14 +92,36 @@ class _OnboardingPageState extends State<OnboardingPage> {
               debugPrint('Error parsing birth date: $e');
             }
           }
+          
+          // Pre-fill birth time if available
+          if (existingProfile['birth_time'] != null) {
+            try {
+              final timeStr = existingProfile['birth_time'];
+              final parts = timeStr.split(':');
+              if (parts.length >= 2) {
+                _birthTime = TimeOfDay(
+                  hour: int.parse(parts[0]),
+                  minute: int.parse(parts[1]),
+                );
+              }
+            } catch (e) {
+              debugPrint('Error parsing birth time: $e');
+            }
+          }
         });
       } else if (_currentUser != null) {
         // No existing profile, just use auth metadata
         setState(() {
+          // Kakao 사용자의 경우 email.split('@')[0]를 사용하지 않음
+          String defaultName = '';
+          if (_currentUser?.email != null && 
+              !_currentUser!.email!.contains('kakao_')) {
+            defaultName = _currentUser!.email!.split('@')[0];
+          }
+          
           _name = _currentUser?.userMetadata?['full_name'] ??
               _currentUser?.userMetadata?['name'] ??
-              _currentUser?.email?.split('@')[0] ??
-              '';
+              defaultName;
         });
       }
     } catch (e) {

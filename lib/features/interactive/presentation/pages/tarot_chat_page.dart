@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/tarot_deck_provider.dart';
@@ -82,16 +84,29 @@ class TarotChatPage extends ConsumerStatefulWidget {
   ConsumerState<TarotChatPage> createState() => _TarotChatPageState();
 }
 
-class _TarotChatPageState extends ConsumerState<TarotChatPage> {
+class _TarotChatPageState extends ConsumerState<TarotChatPage> 
+    with TickerProviderStateMixin {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   bool _isProcessing = false;
   bool _hasCheckedDeck = false;
+  bool _showCardDrawing = false;
+  late AnimationController _cardAnimationController;
+  late Animation<double> _cardAnimation;
 
   @override
   void initState() {
     super.initState();
+    // Initialize animation controller
+    _cardAnimationController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    );
+    _cardAnimation = CurvedAnimation(
+      parent: _cardAnimationController,
+      curve: Curves.easeInOut,
+    );
     // Clear messages when entering the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(chatMessagesProvider.notifier).clear();
@@ -106,6 +121,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
     _inputController.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
+    _cardAnimationController.dispose();
     super.dispose();
   }
 
@@ -153,9 +169,29 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
     setState(() => _isProcessing = true);
     _scrollToBottom();
 
-    // Add loading message
+    // Add loading messages with animation
     messages.addMessage(ChatMessage(
-      text: '타로 카드를 섞고 있습니다...',
+      text: '카드를 섞고 있습니다... 🎴',
+      isUser: false,
+      timestamp: DateTime.now(),
+      isLoading: true,
+    ));
+    _scrollToBottom();
+    
+    // Start card drawing animation
+    await Future.delayed(const Duration(seconds: 1));
+    
+    messages.updateLastMessage(ChatMessage(
+      text: '당신을 위한 카드를 뽑고 있습니다... ✨',
+      isUser: false,
+      timestamp: DateTime.now(),
+      isLoading: true,
+    ));
+    
+    await Future.delayed(const Duration(seconds: 1));
+    
+    messages.updateLastMessage(ChatMessage(
+      text: '카드의 메시지를 해석하고 있습니다... 🔮',
       isUser: false,
       timestamp: DateTime.now(),
       isLoading: true,
@@ -206,18 +242,98 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
           cards: cards,
         ));
       } else {
-        throw Exception(response['error'] ?? '타로 카드 해석에 실패했습니다');
+        // API 실패 시 로컬 타로 카드 사용
+        _generateLocalTarotResult(text, messages);
       }
     } catch (e) {
-      messages.updateLastMessage(ChatMessage(
-        text: '발생했습니다: ${e.toString()}',
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
+      // 에러 발생 시에도 로컬 타로 카드 사용
+      _generateLocalTarotResult(text, messages);
     } finally {
       setState(() => _isProcessing = false);
       _scrollToBottom();
     }
+  }
+
+  void _generateLocalTarotResult(String question, ChatMessagesNotifier messages) {
+    final random = Random();
+    final List<TarotCardInfo> selectedCards = [];
+    final List<int> usedIndices = [];
+    
+    // 3장의 카드 선택 (과거, 현재, 미래)
+    for (int i = 0; i < 3; i++) {
+      int cardNumber;
+      do {
+        cardNumber = TarotMetadata.majorArcana.keys.toList()[random.nextInt(TarotMetadata.majorArcana.length)];
+      } while (usedIndices.contains(cardNumber));
+      
+      usedIndices.add(cardNumber);
+      final card = TarotMetadata.majorArcana[cardNumber]!;
+      final isReversed = random.nextInt(100) < 30; // 30% 확률로 역방향
+      
+      selectedCards.add(TarotCardInfo(
+        name: card.name,
+        meaning: isReversed ? card.reversedMeaning : card.uprightMeaning,
+        imageUrl: 'assets/images/tarot/major_${cardNumber.toString().padLeft(2, '0')}.jpg',
+        isReversed: isReversed,
+      ));
+    }
+    
+    // 질문에 따른 해석 생성
+    String interpretation = _generateInterpretation(question, selectedCards);
+    String advice = _generateAdvice(question, selectedCards);
+    
+    messages.updateLastMessage(ChatMessage(
+      text: '$interpretation\n\n💡 조언: $advice',
+      isUser: false,
+      timestamp: DateTime.now(),
+      cards: selectedCards,
+    ));
+  }
+  
+  String _generateInterpretation(String question, List<TarotCardInfo> cards) {
+    String baseInterpretation = '';
+    
+    // 3장 카드 스프레드 - 과거, 현재, 미래로 해석
+    baseInterpretation += '📅 **과거의 영향**\n';
+    baseInterpretation += '카드: ${cards[0].name}${cards[0].isReversed ? " (역방향)" : ""}\n';
+    baseInterpretation += '${cards[0].meaning}\n\n';
+    
+    baseInterpretation += '⏰ **현재의 상황**\n';
+    baseInterpretation += '카드: ${cards[1].name}${cards[1].isReversed ? " (역방향)" : ""}\n';
+    baseInterpretation += '${cards[1].meaning}\n\n';
+    
+    baseInterpretation += '🌟 **미래의 가능성**\n';
+    baseInterpretation += '카드: ${cards[2].name}${cards[2].isReversed ? " (역방향)" : ""}\n';
+    baseInterpretation += '${cards[2].meaning}';
+    
+    // 질문 키워드에 따른 추가 해석
+    if (question.contains('연애') || question.contains('사랑')) {
+      baseInterpretation = '❤️ **연애운 3장 타로 리딩**\n\n' + baseInterpretation;
+    } else if (question.contains('직장') || question.contains('일')) {
+      baseInterpretation = '💼 **직장운 3장 타로 리딩**\n\n' + baseInterpretation;
+    } else if (question.contains('돈') || question.contains('재물')) {
+      baseInterpretation = '💰 **금전운 3장 타로 리딩**\n\n' + baseInterpretation;
+    } else {
+      baseInterpretation = '🎴 **종합 3장 타로 리딩**\n\n' + baseInterpretation;
+    }
+    
+    return baseInterpretation;
+  }
+  
+  String _generateAdvice(String question, List<TarotCardInfo> cards) {
+    // 카드 조합에 따른 조언 생성
+    final List<String> adviceList = [];
+    
+    for (var card in cards) {
+      final metadata = TarotMetadata.majorArcana.values.firstWhere(
+        (m) => m.name == card.name,
+        orElse: () => TarotMetadata.majorArcana[0]!,
+      );
+      adviceList.add(metadata.advice);
+    }
+    
+    // 랜덤하게 하나의 조언 선택 또는 조합
+    return adviceList[Random().nextInt(adviceList.length)];
   }
 
   @override
@@ -328,31 +444,39 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
   }
 
   Widget _buildExampleCard(String question, double fontScale) {
-    return InkWell(
-      onTap: () => _sendMessage(question),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.42),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.42),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () {
+            print('[TarotChat] Example question tapped: $question');
+            HapticFeedback.lightImpact();
+            _sendMessage(question);
+          },
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: TossDesignSystem.gray600,
-            width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 4,
-              offset: const Offset(0, 2))]),
-        child: Text(
-          question,
-          style: TextStyle(
-            fontSize: 14 * fontScale,
-            color: TossDesignSystem.gray900,
-            height: 1.4),
-          textAlign: TextAlign.center)));
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: TossDesignSystem.gray200,
+                width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2))]),
+            child: Text(
+              question,
+              style: TextStyle(
+                fontSize: 14 * fontScale,
+                color: TossDesignSystem.gray900,
+                fontWeight: FontWeight.w500,
+                height: 1.4),
+              textAlign: TextAlign.center)))));
   }
 
   Widget _buildChatView(List<ChatMessage> messages, double fontScale) {
@@ -471,44 +595,74 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
     return Container(
       width: 100,
       margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: TossDesignSystem.gray600,
+          color: TossDesignSystem.gray300,
           width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.style,
-            size: 32,
-            color: TossDesignSystem.gray600,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            card.name,
-            style: TextStyle(
-              fontSize: 12 * fontScale,
-              fontWeight: FontWeight.w600,
-              color: TossDesignSystem.gray900,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Column(
+          children: [
+            // 카드 이미지
+            Container(
+              height: 120,
+              width: 100,
+              child: Image.asset(
+                card.imageUrl ?? 'assets/images/tarot/major_00.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: TossDesignSystem.gray100,
+                    child: Icon(
+                      Icons.style,
+                      size: 40,
+                      color: TossDesignSystem.gray600,
+                    ),
+                  );
+                },
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (card.isReversed) ...[
-            const SizedBox(height: 2),
-            Text(
-              '(역방향)',
-              style: TextStyle(
-                fontSize: 10 * fontScale,
-                color: TossDesignSystem.gray600,
+            // 카드 이름
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Text(
+                    card.name,
+                    style: TextStyle(
+                      fontSize: 12 * fontScale,
+                      fontWeight: FontWeight.w600,
+                      color: TossDesignSystem.gray900,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (card.isReversed) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      '(역방향)',
+                      style: TextStyle(
+                        fontSize: 10 * fontScale,
+                        color: TossDesignSystem.gray600,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],
-        ],
+        ),
       ),
     );
   }

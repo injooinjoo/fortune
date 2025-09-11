@@ -157,7 +157,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             onPressed: onShare,
             style: TossButtonStyle.primary,
             size: TossButtonSize.medium,
-            icon: Icons.share,
+            icon: Icon(Icons.share),
           ),
           const SizedBox(height: 24),
         ],

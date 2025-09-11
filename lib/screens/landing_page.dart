@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,20 +24,25 @@ class LandingPage extends ConsumerStatefulWidget {
   ConsumerState<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends ConsumerState<LandingPage> {
+class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingObserver {
   bool _isCheckingAuth = true;
   bool _isAuthProcessing = false;
   final _authService = AuthService();
   late final SocialAuthService _socialAuthService;
   final _storageService = StorageService();
+  Timer? _authTimeoutTimer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     
     // 상태 초기화 명확히 하기
     _isAuthProcessing = false;
     print('🔵 initState: _isAuthProcessing initialized to false');
+    
+    // WidgetsBinding observer 추가
+    WidgetsBinding.instance.addObserver(this);
     
     _socialAuthService = SocialAuthService(Supabase.instance.client);
     _checkAuthState();
@@ -60,6 +66,76 @@ class _LandingPageState extends ConsumerState<LandingPage> {
           debugPrint('Profile complete, redirecting to home...');
           context.go('/home');
         }
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // 페이지로 돌아왔을 때 OAuth 상태 체크
+    if (_isAuthProcessing) {
+      // 세션이 없으면 OAuth가 취소된 것으로 판단
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session == null) {
+        debugPrint('🔄 Page resumed with no session - resetting auth state');
+        _resetAuthProcessing();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _authTimeoutTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // 앱이 다시 활성화될 때
+      if (_isAuthProcessing) {
+        // OAuth 프로세스 중이었다면, 짧은 지연 후 상태 체크
+        Future.delayed(const Duration(seconds: 1), () {
+          // 세션이 없으면 OAuth가 취소된 것으로 판단
+          final session = Supabase.instance.client.auth.currentSession;
+          if (session == null && _isAuthProcessing && mounted) {
+            debugPrint('OAuth cancelled - returning to login screen');
+            _resetAuthProcessing();
+          }
+        });
+      }
+    }
+  }
+
+  void _resetAuthProcessing() {
+    debugPrint('🔄 _resetAuthProcessing called - _isAuthProcessing: $_isAuthProcessing');
+    if (mounted) {
+      setState(() {
+        _isAuthProcessing = false;
+      });
+      _authTimeoutTimer?.cancel();
+      debugPrint('🔄 Auth processing reset complete');
+      
+      // 사용자에게 취소되었음을 알림
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그인이 취소되었습니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _startAuthTimeout() {
+    _authTimeoutTimer?.cancel();
+    _authTimeoutTimer = Timer(const Duration(seconds: 15), () {
+      if (_isAuthProcessing && mounted) {
+        debugPrint('OAuth timeout - resetting auth state');
+        _resetAuthProcessing();
       }
     });
   }
@@ -265,19 +341,37 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     
     print('🍎 Setting _isAuthProcessing to true');
     setState(() => _isAuthProcessing = true);
+    _startAuthTimeout(); // 타임아웃 시작
     
     try {
-      print('🍎 Calling _authService.signInWithApple()');
-      // Apple OAuth 로그인
-      await _authService.signInWithApple();
+      print('🍎 Calling _socialAuthService.signInWithApple()');
+      // Apple OAuth 로그인 - SocialAuthService 사용
+      final result = await _socialAuthService.signInWithApple();
       
-      print('🍎 signInWithApple() completed successfully');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Apple 로그인을 처리하고 있습니다...'),
-          ),
-        );
+      print('🍎 signInWithApple() result: $result');
+      
+      if (result != null) {
+        // Native Apple Sign-In 성공
+        print('🍎 Native Apple Sign-In successful');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Apple 로그인 성공!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        // OAuth flow - 브라우저로 리다이렉트됨
+        print('🍎 OAuth flow initiated');
+        // _startAuthTimeout(); // 이미 시작됨
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Apple 로그인을 처리하고 있습니다...'),
+            ),
+          );
+        }
       }
     } catch (e) {
       print('🍎 Apple login error: $e');
@@ -300,17 +394,32 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     if (_isAuthProcessing) return;
     
     setState(() => _isAuthProcessing = true);
+    _startAuthTimeout(); // 타임아웃 시작
     
     try {
-      // Naver OAuth 로그인
-      await _authService.signInWithNaver();
+      // Naver OAuth 로그인 - SocialAuthService 사용
+      final result = await _socialAuthService.signInWithNaver();
       
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('네이버 로그인을 처리하고 있습니다...')
-          )
-        );
+      if (result != null) {
+        // Naver Sign-In 성공
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('네이버 로그인 성공!'),
+              backgroundColor: Colors.green,
+            )
+          );
+        }
+      } else {
+        // OAuth 방식인 경우
+        // _startAuthTimeout(); // 이미 시작됨
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('네이버 로그인을 처리하고 있습니다...')
+            )
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');
@@ -379,15 +488,23 @@ class _LandingPageState extends ConsumerState<LandingPage> {
   }
 
   void _showSocialLoginBottomSheet() async {
-    showModalBottomSheet(
+    // Modal 표시 전에 항상 인증 상태 초기화
+    if (_isAuthProcessing) {
+      setState(() => _isAuthProcessing = false);
+      _authTimeoutTimer?.cancel();
+    }
+    
+    // Modal이 닫힐 때 처리하는 로직 추가
+    final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.9,
-        builder: (context, scrollController) => Container(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.only(
@@ -518,15 +635,25 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               ),
             ],
           ),
+          ),
         ),
       ),
     );
+    
+    // Modal이 닫힌 후 처리
+    // result가 null이면 사용자가 직접 modal을 닫은 것
+    // _isAuthProcessing이 true이면 OAuth 진행 중이었던 것
+    if (result == null && _isAuthProcessing) {
+      // OAuth 진행 중에 modal이 닫혔다면 상태 초기화
+      _resetAuthProcessing();
+    }
   }
 
   Future<void> _handleSocialLogin(String provider) async {
     if (_isAuthProcessing) return;
     
     setState(() => _isAuthProcessing = true);
+    _startAuthTimeout(); // 모든 소셜 로그인에 타임아웃 적용
     
     try {
       if (provider == 'Google') {
@@ -670,6 +797,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
           } else {
             // OAuth 방식인 경우 (response == null)
             debugPrint('🟡 Kakao OAuth flow initiated, waiting for callback...');
+            // _startAuthTimeout(); 이미 _handleSocialLogin에서 시작됨
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -721,6 +849,18 @@ class _LandingPageState extends ConsumerState<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Build 시마다 OAuth 상태 체크
+    if (_isAuthProcessing) {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session == null) {
+        // 세션이 없는데 아직 processing 중이면 즉시 리셋
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          debugPrint('🔄 Build detected no session while auth processing - resetting');
+          _resetAuthProcessing();
+        });
+      }
+    }
+    
     if (_isCheckingAuth) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -36,36 +37,40 @@ class _PastLifeInputForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        Text(
-          '당신의 전생을 확인해보세요!\n과거의 인연과 현생의 과업을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
-            height: 1.5,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '당신의 전생을 확인해보세요!\n과거의 인연과 현생의 과업을 알려드립니다.',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            
+            Center(
+              child: Icon(
+                Icons.history,
+                size: 120,
+                color: theme.colorScheme.primary.withOpacity(0.3),
+              ),
+            ),
+            
+            // 하단 버튼 공간만큼 여백 추가
+            const BottomButtonSpacing(),
+          ],
         ),
-        const SizedBox(height: 32),
         
-        Center(
-          child: Icon(
-            Icons.history,
-            size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3),
-          ),
-        ),
-        
-        const SizedBox(height: 32),
-        
-        Center(
-          child: TossButton(
-            text: '운세 확인하기',
-            onPressed: () => onSubmit({}),
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            icon: Icons.history,
-          ),
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '운세 확인하기',
+          onPressed: () => onSubmit({}),
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.history),
         ),
       ],
     );

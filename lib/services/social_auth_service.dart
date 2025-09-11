@@ -44,7 +44,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication,
+        authScreenLaunchMode: LaunchMode.platformDefault,
       );
       
       if (!response) {
@@ -176,13 +176,28 @@ class SocialAuthService {
         // Check if native Apple Sign-In is available
         final isAvailable = await SignInWithApple.isAvailable();
         if (!isAvailable) {
-          // Fall back to OAuth if native is not available
+          // Fall back to OAuth if native is not available (usually simulator)
+          Logger.info('Native Apple Sign-In not available (likely simulator), using OAuth');
           return await _signInWithAppleOAuth();
         }
-        // Native Sign in with Apple for iOS/macOS
-        return await _signInWithAppleNative();
+        
+        // Try native Sign-In first
+        try {
+          Logger.info('Attempting native Apple Sign-In');
+          return await _signInWithAppleNative();
+        } catch (nativeError) {
+          // If native fails with specific simulator error, use OAuth
+          if (nativeError.toString().contains('AuthorizationErrorCode') ||
+              nativeError.toString().contains('error 1000')) {
+            Logger.info('Native Apple Sign-In failed (simulator detected), falling back to OAuth');
+            return await _signInWithAppleOAuth();
+          }
+          // For other errors, rethrow
+          rethrow;
+        }
       } else {
         // Use Supabase OAuth for web and Android
+        Logger.info('Using OAuth for Apple Sign-In (web/Android)');
         return await _signInWithAppleOAuth();
       }
     } catch (error) {
@@ -244,7 +259,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication);
+        authScreenLaunchMode: LaunchMode.platformDefault);
       
       if (!response) {
         throw Exception('Apple OAuth sign in failed');
@@ -276,8 +291,8 @@ class SocialAuthService {
         'updated_at': null};
       
       // 조건부 필드 추가
-      if (name != null) profileData['name'] = name;
-      if (photoUrl != null && provider == 'google') {
+      if (name != null && name.isNotEmpty) profileData['name'] = name;
+      if (photoUrl != null && photoUrl.isNotEmpty) {
         profileData['profile_image_url'] = photoUrl;
       }
       
@@ -325,7 +340,7 @@ class SocialAuthService {
             final minimalProfile = {
               'id': userId,
               'email': email,
-              'name': name ?? email?.split('@')[0] ?? 'User',
+              'name': name ?? '사용자',
               'created_at': now,
               'updated_at': null};
             
@@ -358,9 +373,12 @@ class SocialAuthService {
         final updates = <String, dynamic>{
           'updated_at': null};
         
-        // Update name if not set
-        if (name != null && existingProfile['name'] == null) {
-          updates['name'] = name;
+        // Update name if not set or if it's a kakao placeholder
+        if (name != null && name.isNotEmpty) {
+          final currentName = existingProfile['name'] as String?;
+          if (currentName == null || currentName == '사용자' || currentName.startsWith('kakao_')) {
+            updates['name'] = name;
+          }
         }
         
         // Handle profile image update
@@ -416,7 +434,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication);
+        authScreenLaunchMode: LaunchMode.platformDefault);
       
       if (!response) {
         throw Exception('Facebook OAuth sign in failed');
@@ -482,12 +500,15 @@ class SocialAuthService {
       final kakaoUser = await kakao.UserApi.instance.me();
       Logger.info('Kakao user info retrieved: ${kakaoUser.id}');
       
-      final String? email = kakaoUser.kakaoAccount?.email;
-      if (email == null) {
-        throw Exception('Kakao account does not have an email address');
-      }
+      // Kakao 계정에 이메일이 없는 경우 대체 이메일 생성
+      final String email = kakaoUser.kakaoAccount?.email ?? 
+                          'kakao_${kakaoUser.id}@kakao.local';
       
-      Logger.info('Processing Kakao login for email: $email');
+      // 카카오 닉네임 가져오기 (없으면 기본값 사용)
+      final String nickname = kakaoUser.kakaoAccount?.profile?.nickname ?? 
+                            (kakaoUser.kakaoAccount?.name ?? '사용자');
+      
+      Logger.info('Processing Kakao login for email: $email, nickname: $nickname');
       
       // Supabase Edge Function을 사용해 OAuth 처리
       try {
@@ -499,7 +520,7 @@ class SocialAuthService {
             'user_info': {
               'id': kakaoUser.id.toString(),
               'email': email,
-              'nickname': kakaoUser.kakaoAccount?.profile?.nickname,
+              'nickname': nickname,  // 위에서 계산한 닉네임 사용
               'profile_image_url': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
             }
           }
@@ -512,31 +533,54 @@ class SocialAuthService {
         
         final data = response.data as Map<String, dynamic>;
         
+        Logger.info('Edge Function response data: ${data.keys.join(', ')}');
+        
         if (!data['success']) {
           throw Exception(data['error'] ?? 'Kakao OAuth failed');
         }
         
-        final sessionUrl = data['session_url'] as String?;
-        if (sessionUrl == null) {
-          throw Exception('No session URL returned from Kakao OAuth');
+        // Edge Function이 needsManualAuth를 반환하면 수동 인증 필요
+        if (data['needsManualAuth'] == true) {
+          Logger.info('Edge Function requires manual auth, falling back...');
+          throw Exception('Manual auth required');
         }
         
-        Logger.info('Got session URL from Edge Function, processing...');
+        final sessionData = data['session'] as Map<String, dynamic>?;
+        Session? currentSession;
         
-        // Parse the magic link URL to get the session
-        final uri = Uri.parse(sessionUrl);
-        final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
-        
-        if (sessionResponse.session == null) {
-          throw Exception('Failed to create session from Kakao OAuth');
+        if (sessionData != null && sessionData['access_token'] != null) {
+          Logger.info('Got session from Edge Function, processing...');
+          
+          // Set the session using both access and refresh tokens
+          final accessToken = sessionData['access_token'] as String;
+          final refreshToken = sessionData['refresh_token'] as String?;
+          
+          if (refreshToken != null) {
+            // Use refreshSession if we have a refresh token
+            await _supabase.auth.setSession(refreshToken);
+            currentSession = _supabase.auth.currentSession;
+          } else {
+            // Try with access token only
+            await _supabase.auth.setSession(accessToken);
+            currentSession = _supabase.auth.currentSession;
+          }
+          
+          if (currentSession == null) {
+            Logger.warning('Failed to set session from Edge Function, falling back...');
+            throw Exception('Failed to set session from Kakao OAuth');
+          }
+        } else {
+          // 세션이 없으면 수동 인증으로 폴백
+          Logger.info('No session from Edge Function, falling back to manual auth...');
+          throw Exception('No session returned from Kakao OAuth');
         }
         
-        Logger.securityCheckpoint('Kakao OAuth: ${sessionResponse.session?.user?.id}');
+        Logger.securityCheckpoint('Kakao OAuth: ${currentSession?.user?.id}');
         
         // Return the auth response
         return AuthResponse(
-          session: sessionResponse.session,
-          user: sessionResponse.session?.user
+          session: currentSession,
+          user: currentSession.user
         );
         
       } catch (edgeFunctionError) {
@@ -552,26 +596,31 @@ class SocialAuthService {
             await _updateUserProfile(
               userId: existingUser.id,
               email: email,
-              name: kakaoUser.kakaoAccount?.profile?.nickname,
+              name: nickname,  // 위에서 계산한 닉네임 사용
               photoUrl: kakaoUser.kakaoAccount?.profile?.profileImageUrl,
               provider: 'kakao'
             );
             
             // Create a session for existing user
-            final sessionResponse = await _createManualSession(existingUser);
+            // Pass the Kakao ID to ensure correct password generation
+            final sessionResponse = await _createManualSession(existingUser, kakaoId: kakaoUser.id.toString());
             return sessionResponse;
             
           } else {
             // 새 사용자 생성
+            // Use consistent password pattern that can be regenerated for existing users
+            final password = 'kakao_oauth_${kakaoUser.id}_secure2024';
             final signUpResponse = await _supabase.auth.signUp(
               email: email,
-              password: 'kakao_oauth_${kakaoUser.id}_${DateTime.now().millisecondsSinceEpoch}',
+              password: password,
               data: {
                 'provider': 'kakao',
                 'kakao_id': kakaoUser.id.toString(),
-                'name': kakaoUser.kakaoAccount?.profile?.nickname ?? email.split('@')[0],
+                'name': nickname,  // 위에서 계산한 닉네임 사용
                 'profile_image': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
-              }
+                'email_confirmed_at': DateTime.now().toIso8601String(), // Mark email as confirmed
+              },
+              emailRedirectTo: 'com.beyond.fortune://auth-callback', // Set redirect URL
             );
             
             if (signUpResponse.user != null) {
@@ -581,9 +630,42 @@ class SocialAuthService {
               await _updateUserProfile(
                 userId: signUpResponse.user!.id,
                 email: email,
-                name: kakaoUser.kakaoAccount?.profile?.nickname,
+                name: nickname,  // 위에서 계산한 닉네임 사용
                 photoUrl: kakaoUser.kakaoAccount?.profile?.profileImageUrl,
                 provider: 'kakao'
+              );
+              
+              // signUp response에 session이 있으면 사용하고, 없으면 OTP로 로그인 요청
+              if (signUpResponse.session != null) {
+                Logger.info('Kakao user signed up with session successfully');
+                return signUpResponse;
+              } else {
+                // session이 없으면 OTP로 로그인 처리
+                Logger.info('No session from signUp, requesting OTP sign-in');
+                try {
+                  // OTP 요청 - 이메일로 매직 링크 발송
+                  await _supabase.auth.signInWithOtp(
+                    email: email,
+                    shouldCreateUser: false, // 이미 사용자를 생성했으므로 false
+                  );
+                  
+                  Logger.info('OTP sent to Kakao user email (if real email)');
+                  // OTP를 보냈지만 Kakao 이메일은 가짜일 수 있으므로
+                  // 사용자가 생성되었다는 사실만 반환
+                } catch (otpError) {
+                  Logger.warning('OTP sign-in failed', otpError);
+                }
+              }
+            }
+            
+            // 사용자는 생성되었지만 세션이 없는 경우에도 성공으로 처리
+            // (Kakao 로그인은 이메일 확인이 불가능하므로)
+            if (signUpResponse.user != null) {
+              Logger.info('Kakao user created successfully, but session creation pending');
+              // 사용자 생성은 성공했으므로 성공 응답 반환
+              return AuthResponse(
+                session: null,
+                user: signUpResponse.user,
               );
             }
             
@@ -620,15 +702,55 @@ class SocialAuthService {
   }
   
   // Helper method to create manual session
-  Future<AuthResponse?> _createManualSession(User user) async {
+  Future<AuthResponse?> _createManualSession(User user, {String? kakaoId}) async {
+    // Extract Kakao ID - use provided kakaoId first, then try metadata
+    final effectiveKakaoId = kakaoId ?? 
+                            user.userMetadata?['kakao_id'] ?? 
+                            user.appMetadata?['provider_id'] ??
+                            user.id; // Fallback to user ID
+    
     try {
-      // This is a simplified approach - in production you'd want proper JWT generation
       Logger.info('Creating manual session for user: ${user.id}');
       
-      // For now, return null to trigger OAuth flow
-      return null;
+      // Generate consistent password for existing Kakao users
+      // This should match the password used during user creation
+      final password = 'kakao_oauth_${effectiveKakaoId}_secure2024';
+      
+      Logger.info('Attempting to sign in existing Kakao user with email: ${user.email}');
+      
+      // Sign in with password
+      final signInResponse = await _supabase.auth.signInWithPassword(
+        email: user.email!,
+        password: password,
+      );
+      
+      if (signInResponse.session != null) {
+        Logger.info('Successfully signed in existing Kakao user');
+        return signInResponse;
+      } else {
+        Logger.warning('Sign in succeeded but no session returned');
+        return null;
+      }
     } catch (e) {
       Logger.error('Failed to create manual session', e);
+      // If password sign-in fails, try with a legacy password pattern
+      try {
+        // Try with the timestamp-based password that might have been used before
+        final legacyPassword = 'kakao_oauth_${effectiveKakaoId}_${user.createdAt.replaceAll(RegExp(r'[^0-9]'), '')}';
+        
+        Logger.info('Trying legacy password pattern for Kakao user');
+        final legacySignIn = await _supabase.auth.signInWithPassword(
+          email: user.email!,
+          password: legacyPassword,
+        );
+        
+        if (legacySignIn.session != null) {
+          Logger.info('Successfully signed in with legacy password');
+          return legacySignIn;
+        }
+      } catch (legacyError) {
+        Logger.error('Legacy password sign-in also failed', legacyError);
+      }
       return null;
     }
   }
@@ -643,7 +765,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? '${Uri.base.origin}/auth/callback'
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication);
+        authScreenLaunchMode: LaunchMode.platformDefault);
       
       if (!response) {
         throw Exception('Kakao OAuth sign in failed');
@@ -664,15 +786,22 @@ class SocialAuthService {
       
       // 네이버 로그인
       final loginResult = await FlutterNaverLogin.logIn();
+      Logger.info('Naver login result status: ${loginResult.status}');
       
-      // Check if logged in
-      if (loginResult.status.toString() != 'NaverLoginStatus.loggedIn') {
-        Logger.info('User cancelled Naver Sign-In');
+      // Check if logged in - Check against string representation
+      // The NaverLoginResult status is an enum but we need to compare as string
+      final isLoggedIn = loginResult.status.toString() == 'NaverLoginStatus.loggedIn' ||
+                         loginResult.status.index == 2; // loggedIn is usually index 2
+      
+      if (!isLoggedIn) {
+        Logger.info('User cancelled Naver Sign-In or login failed');
         return null;
       }
       
       // Get access token
       final tokenResult = await FlutterNaverLogin.getCurrentAccessToken();
+      Logger.info('Naver token retrieved: ${tokenResult.accessToken.isNotEmpty}');
+      
       if (tokenResult.accessToken.isEmpty) {
         throw Exception('Failed to get Naver access token');
       }

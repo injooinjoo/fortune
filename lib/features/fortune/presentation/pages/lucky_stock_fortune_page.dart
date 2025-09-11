@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -36,9 +37,11 @@ class _LuckyStockInputForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
         Text(
           '오늘의 주식 투자 운세를 확인해보세요!\n매수/매도 타이밍과 유망 섹터를 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
@@ -56,16 +59,20 @@ class _LuckyStockInputForm extends StatelessWidget {
           ),
         ),
         
-        const SizedBox(height: 32),
+            const SizedBox(height: 32),
+            
+            // 하단 버튼 공간만큼 여백 추가
+            const BottomButtonSpacing(),
+          ],
+        ),
         
-        Center(
-          child: TossButton(
-            text: '투자 운세 확인하기',
-            onPressed: () => onSubmit({}),
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            icon: Icons.trending_up,
-          ),
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '투자 운세 확인하기',
+          onPressed: () => onSubmit({}),
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.trending_up),
         ),
       ],
     );

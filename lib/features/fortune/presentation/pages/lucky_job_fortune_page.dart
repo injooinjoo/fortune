@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -67,10 +68,12 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
-    return GlassContainer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Stack(
+      children: [
+        GlassContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           const Text(
             '당신의 천직 찾기',
             style: TextStyle(
@@ -229,29 +232,31 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               ),
             ),
           ],
-          
-          const SizedBox(height: 24),
-          
-          // Submit button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '천직 찾기',
-              onPressed: _canSubmit()
-                  ? () => onSubmit({
-                        'name': _name,
-                        'birthdate': _birthdate!.toIso8601String(),
-                        'current_status': _currentStatus,
-                        'interests': _interests,
-                      })
-                  : null,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-              icon: Icons.work_outline,
-            ),
+              
+              const SizedBox(height: 24),
+              
+              // 하단 버튼 공간만큼 여백 추가
+              const BottomButtonSpacing(),
+            ],
           ),
-        ],
-      ),
+        ),
+        
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '천직 찾기',
+          onPressed: _canSubmit()
+              ? () => onSubmit({
+                    'name': _name,
+                    'birthdate': _birthdate!.toIso8601String(),
+                    'current_status': _currentStatus,
+                    'interests': _interests,
+                  })
+              : null,
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.work_outline),
+        ),
+      ],
     );
   }
   

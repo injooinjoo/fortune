@@ -14,6 +14,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/services/holiday_service.dart';
 import '../../core/models/holiday_models.dart';
+import '../../shared/components/toss_button.dart';
 
 class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
   final VoidCallback? onDismiss;
@@ -617,56 +618,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           ),
         ],
       ),
-      child: ElevatedButton(
+      child: TossButton(
+        text: canGetFortune 
+            ? '운세 보기'
+            : (_selectedDay == null 
+                ? '날짜를 선택해주세요'
+                : '선택할 수 없는 날짜입니다'),
         onPressed: (canGetFortune && !_isLoadingFortune) ? _onFortuneButtonPressed : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: canGetFortune ? TossDesignSystem.gray600 : Colors.grey.shade400,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(56),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: canGetFortune ? 4 : 0,
-          shadowColor: TossDesignSystem.gray600.withOpacity(0.3),
-        ),
-        child: _isLoadingFortune
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '광고 로딩 중...',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.auto_awesome, size: 20, color: Colors.white),
-                  const SizedBox(width: 12),
-                  Text(
-                    canGetFortune 
-                        ? '운세 보기'
-                        : (_selectedDay == null 
-                            ? '날짜를 선택해주세요'
-                            : '선택할 수 없는 날짜입니다'),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+        style: TossButtonStyle.primary,
+        size: TossButtonSize.large,
+        isLoading: _isLoadingFortune,
+        isEnabled: canGetFortune && !_isLoadingFortune,
+        icon: !_isLoadingFortune ? const Icon(Icons.auto_awesome, size: 20, color: Colors.white) : null,
+        width: double.infinity,
       ),
     );
   }

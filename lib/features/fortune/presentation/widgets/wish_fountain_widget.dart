@@ -216,7 +216,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
               onPressed: widget.onWriteWish,
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,
-              icon: Icons.edit,
+              icon: Icon(Icons.edit),
             ),
           ),
           
@@ -231,7 +231,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                 onPressed: widget.isThrowingCoin ? null : widget.onThrowCoin,
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.large,
-                icon: widget.isThrowingCoin ? null : Icons.toll,
+                icon: widget.isThrowingCoin ? null : Icon(Icons.toll),
               ),
             ),
           ],

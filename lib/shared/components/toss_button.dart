@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import 'loading_dots.dart';
 
 /// 토스 스타일 버튼
 /// Primary, Secondary, Ghost, Text 스타일 지원
@@ -130,30 +131,26 @@ class TossButton extends StatelessWidget {
     
     final effectiveEnabled = isEnabled && !isLoading && onPressed != null;
     
-    Widget child = Row(
-      mainAxisSize: width != null ? MainAxisSize.max : MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (isLoading)
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(_getTextColor(isDark, effectiveEnabled)),
-            ),
+    Widget child = isLoading
+        ? LoadingDots(
+            color: _getTextColor(isDark, effectiveEnabled),
+            size: 6,
           )
-        else if (icon != null)
-          icon!,
-        if ((icon != null || isLoading) && text.isNotEmpty)
-          const SizedBox(width: TossDesignSystem.spacingXS),
-        if (text.isNotEmpty)
-          Text(
-            text,
-            style: _getTextStyle(isDark, effectiveEnabled),
-          ),
-      ],
-    );
+        : Row(
+            mainAxisSize: width != null ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                icon!,
+                if (text.isNotEmpty) const SizedBox(width: TossDesignSystem.spacingXS),
+              ],
+              if (text.isNotEmpty)
+                Text(
+                  text,
+                  style: _getTextStyle(isDark, effectiveEnabled),
+                ),
+            ],
+          );
     
     Widget button;
     

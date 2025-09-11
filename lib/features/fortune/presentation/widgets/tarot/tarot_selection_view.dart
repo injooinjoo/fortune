@@ -35,25 +35,35 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
   bool _isShuffling = false;
 
   void _handleCardSelection(int index) {
-    print('Fortune cached');
-    print('Fortune cached');
-    print('cards: ${widget.requiredCards}');
+    print('[TarotSelection] Card selected: $index');
+    print('[TarotSelection] Current selection: $_selectedCards');
+    print('[TarotSelection] Required cards: ${widget.requiredCards}');
     
     if (_selectedCards.contains(index)) {
+      // 카드 선택 해제
       setState(() {
         _selectedCards.remove(index);
       });
+      print('[TarotSelection] Card $index deselected');
     } else if (_selectedCards.length < widget.requiredCards) {
+      // 새 카드 선택
       setState(() {
         _selectedCards.add(index);
       });
+      print('[TarotSelection] Card $index selected (${_selectedCards.length}/${widget.requiredCards})');
       
       // Check if selection is complete
       if (_selectedCards.length == widget.requiredCards) {
-        Future.delayed(const Duration(milliseconds: 500), () {
-          widget.onSelectionComplete(_selectedCards);
+        print('[TarotSelection] Selection complete! Proceeding...');
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (mounted) {
+            widget.onSelectionComplete(_selectedCards);
+          }
         });
       }
+    } else {
+      // 이미 필요한 수만큼 선택됨
+      print('[TarotSelection] Maximum cards already selected');
     }
   }
 
@@ -106,6 +116,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                     onCardSelected: _handleCardSelection,
                     selectedIndices: _selectedCards,
                     spreadType: SpreadType.fan,
+                    enableSelection: true, // 카드 선택 활성화
                   ),
           ),
         ),
@@ -226,9 +237,9 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
             child: TossButton(
               text: '카드 섞기',
               onPressed: _isShuffling ? null : _shuffleCards,
-              style: TossButtonStyle.outlined,
+              style: TossButtonStyle.ghost,
               size: TossButtonSize.medium,
-              icon: Icons.shuffle,
+              icon: Icon(Icons.shuffle),
             ),
           ),
           const SizedBox(width: 16),
@@ -242,7 +253,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               },
               style: TossButtonStyle.primary,
               size: TossButtonSize.medium,
-              icon: Icons.refresh,
+              icon: Icon(Icons.refresh),
             ),
           ),
         ],

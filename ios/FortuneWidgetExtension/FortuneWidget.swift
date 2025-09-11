@@ -3,6 +3,7 @@ import SwiftUI
 
 @main
 struct FortuneWidgetBundle: WidgetBundle {
+    @WidgetBundleBuilder
     var body: some Widget {
         // Daily Fortune Widget
         FortuneWidget()

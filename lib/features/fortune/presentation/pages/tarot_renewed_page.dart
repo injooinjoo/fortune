@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as dart_math;
+import 'dart:math';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/constants/tarot_metadata.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_loading_button.dart';
 import '../widgets/tarot/tarot_result_card.dart';
@@ -375,15 +377,53 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   void _generateTarotResult() {
     if (!mounted) return;
     
-    // 임시 결과 데이터 (실제로는 API 호출)
+    // 랜덤하게 메이저 아르카나 카드 선택
+    final random = Random();
+    final cardNumbers = TarotMetadata.majorArcana.keys.toList();
+    final selectedCardNumber = cardNumbers[random.nextInt(cardNumbers.length)];
+    final selectedCard = TarotMetadata.majorArcana[selectedCardNumber]!;
+    
+    // 질문에 따른 해석 커스터마이징
+    String interpretation = selectedCard.uprightMeaning;
+    String advice = selectedCard.advice;
+    
+    if (_selectedQuestion != null || _customQuestion != null) {
+      final question = _selectedQuestion ?? _customQuestion ?? '';
+      
+      // 질문 키워드에 따른 해석 조정
+      if (question.contains('연애') || question.contains('사랑')) {
+        interpretation = '${selectedCard.name}가 연애운에 대해 전하는 메시지입니다. ${selectedCard.uprightMeaning}';
+        advice = '연애 관계에서 ${selectedCard.advice}';
+      } else if (question.contains('직장') || question.contains('일') || question.contains('커리어')) {
+        interpretation = '${selectedCard.name}가 직장운에 대해 알려줍니다. ${selectedCard.uprightMeaning}';
+        advice = '업무와 관련하여 ${selectedCard.advice}';
+      } else if (question.contains('돈') || question.contains('재물') || question.contains('금전')) {
+        interpretation = '${selectedCard.name}가 금전운을 보여줍니다. ${selectedCard.uprightMeaning}';
+        advice = '재정 관리에 있어 ${selectedCard.advice}';
+      }
+    }
+    
+    // 역방향 카드 확률 (30%)
+    final isReversed = random.nextInt(100) < 30;
+    if (isReversed) {
+      interpretation = '[역방향] ${selectedCard.reversedMeaning}';
+      advice = '주의사항: ${selectedCard.advice}';
+    }
+    
     setState(() {
       _tarotResult = {
-        'cardName': 'The Fool',
-        'cardNumber': 0,
-        'cardImage': 'assets/images/tarot/decks/rider_waite/major/00_fool.jpg',
-        'interpretation': '새로운 시작을 의미하는 카드입니다. 모험을 두려워하지 말고 새로운 도전에 나서보세요.',
-        'keywords': ['새로운 시작', '모험', '순수함', '자유'],
-        'advice': '지금이 새로운 일을 시작하기 좋은 때입니다. 과거에 얽매이지 말고 새로운 가능성을 열어보세요.',
+        'cardName': selectedCard.name,
+        'cardNumber': selectedCardNumber,
+        'cardImage': 'assets/images/tarot/major_${selectedCardNumber.toString().padLeft(2, '0')}.jpg',
+        'interpretation': interpretation,
+        'keywords': selectedCard.keywords,
+        'advice': advice,
+        'isReversed': isReversed,
+        'element': selectedCard.element,
+        'astrology': selectedCard.astrology,
+        'story': selectedCard.story,
+        'mythology': selectedCard.mythology,
+        'psychologicalMeaning': selectedCard.psychologicalMeaning,
       };
       _currentState = TarotFlowState.result;
     });

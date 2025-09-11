@@ -12,7 +12,7 @@
 - Dev run: `flutter run --dart-define-from-file=.env.development`.
 - Clean reinstall (required before PR):
   1) `pkill -f flutter`  2) `flutter clean`  3) `flutter pub get`
-  4) Uninstall simulator app: `xcrun simctl uninstall <DEVICE_ID> com.beyond.fortuneFlutter`
+  4) Uninstall simulator app: `xcrun simctl uninstall <DEVICE_ID> com.beyond.fortune`
   5) Re-run: `flutter run -d <DEVICE_ID> --dart-define-from-file=.env.development`
 - Production builds:
   - iOS: `flutter build ios --dart-define-from-file=.env.production --release`

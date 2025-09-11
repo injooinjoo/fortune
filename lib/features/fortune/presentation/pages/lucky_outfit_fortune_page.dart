@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -122,10 +123,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
-    return GlassContainer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Stack(
+      children: [
+        GlassContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           const Text(
             '오늘의 럭키 스타일링',
             style: TextStyle(
@@ -332,29 +335,31 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               );
             }).toList(),
           ),
-          
-          const SizedBox(height: 24),
-          
-          // Submit button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '행운의 스타일 확인하기',
-              onPressed: _occasion != null && _personalStyle != null
-                  ? () => onSubmit({
-                        'date': _selectedDate!.toIso8601String(),
-                        'occasion': _occasion,
-                        'personal_style': _personalStyle,
-                        'zodiac_sign': _zodiacSign,
-                      })
-                  : null,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-              icon: Icons.checkroom,
-            ),
+              
+              const SizedBox(height: 24),
+              
+              // 하단 버튼 공간만큼 여백 추가
+              const BottomButtonSpacing(),
+            ],
           ),
-        ],
-      ),
+        ),
+        
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '행운의 스타일 확인하기',
+          onPressed: _occasion != null && _personalStyle != null
+              ? () => onSubmit({
+                    'date': _selectedDate!.toIso8601String(),
+                    'occasion': _occasion,
+                    'personal_style': _personalStyle,
+                    'zodiac_sign': _zodiacSign,
+                  })
+              : null,
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.checkroom),
+        ),
+      ],
     );
   }
   

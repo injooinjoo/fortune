@@ -14,6 +14,8 @@ import '../../models/fortune_model.dart';
 import '../../services/weather_service.dart';
 import '../../services/fortune_history_service.dart';
 import '../../widgets/emotional_loading_checklist.dart';
+import '../../widgets/profile_completion_dialog.dart';
+import '../../core/utils/profile_validation.dart';
 import 'fortune_story_viewer.dart';
 import 'fortune_completion_page.dart';
 import 'preview_screen.dart';
@@ -87,6 +89,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   void initState() {
     super.initState();
     _checkIfAlreadyViewed();
+    _checkRealLoginStatus(); // 초기 로그인 상태 확인
     _initializeDataWithCacheCheck();
     
     // 인증 상태 변화 리스너 추가
@@ -95,8 +98,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       debugPrint('🔐 [StoryHomeScreen] Session exists: ${data.session != null}');
       debugPrint('🔐 [StoryHomeScreen] Current _showPreviewScreen: $_showPreviewScreen');
       
-      if (data.event == AuthChangeEvent.signedIn && data.session != null) {
-        debugPrint('🔐 [StoryHomeScreen] User signed in, updating login status');
+      if ((data.event == AuthChangeEvent.signedIn || data.event == AuthChangeEvent.initialSession) && data.session != null) {
+        debugPrint('🔐 [StoryHomeScreen] User signed in or session restored, updating login status');
         _checkRealLoginStatus();
         
         // PreviewScreen에서 로그인한 경우 자동으로 스토리 표시
@@ -391,12 +394,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             debugPrint('🔮 사주 미계산 감지: 자동 계산 시작');
             _calculateSajuForExistingUser(userId, birthDate, birthTime);
           }
+          
+          // Check if profile has essential fields
+          if (mounted) {
+            _checkProfileCompletion(response);
+          }
         }
       }
     } catch (e) {
       debugPrint('Error loading user profile: $e');
     } finally {
       _isLoadingProfile = false;
+    }
+  }
+  
+  /// Check if profile has essential fields and show dialog if needed
+  Future<void> _checkProfileCompletion(Map<String, dynamic> profile) async {
+    // Only check for logged-in users, not guest mode
+    if (!_isReallyLoggedIn) return;
+    
+    // Check if profile has essential fields
+    if (!ProfileValidation.hasEssentialFields(profile)) {
+      final missingFields = ProfileValidation.getMissingEssentialFields(profile);
+      
+      // Show profile completion dialog after a short delay
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      if (mounted) {
+        await ProfileCompletionDialog.show(context, missingFields);
+      }
     }
   }
   

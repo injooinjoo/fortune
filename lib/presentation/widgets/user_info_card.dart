@@ -127,7 +127,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      userProfile!['name'] ?? '사용자',
+                      _getDisplayName(),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold)),
                     SizedBox(height: AppSpacing.spacing1),
@@ -386,6 +386,30 @@ class _UserInfoCardState extends State<UserInfoCard> {
     } catch (e) {
       return '미입력';
     }
+  }
+
+  String _getDisplayName() {
+    final name = userProfile!['name'] as String?;
+    final email = userProfile!['email'] as String?;
+    
+    // 이름이 없거나 기본값인 경우
+    if (name == null || name.isEmpty || name == '사용자') {
+      // 이메일에서 이름 추출 시도
+      if (email != null && email.isNotEmpty) {
+        // 카카오 형식 이메일이 아닌 경우에만 이메일에서 이름 추출
+        if (!email.startsWith('kakao_')) {
+          return email.split('@')[0];
+        }
+      }
+      return '사용자';
+    }
+    
+    // 카카오 ID 형식인 경우
+    if (name.startsWith('kakao_') && name.contains('@')) {
+      return '사용자';
+    }
+    
+    return name;
   }
 
   String _getGenderLabel(String? gender) {

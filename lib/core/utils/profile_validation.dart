@@ -142,4 +142,58 @@ class ProfileValidation {
     
     return missingFields;
   }
+  
+  /// Check if profile has essential fields for fortune telling
+  static bool hasEssentialFields(Map<String, dynamic>? profile) {
+    if (profile == null) return false;
+    
+    // Essential fields for fortune telling: name and birth_date
+    final name = profile['name'];
+    final birthDate = profile['birth_date'];
+    
+    return name != null && 
+           name.toString().isNotEmpty && 
+           birthDate != null && 
+           birthDate.toString().isNotEmpty;
+  }
+  
+  /// Check if user signed up through social login
+  static bool isSocialLoginUser(Map<String, dynamic>? profile) {
+    if (profile == null) return false;
+    
+    // Check if user has social provider data
+    final email = profile['email']?.toString() ?? '';
+    final id = profile['id']?.toString() ?? '';
+    
+    // Common patterns for social login users
+    return email.contains('kakao.com') || 
+           email.contains('naver.com') ||
+           email.contains('google') ||
+           email.contains('apple') ||
+           id.startsWith('kakao_') ||
+           id.startsWith('naver_') ||
+           id.startsWith('google_') ||
+           id.startsWith('apple_');
+  }
+  
+  /// Get list of missing essential fields only
+  static List<String> getMissingEssentialFields(Map<String, dynamic>? profile) {
+    if (profile == null) {
+      return ['이름', '생년월일'];
+    }
+    
+    final missingFields = <String>[];
+    
+    final name = profile['name'];
+    if (name == null || name.toString().isEmpty) {
+      missingFields.add('이름');
+    }
+    
+    final birthDate = profile['birth_date'];
+    if (birthDate == null || birthDate.toString().isEmpty) {
+      missingFields.add('생년월일');
+    }
+    
+    return missingFields;
+  }
 }

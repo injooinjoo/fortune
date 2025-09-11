@@ -1,7 +1,7 @@
 # Deliverfile for iOS App Store deployment
 
 # App Store Connect information
-app_identifier "com.beyond.fortuneFlutter"
+app_identifier "com.beyond.fortune"
 username "your-apple-id@example.com"
 
 # Metadata and screenshots

@@ -248,7 +248,7 @@ if (kDebugMode) {
 
 #### Android
 ```bash
-adb shell setprop debug.firebase.analytics.app com.beyond.fortuneFlutter
+adb shell setprop debug.firebase.analytics.app com.beyond.fortune
 ```
 
 #### iOS

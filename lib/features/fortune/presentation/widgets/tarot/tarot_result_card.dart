@@ -311,7 +311,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                     child: TossButton(
                       text: '다른 질문하기',
                       onPressed: widget.onRetry,
-                      style: TossButtonStyle.outlined,
+                      style: TossButtonStyle.ghost,
                       size: TossButtonSize.large,
                     ),
                   ),
@@ -326,7 +326,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                       onPressed: _shareResult,
                       style: TossButtonStyle.primary,
                       size: TossButtonSize.large,
-                      icon: Icons.share,
+                      icon: Icon(Icons.share),
                     ),
                   ),
                 ],
@@ -393,7 +393,7 @@ class _TarotResultCardState extends State<TarotResultCard>
           children: [
             // 카드 이미지
             Image.asset(
-              widget.result['cardImage'] ?? 'assets/images/tarot/decks/rider_waite/major/00_fool.jpg',
+              widget.result['cardImage'] ?? 'assets/images/tarot/major_00.jpg',
               fit: BoxFit.cover,
               width: 200,
               height: 280,

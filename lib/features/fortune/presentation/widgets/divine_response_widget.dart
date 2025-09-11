@@ -513,7 +513,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
         },
         style: TossButtonStyle.primary,
         size: TossButtonSize.large,
-        icon: Icons.share,
+        icon: Icon(Icons.share),
       ),
     );
   }

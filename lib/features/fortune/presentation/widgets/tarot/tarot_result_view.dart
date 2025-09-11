@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
+import '../../../../../core/constants/tarot_metadata.dart';
 import '../../../../../presentation/providers/font_size_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
@@ -68,20 +69,13 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
 
   @override
   Widget build(BuildContext context) {
-    print('[TarotResult] === Build Start ===');
-    print('[TarotResult] isLoading: ${widget.isLoading}');
-    print('[TarotResult] selectedCards: ${widget.selectedCards}');
-    print('[TarotResult] _entranceAnimation.value: ${_entranceAnimation.value}');
-    print('[TarotResult] _entranceAnimation.status: ${_entranceAnimation.status}');
-    
     final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
 
     if (widget.isLoading) {
-      print('[TarotResult] Showing loading widget');
       return const LoadingStateWidget(
-        message: '타로 해석 중...');
+        message: '타로 카드를 해석하고 있습니다...\n당신의 질문에 맞는 답변을 준비 중입니다');
     }
 
     return AnimatedBuilder(
@@ -176,63 +170,70 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   }
 
   Widget _buildReadingResult(ThemeData theme, double fontScale) {
-    final result = widget.readingResult!;
+    final result = widget.readingResult;
     
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Overall interpretation
-          if (result['overallInterpretation'] != null) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.auto_awesome,
-                        color: theme.colorScheme.primary,
-                        size: 24),
-                      const SizedBox(width: 8),
-                      Text(
-                        '전체 해석',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18 * fontScale,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    result['overallInterpretation'],
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 16 * fontScale,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
+          // 질문에 대한 요약 답변
+          GlassContainer(
+            padding: const EdgeInsets.all(20),
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.primary.withOpacity(0.1),
+                theme.colorScheme.secondary.withOpacity(0.1),
+              ],
             ),
-            const SizedBox(height: 16),
-          ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: theme.colorScheme.primary,
+                      size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      '당신의 질문에 대한 답',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18 * fontScale,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  result != null && result['overallInterpretation'] != null
+                      ? result['overallInterpretation']
+                      : _generateDefaultInterpretation(),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: 16 * fontScale,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
           
           // Individual card interpretations
-          if (result['cardInterpretations'] != null) ...[
-            Text(
-              '카드별 해석',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 18 * fontScale,
-              ),
+          Text(
+            '카드별 상세 해석',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 18 * fontScale,
             ),
-            const SizedBox(height: 16),
-            ...List.generate(widget.selectedCards.length, (index) {
-              final interpretation = result['cardInterpretations'][index];
-              if (interpretation == null) return const SizedBox.shrink();
+          ),
+          const SizedBox(height: 16),
+          ...List.generate(widget.selectedCards.length, (index) {
+            final interpretation = result != null && result['cardInterpretations'] != null 
+                ? result['cardInterpretations'][index]
+                : _generateCardInterpretation(widget.selectedCards[index], index);
+            if (interpretation == null) return const SizedBox.shrink();
               
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
@@ -284,10 +285,9 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 ),
               );
             }),
-          ],
           
           // Advice
-          if (result['advice'] != null) ...[
+          if (result != null && result['advice'] != null) ...[
             const SizedBox(height: 16),
             GlassContainer(
               padding: const EdgeInsets.all(20),
@@ -344,9 +344,9 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               child: TossButton(
                 text: '새로운 리딩',
                 onPressed: widget.onNewReading,
-                style: TossButtonStyle.outlined,
+                style: TossButtonStyle.ghost,
                 size: TossButtonSize.medium,
-                icon: Icons.refresh,
+                icon: Icon(Icons.refresh),
               ),
             ),
           if (widget.onShare != null) ...[
@@ -357,7 +357,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 onPressed: widget.onShare,
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.medium,
-                icon: Icons.share,
+                icon: Icon(Icons.share),
               ),
             ),
           ],
@@ -386,5 +386,70 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
       default:
         return '카드 ${index + 1}';
     }
+  }
+
+  String _generateDefaultInterpretation() {
+    // 선택된 카드의 메타데이터를 기반으로 기본 해석 생성
+    if (widget.selectedCards.isEmpty) {
+      return '카드를 해석하고 있습니다...';
+    }
+
+    final cards = widget.selectedCards.map((index) {
+      final cardInfo = TarotMetadata.majorArcana[index % 22]; // Major Arcana만 사용
+      return cardInfo;
+    }).toList();
+
+    String interpretation = '';
+    
+    if (widget.spreadType == 'three' && cards.length >= 3) {
+      // 3장 스프레드 해석
+      interpretation = '''당신의 과거는 ${cards[0]?.name ?? '알 수 없는 카드'}가 나타내듯이, ${cards[0]?.keywords.join(', ') ?? '신비로운 에너지'}와 관련이 있습니다.
+      
+현재 당신은 ${cards[1]?.name ?? '알 수 없는 카드'}의 영향 하에 있으며, ${cards[1]?.uprightMeaning ?? '중요한 전환점'}을 경험하고 있습니다.
+
+미래에는 ${cards[2]?.name ?? '알 수 없는 카드'}가 암시하듯, ${cards[2]?.advice ?? '새로운 가능성'}이 기다리고 있습니다.''';
+    } else if (cards.isNotEmpty) {
+      // 단일 카드 또는 기타 스프레드
+      final firstCard = cards[0];
+      interpretation = '''${firstCard?.name ?? '선택하신 카드'}는 ${firstCard?.keywords.join(', ') ?? '깊은 의미'}를 상징합니다.
+
+${firstCard?.uprightMeaning ?? '이 카드는 당신에게 중요한 메시지를 전달하고 있습니다.'}
+
+${firstCard?.advice ?? '마음을 열고 새로운 가능성을 받아들이세요.'}''';
+    }
+
+    if (widget.question != null && widget.question!.isNotEmpty) {
+      interpretation = '''당신의 질문 "${widget.question}"에 대한 답변입니다.
+
+$interpretation''';
+    }
+
+    return interpretation;
+  }
+
+  Map<String, dynamic> _generateCardInterpretation(int cardIndex, int position) {
+    final cardInfo = TarotMetadata.majorArcana[cardIndex % 22];
+    if (cardInfo == null) {
+      return {
+        'cardName': '알 수 없는 카드',
+        'interpretation': '이 카드의 의미를 해석 중입니다...'
+      };
+    }
+
+    final positionMeaning = _getPositionLabel(position);
+    
+    return {
+      'cardName': cardInfo.name,
+      'keywords': cardInfo.keywords,
+      'interpretation': '''$positionMeaning 위치의 ${cardInfo.name}:
+      
+${cardInfo.uprightMeaning}
+
+이 카드가 전하는 메시지: ${cardInfo.advice}
+
+${cardInfo.story != null ? '\n이야기: ${cardInfo.story!.substring(0, 200)}...' : ''}''',
+      'element': cardInfo.element,
+      'astrology': cardInfo.astrology,
+    };
   }
 }

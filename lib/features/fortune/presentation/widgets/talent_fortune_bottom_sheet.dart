@@ -127,7 +127,12 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
           
           // Bottom Button
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              12, // 상단 패딩 추가
+              20,
+              16 + MediaQuery.of(context).padding.bottom, // 하단 패딩 조정
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [

@@ -1,5 +1,41 @@
 # Fortune Flutter App - Claude Code 개발 규칙
 
+## 🚨 절대 금지 사항 - CRITICAL RULES 🚨
+
+### ❌ 일괄 수정 절대 금지 (NEVER USE BATCH MODIFICATIONS)
+**이 규칙을 어기면 프로젝트가 망가집니다!**
+
+1. **Python 스크립트를 사용한 일괄 수정 금지**
+   - `for file in files:` 형태의 일괄 처리 스크립트 작성 금지
+   - 여러 파일을 한번에 수정하는 Python 스크립트 절대 사용 금지
+
+2. **Shell 스크립트를 사용한 일괄 수정 금지**
+   - `sed -i`, `awk`, `perl` 등을 사용한 일괄 치환 금지
+   - `for` 루프를 사용한 여러 파일 동시 수정 금지
+   - `grep | xargs` 조합으로 여러 파일 수정 금지
+
+3. **정규식 일괄 치환 금지**
+   - IDE의 "Replace All in Files" 기능 사용 금지
+   - 정규식 패턴으로 여러 파일 동시 수정 금지
+
+### ✅ 올바른 수정 방법 (CORRECT MODIFICATION METHOD)
+**반드시 하나씩 수정해야 합니다:**
+1. 한 파일씩 열어서 확인
+2. 해당 파일의 컨텍스트 이해
+3. 필요한 부분만 정확히 수정
+4. 수정 후 해당 파일 검증
+5. 다음 파일로 이동
+
+### 🔴 위반 시 결과 (CONSEQUENCES OF VIOLATION)
+- 프로젝트 전체가 빌드 불가능한 상태가 됨
+- 수많은 연쇄 에러 발생
+- 복구에 몇 시간 소요
+- Git 히스토리 오염
+
+**"일괄수정안할거야. 하나씩해" - 이것이 철칙입니다!**
+
+---
+
 ## 앱 개발 완료 후 필수 작업
 
 ### 🔄 앱 완전 재설치 및 실행 필수
@@ -18,7 +54,7 @@ flutter clean
 flutter pub get
 
 # 4. 시뮬레이터에서 앱 삭제
-xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.fortuneFlutter
+xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.fortune
 
 # 5. 앱 새로 빌드 및 실행
 flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527

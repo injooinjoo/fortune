@@ -176,7 +176,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
             height: 1.5)),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         
         // 상세 설정 토글
         Row(
@@ -202,7 +202,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         
         // Name Input
         Text(

@@ -18,7 +18,7 @@ platform :ios do
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-          "com.beyond.fortuneFlutter" => "Fortune App Store Distribution"
+          "com.beyond.fortune" => "Fortune App Store Distribution"
         }
       }
     )
@@ -83,7 +83,7 @@ platform :ios do
   lane :certificates do
     match(
       type: "appstore",
-      app_identifier: "com.beyond.fortuneFlutter",
+      app_identifier: "com.beyond.fortune",
       readonly: true
     )
   end
@@ -92,7 +92,7 @@ platform :ios do
   lane :sync_dev_certificates do
     match(
       type: "development",
-      app_identifier: "com.beyond.fortuneFlutter",
+      app_identifier: "com.beyond.fortune",
       readonly: false
     )
   end

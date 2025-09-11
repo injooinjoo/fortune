@@ -484,7 +484,7 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
           child: TossButton(
             text: '리포트 공유하기',
             onPressed: widget.onShare,
-            style: TossButtonStyle.outlined,
+            style: TossButtonStyle.ghost,
             size: TossButtonSize.medium,
             icon: Icons.share))]
     );

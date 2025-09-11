@@ -116,7 +116,7 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
                 TossButton(
                   text: '이전',
                   onPressed: widget.onPrevious,
-                  style: TossButtonStyle.outlined,
+                  style: TossButtonStyle.ghost,
                   size: TossButtonSize.medium,
                 )
               else

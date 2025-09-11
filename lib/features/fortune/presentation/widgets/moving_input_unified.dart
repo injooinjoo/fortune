@@ -171,15 +171,15 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                   children: [
                     // 제목
                     Text(
-                      '어디로\n이사하시나요?',
+                      '이사 정보 입력',
                       style: TossTheme.heading1.copyWith(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
                         height: 1.2,
                       ),
                     ),
                     
-                    const SizedBox(height: TossTheme.spacingXXL),
+                    const SizedBox(height: TossTheme.spacingL),
                     
                     // 지역 선택
                     _buildLocationSection(),

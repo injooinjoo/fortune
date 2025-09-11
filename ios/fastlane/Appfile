@@ -1,7 +1,7 @@
 # Appfile for iOS
 
 # Your Apple Developer Account email
-app_identifier("com.beyond.fortuneFlutter") # The bundle identifier of your app
+app_identifier("com.beyond.fortune") # The bundle identifier of your app
 apple_id("your-apple-id@example.com") # Your Apple Developer email
 
 # Team ID for Apple Developer Account

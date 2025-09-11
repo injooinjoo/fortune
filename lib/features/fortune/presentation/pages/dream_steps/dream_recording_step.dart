@@ -612,9 +612,14 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                       color: Colors.deepPurple.shade300),
                     const SizedBox(width: 6),
                     Text(
-                      example['title']);
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.white)]));
+                      example['title'],
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              );
           }).toList())]
     );
   }
@@ -642,14 +647,22 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
-              example['example']);
-              style: const TextStyle(color: Colors.white70)),
+              example['example'],
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               '이런 꿈을 꾸셨나요? 구체적인 내용을 입력해주세요.',
               style: TextStyle(
                 color: Colors.white.withOpacity(0.6),
-    fontSize: 12))]),
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () {

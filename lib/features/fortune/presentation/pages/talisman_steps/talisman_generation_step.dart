@@ -274,7 +274,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
               if (!_isGenerating) TossButton(
                   text: '다시 만들기',
                   onPressed: widget.onBack,
-                  style: TossButtonStyle.outlined,
+                  style: TossButtonStyle.ghost,
                   size: TossButtonSize.large,
                 ),
 }

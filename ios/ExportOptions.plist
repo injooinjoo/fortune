@@ -18,7 +18,7 @@
     <string>automatic</string>
     <key>provisioningProfiles</key>
     <dict>
-        <key>com.beyond.fortuneFlutter</key>
+        <key>com.beyond.fortune</key>
         <string>Fortune App Store Distribution</string>
     </dict>
 </dict>

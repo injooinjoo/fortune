@@ -785,7 +785,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             },
             style: TossButtonStyle.primary,
             size: TossButtonSize.large,
-            icon: Icons.refresh,
+            icon: Icon(Icons.refresh),
           ),
         ),
         const SizedBox(height: 12),
@@ -797,9 +797,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 onPressed: () {
                   context.pushNamed('history');
                 },
-                style: TossButtonStyle.outlined,
+                style: TossButtonStyle.ghost,
                 size: TossButtonSize.medium,
-                icon: Icons.history,
+                icon: Icon(Icons.history),
               ),
             ),
             const SizedBox(width: 12),
@@ -809,9 +809,9 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 onPressed: () {
                   context.go('/');
                 },
-                style: TossButtonStyle.outlined,
+                style: TossButtonStyle.ghost,
                 size: TossButtonSize.medium,
-                icon: Icons.home,
+                icon: Icon(Icons.home),
               ),
             ),
           ],

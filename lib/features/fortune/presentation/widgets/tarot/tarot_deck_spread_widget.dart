@@ -45,6 +45,11 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
   double _currentRotation = 0;
   double _dragStartX = 0;
   
+  // 드래그 애니메이션 관련 변수
+  int? _draggingCardIndex;
+  Offset _dragOffset = Offset.zero;
+  double _dragScale = 1.0;
+  
   @override
   void initState() {
     super.initState();
@@ -72,9 +77,11 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
   }
 
   void _handleCardTap(int index) {
+    print('[TarotDeckSpread] Card tapped: $index, enableSelection: ${widget.enableSelection}');
     if (widget.enableSelection) {
       HapticUtils.lightImpact();
       widget.onCardSelected(index);
+      print('[TarotDeckSpread] Card selected event fired for index: $index');
     }
   }
 
@@ -109,9 +116,11 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
         });
       },
       child: Container(
-        height: widget.cardHeight * 1.5,
+        height: widget.cardHeight * 2.2, // 카드가 짤리지 않도록 높이 증가
+        padding: EdgeInsets.symmetric(vertical: 20), // 상하 패딩 추가
         child: Stack(
           alignment: Alignment.center,
+          clipBehavior: Clip.none, // 카드가 컨테이너 밖으로 나갈 수 있도록 허용
           children: List.generate(widget.cardCount, (index) {
             return _buildFanCard(index, screenWidth);
           }),
@@ -121,16 +130,18 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
   }
 
   Widget _buildFanCard(int index, double screenWidth) {
-    print('[TarotFan] === Card $index Build Start ===');
     final isSelected = widget.selectedIndices?.contains(index) ?? false;
     final isHovered = _hoveredIndex == index;
-    print('Fortune cached');
+    final isDragging = _draggingCardIndex == index;
+    // 선택 순서 계산
+    final selectionOrder = isSelected && widget.selectedIndices != null
+        ? widget.selectedIndices!.indexOf(index) + 1
+        : null;
     
     return AnimatedBuilder(
       animation: _fanAnimations[index],
       builder: (context, child) {
         final fanProgress = _fanAnimations[index].value;
-        print('Fortune cached');
         final position = TarotAnimations.calculateFanPosition(
           index: index,
           totalCards: widget.cardCount,
@@ -138,32 +149,80 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           radius: screenWidth * 0.6,
           baseRotation: _currentRotation
         );
-        print('[TarotFan] Card $index - position.x: ${position.x}, position.y: ${position.y}');
-        print('[TarotFan] Card $index - position.scale: ${position.scale}, rotation: ${position.rotation}');
         
-        return Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..translate(
-              position.x * fanProgress,
-              position.y * fanProgress + (1 - fanProgress) * 100,
-              (widget.cardCount - index).toDouble())
-            ..rotateZ(position.rotation * fanProgress)
-            ..scale(position.scale * fanProgress, position.scale * fanProgress),
-          child: Opacity(
-            opacity: (0.3 + fanProgress * 0.7).clamp(0.0, 1.0),
-            child: MouseRegion(
-              onEnter: widget.enableHover ? (_) => setState(() => _hoveredIndex = index) : null,
-              onExit: widget.enableHover ? (_) => setState(() => _hoveredIndex = -1) : null,
-              child: TarotCardWidget(
-                cardIndex: index,
-                deck: widget.selectedDeck,
-                width: widget.cardWidth,
-                height: widget.cardHeight,
-                isSelected: isSelected,
-                isHovered: isHovered,
-                onTap: () => _handleCardTap(index),
-                enableFlipAnimation: false,
+        // 드래그 중일 때 추가 변환
+        double translateX = position.x * fanProgress;
+        double translateY = position.y * fanProgress + (1 - fanProgress) * 100;
+        double scale = position.scale * fanProgress;
+        
+        if (isDragging) {
+          translateX += _dragOffset.dx;
+          translateY += _dragOffset.dy;
+          scale *= _dragScale;
+        }
+        
+        // GestureDetector를 Transform 바깥에 배치하여 터치 영역 보존
+        return GestureDetector(
+          onTap: () => _handleCardTap(index),
+          onVerticalDragStart: (details) {
+            setState(() {
+              _draggingCardIndex = index;
+              _dragOffset = Offset.zero;
+              _dragScale = 1.0;
+            });
+            HapticUtils.lightImpact();
+          },
+          onVerticalDragUpdate: (details) {
+            setState(() {
+              _dragOffset = Offset(
+                _dragOffset.dx + details.delta.dx,
+                _dragOffset.dy + details.delta.dy,
+              );
+              // 위로 드래그할수록 카드가 커지는 효과
+              _dragScale = 1.0 + (-_dragOffset.dy / 200).clamp(0.0, 0.5);
+            });
+          },
+          onVerticalDragEnd: (details) {
+            // 충분히 위로 드래그했으면 카드 선택
+            if (_dragOffset.dy < -50) {
+              _handleCardTap(index);
+              HapticUtils.mediumImpact();
+            }
+            setState(() {
+              _draggingCardIndex = null;
+              _dragOffset = Offset.zero;
+              _dragScale = 1.0;
+            });
+          },
+          behavior: HitTestBehavior.opaque,
+          child: AnimatedContainer(
+            duration: isDragging ? Duration.zero : Duration(milliseconds: 200),
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..translate(
+                  translateX,
+                  translateY,
+                  (widget.cardCount - index).toDouble() + (isDragging ? 100 : 0))
+                ..rotateZ(position.rotation * fanProgress)
+                ..scale(scale, scale),
+              child: Opacity(
+                opacity: ((isDragging ? 1.0 : 0.3) + fanProgress * 0.7).clamp(0.0, 1.0),
+                child: MouseRegion(
+                  onEnter: widget.enableHover ? (_) => setState(() => _hoveredIndex = index) : null,
+                  onExit: widget.enableHover ? (_) => setState(() => _hoveredIndex = -1) : null,
+                  child: TarotCardWidget(
+                    cardIndex: index,
+                    deck: widget.selectedDeck,
+                    width: widget.cardWidth,
+                    height: widget.cardHeight,
+                    isSelected: isSelected,
+                    isHovered: isHovered || isDragging,
+                    selectionOrder: selectionOrder,
+                    onTap: null, // GestureDetector에서 처리하므로 제거
+                    enableFlipAnimation: false,
+                  ),
+                ),
               ),
             ),
           ),

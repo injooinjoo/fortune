@@ -396,13 +396,16 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   }
   
   Widget _buildBasicSajuInfo(Map<String, dynamic> sajuData) {
-    // 오행 균형 데이터 생성
+    // 오행 균형 데이터 생성 - sajuProvider에서 가져오기
+    final sajuState = ref.watch(sajuProvider);
+    final providerElements = sajuState.sajuData?['elements'] as Map<String, dynamic>?;
+    
     final elementBalance = {
-      '목': sajuData['elementBalance']?['목'] ?? 0,
-      '화': sajuData['elementBalance']?['화'] ?? 0,
-      '토': sajuData['elementBalance']?['토'] ?? 0,
-      '금': sajuData['elementBalance']?['금'] ?? 0,
-      '수': sajuData['elementBalance']?['수'] ?? 0,
+      '목': providerElements?['목'] ?? sajuData['elementBalance']?['목'] ?? 0,
+      '화': providerElements?['화'] ?? sajuData['elementBalance']?['화'] ?? 0,
+      '토': providerElements?['토'] ?? sajuData['elementBalance']?['토'] ?? 0,
+      '금': providerElements?['금'] ?? sajuData['elementBalance']?['금'] ?? 0,
+      '수': providerElements?['수'] ?? sajuData['elementBalance']?['수'] ?? 0,
     };
     
     return Column(

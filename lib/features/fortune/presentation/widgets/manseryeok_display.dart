@@ -273,19 +273,18 @@ class ManseryeokDisplay extends StatelessWidget {
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.info_outline,
             color: TossTheme.textGray600,
             size: 16,
           ),
-          const SizedBox(width: TossTheme.spacingS),
-          Expanded(
-            child: Text(
-              '위 사주는 만세력 기준으로 계산되었습니다',
-              style: TossTheme.caption.copyWith(
-                color: TossTheme.textGray600,
-              ),
+          const SizedBox(width: TossTheme.spacingXS),
+          Text(
+            '위 사주는 만세력 기준으로 계산되었습니다',
+            style: TossTheme.caption.copyWith(
+              color: TossTheme.textGray600,
             ),
           ),
         ],

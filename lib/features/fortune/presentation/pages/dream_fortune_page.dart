@@ -248,7 +248,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           border: InputBorder.none,
           filled: false
         ),
-        style: theme.textTheme.bodyLarge
+        style: theme.textTheme.bodyMedium
       )
     );
   }
@@ -273,7 +273,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                       _isRecording
                           ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
                           : '마이크 버튼을 눌러 녹음을 시작하세요',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
                       textAlign: TextAlign.center,
@@ -281,7 +281,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                   else
                     Text(
                       recognizedText,
-                      style: theme.textTheme.bodyLarge,
+                      style: theme.textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
                 ],

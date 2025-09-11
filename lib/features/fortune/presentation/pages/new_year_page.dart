@@ -215,7 +215,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
           child: TossButton(
             text: '새해 운세 공유하기',
             onPressed: widget.onShare,
-            style: TossButtonStyle.outlined,
+            style: TossButtonStyle.ghost,
             size: TossButtonSize.medium,
             icon: Icons.share)]);
   }
