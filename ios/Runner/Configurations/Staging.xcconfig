@@ -2,7 +2,7 @@
 #include "Flutter/Release.xcconfig"
 
 // Staging Configuration
-PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
+PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune.staging
 PRODUCT_NAME = Fortune Staging
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
