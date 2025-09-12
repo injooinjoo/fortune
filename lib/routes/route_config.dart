@@ -77,7 +77,7 @@ import '../services/storage_service.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/',
     debugLogDiagnostics: true,
     errorBuilder: (context, state) => Scaffold(
       body: Center(

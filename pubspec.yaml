@@ -162,7 +162,8 @@ dependencies:
   google_sign_in: ^6.2.2
   sign_in_with_apple: ^6.1.3
   kakao_flutter_sdk_user: ^1.9.0
-  flutter_naver_login: ^2.1.1  # Updated to fix deprecated APIs
+  # flutter_naver_login: ^2.1.1  # Replaced with native iOS implementation
+  crypto: ^3.0.3  # For SHA256 hashing in Apple Sign In
   
   # Native Platform Features
   home_widget: ^0.8.0  # Updated to fix Swift concurrency warnings
@@ -276,6 +277,8 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#FFFFFF"  # White background
   color_dark: "#121212"  # Dark gray for dark mode
+  image: "assets/images/splash_flower_icon.png"  # Cherry blossom icon
+  image_dark: "assets/images/splash_flower_icon.png"
   
   # Android 12+ specific
   android_12:
@@ -289,9 +292,11 @@ flutter_native_splash:
   ios: true
   web: true
   
-  # iOS specific
+  # iOS specific - center the image
   ios_content_mode: center
   
-  # Android specific
-  fullscreen: true
+  # Android specific - center the image  
   android_gravity: center
+  
+  # Don't use fullscreen splash
+  fullscreen: false

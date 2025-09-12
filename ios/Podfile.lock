@@ -111,9 +111,6 @@ PODS:
     - Flutter
   - flutter_native_splash (2.4.3):
     - Flutter
-  - flutter_naver_login (0.0.1):
-    - Flutter
-    - NidThirdPartyLogin (~> 5.0.0)
   - flutter_secure_storage (6.0.0):
     - Flutter
   - flutter_widgetkit (0.0.1):
@@ -228,7 +225,7 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - NidThirdPartyLogin (5.0.1)
+  - naveridlogin-sdk-ios (4.2.3)
   - OrderedSet (6.0.3)
   - package_info_plus (0.4.5):
     - Flutter
@@ -332,7 +329,6 @@ DEPENDENCIES:
   - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
-  - flutter_naver_login (from `.symlinks/plugins/flutter_naver_login/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_widgetkit (from `.symlinks/plugins/flutter_widgetkit/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
@@ -347,6 +343,7 @@ DEPENDENCIES:
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
   - location (from `.symlinks/plugins/location/ios`)
+  - naveridlogin-sdk-ios
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pay_ios (from `.symlinks/plugins/pay_ios/ios`)
@@ -387,7 +384,7 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - nanopb
-    - NidThirdPartyLogin
+    - naveridlogin-sdk-ios
     - OrderedSet
     - PromisesObjC
     - Stripe
@@ -426,8 +423,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
-  flutter_naver_login:
-    :path: ".symlinks/plugins/flutter_naver_login/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   flutter_widgetkit:
@@ -510,7 +505,6 @@ SPEC CHECKSUMS:
   flutter_inappwebview_ios: 6f63631e2c62a7c350263b13fa5427aedefe81d4
   flutter_local_notifications: ff50f8405aaa0ccdc7dcfb9022ca192e8ad9688f
   flutter_native_splash: df59bb2e1421aa0282cb2e95618af4dcb0c56c29
-  flutter_naver_login: 6e80dabbf52e2715e734c2606734654fd385a111
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   flutter_widgetkit: a0e9b0d50ee9bec366dad36c639509daaafc397a
   geocoding_ios: eafacae6ad11a1eb56681f7d11df602a5fd49416
@@ -535,7 +529,7 @@ SPEC CHECKSUMS:
   kakao_flutter_sdk_common: 3dc8492c202af7853585d151490b1c5c6b7576cb
   location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  NidThirdPartyLogin: ed291a543cc60a433bcad522b6bf7d3126ad4fdc
+  naveridlogin-sdk-ios: d9d46d02119d303023d7000cd5963864d5bb89e5
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
@@ -562,6 +556,6 @@ SPEC CHECKSUMS:
   webview_flutter_wkwebview: a4af96a051138e28e29f60101d094683b9f82188
   workmanager_apple: 0b8b21579ac211f9119dcfed50fe5f9b1822c7d5
 
-PODFILE CHECKSUM: 96adb9a1bb91bdb617ed3888d4cfaf7b47dfddab
+PODFILE CHECKSUM: b923ef263e205fc461e8ac695bc47d427dd751c7
 
 COCOAPODS: 1.16.2

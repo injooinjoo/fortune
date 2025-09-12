@@ -1,13 +1,21 @@
 import Flutter
 import UIKit
+import NidThirdPartyLogin
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+  private let naverLoginHandler = NaverLoginHandler()
+  
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    
+    // Register native Naver login handler
+    if let registrar = self.registrar(forPlugin: "NaverLoginHandler") {
+      naverLoginHandler.register(with: registrar)
+    }
     
     // Register native platform plugin
     // TODO: Add NativePlatformPlugin.swift to Xcode project before uncommenting
@@ -30,6 +38,14 @@ import UIKit
     print("URL Query: \(url.query ?? "nil")")
     print("Source Application: \(options[.sourceApplication] ?? "nil")")
     print("====================")
+    
+    // Check if this is a Naver auth callback (handle both naver{CLIENT_ID} and legacy values)
+    if let scheme = url.scheme, scheme.hasPrefix("naver") {
+      print("✅ Detected Naver auth callback")
+      // Handle Naver OAuth URL
+      NidOAuth.shared.handleURL(url)
+      return true
+    }
     
     // Check if this is a Supabase auth callback
     if url.scheme == "io.supabase.flutter" {

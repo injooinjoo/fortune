@@ -50,14 +50,33 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     
     // Listen for auth state changes
     Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
-      debugPrint('changed: ${data.event}');
-      if (data.session != null && mounted) {
-        debugPrint('User logged in, checking profile...');
+      debugPrint('🔔 Auth state changed: ${data.event}');
+      
+      // OAuth 로그인 성공 후 처리 (SignedIn 이벤트)
+      if (data.event == AuthChangeEvent.signedIn && data.session != null && mounted) {
+        debugPrint('🟢 User signed in via OAuth, processing...');
         
-        // Try to sync profile from Supabase first
+        // OAuth 처리 중 상태 해제
+        if (_isAuthProcessing) {
+          setState(() => _isAuthProcessing = false);
+          _authTimeoutTimer?.cancel();
+        }
+        
+        // 프로필 동기화 (이미 프로필 저장 로직이 포함됨)
         await _syncProfileFromSupabase();
         
-        // Check if user needs onboarding
+        // 로그인 성공 메시지 표시
+        if (mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('로그인 성공!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+        
+        // 온보딩 필요 여부 확인 후 라우팅
         final needsOnboarding = await ProfileValidation.needsOnboarding();
         if (needsOnboarding && mounted) {
           debugPrint('Profile incomplete, redirecting to onboarding...');
@@ -353,6 +372,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       if (result != null) {
         // Native Apple Sign-In 성공
         print('🍎 Native Apple Sign-In successful');
+        
+        // 프로필은 social_auth_service에서 이미 저장됨
+        
+        // 프로필 검증 후 라우팅
+        final needsOnboarding = await ProfileValidation.needsOnboarding();
+        
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -360,6 +385,13 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               backgroundColor: Colors.green,
             ),
           );
+          
+          // 화면 전환
+          if (needsOnboarding) {
+            context.go('/onboarding');
+          } else {
+            context.go('/home');
+          }
         }
       } else {
         // OAuth flow - 브라우저로 리다이렉트됨
@@ -868,13 +900,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                'assets/images/main_logo.svg',
+              Image.asset(
+                'assets/images/flower_transparent.png',
                 width: 64,
                 height: 64,
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.onSurface,
-                  BlendMode.srcIn),
               ).animate(onPlay: (controller) => controller.repeat())
                 .rotate(duration: 2.seconds),
               const SizedBox(height: 16),
@@ -1081,13 +1110,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // App Logo
-                        SvgPicture.asset(
-                          'assets/images/main_logo.svg',
+                        Image.asset(
+                          'assets/images/flower_transparent.png',
                           width: 100,
                           height: 100,
-                          colorFilter: ColorFilter.mode(
-                            Colors.black87,
-                            BlendMode.srcIn),
                         ).animate()
                           .fadeIn(duration: 800.ms)
                           .scale(

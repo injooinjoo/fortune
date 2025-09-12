@@ -61,9 +61,8 @@ serve(async (req) => {
 
     const naverUser = naverData.response
     
-    if (!naverUser.email) {
-      throw new Error('Naver account does not have an email address')
-    }
+    // 이메일이 없는 경우 네이버 ID를 기반으로 생성
+    const email = naverUser.email || `naver_${naverUser.id}@fortune.app`
 
     // Supabase 클라이언트 생성
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!

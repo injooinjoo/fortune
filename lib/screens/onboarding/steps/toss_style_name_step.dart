@@ -249,6 +249,16 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
   }
 
   Future<void> _handleSocialLoginInBottomSheet(String provider, StateSetter setBottomSheetState) async {
+    // Debug: Show immediate feedback
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$provider 로그인 시도 중...'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }
+    
     setBottomSheetState(() {
       _bottomSheetLoading = true;
     });
@@ -290,11 +300,13 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
           _bottomSheetLoading = false;
         });
         
-        // Show error message
+        // Show detailed error message for debugging
+        final errorMessage = error.toString();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
+            content: Text('$provider 로그인 실패: $errorMessage'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }
@@ -307,9 +319,16 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
     required String logoPath,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          // Debug: Immediate feedback
+          print('Button tapped: $label');
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
@@ -336,6 +355,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

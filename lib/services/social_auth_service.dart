@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:flutter_naver_login/flutter_naver_login.dart';
+// import 'package:flutter_naver_login/flutter_naver_login.dart'; // Replaced with native implementation
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -171,24 +173,12 @@ class SocialAuthService {
     try {
       Logger.info('Starting Apple Sign-In process');
       
-      // Use native Sign in with Apple on iOS, OAuth on other platforms
+      // Use native Sign in with Apple for iOS
       if (!kIsWeb && Platform.isIOS) {
-        // On real iOS devices, always use native Sign-In
-        // Don't fall back to OAuth - if native fails, show proper error
         Logger.info('Using native Apple Sign-In for iOS');
         return await _signInWithAppleNative();
-      } else if (!kIsWeb && Platform.isMacOS) {
-        // On macOS, check availability first
-        final isAvailable = await SignInWithApple.isAvailable();
-        if (isAvailable) {
-          Logger.info('Using native Apple Sign-In for macOS');
-          return await _signInWithAppleNative();
-        } else {
-          Logger.info('Native Apple Sign-In not available on macOS, using OAuth');
-          return await _signInWithAppleOAuth();
-        }
       } else {
-        // Use Supabase OAuth for web and Android
+        // Use OAuth for web and other platforms
         Logger.info('Using OAuth for Apple Sign-In (web/Android)');
         return await _signInWithAppleOAuth();
       }
@@ -201,14 +191,31 @@ class SocialAuthService {
   // Native Apple Sign In for iOS/macOS
   Future<AuthResponse?> _signInWithAppleNative() async {
     try {
-      Logger.info('Using native Apple Sign-In');
+      Logger.info('Starting native Apple Sign-In process...');
+      Logger.info('Platform: ${Platform.operatingSystem}');
+      Logger.info('Device info: ${Platform.localHostname}');
+      
+      // Generate raw nonce for Supabase
+      final rawNonce = _supabase.auth.generateRawNonce();
+      Logger.info('Generated raw nonce for Supabase');
+      
+      // Hash the nonce with SHA256 for Apple (iOS 18 requirement)
+      final bytes = utf8.encode(rawNonce);
+      final digest = sha256.convert(bytes);
+      final hashedNonce = digest.toString();
+      Logger.info('Generated SHA256 hashed nonce for Apple');
       
       // Apple Sign-In 요청 - 네이티브 시스템 UI가 표시됨
+      Logger.info('Requesting Apple ID credential with hashed nonce...');
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName]
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,  // Use hashed nonce for Apple
       );
+      
+      Logger.info('Apple credential received successfully');
       
       final String? idToken = credential.identityToken;
       if (idToken == null) {
@@ -216,9 +223,12 @@ class SocialAuthService {
       }
       
       // Supabase에 Apple 토큰으로 로그인
+      // IMPORTANT: Use raw (unhashed) nonce for Supabase
       final response = await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.apple,
-        idToken: idToken);
+        idToken: idToken,
+        nonce: rawNonce,  // Use original raw nonce for Supabase, not hashed
+      );
       
       Logger.securityCheckpoint('Apple: ${response.user?.id}');
       
@@ -251,8 +261,23 @@ class SocialAuthService {
         Logger.error('Apple Sign-In not handled', e);
         throw Exception('Apple 로그인을 처리할 수 없습니다.');
       } else if (e.code == AuthorizationErrorCode.unknown) {
-        Logger.error('Unknown Apple Sign-In error', e);
-        throw Exception('알 수 없는 오류가 발생했습니다.');
+        // Add detailed logging for unknown errors
+        Logger.error('Unknown Apple Sign-In error - code: ${e.code}', e);
+        Logger.error('Error message: ${e.message}');
+        Logger.error('Full error details: ${e.toString()}');
+        
+        // Check for specific error code 1000
+        if (e.message?.contains('1000') ?? false || e.toString().contains('1000')) {
+          Logger.error('Apple Sign-In Error 1000 - Configuration issue detected');
+          Logger.error('This usually means the app ID configuration is incorrect');
+          throw Exception('Apple ID 설정을 확인해주세요');
+        }
+        
+        // Provide more specific error message if possible
+        if (e.message != null && e.message!.isNotEmpty) {
+          throw Exception('Apple 로그인 오류: ${e.message}');
+        }
+        throw Exception('알 수 없는 오류가 발생했습니다. (${e.code})');
       } else {
         Logger.error('Apple Sign-In error', e);
         throw Exception('Apple 로그인 중 오류가 발생했습니다.');
@@ -798,30 +823,29 @@ class SocialAuthService {
     }
   }
   
-  // Naver Sign In
+  // Native Naver platform channel
+  static const _naverChannel = MethodChannel('com.beyond.fortune/naver_auth');
+  
+  // Naver Sign In using native implementation
   Future<AuthResponse?> signInWithNaver() async {
     try {
-      Logger.info('Starting Naver Sign-In process');
+      Logger.info('Starting Naver Sign-In process (Native)');
       
-      // 네이버 로그인
-      final loginResult = await FlutterNaverLogin.logIn();
-      Logger.info('Naver login result status: ${loginResult.status}');
+      // Initialize Naver SDK
+      final initResult = await _naverChannel.invokeMethod('initializeNaver');
+      Logger.info('Naver SDK initialization: $initResult');
       
-      // Check if logged in - Check against string representation
-      // The NaverLoginResult status is an enum but we need to compare as string
-      final isLoggedIn = loginResult.status.toString() == 'NaverLoginStatus.loggedIn' ||
-                         loginResult.status.index == 2; // loggedIn is usually index 2
+      // Perform Naver login
+      final loginResult = await _naverChannel.invokeMethod('loginWithNaver');
+      Logger.info('Naver native login result: $loginResult');
       
-      if (!isLoggedIn) {
+      if (loginResult == null || loginResult['success'] != true) {
         Logger.info('User cancelled Naver Sign-In or login failed');
         return null;
       }
       
-      // Get access token
-      final tokenResult = await FlutterNaverLogin.getCurrentAccessToken();
-      Logger.info('Naver token retrieved: ${tokenResult.accessToken.isNotEmpty}');
-      
-      if (tokenResult.accessToken.isEmpty) {
+      final accessToken = loginResult['accessToken'] as String?;
+      if (accessToken == null || accessToken.isEmpty) {
         throw Exception('Failed to get Naver access token');
       }
       
@@ -831,7 +855,7 @@ class SocialAuthService {
       final response = await _supabase.functions.invoke(
         'naver-oauth',
         body: {
-          'accessToken': tokenResult.accessToken
+          'accessToken': accessToken
         }
       );
       
@@ -851,14 +875,15 @@ class SocialAuthService {
         throw Exception('No session URL returned from Naver OAuth');
       }
       
-      Logger.info('Got session URL from Edge Function, processing...');
-      
-      // Parse the magic link URL to get the session
+      Logger.info('Got session URL from Edge Function, processing via getSessionFromUrl...');
+
+      // Let Supabase parse and set session directly from the callback URL
       final uri = Uri.parse(sessionUrl);
       final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
       
       if (sessionResponse.session == null) {
-        throw Exception('Failed to create session from Naver OAuth');
+        Logger.error('Failed to set session with tokens');
+        throw Exception('Failed to create session from Naver OAuth tokens');
       }
       
       Logger.securityCheckpoint('Naver: ${sessionResponse.session?.user?.id}');
@@ -891,9 +916,9 @@ class SocialAuthService {
         // 카카오 로그아웃 실패 무시
       }
       
-      // Naver 로그아웃
+      // Naver 로그아웃 (native channel)
       try {
-        await FlutterNaverLogin.logOut();
+        await _naverChannel.invokeMethod('logoutNaver');
       } catch (e) {
         // 네이버 로그아웃 실패 무시
       }
@@ -940,7 +965,7 @@ class SocialAuthService {
   // Naver 계정 연결 해제
   Future<void> disconnectNaver() async {
     try {
-      await FlutterNaverLogin.logOutAndDeleteToken();
+      await _naverChannel.invokeMethod('logoutNaver');
     } catch (e) {
       Logger.error('Failed to disconnect Naver', e);
     }

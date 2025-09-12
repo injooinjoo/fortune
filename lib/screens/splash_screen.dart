@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/theme/toss_design_system.dart';
@@ -18,24 +17,19 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     
     // 2초 후 인증 확인
-    _checkAuthStatus();
-  }
-
-  Future<void> _checkAuthStatus() async {
-    print('🚀 SplashScreen: Starting auth check...');
+    _performAuthCheck();
     
-    // Add a shorter timeout and always redirect to landing page for now
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-      print('⏰ SplashScreen: Redirecting to landing page');
-      if (mounted) context.go('/');
-    } catch (e) {
-      print('❌ SplashScreen: Auth check failed: $e');
-      if (mounted) context.go('/');
-    }
+    // Failsafe: If still on splash after 5 seconds, force navigation
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        print('⏰ SplashScreen: Failsafe triggered, forcing navigation to landing');
+        context.go('/');
+      }
+    });
   }
 
   Future<void> _performAuthCheck() async {
+    print('🚀 SplashScreen: Starting auth check');
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) {
@@ -44,7 +38,9 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     try {
+      print('🔍 SplashScreen: Getting Supabase client');
       final supabase = Supabase.instance.client;
+      print('🔐 SplashScreen: Checking current session');
       final session = supabase.auth.currentSession;
       print('🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
 
@@ -107,8 +103,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: SvgPicture.asset(
-          'assets/images/cherry_blossom.svg',
+        child: Image.asset(
+          'assets/images/flower_transparent.png',
           width: 120,
           height: 120,
         ).animate()

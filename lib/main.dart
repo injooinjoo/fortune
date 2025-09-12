@@ -95,6 +95,10 @@ void main() async {
     } catch (e) {
       Logger.error('Kakao SDK initialization failed', e);
     }
+    
+    // Naver SDK doesn't require explicit initialization in Flutter
+    // The SDK is initialized when first login is attempted
+    Logger.info('Naver SDK ready (initialized on first use)');
   }
   
   // Initialize Analytics with error handling
