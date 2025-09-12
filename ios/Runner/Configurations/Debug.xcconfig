@@ -2,7 +2,7 @@
 #include "Flutter/Debug.xcconfig"
 
 // Debug Configuration
-PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune_flutter.debug
+PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
 PRODUCT_NAME = Fortune Debug
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 

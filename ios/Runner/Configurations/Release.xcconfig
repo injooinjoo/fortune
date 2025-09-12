@@ -2,7 +2,7 @@
 #include "Flutter/Release.xcconfig"
 
 // Production Configuration
-PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune_flutter
+PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
 PRODUCT_NAME = Fortune
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 

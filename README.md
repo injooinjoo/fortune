@@ -49,7 +49,7 @@ Fortune은 74가지의 다양한 운세를 제공하는 프리미엄 모바일 �
 ## 📂 프로젝트 구조
 
 ```
-fortune_flutter/
+fortune/
 ├── lib/
 │   ├── core/               # 핵심 기능 (설정, 상수, 유틸)
 │   │   ├── config/         # 앱 설정

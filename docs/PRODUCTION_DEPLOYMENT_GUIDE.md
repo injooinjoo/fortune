@@ -68,7 +68,7 @@ keytool -genkey -v -keystore ~/fortune-release-key.jks \
 ### 1. Apple Developer 설정
 
 1. [Apple Developer](https://developer.apple.com) 계정 필요
-2. App ID 생성: `com.fortune.fortune_flutter`
+2. App ID 생성: `com.beyond.fortune`
 3. 프로비저닝 프로필 생성 (Distribution)
 
 ### 2. Xcode 설정

@@ -272,7 +272,7 @@ Text(
 ### Common Patterns
 ```dart
 // Import typography extension
-import 'package:fortune_flutter/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 // Use in build method
 @override

@@ -1,4 +1,4 @@
-package com.beyond.fortune_flutter
+package com.beyond.fortune
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

@@ -145,7 +145,7 @@ Integration tests verify complete user flows and feature interactions.
 ```dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune_flutter/main.dart' as app;
+import 'package:fortune/main.dart' as app;
 import '../helpers/test_helpers.dart';
 
 void main() {
