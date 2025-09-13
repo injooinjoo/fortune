@@ -161,31 +161,38 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       body: SafeArea(
         child: Stack(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 100, // Space for FloatingBottomButton
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title Section
-                  _buildTitleSection(),
-                  const SizedBox(height: 32),
-
-                  // MBTI Groups Selection
-                  _buildMbtiGroupsSection(),
-
-                  // Selected MBTI Info
-                  if (_selectedMbti != null) ...[
+            // Main content with proper Positioned wrapper
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: 100, // Space for FloatingBottomButton
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title Section
+                    _buildTitleSection(),
                     const SizedBox(height: 32),
-                    _buildSelectedMbtiInfo(),
-                    const SizedBox(height: 24),
-                    _buildCategorySelection(),
+
+                    // MBTI Groups Selection
+                    _buildMbtiGroupsSection(),
+
+                    // Selected MBTI Info
+                    if (_selectedMbti != null) ...[
+                      const SizedBox(height: 32),
+                      _buildSelectedMbtiInfo(),
+                      const SizedBox(height: 24),
+                      _buildCategorySelection(),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
 

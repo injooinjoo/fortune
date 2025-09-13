@@ -45,7 +45,7 @@ class SocialAuthService {
         OAuthProvider.google,
         redirectTo: kIsWeb
           ? '${Uri.base.origin}/auth/callback'
-          : 'io.supabase.flutter://auth-callback',
+          : 'com.beyond.fortune://auth-callback',
         authScreenLaunchMode: LaunchMode.externalApplication,
       );
       
