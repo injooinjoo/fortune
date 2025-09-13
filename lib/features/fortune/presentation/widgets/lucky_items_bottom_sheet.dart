@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/components/toss_bottom_sheet.dart';
 import '../../../../core/theme/toss_design_system.dart';
-
+import '../../../../services/ad_service.dart';
 
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -102,46 +102,39 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
 
   void _handleFortuneView() async {
     if (_isLoadingAd) return; // 이미 로딩 중이면 중복 실행 방지
-    
+
     final isPremium = ref.read(hasUnlimitedAccessProvider);
-    
+
     if (isPremium) {
       // 프리미엄 사용자는 바로 이동
       _navigateToLuckyItems();
     } else {
-      // 무료 사용자는 로딩 후 광고 표시
+      // 무료 사용자는 광고 표시
       setState(() {
         _isLoadingAd = true;
       });
-      
-      try {
-        // 광고 로딩 시뮬레이션 (3-5초)
-        await _showDirectAd();
-        
-        if (mounted) {
-          setState(() {
-            _isLoadingAd = false;
-          });
-          
-          // 광고 완료 후 페이지로 이동
-          _navigateToLuckyItems();
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _isLoadingAd = false;
-          });
-          
+
+      // AdService를 사용하여 실제 광고 표시
+      await AdService.instance.showInterstitialAdWithCallback(
+        onAdCompleted: () {
+          if (mounted) {
+            setState(() {
+              _isLoadingAd = false;
+            });
+            _navigateToLuckyItems();
+          }
+        },
+        onAdFailed: () {
           // 광고 실패 시에도 페이지로 이동
-          _navigateToLuckyItems();
-        }
-      }
+          if (mounted) {
+            setState(() {
+              _isLoadingAd = false;
+            });
+            _navigateToLuckyItems();
+          }
+        },
+      );
     }
-  }
-  
-  Future<void> _showDirectAd() async {
-    // 광고 표시 시뮬레이션 (실제 광고 SDK 연동 시 이 부분을 교체)
-    await Future.delayed(const Duration(seconds: 3));
   }
 
   void _navigateToLuckyItems() {
