@@ -164,7 +164,8 @@
       "Bash(elif grep -q \"FloatingBottomButton\" \"$file\")",
       "Bash(then echo \"$file: FloatingBottomButton\")",
       "Bash(nc localhost 58465)",
-      "Bash(pod update:*)"
+      "Bash(pod update:*)",
+      "Bash(nc localhost 52590)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

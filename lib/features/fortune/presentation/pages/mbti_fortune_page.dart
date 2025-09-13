@@ -196,31 +196,13 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               ),
             ),
 
-            // Floating Bottom Button
+            // Floating Bottom Button - already contains internal Positioned widget
             if (_selectedMbti != null)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -5),
-                      ),
-                    ],
-                  ),
-                  child: FloatingBottomButton(
-                    text: '운세 보기',
-                    onPressed: canGenerateFortune ? () => generateFortuneAction() : null,
-                    style: TossButtonStyle.primary,
-                    size: TossButtonSize.large,
-                  ),
-                ),
+              FloatingBottomButton(
+                text: '운세 보기',
+                onPressed: canGenerateFortune ? () => generateFortuneAction() : null,
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
               ),
           ],
         ),
