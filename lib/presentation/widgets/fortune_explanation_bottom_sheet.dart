@@ -12,6 +12,8 @@ import '../../presentation/providers/token_provider.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../services/ad_service.dart';
+import '../../core/utils/logger.dart';
 
 class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -552,9 +554,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           height: 56,
           child: ElevatedButton(
             onPressed: _isFormValid
-                ? () {
+                ? () async {
                     Navigator.of(context).pop();
-                    
+
                     // Collect form data
                     final fortuneParams = {
                       'name': _nameController.text,
@@ -563,10 +565,45 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                       'mbtiType': _selectedMbti,
                       'bloodType': _selectedBloodType,
                     };
-                    
-                    // Direct navigation to fortune route
+
                     final fortuneRoute = _getFortuneRoute(widget.fortuneType);
-                    context.go(fortuneRoute, extra: fortuneParams);
+
+                    try {
+                      // Check if ad is ready
+                      if (!AdService.instance.isInterstitialAdReady) {
+                        Logger.debug('📺 [FortuneExplanationBottomSheet] Interstitial ad not ready, loading...');
+                        // Try to load ad with a timeout
+                        await Future.any([
+                          AdService.instance.loadInterstitialAd(),
+                          Future.delayed(const Duration(seconds: 2)), // 2 second timeout for loading
+                        ]);
+                      }
+
+                      // Show ad if ready
+                      if (AdService.instance.isInterstitialAdReady) {
+                        Logger.debug('📺 [FortuneExplanationBottomSheet] Showing interstitial ad');
+                        await AdService.instance.showInterstitialAdWithCallback(
+                          onAdCompleted: () {
+                            Logger.debug('📺 [FortuneExplanationBottomSheet] Ad completed, navigating to fortune page');
+                            // Navigate to fortune route after ad completes
+                            context.go(fortuneRoute, extra: fortuneParams);
+                          },
+                          onAdFailed: () {
+                            Logger.debug('📺 [FortuneExplanationBottomSheet] Ad failed, navigating to fortune page anyway');
+                            // Navigate even if ad fails
+                            context.go(fortuneRoute, extra: fortuneParams);
+                          },
+                        );
+                      } else {
+                        Logger.debug('📺 [FortuneExplanationBottomSheet] Ad not ready after timeout, proceeding without ad');
+                        // Navigate without ad if not ready
+                        context.go(fortuneRoute, extra: fortuneParams);
+                      }
+                    } catch (e) {
+                      Logger.error('❌ [FortuneExplanationBottomSheet] Error showing ad: $e');
+                      // Navigate even if error occurs
+                      context.go(fortuneRoute, extra: fortuneParams);
+                    }
                   }
                 : null,
             style: ElevatedButton.styleFrom(

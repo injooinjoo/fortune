@@ -3,13 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
-import '../widgets/cognitive_functions_radar_chart.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
-import '../../../../shared/components/fortune_result_display.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_card.dart';
+import '../../../../shared/components/app_header.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
@@ -144,50 +143,81 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     return state.fortune!;
   }
 
+  // Override build to show MBTI selection UI
   @override
-  Widget buildInputForm() {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 100, // Space for FloatingBottomButton
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title Section
-              _buildTitleSection(),
-              const SizedBox(height: 32),
+  Widget build(BuildContext context) {
+    // If fortune exists, use the parent's build method to show result
+    if (fortune != null || isLoading || error != null) {
+      return super.build(context);
+    }
 
-              // MBTI Groups Selection
-              _buildMbtiGroupsSection(),
+    // Show MBTI selection UI
+    return Scaffold(
+      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
+      appBar: AppHeader(
+        title: widget.title,
+        showShareButton: false,
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 100, // Space for FloatingBottomButton
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title Section
+                  _buildTitleSection(),
+                  const SizedBox(height: 32),
 
-              // Selected MBTI Info
-              if (_selectedMbti != null) ...[
-                const SizedBox(height: 32),
-                _buildSelectedMbtiInfo(),
-                const SizedBox(height: 24),
-                _buildCategorySelection(),
-              ],
+                  // MBTI Groups Selection
+                  _buildMbtiGroupsSection(),
 
-              // Add extra space at bottom
-              const BottomButtonSpacing(additionalSpacing: 20),
-            ],
-          ),
+                  // Selected MBTI Info
+                  if (_selectedMbti != null) ...[
+                    const SizedBox(height: 32),
+                    _buildSelectedMbtiInfo(),
+                    const SizedBox(height: 24),
+                    _buildCategorySelection(),
+                  ],
+                ],
+              ),
+            ),
+
+            // Floating Bottom Button
+            if (_selectedMbti != null)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: FloatingBottomButton(
+                    text: '운세 보기',
+                    onPressed: canGenerateFortune ? () => generateFortuneAction() : null,
+                    style: TossButtonStyle.primary,
+                    size: TossButtonSize.large,
+                  ),
+                ),
+              ),
+          ],
         ),
-
-        // Floating Bottom Button
-        if (_selectedMbti != null)
-          FloatingBottomButton(
-            text: '운세 보기',
-            onPressed: canGenerateFortune ? () => generateFortuneAction() : null,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-          ),
-      ],
+      ),
     );
   }
 
@@ -603,7 +633,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           children: [
             Icon(Icons.stars,
               size: 20,
-              color: TossDesignSystem.amber500),
+              color: TossDesignSystem.warningOrange),
             const SizedBox(width: 8),
             Text(
               '오늘의 행운 아이템',
@@ -622,15 +652,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           children: items.entries.map((entry) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.amber50,
+              color: TossDesignSystem.warningOrange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: TossDesignSystem.amber200),
+              border: Border.all(color: TossDesignSystem.warningOrange.withOpacity(0.3)),
             ),
             child: Text(
               '${entry.value}',
               style: TextStyle(
                 fontSize: 13,
-                color: TossDesignSystem.amber700,
+                color: TossDesignSystem.warningOrange,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -650,7 +680,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             children: [
               Icon(Icons.psychology,
                 size: 20,
-                color: TossDesignSystem.blue500),
+                color: TossDesignSystem.tossBlue),
               const SizedBox(width: 8),
               Text(
                 '인지 기능 분석',
@@ -663,11 +693,21 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             ],
           ),
           const SizedBox(height: 20),
-          SizedBox(
+          // TODO: Implement cognitive functions radar chart
+          Container(
             height: 200,
-            child: CognitiveFunctionsRadarChart(
-              functions: _cognitiveFunctions!,
-              mbtiType: _selectedMbti!,
+            decoration: BoxDecoration(
+              color: TossDesignSystem.gray50,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                '인지 기능 차트',
+                style: TextStyle(
+                  color: TossDesignSystem.gray500,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
         ],
@@ -739,7 +779,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             children: [
               Icon(Icons.people,
                 size: 20,
-                color: TossDesignSystem.purple500),
+                color: TossDesignSystem.purple),
               const SizedBox(width: 8),
               Text(
                 '오늘의 궁합',
