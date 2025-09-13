@@ -140,30 +140,34 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       categories: _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
     );
 
-    await mbtiNotifier.loadFortune();
+    try {
+      await mbtiNotifier.loadFortune();
+    } catch (e) {
+      // Log error but continue with fallback
+      print('⚠️ [MbtiFortunePage] Fortune API failed: $e');
+    }
 
     final state = ref.read(mbtiFortuneProvider);
 
     // If there's an error or no fortune, create a fallback fortune
     if (state.error != null || state.fortune == null) {
       // Log the error but don't throw - provide fallback instead
-      print('⚠️ [MbtiFortunePage] Fortune generation failed: ${state.error ?? "No fortune data"}');
+      print('⚠️ [MbtiFortunePage] Using fallback fortune due to: ${state.error ?? "No fortune data"}');
 
       // Create a fallback fortune
       final fallbackFortune = Fortune(
         id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',
         userId: user.id,
-        fortuneType: 'mbti',
-        date: DateTime.now(),
+        type: 'mbti',
+        content: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
+        createdAt: DateTime.now(),
         overallScore: 75,
         description: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
-        details: {
+        metadata: {
           'mbtiType': _selectedMbti!,
           'categories': _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
           'energyLevel': _energyLevel,
           'compatibility': _getCompatibleTypes(_selectedMbti!),
-        },
-        metadata: {
           'generatedAt': DateTime.now().toIso8601String(),
           'fallback': true,
         }
