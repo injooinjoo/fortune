@@ -129,6 +129,7 @@ class _MainShellState extends ConsumerState<MainShell>
       backgroundColor: Colors.transparent,
       extendBody: true,
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false, // Prevent navigation bar from moving with keyboard
       body: Stack(
         children: [
           // Main content with animated padding

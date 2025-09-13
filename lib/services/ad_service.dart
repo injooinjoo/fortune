@@ -48,37 +48,61 @@ class AdService {
     if (_isInitialized) return;
 
     try {
+      Logger.info('Starting AdMob SDK initialization...');
+
       // Check if ads are enabled
       if (!Environment.enableAds) {
         Logger.info('Ads are disabled via feature flag');
         return;
       }
 
-      // Initialize MobileAds SDK
-      await MobileAds.instance.initialize();
-      
+      // Initialize MobileAds SDK with timeout
+      // Use Future.any to ensure we don't block indefinitely
+      await Future.any([
+        MobileAds.instance.initialize().then((status) {
+          Logger.info('AdMob SDK initialized with status: ${status.adapterStatuses.keys.join(', ')}');
+          return status;
+        }),
+        Future.delayed(const Duration(seconds: 3)).then((_) {
+          Logger.warning('AdMob SDK initialization timed out after 3 seconds - continuing without ads');
+          return InitializationStatus({});
+        }),
+      ]);
+
       // Configure test devices for development
       if (kDebugMode) {
-        final testDeviceIds = <String>[];
-        if (Platform.isAndroid) {
-          // Add Android test device IDs here
-          testDeviceIds.add('YOUR_ANDROID_TEST_DEVICE_ID');
-        } else if (Platform.isIOS) {
-          // Add iOS test device IDs here
-          testDeviceIds.add('YOUR_IOS_TEST_DEVICE_ID');
+        try {
+          final testDeviceIds = <String>[];
+          if (Platform.isAndroid) {
+            // Add Android test device IDs here
+            testDeviceIds.add('YOUR_ANDROID_TEST_DEVICE_ID');
+          } else if (Platform.isIOS) {
+            // Add iOS test device IDs here
+            testDeviceIds.add('YOUR_IOS_TEST_DEVICE_ID');
+          }
+
+          await MobileAds.instance.updateRequestConfiguration(
+            RequestConfiguration(testDeviceIds: testDeviceIds)).timeout(
+              const Duration(seconds: 1),
+              onTimeout: () {
+                Logger.warning('Test device configuration timed out');
+              },
+            );
+        } catch (e) {
+          Logger.warning('Failed to configure test devices: $e');
         }
-        
-        MobileAds.instance.updateRequestConfiguration(
-          RequestConfiguration(testDeviceIds: testDeviceIds));
       }
 
       _isInitialized = true;
       Logger.info('AdMob SDK initialized successfully');
-      
-      // Preload ads
-      await _preloadAds();
+
+      // Preload ads asynchronously in the background
+      // Don't await this - let it run in the background
+      _preloadAdsInBackground();
     } catch (e) {
-      Logger.error('Failed to initialize AdMob SDK', e);
+      Logger.error('Failed to initialize AdMob SDK: $e');
+      // Don't throw - let the app continue without ads
+      _isInitialized = false;
     }
   }
 
@@ -123,6 +147,45 @@ class AdService {
     await loadRewardedAd();
   }
 
+  /// Preload ads in the background without blocking app startup
+  void _preloadAdsInBackground() {
+    // Load ads with timeout to prevent hanging
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      try {
+        Logger.info('Starting background ad preloading...');
+
+        // Load banner ad with timeout
+        Logger.info('Loading Banner ad...');
+        loadBannerAd().timeout(
+          const Duration(seconds: 2),
+          onTimeout: () {
+            Logger.warning('Banner ad loading timed out');
+          },
+        );
+
+        // Load interstitial ad with timeout
+        Logger.info('Loading Interstitial ad...');
+        loadInterstitialAd().timeout(
+          const Duration(seconds: 2),
+          onTimeout: () {
+            Logger.warning('Interstitial ad loading timed out');
+          },
+        );
+
+        // Load rewarded ad with timeout
+        Logger.info('Loading Rewarded ad...');
+        loadRewardedAd().timeout(
+          const Duration(seconds: 2),
+          onTimeout: () {
+            Logger.warning('Rewarded ad loading timed out');
+          },
+        );
+      } catch (e) {
+        Logger.error('Error preloading ads in background', e);
+      }
+    });
+  }
+
   /// Load a banner ad
   Future<void> loadBannerAd({
     AdSize adSize = AdSize.banner,
@@ -140,7 +203,7 @@ class AdService {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           _isBannerAdReady = true;
-          Logger.info('Banner ad loaded');
+          Logger.info('Banner ad loaded successfully');
           onAdLoaded?.call(ad);
         },
         onAdFailedToLoad: (ad, error) {
@@ -173,7 +236,7 @@ class AdService {
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialAdReady = true;
-          Logger.info('Interstitial ad loaded');
+          Logger.info('Interstitial ad loaded successfully');
           onAdLoaded?.call(ad);
 
           // Set full screen content callback
@@ -264,7 +327,7 @@ class AdService {
         onAdLoaded: (ad) {
           _rewardedAd = ad;
           _isRewardedAdReady = true;
-          Logger.info('Rewarded ad loaded');
+          Logger.info('Rewarded ad loaded successfully');
           onAdLoaded?.call(ad);
 
           // Set full screen content callback

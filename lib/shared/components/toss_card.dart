@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+
+class TossCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
+  final List<BoxShadow>? boxShadow;
+
+  const TossCard({
+    Key? key,
+    required this.child,
+    this.padding,
+    this.margin,
+    this.backgroundColor,
+    this.borderRadius,
+    this.boxShadow,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      margin: margin,
+      decoration: BoxDecoration(
+        color: backgroundColor ?? Colors.white,
+        borderRadius: borderRadius ?? BorderRadius.circular(16),
+        boxShadow: boxShadow ?? [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}

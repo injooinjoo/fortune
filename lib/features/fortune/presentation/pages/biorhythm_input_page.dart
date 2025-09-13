@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../services/ad_service.dart';
 import 'biorhythm_loading_page.dart';
 
 class BiorhythmInputPage extends StatefulWidget {
@@ -142,28 +143,56 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
     );
   }
 
-  void _analyzeBiorhythm() {
+  void _analyzeBiorhythm() async {
     if (_selectedDate == null) return;
-    
+
     HapticFeedback.mediumImpact();
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            BiorhythmLoadingPage(birthDate: _selectedDate!),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position: animation.drive(
-              Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                  .chain(CurveTween(curve: Curves.easeOutCubic)),
-            ),
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 600),
-      ),
+
+    // Show ad before navigating to analysis
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                BiorhythmLoadingPage(birthDate: _selectedDate!),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: animation.drive(
+                  Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                      .chain(CurveTween(curve: Curves.easeOutCubic)),
+                ),
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 600),
+          ),
+        );
+      },
+      onAdFailed: () {
+        // Navigate even if ad fails
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                BiorhythmLoadingPage(birthDate: _selectedDate!),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: animation.drive(
+                  Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                      .chain(CurveTween(curve: Curves.easeOutCubic)),
+                ),
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 600),
+          ),
+        );
+      },
     );
   }
 

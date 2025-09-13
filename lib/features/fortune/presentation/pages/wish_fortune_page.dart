@@ -22,8 +22,7 @@ class WishFortunePage extends ConsumerStatefulWidget {
 }
 
 enum WishPageState {
-  fountain,      // 분수대 화면
-  coinThrow,     // 동전 던지기 애니메이션
+  fountain,      // 메인 화면
   divineResponse // 신의 응답
 }
 
@@ -39,8 +38,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   String _category = '';
   int _urgency = 3;
   String _divineResponse = '';
-  bool _hasWish = false;
-  bool _isThrowingCoin = false;
 
   @override
   void initState() {
@@ -131,57 +128,59 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
     );
   }
 
-  /// 소원 작성 완료 콜백
+  /// 소원 작성 완료 콜백 - 광고 표시 후 신의 응답으로 이동
   void _onWishSubmitted(String wishText, String category, int urgency) {
     setState(() {
       _wishText = wishText;
       _category = category;
       _urgency = urgency;
-      _hasWish = true;
     });
-  }
 
-  /// 동전 던지기
-  void _throwCoin() {
-    setState(() {
-      _isThrowingCoin = true;
-    });
-    
-    // AdMob 광고 직접 표시
+    // 광고 표시 후 신의 응답 표시
     AdService.instance.showInterstitialAdWithCallback(
       onAdCompleted: () {
-        // 광고 완료 후 신의 응답 표시
         if (mounted) {
-          setState(() {
-            _isThrowingCoin = false;
-          });
+          _generateDivineResponse(wishText, category, urgency);
+        }
+      },
+      onAdFailed: () {
+        // 광고 실패 시에도 결과 표시
+        if (mounted) {
+          _generateDivineResponse(wishText, category, urgency);
+        }
+      },
+    );
+  }
+
+  /// 소원 빌기 - 이미 작성된 소원으로 광고 표시 후 신의 응답
+  void _throwCoin() {
+    // 광고 표시 후 신의 응답 표시
+    AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        if (mounted) {
           _generateDivineResponse(_wishText, _category, _urgency);
         }
       },
       onAdFailed: () {
         // 광고 실패 시에도 결과 표시
         if (mounted) {
-          setState(() {
-            _isThrowingCoin = false;
-          });
           _generateDivineResponse(_wishText, _category, _urgency);
         }
       },
     );
   }
 
+
   /// 새로운 소원 빌기
   void _makeNewWish() {
     setState(() {
       _currentState = WishPageState.fountain;
-      _hasWish = false;
       _wishText = '';
       _category = '';
       _urgency = 3;
       _divineResponse = '';
-      _isThrowingCoin = false;
     });
-    
+
     _fadeController.reset();
     _slideController.reset();
   }
@@ -193,9 +192,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
         return _buildFountainView();
       case WishPageState.divineResponse:
         return _buildDivineResponseView();
-      case WishPageState.coinThrow:
-        // 더 이상 사용하지 않지만 enum에서 제거하지 않고 fountain으로 리다이렉트
-        return _buildFountainView();
     }
   }
 
@@ -236,7 +232,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             const SizedBox(height: TossTheme.spacingXL),
             
             // 소원 상태 카드
-            if (_hasWish) _buildWishStatusCard(),
+            if (_wishText.isNotEmpty) _buildWishStatusCard(),
             
             const SizedBox(height: TossTheme.spacingXL),
             
@@ -548,7 +544,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   Widget _buildActionButtons() {
     return Column(
       children: [
-        if (!_hasWish) ...[
+        if (_wishText.isEmpty) ...[
           TossButton(
             text: '소원 작성하기',
             onPressed: _writeWish,
@@ -557,11 +553,11 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
           ),
         ] else ...[
           TossButton(
-            text: _isThrowingCoin ? '소원을 전달하고 있어요...' : '소원 빌기',
-            onPressed: _isThrowingCoin ? null : _throwCoin,
+            text: '소원 빌기',
+            onPressed: _throwCoin,
             size: TossButtonSize.large,
             width: double.infinity,
-            isLoading: _isThrowingCoin,
+            isLoading: false,
           ),
           const SizedBox(height: TossTheme.spacingM),
           TossButton(

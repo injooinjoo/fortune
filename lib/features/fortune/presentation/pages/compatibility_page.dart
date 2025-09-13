@@ -254,310 +254,310 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
           child: Form(
             key: _formKey,
             child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 헤더 카드
-            TossCard(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFEC4899),
-                          Color(0xFF8B5CF6),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFEC4899).withOpacity(0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
-                  
-                  const SizedBox(height: 24),
-                  
-                  Text(
-                    '두 사람의 궁합',
-                    style: TossTheme.heading2.copyWith(
-                      color: TossTheme.textBlack,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  Text(
-                    '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
-                    style: TossTheme.body2.copyWith(
-                      color: TossTheme.textGray600,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
-
-            const SizedBox(height: 32),
-
-            // 첫 번째 사람 정보
-            Text(
-              '첫 번째 사람 (나)',
-              style: TossTheme.heading4.copyWith(
-                color: TossTheme.textBlack,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            TossCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _person1NameController,
-                    decoration: InputDecoration(
-                      labelText: '이름',
-                      hintText: '이름을 입력해주세요',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: TossTheme.borderGray300,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: TossTheme.primaryBlue,
-                        ),
-                      ),
-                    ),
-                    style: TossTheme.body1.copyWith(
-                      color: TossTheme.textBlack,
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  GestureDetector(
-                    onTap: () => _showDatePicker(isPerson1: true),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: TossTheme.backgroundSecondary,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _person1BirthDate != null 
-                              ? TossTheme.primaryBlue 
-                              : TossTheme.borderGray300,
-                          width: _person1BirthDate != null ? 2 : 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '생년월일',
-                                style: TossTheme.caption.copyWith(
-                                  color: TossTheme.textGray600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _person1BirthDate != null
-                                    ? '${_person1BirthDate!.year}년 ${_person1BirthDate!.month}월 ${_person1BirthDate!.day}일'
-                                    : '생년월일을 선택해주세요',
-                                style: TossTheme.body2.copyWith(
-                                  color: _person1BirthDate != null 
-                                      ? TossTheme.textBlack 
-                                      : TossTheme.textGray600,
-                                  fontWeight: _person1BirthDate != null 
-                                      ? FontWeight.w500 
-                                      : FontWeight.w400,
-                                ),
-                              ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 헤더 카드
+                TossCard(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFEC4899),
+                              Color(0xFF8B5CF6),
                             ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          Icon(
-                            Icons.calendar_today_rounded,
-                            color: _person1BirthDate != null 
-                                ? TossTheme.primaryBlue 
-                                : TossTheme.textGray600,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
-
-            const SizedBox(height: 24),
-
-            // 두 번째 사람 정보
-            Text(
-              '두 번째 사람 (상대방)',
-              style: TossTheme.heading4.copyWith(
-                color: TossTheme.textBlack,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            TossCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _person2NameController,
-                    decoration: InputDecoration(
-                      labelText: '이름',
-                      hintText: '상대방 이름을 입력해주세요',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: TossTheme.borderGray300,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFEC4899).withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: TossTheme.primaryBlue,
+                        child: const Icon(
+                          Icons.favorite,
+                          color: Colors.white,
+                          size: 36,
                         ),
-                      ),
-                    ),
-                    style: TossTheme.body1.copyWith(
-                      color: TossTheme.textBlack,
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  GestureDetector(
-                    onTap: () => _showDatePicker(isPerson1: false),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: TossTheme.backgroundSecondary,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _person2BirthDate != null 
-                              ? TossTheme.primaryBlue 
-                              : TossTheme.borderGray300,
-                          width: _person2BirthDate != null ? 2 : 1,
+                      ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+
+                      const SizedBox(height: 24),
+
+                      Text(
+                        '두 사람의 궁합',
+                        style: TossTheme.heading2.copyWith(
+                          color: TossTheme.textBlack,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '생년월일',
-                                style: TossTheme.caption.copyWith(
-                                  color: TossTheme.textGray600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _person2BirthDate != null
-                                    ? '${_person2BirthDate!.year}년 ${_person2BirthDate!.month}월 ${_person2BirthDate!.day}일'
-                                    : '생년월일을 선택해주세요',
-                                style: TossTheme.body2.copyWith(
-                                  color: _person2BirthDate != null 
-                                      ? TossTheme.textBlack 
-                                      : TossTheme.textGray600,
-                                  fontWeight: _person2BirthDate != null 
-                                      ? FontWeight.w500 
-                                      : FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Icon(
-                            Icons.calendar_today_rounded,
-                            color: _person2BirthDate != null 
-                                ? TossTheme.primaryBlue 
-                                : TossTheme.textGray600,
-                            size: 20,
-                          ),
-                        ],
+
+                      const SizedBox(height: 12),
+
+                      Text(
+                        '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
+                        style: TossTheme.body2.copyWith(
+                          color: TossTheme.textGray600,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+                ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 32),
 
-            Center(
-              child: Text(
-                '분석 결과는 참고용으로만 활용해 주세요',
-                style: TossTheme.caption.copyWith(
-                  color: TossTheme.textGray600,
+                // 첫 번째 사람 정보
+                Text(
+                  '첫 번째 사람 (나)',
+                  style: TossTheme.heading4.copyWith(
+                    color: TossTheme.textBlack,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
+
+                const SizedBox(height: 16),
+
+                TossCard(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _person1NameController,
+                        decoration: InputDecoration(
+                          labelText: '이름',
+                          hintText: '이름을 입력해주세요',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: TossTheme.borderGray300,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: TossTheme.primaryBlue,
+                            ),
+                          ),
+                        ),
+                        style: TossTheme.body1.copyWith(
+                          color: TossTheme.textBlack,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      GestureDetector(
+                        onTap: () => _showDatePicker(isPerson1: true),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: TossTheme.backgroundSecondary,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _person1BirthDate != null
+                                  ? TossTheme.primaryBlue
+                                  : TossTheme.borderGray300,
+                              width: _person1BirthDate != null ? 2 : 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '생년월일',
+                                    style: TossTheme.caption.copyWith(
+                                      color: TossTheme.textGray600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    _person1BirthDate != null
+                                        ? '${_person1BirthDate!.year}년 ${_person1BirthDate!.month}월 ${_person1BirthDate!.day}일'
+                                        : '생년월일을 선택해주세요',
+                                    style: TossTheme.body2.copyWith(
+                                      color: _person1BirthDate != null
+                                          ? TossTheme.textBlack
+                                          : TossTheme.textGray600,
+                                      fontWeight: _person1BirthDate != null
+                                          ? FontWeight.w500
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.calendar_today_rounded,
+                                color: _person1BirthDate != null
+                                    ? TossTheme.primaryBlue
+                                    : TossTheme.textGray600,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+
+                const SizedBox(height: 24),
+
+                // 두 번째 사람 정보
+                Text(
+                  '두 번째 사람 (상대방)',
+                  style: TossTheme.heading4.copyWith(
+                    color: TossTheme.textBlack,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                TossCard(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _person2NameController,
+                        decoration: InputDecoration(
+                          labelText: '이름',
+                          hintText: '상대방 이름을 입력해주세요',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: TossTheme.borderGray300,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: TossTheme.primaryBlue,
+                            ),
+                          ),
+                        ),
+                        style: TossTheme.body1.copyWith(
+                          color: TossTheme.textBlack,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      GestureDetector(
+                        onTap: () => _showDatePicker(isPerson1: false),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: TossTheme.backgroundSecondary,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _person2BirthDate != null
+                                  ? TossTheme.primaryBlue
+                                  : TossTheme.borderGray300,
+                              width: _person2BirthDate != null ? 2 : 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '생년월일',
+                                    style: TossTheme.caption.copyWith(
+                                      color: TossTheme.textGray600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    _person2BirthDate != null
+                                        ? '${_person2BirthDate!.year}년 ${_person2BirthDate!.month}월 ${_person2BirthDate!.day}일'
+                                        : '생년월일을 선택해주세요',
+                                    style: TossTheme.body2.copyWith(
+                                      color: _person2BirthDate != null
+                                          ? TossTheme.textBlack
+                                          : TossTheme.textGray600,
+                                      fontWeight: _person2BirthDate != null
+                                          ? FontWeight.w500
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.calendar_today_rounded,
+                                color: _person2BirthDate != null
+                                    ? TossTheme.primaryBlue
+                                    : TossTheme.textGray600,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+
+                const SizedBox(height: 16),
+
+                Center(
+                  child: Text(
+                    '분석 결과는 참고용으로만 활용해 주세요',
+                    style: TossTheme.caption.copyWith(
+                      color: TossTheme.textGray600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                // 하단 버튼 공간만큼 여백 추가
+                const BottomButtonSpacing(),
+              ],
             ),
-            
-            // 하단 버튼 공간만큼 여백 추가
-            const BottomButtonSpacing(),
-          ],
+          ),
         ),
-      ),
-    ),
-    
-    // Floating 버튼
-    FloatingBottomButton(
-      text: '궁합 분석하기',
-      isLoading: _isLoading,
-      onPressed: () async {
-        await AdService.instance.showInterstitialAdWithCallback(
-          onAdCompleted: () {
-            _analyzeCompatibility();
+
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '궁합 분석하기',
+          isLoading: _isLoading,
+          onPressed: () async {
+            await AdService.instance.showInterstitialAdWithCallback(
+              onAdCompleted: () {
+                _analyzeCompatibility();
+              },
+              onAdFailed: () {
+                // Still allow compatibility analysis even if ad fails
+                _analyzeCompatibility();
+              },
+            );
           },
-          onAdFailed: () {
-            // Still allow compatibility analysis even if ad fails
-            _analyzeCompatibility();
-          },
-        );
-      },
-      style: TossButtonStyle.primary,
-      size: TossButtonSize.large,
-    ),
-    ],
-  );
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+        ),
+      ],
+    );
   }
 
   Widget _buildResultView() {

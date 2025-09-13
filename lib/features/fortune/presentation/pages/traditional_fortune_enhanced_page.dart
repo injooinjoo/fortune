@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/base_card.dart';
+import '../../../../services/ad_service.dart';
 // import '../../../../presentation/widgets/simple_fortune_info_sheet.dart';
 
 class TraditionalFortuneEnhancedPage extends ConsumerStatefulWidget {
@@ -336,18 +337,18 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
 
   Widget _buildMainFortuneButton(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // SimpleFortunInfoSheet.show(
-        //   context,
-        //   fortuneType: 'traditional-unified',
-        //   title: '전통운세 종합',
-        //   description: '사주, 토정비결, 주역을 통합한 깊이 있는 운세 분석',
-        //   onDismiss: () {},
-        //   onFortuneButtonPressed: () {
-        //     // Navigate to fortune generation
-        //     context.push('/fortune/traditional-unified');
-        //   },
-        // );
+      onTap: () async {
+        // Show ad before navigating to fortune page
+        await AdService.instance.showInterstitialAdWithCallback(
+          onAdCompleted: () {
+            // Navigate to fortune generation after ad
+            context.push('/fortune/traditional-unified');
+          },
+          onAdFailed: () {
+            // Navigate even if ad fails
+            context.push('/fortune/traditional-unified');
+          },
+        );
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(

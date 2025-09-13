@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../services/ad_service.dart';
 import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
 import 'love_input_step3_page.dart';
 import 'love_input_step4_page.dart';
-// import 'love_fortune_result_page.dart'; // Removed - unused
+import 'love_fortune_result_page.dart';
 
 class LoveFortuneMainPage extends StatefulWidget {
   const LoveFortuneMainPage({super.key});
@@ -61,23 +62,29 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     }
   }
 
-  void _showResults() {
-    // 결과 표시 - 현재 페이지에서 처리하거나 다이얼로그로 표시
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('연애운세 결과'),
-        content: Text('결과가 저장되었습니다.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: Text('확인'),
+  void _showResults() async {
+    // Show ad before showing results
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        // Navigate to result page
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LoveFortuneResultPage(
+              fortuneData: _loveFortuneData,
+            ),
           ),
-        ],
-      ),
+        );
+      },
+      onAdFailed: () {
+        // Navigate to result page even if ad fails
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LoveFortuneResultPage(
+              fortuneData: _loveFortuneData,
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -9,6 +9,7 @@ import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../services/ad_service.dart';
 import '../providers/dream_chat_provider.dart';
 import '../widgets/dream_chat_bubble.dart';
 import '../widgets/dream_input_widget.dart';
@@ -28,6 +29,7 @@ class DreamFortuneChatPage extends ConsumerStatefulWidget {
 class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
   final ScrollController _scrollController = ScrollController();
   bool _hasConsumedSoul = false;
+  bool _hasShownFirstMessageAd = false;
   
   @override
   void initState() {
@@ -163,11 +165,32 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
               color: TossTheme.backgroundWhite,
               child: DreamInputWidget(
                 enabled: !chatState.isAnalyzing,
-                onSendPressed: () {
-                  _scrollToBottom();
-                  // Consume soul on first message if not done yet
-                  if (!_hasConsumedSoul) {
-                    _consumeSoulIfNeeded();
+                onSendPressed: () async {
+                  // Show ad on first user message
+                  if (!_hasShownFirstMessageAd) {
+                    _hasShownFirstMessageAd = true;
+                    await AdService.instance.showInterstitialAdWithCallback(
+                      onAdCompleted: () {
+                        _scrollToBottom();
+                        // Consume soul on first message if not done yet
+                        if (!_hasConsumedSoul) {
+                          _consumeSoulIfNeeded();
+                        }
+                      },
+                      onAdFailed: () {
+                        _scrollToBottom();
+                        // Consume soul on first message if not done yet
+                        if (!_hasConsumedSoul) {
+                          _consumeSoulIfNeeded();
+                        }
+                      },
+                    );
+                  } else {
+                    _scrollToBottom();
+                    // Consume soul on first message if not done yet
+                    if (!_hasConsumedSoul) {
+                      _consumeSoulIfNeeded();
+                    }
                   }
                 },
               ),
@@ -224,10 +247,14 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
           ),
           TextButton(
             onPressed: () {
-              // Show navigation bar when exiting
-              ref.read(navigationVisibilityProvider.notifier).show();
+              // First pop the dialog
               Navigator.of(context).pop();
+              // Then pop the page and reset state
               Navigator.of(context).pop();
+              // Show navigation bar after navigation is complete
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ref.read(navigationVisibilityProvider.notifier).show();
+              });
               // Reset the chat state
               ref.read(dreamChatProvider.notifier).resetChat();
             },

@@ -40,13 +40,24 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     // 상태 초기화 명확히 하기
     _isAuthProcessing = false;
     print('🔵 initState: _isAuthProcessing initialized to false');
-    
-    // WidgetsBinding observer 추가
-    WidgetsBinding.instance.addObserver(this);
+    print('🔵 initState: _isCheckingAuth is $_isCheckingAuth');
     
     _socialAuthService = SocialAuthService(Supabase.instance.client);
-    _checkAuthState();
-    _checkUrlParameters();
+    
+    // Ensure auth check happens after first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('🔄 PostFrameCallback: Starting auth check');
+      _checkAuthState();
+      _checkUrlParameters();
+    });
+    
+    // Add timeout fallback to prevent infinite loading
+    Timer(const Duration(seconds: 5), () {
+      if (_isCheckingAuth && mounted) {
+        print('⚠️ Auth check timeout - forcing _isCheckingAuth to false');
+        setState(() => _isCheckingAuth = false);
+      }
+    });
     
     // Listen for auth state changes
     Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
@@ -264,12 +275,20 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   }
 
   Future<void> _checkAuthState() async {
+    print('🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
     try {
       final session = Supabase.instance.client.auth.currentSession;
       
       // If no session, stay on landing page
       if (session == null) {
         debugPrint('No session found, staying on landing page');
+        print('🔍 _checkAuthState: Setting _isCheckingAuth to false');
+        if (mounted) {
+          setState(() {
+            _isCheckingAuth = false;
+            print('✅ _checkAuthState: _isCheckingAuth set to false');
+          });
+        }
         return;
       }
       
@@ -302,8 +321,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     } catch (e) {
       debugPrint('Error saving profile: $e');
     } finally {
+      print('🔍 _checkAuthState: Finally block - setting _isCheckingAuth to false');
       if (mounted) {
-        setState(() => _isCheckingAuth = false);
+        setState(() {
+          _isCheckingAuth = false;
+          print('✅ _checkAuthState: Finally - _isCheckingAuth set to false');
+        });
       }
     }
   }
@@ -881,6 +904,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
 
   @override
   Widget build(BuildContext context) {
+    print('🎨 Building LandingPage: _isCheckingAuth=$_isCheckingAuth, _isAuthProcessing=$_isAuthProcessing');
+    
     // Build 시마다 OAuth 상태 체크
     if (_isAuthProcessing) {
       final session = Supabase.instance.client.auth.currentSession;
@@ -894,6 +919,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     }
     
     if (_isCheckingAuth) {
+      print('🅿️ Showing loading screen because _isCheckingAuth is true');
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(

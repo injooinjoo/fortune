@@ -30,9 +30,9 @@ serve(async (req) => {
   }
 
   try {
-    const { accessToken } = await req.json()
+    const { access_token } = await req.json()
     
-    if (!accessToken) {
+    if (!access_token) {
       return new Response(
         JSON.stringify({ error: 'Access token is required' }),
         { 
@@ -45,7 +45,7 @@ serve(async (req) => {
     // 네이버 API에서 사용자 정보 가져오기
     const naverResponse = await fetch('https://openapi.naver.com/v1/nid/me', {
       headers: {
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${access_token}`
       }
     })
 
@@ -76,8 +76,9 @@ serve(async (req) => {
     })
 
     // 사용자 존재 여부 확인
-    const { data: existingUser } = await supabase.auth.admin.getUserByEmail(naverUser.email)
-    
+    const { data: { users } } = await supabase.auth.admin.listUsers()
+    const existingUser = users?.find(u => u.email === email)
+
     let user
     if (existingUser) {
       // 기존 사용자 업데이트
@@ -97,7 +98,7 @@ serve(async (req) => {
     } else {
       // 새 사용자 생성
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-        email: naverUser.email,
+        email: email,
         password: `naver_${naverUser.id}_${Math.random().toString(36)}`, // 임시 비밀번호
         email_confirm: true, // 이메일 확인됨으로 설정
         user_metadata: {
@@ -105,7 +106,7 @@ serve(async (req) => {
           naver_id: naverUser.id,
           name: naverUser.name || naverUser.nickname,
           nickname: naverUser.nickname,
-          email: naverUser.email,
+          email: email,
           profile_image: naverUser.profile_image,
         }
       })
@@ -120,8 +121,8 @@ serve(async (req) => {
     // 사용자 프로필 정보 업데이트 (user_profiles 테이블)
     const profileData = {
       id: user.id,
-      email: naverUser.email,
-      name: naverUser.name || naverUser.nickname || naverUser.email.split('@')[0],
+      email: email,
+      name: naverUser.name || naverUser.nickname || email.split('@')[0],
       profile_image_url: naverUser.profile_image,
       primary_provider: 'naver',
       linked_providers: ['naver'],
@@ -134,10 +135,10 @@ serve(async (req) => {
       onConflict: 'id'
     })
 
-    // Access Token 및 Refresh Token 생성
+    // Create a session for the user
     const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
-      email: naverUser.email,
+      email: email,
       options: {
         redirectTo: 'com.beyond.fortune://auth-callback'
       }
@@ -147,15 +148,40 @@ serve(async (req) => {
       throw sessionError
     }
 
+    // Try to create session directly - wrap in try-catch for safety
+    let session = null
+    try {
+      // Note: createSession might not be available in all Supabase versions
+      // Using generateLink as the primary method is more reliable
+      if (supabase.auth.admin.createSession) {
+        const { data: sessionResult } = await supabase.auth.admin.createSession({
+          user_id: user.id
+        })
+        session = sessionResult?.session
+      }
+    } catch (sessionError) {
+      console.log('Direct session creation not available or failed:', sessionError.message)
+      // Continue without session - will use magic link
+    }
+
+    // Return response with magic link as primary method, session as bonus if available
     return new Response(
       JSON.stringify({
         success: true,
         user: {
           id: user.id,
-          email: naverUser.email,
+          email: email,
           name: naverUser.name || naverUser.nickname,
           profile_image: naverUser.profile_image
         },
+        // Session tokens if we managed to create them
+        session: session ? {
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at,
+          expires_in: session.expires_in
+        } : null,
+        // Magic link URL as reliable fallback
         session_url: sessionData.properties?.action_link
       }),
       {

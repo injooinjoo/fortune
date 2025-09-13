@@ -11,6 +11,7 @@ import '../widgets/moving_step_indicator.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../widgets/moving_input_unified.dart';
 import '../widgets/moving_result_infographic.dart';
+import '../../../../services/ad_service.dart';
 
 /// 토스 스타일 이사운 페이지
 class MovingFortuneTossPage extends ConsumerStatefulWidget {
@@ -36,13 +37,30 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
       _movingPeriod = period;
       _purpose = purpose;
     });
-    
-    // 운세 결과를 히스토리에 저장
-    await _saveMovingFortuneResult();
-    
-    setState(() {
-      _currentStep = 1; // 결과 페이지로 이동
-    });
+
+    // 광고 표시 후 결과 페이지로 이동
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        // 운세 결과를 히스토리에 저장
+        await _saveMovingFortuneResult();
+
+        if (mounted) {
+          setState(() {
+            _currentStep = 1; // 결과 페이지로 이동
+          });
+        }
+      },
+      onAdFailed: () async {
+        // 광고 실패 시에도 결과 표시
+        await _saveMovingFortuneResult();
+
+        if (mounted) {
+          setState(() {
+            _currentStep = 1; // 결과 페이지로 이동
+          });
+        }
+      },
+    );
   }
 
   /// 이사운 결과를 히스토리에 저장

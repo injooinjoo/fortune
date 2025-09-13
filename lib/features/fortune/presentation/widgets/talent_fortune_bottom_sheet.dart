@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../services/ad_service.dart';
 
 class TalentFortuneBottomSheet extends ConsumerStatefulWidget {
   const TalentFortuneBottomSheet({super.key});
@@ -237,11 +238,23 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
            _selectedGoal != null;
   }
 
-  void _generateFortune() {
+  void _generateFortune() async {
     // 바텀시트 닫기
     Navigator.of(context).pop();
-    
-    // 바로 재능 발견 페이지로 이동 (광고 없음)
+
+    // 광고 표시 후 재능 발견 페이지로 이동
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        _navigateToTalentPage();
+      },
+      onAdFailed: () {
+        // 광고 실패해도 페이지로 이동
+        _navigateToTalentPage();
+      },
+    );
+  }
+
+  void _navigateToTalentPage() {
     context.go('/talent', extra: {
       'autoGenerate': true,
       'fortuneParams': {

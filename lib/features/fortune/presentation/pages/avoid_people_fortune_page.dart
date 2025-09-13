@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../services/ad_service.dart';
 import '../../domain/models/avoid_person_analysis.dart';
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
@@ -64,7 +65,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
     }
   }
 
-  void _analyzeAndShowResult() {
+  void _analyzeAndShowResult() async {
     final input = AvoidPersonInput(
       environment: _environment,
       importantSchedule: _importantSchedule,
@@ -75,10 +76,22 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
       hasSensitiveConversation: _hasSensitiveConversation,
       hasTeamProject: _hasTeamProject,
     );
-    
-    context.pushNamed(
-      'fortune-avoid-people-result',
-      extra: input,
+
+    // Show ad before showing result
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        context.pushNamed(
+          'fortune-avoid-people-result',
+          extra: input,
+        );
+      },
+      onAdFailed: () {
+        // Navigate even if ad fails
+        context.pushNamed(
+          'fortune-avoid-people-result',
+          extra: input,
+        );
+      },
     );
   }
 
@@ -92,13 +105,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () {
-            if (_currentStep > 0) {
-              _previousStep();
-            } else {
-              Navigator.pop(context);
-            }
-          },
+          onPressed: () => Navigator.pop(context), // Always go back to fortune page
           icon: Icon(
             Icons.arrow_back_ios_new,
             color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,

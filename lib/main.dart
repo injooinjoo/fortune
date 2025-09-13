@@ -34,52 +34,68 @@ import 'services/remote_config_service.dart';
 import 'presentation/providers/font_size_provider.dart';
 
 void main() async {
+  print('🚀 [STARTUP] App main() started');
   WidgetsFlutterBinding.ensureInitialized();
-  
+  print('🚀 [STARTUP] Flutter binding initialized');
+
   try {
     // Load environment variables
+    print('🚀 [STARTUP] Loading environment variables...');
     await dotenv.dotenv.load(fileName: ".env");
+    print('🚀 [STARTUP] Environment variables loaded');
   } catch (e) {
     print('Warning: Could not load .env file: $e');
   }
-  
+
+  print('🚀 [STARTUP] Initializing date formatting...');
   await initializeDateFormatting('ko_KR', null);
+  print('🚀 [STARTUP] Date formatting initialized');
   
   // Initialize Hive
   try {
+    print('🚀 [STARTUP] Initializing Hive...');
     await Hive.initFlutter();
+    print('🚀 [STARTUP] Hive initialized successfully');
     Logger.info('Hive initialized successfully');
   } catch (e) {
+    print('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
   }
-  
+
   // Initialize Firebase - wrapped in try-catch to prevent crash
   try {
+    print('🚀 [STARTUP] Initializing Firebase...');
     await Firebase.initializeApp(
       options: SecureFirebaseOptions.currentPlatform,
     );
+    print('🚀 [STARTUP] Firebase initialized successfully');
     Logger.info('Firebase initialized successfully');
   } catch (e) {
+    print('❌ [STARTUP] Firebase initialization failed: $e');
     Logger.error('Firebase initialization failed', e);
     // Continue without Firebase
   }
   
   // Initialize Supabase with error handling
   try {
+    print('🚀 [STARTUP] Initializing Supabase...');
     final supabaseUrl = dotenv.dotenv.env['SUPABASE_URL'];
     final supabaseAnonKey = dotenv.dotenv.env['SUPABASE_ANON_KEY'];
-    
-    if (supabaseUrl != null && supabaseAnonKey != null && 
+
+    if (supabaseUrl != null && supabaseAnonKey != null &&
         supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty) {
       await Supabase.initialize(
         url: supabaseUrl,
         anonKey: supabaseAnonKey,
       );
+      print('🚀 [STARTUP] Supabase initialized successfully');
       Logger.info('Supabase initialized successfully');
     } else {
+      print('⚠️ [STARTUP] Supabase credentials not found in environment');
       Logger.error('Supabase credentials not found in environment');
     }
   } catch (e) {
+    print('❌ [STARTUP] Supabase initialization failed: $e');
     Logger.error('Supabase initialization failed', e);
   }
   
@@ -116,13 +132,22 @@ void main() async {
     Logger.error('Remote Config initialization failed', e);
   }
   
-  // Initialize Ad Service with error handling
+  // Initialize Ad Service with error handling and timeout
   if (!kIsWeb) {
     try {
-      await AdService.instance.initialize();
-      Logger.info('Ad Service initialized');
+      Logger.info('Initializing Ad Service...');
+      // Use Future.any to ensure we don't block indefinitely
+      await Future.any([
+        AdService.instance.initialize().then((_) {
+          Logger.info('Ad Service initialized successfully');
+        }),
+        Future.delayed(const Duration(seconds: 5)).then((_) {
+          Logger.warning('Ad Service initialization timed out after 5 seconds - continuing without ads');
+        }),
+      ]);
     } catch (e) {
-      Logger.error('Ad Service initialization failed', e);
+      Logger.error('Ad Service initialization failed: $e');
+      // Continue without ads - don't let this block app startup
     }
   }
   
@@ -134,6 +159,7 @@ void main() async {
     Logger.error('SharedPreferences initialization failed', e);
   }
   
+  print('🚀 [STARTUP] All initializations complete, starting app...');
   if (sharedPreferences != null) {
     runApp(
       ProviderScope(
@@ -147,6 +173,7 @@ void main() async {
       const ProviderScope(
         child: MyApp()));
   }
+  print('🚀 [STARTUP] App started successfully');
 }
 
 class MyApp extends ConsumerWidget {

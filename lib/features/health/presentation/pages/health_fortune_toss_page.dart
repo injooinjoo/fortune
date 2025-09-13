@@ -10,6 +10,7 @@ import '../../data/services/health_fortune_service.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toast.dart';
+import '../../../../services/ad_service.dart';
 
 class HealthFortuneTossPage extends StatefulWidget {
   const HealthFortuneTossPage({super.key});
@@ -22,7 +23,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
   final PageController _pageController = PageController();
   final HealthFortuneService _healthService = HealthFortuneService();
   
-  int _currentStep = 0;
+  int _currentStep = 1; // Start from condition selection
   bool _isLoading = false;
   bool _useGridSelector = true; // 그리드 선택기 사용 여부
   
@@ -50,9 +51,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
           child: IconButton(
-            onPressed: _currentStep == 0 
-                ? () => Navigator.pop(context)
-                : _goToPreviousStep,
+            onPressed: () => Navigator.pop(context), // Always go back to fortune page
             style: IconButton.styleFrom(
               backgroundColor: TossTheme.backgroundSecondary,
               shape: RoundedRectangleBorder(
@@ -79,17 +78,16 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
           children: [
             // 진행 인디케이터
             if (_currentStep < 3) _buildProgressIndicator(),
-            
+
             // 페이지 뷰
             Expanded(
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _buildWelcomePage(), // 0: 환영 페이지
-                  _buildConditionSelectionPage(), // 1: 컨디션 선택
-                  _buildBodyPartSelectionPage(), // 2: 신체 부위 선택
-                  _buildResultPage(), // 3: 결과 페이지
+                  _buildConditionSelectionPage(), // 0: 컨디션 선택 (Start here)
+                  _buildBodyPartSelectionPage(), // 1: 신체 부위 선택
+                  _buildResultPage(), // 2: 결과 페이지
                 ],
               ),
             ),
@@ -103,14 +101,14 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
-        children: List.generate(3, (index) {
-          final isActive = index <= _currentStep;
-          final isCompleted = index < _currentStep;
+        children: List.generate(2, (index) { // Changed from 3 to 2 steps
+          final isActive = index <= _currentStep - 1; // Adjust for starting at step 1
+          final isCompleted = index < _currentStep - 1;
           
           return Expanded(
             child: Container(
               height: 4,
-              margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
+              margin: EdgeInsets.only(right: index < 1 ? 8 : 0),
               decoration: BoxDecoration(
                 color: isActive 
                     ? TossTheme.primaryBlue 
@@ -943,7 +941,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
   }
 
   void _goToNextStep() {
-    if (_currentStep < 3) {
+    if (_currentStep < 2) { // Adjusted for 2 steps instead of 3
       HapticFeedback.lightImpact();
       setState(() {
         _currentStep++;
@@ -956,7 +954,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
   }
 
   void _goToPreviousStep() {
-    if (_currentStep > 0) {
+    if (_currentStep > 1) { // Adjusted for starting at step 1
       HapticFeedback.lightImpact();
       setState(() {
         _currentStep--;
@@ -973,28 +971,58 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
       _isLoading = true;
     });
 
-    try {
-      final input = HealthFortuneInput(
-        userId: 'test_user_id', // 실제로는 현재 사용자 ID
-        currentCondition: _currentCondition,
-        concernedBodyParts: _selectedBodyParts.isNotEmpty ? _selectedBodyParts : null,
-      );
+    // Show ad before generating health fortune
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        try {
+          final input = HealthFortuneInput(
+            userId: 'test_user_id', // 실제로는 현재 사용자 ID
+            currentCondition: _currentCondition,
+            concernedBodyParts: _selectedBodyParts.isNotEmpty ? _selectedBodyParts : null,
+          );
 
-      final result = await _healthService.generateHealthFortune(input);
-      
-      setState(() {
-        _fortuneResult = result;
-      });
-      
-      _goToNextStep();
-      
-    } catch (e) {
-      Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+          final result = await _healthService.generateHealthFortune(input);
+
+          setState(() {
+            _fortuneResult = result;
+          });
+
+          _goToNextStep();
+
+        } catch (e) {
+          Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
+        } finally {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      },
+      onAdFailed: () async {
+        // Generate health fortune even if ad fails
+        try {
+          final input = HealthFortuneInput(
+            userId: 'test_user_id', // 실제로는 현재 사용자 ID
+            currentCondition: _currentCondition,
+            concernedBodyParts: _selectedBodyParts.isNotEmpty ? _selectedBodyParts : null,
+          );
+
+          final result = await _healthService.generateHealthFortune(input);
+
+          setState(() {
+            _fortuneResult = result;
+          });
+
+          _goToNextStep();
+
+        } catch (e) {
+          Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
+        } finally {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      },
+    );
   }
 
   void _shareResult() {
@@ -1004,14 +1032,14 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
 
   void _restartAnalysis() {
     setState(() {
-      _currentStep = 0;
+      _currentStep = 1; // Start from condition selection
       _currentCondition = null;
       _selectedBodyParts.clear();
       _fortuneResult = null;
     });
-    
+
     _pageController.animateToPage(
-      0,
+      0, // First page is now condition selection
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
     );

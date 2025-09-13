@@ -15,22 +15,22 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // 2초 후 인증 확인
-    _performAuthCheck();
-    
-    // Failsafe: If still on splash after 5 seconds, force navigation
-    Future.delayed(const Duration(seconds: 5), () {
+
+    // Failsafe: If still on splash after 3 seconds, force navigation
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         print('⏰ SplashScreen: Failsafe triggered, forcing navigation to landing');
         context.go('/');
       }
     });
+
+    // 인증 확인 시작
+    _performAuthCheck();
   }
 
   Future<void> _performAuthCheck() async {
     print('🚀 SplashScreen: Starting auth check');
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) {
       print('⚠️ SplashScreen: Widget not mounted, returning');
@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (session != null) {
         try {
           print('👤 SplashScreen: Checking user profile for user ${session.user.id}');
-          
+
           // Add timeout to prevent hanging
           final profileResponse = await supabase
               .from('user_profiles')
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
               .eq('id', session.user.id)
               .maybeSingle()
               .timeout(
-                const Duration(seconds: 3),
+                const Duration(seconds: 2),
                 onTimeout: () {
                   print('⏱️ SplashScreen: Profile fetch timeout');
                   return null;

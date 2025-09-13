@@ -11,8 +11,8 @@ struct FortuneWidgetBundle: WidgetBundle {
         // Love Compatibility Widget
         LoveFortuneWidget()
         
-        // Lock Screen Widget (iOS 16+)
-        if #available(iOS 16.0, *) {
+        // Lock Screen Widget (iOS 16.1+)
+        if #available(iOS 16.1, *) {
             LockScreenFortuneWidget()
         }
     }
@@ -47,7 +47,7 @@ struct LoveFortuneWidget: Widget {
 }
 
 // MARK: - Lock Screen Widget
-@available(iOS 16.0, *)
+@available(iOS 16.1, *)
 struct LockScreenFortuneWidget: Widget {
     let kind: String = "LockScreenFortuneWidget"
     

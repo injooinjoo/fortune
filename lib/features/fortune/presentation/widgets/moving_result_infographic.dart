@@ -229,25 +229,58 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Column(
+      child: Stack(
         children: [
-          Text(
-            '${widget.name}님의',
-            style: TossTheme.heading3.copyWith(
-              color: TossTheme.textGray600,
+          // 뒤로가기 버튼
+          Positioned(
+            left: 0,
+            top: 0,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_rounded,
+                  size: 20,
+                  color: TossTheme.textBlack,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            '이사운 분석 완료',
-            style: TossTheme.heading1.copyWith(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              color: TossTheme.textBlack,
-            ),
-          ).animate()
-            .fadeIn(duration: 600.ms)
-            .slideY(begin: 0.2, end: 0),
+          // 제목
+          Column(
+            children: [
+              Text(
+                '${widget.name}님의',
+                style: TossTheme.heading3.copyWith(
+                  color: TossTheme.textGray600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '이사운 분석 완료',
+                style: TossTheme.heading1.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: TossTheme.textBlack,
+                ),
+              ).animate()
+                .fadeIn(duration: 600.ms)
+                .slideY(begin: 0.2, end: 0),
+            ],
+          ),
         ],
       ),
     );

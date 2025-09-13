@@ -399,9 +399,67 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return filtered;
   }
 
-  // Mock methods for statistics and views
-  dynamic _calculateStatistics(List<FortuneHistory> filteredHistory) {
-    return MockStatistics();
+  // Calculate real statistics from history data
+  FortuneStatistics _calculateStatistics(List<FortuneHistory> filteredHistory) {
+    // Get current month data
+    final now = DateTime.now();
+    final monthlyData = filteredHistory.where((item) {
+      return item.createdAt.year == now.year &&
+             item.createdAt.month == now.month;
+    }).toList();
+
+    // Calculate average score
+    double avgScore = 0;
+    if (monthlyData.isNotEmpty) {
+      final scores = monthlyData
+          .where((item) => item.summary['score'] != null)
+          .map((item) => (item.summary['score'] as num).toDouble())
+          .toList();
+      if (scores.isNotEmpty) {
+        avgScore = scores.reduce((a, b) => a + b) / scores.length;
+      }
+    }
+
+    // Count fortune types
+    final typeCounts = <String, int>{};
+    for (final item in filteredHistory) {
+      typeCounts[item.fortuneType] = (typeCounts[item.fortuneType] ?? 0) + 1;
+    }
+
+    // Find most frequent type
+    String mostFrequentType = '일일운세';
+    if (typeCounts.isNotEmpty) {
+      final sorted = typeCounts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+      mostFrequentType = _getTypeName(sorted.first.key);
+    }
+
+    return FortuneStatistics(
+      monthlyCount: monthlyData.length,
+      averageScore: avgScore,
+      mostFrequentCategory: mostFrequentType,
+      totalCount: filteredHistory.length,
+      typeCounts: typeCounts,
+    );
+  }
+
+  String _getTypeName(String type) {
+    final typeNames = {
+      'daily': '일일운세',
+      'weekly': '주간운세',
+      'monthly': '월간운세',
+      'love': '연애운',
+      'money': '금전운',
+      'career': '직업운',
+      'health': '건강운',
+      'moving': '이사운',
+      'wish': '소원운',
+      'traditional': '전통사주',
+      'tarot': '타로',
+      'dream': '꿈해몽',
+      'face': '관상',
+    };
+    return typeNames[type] ?? type;
   }
 
   Widget _buildTimelineView(List<FortuneHistory> filteredHistory) {
@@ -414,8 +472,17 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     );
   }
 
-  Widget _buildStatisticsView(dynamic statistics, double fontScale) {
-    return StatisticsDashboard(statistics: statistics, fontScale: fontScale);
+  Widget _buildStatisticsView(FortuneStatistics statistics, double fontScale) {
+    // Convert FortuneStatistics to UserStatistics for the dashboard widget
+    final userStats = UserStatistics(
+      totalCount: statistics.totalCount,
+      monthlyCount: statistics.monthlyCount,
+      averageScore: statistics.averageScore,
+      categoryCount: statistics.typeCounts,
+      mostFrequentCategory: statistics.mostFrequentCategory,
+      lastFortuneDate: DateTime.now(), // You can get this from the most recent history item
+    );
+    return StatisticsDashboard(statistics: userStats, fontScale: fontScale);
   }
 
   Widget _buildChartsView(List<FortuneHistory> filteredHistory, double fontScale) {
@@ -431,9 +498,19 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
   }
 }
 
-// Mock statistics class
-class MockStatistics {
-  int get monthlyCount => 12;
-  double get averageScore => 78.5;
-  String get mostFrequentCategory => '일일운세';
+// Fortune statistics class
+class FortuneStatistics {
+  final int monthlyCount;
+  final double averageScore;
+  final String mostFrequentCategory;
+  final int totalCount;
+  final Map<String, int> typeCounts;
+
+  FortuneStatistics({
+    required this.monthlyCount,
+    required this.averageScore,
+    required this.mostFrequentCategory,
+    required this.totalCount,
+    required this.typeCounts,
+  });
 }

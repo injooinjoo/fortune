@@ -43,10 +43,10 @@ class SocialAuthService {
       // Use Supabase standard OAuth
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: kIsWeb 
+        redirectTo: kIsWeb
           ? '${Uri.base.origin}/auth/callback'
-          : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.platformDefault,
+          : 'io.supabase.flutter://auth-callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
       );
       
       if (!response) {
@@ -850,28 +850,79 @@ class SocialAuthService {
       }
       
       Logger.info('Got Naver access token, calling Edge Function');
+      Logger.info('Access token (first 10 chars): ${accessToken.substring(0, 10 > accessToken.length ? accessToken.length : 10)}...');
       
       // Call our Edge Function to handle OAuth
       final response = await _supabase.functions.invoke(
         'naver-oauth',
         body: {
-          'accessToken': accessToken
+          'access_token': accessToken  // Edge Function expects 'access_token', not 'accessToken'
         }
       );
       
+      Logger.info('Edge Function response status: ${response.status}');
+      Logger.info('Edge Function response data: ${response.data}');
+      
       if (response.status != 200) {
         Logger.error('Naver OAuth Edge Function failed: ${response.status}');
-        throw Exception('Naver OAuth failed: ${response.data}');
+        Logger.error('Response data: ${response.data}');
+        throw Exception('Naver OAuth failed: Status ${response.status}, Data: ${response.data}');
       }
       
       final data = response.data as Map<String, dynamic>;
       
-      if (!data['success']) {
+      if (data['success'] != true) {
+        Logger.error('Naver OAuth failed: ${data['error'] ?? 'Unknown error'}');
+        Logger.error('Full response data: $data');
         throw Exception(data['error'] ?? 'Naver OAuth failed');
       }
       
+      // Check if we got session tokens directly (preferred)
+      final sessionData = data['session'] as Map<String, dynamic>?;
+      if (sessionData != null && sessionData['access_token'] != null) {
+        Logger.info('Got session tokens directly from Edge Function');
+
+        try {
+          // Set the session directly using the tokens
+          final refreshToken = sessionData['refresh_token'] as String?;
+          if (refreshToken != null) {
+            final authResponse = await _supabase.auth.setSession(refreshToken);
+
+            if (authResponse.session != null) {
+              Logger.securityCheckpoint('Naver: ${authResponse.session?.user?.id}');
+              return authResponse;
+            }
+          }
+          Logger.warning('Failed to set session with tokens, falling back to magic link');
+        } catch (e) {
+          Logger.warning('Session setting failed: $e, falling back to magic link');
+        }
+      }
+
+      // Fallback to magic link approach - this is now the primary method
       final sessionUrl = data['session_url'] as String?;
       if (sessionUrl == null) {
+        // If no session URL, but user was created successfully, return partial success
+        final userData = data['user'] as Map<String, dynamic>?;
+        if (userData != null && userData['id'] != null) {
+          Logger.info('User created successfully but session pending');
+          // Return success with user info but no session
+          // The app should handle this by asking user to check email or retry
+          return AuthResponse(
+            session: null,
+            user: User(
+              id: userData['id'] as String,
+              email: userData['email'] as String?,
+              appMetadata: {'provider': 'naver'},
+              userMetadata: {
+                'name': userData['name'],
+                'profile_image': userData['profile_image']
+              },
+              aud: '',
+              createdAt: DateTime.now().toIso8601String()
+            )
+          );
+        }
         throw Exception('No session URL returned from Naver OAuth');
       }
       

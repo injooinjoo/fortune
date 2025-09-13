@@ -36,19 +36,21 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
     Function(String wishText, String category, int urgency)? onWishSubmitted,
   }) async {
     final container = ProviderScope.containerOf(context);
-    
+
     // 네비게이션 바 숨기기
     container.read(navigationVisibilityProvider.notifier).hide();
-    
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      // 키보드가 올라와도 바텀시트가 키보드 위에 위치하도록 설정
+      useSafeArea: false,
       builder: (context) => WishInputBottomSheet(
         onWishSubmitted: onWishSubmitted,
       ),
     );
-    
+
     // 네비게이션 바 다시 표시
     container.read(navigationVisibilityProvider.notifier).show();
   }
@@ -86,8 +88,13 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
+    // 키보드가 올라왔을 때 바텀시트 높이를 조정
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
+      height: screenHeight * 0.85 - (bottomInset > 0 ? 0 : 0),
       decoration: const BoxDecoration(
         color: Color(0xFFF7F8FA),
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -133,14 +140,14 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
               ),
             ),
           ),
-          
+
           // Submit button
           Container(
             padding: EdgeInsets.fromLTRB(
               20,
               12, // 상단 패딩 추가
               20,
-              16 + MediaQuery.of(context).padding.bottom, // 하단 패딩 조정
+              16 + MediaQuery.of(context).padding.bottom + bottomInset, // 키보드 높이 반영
             ),
             child: SizedBox(
               width: double.infinity,
