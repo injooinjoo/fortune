@@ -12,6 +12,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import 'dart:math' as math;
 
 class MbtiFortunePage extends BaseFortunePage {
@@ -107,6 +108,22 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Hide navigation bar when entering MBTI fortune page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navigationVisibilityProvider.notifier).hide();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Show navigation bar when leaving MBTI fortune page
+    ref.read(navigationVisibilityProvider.notifier).show();
+    super.dispose();
+  }
+
+  @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final user = ref.read(userProvider).value;
     if (user == null) {
@@ -126,12 +143,39 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     await mbtiNotifier.loadFortune();
 
     final state = ref.read(mbtiFortuneProvider);
-    if (state.error != null) {
-      throw Exception(state.error);
-    }
 
-    if (state.fortune == null) {
-      throw Exception('운세를 불러올 수 없습니다');
+    // If there's an error or no fortune, create a fallback fortune
+    if (state.error != null || state.fortune == null) {
+      // Log the error but don't throw - provide fallback instead
+      print('⚠️ [MbtiFortunePage] Fortune generation failed: ${state.error ?? "No fortune data"}');
+
+      // Create a fallback fortune
+      final fallbackFortune = Fortune(
+        id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',
+        userId: user.id,
+        fortuneType: 'mbti',
+        date: DateTime.now(),
+        overallScore: 75,
+        description: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
+        details: {
+          'mbtiType': _selectedMbti!,
+          'categories': _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
+          'energyLevel': _energyLevel,
+          'compatibility': _getCompatibleTypes(_selectedMbti!),
+        },
+        metadata: {
+          'generatedAt': DateTime.now().toIso8601String(),
+          'fallback': true,
+        }
+      );
+
+      // Calculate cognitive functions for today
+      _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
+        _selectedMbti!,
+        DateTime.now(),
+      );
+
+      return fallbackFortune;
     }
 
     // Calculate cognitive functions for today
