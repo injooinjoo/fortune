@@ -132,7 +132,7 @@ class Environment {
         dotenv.env['SUPABASE_ANON_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MTU4MzIsImV4cCI6MjA2Nzk5MTgzMn0.o5h68r7OZ_W9NE49-b-0pKQIaUFG4oZCXWRwhnmIqdI';
         dotenv.env['API_BASE_URL'] = 'http://localhost:3000';
         dotenv.env['EDGE_FUNCTIONS_URL'] = 'https://hayjukwfcsdmppairazc.supabase.co/functions/v1';
-        dotenv.env['USE_EDGE_FUNCTIONS'] = 'false';
+        dotenv.env['USE_EDGE_FUNCTIONS'] = 'true';
         return;
       } else {
         rethrow;

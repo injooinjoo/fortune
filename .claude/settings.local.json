@@ -165,7 +165,15 @@
       "Bash(then echo \"$file: FloatingBottomButton\")",
       "Bash(nc localhost 58465)",
       "Bash(pod update:*)",
-      "Bash(nc localhost 52590)"
+      "Bash(nc localhost 52590)",
+      "Bash(nc localhost 57399)",
+      "Bash(nc localhost 56557)",
+      "Bash(pod cache clean:*)",
+      "Bash(nc localhost 57715)",
+      "Bash(nc localhost 58293)",
+      "Bash(nc localhost 58960)",
+      "Bash(nc localhost 59992)",
+      "Bash(nc localhost 62111)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

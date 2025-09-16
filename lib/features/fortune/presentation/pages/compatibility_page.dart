@@ -111,7 +111,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       );
       return;
     }
-    
+
     if (_person1BirthDate == null || _person2BirthDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -131,6 +131,19 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       _isLoading = true;
     });
 
+    // 광고 표시 후 분석 진행
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        await _performCompatibilityAnalysis();
+      },
+      onAdFailed: () async {
+        // 광고 실패해도 분석 진행
+        await _performCompatibilityAnalysis();
+      },
+    );
+  }
+
+  Future<void> _performCompatibilityAnalysis() async {
     try {
       final fortuneService = ref.read(fortuneServiceProvider);
       final params = {
@@ -143,19 +156,19 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
           'birthDate': _person2BirthDate!.toIso8601String(),
         },
       };
-      
+
       final fortune = await fortuneService.getCompatibilityFortune(
         person1: params['person1'] as Map<String, dynamic>,
         person2: params['person2'] as Map<String, dynamic>,
       );
-      
+
       // Parse scores from fortune response
       Map<String, double> scores = {};
-      
+
       // Extract overall score
       double overallScore = (fortune.overallScore ?? 75) / 100.0;
       scores['전체 궁합'] = overallScore;
-      
+
       // Parse detailed scores from fortune content or metadata
       if (fortune.metadata != null && fortune.metadata!['scores'] != null) {
         final detailedScores = fortune.metadata!['scores'] as Map<String, dynamic>;
@@ -170,7 +183,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         scores['일상 궁합'] = (overallScore - 0.07).clamp(0.0, 1.0);
         scores['소통 궁합'] = overallScore;
       }
-      
+
       setState(() {
         _compatibilityData = {
           'fortune': fortune,
@@ -178,7 +191,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         };
         _isLoading = false;
       });
-      
+
       HapticFeedback.mediumImpact();
     } catch (e) {
       setState(() {
@@ -191,7 +204,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         } else if (e.toString().contains('network')) {
           errorMessage = '네트워크 연결을 확인해주세요';
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
@@ -295,6 +308,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         '두 사람의 궁합',
                         style: TossTheme.heading2.copyWith(
                           color: TossTheme.textBlack,
+                          fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -313,21 +327,44 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   ),
                 ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
-                // 첫 번째 사람 정보
-                Text(
-                  '첫 번째 사람 (나)',
-                  style: TossTheme.heading4.copyWith(
-                    color: TossTheme.textBlack,
-                    fontWeight: FontWeight.w700,
-                  ),
+                // 첫 번째 사람 정보 - 컴팩트 스타일
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: TossTheme.primaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.person,
+                            size: 14,
+                            color: TossTheme.primaryBlue,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '나',
+                            style: TossTheme.caption.copyWith(
+                              color: TossTheme.primaryBlue,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 TossCard(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
+                  style: TossCardStyle.outlined,
                   child: Column(
                     children: [
                       TextField(
@@ -335,78 +372,84 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         decoration: InputDecoration(
                           labelText: '이름',
                           hintText: '이름을 입력해주세요',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
                               color: TossTheme.borderGray300,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
                               color: TossTheme.primaryBlue,
+                              width: 1.5,
                             ),
                           ),
                         ),
-                        style: TossTheme.body1.copyWith(
+                        style: TossTheme.body2.copyWith(
                           color: TossTheme.textBlack,
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       GestureDetector(
                         onTap: () => _showDatePicker(isPerson1: true),
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
                             color: TossTheme.backgroundSecondary,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: _person1BirthDate != null
                                   ? TossTheme.primaryBlue
                                   : TossTheme.borderGray300,
-                              width: _person1BirthDate != null ? 2 : 1,
+                              width: _person1BirthDate != null ? 1.5 : 1,
                             ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '생년월일',
-                                    style: TossTheme.caption.copyWith(
-                                      color: TossTheme.textGray600,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '생년월일',
+                                      style: TossTheme.caption.copyWith(
+                                        color: TossTheme.textGray600,
+                                        fontSize: 11,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    _person1BirthDate != null
-                                        ? '${_person1BirthDate!.year}년 ${_person1BirthDate!.month}월 ${_person1BirthDate!.day}일'
-                                        : '생년월일을 선택해주세요',
-                                    style: TossTheme.body2.copyWith(
-                                      color: _person1BirthDate != null
-                                          ? TossTheme.textBlack
-                                          : TossTheme.textGray600,
-                                      fontWeight: _person1BirthDate != null
-                                          ? FontWeight.w500
-                                          : FontWeight.w400,
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _person1BirthDate != null
+                                          ? '${_person1BirthDate!.year}년 ${_person1BirthDate!.month}월 ${_person1BirthDate!.day}일'
+                                          : '생년월일을 선택해주세요',
+                                      style: TossTheme.body2.copyWith(
+                                        color: _person1BirthDate != null
+                                            ? TossTheme.textBlack
+                                            : TossTheme.textGray600,
+                                        fontWeight: _person1BirthDate != null
+                                            ? FontWeight.w500
+                                            : FontWeight.w400,
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               Icon(
                                 Icons.calendar_today_rounded,
                                 color: _person1BirthDate != null
                                     ? TossTheme.primaryBlue
                                     : TossTheme.textGray600,
-                                size: 20,
+                                size: 18,
                               ),
                             ],
                           ),
@@ -416,15 +459,42 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   ),
                 ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
-                // 두 번째 사람 정보
-                Text(
-                  '두 번째 사람 (상대방)',
-                  style: TossTheme.heading4.copyWith(
-                    color: TossTheme.textBlack,
-                    fontWeight: FontWeight.w700,
-                  ),
+                // 두 번째 사람 정보 - 강조된 스타일
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFEC4899),
+                            Color(0xFF8B5CF6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.favorite,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '상대방',
+                            style: TossTheme.body2.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 16),
@@ -542,17 +612,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         FloatingBottomButton(
           text: '궁합 분석하기',
           isLoading: _isLoading,
-          onPressed: () async {
-            await AdService.instance.showInterstitialAdWithCallback(
-              onAdCompleted: () {
-                _analyzeCompatibility();
-              },
-              onAdFailed: () {
-                // Still allow compatibility analysis even if ad fails
-                _analyzeCompatibility();
-              },
-            );
-          },
+          onPressed: _analyzeCompatibility,
           style: TossButtonStyle.primary,
           size: TossButtonSize.large,
         ),

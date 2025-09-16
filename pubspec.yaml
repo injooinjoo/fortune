@@ -216,7 +216,6 @@ flutter:
   assets:
     - .env
     - assets/images/
-    - assets/images/fortune_cards/
     - assets/images/social/
     - assets/images/tarot/
     - assets/images/tarot/decks/
@@ -229,7 +228,6 @@ flutter:
     - assets/images/talismans/
     - assets/images/health/
     - assets/fonts/
-    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -33,18 +33,10 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo with inverted colors
-            Container(
+            SvgPicture.asset(
+              'assets/images/flower_transparent.svg',
               width: 120,
               height: 120,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.spa_outlined, // Placeholder for your logo
-                size: 80,
-                color: Colors.black,
-              ),
             )
                 .animate()
                 .fadeIn(duration: 800.ms)

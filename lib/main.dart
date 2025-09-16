@@ -62,19 +62,20 @@ void main() async {
     Logger.error('Hive initialization failed', e);
   }
 
-  // Initialize Firebase - wrapped in try-catch to prevent crash
-  try {
-    print('🚀 [STARTUP] Initializing Firebase...');
-    await Firebase.initializeApp(
-      options: SecureFirebaseOptions.currentPlatform,
-    );
-    print('🚀 [STARTUP] Firebase initialized successfully');
-    Logger.info('Firebase initialized successfully');
-  } catch (e) {
-    print('❌ [STARTUP] Firebase initialization failed: $e');
-    Logger.error('Firebase initialization failed', e);
-    // Continue without Firebase
-  }
+  // Initialize Firebase in background - don't block app startup
+  Future(() async {
+    try {
+      print('🚀 [STARTUP] Initializing Firebase in background...');
+      await Firebase.initializeApp(
+        options: SecureFirebaseOptions.currentPlatform,
+      );
+      print('🚀 [STARTUP] Firebase initialized successfully in background');
+      Logger.info('Firebase initialized successfully in background');
+    } catch (e) {
+      print('❌ [STARTUP] Firebase initialization failed in background: $e');
+      Logger.error('Firebase initialization failed in background', e);
+    }
+  });
   
   // Initialize Supabase with error handling
   try {
@@ -116,39 +117,40 @@ void main() async {
     Logger.info('Naver SDK ready (initialized on first use)');
   }
   
-  // Initialize Analytics with error handling
-  try {
-    await AnalyticsService.instance.initialize();
-    Logger.info('Analytics initialized');
-  } catch (e) {
-    Logger.error('Analytics initialization failed', e);
-  }
-  
-  // Initialize Remote Config with error handling
-  try {
-    await RemoteConfigService().initialize();
-    Logger.info('Remote Config initialized');
-  } catch (e) {
-    Logger.error('Remote Config initialization failed', e);
-  }
-  
-  // Initialize Ad Service with error handling and timeout
-  if (!kIsWeb) {
+  // Initialize Analytics and Remote Config in background
+  Future(() async {
     try {
-      Logger.info('Initializing Ad Service...');
-      // Use Future.any to ensure we don't block indefinitely
-      await Future.any([
-        AdService.instance.initialize().then((_) {
-          Logger.info('Ad Service initialized successfully');
-        }),
-        Future.delayed(const Duration(seconds: 5)).then((_) {
-          Logger.warning('Ad Service initialization timed out after 5 seconds - continuing without ads');
-        }),
-      ]);
+      await AnalyticsService.instance.initialize();
+      Logger.info('Analytics initialized in background');
     } catch (e) {
-      Logger.error('Ad Service initialization failed: $e');
-      // Continue without ads - don't let this block app startup
+      Logger.error('Analytics initialization failed in background', e);
     }
+
+    try {
+      await RemoteConfigService().initialize();
+      Logger.info('Remote Config initialized in background');
+    } catch (e) {
+      Logger.error('Remote Config initialization failed in background', e);
+    }
+  });
+  
+  // Initialize Ad Service in background - don't block app startup
+  // DISABLE ADS FOR TESTING ON REAL DEVICES
+  const bool DISABLE_ADS_FOR_TESTING = false; // Enable ads for release build
+
+  if (!kIsWeb && !DISABLE_ADS_FOR_TESTING) {
+    // Don't await - let it run in the background
+    Future(() async {
+      try {
+        Logger.info('Initializing Ad Service in background...');
+        await AdService.instance.initialize();
+        Logger.info('Ad Service initialized successfully in background');
+      } catch (e) {
+        Logger.error('Ad Service initialization failed in background: $e');
+      }
+    });
+  } else {
+    Logger.info('Ad Service disabled for testing');
   }
   
   // Initialize SharedPreferences

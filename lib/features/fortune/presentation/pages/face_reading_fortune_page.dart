@@ -368,37 +368,53 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
   }
   
   Future<void> _startAnalysis(Function(Map<String, dynamic>) onSubmit) async {
+    debugPrint('🎯 [FaceReadingFortunePage] _startAnalysis started');
     setState(() {
       _isAnalyzing = true;
     });
-    
+
     try {
       Map<String, dynamic> data = {
         'analysis_type': 'comprehensive',
         'include_character': true,
         'include_fortune': true,
       };
-      
+
+      debugPrint('📸 [FaceReadingFortunePage] Upload result type: ${_uploadResult?.type}');
+
       if (_uploadResult?.imageFile != null) {
         final bytes = await _uploadResult!.imageFile!.readAsBytes();
+        debugPrint('📏 [FaceReadingFortunePage] Image size: ${bytes.length} bytes (${(bytes.length / 1024 / 1024).toStringAsFixed(2)} MB)');
+
+        // 이미지 크기 체크 (5MB 제한)
+        if (bytes.length > 5 * 1024 * 1024) {
+          throw '이미지 크기가 너무 큽니다. 5MB 이하의 이미지를 선택해주세요.';
+        }
         data['image'] = base64Encode(bytes);
+        data['analysis_source'] = 'image';
+        debugPrint('✅ [FaceReadingFortunePage] Image encoded to base64, source: image');
       } else if (_uploadResult?.instagramUrl != null) {
         data['instagram_url'] = _uploadResult!.instagramUrl;
         data['analysis_source'] = 'instagram';
+        debugPrint('✅ [FaceReadingFortunePage] Using Instagram URL: ${_uploadResult!.instagramUrl}');
+      } else {
+        debugPrint('❌ [FaceReadingFortunePage] No image or Instagram URL provided');
+        throw '분석할 이미지를 선택해주세요.';
       }
-      
+
+      debugPrint('📤 [FaceReadingFortunePage] Calling onSubmit with data keys: ${data.keys.toList()}');
+      debugPrint('📤 [FaceReadingFortunePage] Analysis source: ${data['analysis_source']}');
+
       onSubmit(data);
     } catch (e) {
+      debugPrint('❌ [FaceReadingFortunePage] Error in _startAnalysis: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('오류가 발생했습니다: $e'),
+            content: Text(e.toString()),
             backgroundColor: TossDesignSystem.errorRed,
           ),
         );
-      }
-    } finally {
-      if (mounted) {
         setState(() {
           _isAnalyzing = false;
         });

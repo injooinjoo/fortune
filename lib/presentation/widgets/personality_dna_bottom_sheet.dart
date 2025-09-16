@@ -163,7 +163,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             ),
             child: SafeArea(
               child: TossButton(
-                text: '성격 DNA 분석하기',
+                text: '🧬 나만의 성격 DNA 발견하기',
                 onPressed: _canGenerate && !_isLoading
                     ? _generatePersonalityDNA
                     : null,

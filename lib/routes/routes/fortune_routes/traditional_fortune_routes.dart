@@ -3,7 +3,6 @@ import '../../../features/fortune/presentation/pages/tojeong_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/traditional_saju_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
 import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/physiognomy_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/saju_psychology_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart';

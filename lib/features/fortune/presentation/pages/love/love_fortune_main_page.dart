@@ -63,10 +63,28 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
   }
 
   void _showResults() async {
-    // Show ad before showing results
+    print('[LoveFortune] _showResults called');
+
+    // 로딩 다이얼로그 표시
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // 광고 표시
+    print('[LoveFortune] Attempting to show interstitial ad...');
     await AdService.instance.showInterstitialAdWithCallback(
       onAdCompleted: () {
-        // Navigate to result page
+        print('[LoveFortune] Ad completed successfully');
+        // 로딩 다이얼로그 닫기
+        Navigator.of(context).pop();
+
+        // 결과 페이지로 이동
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => LoveFortuneResultPage(
@@ -76,7 +94,11 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
         );
       },
       onAdFailed: () {
-        // Navigate to result page even if ad fails
+        print('[LoveFortune] Ad failed to load or show');
+        // 로딩 다이얼로그 닫기
+        Navigator.of(context).pop();
+
+        // 광고 실패해도 결과 페이지로 이동
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => LoveFortuneResultPage(

@@ -13,6 +13,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../widgets/fortune_button.dart';
 import '../constants/fortune_button_spacing.dart';
+import '../../../../services/ad_service.dart';
 
 // Step 관리를 위한 StateNotifier
 class InvestmentStepNotifier extends StateNotifier<int> {
@@ -325,6 +326,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               onPressed: isValid ? _generateFortune : null,
               isEnabled: isValid,
               isLoading: false,
+              text: '💰 나의 투자 운명 확인하기',
             )
           : FortuneButtonGroup.navigation(
               onPrevious: currentStep > 0
@@ -1219,7 +1221,20 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   // Generate fortune
   void _generateFortune() async {
     final data = ref.read(investmentDataProvider);
-    
+
+    // Show ad first
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        _proceedWithFortune(data);
+      },
+      onAdFailed: () {
+        // Still proceed even if ad fails
+        _proceedWithFortune(data);
+      },
+    );
+  }
+
+  void _proceedWithFortune(InvestmentFortuneData data) async {
     // Show loading
     showDialog(
       context: context,

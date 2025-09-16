@@ -11,11 +11,16 @@ import '../../../../core/constants/tarot_metadata.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_loading_button.dart';
 import '../widgets/tarot/tarot_result_card.dart';
+import '../widgets/tarot/tarot_spread_selector.dart';
+import '../widgets/tarot/tarot_multi_card_result.dart';
+import '../../domain/models/tarot_card_model.dart';
+import '../../services/tarot_service.dart';
 import '../../../../services/ad_service.dart';
 
 enum TarotFlowState {
   initial,      // 초기 화면
   questioning,  // 질문 선택/입력
+  spreadSelection, // 스프레드 선택
   loading,     // 로딩 중
   result       // 결과 표시
 }
@@ -32,7 +37,9 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   TarotFlowState _currentState = TarotFlowState.questioning;
   String? _selectedQuestion;
   String? _customQuestion;
-  Map<String, dynamic>? _tarotResult;
+  TarotSpreadType? _selectedSpread;
+  TarotSpreadResult? _tarotResult;
+  TarotDeckType _selectedDeck = TarotDeckType.riderWaite; // 기본 덱
   
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -107,6 +114,8 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
         child: _buildCurrentStateWidget(),
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
       ),
     );
   }
@@ -138,6 +147,8 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         return _buildInitialScreen();
       case TarotFlowState.questioning:
         return _buildQuestioningScreen();
+      case TarotFlowState.spreadSelection:
+        return _buildSpreadSelectionScreen();
       case TarotFlowState.loading:
         return _buildLoadingScreen();
       case TarotFlowState.result:
@@ -268,7 +279,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               
               // 시작하기 버튼
               TossButton(
-                text: '타로 운세 보기',
+                text: '🔮 카드가 전하는 메시지',
                 onPressed: () async {
                   await AdService.instance.showInterstitialAdWithCallback(
                     onAdCompleted: () {
@@ -297,24 +308,49 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   }
 
   Widget _buildQuestioningScreen() {
+    print('🟡 Building questioning screen - selectedQuestion: $_selectedQuestion');
     return TarotQuestionSelector(
+      key: const ValueKey('tarot-question-selector'), // key 추가로 위젯 재사용
       onQuestionSelected: (question) {
-        setState(() {
-          _selectedQuestion = question.isEmpty ? null : question;
-          _customQuestion = null;
-        });
+        print('🟢 Parent received question: $question');
+        if (mounted) {
+          setState(() {
+            _selectedQuestion = question;  // 빈 문자열 체크 제거
+            _customQuestion = null;
+            print('🟢 State updated - selectedQuestion: $_selectedQuestion');
+          });
+        }
       },
       onCustomQuestionChanged: (question) {
-        setState(() {
-          _customQuestion = question;
-          _selectedQuestion = null;
-        });
+        if (mounted) {
+          setState(() {
+            _customQuestion = question;
+            _selectedQuestion = null;
+          });
+        }
       },
       onStartReading: () {
-        _startTarotReading();
+        // 질문 선택 후 스프레드 선택으로 이동
+        setState(() {
+          _currentState = TarotFlowState.spreadSelection;
+        });
       },
       selectedQuestion: _selectedQuestion,
       customQuestion: _customQuestion,
+    );
+  }
+
+  Widget _buildSpreadSelectionScreen() {
+    final question = _selectedQuestion ?? _customQuestion ?? '일반 운세';
+
+    return TarotSpreadSelector(
+      question: question,
+      onSpreadSelected: (spread) {
+        setState(() {
+          _selectedSpread = spread;
+        });
+        _startTarotReading();
+      },
     );
   }
 
@@ -358,14 +394,16 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
   Widget _buildResultScreen() {
     if (_tarotResult == null) return const SizedBox();
-    
-    return TarotResultCard(
+
+    return TarotMultiCardResult(
       result: _tarotResult!,
-      question: _selectedQuestion ?? _customQuestion ?? '일반 운세',
       onRetry: () {
         setState(() {
           _currentState = TarotFlowState.questioning;
           _tarotResult = null;
+          _selectedSpread = null;
+          _selectedQuestion = null;
+          _customQuestion = null;
         });
       },
     );
@@ -387,55 +425,18 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
   void _generateTarotResult() {
     if (!mounted) return;
-    
-    // 랜덤하게 메이저 아르카나 카드 선택
-    final random = Random();
-    final cardNumbers = TarotMetadata.majorArcana.keys.toList();
-    final selectedCardNumber = cardNumbers[random.nextInt(cardNumbers.length)];
-    final selectedCard = TarotMetadata.majorArcana[selectedCardNumber]!;
-    
-    // 질문에 따른 해석 커스터마이징
-    String interpretation = selectedCard.uprightMeaning;
-    String advice = selectedCard.advice;
-    
-    if (_selectedQuestion != null || _customQuestion != null) {
-      final question = _selectedQuestion ?? _customQuestion ?? '';
-      
-      // 질문 키워드에 따른 해석 조정
-      if (question.contains('연애') || question.contains('사랑')) {
-        interpretation = '${selectedCard.name}가 연애운에 대해 전하는 메시지입니다. ${selectedCard.uprightMeaning}';
-        advice = '연애 관계에서 ${selectedCard.advice}';
-      } else if (question.contains('직장') || question.contains('일') || question.contains('커리어')) {
-        interpretation = '${selectedCard.name}가 직장운에 대해 알려줍니다. ${selectedCard.uprightMeaning}';
-        advice = '업무와 관련하여 ${selectedCard.advice}';
-      } else if (question.contains('돈') || question.contains('재물') || question.contains('금전')) {
-        interpretation = '${selectedCard.name}가 금전운을 보여줍니다. ${selectedCard.uprightMeaning}';
-        advice = '재정 관리에 있어 ${selectedCard.advice}';
-      }
-    }
-    
-    // 역방향 카드 확률 (30%)
-    final isReversed = random.nextInt(100) < 30;
-    if (isReversed) {
-      interpretation = '[역방향] ${selectedCard.reversedMeaning}';
-      advice = '주의사항: ${selectedCard.advice}';
-    }
-    
+    if (_selectedSpread == null) return;
+
+    // 새로운 타로 서비스를 사용하여 카드 뽑기
+    final question = _selectedQuestion ?? _customQuestion ?? '일반 운세';
+    final result = TarotService.drawCards(
+      spreadType: _selectedSpread!,
+      question: question,
+      deck: _selectedDeck,
+    );
+
     setState(() {
-      _tarotResult = {
-        'cardName': selectedCard.name,
-        'cardNumber': selectedCardNumber,
-        'cardImage': 'assets/images/tarot/major_${selectedCardNumber.toString().padLeft(2, '0')}.jpg',
-        'interpretation': interpretation,
-        'keywords': selectedCard.keywords,
-        'advice': advice,
-        'isReversed': isReversed,
-        'element': selectedCard.element,
-        'astrology': selectedCard.astrology,
-        'story': selectedCard.story,
-        'mythology': selectedCard.mythology,
-        'psychologicalMeaning': selectedCard.psychologicalMeaning,
-      };
+      _tarotResult = result;
       _currentState = TarotFlowState.result;
     });
   }

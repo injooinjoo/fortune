@@ -11,6 +11,7 @@ import '../widgets/saju_table_toss.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../services/ad_service.dart';
 
 /// 토스 스타일 전통 사주팔자 페이지
 class TraditionalSajuTossPage extends ConsumerStatefulWidget {
@@ -38,7 +39,10 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
+    // 애니메이션 즉시 시작 - 오행 차트 표시를 위해
+    _resultAnimationController.forward();
+
     // 네비게이션 바 숨기기
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).hide();
@@ -517,7 +521,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       width: double.infinity,
       height: 60,
       child: TossButton(
-        text: _isFortuneLoading ? '운세를 보고 있어요...' : '운세보기',
+        text: _isFortuneLoading ? '운세를 보고 있어요...' : '📿 하늘이 정한 나의 운명',
         onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
         style: TossButtonStyle.primary,
         isLoading: _isFortuneLoading,
@@ -530,15 +534,22 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       _isFortuneLoading = true;
     });
 
-    // 로딩 애니메이션 (2초)
-    await Future.delayed(const Duration(seconds: 2));
-    
-    // TODO: 여기에 광고 표시 로직 추가
-    
-    setState(() {
-      _isFortuneLoading = false;
-      _showResults = true;
-    });
+    // 광고 표시
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () {
+        setState(() {
+          _isFortuneLoading = false;
+          _showResults = true;
+        });
+      },
+      onAdFailed: () {
+        // 광고 실패해도 운세 표시
+        setState(() {
+          _isFortuneLoading = false;
+          _showResults = true;
+        });
+      },
+    );
   }
 
   Widget _buildFortuneResult(Map<String, dynamic> sajuData) {

@@ -263,11 +263,12 @@ class LoveFortuneResultPage extends StatelessWidget {
   }
 
   String _getCharmPoints() {
-    final charmPoints = fortuneData['charmPoints'] as Set<String>? ?? {};
+    final charmPoints = fortuneData['charmPoints'] as List<dynamic>? ?? [];
     if (charmPoints.isEmpty) {
       return '당신만의 특별한 매력을 찾아보세요. 자신감이 가장 큰 매력이 될 수 있어요.';
     }
-    return '${charmPoints.join(', ')} 등이 당신의 매력 포인트에요. 이런 장점들을 자신있게 어필해보세요!';
+    final charmList = charmPoints.map((e) => e.toString()).toList();
+    return '${charmList.join(', ')} 등이 당신의 매력 포인트에요. 이런 장점들을 자신있게 어필해보세요!';
   }
 
   String _getImprovementPoints() {

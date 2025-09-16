@@ -12,6 +12,7 @@ import '../../../../../data/services/fortune_api_service.dart';
 import '../../../../../core/constants/api_endpoints.dart';
 import '../../../domain/models/talisman_models.dart';
 import '../talisman_enhanced_page.dart';
+import '../../../../../services/ad_service.dart';
 
 class TalismanGenerationStep extends ConsumerStatefulWidget {
   final Function(TalismanResult) onComplete;
@@ -38,24 +39,25 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),..repeat();
+      duration: const Duration(seconds: 2),
+    )..repeat();
     
     // Start generation process
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateTalisman();
-});
+    });
 }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   Future<void> _generateTalisman() async {
     final state = ref.read(talismanCreationProvider);
     final apiService = ref.read(fortuneApiServiceProvider);
-    
+
     // Check if required data is available
     if (state.selectedType == null) {
       setState(() {
@@ -63,35 +65,52 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
         _statusMessage = '부적 유형이 선택되지 않았습니다.';
       });
       return;
-}
-    
+    }
+
+    // Show interstitial ad before generating talisman
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        // Start generation after ad completes
+        await _startTalismanGeneration(state, apiService);
+      },
+      onAdFailed: () async {
+        // Continue generation even if ad fails
+        await _startTalismanGeneration(state, apiService);
+      },
+    );
+  }
+
+  Future<void> _startTalismanGeneration(TalismanCreationState state, FortuneApiService apiService) async {
     // Simulate progress updates
     _updateProgress(0.2, '사용자 정보를 분석하고 있습니다...');
-    await Future.delayed(const Duration(seconds: 1),;
+    await Future.delayed(const Duration(seconds: 1));
     
     _updateProgress(0.4, '부적 문양을 그리고 있습니다...');
-    await Future.delayed(const Duration(seconds: 1),;
-    
+    await Future.delayed(const Duration(seconds: 1));
+
     _updateProgress(0.6, '주술을 입히고 있습니다...');
-    await Future.delayed(const Duration(seconds: 1),;
-    
+    await Future.delayed(const Duration(seconds: 1));
+
     _updateProgress(0.8, '영적 에너지를 충전하고 있습니다...');
-    
+
     try {
       // Call API to generate talisman
       final response = await apiService.post(
         ApiEndpoints.generateFortune,
         data: {
-          'type', 'talisman',
+          'type': 'talisman',
           'userInfo': {
-            , 'talismanType': state.selectedType!.name,
+            'talismanType': state.selectedType!.name,
             'userName': state.userName,
             'birthDate': state.birthDate,
             'personalWish': state.personalWish,
-            'customization': {}
+            'customization': {
               'primaryColor': state.primaryColor?.value,
               'secondaryColor': state.secondaryColor?.value,
-              'personalText': null}}}
+              'personalText': state.personalText,
+            },
+          },
+        },
       );
       
       if (response['success'] == true) {
@@ -104,12 +123,12 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
         final result = TalismanResult(
           type: state.selectedType!,
           design: TalismanDesign(
-            baseSymbol: 'classic': null,
-    primaryColor: state.primaryColor ?? state.selectedType!.gradientColors[0],
+            baseSymbol: 'classic',
+            primaryColor: state.primaryColor ?? state.selectedType!.gradientColors[0],
             secondaryColor: state.secondaryColor ?? state.selectedType!.gradientColors[1],
             personalText: state.personalText ?? '',
-            protectionSymbol: '護'),
-    createdDate: DateTime.now(),
+            protectionSymbol: '護',
+            createdDate: DateTime.now(),
             userBirthInfo: state.birthDate,
             userName: state.userName),
           meaning: fortune['meaning'] ?? '이 부적은 당신의 소원을 이루어주고 행운을 가져다 줄 것입니다.',
@@ -118,37 +137,38 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
           precautions: List<String>.from(fortune['precautions'] ?? [
             '부적을 타인에게 보여주지 마세요',
             '항상 깨끗하게 보관하세요',
-            '부정적인 생각을 품지 마세요']);
+            '부정적인 생각을 품지 마세요',
+          ]);
         
-        await Future.delayed(const Duration(seconds: 1),;
+        await Future.delayed(const Duration(seconds: 1));
         
         setState(() {
           _isGenerating = false;
-});
+        });
         
         // Haptic feedback for completion
         HapticUtils.successNotification();
         
         // Complete after a short delay
-        await Future.delayed(const Duration(milliseconds: 500),;
+        await Future.delayed(const Duration(milliseconds: 500));
         widget.onComplete(result);
-} else {
+      } else {
         throw Exception(response['error'] ?? '부적 생성에 실패했습니다');
-}
+      }
     } catch (e) {
       setState(() {
         _isGenerating = false;
-        _statusMessage = '발생했습니다: ${e.toString()}';
+        _statusMessage = '오류가 발생했습니다: ${e.toString()}';
       });
       HapticUtils.errorNotification();
-}
+    }
   }
 
   void _updateProgress(double progress, String message) {
     setState(() {
       _progress = progress;
       _statusMessage = message;
-});
+    });
 }
 
   @override

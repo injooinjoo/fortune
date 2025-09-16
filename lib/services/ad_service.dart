@@ -56,18 +56,22 @@ class AdService {
         return;
       }
 
-      // Initialize MobileAds SDK with timeout
-      // Use Future.any to ensure we don't block indefinitely
-      await Future.any([
-        MobileAds.instance.initialize().then((status) {
-          Logger.info('AdMob SDK initialized with status: ${status.adapterStatuses.keys.join(', ')}');
-          return status;
-        }),
-        Future.delayed(const Duration(seconds: 3)).then((_) {
-          Logger.warning('AdMob SDK initialization timed out after 3 seconds - continuing without ads');
-          return InitializationStatus({});
-        }),
-      ]);
+      // Initialize MobileAds SDK with timeout - don't block the app
+      try {
+        final initFuture = MobileAds.instance.initialize();
+        final status = await initFuture.timeout(
+          const Duration(seconds: 3),
+          onTimeout: () {
+            Logger.warning('AdMob SDK initialization timed out after 3 seconds - continuing without ads');
+            // Return empty status on timeout
+            return InitializationStatus({});
+          },
+        );
+        Logger.info('AdMob SDK initialized successfully');
+      } catch (e) {
+        Logger.warning('AdMob SDK initialization failed: $e - continuing without ads');
+        // Don't rethrow - let the app continue
+      }
 
       // Configure test devices for development
       if (kDebugMode) {
@@ -96,9 +100,8 @@ class AdService {
       _isInitialized = true;
       Logger.info('AdMob SDK initialized successfully');
 
-      // Preload ads asynchronously in the background
-      // Don't await this - let it run in the background
-      _preloadAdsInBackground();
+      // Don't preload ads automatically - this can cause delays on real devices
+      // Ads will be loaded on-demand when needed
     } catch (e) {
       Logger.error('Failed to initialize AdMob SDK: $e');
       // Don't throw - let the app continue without ads
@@ -147,44 +150,7 @@ class AdService {
     await loadRewardedAd();
   }
 
-  /// Preload ads in the background without blocking app startup
-  void _preloadAdsInBackground() {
-    // Load ads with timeout to prevent hanging
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      try {
-        Logger.info('Starting background ad preloading...');
-
-        // Load banner ad with timeout
-        Logger.info('Loading Banner ad...');
-        loadBannerAd().timeout(
-          const Duration(seconds: 2),
-          onTimeout: () {
-            Logger.warning('Banner ad loading timed out');
-          },
-        );
-
-        // Load interstitial ad with timeout
-        Logger.info('Loading Interstitial ad...');
-        loadInterstitialAd().timeout(
-          const Duration(seconds: 2),
-          onTimeout: () {
-            Logger.warning('Interstitial ad loading timed out');
-          },
-        );
-
-        // Load rewarded ad with timeout
-        Logger.info('Loading Rewarded ad...');
-        loadRewardedAd().timeout(
-          const Duration(seconds: 2),
-          onTimeout: () {
-            Logger.warning('Rewarded ad loading timed out');
-          },
-        );
-      } catch (e) {
-        Logger.error('Error preloading ads in background', e);
-      }
-    });
-  }
+  // Removed _preloadAdsInBackground - ads will be loaded on-demand
 
   /// Load a banner ad
   Future<void> loadBannerAd({

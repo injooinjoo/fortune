@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
+import '../../../../services/ad_service.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_card.dart';
@@ -121,6 +122,31 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     // Show navigation bar when leaving MBTI fortune page
     ref.read(navigationVisibilityProvider.notifier).show();
     super.dispose();
+  }
+
+  Future<void> _handleGenerateFortune() async {
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // Show ad with callback
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        Navigator.of(context).pop(); // Close loading dialog
+        await generateFortuneAction(); // Generate fortune after ad
+      },
+      onAdFailed: () async {
+        Navigator.of(context).pop(); // Close loading dialog
+        await generateFortuneAction(); // Generate fortune even if ad fails
+      },
+    );
   }
 
   @override
@@ -247,8 +273,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             // Floating Bottom Button - already contains internal Positioned widget
             if (_selectedMbti != null)
               FloatingBottomButton(
-                text: '운세 보기',
-                onPressed: canGenerateFortune ? () => generateFortuneAction() : null,
+                text: '🧠 내 성격이 말하는 오늘',
+                onPressed: canGenerateFortune ? () => _handleGenerateFortune() : null,
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.large,
               ),

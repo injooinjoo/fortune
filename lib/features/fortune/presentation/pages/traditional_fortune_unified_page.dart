@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import './traditional_fortune_enhanced_page.dart';
+import '../../../../services/ad_service.dart';
 
 enum TraditionalType {
   saju('정통 사주', 'saju', '사주팔자로 보는 운명', Icons.auto_stories_rounded, [Color(0xFF7C3AED), Color(0xFF6D28D9)], false),
@@ -617,11 +618,24 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
     );
 }
 
-  void _navigateToFortune(TraditionalType type) {
+  void _navigateToFortune(TraditionalType type) async {
     // Special handling for different fortune types
     switch (type) {
       case TraditionalType.saju:
-        context.push('/fortune/saju');
+        // 광고 표시 후 페이지 이동
+        await AdService.instance.showInterstitialAdWithCallback(
+          onAdCompleted: () {
+            if (mounted) {
+              context.push('/fortune/saju');
+            }
+          },
+          onAdFailed: () {
+            // 광고 실패 시에도 페이지 이동
+            if (mounted) {
+              context.push('/fortune/saju');
+            }
+          },
+        );
         break;
       case TraditionalType.sajuChart:
         context.push('/fortune/saju-chart');

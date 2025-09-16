@@ -107,7 +107,8 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = widget.selectedQuestion != null || 
+    print('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
+    final hasSelection = widget.selectedQuestion != null ||
                         (widget.customQuestion?.isNotEmpty == true);
     final hasCustomInput = widget.customQuestion?.isNotEmpty == true;
     
@@ -151,7 +152,8 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
               ...List.generate(_templateQuestions.length, (index) {
                 final question = _templateQuestions[index];
                 final isSelected = widget.selectedQuestion == question['question'];
-                
+                print('🔶 Question "${question['question']}" - isSelected: $isSelected');
+
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _buildQuestionCard(
@@ -160,11 +162,13 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                     color: question['color'] as Color,
                     isSelected: isSelected,
                     onTap: () {
+                      print('🔵 Question tapped: ${question['question']}');
                       _focusNode.unfocus();
                       widget.onQuestionSelected(question['question'] as String);
+                      print('🔵 onQuestionSelected called with: ${question['question']}');
                       // 템플릿 질문을 선택하면 커스텀 입력 완전히 초기화
                       _customController.clear();
-                      widget.onCustomQuestionChanged('');
+                      // widget.onCustomQuestionChanged(''); // 제거 - 이게 _selectedQuestion을 null로 만듦
                     },
                   ),
                 );
@@ -266,17 +270,16 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(12),
+      child: Ink(
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? color.withOpacity(0.1)
               : Colors.white,
           border: Border.all(
-            color: isSelected 
+            color: isSelected
                 ? color
                 : const Color(0xFFE5E7EB),
             width: isSelected ? 2 : 1,
@@ -292,7 +295,15 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                 ]
               : null,
         ),
-        child: Row(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          splashColor: color.withOpacity(0.1),
+          highlightColor: color.withOpacity(0.05),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(16),
+            child: Row(
           children: [
             // 아이콘
             Container(
@@ -300,7 +311,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
               height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected 
+                color: isSelected
                     ? color
                     : color.withOpacity(0.1),
               ),
@@ -310,9 +321,9 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                 size: 20,
               ),
             ),
-            
+
             const SizedBox(width: 16),
-            
+
             // 질문 텍스트
             Expanded(
               child: Text(
@@ -320,13 +331,13 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: isSelected 
+                  color: isSelected
                       ? color
                       : const Color(0xFF191919),
                 ),
               ),
             ),
-            
+
             // 선택 표시
             if (isSelected)
               Icon(
@@ -335,6 +346,8 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                 size: 20,
               ),
           ],
+            ),
+          ),
         ),
       ),
     );

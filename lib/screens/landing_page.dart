@@ -1237,13 +1237,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         foregroundColor = Colors.white;
         break;
       case 'google':
-        icon = Image.network(
-          'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
-          height: 24,
-          width: 24,
-          errorBuilder: (context, error, stackTrace) => 
-              Icon(Icons.g_mobiledata, size: 24, color: Colors.blue),
-        );
+        // Use icon instead of network image to prevent loading issues on real devices
+        icon = Icon(Icons.g_mobiledata, size: 24, color: Colors.blue);
         text = 'Google로 계속하기';
         backgroundColor = Colors.white;
         foregroundColor = Colors.black87;

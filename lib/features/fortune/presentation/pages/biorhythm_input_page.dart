@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../services/storage_service.dart';
+import '../../../../models/user_profile.dart' as models;
 import 'biorhythm_loading_page.dart';
 
 class BiorhythmInputPage extends StatefulWidget {
@@ -29,17 +32,17 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
   @override
   void initState() {
     super.initState();
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _pulseAnimation = Tween<double>(
       begin: 1.0,
       end: 1.1,
@@ -47,7 +50,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
       parent: _pulseController,
       curve: Curves.easeInOut,
     ));
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -55,9 +58,58 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
       parent: _fadeController,
       curve: Curves.easeOut,
     ));
-    
+
     _pulseController.repeat(reverse: true);
     _fadeController.forward();
+
+    // 사용자 프로필에서 생년월일 가져오기
+    _loadUserBirthDate();
+  }
+
+  Future<void> _loadUserBirthDate() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
+
+      if (user != null) {
+        // Supabase에서 사용자 프로필 가져오기
+        final response = await supabase
+            .from('user_profiles')
+            .select('birth_date')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (response != null && response['birth_date'] != null) {
+          // birth_date 형식: YYYY-MM-DD
+          final birthDateString = response['birth_date'] as String;
+          final birthDate = DateTime.parse(birthDateString);
+
+          setState(() {
+            _selectedDate = birthDate;
+            _dateController.text =
+                '${birthDate.year}.${birthDate.month.toString().padLeft(2, '0')}.${birthDate.day.toString().padLeft(2, '0')}';
+          });
+        }
+      } else {
+        // 로그인하지 않은 경우 로컬 스토리지에서 확인
+        final storageService = StorageService();
+        final profile = await storageService.getUserProfile();
+
+        if (profile != null && profile['birth_date'] != null) {
+          final birthDateString = profile['birth_date'] as String;
+          final birthDate = DateTime.parse(birthDateString);
+
+          setState(() {
+            _selectedDate = birthDate;
+            _dateController.text =
+                '${birthDate.year}.${birthDate.month.toString().padLeft(2, '0')}.${birthDate.day.toString().padLeft(2, '0')}';
+          });
+        }
+      }
+    } catch (e) {
+      // 에러가 발생해도 앱이 계속 작동하도록 함
+      print('생년월일 로드 실패: $e');
+    }
   }
 
   @override

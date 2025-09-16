@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
-import '../../../../../services/ad_service.dart';
 
 enum LifestyleType { employee, student, freelancer, business }
 enum HobbyType { exercise, reading, travel, cooking, gaming, movie }
@@ -117,28 +116,17 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
     }
   }
 
-  void _handleNext() async {
+  void _handleNext() {
     if (!_canProceed) return;
-    
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
-        widget.onNext({
-          'appearanceConfidence': _appearanceConfidence,
-          'charmPoints': _charmPoints.toList(),
-          'lifestyle': _lifestyle.toString().split('.').last,
-          'hobbies': _hobbies.map((h) => h.toString().split('.').last).toList(),
-        });
-      },
-      onAdFailed: () {
-        // Still allow fortune generation even if ad fails
-        widget.onNext({
-          'appearanceConfidence': _appearanceConfidence,
-          'charmPoints': _charmPoints.toList(),
-          'lifestyle': _lifestyle.toString().split('.').last,
-          'hobbies': _hobbies.map((h) => h.toString().split('.').last).toList(),
-        });
-      },
-    );
+
+    // Step4에서는 광고를 호출하지 않고 데이터만 전달
+    // MainPage에서 광고를 호출하도록 수정
+    widget.onNext({
+      'appearanceConfidence': _appearanceConfidence,
+      'charmPoints': _charmPoints.toList(),
+      'lifestyle': _lifestyle.toString().split('.').last,
+      'hobbies': _hobbies.map((h) => h.toString().split('.').last).toList(),
+    });
   }
 
   @override

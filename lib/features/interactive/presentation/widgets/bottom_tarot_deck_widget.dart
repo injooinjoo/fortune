@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import '../../../../services/ad_service.dart';
 
 class BottomTarotDeckWidget extends StatefulWidget {
   final Function(int) onCardSelected;
@@ -161,7 +162,17 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
             onTap: () {
               if (isCenter) {
                 HapticFeedback.mediumImpact();
-                widget.onCardSelected(index);
+                // Show ad before selecting card
+                AdService.instance.showInterstitialAdWithCallback(
+                  onAdCompleted: () {
+                    // Select card after ad is completed or if ad is not ready
+                    widget.onCardSelected(index);
+                  },
+                  onAdFailed: () {
+                    // If ad fails, still select the card
+                    widget.onCardSelected(index);
+                  },
+                );
               } else {
                 // Animate to this card
                 _animateToCard(index);

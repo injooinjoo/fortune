@@ -125,7 +125,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
                 foregroundColor: Colors.white,
                 elevation: 0,
                 label: const Text(
-                  'DNA 분석하기',
+                  '🧬 나만의 성격 DNA 발견하기',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

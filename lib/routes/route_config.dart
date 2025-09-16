@@ -32,7 +32,6 @@ import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
 // Import pages that need to hide navigation bar
 import '../features/fortune/presentation/pages/moving_fortune_toss_page.dart';
 import '../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
-import '../features/fortune/presentation/pages/physiognomy_fortune_page.dart';
 import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
 import '../features/fortune/presentation/pages/love/love_fortune_main_page.dart';
@@ -78,7 +77,7 @@ import '../services/storage_service.dart';
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false, // Disabled to prevent freezing on real devices
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Text('Page not found: ${state.error}'),
@@ -321,11 +320,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'fortune-traditional-saju',
         builder: (context, state) => const TraditionalSajuTossPage(),
       ),
-      GoRoute(
-        path: '/physiognomy',
-        name: 'fortune-physiognomy',
-        builder: (context, state) => const PhysiognomyFortunePage(),
-      ),
+      // Physiognomy route removed - page deleted
       GoRoute(
         path: '/lucky-talisman',
         name: 'fortune-lucky-talisman',

@@ -759,7 +759,16 @@ class FortuneApiService {
         'endpoint': endpoint,
         'method': params != null ? 'POST' : 'GET',
         'fortuneType': fortuneType});
-      
+
+      // Add detailed logging for face-reading
+      if (fortuneType == 'face-reading') {
+        Logger.info('🎯 [FortuneApiService] Processing face-reading fortune', {
+          'hasImage': params?.containsKey('image') ?? false,
+          'hasInstagramUrl': params?.containsKey('instagram_url') ?? false,
+          'analysisSource': params?['analysis_source'],
+          'paramKeys': params?.keys.toList()});
+      }
+
       final apiStopwatch = Logger.startTimer('Fortune cached');
       final response = params != null
           ? await _apiClient.post(endpoint, data: params)

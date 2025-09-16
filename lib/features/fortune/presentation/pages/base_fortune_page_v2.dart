@@ -201,59 +201,32 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppHeader(
+        title: widget.title,
+        showShareButton: widget.showShareButton && _fortuneResult != null,
+        showFontSizeSelector: false,
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Custom Header with Gradient
-            Container(
-              decoration: BoxDecoration(
-                gradient: widget.headerGradient ?? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
-                  ],
-                ),
-              ),
-              child: AppHeader(
-                title: widget.title,
-                showShareButton: widget.showShareButton && _fortuneResult != null,
-                showFontSizeSelector: widget.showFontSizeSelector,
-                currentFontSize: ref.watch(fontSizeProvider),
-                onFontSizeChanged: (size) {
-                  ref.read(fontSizeProvider.notifier).setFontSize(size);
-                },
-                backgroundColor: const Color(0x00000000), // transparent
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-            
-            // Content
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: FortuneResultSkeleton())
-                  : _error != null
-                      ? _buildErrorState()
-                      : _fortuneResult != null
-                          ? FadeTransition(
-                              opacity: _fadeAnimation,
-                              child: SingleChildScrollView(
-                                padding: const EdgeInsets.all(16),
-                                child: widget.resultBuilder(
-                                  context, 
-                                  _fortuneResult!,
-                                  _handleShare,
-                                ),
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              padding: const EdgeInsets.all(16),
-                              child: widget.inputBuilder(context, _generateFortune),
-                            ),
-            ),
-          ],
-        ),
+        child: _isLoading
+            ? const Center(child: FortuneResultSkeleton())
+            : _error != null
+                ? _buildErrorState()
+                : _fortuneResult != null
+                    ? FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
+                          child: widget.resultBuilder(
+                            context,
+                            _fortuneResult!,
+                            _handleShare,
+                          ),
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: widget.inputBuilder(context, _generateFortune),
+                      ),
       ),
       bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: 1),
     );

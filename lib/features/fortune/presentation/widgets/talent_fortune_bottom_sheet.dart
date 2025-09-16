@@ -147,7 +147,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
             child: SizedBox(
               width: double.infinity,
               child: TossButton(
-                text: _canGenerate() ? '재능 분석하기' : '모든 질문에 답해주세요',
+                text: _canGenerate() ? '✨ 나의 숨겨진 재능 발견하기' : '모든 질문에 답해주세요',
                 onPressed: _canGenerate() ? _generateFortune : null,
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.large,

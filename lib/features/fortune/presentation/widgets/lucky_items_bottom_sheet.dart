@@ -358,7 +358,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
           child: SizedBox(
             width: double.infinity,
             child: TossButton(
-              text: '운세보기',
+              text: '🍀 나의 행운 아이템 찾기',
               onPressed: _isLoadingAd ? null : _handleFortuneView,
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,

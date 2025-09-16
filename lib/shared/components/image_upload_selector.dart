@@ -237,49 +237,83 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                 ],
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: _instagramController,
-                decoration: InputDecoration(
-                  hintText: 'instagram.com/username',
-                  hintStyle: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
-                  ),
-                  prefixIcon: const Icon(Icons.link),
-                  suffixIcon: _instagramController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              _instagramController.clear();
-                            });
-                          },
-                        )
-                      : null,
-                  filled: true,
-                  fillColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      border: Border.all(
+                        color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                      ),
+                    ),
+                    child: Text(
+                      'instagram.com/',
+                      style: TossDesignSystem.body2.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      ),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                  Expanded(
+                    child: TextField(
+                      controller: _instagramController,
+                      decoration: InputDecoration(
+                        hintText: 'username',
+                        hintStyle: TossDesignSystem.body2.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                        ),
+                        suffixIcon: _instagramController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: () {
+                                  setState(() {
+                                    _instagramController.clear();
+                                  });
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+                        border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
+                          borderSide: BorderSide(
+                            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
+                          borderSide: BorderSide(
+                            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
+                          borderSide: BorderSide(
+                            color: TossDesignSystem.purple,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: TossDesignSystem.purple,
-                      width: 2,
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {});
-                },
+                ],
               ),
               const SizedBox(height: 12),
               Text(
@@ -310,15 +344,17 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             Expanded(
               child: TossButton.primary(
                 text: '확인',
-                onPressed: _isValidInstagramUrl(_instagramController.text)
+                onPressed: _instagramController.text.trim().isNotEmpty
                     ? () {
+                        final username = _instagramController.text.trim();
+                        final fullUrl = 'https://instagram.com/$username';
                         widget.onImageSelected(ImageUploadResult(
                           type: ImageUploadType.instagram,
-                          instagramUrl: _instagramController.text,
+                          instagramUrl: fullUrl,
                         ));
                       }
                     : null,
-                isEnabled: _isValidInstagramUrl(_instagramController.text),
+                isEnabled: _instagramController.text.trim().isNotEmpty,
                 size: TossButtonSize.medium,
               ),
             ),
@@ -337,35 +373,50 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
 
     return Column(
       children: [
-        // Visual preview area
-        Container(
-          height: widget.imageHeight,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
-              width: 1.5,
+        // Visual preview area - Make it clickable
+        InkWell(
+          onTap: () {
+            // Show bottom sheet with options
+            _showImageSelectionBottomSheet(context, isDark);
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: widget.imageHeight,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                width: 1.5,
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.add_photo_alternate,
-                size: 64,
-                color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '분석할 사진을 선택해주세요',
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                  fontWeight: FontWeight.w500,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.add_photo_alternate,
+                  size: 64,
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                Text(
+                  '분석할 사진을 선택해주세요',
+                  style: TossDesignSystem.body1.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '탭하여 선택',
+                  style: TossDesignSystem.body3.copyWith(
+                    color: TossDesignSystem.purple,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ).animate().fadeIn(duration: 400.ms),
         
@@ -624,5 +675,103 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
       caseSensitive: false,
     );
     return regex.hasMatch(url);
+  }
+
+  void _showImageSelectionBottomSheet(BuildContext context, bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '사진 선택 방법',
+                style: TossDesignSystem.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                ),
+                title: Text(
+                  '카메라로 촬영',
+                  style: TossDesignSystem.body1.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.photo_library,
+                  color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                ),
+                title: Text(
+                  '갤러리에서 선택',
+                  style: TossDesignSystem.body1.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              if (widget.showInstagramOption)
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Colors.purple, Colors.pink, Colors.orange],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                  title: Text(
+                    '인스타그램 URL 입력',
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _showInstagramInput = true;
+                    });
+                  },
+                ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

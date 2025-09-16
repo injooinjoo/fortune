@@ -395,7 +395,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
     return SizedBox(
       width: double.infinity,
       child: TossButton(
-        text: '꿈 해몽 받기',
+        text: '💭 꿈이 전하는 나의 무의식',
         onPressed: hasText ? _onStartInterpretation : null,
         style: TossButtonStyle.primary,
         size: TossButtonSize.large,

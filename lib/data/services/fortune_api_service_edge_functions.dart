@@ -666,16 +666,34 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     required String userId,
     required String fortuneType,
     Map<String, dynamic>? params}) async {
+    debugPrint('🎯 [FortuneApiServiceWithEdgeFunctions] getFortune called');
+    debugPrint('📋 Fortune Type: $fortuneType');
+    debugPrint('📊 Params keys: ${params?.keys.toList()}');
+    debugPrint('🔢 Has image data: ${params?.containsKey('image') ?? false}');
+    debugPrint('🔢 Has instagram URL: ${params?.containsKey('instagram_url') ?? false}');
+
     if (_featureFlags.isEdgeFunctionsEnabled()) {
+      debugPrint('✅ [FortuneApiServiceWithEdgeFunctions] Edge Functions enabled');
       final endpoint = EdgeFunctionsEndpoints.getEndpointForType(fortuneType);
+      debugPrint('📍 [FortuneApiServiceWithEdgeFunctions] Endpoint for $fortuneType: $endpoint');
+
       if (endpoint != null) {
-        return _getFortuneFromEdgeFunction(
-          endpoint: endpoint,
-          userId: userId,
-          fortuneType: fortuneType,
-          data: params);
+        debugPrint('🚀 [FortuneApiServiceWithEdgeFunctions] Using Edge Function: $endpoint');
+        try {
+          return await _getFortuneFromEdgeFunction(
+            endpoint: endpoint,
+            userId: userId,
+            fortuneType: fortuneType,
+            data: params);
+        } catch (e) {
+          debugPrint('❌ [FortuneApiServiceWithEdgeFunctions] Edge Function failed: $e');
+          debugPrint('🔄 [FortuneApiServiceWithEdgeFunctions] Falling back to traditional API');
+          return super.getFortune(userId: userId, fortuneType: fortuneType, params: params);
+        }
       }
     }
+
+    debugPrint('📡 [FortuneApiServiceWithEdgeFunctions] Using traditional API');
     return super.getFortune(userId: userId, fortuneType: fortuneType, params: params);
   }
 
