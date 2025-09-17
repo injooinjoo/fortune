@@ -14,6 +14,7 @@ import '../widgets/fortune_card.dart';
 import '../widgets/fortune_result_card.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../widgets/fortune_button.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class CelebrityFortuneEnhancedPage extends ConsumerStatefulWidget {
   const CelebrityFortuneEnhancedPage({super.key});
@@ -222,7 +223,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               ),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.white : TossTheme.textGray500,
+                color: isSelected ? TossDesignSystem.white : TossTheme.textGray500,
                 size: 22,
               ),
             ),
@@ -425,7 +426,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                 style: TextStyle(
                                   fontSize: 48,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                                  color: TossDesignSystem.white,
                                 ),
                               ),
                             ),
@@ -436,7 +437,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: TossDesignSystem.white,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -575,7 +576,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : Colors.white,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : TossDesignSystem.white,
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
             width: isSelected ? 2 : 1,
@@ -583,7 +584,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: TossDesignSystem.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -598,7 +599,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: isSelected ? Colors.white : TossTheme.textGray600, size: 20),
+              child: Icon(icon, color: isSelected ? TossDesignSystem.white : TossTheme.textGray600, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -638,7 +639,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFFFF6B6B).withValues(alpha: 0.05) : Colors.white,
+          color: isSelected ? Color(0xFFFF6B6B).withValues(alpha: 0.05) : TossDesignSystem.white,
           border: Border.all(
             color: isSelected ? Color(0xFFFF6B6B) : TossTheme.borderGray200,
             width: isSelected ? 2 : 1,
@@ -646,7 +647,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: TossDesignSystem.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -661,7 +662,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 color: isSelected ? Color(0xFFFF6B6B) : TossTheme.backgroundSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: isSelected ? Colors.white : TossTheme.textGray600, size: 20),
+              child: Icon(icon, color: isSelected ? TossDesignSystem.white : TossTheme.textGray600, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -790,7 +791,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.error,
           ),
         );
       }
@@ -808,11 +809,11 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: TossDesignSystem.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -833,7 +834,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                     ),
                   ),
@@ -885,11 +886,11 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: TossDesignSystem.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -922,11 +923,11 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -1074,10 +1075,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
+    if (score >= 80) return TossDesignSystem.success;
     if (score >= 60) return TossTheme.primaryBlue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.error;
   }
 
   Widget _buildLoadingState() {

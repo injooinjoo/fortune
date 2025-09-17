@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/toss_design_system.dart';
 
 class TarotDeckMetadata {
   // 사용 가능한 타로 덱 목록
@@ -333,15 +334,15 @@ extension TarotDifficultyExtension on TarotDifficulty {
   Color get color {
     switch (this) {
       case TarotDifficulty.beginner:
-        return Colors.green;
+        return TossDesignSystem.success;
       case TarotDifficulty.intermediate:
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case TarotDifficulty.advanced:
-        return Colors.red;
+        return TossDesignSystem.error;
       case TarotDifficulty.expert:
-        return Colors.purple;
+        return TossDesignSystem.purple;
       case TarotDifficulty.unique:
-        return Colors.indigo;
+        return TossDesignSystem.tossBlue;
     }
   }
 }

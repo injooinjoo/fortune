@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 
@@ -185,7 +186,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
                     child: Text(
                       '${_preferredAgeRange.start.round()}세 ~ ${_preferredAgeRange.end.round()}세',
                       style: TossTheme.body1.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -316,7 +317,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
           trait,
           style: TossTheme.body2.copyWith(
             color: isSelected 
-                ? Colors.white 
+                ? TossDesignSystem.white 
                 : canSelect 
                     ? TossTheme.textBlack 
                     : TossTheme.disabledGray,
@@ -362,7 +363,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
               child: Text(
                 _getMeetingPlaceText(place),
                 style: TossTheme.body2.copyWith(
-                  color: isSelected ? Colors.white : TossTheme.textBlack,
+                  color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,

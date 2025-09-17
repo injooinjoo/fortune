@@ -14,6 +14,7 @@ import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../services/ad_service.dart';
 import '../../core/utils/logger.dart';
+import '../../core/theme/toss_design_system.dart';
 
 class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -35,7 +36,7 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.black.withValues(alpha: 0.0),
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
@@ -111,9 +112,11 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       builder: (context, child) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.9,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark100
+                : TossDesignSystem.white,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),
@@ -155,7 +158,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark300
+            : TossDesignSystem.gray300,
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -199,7 +204,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     Text(
                       _getFortuneDescription(widget.fortuneType),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark600
+                            : TossDesignSystem.gray600,
                       ),
                     ),
                   ],
@@ -300,7 +307,11 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.grayDark300
+                    : TossDesignSystem.gray300,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -313,7 +324,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
                         : '생년월일을 선택하세요',
                     style: TextStyle(
-                      color: _selectedDate != null ? Colors.black : Colors.grey[600],
+                      color: _selectedDate != null
+                          ? (Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark900
+                              : TossDesignSystem.black)
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark600
+                              : TossDesignSystem.gray600),
                       fontSize: 16,
                     ),
                   ),
@@ -405,16 +422,28 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor : Colors.grey[100],
+          color: isSelected
+              ? Theme.of(context).primaryColor
+              : (Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark100
+                  : TossDesignSystem.gray100),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
+            color: isSelected
+                ? Theme.of(context).primaryColor
+                : (Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.grayDark300
+                    : TossDesignSystem.gray300),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected
+                ? TossDesignSystem.white
+                : (Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.grayDark900
+                    : TossDesignSystem.black),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -436,18 +465,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark50.withValues(alpha: 0.5)
+                : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.blue[200]!),
+            border: Border.all(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark200
+                  : TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+            ),
           ),
           child: Column(
             children: [
-              _buildScoreRow('90-100점', '최고운', Colors.red),
-              _buildScoreRow('80-89점', '대길', Colors.orange),
-              _buildScoreRow('70-79점', '길', Colors.yellow[700]!),
-              _buildScoreRow('60-69점', '평', Colors.green),
-              _buildScoreRow('50-59점', '하', Colors.blue),
-              _buildScoreRow('~49점', '흉', Colors.grey),
+              _buildScoreRow('90-100점', '최고운', TossDesignSystem.errorRed),
+              _buildScoreRow('80-89점', '대길', TossDesignSystem.warningOrange),
+              _buildScoreRow('70-79점', '길', TossDesignSystem.warningYellow),
+              _buildScoreRow('60-69점', '평', TossDesignSystem.successGreen),
+              _buildScoreRow('50-59점', '하', TossDesignSystem.tossBlue),
+              _buildScoreRow('~49점', '흉', TossDesignSystem.gray500),
             ],
           ),
         ),
@@ -496,10 +531,15 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.purple[50]!,
-                Colors.blue[50]!,
-              ],
+              colors: Theme.of(context).brightness == Brightness.dark
+                  ? [
+                      TossDesignSystem.grayDark100.withValues(alpha: 0.8),
+                      TossDesignSystem.grayDark50.withValues(alpha: 0.8),
+                    ]
+                  : [
+                      TossDesignSystem.purple.withValues(alpha: 0.1),
+                      TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    ],
             ),
             borderRadius: BorderRadius.circular(12),
           ),
@@ -508,14 +548,21 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             children: [
               Row(
                 children: [
-                  Icon(Icons.auto_awesome, color: Colors.purple[700]),
+                  Icon(
+                    Icons.auto_awesome,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.purple.withValues(alpha: 0.7)
+                        : TossDesignSystem.purple,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'AI가 분석하는 개인 맞춤 운세',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple[700],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.purple.withValues(alpha: 0.7)
+                          : TossDesignSystem.purple,
                     ),
                   ),
                 ],
@@ -539,10 +586,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: (Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark900
+                : TossDesignSystem.black).withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -608,7 +659,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: theme.primaryColor,
-              foregroundColor: Colors.white,
+              foregroundColor: TossDesignSystem.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

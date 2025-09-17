@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../data/services/fortune_batch_service.dart';
 import '../providers/batch_fortune_provider.dart';
 import '../widgets/batch_fortune_package_card.dart';
@@ -29,8 +30,8 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('운세 패키지'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.tossBlue,
+        foregroundColor: TossDesignSystem.white,
         elevation: 0),
       body: SingleChildScrollView(
         child: Column(
@@ -41,8 +42,8 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withValues(alpha: 0.8),
+                    TossDesignSystem.tossBlue,
+                    TossDesignSystem.tossBlue.withValues(alpha: 0.8),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -57,15 +58,15 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '패키지로 구매하면 최대 50% 토큰 절약',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: TossDesignSystem.white.withOpacity(0.7),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -73,7 +74,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: TossDesignSystem.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -83,14 +84,14 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                           children: [
                             const Icon(
                               Icons.toll,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               '보유 토큰',
                               style: TextStyle(
-                                color: Colors.white70,
+                                color: TossDesignSystem.white.withOpacity(0.7),
                                 fontSize: 14,
                               ),
                             ),
@@ -101,7 +102,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                               ? '${tokenBalance}개'
                               : '로그인 필요',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -262,14 +263,14 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
                   const Icon(
                     Icons.savings,
-                    color: Colors.green,
+                    color: TossDesignSystem.successGreen,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -277,7 +278,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                     child: Text(
                       '${packageType.tokenCost} 토큰으로 ${savings.toStringAsFixed(0)}% 절약!',
                       style: const TextStyle(
-                        color: Colors.green,
+                        color: TossDesignSystem.successGreen,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -295,7 +296,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               padding: const EdgeInsets.only(left: 8, bottom: 4),
               child: Row(
                 children: [
-                  const Icon(Icons.check, size: 16, color: Colors.green),
+                  const Icon(Icons.check, size: 16, color: TossDesignSystem.successGreen),
                   const SizedBox(width: 8),
                   Text(_getFortuneTypeName(type)),
                 ],

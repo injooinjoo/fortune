@@ -5,6 +5,7 @@ import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class PolicyPage extends ConsumerWidget {
   const PolicyPage({super.key});
@@ -29,7 +30,7 @@ class PolicyPage extends ConsumerWidget {
                         icon: Icons.privacy_tip_rounded,
                         title: '개인정보처리방침',
                         subtitle: '개인정보 수집 및 이용에 관한 안내',
-                        color: Colors.blue,
+                        color: TossDesignSystem.tossBlue,
                         onTap: () => context.push('/policy/privacy')).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 16),
                       _buildPolicyCard(
@@ -37,7 +38,7 @@ class PolicyPage extends ConsumerWidget {
                         icon: Icons.description_rounded,
                         title: '이용약관',
                         subtitle: '서비스 이용에 관한 약관',
-                        color: Colors.purple,
+                        color: TossDesignSystem.purple,
                         onTap: () => context.push('/policy/terms')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 32),
                       _buildInfoSection(),
@@ -95,13 +96,13 @@ class PolicyPage extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: TossDesignSystem.white)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.8),
+                      color: TossDesignSystem.white.withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -109,7 +110,7 @@ class PolicyPage extends ConsumerWidget {
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.white.withOpacity(0.5),
+              color: TossDesignSystem.white.withOpacity(0.5),
               size: 20,
             ),
           ],
@@ -122,22 +123,22 @@ class PolicyPage extends ConsumerWidget {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.white.withOpacity(0.1),
-          Colors.white.withOpacity(0.05)]),
+          TossDesignSystem.white.withOpacity(0.1),
+          TossDesignSystem.white.withOpacity(0.05)]),
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withOpacity(0.6),
             size: 32),
           const SizedBox(height: 12),
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: TossDesignSystem.white.withOpacity(0.8),
               fontSize: 14,
               height: 1.5),
             textAlign: TextAlign.center),
@@ -145,7 +146,7 @@ class PolicyPage extends ConsumerWidget {
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: TossDesignSystem.white.withOpacity(0.6),
               fontSize: 12),
             textAlign: TextAlign.center,
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 class TarotQuestionSelector extends StatefulWidget {
   final Function(String) onQuestionSelected;
@@ -191,9 +192,9 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
               // 직접 입력 텍스트 필드
               Container(
                 decoration: BoxDecoration(
-                  color: hasCustomInput 
-                      ? const Color(0xFF3182F6).withOpacity(0.05)
-                      : Colors.white,
+                  color: hasCustomInput
+                      ? const Color(0xFF3182F6).withValues(alpha: 0.05)
+                      : TossDesignSystem.white,
                   border: Border.all(
                     color: hasCustomInput || _focusNode.hasFocus 
                         ? const Color(0xFF3182F6)
@@ -204,7 +205,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   boxShadow: hasCustomInput
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF3182F6).withOpacity(0.1),
+                            color: const Color(0xFF3182F6).withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -271,13 +272,13 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     required VoidCallback onTap,
   }) {
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       borderRadius: BorderRadius.circular(12),
       child: Ink(
         decoration: BoxDecoration(
           color: isSelected
-              ? color.withOpacity(0.1)
-              : Colors.white,
+              ? color.withValues(alpha: 0.1)
+              : TossDesignSystem.white,
           border: Border.all(
             color: isSelected
                 ? color
@@ -288,7 +289,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -298,8 +299,8 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          splashColor: color.withOpacity(0.1),
-          highlightColor: color.withOpacity(0.05),
+          splashColor: color.withValues(alpha: 0.1),
+          highlightColor: color.withValues(alpha: 0.05),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(16),
@@ -313,11 +314,11 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                 shape: BoxShape.circle,
                 color: isSelected
                     ? color
-                    : color.withOpacity(0.1),
+                    : color.withValues(alpha: 0.1),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.white : color,
+                color: isSelected ? TossDesignSystem.white : color,
                 size: 20,
               ),
             ),

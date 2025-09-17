@@ -138,10 +138,14 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     final userStats = _calculateUserStats(widget.fortune, fortuneHistory);
     
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F6), // 토스 배경색
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.grayDark100
+          : const Color(0xFFF2F4F6),
       extendBodyBehindAppBar: true,
       body: Container(
-        color: const Color(0xFFF2F4F6), // 토스 배경색
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : const Color(0xFFF2F4F6),
         child: SafeArea(
           top: false,
           child: SingleChildScrollView(
@@ -175,9 +179,15 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark200
+                            : TossDesignSystem.white,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark300
+                                : const Color(0xFFE5E7EB),
+                            width: 1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,9 +342,15 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark200
+                            : TossDesignSystem.white,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark300
+                                : const Color(0xFFE5E7EB),
+                            width: 1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,27 +397,37 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEF3C7),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.warningOrange.withOpacity(0.2)
+                            : const Color(0xFFFEF3C7),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFF59E0B), width: 1),
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.warningOrange
+                                : const Color(0xFFF59E0B),
+                            width: 1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.warning_amber_outlined,
-                                color: Color(0xFFF59E0B),
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.warningOrange
+                                    : const Color(0xFFF59E0B),
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
-                              const Text(
+                              Text(
                                 '주의할 점',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF92400E),
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.warningOrange
+                                      : const Color(0xFF92400E),
                                 ),
                               ),
                             ],
@@ -409,10 +435,12 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           const SizedBox(height: 16),
                           Text(
                             widget.fortune!.metadata!['caution'],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
-                              color: Color(0xFF92400E),
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? TossDesignSystem.warningOrange
+                                  : const Color(0xFF92400E),
                               height: 1.6,
                             ),
                           ),
@@ -433,31 +461,44 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            const Color(0xFF8B5CF6).withOpacity(0.1),
-                            const Color(0xFF3B82F6).withOpacity(0.1),
-                          ],
+                          colors: Theme.of(context).brightness == Brightness.dark
+                              ? [
+                                  TossDesignSystem.purple.withOpacity(0.3),
+                                  TossDesignSystem.tossBlue.withOpacity(0.3),
+                                ]
+                              : [
+                                  const Color(0xFF8B5CF6).withValues(alpha:0.1),
+                                  const Color(0xFF3B82F6).withValues(alpha:0.1),
+                                ],
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFF8B5CF6), width: 1),
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.purple
+                                : const Color(0xFF8B5CF6),
+                            width: 1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.auto_awesome,
-                                color: Color(0xFF8B5CF6),
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.purple
+                                    : const Color(0xFF8B5CF6),
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
-                              const Text(
+                              Text(
                                 '특별 팁',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B21A8),
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.purple
+                                      : const Color(0xFF6B21A8),
                                 ),
                               ),
                             ],
@@ -465,10 +506,12 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           const SizedBox(height: 16),
                           Text(
                             widget.fortune!.specialTip!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
-                              color: Color(0xFF6B21A8),
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? TossDesignSystem.purple
+                                  : const Color(0xFF6B21A8),
                               height: 1.6,
                             ),
                           ),
@@ -490,31 +533,44 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            const Color(0xFF06B6D4).withOpacity(0.1),
-                            const Color(0xFF0891B2).withOpacity(0.1),
-                          ],
+                          colors: Theme.of(context).brightness == Brightness.dark
+                              ? [
+                                  TossDesignSystem.teal.withOpacity(0.3),
+                                  TossDesignSystem.teal.withOpacity(0.2),
+                                ]
+                              : [
+                                  const Color(0xFF06B6D4).withValues(alpha:0.1),
+                                  const Color(0xFF0891B2).withValues(alpha:0.1),
+                                ],
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFF06B6D4), width: 1),
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.teal
+                                : const Color(0xFF06B6D4),
+                            width: 1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.psychology_outlined,
-                                color: Color(0xFF0891B2),
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.teal
+                                    : const Color(0xFF0891B2),
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
-                              const Text(
+                              Text(
                                 'AI 추천 팁',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF0F766E),
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.teal
+                                      : const Color(0xFF0F766E),
                                 ),
                               ),
                             ],
@@ -532,18 +588,22 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                                     width: 6,
                                     height: 6,
                                     margin: const EdgeInsets.only(top: 8, right: 12),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF0891B2),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).brightness == Brightness.dark
+                                          ? TossDesignSystem.teal
+                                          : const Color(0xFF0891B2),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
                                   Expanded(
                                     child: Text(
                                       tip,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF0F766E),
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                            ? TossDesignSystem.teal
+                                            : const Color(0xFF0F766E),
                                         height: 1.6,
                                       ),
                                     ),
@@ -615,15 +675,15 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark 
-                            ? const Color(0xFF6366F1).withOpacity(0.1)
-                            : const Color(0xFF3B82F6).withOpacity(0.1),
+                            ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                            : const Color(0xFF3B82F6).withValues(alpha:0.1),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: isDark 
-                              ? const Color(0xFF6366F1).withOpacity(0.1)
-                              : const Color(0xFF3B82F6).withOpacity(0.1),
+                              ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                              : const Color(0xFF3B82F6).withValues(alpha:0.1),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -636,7 +696,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withOpacity(0.1),
+                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -649,7 +709,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                               Text(
                                 '카테고리별 운세',
                                 style: TextStyle(
-                                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                                  color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -680,13 +740,13 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: isDark 
-                          ? Colors.white.withValues(alpha: 0.05)
-                          : Colors.black.withValues(alpha: 0.03),
+                          ? TossDesignSystem.white.withValues(alpha: 0.05)
+                          : TossDesignSystem.black.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark 
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : Colors.black.withValues(alpha: 0.1),
+                            ? TossDesignSystem.white.withValues(alpha: 0.1)
+                            : TossDesignSystem.black.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -697,8 +757,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                             '오늘의 추천 활동',
                             style: TextStyle(
                               color: isDark 
-                                ? Colors.white.withValues(alpha: 0.8)
-                                : Colors.black.withValues(alpha: 0.7),
+                                ? TossDesignSystem.white.withValues(alpha: 0.8)
+                                : TossDesignSystem.black.withValues(alpha: 0.7),
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
@@ -727,15 +787,15 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark 
-                          ? const Color(0xFF6366F1).withOpacity(0.1)
-                          : const Color(0xFF3B82F6).withOpacity(0.1),
+                          ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                          : const Color(0xFF3B82F6).withValues(alpha:0.1),
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
                           color: isDark 
-                            ? const Color(0xFF6366F1).withOpacity(0.1)
-                            : const Color(0xFF3B82F6).withOpacity(0.1),
+                            ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                            : const Color(0xFF3B82F6).withValues(alpha:0.1),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -748,7 +808,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withOpacity(0.1),
+                                color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
@@ -761,7 +821,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                             Text(
                               '24시간 운세 흐름',
                               style: TextStyle(
-                                color: isDark ? Colors.white : const Color(0xFF1E293B),
+                                color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -799,15 +859,15 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark 
-                            ? const Color(0xFF6366F1).withOpacity(0.1)
-                            : const Color(0xFF3B82F6).withOpacity(0.1),
+                            ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                            : const Color(0xFF3B82F6).withValues(alpha:0.1),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: isDark 
-                              ? const Color(0xFF6366F1).withOpacity(0.1)
-                              : const Color(0xFF3B82F6).withOpacity(0.1),
+                              ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                              : const Color(0xFF3B82F6).withValues(alpha:0.1),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -820,7 +880,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withOpacity(0.1),
+                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -833,7 +893,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                               Text(
                                 '오늘의 행운 아이템',
                                 style: TextStyle(
-                                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                                  color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -874,15 +934,15 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isDark 
-                            ? const Color(0xFF6366F1).withOpacity(0.1)
-                            : const Color(0xFF3B82F6).withOpacity(0.1),
+                            ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                            : const Color(0xFF3B82F6).withValues(alpha:0.1),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: isDark 
-                              ? const Color(0xFF6366F1).withOpacity(0.05)
-                              : const Color(0xFF3B82F6).withOpacity(0.05),
+                              ? const Color(0xFF6366F1).withValues(alpha:0.05)
+                              : const Color(0xFF3B82F6).withValues(alpha:0.05),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -895,7 +955,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withOpacity(0.1),
+                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -908,7 +968,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                               Text(
                                 '오늘의 키워드',
                                 style: TextStyle(
-                                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                                  color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -1036,13 +1096,13 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: isDark 
-                          ? Colors.white.withValues(alpha: 0.05)
-                          : Colors.black.withValues(alpha: 0.03),
+                          ? TossDesignSystem.white.withValues(alpha: 0.05)
+                          : TossDesignSystem.black.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark 
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : Colors.black.withValues(alpha: 0.1),
+                            ? TossDesignSystem.white.withValues(alpha: 0.1)
+                            : TossDesignSystem.black.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -1052,8 +1112,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                             '카테고리별 운세',
                             style: TextStyle(
                               color: isDark 
-                                ? Colors.white.withValues(alpha: 0.8)
-                                : Colors.black.withValues(alpha: 0.7),
+                                ? TossDesignSystem.white.withValues(alpha: 0.8)
+                                : TossDesignSystem.black.withValues(alpha: 0.7),
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                             ),
@@ -1111,7 +1171,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       children: List.generate(5, (index) {
         return Icon(
           index < stars ? Icons.star : Icons.star_border,
-          color: Colors.amber,
+          color: TossDesignSystem.warningOrange,
           size: 24,
         ).animate()
           .fadeIn(duration: 200.ms, delay: Duration(milliseconds: 300 + (index * 50)))
@@ -1144,7 +1204,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         Text(
           '오늘의 운세 분석',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
+            color: TossDesignSystem.white.withValues(alpha: 0.8),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
@@ -1154,7 +1214,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
           child: HexagonChart(
             scores: hexagonData,
             size: 180,
-            primaryColor: Colors.cyan,
+            primaryColor: TossDesignSystem.tossBlue,
             showValues: true,
           ),
         ).animate()
@@ -1178,7 +1238,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         Text(
           '오행 균형',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
+            color: TossDesignSystem.white.withValues(alpha: 0.8),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
@@ -1204,13 +1264,13 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: isDark 
-          ? Colors.white.withValues(alpha: 0.05)
-          : Colors.black.withValues(alpha: 0.03),
+          ? TossDesignSystem.white.withValues(alpha: 0.05)
+          : TossDesignSystem.black.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark 
-            ? Colors.white.withValues(alpha: 0.1)
-            : Colors.black.withValues(alpha: 0.1),
+            ? TossDesignSystem.white.withValues(alpha: 0.1)
+            : TossDesignSystem.black.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -1221,7 +1281,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             children: [
               Icon(
                 Icons.auto_awesome,
-                color: Colors.amber,
+                color: TossDesignSystem.warningOrange,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -1229,8 +1289,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                 '사주팔자',
                 style: TextStyle(
                   color: isDark 
-                    ? Colors.white.withValues(alpha: 0.8)
-                    : Colors.black.withValues(alpha: 0.7),
+                    ? TossDesignSystem.white.withValues(alpha: 0.8)
+                    : TossDesignSystem.black.withValues(alpha: 0.7),
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
                 ),
@@ -1249,7 +1309,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.1),
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -1258,7 +1318,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   Text(
                     '부족한 오행: ${saju['부족한오행']}',
                     style: TextStyle(
-                      color: Colors.amber,
+                      color: TossDesignSystem.warningOrange,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1269,8 +1329,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                       saju['보충방법'].toString(),
                       style: TextStyle(
                         color: isDark 
-                          ? Colors.white.withValues(alpha: 0.7)
-                          : Colors.black.withValues(alpha: 0.6),
+                          ? TossDesignSystem.white.withValues(alpha: 0.7)
+                          : TossDesignSystem.black.withValues(alpha: 0.6),
                         fontSize: 13,
                         fontWeight: FontWeight.w300,
                       ),
@@ -1298,8 +1358,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             '$label: ',
             style: TextStyle(
               color: isDark 
-                ? Colors.white.withValues(alpha: 0.5)
-                : Colors.black.withValues(alpha: 0.5),
+                ? TossDesignSystem.white.withValues(alpha: 0.5)
+                : TossDesignSystem.black.withValues(alpha: 0.5),
               fontSize: 14,
             ),
           ),
@@ -1307,8 +1367,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             value,
             style: TextStyle(
               color: isDark 
-                ? Colors.white.withValues(alpha: 0.9)
-                : Colors.black.withValues(alpha: 0.8),
+                ? TossDesignSystem.white.withValues(alpha: 0.9)
+                : TossDesignSystem.black.withValues(alpha: 0.8),
               fontSize: 14,
               fontWeight: FontWeight.w400,
             ),
@@ -1336,10 +1396,10 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: TossDesignSystem.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: TossDesignSystem.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -1348,7 +1408,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
           Text(
             '오늘의 행운',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: TossDesignSystem.white.withValues(alpha: 0.8),
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
@@ -1369,14 +1429,14 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         children: [
           Icon(
             icon,
-            color: Colors.white.withValues(alpha: 0.5),
+            color: TossDesignSystem.white.withValues(alpha: 0.5),
             size: 20,
           ),
           const SizedBox(width: 12),
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: TossDesignSystem.white.withValues(alpha: 0.5),
               fontSize: 14,
             ),
           ),
@@ -1384,7 +1444,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
           Text(
             value,
             style: TextStyle(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -1399,12 +1459,12 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: isDark 
             ? Color(0xFF1a1a2e)
-            : Colors.white,
+            : TossDesignSystem.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(24),
@@ -1414,7 +1474,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
             Text(
               '다른 운세 보기',
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
@@ -1438,21 +1498,21 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       leading: Icon(
         icon, 
         color: isDark 
-          ? Colors.white.withValues(alpha: 0.8)
-          : Colors.black.withValues(alpha: 0.7)
+          ? TossDesignSystem.white.withValues(alpha: 0.8)
+          : TossDesignSystem.black.withValues(alpha: 0.7)
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
           fontSize: 16,
         ),
       ),
       trailing: Icon(
         Icons.arrow_forward_ios, 
         color: isDark 
-          ? Colors.white.withValues(alpha: 0.3)
-          : Colors.black.withValues(alpha: 0.3), 
+          ? TossDesignSystem.white.withValues(alpha: 0.3)
+          : TossDesignSystem.black.withValues(alpha: 0.3), 
         size: 16
       ),
       onTap: () {

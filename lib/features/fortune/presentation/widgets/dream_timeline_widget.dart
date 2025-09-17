@@ -4,6 +4,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class DreamTimelineWidget extends StatefulWidget {
   final List<double> emotionalFlow;
@@ -73,7 +74,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       children: [
         Icon(
           Icons.timeline,
-          color: Colors.teal,
+          color: TossDesignSystem.tossBlue,
           size: 24,
         ),
         const SizedBox(width: AppSpacing.spacing2),
@@ -101,13 +102,13 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                 verticalInterval: 1,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withOpacity(0.1),
+                    color: TossDesignSystem.white.withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
                 getDrawingVerticalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withOpacity(0.1),
+                    color: TossDesignSystem.white.withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
@@ -170,7 +171,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               borderData: FlBorderData(
                 show: true,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: TossDesignSystem.white.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -184,8 +185,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                   isCurved: true,
                   gradient: LinearGradient(
                     colors: [
-                      Colors.teal.withOpacity(0.8),
-                      Colors.blue.withOpacity(0.8),
+                      TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                      TossDesignSystem.primaryBlue.withValues(alpha: 0.8),
                     ],
                   ),
                   barWidth: 3,
@@ -198,7 +199,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                         radius: isSelected ? 8 : 5,
                         color: _getEmotionColor(spot.y),
                         strokeWidth: 2,
-                        strokeColor: Colors.white,
+                        strokeColor: TossDesignSystem.white,
                       );
                     },
                   ),
@@ -206,8 +207,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        Colors.teal.withOpacity(0.1),
-                        Colors.blue.withOpacity(0.1),
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -248,7 +249,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       return LineTooltipItem(
                         '장면 ${spot.x.toInt() + 1}\n$emotionText',
                         TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontWeight: FontWeight.bold,
                         ),
                       );
@@ -273,11 +274,11 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
   }
 
   Color _getEmotionColor(double value) {
-    if (value >= 0.8) return Colors.green;
-    if (value >= 0.6) return Colors.lightGreen;
-    if (value >= 0.4) return Colors.amber;
-    if (value >= 0.2) return Colors.orange;
-    return Colors.red;
+    if (value >= 0.8) return TossDesignSystem.successGreen;
+    if (value >= 0.6) return TossDesignSystem.successGreen;
+    if (value >= 0.4) return TossDesignSystem.warningYellow;
+    if (value >= 0.2) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   Widget _buildScenesList() {
@@ -308,14 +309,14 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               margin: const EdgeInsets.only(bottom: AppSpacing.spacing2),
               padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
-                color: isSelected 
-                    ? _getEmotionColor(emotion).withOpacity(0.2)
-                    : Colors.white.withOpacity(0.05),
+                color: isSelected
+                    ? _getEmotionColor(emotion).withValues(alpha: 0.2)
+                    : TossDesignSystem.white.withValues(alpha: 0.05),
                 borderRadius: AppDimensions.borderRadiusMedium,
                 border: Border.all(
-                  color: isSelected 
-                      ? _getEmotionColor(emotion).withOpacity(0.5)
-                      : Colors.white.withOpacity(0.1),
+                  color: isSelected
+                      ? _getEmotionColor(emotion).withValues(alpha: 0.5)
+                      : TossDesignSystem.white.withValues(alpha: 0.1),
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -325,7 +326,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     width: 40,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: _getEmotionColor(emotion).withOpacity(0.2),
+                      color: _getEmotionColor(emotion).withValues(alpha: 0.2),
                       borderRadius: AppDimensions.borderRadiusSmall,
                     ),
                     child: Center(
@@ -481,17 +482,17 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: TossDesignSystem.white.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: TossDesignSystem.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
       child: Text(
         interpretation,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.9),
+          color: TossDesignSystem.white.withValues(alpha: 0.9),
           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
           height: 1.4,
         ),

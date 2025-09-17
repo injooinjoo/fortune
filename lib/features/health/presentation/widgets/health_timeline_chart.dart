@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class HealthTimelineChart extends StatefulWidget {
   final HealthTimeline timeline;
@@ -51,11 +52,11 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             offset: const Offset(0, 2),
             blurRadius: 16,
             spreadRadius: 0,
@@ -216,7 +217,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 radius: 6,
                 color: TossTheme.primaryBlue,
                 strokeWidth: 3,
-                strokeColor: Colors.white,
+                strokeColor: TossDesignSystem.white,
               );
             },
           ),
@@ -265,7 +266,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               return LineTooltipItem(
                 '$timeLabel\n${touchedSpot.y.toInt()}점\n$description',
                 const TextStyle(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   height: 1.3,
@@ -330,7 +331,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                   child: Text(
                     '${timeSlot.conditionScore}',
                     style: TossTheme.caption.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/talent_type.dart';
 
 /// 재능 타입 결과를 표시하는 메인 위젯
@@ -224,7 +225,7 @@ class TalentStrengthCards extends StatelessWidget {
               child: Text(
                 '$rank',
                 style: TossTheme.button.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontSize: 16,
                 ),
               ),
@@ -375,7 +376,7 @@ class ActionPlanWidget extends StatelessWidget {
               child: Text(
                 '$step',
                 style: TossTheme.caption.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontWeight: FontWeight.w700,
                 ),
               ),

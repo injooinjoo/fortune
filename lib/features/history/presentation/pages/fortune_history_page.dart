@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/components/toss_card.dart';
@@ -104,8 +105,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           '타임라인',
                           style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: _tabController.index == 0 
-                              ? Colors.white 
+                            color: _tabController.index == 0
+                              ? TossDesignSystem.white
                               : TossTheme.textGray600,
                           ),
                           textAlign: TextAlign.center,
@@ -127,8 +128,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           '통계',
                           style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: _tabController.index == 1 
-                              ? Colors.white 
+                            color: _tabController.index == 1
+                              ? TossDesignSystem.white
                               : TossTheme.textGray600,
                           ),
                           textAlign: TextAlign.center,
@@ -150,8 +151,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           '차트',
                           style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: _tabController.index == 2 
-                              ? Colors.white 
+                            color: _tabController.index == 2
+                              ? TossDesignSystem.white
                               : TossTheme.textGray600,
                           ),
                           textAlign: TextAlign.center,
@@ -173,8 +174,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           '일일운세',
                           style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: _tabController.index == 3 
-                              ? Colors.white 
+                            color: _tabController.index == 3
+                              ? TossDesignSystem.white
                               : TossTheme.textGray600,
                           ),
                           textAlign: TextAlign.center,

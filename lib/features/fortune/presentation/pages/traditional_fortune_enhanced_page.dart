@@ -52,7 +52,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFEF4444).withOpacity(0.05),
+              Color(0xFFEF4444).withValues(alpha: 0.05),
               TossDesignSystem.white,
             ],
           ),
@@ -110,7 +110,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                             Icon(
                               Icons.auto_awesome_rounded,
                               size: 60,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                             ).animate()
                               .scale(delay: 300.ms, duration: 600.ms)
                               .fade(),
@@ -120,12 +120,12 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 shadows: [
                                   Shadow(
                                     offset: Offset(0, 2),
                                     blurRadius: 4,
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: TossDesignSystem.black.withValues(alpha: 0.3),
                                   ),
                                 ],
                               ),
@@ -137,7 +137,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                               '사주 · 토정비결 · 주역',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.white.withOpacity(0.9),
+                                color: TossDesignSystem.white.withValues(alpha: 0.9),
                               ),
                             ).animate()
                               .fadeIn(delay: 700.ms, duration: 600.ms),
@@ -203,8 +203,8 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color(0xFFEF4444).withOpacity(0.05),
-          Color(0xFFEC4899).withOpacity(0.02),
+          Color(0xFFEF4444).withValues(alpha: 0.05),
+          Color(0xFFEC4899).withValues(alpha: 0.02),
         ],
       ),
       child: Padding(
@@ -214,7 +214,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Color(0xFFEF4444).withOpacity(0.1),
+                color: Color(0xFFEF4444).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -365,7 +365,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFEF4444).withOpacity(0.4),
+              color: Color(0xFFEF4444).withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -394,7 +394,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                       Icon(
                         Icons.auto_awesome_rounded,
                         size: 32,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                       const SizedBox(width: 12),
                       Text(
@@ -402,7 +402,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         ),
                       ),
                     ],
@@ -411,14 +411,14 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: TossDesignSystem.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       '오늘의 종합 운세를 확인하세요',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                     ),
                   ),
@@ -489,7 +489,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF795548).withOpacity(0.1),
+              color: Color(0xFF795548).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -533,7 +533,7 @@ class TraditionalBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withValues(alpha: 0.1);
 
     // Draw traditional patterns
     final spacing = 60.0;
@@ -594,7 +594,7 @@ class YinYangPainter extends CustomPainter {
     );
     
     final whitePaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = TossDesignSystem.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
     canvas.drawPath(whitePath, whitePaint);
     
@@ -619,7 +619,7 @@ class YinYangPainter extends CustomPainter {
     );
     
     final blackPaint = Paint()
-      ..color = Colors.black.withOpacity(0.2)
+      ..color = TossDesignSystem.black.withValues(alpha: 0.2)
       ..style = PaintingStyle.fill;
     canvas.drawPath(blackPath, blackPaint);
     
@@ -627,17 +627,17 @@ class YinYangPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(center.dx, center.dy - radius / 2),
       radius / 8,
-      Paint()..color = Colors.black.withOpacity(0.2),
+      Paint()..color = TossDesignSystem.black.withValues(alpha: 0.2),
     );
     canvas.drawCircle(
       Offset(center.dx, center.dy + radius / 2),
       radius / 8,
-      Paint()..color = Colors.white.withOpacity(0.3),
+      Paint()..color = TossDesignSystem.white.withValues(alpha: 0.3),
     );
     
     // Outer circle
     final outlinePaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = TossDesignSystem.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawCircle(center, radius, outlinePaint);
@@ -654,7 +654,7 @@ class UnifiedPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5
-      ..color = Colors.white.withOpacity(0.15);
+      ..color = TossDesignSystem.white.withValues(alpha: 0.15);
 
     // Draw multiple elements representing different fortune types
     _drawSajuElements(canvas, size, paint);
@@ -684,14 +684,14 @@ class UnifiedPatternPainter extends CustomPainter {
       canvas.drawLine(
         Offset(x, 0),
         Offset(x, size.height),
-        paint..color = Colors.white.withOpacity(0.05),
+        paint..color = TossDesignSystem.white.withValues(alpha: 0.05),
       );
     }
     for (double y = 0; y < size.height; y += spacing) {
       canvas.drawLine(
         Offset(0, y),
         Offset(size.width, y),
-        paint..color = Colors.white.withOpacity(0.05),
+        paint..color = TossDesignSystem.white.withValues(alpha: 0.05),
       );
     }
   }
@@ -703,7 +703,7 @@ class UnifiedPatternPainter extends CustomPainter {
     final lineWidth = 40.0;
     final lineSpacing = 10.0;
     
-    paint.color = Colors.white.withOpacity(0.2);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.2);
     paint.strokeWidth = 3.0;
     
     // Top trigram

@@ -6,6 +6,7 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class EmploymentFortunePage extends ConsumerWidget {
   const EmploymentFortunePage({super.key});
@@ -43,7 +44,7 @@ class _EmploymentInputForm extends StatelessWidget {
             Text(
               '오늘의 취업 운세를 확인해보세요!\n면접운과 합격 가능성을 알려드립니다.',
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha:0.8),
                 height: 1.5,
               ),
             ),
@@ -53,7 +54,7 @@ class _EmploymentInputForm extends StatelessWidget {
               child: Icon(
                 Icons.work,
                 size: 120,
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withValues(alpha:0.3),
               ),
             ),
             
@@ -162,7 +163,7 @@ class _EmploymentFortuneResult extends StatelessWidget {
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getScoreColor(entry.value).withOpacity(0.2),
+                            color: _getScoreColor(entry.value).withValues(alpha:0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -262,9 +263,9 @@ class _EmploymentFortuneResult extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }

@@ -99,8 +99,8 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              TossDesignSystem.gray600.withOpacity(0.1),
-              TossDesignSystem.gray600.withOpacity(0.1)]),
+              theme.colorScheme.onSurfaceVariant.withOpacity(0.1),
+              theme.colorScheme.onSurfaceVariant.withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
           border: Border.all(
             color: theme.colorScheme.primary.withOpacity(0.2),
@@ -177,7 +177,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                 child: Text(
                   '영혼 충전하기',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -206,7 +206,7 @@ class TokenBalanceStats extends ConsumerWidget {
         borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4))]),
       child: Column(

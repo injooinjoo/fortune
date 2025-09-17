@@ -173,7 +173,8 @@
       "Bash(nc localhost 58293)",
       "Bash(nc localhost 58960)",
       "Bash(nc localhost 59992)",
-      "Bash(nc localhost 62111)"
+      "Bash(nc localhost 62111)",
+      "Bash(nc localhost 63300)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

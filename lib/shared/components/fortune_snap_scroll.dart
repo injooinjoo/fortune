@@ -311,7 +311,7 @@ class FortuneSnapCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
+                      TossDesignSystem.transparent,
                       TossDesignSystem.gray900.withOpacity(0.3),
                       TossDesignSystem.gray900.withOpacity(0.7),
                     ],

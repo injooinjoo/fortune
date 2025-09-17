@@ -15,6 +15,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class DreamFortunePage extends BaseFortunePage {
   const DreamFortunePage({Key? key})
@@ -202,8 +203,8 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withOpacity(0.2)
-              : Colors.transparent,
+              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+              : TossDesignSystem.white.withValues(alpha: 0.0),
           borderRadius: BorderRadius.circular(20)
         ),
         child: Row(
@@ -318,13 +319,13 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           shape: BoxShape.circle,
           gradient: LinearGradient(
             colors: _isRecording
-                ? [Colors.red.shade400, Colors.red.shade600]
-                : [theme.colorScheme.primary, theme.colorScheme.primary.withOpacity(0.8)]
+                ? [TossDesignSystem.error, TossDesignSystem.error]
+                : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)]
           ),
           boxShadow: [
             BoxShadow(
-              color: (_isRecording ? Colors.red : theme.colorScheme.primary)
-                  .withOpacity(0.3),
+              color: (_isRecording ? TossDesignSystem.error : theme.colorScheme.primary)
+                  .withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10)
             )
@@ -333,7 +334,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
         child: Icon(
           _isRecording ? Icons.stop : Icons.mic,
           size: 40,
-          color: Colors.white
+          color: TossDesignSystem.white
         )
       )
     );
@@ -534,13 +535,13 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade600]
+                    colors: [TossDesignSystem.purple, TossDesignSystem.purple]
                   ),
                   borderRadius: BorderRadius.circular(12)
                 ),
                 child: const Icon(
                   Icons.auto_stories,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 24
                 )
               ),
@@ -556,10 +557,10 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.deepPurple.withOpacity(0.1),
+              color: TossDesignSystem.purple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.deepPurple.withOpacity(0.3),
+                color: TossDesignSystem.purple.withValues(alpha: 0.3),
                 width: 1
               )
             ),
@@ -567,14 +568,14 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
               children: [
                 Icon(
                   Icons.category,
-                  color: Colors.deepPurple,
+                  color: TossDesignSystem.purple,
                   size: 20
                 ),
                 const SizedBox(width: 8),
                 Text(
                   interpretation['mainTheme'],
                   style: TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold
                   )
@@ -589,7 +590,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.white
+              color: TossDesignSystem.white
             )
           ),
           const SizedBox(height: 8),
@@ -597,7 +598,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
             interpretation['psychologicalInsight'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: TossDesignSystem.white.withValues(alpha: 0.9),
               height: 1.5
             )
           ),
@@ -609,7 +610,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white
+                color: TossDesignSystem.white
               )
             ),
             const SizedBox(height: 8),
@@ -621,14 +622,14 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                   children: [
                     Text(
                       '• ',
-                      style: TextStyle(color: Colors.green)
+                      style: TextStyle(color: TossDesignSystem.success)
                     ),
                     Expanded(
                       child: Text(
                         element,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withOpacity(0.8)
+                          color: TossDesignSystem.white.withValues(alpha: 0.8)
                         )
                       )
                     )

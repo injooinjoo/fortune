@@ -95,7 +95,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
       padding: AppSpacing.paddingAll20,
       borderRadius: AppDimensions.borderRadiusMedium,
       border: Border.all(
-        color: theme.colorScheme.outline.withOpacity(0.1),
+        color: theme.colorScheme.outline.withValues(alpha: 0.1),
         width: 1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +110,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
               Text(
                 '基本情報',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -171,7 +171,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
           width: 2)),
       child: ClipOval(
         child: userProfile?['profile_photo_url'] != null
@@ -187,7 +187,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
   
   Widget _buildDefaultAvatar(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
       child: Icon(
         Icons.person,
         size: 40,
@@ -292,7 +292,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
     final theme = Theme.of(context);
     
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: item.onTap,
         borderRadius: AppDimensions.borderRadiusSmall,
@@ -302,7 +302,9 @@ class _UserInfoCardState extends State<UserInfoCard> {
             right: items.indexOf(item) == 0 ? 6 : 0,
             left: items.indexOf(item) == 1 ? 6 : 0),
           decoration: BoxDecoration(
-            color: TossDesignSystem.grayDark900,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark800
+                : TossDesignSystem.gray50,
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [
@@ -318,7 +320,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                     Text(
                       item.label,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     SizedBox(height: AppSpacing.xxxSmall),

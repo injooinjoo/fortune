@@ -34,7 +34,7 @@ class TossCard extends StatelessWidget {
         boxShadow: _getBoxShadow(isDark),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.white.withValues(alpha: 0.0),
         borderRadius: BorderRadius.circular(_getBorderRadius()),
         child: InkWell(
           onTap: onTap != null ? () {
@@ -62,10 +62,10 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.filled:
         return isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white;
       case TossCardStyle.transparent:
-        return Colors.transparent;
+        return TossDesignSystem.white.withValues(alpha: 0.0);
       case TossCardStyle.glassmorphism:
         return (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white)
-            .withOpacity(0.7);
+            .withValues(alpha: 0.7);
     }
   }
 
@@ -88,7 +88,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.glassmorphism:
         return Border.all(
           color: (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray100)
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
           width: 1,
         );
       default:
@@ -101,7 +101,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.elevated:
         return [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -109,7 +109,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.glassmorphism:
         return [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: TossDesignSystem.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),

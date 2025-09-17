@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/domain/entities/todo.dart';
 import 'package:fortune/presentation/providers/todo_provider.dart';
@@ -126,7 +127,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('할 일 저장 중 오류가 발생했습니다'),
-            backgroundColor: Colors.red));
+            backgroundColor: TossDesignSystem.error));
       }
     } finally {
       if (mounted) {

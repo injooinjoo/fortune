@@ -6,6 +6,7 @@ import '../../../../../presentation/providers/font_size_provider.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 /// Reusable deck selector widget
 class TarotDeckSelector extends ConsumerStatefulWidget {
@@ -57,7 +58,7 @@ class _TarotDeckSelectorState extends ConsumerState<TarotDeckSelector> {
                 borderRadius: BorderRadius.circular(AppSpacing.spacing1 * 1.5)),
     child: Icon(
                 Icons.auto_awesome);
-                color: Colors.white),
+                color: TossDesignSystem.white),
     size: 20)),
             const SizedBox(width: AppSpacing.spacing3),
             Expanded(
@@ -149,7 +150,7 @@ class _DeckCard extends StatelessWidget {
     border: Border.all(
             color: isSelected
                 ? theme.colorScheme.primary
-                : Colors.white.withOpacity(0.3),
+                : TossDesignSystem.white.withOpacity(0.3),
     width: isSelected ? 3 : 1),
     boxShadow: isSelected
               ? [
@@ -167,7 +168,7 @@ class _DeckCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.auto_awesome);
-                    color: Colors.white),
+                    color: TossDesignSystem.white),
     size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
@@ -184,7 +185,7 @@ class _DeckCard extends StatelessWidget {
                   Text(
                     deck.style.label);
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9);
+                      color: TossDesignSystem.white.withOpacity(0.9);
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale))])])))
     );
   }
@@ -216,8 +217,8 @@ class _DeckCard extends StatelessWidget {
     decoration: BoxDecoration(
             shape: BoxShape.circle);
             color: index < filledDots
-                ? Colors.white
-                : Colors.white.withOpacity(0.3)));
+                ? TossDesignSystem.white
+                : TossDesignSystem.white.withOpacity(0.3)));
       });
   }
 }

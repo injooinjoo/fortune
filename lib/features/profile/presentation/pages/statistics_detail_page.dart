@@ -136,7 +136,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
@@ -199,7 +199,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   title: '총 운세 조회',
                   value: stats.totalFortunes.toString(),
                   icon: Icons.visibility,
-                  color: Colors.blue,
+                  color: TossDesignSystem.primaryBlue,
                   fontScale: fontScale)),
               const SizedBox(width: 12),
               Expanded(
@@ -207,7 +207,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   title: '연속 접속일',
                   value: '${stats.consecutiveDays}일',
                   icon: Icons.local_fire_department,
-                  color: Colors.orange,
+                  color: TossDesignSystem.warningOrange,
                   fontScale: fontScale))]),
           const SizedBox(height: 12),
           Row(
@@ -217,7 +217,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   title: '평균 운세 점수',
                   value: '${stats.averageFortuneScore.toStringAsFixed(1)}점',
                   icon: Icons.score,
-                  color: Colors.green,
+                  color: TossDesignSystem.success,
                   fontScale: fontScale)),
               const SizedBox(width: 12),
               Expanded(
@@ -225,7 +225,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   title: '회원 기간',
                   value: '$memberDays일',
                   icon: Icons.cake,
-                  color: Colors.purple,
+                  color: TossDesignSystem.purple,
                   fontScale: fontScale))]),
           
           // Profile Completion
@@ -233,11 +233,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -279,17 +279,17 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.amber.withOpacity(0.1),
-                  Colors.orange.withOpacity(0.1)]),
+                  TossDesignSystem.warningYellow.withValues(alpha: 0.1),
+                  TossDesignSystem.warningOrange.withValues(alpha: 0.1)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.amber.withOpacity(0.2)),
+                color: TossDesignSystem.warningYellow.withValues(alpha: 0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.token, color: Colors.amber, size: 24),
+                    const Icon(Icons.token, color: TossDesignSystem.warningYellow, size: 24),
                     const SizedBox(width: 8),
                     Text(
                       '토큰 사용 현황',
@@ -313,7 +313,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           style: TextStyle(
                             fontSize: 20 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green))]),
+                            color: TossDesignSystem.success))]),
                     Container(
                       width: 1,
                       height: 40,
@@ -331,7 +331,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           style: TextStyle(
                             fontSize: 20 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: Colors.red))]),
+                            color: TossDesignSystem.error))]),
                     Container(
                       width: 1,
                       height: 40,
@@ -356,11 +356,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -371,7 +371,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.emoji_events, color: Colors.amber, size: 24),
+                        const Icon(Icons.emoji_events, color: TossDesignSystem.warningYellow, size: 24),
                         const SizedBox(width: 8),
                         Text(
                           '달성 업적',
@@ -417,11 +417,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -490,11 +490,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -543,11 +543,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -570,12 +570,12 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: index == 0 
-                                ? Colors.amber 
-                                : index == 1 
-                                    ? Colors.grey[400] 
-                                    : index == 2 
-                                        ? Colors.orange[700] 
+                            color: index == 0
+                                ? TossDesignSystem.warningYellow
+                                : index == 1
+                                    ? TossDesignSystem.gray400
+                                    : index == 2
+                                        ? TossDesignSystem.warningOrange
                                         : TossDesignSystem.gray200,
                             shape: BoxShape.circle),
                           child: Center(
@@ -584,7 +584,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: index < 3 ? Colors.white : TossDesignSystem.gray600)),
+                                color: index < 3 ? TossDesignSystem.white : TossDesignSystem.gray600)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -611,11 +611,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: Column(
@@ -725,7 +725,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   value: '98점',
                   subtitle: '2024.01.15',
                   icon: Icons.trending_up,
-                  color: Colors.green,
+                  color: TossDesignSystem.success,
                   fontScale: fontScale)),
               const SizedBox(width: 12),
               Expanded(
@@ -734,7 +734,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   value: '45점',
                   subtitle: '2023.12.23',
                   icon: Icons.trending_down,
-                  color: Colors.red,
+                  color: TossDesignSystem.error,
                   fontScale: fontScale))]),
           const SizedBox(height: 12),
           Row(
@@ -745,7 +745,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   value: '85.2점',
                   subtitle: '+3.5 vs 지난달',
                   icon: Icons.calendar_today,
-                  color: Colors.blue,
+                  color: TossDesignSystem.primaryBlue,
                   fontScale: fontScale)),
               const SizedBox(width: 12),
               Expanded(
@@ -754,7 +754,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   value: '${stats.totalShares}회',
                   subtitle: '친구들과 함께',
                   icon: Icons.share,
-                  color: Colors.purple,
+                  color: TossDesignSystem.purple,
                   fontScale: fontScale))]),
           
           // Insights
@@ -803,11 +803,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(
@@ -841,23 +841,23 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isUnlocked ? Colors.amber.withOpacity(0.2) : TossDesignSystem.gray200,
+        color: isUnlocked ? TossDesignSystem.warningYellow.withValues(alpha: 0.2) : TossDesignSystem.gray200,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isUnlocked ? Colors.amber : TossDesignSystem.gray200)),
+          color: isUnlocked ? TossDesignSystem.warningYellow : TossDesignSystem.gray200)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             isUnlocked ? Icons.emoji_events : Icons.lock_outline,
             size: 16,
-            color: isUnlocked ? Colors.amber : TossDesignSystem.gray600),
+            color: isUnlocked ? TossDesignSystem.warningYellow : TossDesignSystem.gray600),
           const SizedBox(width: 4),
           Text(
             name,
             style: TextStyle(
               fontSize: 12 * fontScale,
-              color: isUnlocked ? Colors.amber[800] : TossDesignSystem.gray600,
+              color: isUnlocked ? TossDesignSystem.warningOrange : TossDesignSystem.gray600,
               fontWeight: isUnlocked ? FontWeight.w600 : FontWeight.normal)]);
   }
   
@@ -873,7 +873,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? TossDesignSystem.tossBlue : Colors.white,
+          color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200)),
@@ -881,7 +881,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           label,
           style: TextStyle(
             fontSize: 14 * fontScale,
-            color: isSelected ? Colors.white : TossDesignSystem.gray600,
+            color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal)));
   }
   
@@ -895,11 +895,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(
@@ -956,15 +956,15 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
   Color _getCategoryColor(String category) {
     switch (category) {
       case '일일운세':
-        return Colors.blue;
+        return TossDesignSystem.primaryBlue;
       case '연애/결혼':
-        return Colors.pink;
+        return TossDesignSystem.errorRed;
       case '재물/사업':
-        return Colors.green;
+        return TossDesignSystem.success;
       case '건강':
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case '성격/심리':
-        return Colors.purple;
+        return TossDesignSystem.purple;
       default:
         return TossDesignSystem.tossBlue;
     }

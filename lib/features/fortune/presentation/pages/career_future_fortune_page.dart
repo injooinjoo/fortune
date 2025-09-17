@@ -247,7 +247,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.star, color: Colors.amber),
+                    const Icon(Icons.star, color: TossDesignSystem.warningOrange),
                     SizedBox(width: TossDesignSystem.spacingS),
                     Text(
                       '개발하고 싶은 역량 (2개 이상)',

@@ -194,7 +194,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
         style: ElevatedButton.styleFrom(
           backgroundColor: _canClaim ? TossDesignSystem.gray600 : TossDesignSystem.gray600,
           disabledBackgroundColor: TossDesignSystem.gray600,
-          foregroundColor: _canClaim ? Colors.white : TossDesignSystem.gray400,
+          foregroundColor: _canClaim ? TossDesignSystem.white : TossDesignSystem.gray400,
           padding: EdgeInsets.symmetric(
             vertical: widget.showCompact ? AppSpacing.spacing2 : AppSpacing.spacing3,
           ),
@@ -210,7 +210,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    _canClaim ? Colors.white : TossDesignSystem.gray400,
+                    _canClaim ? TossDesignSystem.white : TossDesignSystem.gray400,
                   ),
                 ),
               )
@@ -247,10 +247,10 @@ class Toast {
     required ToastType type,
   }) {
     final color = switch (type) {
-      ToastType.success => Colors.green,
-      ToastType.error => Colors.red,
-      ToastType.warning => Colors.orange,
-      ToastType.info => Colors.blue,
+      ToastType.success => TossDesignSystem.successGreen,
+      ToastType.error => TossDesignSystem.errorRed,
+      ToastType.warning => TossDesignSystem.warningOrange,
+      ToastType.info => TossDesignSystem.primaryBlue,
     };
 
     ScaffoldMessenger.of(context).showSnackBar(

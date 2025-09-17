@@ -1,6 +1,5 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
@@ -95,7 +94,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
       case 'AB':
         return TossDesignSystem.purple; // Purple
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray400;
     }
   }
   
@@ -182,7 +181,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       child: Icon(
                         Icons.water_drop,
                         size: 80,
-                        color: Colors.white.withOpacity(0.1)),
+                        color: TossDesignSystem.white.withValues(alpha: 0.1)),
                   
                   // Content
                   Padding(
@@ -195,26 +194,26 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                           height: 48,
                           decoration: BoxDecoration(
                             color: widget.isSelected
-                                ? Colors.white.withValues(alpha:(0.2)
+                                ? TossDesignSystem.white.withValues(alpha: 0.2)
                                 : color.withOpacity(0.1),
                             shape: BoxShape.circle),
                           child: Icon(
                             icon,
                             size: 24,
-                            color: widget.isSelected ? Colors.white : color)),
+                            color: widget.isSelected ? TossDesignSystem.white : color)),
                         const SizedBox(height: AppSpacing.spacing2),
                         Text(
                           '${widget.type}형',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: widget.isSelected
-                                ? Colors.white
+                                ? TossDesignSystem.white
                                 : Theme.of(context).colorScheme.onSurface)),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           description,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: widget.isSelected
-                                ? Colors.white.withValues(alpha:(0.9)
+                                ? TossDesignSystem.white.withValues(alpha: 0.9)
                                 : Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
@@ -232,7 +231,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         width: 20,
                         height: 20,
                         decoration: const BoxDecoration(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

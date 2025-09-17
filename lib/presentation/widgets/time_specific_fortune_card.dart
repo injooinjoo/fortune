@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../domain/entities/fortune.dart';
 
 class TimeSpecificFortuneCard extends StatelessWidget {
@@ -37,8 +38,8 @@ class TimeSpecificFortuneCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                scoreColor.withOpacity(0.10),
-                scoreColor.withOpacity(0.05),
+                scoreColor.withValues(alpha: 0.10),
+                scoreColor.withValues(alpha: 0.05),
               ],
             ),
           ),
@@ -60,7 +61,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
                         Text(
                           fortune.title,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -80,7 +81,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
                   Container(
                     padding: AppSpacing.paddingAll12,
                     decoration: BoxDecoration(
-                      color: scoreColor.withOpacity(0.08),
+                      color: scoreColor.withValues(alpha: 0.08),
                       borderRadius: AppDimensions.borderRadiusSmall,
                     ),
                     child: Row(
@@ -118,7 +119,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
       height: AppSpacing.spacing15,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: scoreColor.withOpacity(0.2),
+        color: scoreColor.withValues(alpha: 0.2),
         border: Border.all(color: scoreColor, width: 3),
       ),
       child: Center(
@@ -140,10 +141,10 @@ class TimeSpecificFortuneCard extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.amber;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }
 

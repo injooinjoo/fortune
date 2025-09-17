@@ -254,7 +254,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.warning_amber, color: Colors.amber),
+                    Icon(Icons.warning_amber, color: TossDesignSystem.warningYellow),
                     const SizedBox(width: 8),
                     Text(
                       '주요 고민/우려사항 (2개 이상)',

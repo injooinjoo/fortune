@@ -1,15 +1,15 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_dimensions.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/theme/app_animations.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../services/storage_service.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class ProfileCompletionBanner extends StatefulWidget {
   const ProfileCompletionBanner({super.key});
@@ -123,12 +123,12 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
         direction: DismissDirection.endToStart,
         onDismissed: (_) => _dismissBanner(),
         background: Container(
-          color: Colors.transparent,
+          color: TossDesignSystem.white.withValues(alpha: 0.0),
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: AppSpacing.spacing4),
           child: Icon(
             Icons.close,
-            color: TossDesignSystem.gray900.withOpacity(0.54)),
+            color: TossDesignSystem.gray900.withValues(alpha: 0.54)),
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -136,7 +136,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
             onTap: () => context.push('/profile/edit'),
             child: GlassContainer(
               padding: AppSpacing.paddingAll16,
-              borderColor: TossDesignSystem.gray900.withOpacity(0.12),
+              borderColor: TossDesignSystem.gray900.withValues(alpha: 0.12),
               child: Row(
                 children: [
                   // Progress Indicator
@@ -152,8 +152,8 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                           backgroundColor: TossDesignSystem.gray600,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _completionPercentage < 0.5 
-                                ? TossDesignSystem.gray900.withOpacity(0.54) 
-                                : TossDesignSystem.gray900.withOpacity(0.87),
+                                ? TossDesignSystem.gray900.withValues(alpha: 0.54)
+                                : TossDesignSystem.gray900.withValues(alpha: 0.87),
                           ),
                         ),
                         Text(
@@ -180,7 +180,9 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                               ? '더 정확한 운세를 위해 프로필을 확인해주세요'
                               : '정보: ${_missingFields.take(2).join(', ')}${_missingFields.length > 2 ? ' 외 ${_missingFields.length - 2}개' : ''}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: TossDesignSystem.gray900,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.gray300
+                                : TossDesignSystem.gray900,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -193,7 +195,9 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                   Icon(
                     Icons.arrow_forward_ios,
                     size: AppDimensions.iconSizeXSmall,
-                    color: TossDesignSystem.gray600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.gray400
+                        : TossDesignSystem.gray600,
                   ),
                 ],
               ),

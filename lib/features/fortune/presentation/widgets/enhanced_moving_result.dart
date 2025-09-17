@@ -4,6 +4,7 @@ import 'direction_compass.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class EnhancedMovingResult extends StatelessWidget {
   final Map<String, dynamic> fortuneData;
@@ -105,7 +106,7 @@ class EnhancedMovingResult extends StatelessWidget {
                   CircularProgressIndicator(
                     value: overallScore / 100,
                     strokeWidth: 15,
-                    backgroundColor: Colors.grey.withOpacity(0.3),
+                    backgroundColor: TossDesignSystem.gray300.withOpacity(0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
                   ),
                   Column(
@@ -286,7 +287,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.directions_bus,
                 '교통',
                 areaAnalysis['transportation'],
-                Colors.blue),
+                TossDesignSystem.blue),
             
             // 교육
             if (areaAnalysis['education'] != null)
@@ -295,7 +296,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.school,
                 '교육',
                 areaAnalysis['education'],
-                Colors.green),
+                TossDesignSystem.green),
             
             // 편의시설
             if (areaAnalysis['convenience'] != null)
@@ -304,7 +305,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.shopping_cart,
                 '편의시설',
                 areaAnalysis['convenience'],
-                Colors.orange),
+                TossDesignSystem.orange),
             
             // 의료
             if (areaAnalysis['medical'] != null)
@@ -313,7 +314,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.local_hospital,
                 '의료',
                 areaAnalysis['medical'],
-                Colors.red),
+                TossDesignSystem.red),
             
             // 미래 발전성
             if (areaAnalysis['development'] != null)
@@ -322,7 +323,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.trending_up,
                 '발전 가능성',
                 areaAnalysis['development'],
-                Colors.purple,
+                TossDesignSystem.purple,
               ),
           ],
         ),
@@ -341,10 +342,10 @@ class EnhancedMovingResult extends StatelessWidget {
       child: RadarChart(
         RadarChartData(
           radarShape: RadarShape.polygon,
-          radarBorderData: const BorderSide(color: Colors.grey, width: 4 * 0.5),
-          gridBorderData: const BorderSide(color: Colors.grey, width: 0.5),
+          radarBorderData: const BorderSide(color: TossDesignSystem.gray300, width: 4 * 0.5),
+          gridBorderData: const BorderSide(color: TossDesignSystem.gray300, width: 0.5),
           titlePositionPercentageOffset: 0.2,
-          radarBackgroundColor: Colors.transparent,
+          radarBackgroundColor: TossDesignSystem.transparent,
           dataSets: [
             RadarDataSet(
               dataEntries: radarData,
@@ -363,7 +364,7 @@ class EnhancedMovingResult extends StatelessWidget {
           },
           tickCount: 5,
           ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
-          tickBorderData: const BorderSide(color: Colors.grey, width: 0.5),
+          tickBorderData: const BorderSide(color: TossDesignSystem.gray300, width: 0.5),
         ),
       ),
     );
@@ -441,12 +442,12 @@ class EnhancedMovingResult extends StatelessWidget {
               Container(
                 padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.1),
+                  color: TossDesignSystem.warning.withOpacity(0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
-                  border: Border.all(color: Colors.amber)),
+                  border: Border.all(color: TossDesignSystem.warning)),
                 child: Row(
                   children: [
-                    Icon(Icons.star, color: Colors.amber),
+                    Icon(Icons.star, color: TossDesignSystem.warning),
                     const SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
@@ -498,7 +499,7 @@ class EnhancedMovingResult extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
+                color: TossDesignSystem.gray500,
               ),
             ),
           ),
@@ -580,7 +581,7 @@ class EnhancedMovingResult extends StatelessWidget {
             child: LinearProgressIndicator(
               value: score / 100,
               minHeight: 8,
-              backgroundColor: Colors.grey.withOpacity(0.3),
+              backgroundColor: TossDesignSystem.gray300.withOpacity(0.3),
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -604,7 +605,7 @@ class EnhancedMovingResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.lightbulb, color: Colors.amber),
+                Icon(Icons.lightbulb, color: TossDesignSystem.warning),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '추천사항',
@@ -621,7 +622,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.check_circle, 
-                    color: Colors.green, 
+                    color: TossDesignSystem.success, 
                     size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
@@ -647,7 +648,7 @@ class EnhancedMovingResult extends StatelessWidget {
     if (cautions.isEmpty) return const SizedBox.shrink();
     
     return Card(
-      color: Colors.red.withOpacity(0.08),
+      color: TossDesignSystem.error.withOpacity(0.08),
       child: Padding(
         padding: AppSpacing.paddingAll16,
         child: Column(
@@ -655,13 +656,13 @@ class EnhancedMovingResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.warning, color: Colors.red),
+                Icon(Icons.warning, color: TossDesignSystem.error),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '주의사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.red.withOpacity(0.9),
+                    color: TossDesignSystem.error.withOpacity(0.9),
                   ),
                 ),
               ],
@@ -672,15 +673,15 @@ class EnhancedMovingResult extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.error_outline, 
-                    color: Colors.red.withOpacity(0.9), 
+                  Icon(Icons.error_outline,
+                    color: TossDesignSystem.error.withOpacity(0.9),
                     size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       caution,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.red.withOpacity(0.9),
+                        color: TossDesignSystem.error.withOpacity(0.9),
                       ),
                     ),
                   ),
@@ -694,10 +695,10 @@ class EnhancedMovingResult extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.success;
+    if (score >= 60) return TossDesignSystem.blue;
+    if (score >= 40) return TossDesignSystem.orange;
+    return TossDesignSystem.error;
   }
 
   String _getScoreDescription(int score) {

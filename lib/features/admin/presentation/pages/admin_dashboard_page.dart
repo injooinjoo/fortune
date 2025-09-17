@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
@@ -325,7 +326,7 @@ class _OverviewTab extends StatelessWidget {
                 value: _formatCurrency(stats.daily.cost),
                 subtitle: costTrend > 0 ? '증가' : '감소',
                 icon: Icons.attach_money,
-                color: costTrend > 0 ? Colors.red : Colors.green,
+                color: costTrend > 0 ? TossDesignSystem.error : TossDesignSystem.success,
                 fontScale: fontScale),
               _SummaryCard(
                 title: '월간 토큰',
@@ -339,7 +340,7 @@ class _OverviewTab extends StatelessWidget {
                 value: '${avgSavings.toStringAsFixed(1)}%',
                 subtitle: '배치 처리 효과',
                 icon: Icons.trending_down,
-                color: Colors.green,
+                color: TossDesignSystem.success,
                 fontScale: fontScale)]),
           const SizedBox(height: 24),
           
@@ -590,7 +591,7 @@ class _UsageTrendTab extends StatelessWidget {
                               _StatItem(
                                 label: '비용',
                                 value: NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(stat.cost),
-                                color: Colors.green,
+                                color: TossDesignSystem.success,
                                 fontScale: fontScale)])])]));
           }).toList()]));
   }
@@ -675,14 +676,14 @@ class _PackageAnalysisTab extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.2),
+                            color: TossDesignSystem.success.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           child: Text(
                             '${stat.savingsPercent.toStringAsFixed(1)}% 절감',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green)))]),
+                              color: TossDesignSystem.success)))]),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -707,15 +708,15 @@ class _PackageAnalysisTab extends StatelessWidget {
           GlassContainer(
             gradient: LinearGradient(
               colors: [
-                Colors.green.withOpacity(0.1),
-                Colors.green.withOpacity(0.05)]),
+                TossDesignSystem.success.withValues(alpha: 0.1),
+                TossDesignSystem.success.withValues(alpha: 0.05)]),
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 Icon(
                   Icons.savings,
                   size: 48,
-                  color: Colors.green),
+                  color: TossDesignSystem.success),
                 const SizedBox(height: 12),
                 Text(
                   '총 절감액',
@@ -733,7 +734,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24 * fontScale,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green)),
+                    color: TossDesignSystem.success)),
                 const SizedBox(height: 4),
                 Text(
                   '배치 처리로 절약한 비용',
@@ -786,12 +787,12 @@ class _TopUsersTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = [
-      Colors.purple,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.red,
-      Colors.pink];
+      TossDesignSystem.purple,
+      TossDesignSystem.primaryBlue,
+      TossDesignSystem.success,
+      TossDesignSystem.warningOrange,
+      TossDesignSystem.error,
+      TossDesignSystem.pink];
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),

@@ -174,7 +174,7 @@ class _ExperimentCard extends StatelessWidget {
                     onPressed: onConclude,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppTheme.textPrimary,
                     ),
                     child: Text('승자 확정: ${result.winningVariantId}'),
                   ),
@@ -424,7 +424,7 @@ class _ConfidenceIndicator extends StatelessWidget {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: confidenceLevel,
-            backgroundColor: Colors.white.withOpacity(0.1),
+            backgroundColor: AppTheme.textPrimary.withOpacity(0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               isSignificant ? AppTheme.success : AppTheme.warning,
             ),

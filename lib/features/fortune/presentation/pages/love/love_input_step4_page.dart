@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
 
 enum LifestyleType { employee, student, freelancer, business }
@@ -216,7 +217,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                         child: Text(
                           '${_appearanceConfidence.round()}점',
                           style: TossTheme.body1.copyWith(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -360,7 +361,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           charm,
           style: TossTheme.body2.copyWith(
             color: isSelected 
-                ? Colors.white 
+                ? TossDesignSystem.white
                 : canSelect 
                     ? TossTheme.textBlack 
                     : TossTheme.disabledGray,
@@ -403,7 +404,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                 child: Text(
                   _getLifestyleText(lifestyle),
                   style: TossTheme.body1.copyWith(
-                    color: isSelected ? Colors.white : TossTheme.textBlack,
+                    color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -452,7 +453,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
               child: Text(
                 _getHobbyText(hobby),
                 style: TossTheme.caption.copyWith(
-                  color: isSelected ? Colors.white : TossTheme.textBlack,
+                  color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,

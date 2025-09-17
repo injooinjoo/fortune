@@ -70,7 +70,7 @@ class _RadarChartPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: _getEmotionLabel(key),
-          style: const TextStyle(fontSize: 12, color: Colors.black87)),
+          style: const TextStyle(fontSize: 12, color: TossDesignSystem.black)),
         textDirection: TextDirection.ltr);
       textPainter.layout();
 

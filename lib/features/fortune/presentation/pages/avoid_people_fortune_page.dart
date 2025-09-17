@@ -102,7 +102,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context), // Always go back to fortune page
@@ -192,13 +192,13 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                   height: 64,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withOpacity(0.8)],
+                      colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha:0.8)],
                     ),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.location_on_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 32,
                   ),
                 ),
@@ -302,13 +302,13 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                   height: 64,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.warningOrange, TossDesignSystem.warningOrange.withOpacity(0.8)],
+                      colors: [TossDesignSystem.warningOrange, TossDesignSystem.warningOrange.withValues(alpha:0.8)],
                     ),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.mood_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 32,
                   ),
                 ),
@@ -392,13 +392,13 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                   height: 64,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.purple, TossDesignSystem.purple.withOpacity(0.8)],
+                      colors: [TossDesignSystem.purple, TossDesignSystem.purple.withValues(alpha:0.8)],
                     ),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.warning_amber_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 32,
                   ),
                 ),
@@ -484,7 +484,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.errorRed.withOpacity(0.1)
+              ? TossDesignSystem.errorRed.withValues(alpha:0.1)
               : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
@@ -542,7 +542,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               activeTrackColor: TossDesignSystem.errorRed,
               inactiveTrackColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200,
               thumbColor: TossDesignSystem.errorRed,
-              overlayColor: TossDesignSystem.errorRed.withOpacity(0.1),
+              overlayColor: TossDesignSystem.errorRed.withValues(alpha:0.1),
             ),
             child: Slider(
               value: value.toDouble(),
@@ -592,7 +592,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             height: 40,
             decoration: BoxDecoration(
               color: value
-                  ? TossDesignSystem.errorRed.withOpacity(0.1)
+                  ? TossDesignSystem.errorRed.withValues(alpha:0.1)
                   : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
               borderRadius: BorderRadius.circular(12),
             ),

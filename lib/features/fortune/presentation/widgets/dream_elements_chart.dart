@@ -80,10 +80,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
           decoration: BoxDecoration(
-            color: Colors.deepPurple.withOpacity(0.2),
+            color: TossDesignSystem.purple.withValues(alpha:0.2),
             borderRadius: AppDimensions.borderRadius(TossDesignSystem.radiusXL),
             border: Border.all(
-              color: Colors.deepPurple.withOpacity(0.3),
+              color: TossDesignSystem.purple.withValues(alpha:0.3),
               width: 1,
             ),
           ),
@@ -165,7 +165,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
             titleStyle: TextStyle(
               fontSize: isSelected ? 16 : 14,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
             badgeWidget: _buildBadge(entry.key),
             badgePositionPercentageOffset: 1.3,
@@ -182,10 +182,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     return Container(
       padding: AppSpacing.paddingAll8,
       decoration: BoxDecoration(
-        color: _getCategoryColor(category).withOpacity(0.2),
+        color: _getCategoryColor(category).withValues(alpha:0.2),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: _getCategoryColor(category).withOpacity(0.5),
+          color: _getCategoryColor(category).withValues(alpha:0.5),
           width: 1,
         ),
       ),
@@ -205,7 +205,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           Icon(
             Icons.bedtime,
             size: 32,
-            color: Colors.white54,
+            color: TossDesignSystem.white.withValues(alpha: 0.54),
           ),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
@@ -266,10 +266,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: _getCategoryColor(category).withOpacity(0.1),
+        color: _getCategoryColor(category).withValues(alpha:0.1),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: _getCategoryColor(category).withOpacity(0.3),
+          color: _getCategoryColor(category).withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -304,10 +304,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: TossDesignSystem.white.withValues(alpha:0.1),
                     borderRadius: AppDimensions.borderRadiusLarge,
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
+                      color: TossDesignSystem.white.withValues(alpha:0.2),
                       width: 1,
                     ),
                   ),
@@ -330,7 +330,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -344,7 +344,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               width: 40,
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: TossDesignSystem.white.withValues(alpha:0.3),
                 borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
               ),
             ),
@@ -367,19 +367,19 @@ class _DreamElementsChartState extends State<DreamElementsChart>
             _buildMeaningSection(
               '긍정적 의미',
               symbolData['positive'],
-              Colors.green,
+              TossDesignSystem.successGreen,
             ),
             const SizedBox(height: AppSpacing.spacing3),
             _buildMeaningSection(
               '부정적 의미',
               symbolData['negative'],
-              Colors.orange,
+              TossDesignSystem.warningOrange,
             ),
             const SizedBox(height: AppSpacing.spacing3),
             _buildMeaningSection(
               '심리학적 해석',
               symbolData['psychological'],
-              Colors.purple,
+              TossDesignSystem.purple,
             ),
           ],
         ),
@@ -392,10 +392,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       width: double.infinity,
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -410,7 +410,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           Text(
             content,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: TossDesignSystem.white.withValues(alpha:0.8),
               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
               height: 1.4,
             ),
@@ -422,23 +422,23 @@ class _DreamElementsChartState extends State<DreamElementsChart>
 
   Color _getCategoryColor(String category) {
     switch (category) {
-      case '동물': return Colors.amber;
+      case '동물': return TossDesignSystem.warningOrange;
       case '사람':
-        return Colors.blue;
+        return TossDesignSystem.primaryBlue;
       case '장소':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case '행동':
-        return Colors.red;
+        return TossDesignSystem.errorRed;
       case '사물':
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case '자연':
-        return Colors.teal;
+        return TossDesignSystem.successGreen;
       case '색상':
-        return Colors.purple;
+        return TossDesignSystem.purple;
       case '감정': 
-        return Colors.pink;
+        return TossDesignSystem.purple;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray500;
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class TalentShareCard extends StatelessWidget {
   final String userName;
@@ -35,15 +36,15 @@ class TalentShareCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            focusColor.withOpacity(0.8),
-            focusColor.withOpacity(0.6),
-            theme.colorScheme.primary.withOpacity(0.4),
+            focusColor.withValues(alpha:0.8),
+            focusColor.withValues(alpha:0.6),
+            theme.colorScheme.primary.withValues(alpha:0.4),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: TossDesignSystem.black.withValues(alpha:0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -59,14 +60,14 @@ class TalentShareCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.stars,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 28,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   '재능 발견',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -79,7 +80,7 @@ class TalentShareCard extends StatelessWidget {
             Text(
               userName.isNotEmpty ? '$userName님의' : '나의',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withValues(alpha:0.9),
                 fontSize: 14,
               ),
             ),
@@ -90,10 +91,10 @@ class TalentShareCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: TossDesignSystem.white.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: TossDesignSystem.white.withValues(alpha:0.3),
                 ),
               ),
               child: Column(
@@ -102,7 +103,7 @@ class TalentShareCard extends StatelessWidget {
                   Text(
                     '오늘의 재능 포커스',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: TossDesignSystem.white.withValues(alpha:0.8),
                       fontSize: 12,
                     ),
                   ),
@@ -111,14 +112,14 @@ class TalentShareCard extends StatelessWidget {
                     children: [
                       Icon(
                         focusIcon,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 24,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         todaysFocus,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -129,7 +130,7 @@ class TalentShareCard extends StatelessWidget {
                   Text(
                     '활성화 지수: $activationLevel%',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: TossDesignSystem.white.withValues(alpha:0.9),
                       fontSize: 14,
                     ),
                   ),
@@ -143,7 +144,7 @@ class TalentShareCard extends StatelessWidget {
             Text(
               '상위 재능',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: TossDesignSystem.white.withValues(alpha:0.8),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -158,7 +159,7 @@ class TalentShareCard extends StatelessWidget {
                     width: 4,
                     height: 4,
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -167,7 +168,7 @@ class TalentShareCard extends StatelessWidget {
                     child: Text(
                       entry.key,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontSize: 14,
                       ),
                     ),
@@ -175,7 +176,7 @@ class TalentShareCard extends StatelessWidget {
                   Text(
                     '${entry.value}점',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -190,7 +191,7 @@ class TalentShareCard extends StatelessWidget {
             Text(
               '추천 직업',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: TossDesignSystem.white.withValues(alpha:0.8),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -203,16 +204,16 @@ class TalentShareCard extends StatelessWidget {
               children: topCareers.take(3).map((career) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: TossDesignSystem.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: TossDesignSystem.white.withValues(alpha:0.3),
                   ),
                 ),
                 child: Text(
                   career,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -228,14 +229,14 @@ class TalentShareCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.psychology,
-                    color: Colors.white.withOpacity(0.6),
+                    color: TossDesignSystem.white.withValues(alpha:0.6),
                     size: 20,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '운세앱에서 더 자세한 분석 확인하기',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                      color: TossDesignSystem.white.withValues(alpha:0.6),
                       fontSize: 11,
                     ),
                   ),
@@ -281,7 +282,7 @@ class TalentCardGenerator {
           left: -1000,
           top: -1000,
           child: Material(
-            color: Colors.transparent,
+            color: TossDesignSystem.transparent,
             child: widget,
           ),
         ),
@@ -336,13 +337,13 @@ class TalentSharePreview extends StatelessWidget {
     
     // Get today's focus
     final Map<int, Map<String, dynamic>> dailyFocus = {
-      1: {'name': '창의력', 'icon': Icons.palette, 'color': Colors.purple},
-      2: {'name': '분석력', 'icon': Icons.analytics, 'color': Colors.blue},
-      3: {'name': '소통능력', 'icon': Icons.chat, 'color': Colors.green},
-      4: {'name': '리더십', 'icon': Icons.groups, 'color': Colors.orange},
-      5: {'name': '집중력', 'icon': Icons.center_focus_strong, 'color': Colors.red},
-      6: {'name': '직감력', 'icon': Icons.psychology, 'color': Colors.indigo},
-      7: {'name': '회복력', 'icon': Icons.self_improvement, 'color': Colors.teal},
+      1: {'name': '창의력', 'icon': Icons.palette, 'color': TossDesignSystem.purple},
+      2: {'name': '분석력', 'icon': Icons.analytics, 'color': TossDesignSystem.primaryBlue},
+      3: {'name': '소통능력', 'icon': Icons.chat, 'color': TossDesignSystem.successGreen},
+      4: {'name': '리더십', 'icon': Icons.groups, 'color': TossDesignSystem.warningOrange},
+      5: {'name': '집중력', 'icon': Icons.center_focus_strong, 'color': TossDesignSystem.errorRed},
+      6: {'name': '직감력', 'icon': Icons.psychology, 'color': TossDesignSystem.primaryBlue},
+      7: {'name': '회복력', 'icon': Icons.self_improvement, 'color': TossDesignSystem.teal},
     };
     
     final focus = dailyFocus[today.weekday]!;

@@ -90,7 +90,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: TossDesignSystem.transparent,
           child: GlassContainer(
       width: MediaQuery.of(context).size.width * 0.9 > 400 
                 ? 400 
@@ -228,7 +228,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     ),
                   ),
                   child: Material(
-                    color: Colors.transparent,
+                    color: TossDesignSystem.transparent,
                     child: InkWell(
       onTap: () {
                         context.pop();
@@ -334,7 +334,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
         ),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: AppDimensions.borderRadiusMedium,

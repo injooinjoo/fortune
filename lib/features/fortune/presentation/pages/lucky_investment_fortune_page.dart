@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/bottom_navigation_bar.dart';
@@ -161,7 +162,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                   : null,
               border: Border.all(
                 color: isSelected
-                    ? Colors.transparent
+                    ? TossDesignSystem.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2,
               ),
@@ -172,14 +173,14 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               children: [
                 Icon(
                   type['icon'] as IconData,
-                  color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                  color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   type['name'] as String,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
@@ -221,7 +222,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                     : null,
                 border: Border.all(
                   color: isSelected
-                      ? Colors.transparent
+                      ? TossDesignSystem.transparent
                       : theme.colorScheme.outline.withOpacity(0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -230,7 +231,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 child: Text(
                   level['name'] as String,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
@@ -279,7 +280,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                   : null,
               border: Border.all(
                 color: isSelected
-                    ? Colors.transparent
+                    ? TossDesignSystem.transparent
                     : theme.colorScheme.outline.withOpacity(0.3),
                 width: 2,
               ),
@@ -290,14 +291,14 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               children: [
                 Icon(
                   goal['icon'] as IconData,
-                  color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                  color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   goal['name'] as String,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
@@ -339,7 +340,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                     : null,
                 border: Border.all(
                   color: isSelected
-                      ? Colors.transparent
+                      ? TossDesignSystem.transparent
                       : theme.colorScheme.outline.withOpacity(0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -348,7 +349,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 child: Text(
                   horizon['name'] as String,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     fontSize: 12,
                   ),
@@ -397,7 +398,7 @@ class _InvestmentFortuneResult extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.trending_up,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 24,
                       ),
                     ),
@@ -513,7 +514,7 @@ class _InvestmentFortuneResult extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 20,
                 ),
               ),

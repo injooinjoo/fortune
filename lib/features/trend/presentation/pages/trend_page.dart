@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TrendPage extends ConsumerStatefulWidget {
   const TrendPage({super.key});
@@ -122,7 +123,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     print('🎯 Navigation state - isVisible: ${navState.isVisible}, isAnimating: ${navState.isAnimating}');
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: TossDesignSystem.white,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -151,12 +152,12 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white),
+                              color: TossDesignSystem.white),
                           ),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.notifications_outlined, color: Colors.black87),
+                        icon: Icon(Icons.notifications_outlined, color: TossDesignSystem.black.withValues(alpha: 0.87)),
                         onPressed: () {},
                       ),
                     ],
@@ -218,13 +219,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: TossDesignSystem.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontSize: 12,
                           fontWeight: FontWeight.w600),
                       ),
@@ -244,7 +245,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                               Text(
                                 item['title'],
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: TossDesignSystem.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.5)),
@@ -252,7 +253,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                               Text(
                                 item['subtitle'],
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: TossDesignSystem.white.withValues(alpha: 0.9),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400),
                               ),
@@ -267,25 +268,25 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       children: [
                         const Icon(
                           Icons.favorite,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           size: 16),
                         const SizedBox(width: 4),
                         Text(
                           '${item['likes']}',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w500)),
                         const SizedBox(width: 16),
                         const Icon(
                           Icons.visibility,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           size: 16),
                         const SizedBox(width: 4),
                         Text(
                           '${item['views']}',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                         ),
@@ -303,7 +304,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.1)),
+                    color: TossDesignSystem.white.withValues(alpha: 0.1)),
                 ),
               ),
               Positioned(
@@ -314,7 +315,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.15)),
+                    color: TossDesignSystem.white.withValues(alpha: 0.15)),
                 ),
               ),
             ],

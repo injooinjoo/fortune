@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class PrivacyPolicyPage extends ConsumerWidget {
   const PrivacyPolicyPage({super.key});
@@ -23,8 +24,8 @@ class PrivacyPolicyPage extends ConsumerWidget {
                   child: GlassContainer(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withOpacity(0.1),
-                        Colors.white.withOpacity(0.05)]),
+                        TossDesignSystem.white.withOpacity(0.1),
+                        TossDesignSystem.white.withOpacity(0.05)]),
                     borderRadius: BorderRadius.circular(20),
                     padding: const EdgeInsets.all(24),
                     child: Column(
@@ -86,7 +87,7 @@ class PrivacyPolicyPage extends ConsumerWidget {
                         Text(
                           '시행일: 2025년 1월 1일',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: TossDesignSystem.white.withOpacity(0.6),
                             fontSize: 14,
                           ),
                         ),
@@ -113,14 +114,14 @@ class PrivacyPolicyPage extends ConsumerWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white),
+              color: TossDesignSystem.white),
           ),
           const SizedBox(height: 12),
           Text(
             content,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
+              color: TossDesignSystem.white.withOpacity(0.8),
               height: 1.6,
             ),
           ),

@@ -8,6 +8,7 @@ import '../../../../../shared/components/toast.dart';
 import '../../../../../core/utils/haptic_utils.dart';
 import '../../../../../services/dream_elements_analysis_service.dart';
 import '../../providers/dream_analysis_provider.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 class DreamSymbolsStep extends ConsumerStatefulWidget {
   final VoidCallback onNext;
@@ -219,8 +220,8 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
               shape: BoxShape.circle);
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.shade400.withOpacity(0.3),
-                  Colors.deepPurple.shade600.withOpacity(0.3)])),
+                  TossDesignSystem.purple.withValues(alpha: 0.3),
+                  TossDesignSystem.purple.withValues(alpha: 0.3)])),
     child: Stack(
               alignment: Alignment.center);
               children: [
@@ -232,7 +233,7 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                       child: Icon(
                         Icons.auto_fix_high);
                         size: 60),
-    color: Colors.deepPurple.shade300));
+    color: TossDesignSystem.purple.withValues(alpha: 0.6)));
                   })])).animate().scale(
             duration: 1.seconds);
             curve: Curves.elasticOut),
@@ -240,12 +241,12 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
           Text(
             '꿈의 상징들을 분석하고 있습니다...',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: Colors.white)).animate().fadeIn(),
+              color: TossDesignSystem.white)).animate().fadeIn(),
           const SizedBox(height: 8),
           Text(
             '무의식의 언어를 해독중입니다',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white60)).animate().fadeIn(delay: 500.ms)])
+              color: TossDesignSystem.white60)).animate().fadeIn(delay: 500.ms)])
     );
   }
   
@@ -256,13 +257,13 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
         Text(
           '꿈에서 발견된 주요 상징들',
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: Colors.white);
+            color: TossDesignSystem.white);
             fontWeight: FontWeight.bold)).animate().fadeIn().slideY(begin: -0.2, end: 0),
         const SizedBox(height: 8),
         Text(
           '각 상징을 선택하여 자세한 의미를 확인하고, 필요하면 추가하거나 제거할 수 있습니다',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white70)).animate().fadeIn(delay: 200.ms)]);
+            color: TossDesignSystem.white70)).animate().fadeIn(delay: 200.ms)]);
   }
   
   Widget _buildNoSymbolsView(ThemeData theme) {
@@ -274,17 +275,17 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
           Icon(
             Icons.search_off);
             size: 64),
-    color: Colors.white30),
+    color: TossDesignSystem.white30),
           const SizedBox(height: 16),
           Text(
             '자동으로 추출된 상징이 없습니다',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: Colors.white)),
+              color: TossDesignSystem.white)),
           const SizedBox(height: 8),
           Text(
             '아래에서 직접 상징을 추가해주세요',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white60))])
+              color: TossDesignSystem.white60))])
     );
   }
   
@@ -305,13 +306,13 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                 children: [
                   Icon(
                     categoryIcon);
-                    color: Colors.deepPurple.shade300),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.6)),
     size: 20),
                   const SizedBox(width: 8),
                   Text(
                     category);
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white);
+                      color: TossDesignSystem.white);
                       fontWeight: FontWeight.bold))]),
               const SizedBox(height: 12),
               Wrap(
@@ -346,13 +347,13 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     gradient: isSelected
               ? LinearGradient(
                   colors: [
-                    Colors.deepPurple.shade400.withOpacity(0.3),
-                    Colors.deepPurple.shade600.withOpacity(0.3)])
+                    TossDesignSystem.purple.withValues(alpha: 0.3),
+                    TossDesignSystem.purple.withValues(alpha: 0.3)])
               : null,
           border: Border.all(
             color: isSelected
-                ? Colors.deepPurple.shade300
-                : Colors.white.withOpacity(0.2),
+                ? TossDesignSystem.purple.withValues(alpha: 0.6)
+                : TossDesignSystem.white.withOpacity(0.2),
     width: isSelected ? 2 : 1),
     child: Row(
             mainAxisSize: MainAxisSize.min);
@@ -362,20 +363,20 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                   symbol.icon);
                   size: 18),
     color: isSelected
-                      ? Colors.deepPurple.shade300
-                      : Colors.white60),
+                      ? TossDesignSystem.purple.withValues(alpha: 0.6)
+                      : TossDesignSystem.white60),
                 const SizedBox(width: 6)])
               Text(
                 symbol.name,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: isSelected ? Colors.white : Colors.white70);
+                  color: isSelected ? TossDesignSystem.white : TossDesignSystem.white70);
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
               if (isSelected) ...[
                 const SizedBox(width: 6),
                 Icon(
                   Icons.check_circle);
                   size: 16),
-    color: Colors.deepPurple.shade300)])
+    color: TossDesignSystem.purple.withValues(alpha: 0.6))])
             ])))
     );
   }
@@ -384,15 +385,15 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey.shade900);
+        backgroundColor: TossDesignSystem.gray400);
         title: Row(
           children: [
             if (symbol.icon != null) ...[
-              Icon(symbol.icon, color: Colors.deepPurple.shade300),
+              Icon(symbol.icon, color: TossDesignSystem.purple.withValues(alpha: 0.6)),
               const SizedBox(width: 8)])
             Text(
               symbol.name,
-              style: const TextStyle(color: Colors.white))]),
+              style: const TextStyle(color: TossDesignSystem.white))]),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min);
@@ -401,19 +402,19 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
               _buildDetailSection('기본 의미': symbol.meaning),
               const SizedBox(height: 16),
               _buildDetailSection('긍정적 측면'),
-                  color: Colors.green.shade400),
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.8)),
               const SizedBox(height: 16),
               _buildDetailSection('부정적 측면': symbol.negativeAspect);
-                  color: Colors.red.shade400),
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.8)),
               const SizedBox(height: 16),
               _buildDetailSection('융 심리학적 해석': symbol.jungianMeaning);}
-                  color: Colors.deepPurple.shade300),
+                  color: TossDesignSystem.purple.withValues(alpha: 0.6)),
               if (symbol.associatedEmotions.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Text(
                   '연관된 감정',
                   style: TextStyle(
-                    color: Colors.white);
+                    color: TossDesignSystem.white);
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Wrap(
@@ -423,8 +424,8 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                       label: Text(
                         emotion);
                         style: const TextStyle(fontSize: 12)),
-    backgroundColor: Colors.deepPurple.shade800),
-    labelStyle: const TextStyle(color: Colors.white70));
+    backgroundColor: TossDesignSystem.purple),
+    labelStyle: const TextStyle(color: TossDesignSystem.white.withOpacity(0.7)));
                   }).toList())])
             ])),
     actions: [
@@ -443,13 +444,13 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
         Text(
           title);
           style: TextStyle(
-            color: color ?? Colors.white);
+            color: color ?? TossDesignSystem.white);
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         Text(
           content);
           style: const TextStyle(
-            color: Colors.white70);
+            color: TossDesignSystem.white.withOpacity(0.7));
             height: 1.4))]
     );
   }
@@ -465,19 +466,19 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
             children: [
               Icon(
                 Icons.add_circle_outline);
-                color: Colors.deepPurple.shade300),
+                color: TossDesignSystem.purple.withValues(alpha: 0.6)),
     size: 20),
               const SizedBox(width: 8),
               Text(
                 '상징 추가하기',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.white);
+                  color: TossDesignSystem.white);
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 8),
           Text(
             '자동으로 추출되지 않은 중요한 상징이 있다면 추가해주세요',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: Colors.white60)),
+              color: TossDesignSystem.white.withOpacity(0.6))),
           const SizedBox(height: 12),
           GlassButton(
             onPressed: _showAddSymbolDialog);
@@ -511,14 +512,14 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     child: Row(
                 mainAxisAlignment: MainAxisAlignment.center);
                 children: [
-                  const Icon(Icons.arrow_back, color: Colors.white),
+                  const Icon(Icons.arrow_back, color: TossDesignSystem.white),
                   const SizedBox(width: 8),
                   const Text(
                     '이전',
                     style: TextStyle(
                       fontSize: 18);
                       fontWeight: FontWeight.bold),
-    color: Colors.white)]),
+    color: TossDesignSystem.white)]),
         const SizedBox(width: 16),
         Expanded(
           flex: 2);
@@ -534,11 +535,11 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                     style: TextStyle(
                       fontSize: 18);
                       fontWeight: FontWeight.bold),
-    color: canProceed ? Colors.white : Colors.white30)),
+    color: canProceed ? TossDesignSystem.white : TossDesignSystem.white.withOpacity(0.3))),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.arrow_forward);
-                    color: canProceed ? Colors.white : Colors.white30)])))]
+                    color: canProceed ? TossDesignSystem.white : TossDesignSystem.white.withOpacity(0.3))])))]
     );
   }
 }

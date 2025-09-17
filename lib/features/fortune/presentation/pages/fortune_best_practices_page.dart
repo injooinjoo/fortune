@@ -21,7 +21,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     _PracticeCategory(
       title: '운세 해석의 기본 원칙',
       icon: Icons.psychology_outlined,
-      color: Colors.purple,
+      color: TossDesignSystem.purple,
       items: [
         _PracticeItem(
           title: '운세는 가이드일 뿐',
@@ -35,7 +35,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     _PracticeCategory(
       title: '운세 확인 최적 시간',
       icon: Icons.access_time,
-      color: Colors.blue,
+      color: TossDesignSystem.tossBlue,
       items: [
         _PracticeItem(
           title: '일일 운세',
@@ -52,7 +52,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     _PracticeCategory(
       title: '운세별 활용법',
       icon: Icons.category_outlined,
-      color: Colors.green,
+      color: TossDesignSystem.successGreen,
       items: [
         _PracticeItem(
           title: '오늘의 운세',
@@ -69,7 +69,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     _PracticeCategory(
       title: '운세 점수 이해하기',
       icon: Icons.score_outlined,
-      color: Colors.orange,
+      color: TossDesignSystem.warningOrange,
       items: [
         _PracticeItem(
           title: '90-100점: 최상의 운',
@@ -89,7 +89,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     _PracticeCategory(
       title: '운세 정확도 높이기',
       icon: Icons.tips_and_updates_outlined,
-      color: Colors.teal,
+      color: TossDesignSystem.teal,
       items: [
         _PracticeItem(
           title: '정확한 생년월일시',
@@ -125,7 +125,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
@@ -267,15 +267,15 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        data: Theme.of(context).copyWith(dividerColor: TossDesignSystem.transparent),
         child: ExpansionTile(
           initiallyExpanded: false,
           onExpansionChanged: (expanded) {
@@ -361,11 +361,11 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 토스 스타일 이사운 결과 페이지
 class MovingResultToss extends StatefulWidget {
@@ -372,7 +373,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                     child: Text(
                       rank,
                       style: TossTheme.caption.copyWith(
-                        color: index == 0 ? Colors.white : TossTheme.textGray600,
+                        color: index == 0 ? TossDesignSystem.white : TossTheme.textGray600,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -492,11 +493,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Color _getScoreColor() {
     if (_overallScore >= 80) {
-      return Colors.green;
+      return TossDesignSystem.successGreen;
     } else if (_overallScore >= 60) {
       return TossTheme.primaryBlue;
     } else {
-      return Colors.orange;
+      return TossDesignSystem.warningOrange;
     }
   }
 

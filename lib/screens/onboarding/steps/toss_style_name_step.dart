@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/toss_theme.dart';
+import '../../../core/theme/toss_design_system.dart';
 import '../../../services/social_auth_service.dart';
 import '../../../core/utils/logger.dart';
 
@@ -81,12 +82,14 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.6,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark100
+              : TossDesignSystem.white,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
@@ -111,7 +114,9 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark300
+                : TossDesignSystem.gray300,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -238,7 +243,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
         
@@ -305,7 +310,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('$provider 로그인 실패: $errorMessage'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
             duration: const Duration(seconds: 5),
           ),
         );
@@ -320,7 +325,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
     required VoidCallback onTap,
   }) {
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: () {
           // Debug: Immediate feedback
@@ -332,8 +337,15 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey[300]!, width: 1),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark100
+              : TossDesignSystem.white,
+          border: Border.all(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark300
+                : TossDesignSystem.gray300,
+            width: 1,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -350,7 +362,9 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.white
+                    : TossDesignSystem.grayDark900,
               ),
             ),
           ],
@@ -366,7 +380,9 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
     final isKeyboardVisible = keyboardHeight > 0;
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.grayDark50
+          : TossDesignSystem.white,
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
@@ -387,16 +403,20 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                       child: TextField(
                           controller: _nameController,
                           focusNode: _focusNode,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.white
+                                : TossDesignSystem.gray900,
                           ),
                           textAlign: TextAlign.center,
                           autofocus: true,
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.done,
-                          cursorColor: Colors.blue,
+                          cursorColor: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.tossBlueDark
+                              : TossDesignSystem.tossBlue,
                           showCursor: true,
                           enableInteractiveSelection: true,
                           onTap: () {
@@ -409,12 +429,14 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                               widget.onNext();
                             }
                           },
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: '이름을 알려주세요',
                             hintStyle: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? TossDesignSystem.grayDark400
+                                  : TossDesignSystem.gray400,
                             ),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -423,7 +445,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                             disabledBorder: InputBorder.none,
                             focusedErrorBorder: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
-                            fillColor: Colors.transparent,
+                            fillColor: TossDesignSystem.white.withValues(alpha: 0.0),
                             filled: true,
                           ),
                           textCapitalization: TextCapitalization.words,
@@ -455,7 +477,9 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                       child: Text(
                         '다음',
                         style: TossTheme.button.copyWith(
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark100
+              : TossDesignSystem.white,
                         ),
                       ),
                     ),

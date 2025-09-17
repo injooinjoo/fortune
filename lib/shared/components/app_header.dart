@@ -116,7 +116,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         duration: const Duration(milliseconds: 200),
         child: Container(
           decoration: BoxDecoration(
-            color: backgroundColor ?? Colors.transparent,
+            color: backgroundColor ?? TossDesignSystem.transparent,
           ),
           child: SafeArea(
             child: Padding(
@@ -246,7 +246,7 @@ class _SizeButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? theme.primaryColor.withValues(alpha: 0.2)
-              : Colors.transparent,
+              : TossDesignSystem.transparent,
           borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
         child: Text(
           label,

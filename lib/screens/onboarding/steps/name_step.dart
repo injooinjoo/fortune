@@ -54,7 +54,7 @@ class _NameStepState extends State<NameStep> {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -77,11 +77,11 @@ class _NameStepState extends State<NameStep> {
                     animation: animation,
                     builder: (context, child) {
                       return Material(
-                        color: Colors.transparent,
+                        color: TossDesignSystem.white.withValues(alpha: 0.0),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Color.lerp(
-                              context.isDarkMode ? context.fortuneTheme.primaryText : TossDesignSystem.gray900, Colors.transparent)
+                              context.isDarkMode ? context.fortuneTheme.primaryText : TossDesignSystem.gray900, TossDesignSystem.white.withValues(alpha: 0.0))
                               animation.value),
                             borderRadius: BorderRadius.circular(
                               (context.fortuneTheme.bottomSheetStyles.borderRadius + 4) * (1 - animation.value)),
@@ -99,7 +99,7 @@ class _NameStepState extends State<NameStep> {
                     });
                 },
                 child: Material(
-                  color: Colors.transparent,
+                  color: TossDesignSystem.white.withValues(alpha: 0.0),
                   child: Text(
                     '이름이 뭐예요?',
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(

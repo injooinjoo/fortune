@@ -8,6 +8,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'base_fortune_page.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// Fortune page that displays multiple fortune results with snap scrolling
 /// Each fortune card snaps to the top of the viewport when scrolling
@@ -137,8 +138,8 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      scoreColor.withOpacity(0.3),
-                      scoreColor.withOpacity(0.1),
+                      scoreColor.withValues(alpha: 0.3),
+                      scoreColor.withValues(alpha: 0.1),
                     ],
                   ),
                   border: Border.all(
@@ -182,7 +183,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                     Text(
                       _getScoreMessage(fortune.score),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -265,7 +266,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.2),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -353,17 +354,17 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
 
   Color _getLuckyColorForType(String type) {
     switch (type) {
-      case 'daily': return Colors.blue;
+      case 'daily': return TossDesignSystem.tossBlue;
       case 'love':
-        return Colors.pink;
+        return TossDesignSystem.pinkPrimary;
       case 'money':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case 'health':
-        return Colors.teal;
+        return TossDesignSystem.successGreen;
       case 'career': 
-        return Colors.indigo;
+        return TossDesignSystem.tossBlue;
       default:
-        return Colors.purple;
+        return TossDesignSystem.purple;
     }
   }
 
@@ -384,11 +385,11 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 90) return Colors.green;
-    if (score >= 80) return Colors.blue;
-    if (score >= 70) return Colors.orange;
-    if (score >= 60) return Colors.deepOrange;
-    return Colors.red;
+    if (score >= 90) return TossDesignSystem.successGreen;
+    if (score >= 80) return TossDesignSystem.tossBlue;
+    if (score >= 70) return TossDesignSystem.warningOrange;
+    if (score >= 60) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getScoreMessage(int score) {

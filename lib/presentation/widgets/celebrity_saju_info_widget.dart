@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/celebrity_saju.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class CelebritySajuInfoWidget extends StatelessWidget {
   final CelebritySaju celebrity;
@@ -18,10 +19,10 @@ class CelebritySajuInfoWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceVariant.withValues(alpha:0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.3),
+          color: theme.colorScheme.outline.withValues(alpha:0.3),
         ),
       ),
       child: Column(
@@ -32,7 +33,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                backgroundColor: theme.colorScheme.primary.withValues(alpha:0.2),
                 child: Text(
                   celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
                   style: TextStyle(
@@ -57,7 +58,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                     Text(
                       '${celebrity.category} • ${celebrity.age}세',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                       ),
                     ),
                     if (celebrity.agency.isNotEmpty) ...[
@@ -65,7 +66,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                       Text(
                         celebrity.agency,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha:0.5),
                         ),
                       ),
                     ],
@@ -107,7 +108,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.1),
+            color: theme.colorScheme.primary.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -177,14 +178,14 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                 height: 24,
                 margin: const EdgeInsets.only(right: 1),
                 decoration: BoxDecoration(
-                  color: _getElementColor(element).withOpacity(0.8),
+                  color: _getElementColor(element).withValues(alpha:0.8),
                   borderRadius: BorderRadius.circular(2),
                 ),
                 child: Center(
                   child: Text(
                     count > 0 ? '$element$count' : '',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -248,13 +249,13 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha:0.6),
           ),
           const SizedBox(width: 8),
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.6),
             ),
           ),
           Expanded(
@@ -289,13 +290,13 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           Icon(
             Icons.psychology,
             size: 16,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha:0.6),
           ),
           const SizedBox(width: 8),
           Text(
             '십신: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.6),
             ),
           ),
           Expanded(
@@ -314,17 +315,17 @@ class CelebritySajuInfoWidget extends StatelessWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case '화':
-        return Colors.red;
+        return TossDesignSystem.warningOrange;
       case '토':
-        return Colors.brown;
+        return TossDesignSystem.warningOrange.withValues(alpha: 0.8);
       case '금':
-        return Colors.amber.shade700;
+        return TossDesignSystem.warningOrange;
       case '수':
-        return Colors.blue;
+        return TossDesignSystem.tossBlue;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray600;
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 
@@ -144,7 +145,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: TossTheme.success.withOpacity(0.1),
+                        color: TossTheme.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -222,7 +223,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               child: Text(
                 _getDatingStyleText(style),
                 style: TossTheme.body1.copyWith(
-                  color: isSelected ? Colors.white : TossTheme.textBlack,
+                  color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -253,7 +254,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _getScoreColor(value).withOpacity(0.1),
+                  color: _getScoreColor(value).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -272,7 +273,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               activeTrackColor: _getScoreColor(value),
               inactiveTrackColor: TossTheme.borderGray200,
               thumbColor: _getScoreColor(value),
-              overlayColor: _getScoreColor(value).withOpacity(0.2),
+              overlayColor: _getScoreColor(value).withValues(alpha: 0.2),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
               trackHeight: 4,
             ),

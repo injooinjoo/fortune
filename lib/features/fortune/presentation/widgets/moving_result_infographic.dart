@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 인포그래픽 스타일 이사운 결과 페이지
 class MovingResultInfographic extends StatefulWidget {
@@ -241,11 +242,11 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: TossDesignSystem.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -377,7 +378,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: _getScoreColor(_fortuneData.overallScore).withOpacity(0.1),
+                    color: _getScoreColor(_fortuneData.overallScore).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -425,7 +426,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                   '최적 시기',
                   '${_fortuneData.luckyDates.first.month}월 ${_fortuneData.luckyDates.first.day}일',
                   Icons.calendar_today_rounded,
-                  Colors.orange,
+                  TossDesignSystem.warningOrange,
                 ),
               ),
             ],
@@ -442,7 +443,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                   '추천 주거',
                   _fortuneData.houseTypeScores.entries.first.key,
                   Icons.home_rounded,
-                  Colors.green,
+                  TossDesignSystem.success,
                 ),
               ),
               const SizedBox(width: 12),
@@ -451,7 +452,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                   '예상 비용',
                   '${_fortuneData.budgetBreakdown.values.reduce((a, b) => a + b)}만원',
                   Icons.payments_rounded,
-                  Colors.purple,
+                  TossDesignSystem.primaryBlue,
                 ),
               ),
             ],
@@ -541,7 +542,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                           isCurved: true,
                           gradient: LinearGradient(
                             colors: [
-                              TossTheme.primaryBlue.withOpacity(0.8),
+                              TossTheme.primaryBlue.withValues(alpha: 0.8),
                               TossTheme.primaryBlue,
                             ],
                           ),
@@ -552,8 +553,8 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                TossTheme.primaryBlue.withOpacity(0.1),
-                                TossTheme.primaryBlue.withOpacity(0.0),
+                                TossTheme.primaryBlue.withValues(alpha: 0.1),
+                                TossTheme.primaryBlue.withValues(alpha: 0.0),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -569,10 +570,10 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildLegend('매우 좋음', Colors.green),
+                    _buildLegend('매우 좋음', TossDesignSystem.success),
                     _buildLegend('좋음', TossTheme.primaryBlue),
-                    _buildLegend('보통', Colors.orange),
-                    _buildLegend('주의', Colors.red),
+                    _buildLegend('보통', TossDesignSystem.warningOrange),
+                    _buildLegend('주의', TossDesignSystem.error),
                   ],
                 ),
               ],
@@ -602,15 +603,15 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                       height: 40,
                       decoration: BoxDecoration(
                         color: index == 0 
-                            ? Colors.amber.withOpacity(0.2)
-                            : TossTheme.primaryBlue.withOpacity(0.1),
+                            ? TossDesignSystem.warningOrange.withValues(alpha: 0.2)
+                            : TossTheme.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
                         child: Text(
                           '${index + 1}',
                           style: TossTheme.heading3.copyWith(
-                            color: index == 0 ? Colors.amber[700] : TossTheme.primaryBlue,
+                            color: index == 0 ? TossDesignSystem.warningOrange : TossTheme.primaryBlue,
                           ),
                         ),
                       ),
@@ -635,7 +636,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                     if (index == 0)
                       Icon(
                         Icons.star_rounded,
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningOrange,
                         size: 24,
                       ),
                   ],
@@ -683,7 +684,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                       ticksTextStyle: TossTheme.caption.copyWith(fontSize: 10),
                       dataSets: [
                         RadarDataSet(
-                          fillColor: TossTheme.primaryBlue.withOpacity(0.2),
+                          fillColor: TossTheme.primaryBlue.withValues(alpha: 0.2),
                           borderColor: TossTheme.primaryBlue,
                           borderWidth: 2,
                           dataEntries: _fortuneData.directionScores.values
@@ -708,8 +709,8 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossTheme.primaryBlue.withOpacity(0.1),
-                        TossTheme.primaryBlue.withOpacity(0.05),
+                        TossTheme.primaryBlue.withValues(alpha: 0.1),
+                        TossTheme.primaryBlue.withValues(alpha: 0.05),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -725,7 +726,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                         ),
                         child: Icon(
                           Icons.navigation_rounded,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           size: 24,
                         ),
                       ),
@@ -771,7 +772,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isBest ? TossTheme.primaryBlue.withOpacity(0.05) : Colors.white,
+                  color: isBest ? TossTheme.primaryBlue.withValues(alpha: 0.05) : TossDesignSystem.white,
                   border: Border.all(
                     color: isBest ? TossTheme.primaryBlue : TossTheme.borderGray200,
                   ),
@@ -815,7 +816,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                         child: Text(
                           '최적',
                           style: TossTheme.caption.copyWith(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -868,13 +869,13 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                       height: 40,
                       decoration: BoxDecoration(
                         color: item.isCompleted 
-                            ? Colors.green 
-                            : TossTheme.primaryBlue.withOpacity(0.1),
+                            ? TossDesignSystem.success 
+                            : TossTheme.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
                         child: item.isCompleted
-                            ? Icon(Icons.check, color: Colors.white, size: 20)
+                            ? Icon(Icons.check, color: TossDesignSystem.white, size: 20)
                             : Text(
                                 '${index + 1}',
                                 style: TossTheme.body2.copyWith(
@@ -910,7 +911,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: _getTimeColor(item.timing).withOpacity(0.1),
+                                  color: _getTimeColor(item.timing).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -926,7 +927,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                                 Text(
                                   '완료',
                                   style: TossTheme.caption.copyWith(
-                                    color: Colors.green,
+                                    color: TossDesignSystem.success,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -1016,7 +1017,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                           title: '$percentage%',
                           radius: 40,
                           titleStyle: TossTheme.caption.copyWith(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w600,
                           ),
                         );
@@ -1044,7 +1045,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   border: Border.all(color: TossTheme.borderGray200),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -1093,14 +1094,14 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.1),
+              color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.savings_rounded,
-                  color: Colors.amber[700],
+                  color: TossDesignSystem.warningOrange,
                   size: 24,
                 ),
                 const SizedBox(width: 12),
@@ -1111,7 +1112,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                       Text(
                         '절약 TIP',
                         style: TossTheme.heading4.copyWith(
-                          color: Colors.amber[700],
+                          color: TossDesignSystem.warningOrange,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -1185,10 +1186,10 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -1236,7 +1237,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
               child: Text(
                 '다시 보기',
                 style: TossTheme.button.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                 ),
               ),
             ),
@@ -1258,9 +1259,9 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
+    if (score >= 80) return TossDesignSystem.success;
     if (score >= 60) return TossTheme.primaryBlue;
-    return Colors.orange;
+    return TossDesignSystem.warningOrange;
   }
 
   String _getScoreDescription(int score) {
@@ -1287,19 +1288,19 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
   }
 
   Color _getTimeColor(String timing) {
-    if (timing.contains('D-30')) return Colors.blue;
-    if (timing.contains('D-21') || timing.contains('D-14')) return Colors.orange;
-    if (timing.contains('D-7') || timing.contains('D-3') || timing.contains('D-1')) return Colors.red;
+    if (timing.contains('D-30')) return TossDesignSystem.primaryBlue;
+    if (timing.contains('D-21') || timing.contains('D-14')) return TossDesignSystem.warningOrange;
+    if (timing.contains('D-7') || timing.contains('D-3') || timing.contains('D-1')) return TossDesignSystem.error;
     return TossTheme.primaryBlue;
   }
 
   Color _getBudgetColor(String category) {
     switch (category) {
       case '이사업체': return TossTheme.primaryBlue;
-      case '포장재료': return Colors.orange;
-      case '청소비용': return Colors.green;
-      case '기타비용': return Colors.purple;
-      default: return Colors.grey;
+      case '포장재료': return TossDesignSystem.warningOrange;
+      case '청소비용': return TossDesignSystem.success;
+      case '기타비용': return TossDesignSystem.primaryBlue;
+      default: return TossDesignSystem.gray300;
     }
   }
 
@@ -1362,7 +1363,7 @@ class CircularScorePainter extends CustomPainter {
     
     // 배경 원
     final backgroundPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
+      ..color = TossDesignSystem.gray300.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
     

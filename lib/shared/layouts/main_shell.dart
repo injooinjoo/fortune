@@ -7,6 +7,7 @@ import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../routes/navigation_helper.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../core/theme/toss_design_system.dart';
 
 /// Main shell widget that provides persistent navigation
 /// This widget wraps around all main pages and maintains the bottom navigation bar
@@ -126,7 +127,7 @@ class _MainShellState extends ConsumerState<MainShell>
     }
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       extendBody: true,
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: false, // Prevent navigation bar from moving with keyboard

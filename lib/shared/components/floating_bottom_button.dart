@@ -38,7 +38,7 @@ class FloatingBottomButton extends StatelessWidget {
       right: 0,
       bottom: 0,
       child: Container(
-        color: Colors.transparent, // 완전히 투명한 배경
+        color: TossDesignSystem.white.withValues(alpha: 0.0), // 완전히 투명한 배경
         padding: padding ?? EdgeInsets.fromLTRB(
           20,
           0, // 상단 패딩 제거

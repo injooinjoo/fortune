@@ -187,15 +187,15 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
   Color get verificationColor {
     switch (verificationLevel) {
       case 0:
-        return Colors.grey;
+        return TossDesignSystem.gray500;
       case 1:
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case 2:
-        return Colors.blue;
+        return TossDesignSystem.primaryBlue;
       case 3:
-        return Colors.green;
+        return TossDesignSystem.success;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray500;
     }
   }
   
@@ -223,7 +223,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
@@ -293,7 +293,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white,)),
+                                      color: TossDesignSystem.white,)),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Lv.$verificationLevel',
@@ -427,7 +427,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white))
+                                      color: TossDesignSystem.white))
                                 : Text(
                                     '인증번호 발송',
                                     style: TextStyle(
@@ -510,12 +510,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            color: Colors.white))
+                                            color: TossDesignSystem.white))
                                       : Text(
                                           '확인',
                                           style: TextStyle(
                                             fontSize: 14 * fontScale,
-                                            fontWeight: FontWeight.w600)))])]))],
+                                            fontWeight: FontWeight.w600,
+                                            color: TossDesignSystem.white)))])]))],
                   
                   const SizedBox(height: 16),
                   
@@ -567,12 +568,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white))
+                                      color: TossDesignSystem.white))
                                 : Text(
                                     '인증 이메일 발송',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      fontWeight: FontWeight.w600)))]),
+                                      fontWeight: FontWeight.w600,
+                                      color: TossDesignSystem.white)))]),
                     fontScale: fontScale),
                   
                   const SizedBox(height: 16),
@@ -647,17 +649,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isCompleted 
-              ? Colors.green.withValues(alpha: 0.3)
+              ? TossDesignSystem.success.withValues(alpha: 0.3)
               : isLocked 
                   ? TossDesignSystem.gray200
                   : TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: InkWell(
@@ -674,7 +676,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     height: 40,
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? Colors.green.withValues(alpha: 0.1)
+                          ? TossDesignSystem.success.withValues(alpha: 0.1)
                           : isLocked
                               ? TossDesignSystem.gray200
                               : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
@@ -686,7 +688,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               ? Icons.lock
                               : Icons.radio_button_unchecked,
                       color: isCompleted
-                          ? Colors.green
+                          ? TossDesignSystem.success
                           : isLocked
                               ? TossDesignSystem.gray600
                               : TossDesignSystem.tossBlue,
@@ -712,14 +714,14 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.1),
+                        color: TossDesignSystem.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       child: Text(
                         '완료',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
                           fontWeight: FontWeight.w600,
-                          color: Colors.green)))
+                          color: TossDesignSystem.success)))
                   else if (!isLocked && onTap != null)
                     Icon(
                       isExpanded ? Icons.expand_less : Icons.expand_more,

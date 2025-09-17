@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 class TarotSpreadSelector extends StatefulWidget {
   final Function(TarotSpreadType) onSpreadSelected;
@@ -165,11 +166,11 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     final isSelected = _selectedSpread == spread;
 
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       borderRadius: BorderRadius.circular(16),
       child: Ink(
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.white,
+          color: isSelected ? color.withValues(alpha: 0.1) : TossDesignSystem.white,
           border: Border.all(
             color: isSelected ? color : const Color(0xFFE5E7EB),
             width: isSelected ? 2 : 1,
@@ -178,7 +179,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: color.withOpacity(0.15),
+                    color: color.withValues(alpha: 0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -192,8 +193,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
             });
           },
           borderRadius: BorderRadius.circular(16),
-          splashColor: color.withOpacity(0.1),
-          highlightColor: color.withOpacity(0.05),
+          splashColor: color.withValues(alpha: 0.1),
+          highlightColor: color.withValues(alpha: 0.05),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -207,11 +208,11 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       height: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? color : color.withOpacity(0.1),
+                        color: isSelected ? color : color.withValues(alpha: 0.1),
                       ),
                       child: Icon(
                         icon,
-                        color: isSelected ? Colors.white : color,
+                        color: isSelected ? TossDesignSystem.white : color,
                         size: 24,
                       ),
                     ),
@@ -242,7 +243,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.1),
+                                  color: color.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -341,10 +342,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     height: 40,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
-                        color: color.withOpacity(0.3),
+                        color: color.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -441,7 +442,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(2),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

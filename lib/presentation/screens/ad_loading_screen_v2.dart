@@ -10,6 +10,7 @@ import '../../services/ad_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 /// Enhanced Ad Loading Screen that integrates real AdMob ads
 class AdLoadingScreenV2 extends ConsumerStatefulWidget {
@@ -262,7 +263,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('발생했습니다: $e'),
-              backgroundColor: Colors.red,
+              backgroundColor: TossDesignSystem.errorRed,
             );
           Navigator.of(context).pop();
         }
@@ -281,7 +282,9 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.black.withOpacity(0.87)
+          : TossDesignSystem.gray900.withOpacity(0.9),
       body: SafeArea(
         child: Stack(
           children: [
@@ -296,8 +299,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.purple.withOpacity(0.92).withOpacity(0.3),
-                          Colors.indigo.withOpacity(0.92).withOpacity(0.3)],
+                          TossDesignSystem.purple.withOpacity(0.92).withOpacity(0.3),
+                          TossDesignSystem.purple.withOpacity(0.92).withOpacity(0.3)],
                         transform: GradientRotation(
                           _animationController.value * 2 * 3.14159)),
                     );
@@ -318,19 +321,19 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            Colors.white.withOpacity(0.2),
-                            Colors.white.withOpacity(0.05)])),
+                            Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                            Theme.of(context).colorScheme.onSurface.withOpacity(0.05)])),
                       child: Icon(
                         Icons.auto_awesome,
                         size: 50,
-                        color: Colors.white)).animate(
+                        color: Theme.of(context).colorScheme.onSurface)).animate(
                       onPlay: (controller) => controller.repeat()).scale(
                       duration: 2.seconds,
                       begin: const Offset(0.95, 0.95),
                       end: const Offset(1.05, 1.05),
                       curve: Curves.easeInOut).shimmer(
                       duration: 2.seconds,
-                      color: Colors.white.withOpacity(0.3)),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
                     
                     const SizedBox(height: AppSpacing.spacing12),
                     
@@ -338,7 +341,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                     Text(
                       widget.fortuneTitle,
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.white)),
+                        color: Theme.of(context).colorScheme.onSurface)),
                         fontWeight: FontWeight.bold)).animate(,
                       .fadeIn(duration: 800.ms,
                       .slideY(begin: -0.3, end: 0),
@@ -352,7 +355,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         _currentMessage,
                         key: ValueKey(_currentMessage),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.white70),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
                         textAlign: TextAlign.center)),
                     
                     const SizedBox(height: AppSpacing.spacing12),
@@ -362,7 +365,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       height: AppSpacing.spacing2,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                         borderRadius: AppDimensions.borderRadiusSmall),
                       child: AnimatedBuilder(
                         animation: _progressAnimation,
@@ -379,7 +382,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                                 borderRadius: AppDimensions.borderRadiusSmall)).animate(
                               onPlay: (controller) => controller.repeat()).shimmer(
                               duration: 1.5.seconds,
-                              color: Colors.white.withOpacity(0.3),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                             );
                         })]),
             
@@ -390,7 +393,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
               child: IconButton(
                 icon: const Icon(
                   Icons.close,
-                  color: Colors.white70,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                   size: 28),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -407,13 +410,13 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                     Text(
                       '광고 없이 바로 운세를 확인하고 싶으신가요?',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white60)),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                       textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.spacing4),
                     ElevatedButton(
                       onPressed: widget.onSkip,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         minimumSize: const Size(double.infinity, 56),
                         shape: RoundedRectangleBorder(

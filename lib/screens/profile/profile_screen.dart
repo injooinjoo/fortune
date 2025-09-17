@@ -301,7 +301,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.02),
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.white.withValues(alpha: 0.02)
+                                    : TossDesignSystem.black.withValues(alpha: 0.02),
                                 blurRadius: 6,
                                 offset: const Offset(0, 1),
                               ),
@@ -354,7 +356,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: TossDesignSystem.successGreen.withOpacity(0.1),
+                                              color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                                               borderRadius: BorderRadius.circular(20),
                                             ),
                                             child: const Text(
@@ -439,7 +441,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: TossDesignSystem.tossBlue.withOpacity(0.08),
+                                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.08),
                                           borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Row(
@@ -515,7 +517,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.white.withValues(alpha: 0.02)
+                          : TossDesignSystem.gray900.withValues(alpha: 0.02),
                       blurRadius: 6,
                       offset: const Offset(0, 1),
                     ),
@@ -612,7 +616,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.white.withValues(alpha: 0.02)
+                          : TossDesignSystem.gray900.withValues(alpha: 0.02),
                       blurRadius: 6,
                       offset: const Offset(0, 1),
                     ),
@@ -676,7 +682,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.white.withValues(alpha: 0.02)
+                          : TossDesignSystem.gray900.withValues(alpha: 0.02),
                       blurRadius: 6,
                       offset: const Offset(0, 1),
                     ),
@@ -748,7 +756,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
                 child: Material(
-                  color: Colors.transparent,
+                  color: TossDesignSystem.white.withValues(alpha: 0.0),
                   child: InkWell(
                     onTap: () => context.push('/settings'),
                     borderRadius: BorderRadius.circular(16),
@@ -955,7 +963,7 @@ https://fortune.app''';
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -1070,7 +1078,7 @@ https://fortune.app''';
                           child: const Text(
                             'NEW',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
@@ -30,7 +31,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '인간관계 분석',
         'description': '대인관계 패턴과 소통 방식 분석',
         'icon': Icons.people_alt_rounded,
-        'color': Colors.pink,
+        'color': TossDesignSystem.purple,
         'value': wantRelationshipAnalysis,
       },
       {
@@ -38,7 +39,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '직업 가이드',
         'description': '성격에 맞는 직업과 커리어 조언',
         'icon': Icons.work_rounded,
-        'color': Colors.blue,
+        'color': TossDesignSystem.primaryBlue,
         'value': wantCareerGuidance,
       },
       {
@@ -46,7 +47,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '성장 조언',
         'description': '개인 성장과 자기계발 방향',
         'icon': Icons.trending_up_rounded,
-        'color': Colors.green,
+        'color': TossDesignSystem.successGreen,
         'value': wantPersonalGrowth,
       },
       {
@@ -54,7 +55,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '궁합 분석',
         'description': '다른 성격 유형과의 궁합',
         'icon': Icons.favorite_rounded,
-        'color': Colors.red,
+        'color': TossDesignSystem.errorRed,
         'value': wantCompatibility,
       },
       {
@@ -62,7 +63,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '일일 조언',
         'description': '오늘의 성격 운세와 조언',
         'icon': Icons.today_rounded,
-        'color': Colors.orange,
+        'color': TossDesignSystem.warningOrange,
         'value': wantDailyAdvice,
       },
     ];

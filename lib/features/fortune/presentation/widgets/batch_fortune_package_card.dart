@@ -4,6 +4,7 @@ import '../../../../data/services/fortune_batch_service.dart';
 import '../providers/batch_fortune_provider.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 배치 운세 패키지 카드 위젯
 class BatchFortunePackageCard extends ConsumerWidget {
@@ -111,7 +112,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.2),
+              color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
               borderRadius: AppDimensions.borderRadiusMedium),
             child: Text(
               '${savings.toStringAsFixed(0)}% 절약',
@@ -131,7 +132,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
       children: [
         LinearProgressIndicator(
           value: 1.0,
-          backgroundColor: Colors.grey.withOpacity(0.3),
+          backgroundColor: TossDesignSystem.gray400.withValues(alpha: 0.3),
           valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)),
         const SizedBox(height: AppSpacing.spacing2),
         Row(
@@ -158,18 +159,18 @@ class BatchFortunePackageCard extends ConsumerWidget {
   Icon _getPackageIcon(BatchPackageType type) {
     switch (type) {
       case BatchPackageType.onboarding:
-        return const Icon(Icons.rocket_launch, color: Colors.blue);
+        return const Icon(Icons.rocket_launch, color: TossDesignSystem.primaryBlue);
       case BatchPackageType.dailyRefresh:
-        return const Icon(Icons.today, color: Colors.orange);
+        return const Icon(Icons.today, color: TossDesignSystem.warningOrange);
       case BatchPackageType.loveSingle:
       case BatchPackageType.loveCouple:
-        return const Icon(Icons.favorite, color: Colors.pink);
+        return const Icon(Icons.favorite, color: TossDesignSystem.pinkPrimary);
       case BatchPackageType.career:
-        return const Icon(Icons.work, color: Colors.green);
+        return const Icon(Icons.work, color: TossDesignSystem.successGreen);
       case BatchPackageType.luckyItems:
-        return const Icon(Icons.star, color: Colors.amber);
+        return const Icon(Icons.star, color: TossDesignSystem.warningOrange);
       case BatchPackageType.premiumComplete:
-        return const Icon(Icons.diamond, color: Colors.purple);
+        return const Icon(Icons.diamond, color: TossDesignSystem.purple);
 }
   }
 
@@ -217,11 +218,11 @@ class BatchFortuneResultsList extends ConsumerWidget {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: result.fromCache
-                  ? Colors.grey
+                  ? TossDesignSystem.gray400
                   : Theme.of(context).primaryColor,
               child: Icon(
                 _getFortuneIcon(result.type),
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 size: 20)),
             title: Text(
               _getFortuneTitle(result.type),
@@ -233,10 +234,10 @@ class BatchFortuneResultsList extends ConsumerWidget {
             trailing: result.fromCache
                 ? const Chip(
                     label: Text('캐시'),
-                    backgroundColor: Colors.grey)
+                    backgroundColor: TossDesignSystem.gray400)
                 : const Chip(
                     label: Text('신규'),
-                    backgroundColor: Colors.green),
+                    backgroundColor: TossDesignSystem.successGreen),
             onTap: () {
               // 상세 운세 보기
               _showFortuneDetail(context, result);
@@ -251,12 +252,12 @@ class BatchFortuneResultsList extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
@@ -265,7 +266,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
               height: AppSpacing.spacing1,
               margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
+                color: TossDesignSystem.gray400.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(4 * 0.5)),
             ),
             Expanded(

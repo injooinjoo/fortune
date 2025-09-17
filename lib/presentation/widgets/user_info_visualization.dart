@@ -1,12 +1,9 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_dimensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class UserInfoVisualization extends StatelessWidget {
   final Map<String, dynamic> userInfo;
@@ -48,14 +45,16 @@ class UserInfoVisualization extends StatelessWidget {
             gradient: LinearGradient(
               colors: gradientColors ?? [
                 theme.colorScheme.primary,
-                theme.colorScheme.primary.withOpacity(0.7),
+                theme.colorScheme.primary.withValues(alpha: 0.7),
               ],
             ),
             borderRadius: AppDimensions.borderRadiusMedium,
           ),
           child: Icon(
             _getIconForFortuneType(),
-            color: TossDesignSystem.grayDark900,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.white
+                : TossDesignSystem.grayDark900,
             size: AppDimensions.iconSizeMedium,
           ),
         ),
@@ -188,10 +187,10 @@ class UserInfoVisualization extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: accentColor.withOpacity(0.05),
+        color: accentColor.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: accentColor.withOpacity(0.2),
+          color: accentColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -246,12 +245,14 @@ class UserInfoVisualization extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: [Colors.pink.withOpacity(0.5), TossDesignSystem.tossBlue.withOpacity(0.5)],
+            colors: [TossDesignSystem.errorRed.withValues(alpha: 0.5), TossDesignSystem.tossBlue.withValues(alpha: 0.5)],
           ),
         ),
-        child: const Icon(
+        child: Icon(
           Icons.favorite,
-          color: TossDesignSystem.grayDark900,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.white
+              : TossDesignSystem.grayDark900,
           size: AppDimensions.iconSizeMedium,
         ),
       ),
@@ -282,10 +283,10 @@ class UserInfoVisualization extends StatelessWidget {
         horizontal: AppSpacing.spacing3,
         vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
-        color: itemColor.withOpacity(0.1),
+        color: itemColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
         border: Border.all(
-          color: itemColor.withOpacity(0.3),
+          color: itemColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -297,7 +298,7 @@ class UserInfoVisualization extends StatelessWidget {
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -174,7 +175,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     final spread = TarotMetadata.spreads[widget.spreadType];
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: TossDesignSystem.black,
       body: MysticalBackground(
         child: SafeArea(
           child: Column(
@@ -183,7 +184,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               AppHeader(
                 title: '타로 리딩',
                 showBackButton: true,
-                backgroundColor: Colors.transparent,
+                backgroundColor: TossDesignSystem.transparent,
               ),
               
               // Progress indicator
@@ -233,7 +234,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           // Background
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: TossDesignSystem.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(3),
             ),
           ),
@@ -266,9 +267,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withOpacity(0),
-                        Colors.white.withOpacity(0.3 * _fadeController.value),
-                        Colors.white.withOpacity(0)],
+                        TossDesignSystem.white.withOpacity(0),
+                        TossDesignSystem.white.withOpacity(0.3 * _fadeController.value),
+                        TossDesignSystem.white.withOpacity(0)],
                       stops: const [0.0, 0.5, 1.0]),
                     borderRadius: BorderRadius.circular(3),
                   ),
@@ -307,10 +308,10 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                           shape: BoxShape.circle,
                           gradient: SweepGradient(
                             colors: [
-                              Colors.purple.withOpacity(0),
+                              TossDesignSystem.purple.withOpacity(0),
                               const Color(0xFF9333EA).withOpacity(0.3),
-                              Colors.indigo.withOpacity(0.3),
-                              Colors.purple.withOpacity(0)],
+                              TossDesignSystem.purple.withOpacity(0.3),
+                              TossDesignSystem.purple.withOpacity(0)],
                           ),
                         ),
                       ),
@@ -319,7 +320,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                     Icon(
                       Icons.auto_awesome,
                       size: 80,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       shadows: [
                         Shadow(
                           color: const Color(0xFF9333EA),
@@ -335,14 +336,14 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               style: TextStyle(
                 fontSize: 24 * fontScale,
                 fontWeight: FontWeight.bold,
-                color: Colors.white),
+                color: TossDesignSystem.white),
               textAlign: TextAlign.center),
             const SizedBox(height: 16),
             Text(
               widget.question ?? '오늘의 운세를 알아보겠습니다',
               style: TextStyle(
                 fontSize: 16 * fontScale,
-                color: Colors.white70,
+                color: TossDesignSystem.white.withOpacity(0.7),
                 fontStyle: FontStyle.italic),
               textAlign: TextAlign.center),
             const SizedBox(height: 32),
@@ -350,11 +351,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               padding: const EdgeInsets.all(20),
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple.withOpacity(0.2),
-                  Colors.indigo.withOpacity(0.2)]),
+                  TossDesignSystem.purple.withOpacity(0.2),
+                  TossDesignSystem.purple.withOpacity(0.2)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: TossDesignSystem.white.withOpacity(0.1),
                 width: 1),
               child: Column(
 
@@ -365,18 +366,18 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withOpacity(0.1),
-                          Colors.transparent])),
+                          TossDesignSystem.white.withOpacity(0.1),
+                          TossDesignSystem.transparent])),
                     child: Icon(
                       Icons.info_outline,
-                      color: Colors.white.withOpacity(0.9),
+                      color: TossDesignSystem.white.withOpacity(0.9),
                       size: 24)),
                   const SizedBox(height: 12),
                   Text(
                     '${widget.selectedCards.length}장의 카드를 하나씩 공개하며\n각 카드가 전하는 메시지를 들려드리겠습니다.',
                     style: TextStyle(
                       fontSize: 14 * fontScale,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       height: 1.5,
                       letterSpacing: 0.5),
                     textAlign: TextAlign.center),
@@ -410,7 +411,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   const Color(0xFF7C3AED).withOpacity(0.3)]),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: TossDesignSystem.white.withOpacity(0.2),
                 width: 1),
               boxShadow: [
                 BoxShadow(
@@ -424,7 +425,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -433,7 +434,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       style: TextStyle(
                         fontSize: 12 * fontScale,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                     ),
                   ),
@@ -444,7 +445,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   style: TextStyle(
                     fontSize: 16 * fontScale,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -502,8 +503,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   padding: const EdgeInsets.all(12),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple.withOpacity(0.1),
-                      Colors.indigo.withOpacity(0.1)]),
+                      TossDesignSystem.purple.withOpacity(0.1),
+                      TossDesignSystem.purple.withOpacity(0.1)]),
                   child: Row(
                     children: [
                       // Mini card image
@@ -530,13 +531,13 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                               '${i + 1}. $positionName',
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
-                                color: Colors.white70)),
+                                color: TossDesignSystem.white.withOpacity(0.7))),
                             Text(
                               cardInfo?.name ?? 'Unknown Card',
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white)),
+                                color: TossDesignSystem.white)),
                           ],
                         ),
                       ),
@@ -592,8 +593,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.8)])),
+            TossDesignSystem.transparent,
+            TossDesignSystem.black.withOpacity(0.8)])),
       child: SafeArea(
         top: false,
         child: SizedBox(

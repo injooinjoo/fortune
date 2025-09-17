@@ -200,7 +200,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                             colors: [
                               state.selectedType!.gradientColors[0].withOpacity(0.3),
                               state.selectedType!.gradientColors[1].withOpacity(0.1),
-                              Colors.transparent],
+                              TossDesignSystem.white.withValues(alpha: 0.0)],
                             stops: const [0.3, 0.7, 1.0]),
                         child: Stack(
                           alignment: Alignment.center,
@@ -244,9 +244,9 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                     spreadRadius: 5)]),
                               child: Icon(
                                 state.selectedType!.icon,
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 size: 50),.animate(onPlay: (controller) => controller.repeat(),
-                              .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.3)
+                              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)
                               .scale(
                                 begin: const Offset(0.9, 0.9),
                                 end: const Offset(1.1, 1.1),
@@ -272,13 +272,13 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                         width: 250,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: Colors.grey[300],
+                          color: TossDesignSystem.gray300,
                           borderRadius: BorderRadius.circular(3),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(3),
                           child: LinearProgressIndicator(
                             value: _progress,
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
                             valueColor: AlwaysStoppedAnimation<Color>(
                               state.selectedType!.gradientColors[0])),
                       

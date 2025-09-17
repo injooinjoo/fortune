@@ -181,9 +181,10 @@ class DailyFortuneCard extends StatelessWidget {
                   )
                 )
               ]
-            ]
-          ),
-          SizedBox(height: AppSpacing.spacing4),
+            )
+          ],
+        ),
+        SizedBox(height: AppSpacing.spacing4),
 
         // 운세 요약
         Container(
@@ -225,38 +226,43 @@ class DailyFortuneCard extends StatelessWidget {
 
               // 조언
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.lightbulb_outline, 
-                    size: AppDimensions.iconSizeXSmall, 
-                    color: context.fortuneTheme.subtitleText))
-                  SizedBox(width: AppSpacing.spacing1))
+                  Icon(Icons.lightbulb_outline,
+                    size: AppDimensions.iconSizeXSmall,
+                    color: context.fortuneTheme.subtitleText),
+                  SizedBox(width: AppSpacing.spacing1),
                   Expanded(
                     child: Text(
-                      fortune!.advice);
+                      fortune!.advice,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface))
-                      ))
-                    ))
-                  ))
-                ]),
-              SizedBox(height: AppSpacing.spacing2))
+                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface)
+                      )
+                    )
+                  )
+                ]
+              ),
+              SizedBox(height: AppSpacing.spacing2),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.visibility_outlined, 
-                    size: AppDimensions.iconSizeXSmall, 
-                    color: context.fortuneTheme.subtitleText))
-                  SizedBox(width: AppSpacing.spacing1))
+                  Icon(Icons.visibility_outlined,
+                    size: AppDimensions.iconSizeXSmall,
+                    color: context.fortuneTheme.subtitleText),
+                  SizedBox(width: AppSpacing.spacing1),
                   Expanded(
                     child: Text(
-                      fortune!.caution);
+                      fortune!.caution,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface))
-                      ))
-                    ))
-                  ))
-                ])])))
+                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface)
+                      )
+                    )
+                  )
+                ]
+              )
+            ]
+          )
+        ),
         SizedBox(height: AppSpacing.spacing4),
 
         // 운세 요소들

@@ -85,7 +85,7 @@ class MbtiGridSelector extends StatelessWidget {
     for (final type in typesList) {
       final groupName = _getGroupForType(type);
       final isSelected = selectedType == type;
-      final colors = groupColors[groupName] ?? [Colors.grey, Colors.grey];
+      final colors = groupColors[groupName] ?? [TossDesignSystem.gray400, TossDesignSystem.gray400];
       
       allTypes.add(
         _MbtiTypeCard(
@@ -277,7 +277,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                         widget.icon,
                         size: 24,
                         color: widget.isSelected
-                            ? Colors.white
+                            ? TossDesignSystem.white
                             : widget.colors[0],
                       ),
                       const SizedBox(height: TossDesignSystem.spacingXS),
@@ -285,7 +285,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                         widget.type,
                         style: TossDesignSystem.caption.copyWith(
                           color: widget.isSelected
-                              ? Colors.white
+                              ? TossDesignSystem.white
                               : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
                         ),
                       ),
@@ -299,7 +299,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                         width: 16,
                         height: 16,
                         decoration: const BoxDecoration(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

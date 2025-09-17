@@ -6,6 +6,7 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class LuckyOutfitFortunePage extends ConsumerStatefulWidget {
   const LuckyOutfitFortunePage({super.key});
@@ -25,42 +26,42 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       'id': 'business',
       'title': '비즈니스/업무',
       'icon': Icons.business_center,
-      'color': Colors.blue,
+      'color': TossDesignSystem.tossBlue,
       'description': '중요한 미팅, 프레젠테이션, 면접',
     },
     {
       'id': 'date',
       'title': '데이트/만남',
       'icon': Icons.favorite,
-      'color': Colors.pink,
+      'color': TossDesignSystem.pinkPrimary,
       'description': '연인과의 데이트, 소개팅',
     },
     {
       'id': 'party',
       'title': '파티/모임',
       'icon': Icons.celebration,
-      'color': Colors.purple,
+      'color': TossDesignSystem.purple,
       'description': '친구 모임, 파티, 경조사',
     },
     {
       'id': 'casual',
       'title': '일상/캐주얼',
       'icon': Icons.wb_sunny,
-      'color': Colors.orange,
+      'color': TossDesignSystem.warningOrange,
       'description': '평상시, 쇼핑, 산책',
     },
     {
       'id': 'sports',
       'title': '운동/활동',
       'icon': Icons.sports,
-      'color': Colors.green,
+      'color': TossDesignSystem.successGreen,
       'description': '운동, 야외활동, 레저',
     },
     {
       'id': 'formal',
       'title': '격식/행사',
       'icon': Icons.stars,
-      'color': Colors.indigo,
+      'color': TossDesignSystem.bluePrimary,
       'description': '결혼식, 공식 행사, 시상식',
     },
   ];
@@ -141,7 +142,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             '날짜와 상황에 맞는 행운의 의상을 추천해드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
+              color: TossDesignSystem.gray400,
             ),
           ),
           const SizedBox(height: 24),
@@ -152,13 +153,13 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(color: TossDesignSystem.gray300),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.calendar_today, color: Colors.grey),
+                  const Icon(Icons.calendar_today, color: TossDesignSystem.gray400),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -168,7 +169,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                           '날짜 선택',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: TossDesignSystem.gray400,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -182,7 +183,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                  const Icon(Icons.arrow_drop_down, color: TossDesignSystem.gray400),
                 ],
               ),
             ),
@@ -225,12 +226,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? occasion['color']
-                        : Colors.white,
+                        : TossDesignSystem.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
                           ? occasion['color']
-                          : Colors.grey[300]!,
+                          : TossDesignSystem.gray300,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -241,8 +242,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         occasion['icon'],
                         size: 32,
                         color: isSelected
-                            ? Colors.white
-                            : Colors.grey[600],
+                            ? TossDesignSystem.white
+                            : TossDesignSystem.gray600,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -251,8 +252,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                           fontSize: 12,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected
-                              ? Colors.white
-                              : Colors.grey[700],
+                              ? TossDesignSystem.white
+                              : TossDesignSystem.gray700,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -268,7 +269,9 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.grayDark700
+                    : TossDesignSystem.gray50,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -276,7 +279,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   Icon(
                     Icons.info_outline,
                     size: 16,
-                    color: Colors.grey[600],
+                    color: TossDesignSystem.gray600,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -284,7 +287,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       occasions.firstWhere((o) => o['id'] == _occasion)['description'],
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: TossDesignSystem.gray600,
                       ),
                     ),
                   ),
@@ -316,7 +319,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     Icon(
                       style['icon'],
                       size: 16,
-                      color: isSelected ? Colors.white : Colors.grey[600],
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
                     ),
                     const SizedBox(width: 4),
                     Text(style['label']),
@@ -328,9 +331,9 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     _personalStyle = selected ? style['id'] : null;
                   });
                 },
-                selectedColor: Colors.pink,
+                selectedColor: TossDesignSystem.pinkPrimary,
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : null,
+                  color: isSelected ? TossDesignSystem.white : null,
                 ),
               );
             }).toList(),
@@ -417,7 +420,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   '오늘의 행운의 색',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey,
+                    color: TossDesignSystem.gray400,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -434,7 +437,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     data['color_meaning'],
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: TossDesignSystem.gray600,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -450,16 +453,20 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark800
+                  : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark600
+                  : TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.checkroom, color: Colors.pink),
+                    Icon(Icons.checkroom, color: TossDesignSystem.pinkPrimary),
                     SizedBox(width: 8),
                     Text(
                       '추천 스타일링',
@@ -489,16 +496,20 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark800
+                  : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark600
+                  : TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.shopping_bag, color: Colors.orange),
+                    Icon(Icons.shopping_bag, color: TossDesignSystem.warningOrange),
                     SizedBox(width: 8),
                     Text(
                       '아이템별 추천',
@@ -519,13 +530,13 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: Colors.pink[50],
+                          color: TossDesignSystem.pinkPrimary.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           _getItemIcon(item['type'] ?? ''),
                           size: 18,
-                          color: Colors.pink,
+                          color: TossDesignSystem.pinkPrimary,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -545,7 +556,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                                 item['description'],
                                 style: const TextStyle(
                                   fontSize: 13,
-                                  color: Colors.grey,
+                                  color: TossDesignSystem.gray400,
                                 ),
                               ),
                           ],
@@ -567,8 +578,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple[50]!,
-                  Colors.pink[50]!,
+                  TossDesignSystem.purple.withOpacity(0.1),
+                  TossDesignSystem.pinkPrimary.withOpacity(0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -578,7 +589,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.diamond, color: Colors.purple),
+                    Icon(Icons.diamond, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '행운의 액세서리',
@@ -608,7 +619,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.amber[50],
+              color: TossDesignSystem.warningYellow.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -616,7 +627,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.tips_and_updates, color: Colors.amber),
+                    Icon(Icons.tips_and_updates, color: TossDesignSystem.warningYellow),
                     SizedBox(width: 8),
                     Text(
                       '스타일링 팁',
@@ -636,7 +647,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       const Icon(
                         Icons.star,
                         size: 16,
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningYellow,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -659,7 +670,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.red[50],
+              color: TossDesignSystem.errorRed.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -667,7 +678,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.block, color: Colors.red),
+                    Icon(Icons.block, color: TossDesignSystem.errorRed),
                     SizedBox(width: 8),
                     Text(
                       '피해야 할 스타일',
@@ -696,20 +707,20 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
   
   Color _getColorFromName(String colorName) {
     final colorMap = {
-      '빨강': Colors.red,
-      '파랑': Colors.blue,
-      '노랑': Colors.yellow,
-      '초록': Colors.green,
-      '보라': Colors.purple,
-      '핑크': Colors.pink,
-      '주황': Colors.orange,
-      '흰색': Colors.white,
-      '검정': Colors.black,
-      '회색': Colors.grey,
-      '갈색': Colors.brown,
-      '네이비': Colors.indigo,
+      '빨강': TossDesignSystem.errorRed,
+      '파랑': TossDesignSystem.tossBlue,
+      '노랑': TossDesignSystem.warningYellow,
+      '초록': TossDesignSystem.successGreen,
+      '보라': TossDesignSystem.purple,
+      '핑크': TossDesignSystem.pinkPrimary,
+      '주황': TossDesignSystem.warningOrange,
+      '흰색': TossDesignSystem.white,
+      '검정': TossDesignSystem.black,
+      '회색': TossDesignSystem.gray400,
+      '갈색': TossDesignSystem.brownPrimary,
+      '네이비': TossDesignSystem.bluePrimary,
     };
-    return colorMap[colorName] ?? Colors.grey;
+    return colorMap[colorName] ?? TossDesignSystem.gray400;
   }
   
   IconData _getItemIcon(String itemType) {

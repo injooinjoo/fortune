@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class BottomTarotDeckWidget extends StatefulWidget {
   final Function(int) onCardSelected;
@@ -219,12 +220,12 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
         borderRadius: BorderRadius.circular(8),
         boxShadow: isCenter ? [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.6),
+            color: TossDesignSystem.tossBlue.withOpacity(0.6),
             blurRadius: 20,
             spreadRadius: 5),
         ] : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: TossDesignSystem.black.withOpacity(0.3),
             blurRadius: 5,
             offset: const Offset(0, 3)),
         ],
@@ -261,9 +262,9 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: isCenter 
-                      ? Colors.white.withOpacity(0.5)
-                      : Colors.white.withOpacity(0.2),
+                  color: isCenter
+                      ? TossDesignSystem.white.withOpacity(0.5)
+                      : TossDesignSystem.white.withOpacity(0.2),
                   width: isCenter ? 2 : 1),
               ),
             ),
@@ -289,7 +290,7 @@ class TarotCardBackPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     
     // Draw stars pattern
-    paint.color = Colors.white.withOpacity(isHighlighted ? 0.4 : 0.2);
+    paint.color = TossDesignSystem.white.withOpacity(isHighlighted ? 0.4 : 0.2);
     
     // Center star
     _drawStar(canvas, center, size.width * 0.15, paint);

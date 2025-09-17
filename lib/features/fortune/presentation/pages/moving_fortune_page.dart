@@ -11,6 +11,7 @@ import '../widgets/enhanced_date_picker.dart';
 import '../widgets/map_location_picker.dart';
 import '../widgets/enhanced_moving_result.dart';
 import '../../../../core/utils/auspicious_days_calculator.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class MovingFortunePage extends ConsumerWidget {
   const MovingFortunePage({super.key});
@@ -174,7 +175,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
         Text(
           '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha:0.8),
             height: 1.5)),
         const SizedBox(height: 16),
         
@@ -219,11 +220,11 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha:0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha:0.3)),
             ),
           ),
         ),
@@ -241,12 +242,12 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha:0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha:0.7)),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
@@ -255,7 +256,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5)),
+                        : theme.colorScheme.onSurface.withValues(alpha:0.5)),
                 ),
               ],
             ),
@@ -272,7 +273,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
           Container(
             height: 200,
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha:0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: ClipRRect(
@@ -301,11 +302,11 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
               prefixIcon: const Icon(Icons.home_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha:0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha:0.3)),
               ),
             ),
           ),
@@ -324,7 +325,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
           Container(
             height: 200,
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha:0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: ClipRRect(
@@ -355,7 +356,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
           Text(
             '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -376,12 +377,12 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha:0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7)),
+                  Icon(Icons.event, color: theme.colorScheme.primary.withValues(alpha:0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _plannedDate != null
@@ -390,7 +391,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _plannedDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5)),
+                          : theme.colorScheme.onSurface.withValues(alpha:0.5)),
                   ),
                 ],
               ),
@@ -417,7 +418,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
                   _selectedReason = selected ? reason : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha:0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
           }).toList(),
@@ -442,7 +443,7 @@ class _MovingInputFormState extends State<_MovingInputForm> with SingleTickerPro
                   _selectedType = selected ? type : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha:0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface),
             );
@@ -592,7 +593,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -651,7 +652,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                   children: [
                     Icon(
                       Icons.schedule,
-                      color: Colors.green,
+                      color: TossDesignSystem.success,
                       size: 24),
                     const SizedBox(width: 12),
                     Text(
@@ -669,7 +670,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                   Text(
                     bestTiming['reason'],
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                       fontSize: 14 + fontSize)),
                 ],
               ],
@@ -689,7 +690,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.analytics_outlined,
-                        color: Colors.blue,
+                        color: TossDesignSystem.tossBlue,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -713,7 +714,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                               width: 100,
                               child: LinearProgressIndicator(
                                 value: entry.value / 100,
-                                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                                backgroundColor: theme.colorScheme.primary.withValues(alpha:0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(entry.value)),
                               ),
@@ -749,7 +750,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.tips_and_updates_outlined,
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningOrange,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -800,7 +801,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.warning_amber_outlined,
-                        color: Colors.orange,
+                        color: TossDesignSystem.warningOrange,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -821,7 +822,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Text(
                       avoidDirection['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                         fontSize: 12 + fontSize),
                     ),
                   ],
@@ -846,7 +847,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                       children: [
                         Icon(
                           isAuspiciousDay ? Icons.calendar_today : Icons.event_busy,
-                          color: isAuspiciousDay ? Colors.green : Colors.orange,
+                          color: isAuspiciousDay ? TossDesignSystem.success : TossDesignSystem.warningOrange,
                           size: 24),
                         const SizedBox(width: 12),
                         Text(
@@ -861,13 +862,13 @@ class _MovingFortuneResult extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: isAuspiciousDay ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                            color: isAuspiciousDay ? TossDesignSystem.success.withValues(alpha:0.1) : TossDesignSystem.warningOrange.withValues(alpha:0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             isAuspiciousDay ? '손없는날 ✓' : '일반날짜',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: isAuspiciousDay ? Colors.green : Colors.orange,
+                              color: isAuspiciousDay ? TossDesignSystem.success : TossDesignSystem.warningOrange,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -877,7 +878,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                           Text(
                             '음력: ${dateAnalysis['lunarDate']}',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                             ),
                           ),
                       ],
@@ -887,7 +888,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                       Text(
                         '절기: ${dateAnalysis['solarTerm']}',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                         ),
                       ),
                     ],
@@ -910,7 +911,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                       children: [
                         Icon(
                           Icons.location_city,
-                          color: Colors.blue,
+                          color: TossDesignSystem.tossBlue,
                           size: 24),
                         const SizedBox(width: 12),
                         Text(
@@ -938,7 +939,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                                   width: 80,
                                   child: LinearProgressIndicator(
                                     value: entry.value / 100,
-                                    backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                                    backgroundColor: theme.colorScheme.primary.withValues(alpha:0.1),
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       _getScoreColor(entry.value)),
                                   ),
@@ -984,9 +985,9 @@ class _MovingFortuneResult extends ConsumerWidget {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.success;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.error;
   }
 }

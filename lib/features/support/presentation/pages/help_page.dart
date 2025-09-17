@@ -13,7 +13,7 @@ class HelpPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
@@ -153,11 +153,11 @@ class HelpPage extends ConsumerWidget {
             Container(
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -168,7 +168,7 @@ class HelpPage extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.purple.shade50,
+                      color: TossDesignSystem.purple.withValues(alpha: 0.1),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
@@ -255,11 +255,11 @@ class HelpPage extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -304,7 +304,7 @@ class HelpPage extends ConsumerWidget {
     required String answer,
   }) {
     return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      data: Theme.of(context).copyWith(dividerColor: TossDesignSystem.white.withValues(alpha: 0.0)),
       child: ExpansionTile(
         tilePadding: EdgeInsets.zero,
         title: Text(

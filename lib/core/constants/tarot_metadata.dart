@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/toss_design_system.dart';
 
 // Extended TarotCardInfo class with rich content
 class TarotCardInfo {
@@ -697,21 +698,21 @@ class TarotHelper {
       case '불':
       case 'fire':
       case 'wands':
-        return Colors.red;
+        return TossDesignSystem.error;
       case '물':
       case 'water':
       case 'cups':
-        return Colors.blue;
+        return TossDesignSystem.tossBlue;
       case '공기':
       case 'air':
       case 'swords':
-        return Colors.yellow;
+        return TossDesignSystem.warningYellow;
       case '땅':
       case 'earth':
       case 'pentacles':
-        return Colors.green;
+        return TossDesignSystem.success;
       default:
-        return Colors.purple;
+        return TossDesignSystem.purple;
     }
   }
 

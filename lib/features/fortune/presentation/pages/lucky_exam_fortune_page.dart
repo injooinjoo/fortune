@@ -42,12 +42,12 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new, 
-            color: isDark ? Colors.white : Colors.black),
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -194,7 +194,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     gradient: LinearGradient(
                       colors: [
                         TossDesignSystem.successGreen,
-                        TossDesignSystem.successGreen.withOpacity(0.7),
+                        TossDesignSystem.successGreen.withValues(alpha: 0.7),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -203,7 +203,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   ),
                   child: const Icon(
                     Icons.school_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 40,
                   ),
                 ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
@@ -346,7 +346,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           period,
                           style: TossDesignSystem.caption.copyWith(
                             color: _studyPeriod == period 
-                                ? Colors.white 
+                                ? TossDesignSystem.white 
                                 : TossDesignSystem.gray700,
                             fontWeight: _studyPeriod == period 
                                 ? FontWeight.bold 
@@ -386,7 +386,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           level,
                           style: TossDesignSystem.caption.copyWith(
                             color: _confidence == level 
-                                ? Colors.white 
+                                ? TossDesignSystem.white 
                                 : TossDesignSystem.gray700,
                             fontWeight: _confidence == level 
                                 ? FontWeight.bold 
@@ -426,7 +426,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           level,
                           style: TossDesignSystem.caption.copyWith(
                             color: _difficulty == level 
-                                ? Colors.white 
+                                ? TossDesignSystem.white 
                                 : TossDesignSystem.gray700,
                             fontWeight: _difficulty == level 
                                 ? FontWeight.bold 
@@ -541,7 +541,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.successGreen.withOpacity(0.1),
+                    color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -689,7 +689,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   Row(
                     children: [
                       Icon(Icons.star, 
-                        color: Colors.amber, size: 24),
+                        color: TossDesignSystem.warningOrange, size: 24),
                       const SizedBox(width: 8),
                       Text(
                         '행운 아이템',
@@ -710,19 +710,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.amber.withOpacity(0.1),
+                              color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                              border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.palette, size: 16, color: Colors.amber),
+                                const Icon(Icons.palette, size: 16, color: TossDesignSystem.warningOrange),
                                 const SizedBox(width: 4),
                                 Text(
                                   color,
                                   style: TossDesignSystem.caption.copyWith(
-                                    color: Colors.amber[800],
+                                    color: TossDesignSystem.warningOrange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -735,19 +735,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.1),
+                              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                              border: Border.all(color: TossDesignSystem.tossBlue.withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.tag, size: 16, color: Colors.blue),
+                                const Icon(Icons.tag, size: 16, color: TossDesignSystem.tossBlue),
                                 const SizedBox(width: 4),
                                 Text(
                                   number,
                                   style: TossDesignSystem.caption.copyWith(
-                                    color: Colors.blue[800],
+                                    color: TossDesignSystem.tossBlue,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

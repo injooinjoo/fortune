@@ -109,7 +109,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
     });
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: TossDesignSystem.white,
       appBar: _buildAppBar(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
@@ -122,7 +122,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: TossDesignSystem.white,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
@@ -187,7 +187,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                     ),
                     child: Icon(
                       Icons.auto_awesome,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 24,
                     ),
                   ),
@@ -230,7 +230,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF7C3AED).withOpacity(0.2),
+                        color: const Color(0xFF7C3AED).withValues(alpha:0.2),
                         blurRadius: 30,
                         spreadRadius: 5,
                         offset: const Offset(0, 10),
@@ -373,7 +373,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
             ),
             child: const Icon(
               Icons.auto_awesome,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               size: 40,
             ),
           ),
@@ -449,7 +449,7 @@ class _TarotCardBackPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = Colors.white.withOpacity(0.3);
+      ..color = TossDesignSystem.white.withValues(alpha:0.3);
 
     final center = Offset(size.width / 2, size.height / 2);
     

@@ -110,7 +110,7 @@ class ScreenshotDetectionService {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => SocialShareBottomSheet(
         fortuneTitle: fortuneTitle,
         fortuneContent: fortuneContent,

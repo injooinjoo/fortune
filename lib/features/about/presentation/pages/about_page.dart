@@ -69,8 +69,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.3),
-          Colors.blue.withOpacity(0.1)],
+          TossDesignSystem.purple.withOpacity(0.3),
+          TossDesignSystem.primaryBlue.withOpacity(0.1)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(20),
@@ -82,38 +82,38 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             height: 100,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Colors.purple, Colors.blue],
+                colors: [TossDesignSystem.purple, TossDesignSystem.primaryBlue],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(25),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.purple.withOpacity(0.5),
+                  color: TossDesignSystem.purple.withOpacity(0.5),
                   blurRadius: 20,
                   offset: const Offset(0, 10))]),
             child: const Icon(
               Icons.auto_awesome,
               size: 50,
-              color: Colors.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+              color: TossDesignSystem.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
           const SizedBox(height: 24),
           const Text(
             'Fortune',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.white)).animate().fadeIn(delay: 200.ms),
+              color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
           const SizedBox(height: 8),
           Text(
             'AI가 읽어주는 나만의 운세',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.white.withOpacity(0.9))).animate().fadeIn(delay: 400.ms),
+              color: TossDesignSystem.white.withOpacity(0.9))).animate().fadeIn(delay: 400.ms),
           const SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.7),
+              color: TossDesignSystem.white.withOpacity(0.7),
               height: 1.5),
             textAlign: TextAlign.center).animate().fadeIn(delay: 600.ms)]));
   }
@@ -124,32 +124,32 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         'icon': Icons.psychology_rounded,
         'title': 'AI 기반 운세',
         'description': '최신 AI 기술로 생성되는\n개인 맞춤형 운세',
-        'color': Colors.purple},
+        'color': TossDesignSystem.purple},
       {
         'icon': Icons.calendar_today_rounded,
         'title': '다양한 운세',
         'description': '일일, 주간, 월간부터\n사주, 타로까지',
-        'color': Colors.blue},
+        'color': TossDesignSystem.tossBlue},
       {
         'icon': Icons.favorite_rounded,
         'title': '궁합 & 연애운',
         'description': '상대방과의 궁합부터\n연애 조언까지',
-        'color': Colors.pink},
+        'color': TossDesignSystem.errorRed},
       {
         'icon': Icons.trending_up_rounded,
         'title': '재테크 운세',
         'description': '투자, 부동산, 사업\n재물운 상세 분석',
-        'color': Colors.green},
+        'color': TossDesignSystem.successGreen},
       {
         'icon': Icons.sports_soccer_rounded,
         'title': '스포츠 운세',
         'description': '골프, 테니스, 운동\n오늘의 컨디션 체크',
-        'color': Colors.orange},
+        'color': TossDesignSystem.warningOrange},
       {
         'icon': Icons.offline_bolt_rounded,
         'title': '오프라인 지원',
         'description': '인터넷 없이도\n저장된 운세 확인',
-        'color': Colors.teal}];
+        'color': TossDesignSystem.successGreen}];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white)),
+            color: TossDesignSystem.white)),
         const SizedBox(height: 16),
         GridView.builder(
           shrinkWrap: true,
@@ -205,14 +205,14 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           Text(
             title,
             style: const TextStyle(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontWeight: FontWeight.bold,
               fontSize: 14)),
           const SizedBox(height: 4),
           Text(
             description,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: TossDesignSystem.white.withOpacity(0.7),
               fontSize: 11,
               height: 1.3),
             textAlign: TextAlign.center)]));
@@ -222,8 +222,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.indigo.withOpacity(0.2),
-          Colors.indigo.withOpacity(0.05)]),
+          TossDesignSystem.indigo.withOpacity(0.2),
+          TossDesignSystem.indigo.withOpacity(0.05)]),
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -233,7 +233,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: TossDesignSystem.white)),
           const SizedBox(height: 16),
           Text(
             'Fortune은 AI 기술과 전통적인 운세를 결합하여\n'
@@ -241,7 +241,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             '매일 아침 운세를 확인하며 하루를 시작하는 것이\n'
             '일상의 작은 행복이 되기를 바랍니다.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: TossDesignSystem.white.withOpacity(0.8),
               height: 1.6),
             textAlign: TextAlign.center),
           const SizedBox(height: 24),
@@ -263,12 +263,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white)),
+            color: TossDesignSystem.white)),
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.7)))]);
+            color: TossDesignSystem.white.withOpacity(0.7)))]);
   }
 
   Widget _buildVersionInfo() {
@@ -278,13 +278,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         Text(
           '버전 $_version',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.5),
+            color: TossDesignSystem.white.withOpacity(0.5),
             fontSize: 12)),
         const SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.5),
+            color: TossDesignSystem.white.withOpacity(0.5),
             fontSize: 12)),
         const SizedBox(height: 32)]);
   }

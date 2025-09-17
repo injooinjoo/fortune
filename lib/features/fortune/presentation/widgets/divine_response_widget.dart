@@ -3,6 +3,7 @@ import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 신의 응답을 표시하는 영적이고 신비로운 위젯
 class DivineResponseWidget extends StatefulWidget {
@@ -156,9 +157,9 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  Colors.white.withOpacity(0.8),
-                                  Colors.white.withOpacity(0.1),
-                                  Colors.transparent,
+                                  TossDesignSystem.white.withValues(alpha:0.8),
+                                  TossDesignSystem.white.withValues(alpha:0.1),
+                                  TossDesignSystem.white.withValues(alpha: 0.0),
                                 ],
                               ),
                             ),
@@ -173,10 +174,10 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                       height: 60,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.white54,
+                            color: TossDesignSystem.white.withValues(alpha: 0.54),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),
@@ -204,7 +205,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                               child: Icon(
                                 Icons.star,
                                 size: 12 + (index % 3) * 4,
-                                color: Colors.white.withOpacity(0.7),
+                                color: TossDesignSystem.white.withValues(alpha:0.7),
                               ),
                             );
                           },
@@ -221,9 +222,9 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
               ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
                   colors: [
-                    Colors.white,
+                    TossDesignSystem.white,
                     Color(0xFFFFD700),
-                    Colors.white,
+                    TossDesignSystem.white,
                   ],
                 ).createShader(bounds),
                 child: const Text(
@@ -231,7 +232,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                 ),
               ),
@@ -242,7 +243,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                 '당신의 간절한 소원이 하늘에 닿았습니다',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white.withOpacity(0.8),
+                  color: TossDesignSystem.white.withValues(alpha:0.8),
                   fontStyle: FontStyle.italic,
                 ),
                 textAlign: TextAlign.center,
@@ -258,10 +259,10 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: TossDesignSystem.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: TossDesignSystem.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -272,7 +273,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
             children: [
               Icon(
                 Icons.auto_awesome,
-                color: Colors.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withValues(alpha:0.9),
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -281,7 +282,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.9),
+                  color: TossDesignSystem.white.withValues(alpha:0.9),
                 ),
               ),
             ],
@@ -292,7 +293,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
             widget.wishText,
             style: const TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               height: 1.5,
             ),
           ),
@@ -315,7 +316,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: TossDesignSystem.white.withValues(alpha:0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -325,14 +326,14 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
             '$label: ',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withOpacity(0.7),
+              color: TossDesignSystem.white.withValues(alpha:0.7),
             ),
           ),
           Text(
             value,
             style: const TextStyle(
               fontSize: 12,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -352,12 +353,12 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withOpacity(0.15),
-                Colors.white.withOpacity(0.05),
+                TossDesignSystem.white.withValues(alpha:0.15),
+                TossDesignSystem.white.withValues(alpha:0.05),
               ],
             ),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: TossDesignSystem.white.withValues(alpha:0.3),
               width: 1,
             ),
           ),
@@ -375,9 +376,9 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            Colors.transparent,
-                            Colors.white.withOpacity(0.1),
-                            Colors.transparent,
+                            TossDesignSystem.white.withValues(alpha: 0.0),
+                            TossDesignSystem.white.withValues(alpha:0.1),
+                            TossDesignSystem.white.withValues(alpha: 0.0),
                           ],
                         ),
                       ),
@@ -400,8 +401,8 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  Colors.white.withOpacity(0.9),
-                                  Colors.white.withOpacity(0.3),
+                                  TossDesignSystem.white.withValues(alpha:0.9),
+                                  TossDesignSystem.white.withValues(alpha:0.3),
                                 ],
                               ),
                             ),
@@ -418,7 +419,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                               ),
                             ),
                           ),
@@ -431,7 +432,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                         widget.divineResponse,
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           height: 1.8,
                           letterSpacing: 0.5,
                         ),
@@ -455,13 +456,13 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFFFD700).withOpacity(0.2),
-            const Color(0xFFFFA500).withOpacity(0.1),
+            const Color(0xFFFFD700).withValues(alpha:0.2),
+            const Color(0xFFFFA500).withValues(alpha:0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFFD700).withOpacity(0.3),
+          color: const Color(0xFFFFD700).withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -493,7 +494,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
             _getLuckyMessage(),
             style: const TextStyle(
               fontSize: 14,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               height: 1.6,
             ),
             textAlign: TextAlign.center,

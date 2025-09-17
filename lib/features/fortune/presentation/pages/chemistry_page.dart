@@ -6,6 +6,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
+import '../../../../core/theme/toss_design_system.dart';
 
 class ChemistryPage extends ConsumerWidget {
   const ChemistryPage({super.key});
@@ -74,7 +75,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
         Text(
           '두 사람의 궁합을 확인해보세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -219,7 +220,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
               label: Text(trait),
               selected: isSelected,
               onSelected: (selected) => onTraitToggled(trait, selected),
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               checkmarkColor: theme.colorScheme.primary);
           }).toList(),
         ),
@@ -278,8 +279,8 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getScoreColor(overallScore).withOpacity(0.8),
-                  _getScoreColor(overallScore).withOpacity(0.6)],
+                  _getScoreColor(overallScore).withValues(alpha: 0.8),
+                  _getScoreColor(overallScore).withValues(alpha: 0.6)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(20),
@@ -292,27 +293,27 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                     Text(
                       person1Name,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold)),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-    child: Icon(Icons.favorite, color: Colors.white, size: 32)),
+    child: Icon(Icons.favorite, color: TossDesignSystem.white, size: 32)),
                     Text(
                       person2Name,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 24),
                 Text(
                   '종합 궁합 점수',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9)),
+                    color: TossDesignSystem.white.withValues(alpha: 0.9)),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   '$overallScore',
                   style: theme.textTheme.displayLarge?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 64,
                   ),
@@ -322,7 +323,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                 Text(
                   _getScoreDescription(overallScore),
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
@@ -449,7 +450,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.tips_and_updates, color: Colors.orange),
+                      const Icon(Icons.tips_and_updates, color: TossDesignSystem.warningOrange),
                       const SizedBox(width: 8),
                       Text(
                         '관계 발전을 위한 조언',
@@ -464,10 +465,10 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Colors.orange.withOpacity(0.3)),
+                          color: TossDesignSystem.warningOrange.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         recommendation.toString(),
@@ -511,15 +512,15 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.8),
-                            theme.colorScheme.secondary.withOpacity(0.8)],
+                            theme.colorScheme.primary.withValues(alpha: 0.8),
+                            theme.colorScheme.secondary.withValues(alpha: 0.8)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         activity.toString(),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontWeight: FontWeight.w600),
                       ),
                     )).toList(),
@@ -565,7 +566,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
               const SizedBox(height: 4),
               LinearProgressIndicator(
                 value: score / 100,
-                backgroundColor: Colors.grey.withOpacity(0.2),
+                backgroundColor: TossDesignSystem.gray500.withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 8,
               ),
@@ -584,10 +585,10 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.success;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.error;
   }
   
   String _getScoreDescription(int score) {

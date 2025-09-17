@@ -5,6 +5,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class ChemistryFortunePage extends ConsumerStatefulWidget {
   const ChemistryFortunePage({super.key});
@@ -74,29 +75,29 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             '두 사람의 정보를 입력하면 서로의 성격, 관계의 강점과 보완점을 분석해드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey)),
+              color: TossDesignSystem.gray600)),
           const SizedBox(height: 24),
           
           // Person 1 Section
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.pink.withOpacity(0.05),
+              color: TossDesignSystem.pinkPrimary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.pink.withOpacity(0.2)),
+              border: Border.all(color: TossDesignSystem.pinkPrimary.withValues(alpha: 0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.person, color: Colors.pink),
+                    Icon(Icons.person, color: TossDesignSystem.pinkPrimary),
                     SizedBox(width: 8),
                     Text(
                       '첫 번째 사람',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink))]),
+                        color: TossDesignSystem.pinkPrimary))]),
                 const SizedBox(height: 16),
                 
                 // Name input
@@ -124,7 +125,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                           ? '${_birthdate1!.year}년 ${_birthdate1!.month}월 ${_birthdate1!.day}일'
                           : '생년월일을 선택해주세요',
                       style: TextStyle(
-                        color: _birthdate1 != null ? null : Colors.grey)),
+                        color: _birthdate1 != null ? null : TossDesignSystem.gray600)),
                 const SizedBox(height: 12),
                 
                 // Gender selection
@@ -158,11 +159,11 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                 shape: BoxShape.circle),
               child: const Icon(
                 Icons.favorite,
-                color: Colors.orange,
+                color: TossDesignSystem.warningOrange,
                 size: 32)),
           
           const SizedBox(height: 20),
@@ -171,22 +172,22 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.withOpacity(0.2)),
+              border: Border.all(color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.person, color: Colors.blue),
+                    Icon(Icons.person, color: TossDesignSystem.tossBlue),
                     SizedBox(width: 8),
                     Text(
                       '두 번째 사람',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue))]),
+                        color: TossDesignSystem.tossBlue))]),
                 const SizedBox(height: 16),
                 
                 // Name input
@@ -214,7 +215,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                           ? '${_birthdate2!.year}년 ${_birthdate2!.month}월 ${_birthdate2!.day}일'
                           : '생년월일을 선택해주세요',
                       style: TextStyle(
-                        color: _birthdate2 != null ? null : Colors.grey)),
+                        color: _birthdate2 != null ? null : TossDesignSystem.gray600)),
                 const SizedBox(height: 12),
                 
                 // Gender selection
@@ -302,8 +303,8 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                _getScoreColor(score).withOpacity(0.1),
-                _getScoreColor(score).withOpacity(0.2)]),
+                _getScoreColor(score).withValues(alpha:0.1),
+                _getScoreColor(score).withValues(alpha:0.2)]),
             borderRadius: BorderRadius.circular(16),
           child: Column(
             children: [
@@ -311,7 +312,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                 '케미스트리 점수',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600])),
+                  color: TossDesignSystem.gray600)),
               const SizedBox(height: 8),
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: score.toDouble(),
@@ -339,15 +340,15 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: TossDesignSystem.gray200)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.auto_awesome, color: Colors.orange),
+                    Icon(Icons.auto_awesome, color: TossDesignSystem.warningOrange),
                     SizedBox(width: 8),
                     Text(
                       '종합 분석',
@@ -367,15 +368,15 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!)),
+              border: Border.all(color: TossDesignSystem.gray200)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.insights, color: Colors.blue),
+                    Icon(Icons.insights, color: TossDesignSystem.tossBlue),
                     SizedBox(width: 8),
                     Text(
                       '항목별 점수',
@@ -403,7 +404,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       const SizedBox(height: 4),
                       LinearProgressIndicator(
                         value: entry.value / 100,
-                        backgroundColor: Colors.grey[200],
+                        backgroundColor: TossDesignSystem.gray200,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           _getScoreColor(entry.value)])])),
           const SizedBox(height: 20)],
@@ -415,9 +416,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!)),
+                border: Border.all(color: TossDesignSystem.gray200)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -446,15 +447,15 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple[50]!,
-                  Colors.pink[50]!]),
+                  TossDesignSystem.purple.withValues(alpha: 0.1),
+                  TossDesignSystem.pinkPrimary.withValues(alpha: 0.1)]),
               borderRadius: BorderRadius.circular(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.tips_and_updates, color: Colors.purple),
+                    Icon(Icons.tips_and_updates, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '관계 발전을 위한 조언',
@@ -470,7 +471,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       const Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: Colors.purple),
+                        color: TossDesignSystem.purple),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -479,10 +480,10 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
   
   String _getScoreMessage(int score) {
@@ -531,12 +532,12 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
   
   Color _getSectionColor(String key) {
     final colors = {
-      'strengths': Colors.green,
-      'challenges': Colors.orange,
-      'communication': Colors.blue,
-      'emotional_connection': Colors.pink,
-      'growth_areas': Colors.purple,
+      'strengths': TossDesignSystem.successGreen,
+      'challenges': TossDesignSystem.warningOrange,
+      'communication': TossDesignSystem.tossBlue,
+      'emotional_connection': TossDesignSystem.pinkPrimary,
+      'growth_areas': TossDesignSystem.purple,
       'advice': null};
-    return colors[key] ?? Colors.grey;
+    return colors[key] ?? TossDesignSystem.gray500;
   }
 }

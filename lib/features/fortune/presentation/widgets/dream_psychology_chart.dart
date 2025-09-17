@@ -5,6 +5,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class DreamPsychologyChart extends StatefulWidget {
   final Map<String, double> psychologicalState;
@@ -71,7 +72,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       children: [
         Icon(
           Icons.psychology,
-          color: Colors.deepPurple,
+          color: TossDesignSystem.purple,
           size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
@@ -99,13 +100,13 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   tickCount: 5,
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withOpacity(0.2),
                     width: 1),
                   gridBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withOpacity(0.2),
                     width: 1),
                   radarBorderData: BorderSide(
-                    color: Colors.deepPurple.withOpacity(0.5),
+                    color: TossDesignSystem.purple.withOpacity(0.5),
                     width: 2),
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   titlePositionPercentageOffset: 0.15,
@@ -117,8 +118,8 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: Colors.deepPurple.withOpacity(0.3),
-                      borderColor: Colors.deepPurple,
+                      fillColor: TossDesignSystem.purple.withOpacity(0.3),
+                      borderColor: TossDesignSystem.purple,
                       borderWidth: 2,
                       entryRadius: 4,
                       dataEntries: _getRadarEntries()),
@@ -154,19 +155,19 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     
     if (consciousness > 0.6 && positivity > 0.6) {
       stateText = '의식적 긍정';
-      stateColor = Colors.green;
+      stateColor = TossDesignSystem.successGreen;
     } else if (consciousness > 0.6 && positivity < 0.4) {
       stateText = '의식적 우려';
-      stateColor = Colors.orange;
+      stateColor = TossDesignSystem.warningOrange;
     } else if (consciousness < 0.4 && positivity > 0.6) {
       stateText = '무의식적 희망';
-      stateColor = Colors.blue;
+      stateColor = TossDesignSystem.tossBlue;
     } else if (consciousness < 0.4 && positivity < 0.4) {
       stateText = '무의식적 불안';
-      stateColor = Colors.red;
+      stateColor = TossDesignSystem.errorRed;
     } else {
       stateText = '균형 상태';
-      stateColor = Colors.purple;
+      stateColor = TossDesignSystem.purple;
     }
     
     return Column(
@@ -196,13 +197,13 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
   Widget _buildBalanceIndicators() {
     return Column(
       children: [
-        _buildBalanceBar('의식', '무의식', Colors.blue, Colors.purple),
+        _buildBalanceBar('의식', '무의식', TossDesignSystem.tossBlue, TossDesignSystem.purple),
         const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('긍정', '부정', Colors.green, Colors.red),
+        _buildBalanceBar('긍정', '부정', TossDesignSystem.successGreen, TossDesignSystem.errorRed),
         const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('안정', '변화', Colors.teal, Colors.orange),
+        _buildBalanceBar('안정', '변화', TossDesignSystem.tossBlue, TossDesignSystem.warningOrange),
         const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('내향', '외향', Colors.indigo, Colors.amber),
+        _buildBalanceBar('내향', '외향', TossDesignSystem.purple, TossDesignSystem.warningYellow),
       ],
     );
   }
@@ -217,10 +218,10 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: TossDesignSystem.white.withOpacity(0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: TossDesignSystem.white.withOpacity(0.1),
           width: 1),
       ),
       child: Column(
@@ -260,7 +261,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             children: [
               Icon(
                 Icons.lightbulb_outline,
-                color: Colors.amber,
+                color: TossDesignSystem.warningYellow,
                 size: 20),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
@@ -325,7 +326,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             children: [
               Text(
                 '• ',
-                style: TextStyle(color: Colors.amber),
+                style: TextStyle(color: TossDesignSystem.warningYellow),
               ),
               Expanded(
                 child: Text(
@@ -378,7 +379,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withOpacity(0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

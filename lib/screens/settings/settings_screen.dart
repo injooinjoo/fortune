@@ -32,7 +32,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
@@ -62,7 +62,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -123,7 +123,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -177,7 +177,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -228,7 +228,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -274,10 +274,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.grey[300]!,
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
                     width: 1,
                   ),
                 ),
@@ -441,10 +441,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             color: TossDesignSystem.tossBlue,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
+                          child: Text(
                             'PRO',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold)),
                         ),
@@ -473,34 +473,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
   
   Color _getIconBackgroundColor(IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (icon == Icons.person_outline || icon == Icons.link_outlined) {
-      return Colors.blue.shade100;
+      return isDark ? TossDesignSystem.tossBlue.withValues(alpha: 0.3) : TossDesignSystem.tossBlue.withValues(alpha: 0.1);
     } else if (icon == Icons.phone_outlined || icon == Icons.notifications_outlined) {
-      return Colors.green.shade100;
+      return isDark ? TossDesignSystem.successGreen.withValues(alpha: 0.3) : TossDesignSystem.successGreen.withValues(alpha: 0.1);
     } else if (icon == Icons.history_outlined || icon == Icons.dark_mode_outlined) {
-      return Colors.purple.shade100;
+      return isDark ? TossDesignSystem.tossBlue.withValues(alpha: 0.2) : TossDesignSystem.gray200;
     } else if (icon == Icons.language_outlined || icon == Icons.local_offer_outlined) {
-      return Colors.orange.shade100;
+      return isDark ? TossDesignSystem.warningOrange.withValues(alpha: 0.3) : TossDesignSystem.warningOrange.withValues(alpha: 0.1);
     } else if (icon == Icons.card_membership_outlined) {
-      return Colors.red.shade100;
+      return isDark ? TossDesignSystem.errorRed.withValues(alpha: 0.3) : TossDesignSystem.errorRed.withValues(alpha: 0.1);
     } else {
-      return Colors.grey.shade100;
+      return isDark ? TossDesignSystem.grayDark300.withValues(alpha: 0.3) : TossDesignSystem.gray200;
     }
   }
   
   Color _getIconColor(IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (icon == Icons.person_outline || icon == Icons.link_outlined) {
-      return Colors.blue.shade700;
+      return isDark ? TossDesignSystem.tossBlue : TossDesignSystem.tossBlue;
     } else if (icon == Icons.phone_outlined || icon == Icons.notifications_outlined) {
-      return Colors.green.shade700;
+      return isDark ? TossDesignSystem.successGreen : TossDesignSystem.successGreen;
     } else if (icon == Icons.history_outlined || icon == Icons.dark_mode_outlined) {
-      return Colors.purple.shade700;
+      return isDark ? TossDesignSystem.gray600 : TossDesignSystem.gray700;
     } else if (icon == Icons.language_outlined || icon == Icons.local_offer_outlined) {
-      return Colors.orange.shade700;
+      return isDark ? TossDesignSystem.warningOrange : TossDesignSystem.warningOrange;
     } else if (icon == Icons.card_membership_outlined) {
-      return Colors.red.shade700;
+      return isDark ? TossDesignSystem.errorRed : TossDesignSystem.errorRed;
     } else {
-      return Colors.grey.shade700;
+      return isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600;
     }
   }
   

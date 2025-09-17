@@ -7,6 +7,7 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../services/saju_calculation_service.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 토스 스타일 사주팔자 페이지
 class SajuPage extends ConsumerStatefulWidget {
@@ -145,7 +146,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(TossTheme.radiusM),
                 ),
                 child: Icon(
@@ -212,10 +213,10 @@ class _SajuPageState extends ConsumerState<SajuPage> {
     return Container(
       padding: const EdgeInsets.all(TossTheme.spacingM),
       decoration: BoxDecoration(
-        color: elementColor.withOpacity(0.1),
+        color: elementColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
         border: Border.all(
-          color: elementColor.withOpacity(0.3),
+          color: elementColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -329,10 +330,10 @@ class _SajuPageState extends ConsumerState<SajuPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: _getTenGodColor(god).withOpacity(0.1),
+                        color: _getTenGodColor(god).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(TossTheme.radiusS),
                         border: Border.all(
-                          color: _getTenGodColor(god).withOpacity(0.3),
+                          color: _getTenGodColor(god).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -438,10 +439,10 @@ class _SajuPageState extends ConsumerState<SajuPage> {
             vertical: TossTheme.spacingS,
           ),
           decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withOpacity(0.1),
+            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(TossTheme.radiusM),
             border: Border.all(
-              color: TossTheme.primaryBlue.withOpacity(0.3),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -465,7 +466,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
           TossListCard(
             leading: Icon(
               Icons.stars,
-              color: Colors.amber,
+              color: TossDesignSystem.warningOrange,
               size: 24,
             ),
             title: Text('공망'),
@@ -475,7 +476,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
           TossListCard(
             leading: Icon(
               Icons.flash_on,
-              color: Colors.orange,
+              color: TossDesignSystem.warningOrange,
               size: 24,
             ),
             title: Text('역마살'),
@@ -485,7 +486,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
           TossListCard(
             leading: Icon(
               Icons.auto_awesome,
-              color: Colors.purple,
+              color: TossDesignSystem.purple,
               size: 24,
             ),
             title: Text('화개살'),

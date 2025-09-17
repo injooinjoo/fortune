@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
@@ -142,7 +143,7 @@ class FortuneContentCard extends StatelessWidget {
     final scoreBreakdown = fortune.scoreBreakdown!;
     final categories = [
       ('총운', '종합적인 운세', Icons.stars, TossDesignSystem.tossBlue),
-      ('애정운', '연애와 인간관계', Icons.favorite, Colors.pink),
+      ('애정운', '연애와 인간관계', Icons.favorite, TossDesignSystem.purple),
       ('금전운', '재물과 금전', Icons.attach_money, TossDesignSystem.warningOrange),
       ('직장운', '직장과 업무', Icons.work, TossDesignSystem.purple),
       ('건강운', '건강과 체력', Icons.favorite_border, TossDesignSystem.successGreen),

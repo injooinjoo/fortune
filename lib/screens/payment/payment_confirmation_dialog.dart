@@ -117,7 +117,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
           child: GlassContainer(
             width: MediaQuery.of(context).size.width * 0.9 > 400 
                 ? 400 
@@ -181,7 +181,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
-                                colors: [Colors.amber.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.6)]
+                                colors: [TossDesignSystem.warningOrange.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.6)]
                               )
                             ),
                             child: Center(

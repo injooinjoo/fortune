@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 관상 타입 정보를 담는 클래스
 class FaceTypeInfo {
@@ -320,7 +321,7 @@ class FaceStrengthsWidget extends StatelessWidget {
               child: Text(
                 '$rank',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontWeight: FontWeight.w700,
                 ),
               ),

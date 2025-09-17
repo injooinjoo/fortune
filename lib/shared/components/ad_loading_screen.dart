@@ -132,7 +132,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         height: 2,
                         child: LinearProgressIndicator(
                           value: _progressAnimation.value,
-                          backgroundColor: Colors.grey.withOpacity(0.2),
+                          backgroundColor: TossDesignSystem.gray400.withOpacity(0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             TossDesignSystem.gray600.withOpacity(0.5),
                           ),
@@ -155,11 +155,11 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     height: 50,
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.3),
+                      color: TossDesignSystem.gray400.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
-                      child: Text('광고 영역', style: TextStyle(color: Colors.grey)),
+                      child: Text('광고 영역', style: TextStyle(color: TossDesignSystem.gray500)),
                     ),
                   ),
                 ],

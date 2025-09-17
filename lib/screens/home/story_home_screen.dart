@@ -20,6 +20,7 @@ import 'fortune_story_viewer.dart';
 import 'fortune_completion_page.dart';
 import 'preview_screen.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
+import '../../core/theme/toss_design_system.dart';
 
 /// 새로운 스토리 중심 홈 화면
 class StoryHomeScreen extends ConsumerStatefulWidget {
@@ -1071,7 +1072,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     
     if (shouldShowLoading) {
       return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark50
+            : TossDesignSystem.white,
         body: EmotionalLoadingChecklist(
           isLoggedIn: _isReallyLoggedIn,
           isApiComplete: !isLoadingFortune && (todaysFortune != null || storySegments != null),

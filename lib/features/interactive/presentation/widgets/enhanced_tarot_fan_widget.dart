@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import '../../../../core/theme/toss_design_system.dart';
 
 class EnhancedTarotFanWidget extends StatefulWidget {
   final String fortuneType;
@@ -135,7 +136,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
     final screenSize = MediaQuery.of(context).size;
     
     return Container(
-      color: Colors.black,
+      color: TossDesignSystem.black,
       width: double.infinity,
       height: double.infinity,
       child: Stack(
@@ -150,7 +151,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                 Text(
                   widget.fortuneType,
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -158,7 +159,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                 Text(
                   'Choose your card',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withOpacity(0.7),
+                    color: TossDesignSystem.white.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -243,7 +244,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
             top: MediaQuery.of(context).padding.top + 10,
             left: 10,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: TossDesignSystem.white),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -267,7 +268,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
           ),
         ] : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: TossDesignSystem.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -300,9 +301,9 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
               bottom: 0,
               child: CustomPaint(
                 painter: CardPatternPainter(
-                  color: isCenter 
-                      ? Colors.white.withOpacity(0.3)
-                      : Colors.white.withOpacity(0.1),
+                  color: isCenter
+                      ? TossDesignSystem.white.withOpacity(0.3)
+                      : TossDesignSystem.white.withOpacity(0.1),
                   isAnimated: isCenter),
               ),
             ),
@@ -312,9 +313,9 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isCenter 
-                      ? Colors.white.withOpacity(0.5)
-                      : Colors.white.withOpacity(0.2),
+                  color: isCenter
+                      ? TossDesignSystem.white.withOpacity(0.5)
+                      : TossDesignSystem.white.withOpacity(0.2),
                   width: isCenter ? 3 : 1),
               ),
             ),
@@ -324,7 +325,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
               child: Icon(
                 Icons.auto_awesome,
                 size: 40 * scale,
-                color: Colors.white.withValues(alpha: isCenter ? 0.9 : 0.5),
+                color: TossDesignSystem.white.withValues(alpha: isCenter ? 0.9 : 0.5),
               ),
             ) : const SizedBox(),
           ],

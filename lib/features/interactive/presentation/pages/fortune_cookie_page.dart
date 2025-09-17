@@ -63,7 +63,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   String _chineseProverb = '';
   String _chineseProverbMeaning = '';
   List<int> _luckyNumbers = [];
-  Color _luckyColor = Colors.blue;
+  Color _luckyColor = TossDesignSystem.tossBlue;
   String _luckyColorName = '';
   String _advice = '';
 
@@ -450,8 +450,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                   borderRadius: BorderRadius.circular(80),
                                   gradient: LinearGradient(
                                     colors: [
-                                      Colors.white.withOpacity(0.2),
-                                      Colors.transparent,
+                                      TossDesignSystem.white.withOpacity(0.2),
+                                      TossDesignSystem.transparent,
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.center,
@@ -482,7 +482,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                   fontSize: 60,
                                   shadows: [
                                     Shadow(
-                                      color: Colors.black.withOpacity(0.2),
+                                      color: TossDesignSystem.black.withOpacity(0.2),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
@@ -775,7 +775,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           text: '새로운 쿠키 열기',
           onPressed: _resetCookie,
           type: FortuneButtonType.primary,
-          icon: const Icon(Icons.refresh, size: 20, color: Colors.white),
+          icon: const Icon(Icons.refresh, size: 20, color: TossDesignSystem.white),
         ),
         const SizedBox(height: 12),
         FortuneButton(
@@ -991,27 +991,27 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
 
   Color _generateLuckyColor() {
     final colors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.yellow,
-      Colors.purple,
-      Colors.orange,
-      Colors.pink,
-      Colors.teal,
+      TossDesignSystem.errorRed,
+      TossDesignSystem.tossBlue,
+      TossDesignSystem.successGreen,
+      TossDesignSystem.warningYellow,
+      TossDesignSystem.purple,
+      TossDesignSystem.orange,
+      TossDesignSystem.pink,
+      TossDesignSystem.teal,
     ];
     return colors[math.Random().nextInt(colors.length)];
   }
 
   String _getLuckyColorName(Color color) {
-    if (color == Colors.red) return '빨강';
-    if (color == Colors.blue) return '파랑';
-    if (color == Colors.green) return '초록';
-    if (color == Colors.yellow) return '노랑';
-    if (color == Colors.purple) return '보라';
-    if (color == Colors.orange) return '주황';
-    if (color == Colors.pink) return '분홍';
-    if (color == Colors.teal) return '청록';
+    if (color == TossDesignSystem.errorRed) return '빨강';
+    if (color == TossDesignSystem.tossBlue) return '파랑';
+    if (color == TossDesignSystem.successGreen) return '초록';
+    if (color == TossDesignSystem.warningYellow) return '노랑';
+    if (color == TossDesignSystem.purple) return '보라';
+    if (color == TossDesignSystem.orange) return '주황';
+    if (color == TossDesignSystem.pink) return '분홍';
+    if (color == TossDesignSystem.teal) return '청록';
     return '파랑';
   }
 
@@ -1092,7 +1092,7 @@ class ImprovedCrackPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.3 * progress)
+      ..color = TossDesignSystem.black.withOpacity(0.3 * progress)
       ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke
       ..isAntiAlias = true // 안티앨리어싱 적용

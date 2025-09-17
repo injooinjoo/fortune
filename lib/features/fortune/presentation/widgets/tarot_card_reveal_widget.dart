@@ -8,6 +8,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class TarotCardRevealWidget extends StatefulWidget {
   final int cardIndex;
@@ -138,10 +139,10 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
           -random.nextDouble() * 150 - 50),
         size: random.nextDouble() * 4 + 2,
         color: [
-          Colors.white,
+          TossDesignSystem.white,
           FortuneColors.spiritualPrimary,
           FortuneColors.spiritualPrimary,
-          Colors.purple.withOpacity(0.3)][random.nextInt(4)],
+          TossDesignSystem.purple.withValues(alpha: 0.3)][random.nextInt(4)],
         lifespan: random.nextDouble() * 0.5 + 0.5));
     }
   }
@@ -267,7 +268,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             boxShadow: [
               if (widget.showGlow)
                 BoxShadow(
-                  color: FortuneColors.spiritualPrimary.withOpacity(0.5 * _glowAnimation.value),
+                  color: FortuneColors.spiritualPrimary.withValues(alpha: 0.5 * _glowAnimation.value),
                   blurRadius: 30 + 10 * _glowAnimation.value,
                   spreadRadius: 5)]),
           child: ClipRRect(
@@ -295,7 +296,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                             angle: value,
                             child: CustomPaint(
                               painter: _MandalaPainter(
-                                color: Colors.white.withOpacity(0.1)),
+                                color: TossDesignSystem.white.withValues(alpha: 0.1)),
                               size: const Size(140, 140),
                             ),
                           );
@@ -313,16 +314,16 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.white.withOpacity(0.2),
-                              Colors.transparent]),
+                              TossDesignSystem.white.withValues(alpha: 0.2),
+                              TossDesignSystem.transparent]),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+                            color: TossDesignSystem.white.withValues(alpha: 0.3),
                             width: 2)),
                         child: Center(
                           child: Icon(
                             Icons.auto_awesome,
                             size: 40,
-                            color: Colors.white.withOpacity(0.9)),
+                            color: TossDesignSystem.white.withValues(alpha: 0.9)),
                         ),
                       ),
                     ],
@@ -347,7 +348,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            color: TossDesignSystem.black.withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: FortuneColors.spiritualPrimary.withOpacity(0.3),
@@ -358,12 +359,12 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                               Icon(
                                 Icons.touch_app,
                                 size: 16,
-                                color: Colors.white.withOpacity(0.8)),
+                                color: TossDesignSystem.white.withValues(alpha: 0.8)),
                               const SizedBox(width: AppSpacing.spacing2),
                               Text(
                                 '카드를 터치하세요',
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
+                                  color: TossDesignSystem.white.withValues(alpha: 0.8),
                                   fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
                                   fontWeight: FontWeight.w500)),
                             ],
@@ -380,14 +381,14 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                       borderRadius: AppDimensions.borderRadiusMedium,
                       border: Border.all(
                         width: 4 * 0.5,
-                        color: Colors.transparent),
+                        color: TossDesignSystem.transparent),
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withOpacity(0.3),
+                          TossDesignSystem.white.withValues(alpha: 0.3),
                           FortuneColors.spiritualPrimary.withOpacity(0.2),
-                          Colors.white.withOpacity(0.3),
+                          TossDesignSystem.white.withValues(alpha: 0.3),
                         ],
                       ),
                     ),
@@ -416,7 +417,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               fit: BoxFit.cover),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: TossDesignSystem.black.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 5)),
             ],
@@ -438,8 +439,8 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.7),
+                  TossDesignSystem.transparent,
+                  TossDesignSystem.black.withValues(alpha: 0.7),
                 ],
               ),
             ),
@@ -473,7 +474,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             decoration: BoxDecoration(
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: TossDesignSystem.white.withValues(alpha: 0.3),
                 width: 2),
             ),
           ),
@@ -532,7 +533,7 @@ class _CardBackPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = TossDesignSystem.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -562,7 +563,7 @@ class _CardBackPatternPainter extends CustomPainter {
 
     // Draw corner decorations
     final cornerPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = TossDesignSystem.white.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     final cornerSize = 20.0;
@@ -619,7 +620,7 @@ class _SparklePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(opacity * 0.3)
+      ..color = TossDesignSystem.white.withValues(alpha: opacity * 0.3)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);
@@ -654,12 +655,12 @@ class _EnhancedCardBackPatternPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Outer hexagon
-    paint.color = Colors.white.withOpacity(0.1 + glowAnimation * 0.05);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.1 + glowAnimation * 0.05);
     _drawHexagon(canvas, centerX, centerY, 60, paint);
     
     // Inner circles
     for (int i = 1; i <= 3; i++) {
-      paint.color = Colors.white.withOpacity(0.05 + glowAnimation * 0.02);
+      paint.color = TossDesignSystem.white.withValues(alpha: 0.05 + glowAnimation * 0.02);
       canvas.drawCircle(Offset(centerX, centerY), i * 20.0, paint);
     }
 
@@ -695,7 +696,7 @@ class _EnhancedCardBackPatternPainter extends CustomPainter {
   }
 
   void _drawCornerOrnaments(Canvas canvas, Size size, Paint paint) {
-    paint.color = Colors.white.withOpacity(0.15 + glowAnimation * 0.05);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.15 + glowAnimation * 0.05);
     final cornerSize = 15.0;
     
     // Top left
@@ -801,7 +802,7 @@ class _AuraPainter extends CustomPainter {
           colors: [
             color.withOpacity(opacity),
             color.withOpacity(opacity * 0.5),
-            Colors.transparent],
+            TossDesignSystem.transparent],
           stops: const [0.0, 0.6, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius))
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, 20 + i * 10.0);
       
@@ -841,7 +842,7 @@ class _ParticlePainter extends CustomPainter {
       
       // Inner bright spot
       final innerPaint = Paint()
-        ..color = Colors.white.withOpacity(opacity);
+        ..color = TossDesignSystem.white.withValues(alpha: opacity);
       canvas.drawCircle(center + position, particle.size * 0.3, innerPaint);
     }
   }
@@ -922,7 +923,7 @@ class _FloatingParticlesPainter extends CustomPainter {
       final y = (particle.y - animation * particle.speed) % 1.0;
       final opacity = math.sin(animation * 2 * math.pi + particle.x * 4) * 0.5 + 0.5;
       
-      paint.color = Colors.white.withOpacity(particle.opacity * opacity);
+      paint.color = TossDesignSystem.white.withValues(alpha: particle.opacity * opacity);
       
       canvas.drawCircle(
         Offset(particle.x * size.width, y * size.height),

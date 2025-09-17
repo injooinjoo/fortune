@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:fortune/core/theme/fortune_colors.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class MysticalBackground extends StatefulWidget {
   final Widget child;
@@ -113,9 +113,9 @@ class _MysticalBackgroundState extends State<MysticalBackground>
   
   Color _getStarColor() {
     final colors = [
-      Colors.white,
-      Colors.blue.withOpacity(0.9),
-      Colors.purple.withOpacity(0.9),
+      TossDesignSystem.white,
+      TossDesignSystem.primaryBlue.withValues(alpha:0.9),
+      TossDesignSystem.purple.withValues(alpha:0.9),
       TossDesignSystem.white]; // Warm white
     return colors[_random.nextInt(colors.length)];
   }
@@ -168,7 +168,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               colors: [
                 FortuneColors.tarotDarkest, // Deep purple
                 FortuneColors.tarotDarkest, // Darker purple
-                Colors.black],
+                TossDesignSystem.black],
               stops: const [0.0, 0.7, 1.0]))),
         
         // Animated nebulae
@@ -212,8 +212,8 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               center: Alignment.center,
               radius: 1.5,
               colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.3)]))),
+                TossDesignSystem.transparent,
+                TossDesignSystem.black.withValues(alpha:0.3)]))),
         
         // Child widget
         widget.child,
@@ -240,7 +240,7 @@ class _StarFieldPainter extends CustomPainter {
       
       // Draw star glow
       final glowPaint = Paint()
-        ..color = star.color.withOpacity(star.opacity * opacity * 0.3)
+        ..color = star.color.withValues(alpha:star.opacity * opacity * 0.3)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, star.size * 2)
         ..style = PaintingStyle.fill;
       
@@ -248,14 +248,14 @@ class _StarFieldPainter extends CustomPainter {
       
       // Draw star core
       final corePaint = Paint()
-        ..color = star.color.withOpacity(star.opacity * opacity * 0.9)
+        ..color = star.color.withValues(alpha:star.opacity * opacity * 0.9)
         ..style = PaintingStyle.fill;
       
       canvas.drawCircle(center, star.size, corePaint);
       
       // Draw bright center
       final centerPaint = Paint()
-        ..color = Colors.white.withOpacity(star.opacity * opacity);
+        ..color = TossDesignSystem.white.withValues(alpha:star.opacity * opacity);
       canvas.drawCircle(center, star.size * 0.3, centerPaint);
     }
   }
@@ -283,9 +283,9 @@ class _NebulaePainter extends CustomPainter {
         purpleCenter,
         size.width * 0.4,
         [
-          FortuneColors.mystical.withOpacity(0.3),
-          FortuneColors.mystical.withOpacity(0.1),
-          Colors.transparent],
+          FortuneColors.mystical.withValues(alpha:0.3),
+          FortuneColors.mystical.withValues(alpha:0.1),
+          TossDesignSystem.transparent],
         [0.0, 0.6, 1.0],
         TileMode.clamp,
         Matrix4.rotationZ(animation * 0.5).storage
@@ -305,9 +305,9 @@ class _NebulaePainter extends CustomPainter {
         indigoCenter,
         size.width * 0.3,
         [
-          FortuneColors.mystical.withOpacity(0.25),
-          FortuneColors.mystical.withOpacity(0.1),
-          Colors.transparent],
+          FortuneColors.mystical.withValues(alpha:0.25),
+          FortuneColors.mystical.withValues(alpha:0.1),
+          TossDesignSystem.transparent],
         [0.0, 0.7, 1.0],
         TileMode.clamp,
         Matrix4.rotationZ(-animation * 0.3).storage
@@ -346,9 +346,9 @@ class _ShootingStarPainter extends CustomPainter {
           currentPoint,
           Offset.lerp(startPoint, currentPoint, 0.7)!,
           [
-            Colors.white.withOpacity(fadeProgress * 0.8),
-            FortuneColors.mystical.withOpacity(fadeProgress * 0.4),
-            Colors.transparent],
+            TossDesignSystem.white.withValues(alpha:fadeProgress * 0.8),
+            FortuneColors.mystical.withValues(alpha:fadeProgress * 0.4),
+            TossDesignSystem.transparent],
           [0.0, 0.5, 1.0])
         ..strokeWidth = 2
         ..strokeCap = StrokeCap.round
@@ -362,13 +362,13 @@ class _ShootingStarPainter extends CustomPainter {
       
       // Draw star head with glow
       final headGlowPaint = Paint()
-        ..color = Colors.white.withOpacity(fadeProgress * 0.5)
+        ..color = TossDesignSystem.white.withValues(alpha:fadeProgress * 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
       
       canvas.drawCircle(currentPoint, 4, headGlowPaint);
       
       final headPaint = Paint()
-        ..color = Colors.white.withOpacity(fadeProgress);
+        ..color = TossDesignSystem.white.withValues(alpha:fadeProgress);
       
       canvas.drawCircle(currentPoint, 2, headPaint);
     }

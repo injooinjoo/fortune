@@ -1,10 +1,10 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../constants/fortune_constants.dart';
 import 'profile_field_edit_dialog.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 class MbtiEditDialog extends StatefulWidget {
   final String? initialMbti;
@@ -65,7 +65,9 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
           Text(
             'MBTI 성격 유형을 선택해주세요',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: TossDesignSystem.gray600,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.gray300
+                  : TossDesignSystem.gray600,
             ),
           ),
           SizedBox(height: AppSpacing.spacing2),
@@ -116,7 +118,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
     final label = customLabel ?? value ?? '';
     
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -131,12 +133,14 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
               color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
               width: isSelected ? 2 : 1),
             borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.1) : Colors.transparent),
+            color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.1) : TossDesignSystem.white.withValues(alpha: 0.0)),
           child: Center(
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: isSelected ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                color: isSelected
+                    ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+                    : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.gray300 : TossDesignSystem.gray900),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

@@ -1,6 +1,5 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/entities/fortune.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class DailyFortuneSummaryCard extends StatelessWidget {
@@ -48,13 +46,18 @@ class DailyFortuneSummaryCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              TossDesignSystem.grayDark900,
-              TossDesignSystem.grayDark900.withOpacity(0.98)]),
+              Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900
+                  : TossDesignSystem.gray50,
+              Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900.withValues(alpha: 0.98)
+                  : TossDesignSystem.gray50.withValues(alpha: 0.98)
+            ]),
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-          border: Border.all(color: context.fortuneTheme.dividerColor.withOpacity(0.5)),
+          border: Border.all(color: context.fortuneTheme.dividerColor.withValues(alpha:0.5)),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withOpacity(0.06),
+              color: Theme.of(context).shadowColor.withValues(alpha:0.06),
               blurRadius: 20,
               offset: const Offset(0, 4))]),
         child: Column(
@@ -88,10 +91,10 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                       Container(
                         height: AppSpacing.spacing9,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                         child: Material(
-                          color: Colors.transparent,
+                          color: TossDesignSystem.transparent,
                           child: InkWell(
                             onTap: isRefreshing ? null : onRefresh,
                             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
@@ -123,7 +126,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3, 
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha:0.1),
                         borderRadius: AppDimensions.borderRadiusMedium),
                       child: Text(
                         '${now.day}일 (${_getWeekdayKorean(now.weekday)})',
@@ -176,9 +179,9 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                 horizontal: AppSpacing.spacing3,
                 vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-                color: scoreColor.withOpacity(0.1),
+                color: scoreColor.withValues(alpha:0.1),
                 borderRadius: AppDimensions.borderRadiusLarge,
-                border: Border.all(color: scoreColor.withOpacity(0.3)),
+                border: Border.all(color: scoreColor.withValues(alpha:0.3)),
               child: Row(
                 children: [
                   Icon(
@@ -197,7 +200,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                 horizontal: AppSpacing.spacing3,
                 vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha:0.05),
                 borderRadius: AppDimensions.borderRadiusLarge),
               child: Text(
                 fortune!.mood ?? '평온함',
@@ -225,7 +228,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
               horizontal: AppSpacing.spacing2,
               vertical: 4),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha:0.1),
               borderRadius: AppDimensions.borderRadiusMedium),
             child: Text(
               '#$keyword',
@@ -238,7 +241,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: context.fortuneTheme.dividerColor.withOpacity(0.3),
+        color: context.fortuneTheme.dividerColor.withValues(alpha:0.3),
         borderRadius: AppDimensions.borderRadiusMedium),
       child: Row(
         children: [

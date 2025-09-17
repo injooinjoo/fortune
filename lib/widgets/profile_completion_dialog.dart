@@ -35,7 +35,7 @@ class ProfileCompletionDialog extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -124,7 +124,7 @@ class ProfileCompletionDialog extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TossDesignSystem.tossBlue,
-                  foregroundColor: Colors.white,
+                  foregroundColor: TossDesignSystem.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -135,7 +135,7 @@ class ProfileCompletionDialog extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                 ),
               ),

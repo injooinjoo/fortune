@@ -88,7 +88,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
               style: Theme.of(context).textTheme.bodyMedium)]),
         Icon(
           Icons.access_time,
-          color: Colors.white54,
+          color: TossDesignSystem.white.withValues(alpha: 0.54),
           size: 32)]);
   }
 
@@ -116,7 +116,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         verticalInterval: 2,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Colors.white.withOpacity(0.1),
+            color: TossDesignSystem.white.withOpacity(0.1),
             strokeWidth: 1
           );
 },
@@ -124,12 +124,12 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           // 현재 시간 강조
           if (value.toInt() == widget.currentTime.hour) {
             return FlLine(
-              color: Colors.purple.withOpacity(0.5),
+              color: TossDesignSystem.purple.withOpacity(0.5),
               strokeWidth: 2,
               dashArray: [5, 5]);
 }
           return FlLine(
-            color: Colors.white.withOpacity(0.1),
+            color: TossDesignSystem.white.withOpacity(0.1),
             strokeWidth: 1
           );
 }),
@@ -169,7 +169,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       borderData: FlBorderData(
         show: true,
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: TossDesignSystem.white.withOpacity(0.2),
           width: 1)),
       minX: 0,
       maxX: 23,
@@ -185,8 +185,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           isCurved: true,
           gradient: LinearGradient(
             colors: [
-              Colors.purple.withOpacity(0.8),
-              Colors.blue.withOpacity(0.8)]),
+              TossDesignSystem.purple.withOpacity(0.8),
+              TossDesignSystem.tossBlue.withOpacity(0.8)]),
           barWidth: 3,
           isStrokeCapRound: true,
           dotData: FlDotData(
@@ -195,17 +195,17 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
               final isCurrentHour = index == widget.currentTime.hour;
               return FlDotCirclePainter(
                 radius: isCurrentHour ? 6 : 4,
-                color: isCurrentHour ? Colors.purple : Colors.white,
+                color: isCurrentHour ? TossDesignSystem.purple : TossDesignSystem.white,
                 strokeWidth: 2,
-                strokeColor: isCurrentHour ? Colors.white : Colors.purple
+                strokeColor: isCurrentHour ? TossDesignSystem.white : TossDesignSystem.purple
               );
 }),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withOpacity(0.2),
-                Colors.blue.withOpacity(0.1)],
+                TossDesignSystem.purple.withOpacity(0.2),
+                TossDesignSystem.tossBlue.withOpacity(0.1)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter)))],
       lineTouchData: LineTouchData(
@@ -242,10 +242,10 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       spacing: 16,
       runSpacing: 8,
       children: [
-        _buildLegendItem('좋음', Colors.green),
-        _buildLegendItem('보통', Colors.orange),
-        _buildLegendItem('주의', Colors.red),
-        _buildLegendItem('현재 시간', Colors.purple)]
+        _buildLegendItem('좋음', TossDesignSystem.successGreen),
+        _buildLegendItem('보통', TossDesignSystem.warningOrange),
+        _buildLegendItem('주의', TossDesignSystem.errorRed),
+        _buildLegendItem('현재 시간', TossDesignSystem.purple)]
     );
   }
 
@@ -394,9 +394,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
   }
 
   Color _getFortuneColor(double fortune) {
-    if (fortune >= 0.7) return Colors.green;
-    if (fortune >= 0.5) return Colors.orange;
-    return Colors.red;
+    if (fortune >= 0.7) return TossDesignSystem.successGreen;
+    if (fortune >= 0.5) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getFortuneDescription(double fortune, String element) {

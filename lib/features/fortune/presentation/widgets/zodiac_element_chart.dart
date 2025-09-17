@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class ZodiacElementChart extends StatefulWidget {
   final String selectedZodiac;
@@ -30,7 +31,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
   // 오행 데이터
   final Map<String, ElementData> _elementData = {
     '목(木)': ElementData(
-      color: Colors.green,
+      color: TossDesignSystem.successGreen,
       icon: Icons.park,
       zodiacs: ['호랑이', '토끼'],
       description: '생명력과 성장을 상징하며, 인내심과 유연성을 나타냅니다.',
@@ -38,7 +39,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '봄',
       direction: '동쪽'),
     '화(火)': ElementData(
-      color: Colors.red,
+      color: TossDesignSystem.errorRed,
       icon: Icons.local_fire_department,
       zodiacs: ['뱀', '말'],
       description: '열정과 활력을 상징하며, 리더십과 표현력을 나타냅니다.',
@@ -46,7 +47,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '여름',
       direction: '남쪽'),
     '토(土)': ElementData(
-      color: Colors.amber,
+      color: TossDesignSystem.warningOrange,
       icon: Icons.landscape,
       zodiacs: ['소', '용', '양', '개'],
       description: '안정과 신뢰를 상징하며, 실용성과 책임감을 나타냅니다.',
@@ -54,7 +55,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '환절기',
       direction: '중앙'),
     '금(金)': ElementData(
-      color: Colors.grey,
+      color: TossDesignSystem.gray400,
       icon: Icons.diamond,
       zodiacs: ['원숭이', '닭'],
       description: '정확성과 결단력을 상징하며, 정의감과 규율을 나타냅니다.',
@@ -62,7 +63,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '가을',
       direction: '서쪽'),
     '수(水)': ElementData(
-      color: Colors.blue,
+      color: TossDesignSystem.primaryBlue,
       icon: Icons.water_drop,
       zodiacs: ['쥐', '돼지'],
       description: '지혜와 유동성을 상징하며, 적응력과 통찰력을 나타냅니다.',
@@ -140,7 +141,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       children: [
         Icon(
           Icons.category,
-          color: Colors.amber,
+          color: TossDesignSystem.warningOrange,
           size: 24,
         ),
         const SizedBox(width: 8),
@@ -149,7 +150,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: TossDesignSystem.white,
           ),
         ),
       ],
@@ -228,17 +229,17 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    data.color.withOpacity(0.8),
-                    data.color.withOpacity(0.4),
+                    data.color.withValues(alpha:0.8),
+                    data.color.withValues(alpha:0.4),
                   ],
                 ),
                 border: Border.all(
-                  color: isSelected ? Colors.white : data.color,
+                  color: isSelected ? TossDesignSystem.white : data.color,
                   width: isSelected ? 3 : 2,
                 ),
                 boxShadow: isSelected ? [
                   BoxShadow(
-                    color: data.color.withOpacity(0.6),
+                    color: data.color.withValues(alpha:0.6),
                     blurRadius: 20,
                     spreadRadius: 5,
                   )
@@ -249,7 +250,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 children: [
                   Icon(
                     data.icon,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: isSelected ? 28 : 24,
                   ),
                   const SizedBox(height: 4),
@@ -258,7 +259,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                     style: TextStyle(
                       fontSize: isSelected ? 14 : 12,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                 ],
@@ -284,12 +285,12 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            data.color.withOpacity(0.3),
-            data.color.withOpacity(0.1),
+            data.color.withValues(alpha:0.3),
+            data.color.withValues(alpha:0.1),
           ],
         ),
         border: Border.all(
-          color: data.color.withOpacity(0.5),
+          color: data.color.withValues(alpha:0.5),
           width: 2,
         ),
       ),
@@ -301,7 +302,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: TossDesignSystem.white)),
           const SizedBox(height: 4),
           Text(
             _selectedElement!,
@@ -314,14 +315,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: data.color.withOpacity(0.3),
+                color: data.color.withValues(alpha:0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
                 '나의 오행',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                 ),
               ),
             ),
@@ -361,7 +362,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                       '${data.season} · ${data.direction}',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: TossDesignSystem.white.withValues(alpha:0.8),
                       ),
                     ),
                   ],
@@ -374,7 +375,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             data.description,
             style: const TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               height: 1.5,
             ),
           ),
@@ -386,10 +387,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: data.color.withOpacity(0.2),
+                  color: data.color.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: data.color.withOpacity(0.4),
+                    color: data.color.withValues(alpha:0.4),
                     width: 1,
                   ),
                 ),
@@ -397,7 +398,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   trait,
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                 ),
               );
@@ -407,10 +408,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: TossDesignSystem.white.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: TossDesignSystem.white.withValues(alpha:0.1),
                 width: 1,
               ),
             ),
@@ -426,7 +427,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   '띠: ',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: TossDesignSystem.white.withValues(alpha:0.8),
                   ),
                 ),
                 ...data.zodiacs.map((zodiac) {
@@ -438,7 +439,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: isCurrentZodiac ? FontWeight.bold : FontWeight.normal,
-                        color: isCurrentZodiac ? data.color : Colors.white,
+                        color: isCurrentZodiac ? data.color : TossDesignSystem.white,
                       ),
                     ),
                   );
@@ -461,7 +462,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             children: [
               Icon(
                 Icons.sync_alt,
-                color: Colors.amber,
+                color: TossDesignSystem.warningOrange,
                 size: 24,
               ),
               const SizedBox(width: 8),
@@ -470,7 +471,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                 ),
               ),
             ],
@@ -479,14 +480,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           _buildRelationshipRow(
             '상생',
             Icons.favorite,
-            Colors.green,
+            TossDesignSystem.successGreen,
             _getGeneratingRelation(),
           ),
           const SizedBox(height: 12),
           _buildRelationshipRow(
             '상극',
             Icons.flash_on,
-            Colors.red,
+            TossDesignSystem.errorRed,
             _getOvercomingRelation(),
           ),
         ],
@@ -500,7 +501,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha:0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -522,7 +523,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 relation,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
+                  color: TossDesignSystem.white.withValues(alpha:0.8),
                 ),
               ),
             ],
@@ -611,7 +612,7 @@ class _ElementRelationshipPainter extends CustomPainter {
 
   void _drawGeneratingCycle(Canvas canvas, Map<String, Offset> positions, List<String> elements) {
     final paint = Paint()
-      ..color = Colors.green.withOpacity(0.3 * animationValue)
+      ..color = TossDesignSystem.successGreen.withValues(alpha:0.3 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     
@@ -632,7 +633,7 @@ class _ElementRelationshipPainter extends CustomPainter {
 
   void _drawOvercomingCycle(Canvas canvas, Map<String, Offset> positions) {
     final paint = Paint()
-      ..color = Colors.red.withOpacity(0.2 * animationValue)
+      ..color = TossDesignSystem.errorRed.withValues(alpha:0.2 * animationValue)
       ..strokeWidth = 1.5
      
    

@@ -45,7 +45,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: TossDesignSystem.white.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -57,7 +57,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: TossDesignSystem.white.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -72,12 +72,12 @@ class DailyTokenBanner extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: TossDesignSystem.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.stars,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 24,
                       ),
                     ),
@@ -93,7 +93,7 @@ class DailyTokenBanner extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -101,7 +101,7 @@ class DailyTokenBanner extends ConsumerWidget {
                             '매일 접속하여 토큰을 받아보세요!',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.8),
+                              color: TossDesignSystem.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -142,7 +142,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
           // Handle claim logic
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: TossDesignSystem.white,
           foregroundColor: TossDesignSystem.gray600,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

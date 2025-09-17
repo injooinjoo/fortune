@@ -328,13 +328,13 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.purple, Colors.pink, Colors.orange],
+                          colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         Icons.camera_alt,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 20,
                       ),
                     ),
@@ -630,7 +630,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? TossDesignSystem.purple.withOpacity(0.1)
+                        ? TossDesignSystem.purple.withValues(alpha: 0.1)
                         : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -696,7 +696,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                         height: 48,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? TossDesignSystem.purple.withOpacity(0.1)
+                              ? TossDesignSystem.purple.withValues(alpha: 0.1)
                               : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -739,7 +739,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
                           ),
                           child: Icon(
                             Icons.check,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             size: 16,
                           ),
                         ),

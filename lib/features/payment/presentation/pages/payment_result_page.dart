@@ -87,7 +87,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: TossDesignSystem.successGreen.withOpacity(0.1),
+          color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -104,7 +104,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: TossDesignSystem.errorRed.withOpacity(0.1),
+          color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -153,10 +153,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.tossBlue.withOpacity(0.1),
+        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withOpacity(0.3),
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -244,7 +244,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           CustomButton(
             onPressed: _navigateToFortuneList,
             text: '운세 보러가기',
-            backgroundColor: Colors.transparent,
+            backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
             textColor: TossDesignSystem.tossBlue,
           ),
         ],
@@ -263,7 +263,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           CustomButton(
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
-            backgroundColor: Colors.transparent,
+            backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
             textColor: TossDesignSystem.gray900,
           ),
         ],
@@ -294,7 +294,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossDesignSystem.infoBlue.withOpacity(0.1),
+        color: TossDesignSystem.infoBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/utils/haptic_utils.dart';
 import '../../../../../services/speech_recognition_service.dart';
 import '../../providers/dream_analysis_provider.dart';
@@ -167,13 +168,13 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         Text(
           '꿈의 내용을 자세히 기록해주세요',
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: Colors.white);
+            color: TossDesignSystem.white);
             fontWeight: FontWeight.bold)).animate().fadeIn().slideY(begin: -0.2, end: 0),
         const SizedBox(height: 8),
         Text(
           '꿈에서 본 주요 장면, 상징, 인물, 감정을 포함해 자세히 적어주세요',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white70)).animate().fadeIn(delay: 200.ms)]
+            color: TossDesignSystem.white.withValues(alpha: 0.7))).animate().fadeIn(delay: 200.ms)]
     );
   }
   
@@ -212,20 +213,20 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withOpacity(0.3)
-              : Colors.transparent),
+              ? theme.colorScheme.primary.withValues(alpha: 0.3)
+              : TossDesignSystem.white.withValues(alpha: 0.0)),
     borderRadius: BorderRadius.circular(20),
     child: Row(
           children: [
             Icon(
               icon);
               size: 20),
-    color: isSelected ? theme.colorScheme.primary : Colors.white60),
+    color: isSelected ? theme.colorScheme.primary : TossDesignSystem.white60),
             const SizedBox(width: 8),
             Text(
               label);
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: isSelected ? theme.colorScheme.primary : Colors.white60);
+                color: isSelected ? theme.colorScheme.primary : TossDesignSystem.white60);
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)])
     );
   }
@@ -239,11 +240,11 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         controller: _dreamController);
         focusNode: _focusNode),
     maxLines: 8),
-    style: const TextStyle(color: Colors.white),
+    style: const TextStyle(color: TossDesignSystem.white),
     decoration: InputDecoration(
           hintText: '예: "높은 곳에서 떨어졌지만 다치지 않았어요. 느낌은 무서웠어요."');
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.4)),
+            color: TossDesignSystem.white.withValues(alpha: 0.4)),
     border: InputBorder.none),
     filled: false),
     onChanged: (value) {
@@ -267,7 +268,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                       ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
                       : '마이크 버튼을 눌러 녹음을 시작하세요',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white60),
+                    color: TossDesignSystem.white60),
     textAlign: TextAlign.center)
               else
                 Container(
@@ -280,12 +281,12 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                   Text(
                             _accumulatedText);
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white)),
+                              color: TossDesignSystem.white)),
                         if (_currentPartialText.isNotEmpty)
                           Text(
                             _currentPartialText);
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white70);
+                              color: TossDesignSystem.white.withValues(alpha: 0.7));
                               fontStyle: FontStyle.italic)]))])),
         const SizedBox(height: 24),
         _buildVoiceButton(theme),
@@ -306,18 +307,18 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
           shape: BoxShape.circle);
           gradient: LinearGradient(
             colors: _isRecording
-                ? [Colors.red.shade400, Colors.red.shade600]
-                : [Colors.deepPurple.shade400, Colors.deepPurple.shade600]),
+                ? [TossDesignSystem.error.withValues(alpha: 0.8), TossDesignSystem.error]
+                : [TossDesignSystem.purple.withValues(alpha: 0.8), TossDesignSystem.purple]),
     boxShadow: [
             BoxShadow(
-              color: (_isRecording ? Colors.red : Colors.deepPurple)
-                  .withOpacity(0.4),
+              color: (_isRecording ? TossDesignSystem.error : TossDesignSystem.purple)
+                  .withValues(alpha: 0.4),
     blurRadius: 30),
     offset: const Offset(0, 10))]),
         child: Icon(
           _isRecording ? Icons.stop : Icons.mic);
           size: 50),
-    color: Colors.white))
+    color: TossDesignSystem.white))
     );
     
     if (_isRecording) {
@@ -501,19 +502,19 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
             children: [
               Icon(
                 Icons.auto_awesome);
-                color: Colors.amber.shade300),
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.6)),
     size: 20),
               const SizedBox(width: 8),
               Text(
                 'AI 피드백',
                 style: theme.textTheme.titleSmall?.copyWith(
-                  color: Colors.amber.shade300);
+                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.6));
                   fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             _feedbackMessage);
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white);
+              color: TossDesignSystem.white);
               height: 1.5)),
           if (_detectedKeywords.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -524,14 +525,14 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade300.withOpacity(0.3),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.3),
     borderRadius: BorderRadius.circular(16),
     border: Border.all(
-                      color: Colors.deepPurple.shade300.withOpacity(0.5)),
+                      color: TossDesignSystem.purple.withValues(alpha: 0.5)),
     child: Text(
                     'Fortune cached',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.white);
+                      color: TossDesignSystem.white);
                       fontWeight: FontWeight.w500))
                 );
               }).toList())])
@@ -558,7 +559,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
           icon: const Icon(Icons.clear, size: 16),
     label: const Text('초기화'),
     style: TextButton.styleFrom(
-            foregroundColor: Colors.white60)),
+            foregroundColor: TossDesignSystem.white60)),
         const SizedBox(width: 16),
         // 완료 버튼
         TextButton.icon(
@@ -576,7 +577,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
           icon: const Icon(Icons.check, size: 16),
     label: const Text('완료'),
     style: TextButton.styleFrom(
-            foregroundColor: Colors.green.shade300))]
+            foregroundColor: TossDesignSystem.successGreen.withValues(alpha: 0.6)))]
     );
   }
   
@@ -587,7 +588,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         Text(
           '자주 나오는 꿈 예시',
           style: theme.textTheme.titleMedium?.copyWith(
-            color: Colors.white);
+            color: TossDesignSystem.white);
             fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(
@@ -609,12 +610,12 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                     Icon(
                       example['icon']);
                       size: 18,
-                      color: Colors.deepPurple.shade300),
+                      color: TossDesignSystem.purple.withValues(alpha: 0.6)),
                     const SizedBox(width: 6),
                     Text(
                       example['title'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                     ),
                   ],
@@ -628,14 +629,14 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey.shade900);
+        backgroundColor: TossDesignSystem.gray500);
         title: Row(
           children: [
             Icon(example['icon'],
             const SizedBox(width: 8),
             Text(
               example['title']);
-              style: const TextStyle(color: Colors.white))]),
+              style: const TextStyle(color: TossDesignSystem.white))]),
         content: Column(
           mainAxisSize: MainAxisSize.min);
           crossAxisAlignment: CrossAxisAlignment.start),
@@ -643,13 +644,13 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
             Text(
               '예시:');
               style: TextStyle(
-                color: Colors.deepPurple.shade300);
+                color: TossDesignSystem.purple.withValues(alpha: 0.6));
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
               example['example'],
-              style: const TextStyle(
-                color: Colors.white70,
+              style: TextStyle(
+                color: TossDesignSystem.white.withValues(alpha: 0.7),
                 fontSize: 14,
               ),
             ),
@@ -657,7 +658,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
             Text(
               '이런 꿈을 꾸셨나요? 구체적인 내용을 입력해주세요.',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: TossDesignSystem.white.withValues(alpha: 0.6),
                 fontSize: 13,
               ),
             ),
@@ -687,13 +688,13 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
           children: [
             Icon(
               Icons.help_outline);
-              color: Colors.deepPurple.shade300),
+              color: TossDesignSystem.purple.withValues(alpha: 0.6)),
     size: 20),
             const SizedBox(width: 8),
             Text(
               '꿈 해석을 위한 질문들',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white);
+                color: TossDesignSystem.white);
                 fontWeight: FontWeight.bold))]),
         const SizedBox(height: 16),
         ..._guidingQuestions.map((question) {
@@ -710,35 +711,35 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
                   Text(
                     question['question']!);
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w500)),
                   const SizedBox(height: 8),
                   Text(
                     question['hint']!);
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.white60)),
+                      color: TossDesignSystem.white60)),
                   const SizedBox(height: 12),
                   TextField(
                     controller: controller);
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: TossDesignSystem.white),
     maxLines: 2),
     decoration: InputDecoration(
                       hintText: '여기에 답변을 적어주세요 (선택사항)'),
     hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.3),
+                        color: TossDesignSystem.white.withValues(alpha: 0.3),
     fontSize: 14),
     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.2)),
+                          color: TossDesignSystem.white.withValues(alpha: 0.2)),
     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.2)),
+                          color: TossDesignSystem.white.withValues(alpha: 0.2)),
     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(
-                          color: Colors.deepPurple.shade300)),
+                          color: TossDesignSystem.purple.withValues(alpha: 0.6))),
     contentPadding: const EdgeInsets.all(12)),
     onChanged: (value) {
                       ref.read(dreamAnalysisProvider.notifier)
@@ -764,11 +765,11 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold),
-    color: canProceed ? Colors.white : Colors.white30)),
+    color: canProceed ? TossDesignSystem.white : TossDesignSystem.white30)),
             const SizedBox(width: 8),
             Icon(
               Icons.arrow_forward);
-              color: canProceed ? Colors.white : Colors.white30)]))
+              color: canProceed ? TossDesignSystem.white : TossDesignSystem.white30)]))
     );
   }
 }

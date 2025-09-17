@@ -40,9 +40,9 @@ class TossSkeleton extends StatelessWidget {
           )
           .shimmer(
             duration: const Duration(milliseconds: 1500),
-            color: isDark 
-                ? TossDesignSystem.grayDark300.withOpacity(0.6)
-                : TossDesignSystem.gray200.withOpacity(0.6),
+            color: isDark
+                ? TossDesignSystem.grayDark300.withValues(alpha: 0.6)
+                : TossDesignSystem.gray200.withValues(alpha: 0.6),
           );
     }
 
@@ -116,7 +116,7 @@ class TossCardSkeleton extends StatelessWidget {
         borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

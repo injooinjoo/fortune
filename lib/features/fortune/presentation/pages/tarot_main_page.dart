@@ -336,13 +336,13 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       .textTheme
                                       .headlineMedium
                                       ?.copyWith(
-                                        color: Colors.white,
+                                        color: TossDesignSystem.white,
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.search,
-                                      color: Colors.white70),
+                                  icon: Icon(Icons.search,
+                                      color: TossDesignSystem.white.withValues(alpha: 0.7)),
                                   onPressed: () {},
                                 ),
                               ],
@@ -369,7 +369,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.white60,
+                                      color: TossDesignSystem.white.withValues(alpha: 0.6),
                                     ),
                               ),
                             ),
@@ -398,7 +398,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                     .textTheme
                                     .titleLarge
                                     ?.copyWith(
-                                      color: Colors.white,
+                                      color: TossDesignSystem.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -522,14 +522,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                   end: Alignment.bottomRight,
                                   colors: [
                                     (_previousCardData!['color'] as Color)
-                                        .withOpacity(0.8),
+                                        .withValues(alpha:0.8),
                                     _previousCardData!['color'] as Color,
                                   ],
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: (_previousCardData!['color'] as Color)
-                                        .withOpacity(0.4),
+                                        .withValues(alpha:0.4),
                                     blurRadius: 20,
                                     spreadRadius: 5,
                                   ),
@@ -545,7 +545,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       right: 0,
                                       child: Icon(
                                         _previousCardData!['icon'],
-                                        color: Colors.white.withOpacity(0.3),
+                                        color: TossDesignSystem.white.withValues(alpha:0.3),
                                         size: 80 - (20 * swapProgress),
                                       ),
                                     ),
@@ -557,7 +557,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                     child: Text(
                                       _previousCardData!['title'] ?? '',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: TossDesignSystem.white,
                                         fontSize: 24 - (8 * swapProgress),
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -635,7 +635,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                               ? _selectedCardData!['title']
                               : 'Daily fortune',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                           ),
@@ -660,7 +660,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 if (isShowingCardDetail && selectedCardIndex != null)
                   Positioned.fill(
                     child: Container(
-                      color: const Color(0xFF0A0E27).withOpacity(0.95),
+                      color: const Color(0xFF0A0E27).withValues(alpha:0.95),
                       child: const Center(child: Text('Card Detail')),
                     ),
                   ),
@@ -686,7 +686,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       icon = _selectedCardData!['icon'];
       final color = _selectedCardData!['color'] as Color;
       const alpha = 0.8;
-      gradientStart = color.withOpacity(alpha);
+      gradientStart = color.withValues(alpha:alpha);
       gradientEnd = color;
     }
 
@@ -724,7 +724,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 BoxShadow(
                   color: (() {
                     const alpha = 0.4;
-                    return gradientStart.withOpacity(alpha);
+                    return gradientStart.withValues(alpha:alpha);
                   })(),
                   blurRadius: 30,
                   spreadRadius: 5,
@@ -753,7 +753,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       icon,
                       color: (() {
                         const alpha = 0.3;
-                        return Colors.white.withOpacity(alpha);
+                        return TossDesignSystem.white.withValues(alpha:alpha);
                       })(),
                       size: 80,
                     ),
@@ -770,8 +770,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       children: [
                         Text(
                           dateString,
-                          style: const TextStyle(
-                            color: Colors.white70,
+                          style: TextStyle(
+                            color: TossDesignSystem.white.withValues(alpha: 0.7),
                             fontSize: 14,
                           ),
                         ),
@@ -779,7 +779,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                         Text(
                           title,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -791,14 +791,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                           decoration: BoxDecoration(
                             color: (() {
                               const alpha = 0.2;
-                              return Colors.white.withOpacity(alpha);
+                              return TossDesignSystem.white.withValues(alpha:alpha);
                             })(),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text(
                             'DRAW',
                             style: TextStyle(
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
@@ -855,13 +855,13 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color.withOpacity(0.8),
+              color.withValues(alpha:0.8),
               color,
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
+              color: color.withValues(alpha:0.4),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -884,7 +884,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
               right: 0,
               child: Icon(
                 icon,
-                color: Colors.white.withOpacity(0.3),
+                color: TossDesignSystem.white.withValues(alpha:0.3),
                 size: 60,
               ),
             ),
@@ -900,7 +900,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                   Text(
                     title,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -912,14 +912,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     decoration: BoxDecoration(
                       color: (() {
                         const alpha = 0.2;
-                        return Colors.white.withOpacity(alpha);
+                        return TossDesignSystem.white.withValues(alpha:alpha);
                       })(),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Text(
                       'DRAW',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
@@ -1024,7 +1024,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.6),
+              color: TossDesignSystem.tossBlue.withValues(alpha:0.6),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -1084,7 +1084,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: TossDesignSystem.black.withValues(alpha:0.5),
             blurRadius: 30,
             spreadRadius: 10,
           ),
@@ -1135,7 +1135,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: TossDesignSystem.black.withValues(alpha:0.5),
             blurRadius: 30,
             spreadRadius: 10,
           ),
@@ -1158,16 +1158,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.image_not_supported,
-                          color: Colors.white54,
+                          color: TossDesignSystem.white.withValues(alpha: 0.54),
                           size: 48,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           cardInfo.name,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1239,7 +1239,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     _buildSectionCard(
                         title: '기본 의미',
                         content: cardInfo.uprightMeaning,
-                        color: Colors.purple,
+                        color: TossDesignSystem.purple,
                         icon: Icons.auto_awesome,
                     ),
 
@@ -1249,7 +1249,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     _buildSectionCard(
                         title: '조언',
                         content: cardInfo.advice,
-                        color: Colors.blue,
+                        color: TossDesignSystem.tossBlue,
                         icon: Icons.lightbulb_outline,
                     ),
 
@@ -1288,9 +1288,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.9),
-                  Colors.black.withOpacity(0.7),
-                  Colors.transparent,
+                  TossDesignSystem.black.withValues(alpha:0.9),
+                  TossDesignSystem.black.withValues(alpha:0.7),
+                  TossDesignSystem.white.withValues(alpha: 0.0),
                 ],
               ),
             ),
@@ -1302,7 +1302,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                   children: [
                     IconButton(
                       icon: const Icon(Icons.close,
-                          color: Colors.white, size: 32),
+                          color: TossDesignSystem.white, size: 32),
                       onPressed: () {
                         _cardFlipController.reverse().then((_) {
                           Future.delayed(const Duration(milliseconds: 100), () {
@@ -1317,7 +1317,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     Text(
                       cardInfo.name.split('(')[0],
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
@@ -1325,7 +1325,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     ),
                     IconButton(
                       icon: const Icon(Icons.bookmark_border,
-                          color: Colors.white, size: 28),
+                          color: TossDesignSystem.white, size: 28),
                       onPressed: () {},
                     ),
                   ],
@@ -1351,14 +1351,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 offset: Offset(0, math.sin(value * 2 * math.pi) * 5),
                 child: Icon(
                   Icons.expand_more,
-                  color: Colors.white.withOpacity(0.6),
+                  color: TossDesignSystem.white.withValues(alpha:0.6),
                   size: 32,
                 ),
               ),
               Text(
                 '아래로 스크롤하여 더 많은 내용을 확인하세요',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.5),
+                  color: TossDesignSystem.white.withValues(alpha:0.5),
                   fontSize: 12,
                 ),
               ),
@@ -1379,13 +1379,13 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(0.2),
-            color.withOpacity(0.1),
+            color.withValues(alpha:0.2),
+            color.withValues(alpha:0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -1410,7 +1410,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           Text(
             content,
             style: const TextStyle(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontSize: 16,
               height: 1.6,
             ),
@@ -1427,7 +1427,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         const Text(
           '키워드',
           style: TextStyle(
-              color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold,
+              color: TossDesignSystem.white, fontSize: 18, fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 12),
@@ -1439,16 +1439,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: TossDesignSystem.white.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha:0.2),
                   ),
                 ),
                 child: Text(
                   keyword,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontSize: 14,
                   ),
                 ),
@@ -1463,7 +1463,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     return _buildSectionCard(
       title: '성찰을 위한 질문',
       content: questions.map((q) => '• $q').join('\n'),
-      color: Colors.amber,
+      color: TossDesignSystem.warningOrange,
       icon: Icons.help_outline,
     );
   }
@@ -1472,7 +1472,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     return _buildSectionCard(
       title: '확언',
       content: affirmations.map((a) => '"$a"').join('\n\n'),
-      color: Colors.green,
+      color: TossDesignSystem.successGreen,
       icon: Icons.format_quote,
     );
   }
@@ -1535,18 +1535,18 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: TossDesignSystem.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: Colors.white60),
+          Icon(icon, size: 16, color: TossDesignSystem.white.withValues(alpha: 0.6)),
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white60,
+            style: TextStyle(
+              color: TossDesignSystem.white.withValues(alpha: 0.6),
               fontSize: 14,
             ),
           ),
@@ -1696,21 +1696,21 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       boxShadow: [
                         // Primary glow
                         BoxShadow(
-                          color: color.withOpacity(0.5 * opacity),
+                          color: color.withValues(alpha:0.5 * opacity),
                           blurRadius: 30,
                           spreadRadius: 5,
                           offset: const Offset(0, 15),
                         ),
                         // Secondary shadow for depth
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3 * opacity),
+                          color: TossDesignSystem.black.withValues(alpha:0.3 * opacity),
                           blurRadius: 20,
                           spreadRadius: -5,
                           offset: const Offset(0, 20),
                         ),
                         // Inner glow
                         BoxShadow(
-                          color: color.withOpacity(0.3 * opacity),
+                          color: color.withValues(alpha:0.3 * opacity),
                           blurRadius: 15,
                           spreadRadius: -10,
                           offset: const Offset(0, -5),
@@ -1728,9 +1728,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                color.withOpacity(0.9),
-                                color.withOpacity(0.7),
-                                color.withOpacity(0.5)],
+                                color.withValues(alpha:0.9),
+                                color.withValues(alpha:0.7),
+                                color.withValues(alpha:0.5)],
                               stops: const [0.0, 0.5, 1.0],
                             ),
                           ),
@@ -1741,14 +1741,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Colors.white.withOpacity(0.25),
-                                    Colors.white.withOpacity(0.15),
-                                    Colors.white.withOpacity(0.05),
+                                    TossDesignSystem.white.withValues(alpha:0.25),
+                                    TossDesignSystem.white.withValues(alpha:0.15),
+                                    TossDesignSystem.white.withValues(alpha:0.05),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(28),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
+                                  color: TossDesignSystem.white.withValues(alpha:0.3),
                                   width: 1.5,
                                 ),
                             ),
@@ -1758,7 +1758,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                 Positioned.fill(
                                   child: CustomPaint(
                                     painter: _CardPatternPainter(
-                                      color: Colors.white.withOpacity(0.1),
+                                      color: TossDesignSystem.white.withValues(alpha:0.1),
                                       animation:
                                           _backgroundAnimationController.value,
                                     ),
@@ -1775,15 +1775,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       decoration: BoxDecoration(
                                         gradient: RadialGradient(
                                           colors: [
-                                            Colors.white.withOpacity(0.3),
-                                            Colors.white.withOpacity(0.1),
-                                            Colors.transparent],
+                                            TossDesignSystem.white.withValues(alpha:0.3),
+                                            TossDesignSystem.white.withValues(alpha:0.1),
+                                            TossDesignSystem.white.withValues(alpha: 0.0)],
                                           stops: const [0.0, 0.5, 1.0]),
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
                                             color:
-                                                Colors.white.withOpacity(0.2),
+                                                TossDesignSystem.white.withValues(alpha:0.2),
                                             blurRadius: 20,
                                             spreadRadius: 5,
                                           ),
@@ -1792,10 +1792,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       child: Icon(
                                         icon,
                                         size: 42,
-                                        color: Colors.white,
+                                        color: TossDesignSystem.white,
                                         shadows: [
                                           Shadow(
-                                            color: color.withOpacity(0.8),
+                                            color: color.withValues(alpha:0.8),
                                             blurRadius: 10,
                                           ),
                                         ],
@@ -1806,19 +1806,19 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                     Text(
                                       title,
                                       style: TextStyle(
-                                          color: Colors.white,
+                                          color: TossDesignSystem.white,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1.5,
                                           shadows: [
                                             Shadow(
-                                              color: Colors.black
-                                                  .withOpacity(0.5),
+                                              color: TossDesignSystem.black
+                                                  .withValues(alpha:0.5),
                                               offset: const Offset(0, 2),
                                               blurRadius: 4,
                                             ),
                                             Shadow(
-                                              color: color.withOpacity(0.8),
+                                              color: color.withValues(alpha:0.8),
                                               blurRadius: 8,
                                             ),
                                           ],
@@ -1832,9 +1832,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.transparent,
-                                            Colors.white.withOpacity(0.6),
-                                            Colors.transparent]),
+                                            TossDesignSystem.white.withValues(alpha: 0.0),
+                                            TossDesignSystem.white.withValues(alpha:0.6),
+                                            TossDesignSystem.white.withValues(alpha: 0.0)]),
                                         borderRadius:
                                             BorderRadius.circular(1.5),
                                         ),
@@ -1873,7 +1873,7 @@ class TarotCardBackPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
 
     // Draw stars pattern
-    paint.color = Colors.white.withOpacity(isHighlighted ? 0.4 : 0.2);
+    paint.color = TossDesignSystem.white.withValues(alpha:isHighlighted ? 0.4 : 0.2);
 
     // Center star
     _drawStar(canvas, center, size.width * 0.15, paint);
@@ -1948,7 +1948,7 @@ class _MysticalBackgroundPainter extends CustomPainter {
 
       paint.color = Color.lerp(const Color(0xFF6A5ACD), const Color(0xFFFF6B6B),
               i / 5)!
-          .withOpacity(opacity);
+          .withValues(alpha:opacity);
 
       final x =
           size.width * (0.2 + i * 0.15 + math.sin(progress * math.pi * 2) * 0.1);
@@ -1985,7 +1985,7 @@ class _CardPatternPainter extends CustomPainter {
     for (int i = 0; i < 3; i++) {
       final radius = size.width * (0.3 + i * 0.15);
       final opacity = (1.0 - i * 0.3) * 0.3;
-      paint.color = color.withOpacity(opacity);
+      paint.color = color.withValues(alpha:opacity);
 
       canvas.save();
       canvas.translate(center.dx, center.dy);
@@ -2010,7 +2010,7 @@ class _CardPatternPainter extends CustomPainter {
 
     // Draw corner ornaments
     paint
-      ..color = color.withOpacity(0.2)
+      ..color = color.withValues(alpha:0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/toss_design_system.dart';
 
 class TossCard extends StatelessWidget {
   final Widget child;
@@ -24,11 +25,11 @@ class TossCard extends StatelessWidget {
       padding: padding,
       margin: margin,
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.white,
+        color: backgroundColor ?? TossDesignSystem.white,
         borderRadius: borderRadius ?? BorderRadius.circular(16),
         boxShadow: boxShadow ?? [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.gray900.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

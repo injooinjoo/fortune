@@ -6,6 +6,7 @@ import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TojeongFortunePage extends BaseFortunePage {
   const TojeongFortunePage({Key? key})
@@ -31,7 +32,7 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
       'meaning': '하늘',
       'description': '강건함과 창조의 기운이 충만한 때입니다. 모든 일이 순조롭게 진행될 것입니다.',
       'element': '금(金)',
-      'color': Colors.amber
+      'color': TossDesignSystem.warningOrange
     },
     '000000': {
       'name': '곤위지(坤爲地)',
@@ -39,7 +40,7 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
       'meaning': '땅',
       'description': '포용력과 수용의 자세가 필요한 때입니다. 겸손함으로 성공을 이룰 수 있습니다.',
       'element': '토(土)',
-      'color': Colors.brown
+      'color': TossDesignSystem.brownPrimary
     },
     '100010': {
       'name': '수뢰둔(水雷屯)',
@@ -47,7 +48,7 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
       'meaning': '어려움',
       'description': '시작의 어려움이 있으나 인내하면 좋은 결과를 얻을 것입니다.',
       'element': '수(水)',
-      'color': Colors.blue
+      'color': TossDesignSystem.tossBlue
     },
     '010001': {
       'name': '산수몽(山水蒙)',
@@ -55,7 +56,7 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
       'meaning': '계몽',
       'description': '배움과 깨달음의 시기입니다. 스승을 찾아 가르침을 받으세요.',
       'element': '토(土)',
-      'color': Colors.grey
+      'color': TossDesignSystem.gray500
     }
   };
   final List<String> _monthlyMeanings = [
@@ -261,12 +262,12 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   String _getColorName(Color color) {
-    if (color == Colors.amber) return '황금색';
-    if (color == Colors.brown) return '갈색';
-    if (color == Colors.blue) return '파란색';
-    if (color == Colors.grey) return '회색';
-    if (color == Colors.green) return '초록색';
-    if (color == Colors.red) return '빨간색';
+    if (color == TossDesignSystem.warningOrange) return '황금색';
+    if (color == TossDesignSystem.brownPrimary) return '갈색';
+    if (color == TossDesignSystem.tossBlue) return '파란색';
+    if (color == TossDesignSystem.gray500) return '회색';
+    if (color == TossDesignSystem.successGreen) return '초록색';
+    if (color == TossDesignSystem.errorRed) return '빨간색';
     return '흰색';
   }
 
@@ -325,11 +326,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          (hexagram['color'] as Color).withOpacity(0.2),
-                          (hexagram['color'] as Color).withOpacity(0.6)]),
+                          (hexagram['color'] as Color).withValues(alpha: 0.2),
+                          (hexagram['color'] as Color).withValues(alpha: 0.6)]),
                       boxShadow: [
                         BoxShadow(
-                          color: (hexagram['color'] as Color).withOpacity(0.3),
+                          color: (hexagram['color'] as Color).withValues(alpha: 0.3),
                           blurRadius: 30,
                           spreadRadius: 10)]),
                     child: Center(
@@ -354,7 +355,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: (hexagram['color'] as Color).withOpacity(0.1),
+                      color: (hexagram['color'] as Color).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -390,7 +391,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               decoration: BoxDecoration(
                 color: bit == '1'
                     ? Theme.of(context).colorScheme.primary
-                    : Colors.transparent,
+                    : TossDesignSystem.white.withValues(alpha: 0.0),
                 border: bit == '0'
                     ? Border.all(
                         color: Theme.of(context).colorScheme.primary,
@@ -454,7 +455,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                                   end: Alignment.topCenter,
                                   colors: [
                                     _getScoreColor(score),
-                                    _getScoreColor(score).withOpacity(0.5)]),
+                                    _getScoreColor(score).withValues(alpha: 0.5)]),
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(4),
                                 ),
@@ -480,10 +481,10 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 85) return Colors.green;
-    if (score >= 70) return Colors.blue;
-    if (score >= 55) return Colors.orange;
-    return Colors.red;
+    if (score >= 85) return TossDesignSystem.successGreen;
+    if (score >= 70) return TossDesignSystem.tossBlue;
+    if (score >= 55) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   Widget _buildElementBalance() {
@@ -542,7 +543,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                     LinearProgressIndicator(
                       value: percentage,
                       backgroundColor:
-                          Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                          Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         _getElementColor(element)),
                       minHeight: 8
@@ -559,12 +560,12 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
 
   Color _getElementColor(String element) {
     final colors = {
-      '목': Colors.green,
-      '화': Colors.red,
-      '토': Colors.brown,
-      '금': Colors.amber,
-      '수': Colors.blue};
-    return colors[element] ?? Colors.grey;
+      '목': TossDesignSystem.successGreen,
+      '화': TossDesignSystem.errorRed,
+      '토': TossDesignSystem.brownPrimary,
+      '금': TossDesignSystem.warningOrange,
+      '수': TossDesignSystem.tossBlue};
+    return colors[element] ?? TossDesignSystem.gray500;
   }
 
   Widget _buildChangingLineInfo() {
@@ -579,8 +580,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Colors.purple.withOpacity(0.1),
-            Colors.purple.withOpacity(0.05)]),
+            TossDesignSystem.purple.withValues(alpha: 0.1),
+            TossDesignSystem.purple.withValues(alpha: 0.05)]),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -589,7 +590,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               children: [
                 material.Icon(
                   Icons.change_circle,
-                  color: Colors.purple),
+                  color: TossDesignSystem.purple),
                 const SizedBox(width: 8),
                 Text(
                   '변효 해석',
@@ -598,10 +599,10 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: TossDesignSystem.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.purple.withOpacity(0.3),
+                  color: TossDesignSystem.purple.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -609,7 +610,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Text(
                     '제${changingLine}효',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.purple,
+                          color: TossDesignSystem.purple,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
@@ -623,7 +624,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7)
+                              .withValues(alpha: 0.7)
                         ),
                   ),
                 ],

@@ -87,7 +87,7 @@ class TossLoadingOverlay extends StatelessWidget {
             child: GestureDetector(
               onTap: () {}, // Prevent taps from passing through
               child: Container(
-                color: Colors.black.withOpacity(0.5),
+                color: TossDesignSystem.gray900.withValues(alpha: 0.5),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.all(TossDesignSystem.spacingL),

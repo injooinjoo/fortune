@@ -35,8 +35,8 @@ class CustomerSupportPage extends ConsumerWidget {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.3),
-          Colors.purple.withOpacity(0.1)],
+          TossDesignSystem.purple.withValues(alpha: 0.3),
+          TossDesignSystem.purple.withValues(alpha: 0.1)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(20),
@@ -46,20 +46,20 @@ class CustomerSupportPage extends ConsumerWidget {
           Icon(
             Icons.support_agent_rounded,
             size: 60,
-            color: Colors.purple.shade300).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
+            color: TossDesignSystem.purple).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
           const SizedBox(height: 16),
           const Text(
             '도움이 필요하신가요?',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: TossDesignSystem.white)),
           const SizedBox(height: 8),
           Text(
             '09:00 - 18:00  운영',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8)),
+              color: TossDesignSystem.white.withValues(alpha: 0.8)),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -68,13 +68,13 @@ class CustomerSupportPage extends ConsumerWidget {
                 icon: Icons.email_rounded,
                 label: '이메일',
                 onTap: () => _launchEmail(),
-                color: Colors.blue),
+                color: TossDesignSystem.primaryBlue),
               const SizedBox(width: 16),
               _buildContactButton(
                 icon: Icons.chat_bubble_rounded,
                 label: '카카오톡',
                 onTap: () => _launchKakaoTalk(),
-                color: Colors.yellow)])])).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
+                color: TossDesignSystem.warningYellow)])])).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildContactButton({
@@ -130,7 +130,7 @@ class CustomerSupportPage extends ConsumerWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white)),
+            color: TossDesignSystem.white)),
         const SizedBox(height: 16),
         ...faqs.asMap().entries.map((entry) {
           final index = entry.key;
@@ -154,22 +154,22 @@ class CustomerSupportPage extends ConsumerWidget {
         title: GlassContainer(
           gradient: LinearGradient(
             colors: [
-              Colors.white.withOpacity(0.1),
-              Colors.white.withOpacity(0.05)]),
+              TossDesignSystem.white.withValues(alpha: 0.1),
+              TossDesignSystem.white.withValues(alpha: 0.05)]),
           borderRadius: BorderRadius.circular(16),
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Icon(
                 Icons.help_outline_rounded,
-                color: Colors.blue.shade300,
+                color: TossDesignSystem.primaryBlue,
                 size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   question,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w500))]),
         children: [
           Padding(
@@ -177,7 +177,7 @@ class CustomerSupportPage extends ConsumerWidget {
             child: Text(
               answer,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: TossDesignSystem.white.withValues(alpha: 0.8),
                 height: 1.5))]);
   }
 
@@ -190,7 +190,7 @@ class CustomerSupportPage extends ConsumerWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white)),
+            color: TossDesignSystem.white)),
         const SizedBox(height: 16),
         GridView.count(
           crossAxisCount: 2,
@@ -204,25 +204,25 @@ class CustomerSupportPage extends ConsumerWidget {
               icon: Icons.book_rounded,
               title: '사용 가이드',
               subtitle: '앱 사용법 알아보기',
-              color: Colors.green,
+              color: TossDesignSystem.success,
               onTap: () => _showGuide(context)),
             _buildActionCard(
               icon: Icons.bug_report_rounded,
               title: '버그 신고',
               subtitle: '문제 발견 시 알려주세요',
-              color: Colors.red,
+              color: TossDesignSystem.error,
               onTap: () => _reportBug(context)),
             _buildActionCard(
               icon: Icons.star_rounded,
               title: '평가하기',
               subtitle: '앱스토어 리뷰 남기기',
-              color: Colors.orange,
+              color: TossDesignSystem.warningOrange,
               onTap: () => _rateApp()),
             _buildActionCard(
               icon: Icons.share_rounded,
               title: '앱 공유',
               subtitle: '친구에게 추천하기',
-              color: Colors.purple,
+              color: TossDesignSystem.purple,
               onTap: () => _shareApp(context))])]);
   }
 
@@ -252,12 +252,12 @@ class CustomerSupportPage extends ConsumerWidget {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 fontWeight: FontWeight.bold)),
             Text(
               subtitle,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: TossDesignSystem.white.withValues(alpha: 0.7),
                 fontSize: 12),
               textAlign: TextAlign.center)])));
   }
@@ -287,16 +287,16 @@ class CustomerSupportPage extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: TossDesignSystem.gray900,
         title: const Text(
           '사용 가이드',
-          style: TextStyle(color: Colors.white)),
+          style: TextStyle(color: TossDesignSystem.white)),
         content: const Text(
           '1. 회원가입 후 프로필을 완성하세요\n'
           '2. 원하는 운세를 선택하여 조회하세요\n'
           '3. 토큰이 부족하면 구매하거나 구독하세요\n'
           '4. 매일 무료 토큰을 받을 수 있습니다',
-          style: TextStyle(color: Colors.white70)),
+          style: TextStyle(color: TossDesignSystem.gray300)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

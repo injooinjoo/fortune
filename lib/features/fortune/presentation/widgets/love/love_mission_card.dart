@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 class LoveMissionCard extends StatefulWidget {
   final List<String> missions;
@@ -205,9 +206,9 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: isCompleted 
-                    ? TossTheme.success 
-                    : Colors.transparent,
+                color: isCompleted
+                    ? TossTheme.success
+                    : TossDesignSystem.transparent,
                 border: Border.all(
                   color: isCompleted 
                       ? TossTheme.success 
@@ -219,7 +220,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
               child: isCompleted
                   ? Icon(
                       Icons.check,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 16,
                     ).animate().scale(duration: 200.ms)
                   : null,
@@ -253,7 +254,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
                 ),
                 child: Icon(
                   Icons.favorite,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 12,
                 ),
               ).animate().scale(duration: 300.ms, delay: 100.ms),

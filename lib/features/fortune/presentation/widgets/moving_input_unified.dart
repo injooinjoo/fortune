@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/region_service.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
 class MovingInputUnified extends StatefulWidget {
@@ -308,12 +309,12 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.location_on_outlined,
-                  color: Colors.orange,
+                  color: TossDesignSystem.warningOrange,
                   size: 20,
                 ),
               ),
@@ -497,7 +498,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: TossDesignSystem.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -710,7 +711,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               child: Text(
                 '인기',
                 style: TossTheme.caption.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),

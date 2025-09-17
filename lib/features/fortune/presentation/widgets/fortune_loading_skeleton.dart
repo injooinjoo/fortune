@@ -26,7 +26,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
         if (showHeader)
           _buildHeaderSkeleton(isDark)
               .animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.3)),
+              .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
         
         // 로딩 메시지
         if (loadingMessage != null || loadingMessages != null)
@@ -41,7 +41,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
                 delay: Duration(milliseconds: i * 100),
                 onPlay: (controller) => controller.repeat(),
               )
-              .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.3)),
+              .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
       ],
     );
   }
@@ -265,7 +265,7 @@ class CelebritySearchSkeleton extends StatelessWidget {
               delay: Duration(milliseconds: index * 50),
               onPlay: (controller) => controller.repeat(),
             )
-            .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.3));
+            .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3));
       },
     );
   }
@@ -370,7 +370,7 @@ class FortuneResultSkeleton extends StatelessWidget {
               ),
             )
                 .animate(onPlay: (controller) => controller.repeat())
-                .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.3)),
+                .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
           
           // 콘텐츠 스켈레톤
           for (int i = 0; i < 3; i++)
@@ -414,7 +414,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                   delay: Duration(milliseconds: 100 + (i * 100)),
                   onPlay: (controller) => controller.repeat(),
                 )
-                .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.3)),
+                .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
         ],
       ),
     );

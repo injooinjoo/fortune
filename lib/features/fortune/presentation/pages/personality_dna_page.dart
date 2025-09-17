@@ -6,6 +6,7 @@ import '../../../../core/models/personality_dna_model.dart';
 import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 성격 DNA 결과 페이지 (토스 디자인 시스템 적용)
 class PersonalityDNAPage extends ConsumerStatefulWidget {
@@ -122,7 +123,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               child: FloatingActionButton.extended(
                 onPressed: _showPersonalityDNABottomSheet,
                 backgroundColor: const Color(0xFF1F4EF5), // 토스 블루
-                foregroundColor: Colors.white,
+                foregroundColor: TossDesignSystem.white,
                 elevation: 0,
                 label: const Text(
                   '🧬 나만의 성격 DNA 발견하기',
@@ -153,7 +154,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             child: const Icon(
               Icons.psychology,
               size: 40,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
           const SizedBox(height: 32),
@@ -244,7 +245,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -283,7 +284,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -304,14 +305,14 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
                 children: [
                   const Icon(
                     Icons.trending_up,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 16,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     _currentDNA!.popularityText,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -623,7 +624,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                 ),
               ),
@@ -736,7 +737,7 @@ ${_currentDNA!.description}
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => PersonalityDNABottomSheet(
         onResult: (personalityDNA) {
           setState(() {

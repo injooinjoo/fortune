@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/components/loading_elevated_button.dart';
 import '../../shared/components/toss_button.dart';
 import '../../services/ad_service.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
 import '../../presentation/providers/auth_provider.dart';
@@ -62,8 +63,10 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
     
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
-      decoration: const BoxDecoration(
-        color: Colors.white, // 토스 스타일: 깨끗한 화이트 배경
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
@@ -74,7 +77,9 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFFE5E5E5),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark300
+                  : TossDesignSystem.gray200,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -88,22 +93,26 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         '성격 DNA 분석',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF191F28),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark900
+                              : TossDesignSystem.gray900,
                           height: 1.2,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
+                      Text(
                         '4가지 정보로 당신만의 DNA를 만들어보세요',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Color(0xFF8B95A1),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark400
+                              : TossDesignSystem.gray600,
                           height: 1.4,
                         ),
                       ),
@@ -116,12 +125,16 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF7F8FA),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.grayDark200
+                          : TossDesignSystem.gray100,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
-                      color: Color(0xFF8B95A1),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.grayDark400
+                          : TossDesignSystem.gray600,
                       size: 20,
                     ),
                   ),
@@ -152,11 +165,15 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
           // Generate Button (토스 스타일)
           Container(
             padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark100
+                  : TossDesignSystem.white,
               border: Border(
                 top: BorderSide(
-                  color: Color(0xFFF0F0F0),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark300
+                      : TossDesignSystem.gray200,
                   width: 1,
                 ),
               ),
@@ -185,19 +202,27 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark300
+              : TossDesignSystem.gray200,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'MBTI 유형',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900
+                  : TossDesignSystem.gray900,
               height: 1.3,
             ),
           ),
@@ -222,13 +247,17 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF1F4EF5) // 토스 블루
-                        : const Color(0xFFF7F8FA),
+                        ? TossDesignSystem.tossBlue
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark200
+                            : TossDesignSystem.gray100),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF1F4EF5)
-                          : const Color(0xFFE5E5E5),
+                          ? TossDesignSystem.tossBlue
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark300
+                              : TossDesignSystem.gray200),
                       width: 1,
                     ),
                   ),
@@ -238,9 +267,11 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: isSelected 
-                            ? Colors.white 
-                            : const Color(0xFF191F28),
+                        color: isSelected
+                            ? TossDesignSystem.white
+                            : (Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark900
+                                : TossDesignSystem.gray900),
                       ),
                     ),
                   ),
@@ -258,19 +289,27 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark300
+              : TossDesignSystem.gray200,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '혈액형',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900
+                  : TossDesignSystem.gray900,
               height: 1.3,
             ),
           ),
@@ -293,13 +332,17 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? const Color(0xFF1F4EF5) // 토스 블루
-                            : const Color(0xFFF7F8FA),
+                            ? TossDesignSystem.tossBlue
+                            : (Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark200
+                                : TossDesignSystem.gray100),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
-                              ? const Color(0xFF1F4EF5)
-                              : const Color(0xFFE5E5E5),
+                              ? TossDesignSystem.tossBlue
+                              : (Theme.of(context).brightness == Brightness.dark
+                                  ? TossDesignSystem.grayDark300
+                                  : TossDesignSystem.gray200),
                           width: 1,
                         ),
                       ),
@@ -309,9 +352,11 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: isSelected 
-                                ? Colors.white 
-                                : const Color(0xFF191F28),
+                            color: isSelected
+                                ? TossDesignSystem.white
+                                : (Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.grayDark900
+                                    : TossDesignSystem.gray900),
                           ),
                         ),
                       ),
@@ -331,19 +376,27 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark300
+              : TossDesignSystem.gray200,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '별자리',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900
+                  : TossDesignSystem.gray900,
               height: 1.3,
             ),
           ),
@@ -368,13 +421,17 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF1F4EF5) // 토스 블루
-                        : const Color(0xFFF7F8FA),
+                        ? TossDesignSystem.tossBlue
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark200
+                            : TossDesignSystem.gray100),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF1F4EF5)
-                          : const Color(0xFFE5E5E5),
+                          ? TossDesignSystem.tossBlue
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark300
+                              : TossDesignSystem.gray200),
                       width: 1,
                     ),
                   ),
@@ -384,9 +441,11 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: isSelected 
-                            ? Colors.white 
-                            : const Color(0xFF191F28),
+                        color: isSelected
+                            ? TossDesignSystem.white
+                            : (Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark900
+                                : TossDesignSystem.gray900),
                       ),
                     ),
                   ),
@@ -404,19 +463,27 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark300
+              : TossDesignSystem.gray200,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '띠 (12지)',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900
+                  : TossDesignSystem.gray900,
               height: 1.3,
             ),
           ),
@@ -441,13 +508,17 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF1F4EF5) // 토스 블루
-                        : const Color(0xFFF7F8FA),
+                        ? TossDesignSystem.tossBlue
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark200
+                            : TossDesignSystem.gray100),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF1F4EF5)
-                          : const Color(0xFFE5E5E5),
+                          ? TossDesignSystem.tossBlue
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark300
+                              : TossDesignSystem.gray200),
                       width: 1,
                     ),
                   ),
@@ -457,9 +528,11 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: isSelected 
-                            ? Colors.white 
-                            : const Color(0xFF191F28),
+                        color: isSelected
+                            ? TossDesignSystem.white
+                            : (Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark900
+                                : TossDesignSystem.gray900),
                       ),
                     ),
                   ),

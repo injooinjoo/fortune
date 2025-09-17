@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/toss_design_system.dart';
 
 class SubscriptionPage extends ConsumerWidget {
   const SubscriptionPage({super.key});
@@ -17,7 +18,7 @@ class SubscriptionPage extends ConsumerWidget {
             Icon(
               Icons.card_membership,
               size: 100,
-              color: Colors.grey,
+              color: TossDesignSystem.gray500,
             ),
             SizedBox(height: 20),
             Text(
@@ -27,7 +28,7 @@ class SubscriptionPage extends ConsumerWidget {
             SizedBox(height: 10),
             Text(
               '구독 기능은 준비 중입니다',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(fontSize: 16, color: TossDesignSystem.gray500),
             ),
           ],
         ),

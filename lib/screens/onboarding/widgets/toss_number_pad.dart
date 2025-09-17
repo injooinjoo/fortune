@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class TossNumberPad extends StatelessWidget {
   final Function(String) onNumberPressed;
@@ -16,7 +17,7 @@ class TossNumberPad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: TossDesignSystem.white,
       child: Column(
         children: [
           // Row 1: 1, 2, 3
@@ -65,7 +66,7 @@ class TossNumberPad extends StatelessWidget {
       height: 60,
       margin: const EdgeInsets.all(1),
       child: Material(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         child: InkWell(
           onTap: () {
             print('[TossNumberPad] Button $number pressed at ${DateTime.now()}');
@@ -75,7 +76,7 @@ class TossNumberPad extends StatelessWidget {
           },
           child: Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[100]!, width: 0.5),
+              border: Border.all(color: TossDesignSystem.gray100, width: 0.5),
             ),
             child: Center(
               child: Text(
@@ -83,7 +84,7 @@ class TossNumberPad extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: TossDesignSystem.grayDark900,
                 ),
               ),
             ),
@@ -98,7 +99,7 @@ class TossNumberPad extends StatelessWidget {
       height: 60,
       margin: const EdgeInsets.all(1),
       child: Material(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         child: InkWell(
           onTap: onBackspacePressed != null ? () {
             print('[TossNumberPad] Backspace pressed at ${DateTime.now()}');
@@ -108,13 +109,13 @@ class TossNumberPad extends StatelessWidget {
           } : null,
           child: Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[100]!, width: 0.5),
+              border: Border.all(color: TossDesignSystem.gray100, width: 0.5),
             ),
             child: Center(
               child: Icon(
                 Icons.backspace_outlined,
                 size: 24,
-                color: onBackspacePressed != null ? Colors.black54 : Colors.grey[300],
+                color: onBackspacePressed != null ? TossDesignSystem.gray700 : TossDesignSystem.gray300,
               ),
             ),
           ),

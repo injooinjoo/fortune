@@ -244,7 +244,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
               ? Icons.all_inclusive 
               : Icons.toll,
             size: 40,
-            color: TossDesignSystem.tossBlue.withOpacity(0.3))
+            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3))
         ]))
     .animate()
       .fadeIn(duration: 600.ms)
@@ -304,23 +304,23 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           gradient: LinearGradient(
             colors: isSelected
               ? [
-                  TossDesignSystem.tossBlue.withOpacity(0.2),
-                  TossDesignSystem.gray600.withOpacity(0.1)
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                  TossDesignSystem.gray600.withValues(alpha: 0.1)
                 ]
               : [
-                  TossDesignSystem.tossBlue.withOpacity(0.05),
-                  TossDesignSystem.gray600.withOpacity(0.02)
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                  TossDesignSystem.gray600.withValues(alpha: 0.02)
                 ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight),
           border: Border.all(
-            color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.tossBlue.withOpacity(0.3),
+            color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.tossBlue.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1.5),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                   blurRadius: 12,
                   offset: const Offset(0, 4))
               ]
@@ -341,13 +341,13 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                     children: [
                       const Icon(
                         Icons.star,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 16),
                       const SizedBox(width: 4),
                       Text(
                         badge,
                         style: TossDesignSystem.caption.copyWith(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontWeight: FontWeight.bold))
                     ])),
                 const Spacer(),
@@ -355,7 +355,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12)),
                   child: const Center(
                     child: Icon(
@@ -461,8 +461,8 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  TossDesignSystem.tossBlue.withOpacity(0.1),
-                  TossDesignSystem.tossBlue.withOpacity(0.05)
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.05)
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight)
@@ -479,7 +479,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                   : TossDesignSystem.gray50,
                 borderRadius: BorderRadius.circular(12)),
               child: Center(
@@ -510,7 +510,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                           child: Text(
                             '인기',
                             style: TossDesignSystem.caption.copyWith(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontWeight: FontWeight.bold)))
                       ]
                     ]),

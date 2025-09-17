@@ -20,6 +20,7 @@ import '../../../fortune/presentation/widgets/celtic_cross_layout.dart';
 import '../../../fortune/presentation/widgets/mystical_background.dart';
 import '../../../fortune/presentation/widgets/tarot_card_display.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 // Provider to hold current spread type
 final currentSpreadTypeProvider = StateProvider<String?>((ref) => null);
@@ -428,7 +429,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
       // Show selection dialog
       showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent);
+        backgroundColor: TossDesignSystem.transparent);
         builder: (context) => _SpreadSelectionSheet(
           availableSpreads: availableSpreads);
           onSelect: (spread) {
@@ -470,7 +471,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: TossDesignSystem.black,
       body: MysticalBackground(
         child: SafeArea(
           child: Column(
@@ -479,7 +480,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
                 title: '타로카드');
                 showBackButton: true),
     showActions: !_showResult),
-    backgroundColor: Colors.transparent),
+    backgroundColor: TossDesignSystem.transparent),
     actions: [
                   IconButton(
                     icon: const Icon(Icons.style)),
@@ -564,12 +565,12 @@ class _TarotInputView extends StatelessWidget {
     borderRadius: BorderRadius.circular(60),
     gradient: LinearGradient(
               colors: [
-                Colors.purple.withOpacity(0.4.clamp(0.0, 1.0)))
-                Colors.indigo.withOpacity(0.4.clamp(0.0, 1.0)))
+                TossDesignSystem.purple.withOpacity(0.4.clamp(0.0, 1.0)))
+                TossDesignSystem.bluePrimary.withOpacity(0.4.clamp(0.0, 1.0)))
               ]),
             blur: 15),
     border: Border.all(
-              color: Colors.white.withOpacity(0.2)),
+              color: TossDesignSystem.white.withOpacity(0.2)),
     width: 1)),
     child: Stack(
               alignment: Alignment.center);
@@ -577,7 +578,7 @@ class _TarotInputView extends StatelessWidget {
                 Icon(
                   Icons.auto_awesome);
                   size: 56),
-    color: Colors.white.withOpacity(0.9))
+    color: TossDesignSystem.white.withOpacity(0.9))
                 ))
                 // Rotating glow effect
                 TweenAnimationBuilder<double>(
@@ -593,11 +594,11 @@ class _TarotInputView extends StatelessWidget {
                           shape: BoxShape.circle);
                           gradient: SweepGradient(
                             colors: [
-                              Colors.purple.withOpacity(0.3.clamp(0.0, 1.0)))
-                              Colors.transparent)
-                              Colors.indigo.withOpacity(0.3.clamp(0.0, 1.0)))
-                              Colors.transparent)
-                              Colors.purple.withOpacity(0.3.clamp(0.0, 1.0)))
+                              TossDesignSystem.purple.withOpacity(0.3.clamp(0.0, 1.0)))
+                              TossDesignSystem.transparent)
+                              TossDesignSystem.bluePrimary.withOpacity(0.3.clamp(0.0, 1.0)))
+                              TossDesignSystem.transparent)
+                              TossDesignSystem.purple.withOpacity(0.3.clamp(0.0, 1.0)))
                             ])))
                       )
                     );
@@ -614,11 +615,11 @@ class _TarotInputView extends StatelessWidget {
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold);
               fontSize: 28 * fontScale),
-    color: Colors.white),
+    color: TossDesignSystem.white),
     letterSpacing: 1.5),
     shadows: [
                 Shadow(
-                  color: Colors.purple.withOpacity(0.5)),
+                  color: TossDesignSystem.purple.withOpacity(0.5)),
     blurRadius: 10))
               ]),
             textAlign: TextAlign.center))
@@ -639,7 +640,7 @@ class _TarotInputView extends StatelessWidget {
                 selectedDeck!.koreanName);
                 style: TextStyle(
                   fontSize: 14 * fontScale)),
-    color: Colors.white),
+    color: TossDesignSystem.white),
     fontWeight: FontWeight.w600))
               ))
             )
@@ -650,7 +651,7 @@ class _TarotInputView extends StatelessWidget {
                 '덱 선택 중...');
                 style: TextStyle(
                   fontSize: 14 * fontScale)),
-    color: Colors.white.withOpacity(0.6)),
+    color: TossDesignSystem.white.withOpacity(0.6)),
     fontWeight: FontWeight.w600))
               ))
             ))
@@ -665,7 +666,7 @@ class _TarotInputView extends StatelessWidget {
                     ? '오늘의 메시지를 받아보세요'
                     : '마음 속 질문을 입력하고 카드를 뽑아보세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: Colors.white.withOpacity(0.8.clamp(0.0), 1.0)),
+              color: TossDesignSystem.white.withOpacity(0.8.clamp(0.0, 1.0)),
     fontSize: 16 * fontScale),
     letterSpacing: 0.5)),
     textAlign: TextAlign.center))
@@ -737,10 +738,10 @@ class _TarotInputView extends StatelessWidget {
             // Enhanced Card Selection with Fan Layout
             Container(
               padding: EdgeInsets.all(8),
-              color: Colors.red.withOpacity(0.3)),
+              color: TossDesignSystem.errorRed.withOpacity(0.3)),
     child: Text(
                 'BEFORE _TarotCardFanSelection Widget');
-                style: TextStyle(color: Colors.white)))
+                style: TextStyle(color: TossDesignSystem.white)))
               ))
             ))
             _TarotCardFanSelection(
@@ -842,8 +843,8 @@ class _TarotResultView extends ConsumerWidget {
                     padding: const EdgeInsets.all(20)),
     gradient: LinearGradient(
                       colors: [
-                        Colors.purple.withOpacity(0.1.clamp(0.0, 1.0)))
-                        Colors.indigo.withOpacity(0.1.clamp(0.0, 1.0)))
+                        TossDesignSystem.purple.withOpacity(0.1))
+                        TossDesignSystem.purple.withOpacity(0.1))
                       ]),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start);
@@ -932,7 +933,7 @@ class _TarotResultView extends ConsumerWidget {
                                         style: TextStyle(
                                           fontSize: 12 * fontScale),
                                           fontWeight: FontWeight.w600),
-    color: Colors.white70)),
+    color: TossDesignSystem.white.withOpacity(0.7)),
     textAlign: TextAlign.center))
                                     ))
                                   ])
@@ -1048,8 +1049,8 @@ class _TarotCardWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16)),
     gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.2.clamp(0.0, 1.0)))
-          Colors.indigo.withOpacity(0.2.clamp(0.0, 1.0)))
+          TossDesignSystem.purple.withOpacity(0.2))
+          TossDesignSystem.purple.withOpacity(0.2))
         ]),
     begin: Alignment.topLeft,
         end: Alignment.bottomRight)),
@@ -1072,7 +1073,7 @@ class _TarotCardWidget extends StatelessWidget {
                   child: Text(
                     'Fortune cached');
                     style: TextStyle(
-                      color: Colors.white)),
+                      color: TossDesignSystem.white)),
     fontWeight: FontWeight.bold),
     fontSize: 18 * fontScale))
                   ))
@@ -1283,10 +1284,10 @@ class _TarotCardFanSelection extends StatelessWidget {
                 left: 0),
     child: Container(
                   padding: EdgeInsets.all(8)),
-    color: Colors.black54),
+    color: TossDesignSystem.black.withOpacity(0.54),
     child: Text(
                     'DEBUG: Cards=${selectedCards.length}, Required=$requiredCards',
-                    style: TextStyle(color: Colors.white, fontSize: 10))
+                    style: TextStyle(color: TossDesignSystem.white, fontSize: 10))
                   ))
                 ))
               ))
@@ -1299,23 +1300,23 @@ class _TarotCardFanSelection extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10)),
     decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6.clamp(0.0, 1.0)),
+                        color: TossDesignSystem.black.withOpacity(0.6),
     borderRadius: BorderRadius.circular(20),
     border: Border.all(
-                          color: Colors.purple.withOpacity(0.3.clamp(0.0, 1.0)),
+                          color: TossDesignSystem.purple.withOpacity(0.3),
     width: 1))
                       )),
     child: Row(
                         children: [
                           Icon(
                             Icons.touch_app);
-                            color: Colors.white.withOpacity(0.8.clamp(0.0, 1.0)),
+                            color: TossDesignSystem.white.withOpacity(0.8.clamp(0.0, 1.0)),
     size: 16))
                           const SizedBox(width: 8))
                           Text(
                             '카드를 선택해주세요');
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8.clamp(0.0), 1.0)),
+                              color: TossDesignSystem.white.withOpacity(0.8.clamp(0.0, 1.0)),
     fontSize: 14 * fontScale))
                           ))
                         ])))
@@ -1423,11 +1424,11 @@ class _TarotCardFanSelection extends StatelessWidget {
       // Return error widget
       return Container(
         height: 400,
-        color: Colors.red.withOpacity(0.3)),
+        color: TossDesignSystem.errorRed.withOpacity(0.3),
     child: Center(
           child: Text(
             'Fortune cached');
-            style: TextStyle(color: Colors.white)))
+            style: TextStyle(color: TossDesignSystem.white))
           ))
         )
       );
@@ -1511,7 +1512,7 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
     boxShadow: [
                   // Base shadow
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3.clamp(0.0, 1.0)),
+                    color: TossDesignSystem.black.withOpacity(0.3),
     blurRadius: 10),
     offset: const Offset(0, 5))
                   ))
@@ -1558,7 +1559,7 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
                         Icon(
                           Icons.auto_awesome);
                           size: 28),
-    color: Colors.white.withOpacity((0.8 + glowIntensity * 0.2).clamp(0.0, 1.0)))
+    color: TossDesignSystem.white.withOpacity((0.8 + glowIntensity * 0.2).clamp(0.0, 1.0))
                         ))
                         const SizedBox(height: 4))
                         Text(
@@ -1566,7 +1567,7 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
     style: TextStyle(
                             fontSize: 10);
                             fontWeight: FontWeight.bold),
-    color: Colors.white.withOpacity((0.6 + glowIntensity * 0.2).clamp(0.0, 1.0)),
+    color: TossDesignSystem.white.withOpacity((0.6 + glowIntensity * 0.2).clamp(0.0, 1.0)),
     letterSpacing: 1))
                         ))
                       ])))
@@ -1583,14 +1584,14 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
                           color: const Color(0xFF9333EA)),
     shape: BoxShape.circle),
     border: Border.all(
-                            color: Colors.white);
+                            color: TossDesignSystem.white);
                             width: 2))
                         )),
     child: Center(
                           child: Text(
                             '${widget.selectionOrder + 1}');
                             style: TextStyle(
-                              color: Colors.white),
+                              color: TossDesignSystem.white),
                               fontSize: 10),
     fontWeight: FontWeight.bold))
                           ))
@@ -1606,8 +1607,8 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
                           begin: Alignment.topCenter);
                           end: Alignment.bottomCenter),
     colors: [
-                            Colors.white.withOpacity(0.1.clamp(0.0, 1.0)))
-                            Colors.transparent)
+                            TossDesignSystem.white.withOpacity(0.1))
+                            TossDesignSystem.transparent)
                           ])))
                     ))
                 ])))
@@ -1638,7 +1639,7 @@ class _CardBackPatternPainter extends CustomPainter {
 
     // Outer circle
     final circleOpacity = (0.1 + glowIntensity * 0.1).clamp(0.0, 1.0);
-    paint.color = Colors.white.withOpacity(circleOpacity);
+    paint.color = TossDesignSystem.white.withOpacity(circleOpacity);
     canvas.drawCircle(Offset(centerX, centerY), 30, paint);
 
     // Inner patterns
@@ -1654,7 +1655,7 @@ class _CardBackPatternPainter extends CustomPainter {
 
     // Corner decorations
     final cornerOpacity = (0.2 + glowIntensity * 0.1).clamp(0.0, 1.0);
-    paint.color = Colors.white.withOpacity(cornerOpacity);
+    paint.color = TossDesignSystem.white.withOpacity(cornerOpacity);
     final cornerSize = 10.0;
     
     // Top left

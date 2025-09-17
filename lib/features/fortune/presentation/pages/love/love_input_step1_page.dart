@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 enum RelationshipStatus { single, dating, breakup, crush }
 
@@ -108,7 +109,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: TossTheme.primaryBlue.withOpacity(0.1),
+                        color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -141,7 +142,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                     activeTrackColor: TossTheme.primaryBlue,
                     inactiveTrackColor: TossTheme.borderGray200,
                     thumbColor: TossTheme.primaryBlue,
-                    overlayColor: TossTheme.primaryBlue.withOpacity(0.2),
+                    overlayColor: TossTheme.primaryBlue.withValues(alpha: 0.2),
                     thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
                     trackHeight: 4,
                   ),
@@ -167,7 +168,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                     child: Text(
                       '$_age세',
                       style: TossTheme.body1.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -247,7 +248,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withOpacity(0.1) : TossTheme.backgroundSecondary,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossTheme.backgroundSecondary,
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
             width: isSelected ? 2 : 1,
@@ -287,7 +288,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withOpacity(0.1) : TossTheme.backgroundSecondary,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossTheme.backgroundSecondary,
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
             width: isSelected ? 2 : 1,

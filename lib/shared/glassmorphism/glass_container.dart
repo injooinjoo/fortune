@@ -47,17 +47,17 @@ class GlassContainer extends StatelessWidget {
       colors: isDark
           ? [
               glassColors.background,
-              glassColors.background.withOpacity(0.5)]
+              glassColors.background.withValues(alpha: 0.5)]
           : [
-              TossDesignSystem.grayDark900.withOpacity(0.6),
-              TossDesignSystem.grayDark900.withOpacity(0.3)]
+              TossDesignSystem.grayDark900.withValues(alpha: 0.6),
+              TossDesignSystem.grayDark900.withValues(alpha: 0.3)]
     );
 
     final defaultBorderColor = borderColor ?? glassColors.border;
 
     final defaultShadow = [
       BoxShadow(
-        color: fortuneTheme.shadowColor.withOpacity(0.15),
+        color: fortuneTheme.shadowColor.withValues(alpha: 0.15),
         blurRadius: 20,
         offset: const Offset(0, 10))];
 
@@ -115,11 +115,11 @@ class GlassButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: onPressed,
         borderRadius: borderRadius as BorderRadius? ?? BorderRadius.circular(TossDesignSystem.radiusL),
-        splashColor: splashColor ?? Theme.of(context).primaryColor.withOpacity(0.2),
+        splashColor: splashColor ?? Theme.of(context).primaryColor.withValues(alpha: 0.2),
         child: GlassContainer(
           width: width,
           height: height,
@@ -165,14 +165,14 @@ class GlassCard extends StatelessWidget {
       gradient: gradient,
       boxShadow: [
         BoxShadow(
-          color: TossDesignSystem.gray900.withOpacity(0.1),
+          color: TossDesignSystem.gray900.withValues(alpha: 0.1),
           blurRadius: elevation * 2,
           offset: Offset(0, elevation))],
       child: child);
 
     if (onTap != null) {
       return Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.white.withValues(alpha: 0.0),
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),

@@ -111,7 +111,7 @@ class TossScoreCard extends StatelessWidget {
     
     if (onTap != null) {
       return Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.transparent,
         borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
         child: InkWell(
           onTap: onTap,

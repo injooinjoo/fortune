@@ -15,8 +15,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        TossDesignSystem.grayDark900.withOpacity(opacity),
-        TossDesignSystem.grayDark900.withOpacity(opacity * 0.5)],
+        TossDesignSystem.grayDark900.withValues(alpha:opacity),
+        TossDesignSystem.grayDark900.withValues(alpha:opacity * 0.5)],
     );
   }
 
@@ -25,8 +25,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        TossDesignSystem.grayDark900.withOpacity(opacity),
-        TossDesignSystem.grayDark900.withOpacity(opacity * 0.5)],
+        TossDesignSystem.grayDark900.withValues(alpha:opacity),
+        TossDesignSystem.grayDark900.withValues(alpha:opacity * 0.5)],
     );
   }
 
@@ -37,8 +37,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        color.withOpacity(opacity),
-        color.withOpacity(opacity * 0.5)],
+        color.withValues(alpha:opacity),
+        color.withValues(alpha:opacity * 0.5)],
     );
   }
 
@@ -61,12 +61,12 @@ class GlassEffects {
     double spread = 0}) {
     return [
       BoxShadow(
-        color: (color ?? TossDesignSystem.gray900).withOpacity(0.1),
+        color: (color ?? TossDesignSystem.gray900).withValues(alpha:0.1),
         blurRadius: elevation * 2,
         offset: Offset(0, elevation),
         spreadRadius: spread),
       BoxShadow(
-        color: (color ?? TossDesignSystem.gray900).withOpacity(0.05),
+        color: (color ?? TossDesignSystem.gray900).withValues(alpha:0.05),
         blurRadius: elevation,
         offset: Offset(0, elevation * 0.5),
         spreadRadius: spread * 0.5)];
@@ -77,7 +77,7 @@ class GlassEffects {
     double width = 1.5,
     double opacity = 0.2}) {
     return Border.all(
-      color: (color ?? TossDesignSystem.grayDark900).withOpacity(opacity),
+      color: (color ?? TossDesignSystem.grayDark900).withValues(alpha:opacity),
       width: width);
   }
 
@@ -106,9 +106,9 @@ class LiquidGlassContainer extends StatefulWidget {
     this.borderRadius,
     this.animationDuration = const Duration(seconds: 3),
     this.liquidColors = const [
-      Color(0xFF7C3AED),
+      TossDesignSystem.purple,
       TossDesignSystem.gray600,
-      Color(0xFF06B6D4)]
+      TossDesignSystem.tossBlue]
   }) : super(key: key);
 
   @override
@@ -236,11 +236,11 @@ class _ShimmerGlassState extends State<ShimmerGlass>
                       begin: Alignment(_animation.value - 1, 0),
                       end: Alignment(_animation.value, 0),
                       colors: [
-                        Colors.transparent,
-                        widget.shimmerColor.withOpacity(0.1),
-                        widget.shimmerColor.withOpacity(0.2),
-                        widget.shimmerColor.withOpacity(0.1),
-                        Colors.transparent],
+                        TossDesignSystem.white.withValues(alpha: 0.0),
+                        widget.shimmerColor.withValues(alpha:0.1),
+                        widget.shimmerColor.withValues(alpha:0.2),
+                        widget.shimmerColor.withValues(alpha:0.1),
+                        TossDesignSystem.white.withValues(alpha: 0.0)],
                       stops: const [0.0, 0.35, 0.5, 0.65, 1.0]),
                   ),
                 ),

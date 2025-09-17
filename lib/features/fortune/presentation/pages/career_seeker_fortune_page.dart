@@ -483,7 +483,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                                 ? Icons.check
                                 : Icons.schedule,
                             color: event.isCompleted
-                                ? Colors.white
+                                ? TossDesignSystem.white
                                 : theme.colorScheme.primary,
                             size: 20,
                           ),
@@ -533,11 +533,11 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
     final theme = Theme.of(context);
     
     final industries = [
-      IndustryMatch('IT/테크', 0.95, Colors.blue),
-      IndustryMatch('금융', 0.85, Colors.green),
-      IndustryMatch('제조', 0.70, Colors.orange),
-      IndustryMatch('서비스', 0.80, Colors.purple),
-      IndustryMatch('공공', 0.75, Colors.red)];
+      IndustryMatch('IT/테크', 0.95, TossDesignSystem.tossBlue),
+      IndustryMatch('금융', 0.85, TossDesignSystem.successGreen),
+      IndustryMatch('제조', 0.70, TossDesignSystem.warningOrange),
+      IndustryMatch('서비스', 0.80, TossDesignSystem.purple),
+      IndustryMatch('공공', 0.75, TossDesignSystem.errorRed)];
     
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -664,7 +664,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             '${index + 1}',
                             style: TextStyle(
                               color: isTop
-                                  ? Colors.white
+                                  ? TossDesignSystem.white
                                   : theme.colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,

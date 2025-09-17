@@ -1,4 +1,5 @@
 import 'package:fortune/core/theme/toss_theme.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -54,10 +55,14 @@ class FortuneBottomNavigationBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: TossTheme.backgroundWhite,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.white.withValues(alpha: 0.1)
+                : TossDesignSystem.black.withValues(alpha: 0.04),
             offset: const Offset(0, -1),
             blurRadius: 0,
             spreadRadius: 0,

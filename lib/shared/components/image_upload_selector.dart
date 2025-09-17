@@ -165,7 +165,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: TossDesignSystem.gray900.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -176,13 +176,13 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                         ? Icons.camera_alt 
                         : Icons.photo_library,
                     size: 16,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     _selectedType == ImageUploadType.camera ? '촬영' : '갤러리',
                     style: TossDesignSystem.body3.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                 ],
@@ -204,7 +204,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: TossDesignSystem.purple.withOpacity(0.3),
+              color: TossDesignSystem.purple.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -216,13 +216,13 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Colors.purple, Colors.pink, Colors.orange],
+                        colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       Icons.camera_alt,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 20,
                     ),
                   ),
@@ -452,15 +452,15 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
               decoration: BoxDecoration(
                 color: type == ImageUploadType.instagram
                     ? const LinearGradient(
-                        colors: [Colors.purple, Colors.pink, Colors.orange],
-                      ).colors.first.withOpacity(0.1)
+                        colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
+                      ).colors.first.withValues(alpha: 0.1)
                     : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 type.icon,
                 color: type == ImageUploadType.instagram
-                    ? Colors.purple
+                    ? TossDesignSystem.purple
                     : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700),
               ),
             ),
@@ -503,10 +503,10 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossDesignSystem.infoBlue.withOpacity(0.1),
+        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: TossDesignSystem.infoBlue.withOpacity(0.3),
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -596,12 +596,12 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
+          color: TossDesignSystem.gray900.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Icon(
           icon,
-          color: Colors.white,
+          color: TossDesignSystem.white,
           size: 20,
         ),
       ),
@@ -744,13 +744,13 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Colors.purple, Colors.pink, Colors.orange],
+                        colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
                       ),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(
                       Icons.camera_alt,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 16,
                     ),
                   ),

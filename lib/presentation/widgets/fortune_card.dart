@@ -1,9 +1,9 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
+import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_dimensions.dart';
+import '../../core/theme/app_typography.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class FortuneCard extends StatelessWidget {
   final IconData icon;
@@ -71,11 +71,11 @@ class FortuneCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: (adjustedGradient?.first ?? theme.colorScheme.primary)
-                  .withOpacity(isDarkMode ? 0.3 : 0.15),
+                  .withValues(alpha: isDarkMode ? 0.3 : 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4))]),
         child: Material(
-          color: Colors.transparent,
+          color: TossDesignSystem.white.withValues(alpha: 0.0),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
@@ -95,13 +95,13 @@ class FortuneCard extends StatelessWidget {
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.grayDark900.withOpacity(0.2),
+                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge)),
                       child: Icon(
                         icon,
                         size: AppDimensions.iconSizeLarge,
-                        color: adjustedGradient != null 
-                            ? (isDarkMode ? TossDesignSystem.grayDark900 : (iconColor ?? theme.colorScheme.primary))
+                        color: adjustedGradient != null
+                            ? (isDarkMode ? TossDesignSystem.white : (iconColor ?? theme.colorScheme.primary))
                             : (iconColor ?? theme.colorScheme.primary),
                       ),
                     ),
@@ -110,8 +110,8 @@ class FortuneCard extends StatelessWidget {
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: adjustedGradient != null 
-                          ? (isDarkMode ? TossDesignSystem.grayDark900 : theme.colorScheme.onSurface)
+                      color: adjustedGradient != null
+                          ? (isDarkMode ? TossDesignSystem.white : theme.colorScheme.onSurface)
                           : theme.colorScheme.onSurface,
                       letterSpacing: -0.5),
                     textAlign: TextAlign.center,
@@ -121,11 +121,11 @@ class FortuneCard extends StatelessWidget {
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: adjustedGradient != null 
-                          ? (isDarkMode 
-                              ? TossDesignSystem.grayDark900.withOpacity(0.9) 
-                              : theme.colorScheme.onSurface.withOpacity(0.6))
-                          : theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: adjustedGradient != null
+                          ? (isDarkMode
+                              ? TossDesignSystem.white.withValues(alpha: 0.9)
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       fontWeight: FontWeight.w400),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -137,13 +137,13 @@ class FortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3,
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.grayDark900.withOpacity(0.2),
+                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                       child: Text(
                         badge!,
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: adjustedGradient != null 
-                              ? (isDarkMode ? TossDesignSystem.grayDark900 : theme.textTheme.bodyMedium?.color)
+                          color: adjustedGradient != null
+                              ? (isDarkMode ? TossDesignSystem.white : theme.textTheme.bodyMedium?.color)
                               : theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w600)),
                     ),

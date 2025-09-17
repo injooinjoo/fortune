@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../providers/dream_chat_provider.dart';
 
 class DreamChatBubble extends StatelessWidget {
@@ -78,7 +79,7 @@ class _FortuneTellerBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: TossDesignSystem.black.withOpacity(0.08),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -119,7 +120,7 @@ class _FortuneTellerBubble extends StatelessWidget {
       ),
       child: const Icon(
         Icons.auto_awesome,
-        color: Colors.white,
+        color: TossDesignSystem.white,
         size: 20,
       ),
     );
@@ -169,7 +170,7 @@ class _UserBubble extends StatelessWidget {
                   child: Text(
                     message.content,
                     style: TossTheme.body3.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       height: 1.5,
                     ),
                   ),
@@ -217,7 +218,7 @@ class _LoadingBubble extends StatelessWidget {
             ),
             child: const Icon(
               Icons.auto_awesome,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               size: 20,
             ),
           ).animate(onPlay: (c) => c.repeat()).rotate(duration: 2.seconds),
@@ -248,7 +249,7 @@ class _LoadingBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: TossDesignSystem.black.withOpacity(0.08),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -323,7 +324,7 @@ class _ResultBubble extends StatelessWidget {
             ),
             child: const Icon(
               Icons.auto_awesome,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               size: 20,
             ),
           ),
@@ -354,7 +355,7 @@ class _ResultBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: TossDesignSystem.black.withOpacity(0.1),
                         blurRadius: 12,
                         offset: const Offset(0, 3),
                       ),
@@ -437,7 +438,7 @@ class TypingIndicator extends StatelessWidget {
             ),
             child: const Icon(
               Icons.auto_awesome,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               size: 20,
             ),
           ),
@@ -452,7 +453,7 @@ class TypingIndicator extends StatelessWidget {
               borderRadius: BorderRadius.circular(TossTheme.radiusL),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: TossDesignSystem.black.withOpacity(0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

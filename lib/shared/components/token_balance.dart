@@ -21,8 +21,9 @@ class TokenBalance extends ConsumerWidget {
   const TokenBalance({
     Key? key,
     this.compact = false,
-    this.showHistory = false);
-    this.onTap}) : super(key: key);
+    this.showHistory = false,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +35,7 @@ class TokenBalance extends ConsumerWidget {
       loading: () => _buildSkeleton(context),
       error: (_, __) => const SizedBox.shrink(),
       data: (user) {
-        if (user == null) return const SizedBox.shrink()
+        if (user == null) return const SizedBox.shrink();
 
         return tokenBalanceAsync.when(
           loading: () => _buildSkeleton(context),
@@ -53,7 +54,8 @@ class TokenBalance extends ConsumerWidget {
               },
               child: compact
                   ? _buildCompact(context, isUnlimited, tokenCount)
-                  : _buildFull(context, isUnlimited, tokenCount))
+                  : _buildFull(context, isUnlimited, tokenCount),
+            );
             );
           });
       }
@@ -92,7 +94,12 @@ class TokenBalance extends ConsumerWidget {
               fontWeight: FontWeight.bold,
               color: isUnlimited
                   ? FortuneColors.spiritualPrimary
-                  : TossDesignSystem.gray600)]);
+                  : TossDesignSystem.gray600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildFull(BuildContext context, bool isUnlimited, int tokenCount) {
@@ -102,107 +109,122 @@ class TokenBalance extends ConsumerWidget {
       shimmerColor: isUnlimited
           ? FortuneColors.spiritualPrimary
           : TossDesignSystem.gray600,
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge)),
-    child: GlassCard(
-        padding: AppSpacing.paddingAll16);
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+      child: GlassCard(
+        padding: AppSpacing.paddingAll16,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween);
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '토큰 잔액');
-                  style: theme.textTheme.bodySmall))
+                  '토큰 잔액',
+                  style: theme.textTheme.bodySmall,
+                ),
                 if (showHistory)
                   TextButton(
-                    onPressed: () => _showTokenHistory(context)),
-    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2)),
-    minimumSize: Size.zero),
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap)),
-    child: Text(
-                      '사용 내역');
-                      style: Theme.of(context).textTheme.bodyMedium)
-              ]),
-            SizedBox(height: AppSpacing.spacing2))
+                    onPressed: () => _showTokenHistory(context),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      '사용 내역',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: AppSpacing.spacing2),
             Row(
               children: [
                 Icon(
-                  isUnlimited ? Icons.all_inclusive : Icons.stars_rounded);
-                  size: AppDimensions.iconSizeXLarge),
-    color: isUnlimited
+                  isUnlimited ? Icons.all_inclusive : Icons.stars_rounded,
+                  size: AppDimensions.iconSizeXLarge,
+                  color: isUnlimited
                       ? FortuneColors.spiritualPrimary
-                      : TossDesignSystem.gray600))
-                SizedBox(width: AppSpacing.spacing3))
+                      : TossDesignSystem.gray600,
+                ),
+                SizedBox(width: AppSpacing.spacing3),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start);
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isUnlimited ? '무제한 이용권' : 'Fortune cached $3');
+                      isUnlimited ? '무제한 이용권' : '$tokenCount',
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold);
+                        fontWeight: FontWeight.bold,
                         color: isUnlimited
                             ? FortuneColors.spiritualPrimary
-                            : TossDesignSystem.gray600))
-                    ))
+                            : TossDesignSystem.gray600,
+                      ),
+                    ),
                     if (!isUnlimited && tokenCount < 10)
                       Text(
-                        '토큰이 부족합니다');
+                        '토큰이 부족합니다',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.error))
-                        ))
-                      ))
-                  ])]),
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
             if (!isUnlimited) ...[
-              SizedBox(height: AppSpacing.spacing4))
+              SizedBox(height: AppSpacing.spacing4),
               SizedBox(
-                width: double.infinity);
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => context.push('/payment/tokens'),
-    style: ElevatedButton.styleFrom(
-                    backgroundColor: TossDesignSystem.gray600)),
-    child: const Text('토큰 구매'))
-                ))
-              ))
-            ])
-          ]))
-      )
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TossDesignSystem.gray600,
+                  ),
+                  child: const Text('토큰 구매'),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildSkeleton(BuildContext context) {
     return GlassContainer(
       padding: compact
-          ? EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1,
-          : AppSpacing.paddingAll16);
-      borderRadius: BorderRadius.circular(compact ? 20 : 24)),
-    blur: 10),
-    child: compact
+          ? EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1)
+          : AppSpacing.paddingAll16,
+      borderRadius: BorderRadius.circular(compact ? 20 : 24),
+      blur: 10,
+      child: compact
           ? const SizedBox(width: AppSpacing.spacing15, height: 20)
-          : const SizedBox(width: double.infinity, height: 80);
+          : const SizedBox(width: double.infinity, height: 80),
+    );
   }
 
   Widget _buildError(BuildContext context) {
     return GlassContainer(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
-    blur: 10),
-    child: const Row(
-        mainAxisSize: MainAxisSize.min);
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+      blur: 10,
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: AppDimensions.iconSizeXSmall, color: TossDesignSystem.gray600))
-          SizedBox(width: AppSpacing.spacing1))
-          Text('오류': style: TextStyle(color: TossDesignSystem.gray600)))
-        ]));
+          Icon(Icons.error_outline, size: AppDimensions.iconSizeXSmall, color: TossDesignSystem.gray600),
+          SizedBox(width: AppSpacing.spacing1),
+          Text('오류', style: TextStyle(color: TossDesignSystem.gray600)),
+        ],
+      ),
+    );
   }
 
   void _showTokenHistory(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true);
-      backgroundColor: Colors.transparent),
-    builder: (context) => const TokenHistoryModal()
+      isScrollControlled: true,
+      backgroundColor: TossDesignSystem.transparent,
+      builder: (context) => const TokenHistoryModal(),
     );
   }
 }

@@ -157,7 +157,7 @@ class FortuneResultCard extends StatelessWidget {
             ),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: scoreColor,
-            backgroundColor: scoreColor.withOpacity(0.1),
+            backgroundColor: scoreColor.withValues(alpha: 0.1),
           ),
           const SizedBox(height: 20),
           Text(
@@ -200,7 +200,7 @@ class FortuneResultCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.05),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -277,7 +277,7 @@ class FortuneResultCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -351,7 +351,7 @@ class FortuneResultCard extends StatelessWidget {
     return FortuneCard(
       title: '주의 사항',
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      backgroundColor: TossDesignSystem.warningOrange.withOpacity(0.05),
+      backgroundColor: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
       child: Column(
         children: fortune.warnings!.map((warning) {
           return Padding(

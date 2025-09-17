@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 십신 분포 차트 위젯
@@ -44,7 +45,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     '상관': {
       'meaning': '예술, 기술, 창의',
       'description': '특별한 기술과 예술성',
-      'color': Colors.purple,
+      'color': TossDesignSystem.purple,
       'icon': Icons.auto_awesome,
     },
     '편재': {
@@ -56,31 +57,31 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     '정재': {
       'meaning': '안정된 재물, 근면',
       'description': '꾸준한 노력으로 얻는 재물',
-      'color': Colors.amber,
+      'color': TossDesignSystem.warningYellow,
       'icon': Icons.savings_outlined,
     },
     '편관': {
       'meaning': '권력, 도전, 변혁',
       'description': '강력한 추진력과 개혁',
-      'color': Colors.indigo,
+      'color': TossDesignSystem.infoBlue,
       'icon': Icons.flash_on_outlined,
     },
     '정관': {
       'meaning': '명예, 지위, 책임',
       'description': '사회적 인정과 명예',
-      'color': Colors.teal,
+      'color': TossDesignSystem.tossBlue,
       'icon': Icons.workspace_premium_outlined,
     },
     '편인': {
       'meaning': '학문, 종교, 직관',
       'description': '특별한 지식과 영적 성장',
-      'color': Colors.brown,
+      'color': TossDesignSystem.gray600,
       'icon': Icons.school_outlined,
     },
     '정인': {
       'meaning': '어머니, 교육, 보호',
       'description': '체계적인 교육과 보살핌',
-      'color': Colors.pink,
+      'color': TossDesignSystem.pinkPrimary,
       'icon': Icons.favorite_outline,
     },
   };
@@ -250,7 +251,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                           child: Text(
                             '$count',
                             style: TossTheme.caption.copyWith(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

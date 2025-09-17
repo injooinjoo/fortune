@@ -692,7 +692,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('알림 설정이 저장되었습니다'),
-            backgroundColor: Colors.green,
+            backgroundColor: TossDesignSystem.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -704,7 +704,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('설정 저장에 실패했습니다'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -722,7 +722,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('테스트 알림을 전송했습니다'),
-            backgroundColor: Colors.blue,
+            backgroundColor: TossDesignSystem.primaryBlue,
             behavior: SnackBarBehavior.floating,
           ),
         );

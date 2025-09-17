@@ -51,38 +51,53 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft),
-                  end: Alignment.bottomRight),
-                  colors: [
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
                         Color(0xFFEF4444),
                         Color(0xFFEC4899),
+                      ],
+                    ),
+                  ),
                   child: Stack(
                     children: [
                       // Traditional pattern overlay
                       Positioned.fill(
                         child: CustomPaint(
                           painter: TraditionalPatternPainter(),
+                        ),
+                      ),
                       Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.auto_awesome_rounded),
-                  size: 60),
-                  color: Colors.white).animate()
-                  .scale(delay: 300.ms, duration: 600.ms)
+                              Icons.auto_awesome_rounded,
+                              size: 60,
+                              color: TossDesignSystem.white,
+                            ).animate()
+                              .scale(delay: 300.ms, duration: 600.ms)
                               .fade(),
                             const SizedBox(height: 16),
                             Text(
                               '전통운세 종합',
                               style: TextStyle(
                                 fontSize: 28,
-                                fontWeight: FontWeight.bold),
-                  color: Colors.white),.animate()
-                  .fadeIn(delay: 500.ms, duration: 600.ms)
-                              .slideY(begin: 0.2, end: 0)),
+                                fontWeight: FontWeight.bold,
+                                color: TossDesignSystem.white,
+                              ),
+                            ).animate()
+                              .fadeIn(delay: 500.ms, duration: 600.ms)
+                              .slideY(begin: 0.2, end: 0),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 title: const Text('전통운세 종합'),
-                centerTitle: true),
+                centerTitle: true,
+              ),
             
             SliverPadding(
               padding: const EdgeInsets.all(16),
@@ -150,7 +165,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   .fadeIn(delay: 800.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
                   
-                  const SizedBox(height: 32)),;
+                  const SizedBox(height: 32),
+                ]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 }
 
   Widget _buildGreetingCard(String greeting) {
@@ -160,27 +182,36 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         child: Column(
           children: [
             Icon(
-              Icons.waving_hand_rounded),
-                  size: 32),
-                  color: Color(0xFFEF4444),
+              Icons.waving_hand_rounded,
+              size: 32,
+              color: Color(0xFFEF4444),
+            ),
             const SizedBox(height: 12),
             Text(
               greeting,
               style: TextStyle(
                 fontSize: 16,
-                height: 1.6),
-                  color: TossDesignSystem.gray900),
-              textAlign: TextAlign.center));
+                height: 1.6,
+                color: TossDesignSystem.gray900,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
 }
 
   Widget _buildTodayThemeCard(Map<String, dynamic> theme) {
     return BaseCard(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight),
-                  colors: [
-          _getElementColor(theme['element'] ?? '화': null,
-          _getElementColor(theme['element'] ?? '화'),
+        end: Alignment.bottomRight,
+        colors: [
+          _getElementColor(theme['element'] ?? '화').withOpacity(0.3),
+          _getElementColor(theme['element'] ?? '화').withOpacity(0.1),
+        ],
+      ),
       child: ExpansionTile(
         title: Row(
           children: [
@@ -189,27 +220,38 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               decoration: BoxDecoration(
                 color: _getElementColor(theme['element'] ?? '화'),
                 borderRadius: BorderRadius.circular(12),
-              child: Icon(
-                Icons.today_rounded),
-                  color: _getElementColor(theme['element'] ?? '화'),
-                size: 24
               ),
+              child: Icon(
+                Icons.today_rounded,
+                color: _getElementColor(theme['element'] ?? '화'),
+                size: 24,
+              ),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '오늘의 주제'),
-                  style: TextStyle(
-                      fontSize: 14),
-                  color: TossDesignSystem.gray600),
+                    '오늘의 주제',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: TossDesignSystem.gray600,
+                    ),
+                  ),
                   Text(
-                    theme['title'] ?? ''$1',
-                  style: TextStyle(
+                    theme['title'] ?? '',
+                    style: TextStyle(
                       fontSize: 18,
-    fontWeight: FontWeight.bold),
-                  color: _getElementColor(theme['element'] ?? '화')),
+                      fontWeight: FontWeight.bold,
+                      color: _getElementColor(theme['element'] ?? '화'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         initiallyExpanded: _expandedSections['todayTheme'],
     onExpansionChanged: (expanded) {
           setState(() {
@@ -822,18 +864,18 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: isAvoid 
-                        ? Colors.red.withOpacity(0.1)
+                        ? TossDesignSystem.errorRed.withOpacity(0.1)
                         : Color(0xFF10B981).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isAvoid 
-                          ? Colors.red.withOpacity(0.3)
+                          ? TossDesignSystem.errorRed.withOpacity(0.3)
                           : Color(0xFF10B981).withOpacity(0.3)),
                     child: Text(
                       value.toString(),
                       style: TextStyle(
                         fontSize: 13),
-                  color: isAvoid ? Colors.red : Color(0xFF10B981)),;
+                  color: isAvoid ? TossDesignSystem.errorRed : Color(0xFF10B981)),;
 }).toList();
 }
           return const SizedBox();
@@ -1014,8 +1056,7 @@ class TraditionalPatternPainter extends CustomPainter {
       ..strokeWidth = 1.0
      
    
-    ..color =,
-      Colors.white.withOpacity(0.1);
+    ..color = TossDesignSystem.white.withOpacity(0.1);
 
     // Draw traditional Korean patterns
     final spacing = 40.0;
@@ -1033,14 +1074,14 @@ class TraditionalPatternPainter extends CustomPainter {
     path.moveTo(center.dx, center.dy - radius);
     path.quadraticBezierTo(
       center.dx + radius,
-      center.dy);
-      center.dx),
-            center.dy + radius);
+      center.dy,
+      center.dx,
+      center.dy + radius);
     path.quadraticBezierTo(
       center.dx - radius,
-      center.dy);
-      center.dx),
-            center.dy - radius
+      center.dy,
+      center.dx,
+      center.dy - radius
     );
     
     canvas.drawPath(path, paint);

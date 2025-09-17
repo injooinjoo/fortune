@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../models/user_profile.dart' as models;
@@ -123,7 +124,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
   void _showDatePicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       isScrollControlled: true,
       builder: (context) => _buildDatePickerModal(),
     );
@@ -135,7 +136,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -255,7 +256,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -317,7 +318,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                             ),
                             child: const Icon(
                               Icons.timeline_rounded,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               size: 36,
                             ),
                           ),

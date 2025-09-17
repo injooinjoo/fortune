@@ -99,7 +99,7 @@ class CareerFortuneSelector extends StatelessWidget {
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
         title: const Text('커리어 운세'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.transparent,
         elevation: 0),
       body: SafeArea(
         child: CustomScrollView(
@@ -188,7 +188,7 @@ class _CareerTypeCard extends StatelessWidget {
                     borderRadius: AppDimensions.borderRadiusMedium),
                   child: Icon(
                     careerType.icon,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 24)),
                 const Spacer(),
                 if (careerType.isNew) Container(
@@ -201,7 +201,7 @@ class _CareerTypeCard extends StatelessWidget {
                     child: Text(
                       'NEW',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold)))
               ],
             ),

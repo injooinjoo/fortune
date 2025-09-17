@@ -5,6 +5,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 // Expert data model
 class Expert {
@@ -200,14 +201,14 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                       child: isCompleted
                           ? const Icon(
                               Icons.check_rounded,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               size: 20,
                             )
                           : Text(
                               '${index + 1}',
                               style: TextStyle(
                                 color: isActive
-                                    ? Colors.white
+                                    ? TossDesignSystem.white
                                     : theme.colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -361,7 +362,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                               Icon(
                                 Icons.star_rounded,
                                 size: 16,
-                                color: Colors.amber,
+                                color: TossDesignSystem.warningOrange,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -791,7 +792,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
         color: theme.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: TossDesignSystem.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),

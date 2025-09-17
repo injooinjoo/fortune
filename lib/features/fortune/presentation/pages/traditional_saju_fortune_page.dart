@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -28,16 +29,16 @@ class _TraditionalSajuFortunePageState
   late List<Animation<double>> _pillarAnimations;
 
   final List<Map<String, dynamic>> _heavenlyStems = [
-    {'name': '갑(甲)', 'element': '목', 'yin': false, 'color': Colors.green},
-    {'name': '을(乙)', 'element': '목', 'yin': true, 'color': Colors.green},
-    {'name': '병(丙)', 'element': '화', 'yin': false, 'color': Colors.red},
-    {'name': '정(丁)', 'element': '화', 'yin': true, 'color': Colors.red},
-    {'name': '무(戊)', 'element': '토', 'yin': false, 'color': Colors.yellow},
-    {'name': '기(己)', 'element': '토', 'yin': true, 'color': Colors.yellow},
-    {'name': '경(庚)', 'element': '금', 'yin': false, 'color': Colors.grey},
-    {'name': '신(辛)', 'element': '금', 'yin': true, 'color': Colors.grey},
-    {'name': '임(壬)', 'element': '수', 'yin': false, 'color': Colors.blue},
-    {'name': '계(癸)', 'element': '수', 'yin': true, 'color': Colors.blue},
+    {'name': '갑(甲)', 'element': '목', 'yin': false, 'color': TossDesignSystem.successGreen},
+    {'name': '을(乙)', 'element': '목', 'yin': true, 'color': TossDesignSystem.successGreen},
+    {'name': '병(丙)', 'element': '화', 'yin': false, 'color': TossDesignSystem.errorRed},
+    {'name': '정(丁)', 'element': '화', 'yin': true, 'color': TossDesignSystem.errorRed},
+    {'name': '무(戊)', 'element': '토', 'yin': false, 'color': TossDesignSystem.warningYellow},
+    {'name': '기(己)', 'element': '토', 'yin': true, 'color': TossDesignSystem.warningYellow},
+    {'name': '경(庚)', 'element': '금', 'yin': false, 'color': TossDesignSystem.gray400},
+    {'name': '신(辛)', 'element': '금', 'yin': true, 'color': TossDesignSystem.gray400},
+    {'name': '임(壬)', 'element': '수', 'yin': false, 'color': TossDesignSystem.tossBlue},
+    {'name': '계(癸)', 'element': '수', 'yin': true, 'color': TossDesignSystem.tossBlue},
   ];
 
   final List<Map<String, dynamic>> _earthlyBranches = [
@@ -56,16 +57,16 @@ class _TraditionalSajuFortunePageState
   ];
 
   final Map<String, Map<String, dynamic>> _tenGods = {
-    '비견': {'meaning': '형제, 경쟁자', 'color': Colors.blue},
-    '겁재': {'meaning': '도전, 투쟁', 'color': Colors.red},
-    '식신': {'meaning': '재능, 표현', 'color': Colors.green},
-    '상관': {'meaning': '예술, 창의', 'color': Colors.purple},
-    '편재': {'meaning': '사업, 투자', 'color': Colors.orange},
-    '정재': {'meaning': '안정된 재물', 'color': Colors.amber},
-    '편관': {'meaning': '권력, 도전', 'color': Colors.indigo},
-    '정관': {'meaning': '명예, 지위', 'color': Colors.teal},
-    '편인': {'meaning': '학문, 종교', 'color': Colors.brown},
-    '정인': {'meaning': '어머니, 교육', 'color': Colors.pink},
+    '비견': {'meaning': '형제, 경쟁자', 'color': TossDesignSystem.tossBlue},
+    '겁재': {'meaning': '도전, 투쟁', 'color': TossDesignSystem.errorRed},
+    '식신': {'meaning': '재능, 표현', 'color': TossDesignSystem.successGreen},
+    '상관': {'meaning': '예술, 창의', 'color': TossDesignSystem.purple},
+    '편재': {'meaning': '사업, 투자', 'color': TossDesignSystem.warningOrange},
+    '정재': {'meaning': '안정된 재물', 'color': TossDesignSystem.warningYellow},
+    '편관': {'meaning': '권력, 도전', 'color': TossDesignSystem.purple},
+    '정관': {'meaning': '명예, 지위', 'color': TossDesignSystem.tossBlue},
+    '편인': {'meaning': '학문, 종교', 'color': TossDesignSystem.gray600},
+    '정인': {'meaning': '어머니, 교육', 'color': TossDesignSystem.pinkPrimary},
   };
 
   @override
@@ -546,7 +547,7 @@ ${_formatMajorFortunes(majorFortunes)}
       blur: 10,
       borderColor: isDay
           ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
-          : Colors.transparent,
+          : TossDesignSystem.transparent,
       borderWidth: isDay ? 2 : 0,
       child: Column(
         children: [
@@ -649,7 +650,7 @@ ${_formatMajorFortunes(majorFortunes)}
                       titleStyle: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                     );
                   }).toList(),
@@ -666,13 +667,13 @@ ${_formatMajorFortunes(majorFortunes)}
 
   Color _getElementColor(String element) {
     final colors = {
-      '목': Colors.green,
-      '화': Colors.red,
-      '토': Colors.brown,
-      '금': Colors.amber,
-      '수': Colors.blue,
+      '목': TossDesignSystem.successGreen,
+      '화': TossDesignSystem.errorRed,
+      '토': TossDesignSystem.gray600,
+      '금': TossDesignSystem.warningYellow,
+      '수': TossDesignSystem.tossBlue,
     };
-    return colors[element] ?? Colors.grey;
+    return colors[element] ?? TossDesignSystem.gray400;
   }
 
   Widget _buildTenGodsDistribution() {
@@ -822,7 +823,7 @@ ${_formatMajorFortunes(majorFortunes)}
                           .colorScheme
                           .primary
                           .withOpacity(0.1)
-                      : Colors.transparent,
+                      : TossDesignSystem.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isCurrent

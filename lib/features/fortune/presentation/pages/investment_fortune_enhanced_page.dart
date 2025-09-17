@@ -269,11 +269,11 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       ),
                       child: Center(
                         child: isCompleted
-                            ? const Icon(Icons.check, size: 16, color: Colors.white)
+                            ? const Icon(Icons.check, size: 16, color: TossDesignSystem.white)
                             : Text(
                                 '${index + 1}',
                                 style: TextStyle(
-                                  color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: isActive ? TossDesignSystem.white : Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.bold),
                               ),
                       ),
@@ -315,7 +315,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: TossDesignSystem.gray900.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -467,7 +467,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 ),
                 borderRadius: BorderRadius.circular(12),
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                    ? Theme.of(context).colorScheme.primary.withValues(alpha:0.1)
                     : null,
               ),
               child: Row(
@@ -577,13 +577,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   ? LinearGradient(
                       colors: [
                         Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                        Theme.of(context).colorScheme.primary.withValues(alpha:0.8),
                       ],
                     )
                   : null,
               border: Border.all(
                 color: isSelected
-                    ? Colors.transparent
+                    ? TossDesignSystem.white.withValues(alpha: 0.0)
                     : Theme.of(context).dividerColor,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -595,7 +595,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   option['icon'] as IconData? ?? Icons.help,
                   size: 32,
                   color: isSelected
-                      ? Colors.white
+                      ? TossDesignSystem.white
                       : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 8),
@@ -603,7 +603,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   option['label'] as String? ?? '',
                   style: TextStyle(
                     color: isSelected
-                        ? Colors.white
+                        ? TossDesignSystem.white
                         : Theme.of(context).colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
@@ -734,14 +734,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? Colors.transparent
+                ? TossDesignSystem.white.withValues(alpha: 0.0)
                 : Theme.of(context).dividerColor,
             width: 2,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: sector.gradientColors[0].withOpacity(0.4),
+                    color: sector.gradientColors[0].withValues(alpha:0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -759,10 +759,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     sector.icon,
                     size: 48,
                     color: isSelected
-                        ? Colors.white
+                        ? TossDesignSystem.white
                         : canSelect
                             ? Theme.of(context).colorScheme.onSurfaceVariant
-                            : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)),
+                            : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha:0.5)),
                   const SizedBox(height: 12),
                   Text(
                     sector.label,
@@ -770,10 +770,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: isSelected
-                          ? Colors.white
+                          ? TossDesignSystem.white
                           : canSelect
                               ? Theme.of(context).colorScheme.onSurface
-                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha:0.5)),
                     textAlign: TextAlign.center),
                   const SizedBox(height: 4),
                   Text(
@@ -781,10 +781,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected
-                          ? Colors.white.withOpacity(0.9)
+                          ? TossDesignSystem.white.withValues(alpha:0.9)
                           : canSelect
                               ? Theme.of(context).colorScheme.onSurfaceVariant
-                              : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)),
+                              : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha:0.5)),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -800,7 +800,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   width: 24,
                   height: 24,
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -848,9 +848,9 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: sector.gradientColors[0],
-              inactiveTrackColor: sector.gradientColors[0].withOpacity(0.3),
+              inactiveTrackColor: sector.gradientColors[0].withValues(alpha:0.3),
               thumbColor: sector.gradientColors[0],
-              overlayColor: sector.gradientColors[0].withOpacity(0.3),
+              overlayColor: sector.gradientColors[0].withValues(alpha:0.3),
             ),
             child: Slider(
               value: priority,
@@ -1000,7 +1000,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           ),
           borderRadius: BorderRadius.circular(12),
           color: value
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha:0.1)
               : null,
         ),
         child: Row(
@@ -1114,10 +1114,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               child: const Icon(
                 Icons.auto_graph_rounded,
                 size: 80,
-                color: Colors.white,
+                color: TossDesignSystem.white,
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.5))
+              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha:0.5))
               .rotate(duration: 20000.ms),
           ),
         ],

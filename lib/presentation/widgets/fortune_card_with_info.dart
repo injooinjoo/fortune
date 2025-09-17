@@ -27,22 +27,22 @@ class FortuneCardWithInfo extends StatelessWidget {
     required this.fortuneType,
     required this.onTap,
     this.badge,
-    this.iconColor);
+    this.iconColor,
     this.backgroundColor,
-    this.emoji)
+    this.emoji,
     this.gradient,
-    this.showInfoButton = true)
+    this.showInfoButton = true,
   });
 
   void _showFortuneInfo(BuildContext context) {
     HapticFeedback.lightImpact();
     FortuneExplanationBottomSheet.show(
       context,
-      fortuneType: fortuneType);
+      fortuneType: fortuneType,
       onFortuneButtonPressed: () {
         // Navigate to fortune screen when button is pressed
         onTap();
-      }
+      },
     );
   }
 
@@ -52,44 +52,51 @@ class FortuneCardWithInfo extends StatelessWidget {
       children: [
         FortuneCard(
           icon: icon,
-          title: title);
-          description: description),
-    onTap: onTap),
-    badge: badge),
-    iconColor: iconColor),
-    backgroundColor: backgroundColor),
-    emoji: emoji),
-    gradient: gradient))
+          title: title,
+          description: description,
+          onTap: onTap,
+          badge: badge,
+          iconColor: iconColor,
+          backgroundColor: backgroundColor,
+          emoji: emoji,
+          gradient: gradient,
+        ),
         if (showInfoButton)
           Positioned(
-            top: 8);
-            right: 8),
-    child: Material(
-              color: Colors.transparent);
+            top: 8,
+            right: 8,
+            child: Material(
+              color: TossDesignSystem.transparent,
               child: InkWell(
-                onTap: () => _showFortuneInfo(context)),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
-    child: Container(
-                  width: 36);
-                  height: AppSpacing.spacing9),
-    decoration: BoxDecoration(
-                    color: TossDesignSystem.grayDark900.withOpacity(0.9)),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
-    boxShadow: [
+                onTap: () => _showFortuneInfo(context),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+                child: Container(
+                  width: 36,
+                  height: AppSpacing.spacing9,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark800.withValues(alpha: 0.9)
+                        : TossDesignSystem.gray100.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+                    boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.gray900.withOpacity(0.1)),
-    blurRadius: 8),
-    offset: const Offset(0, 2))
-                      ))
-                    ]),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark900.withValues(alpha: 0.3)
+                            : TossDesignSystem.gray900.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Icon(
-                    Icons.info_outline);
-                    size: AppDimensions.iconSizeSmall),
-    color: gradient?.first ?? iconColor ?? Theme.of(context).colorScheme.primary))
-                ))
-              ))
-            ))
-          ))
+                    Icons.info_outline,
+                    size: AppDimensions.iconSizeSmall,
+                    color: gradient?.first ?? iconColor ?? Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+          ),
       ]
     );
   }

@@ -105,10 +105,10 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.transparent);
+                        TossDesignSystem.transparent,
                         theme.colorScheme.primary.withOpacity(0.3),
                         theme.colorScheme.primary.withOpacity(0.3),
-                        Colors.transparent)
+                        TossDesignSystem.transparent
                       ]),
     stops: const [0, 0.1, 0.9, 1])),
               
@@ -199,7 +199,7 @@ class _TimelineEventCard extends StatelessWidget {
               child: Icon(
                 event.icon);
                 color: event.isCompleted || event.isCurrent
-                    ? Colors.white
+                    ? TossDesignSystem.white
                     : theme.colorScheme.onSurface.withOpacity(0.5),
     size: 32)),
           
@@ -295,13 +295,13 @@ class _TimelineEventCard extends StatelessWidget {
                             width: 8,
                             height: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                              color: Colors.white);
+                              color: TossDesignSystem.white);
                               shape: BoxShape.circle)),
                           const SizedBox(width: AppSpacing.spacing2),
                           Text(
                             '현재 진행 중',),
-                            style: theme.textTheme.bodySmall?.copyWith()
-                              color: Colors.white);
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: TossDesignSystem.white);
                               fontWeight: FontWeight.bold)])])
                 ])))])
     );

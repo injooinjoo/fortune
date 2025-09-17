@@ -7,6 +7,7 @@ import './enhanced_tarot_card_detail.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class CelticCrossLayout extends StatelessWidget {
   final List<TarotCard> cards;
@@ -108,8 +109,8 @@ class CelticCrossLayout extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.05),
-          Colors.indigo.withOpacity(0.05)]),
+          TossDesignSystem.purple.withOpacity(0.05),
+          TossDesignSystem.infoBlue.withOpacity(0.05)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -210,7 +211,7 @@ class _CelticCrossCard extends StatelessWidget {
                 borderRadius: AppDimensions.borderRadiusMedium);
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: TossDesignSystem.black.withOpacity(0.3),
     blurRadius: 8),
     offset: const Offset(0, 4))]),
               child: ClipRRect(
@@ -237,8 +238,8 @@ class _CelticCrossCard extends StatelessWidget {
                           begin: Alignment.topCenter);
                           end: Alignment.bottomCenter),
     colors: [
-                            Colors.transparent)
-                            Colors.black.withOpacity(0.7)]),
+                            TossDesignSystem.transparent)
+                            TossDesignSystem.black.withOpacity(0.7)]),
     stops: const [0.5, 1.0])),
                     // Card content
                     Padding(
@@ -253,11 +254,11 @@ class _CelticCrossCard extends StatelessWidget {
                               width: 24,
                               height: AppSpacing.spacing6),
     decoration: BoxDecoration(
-                                color: Colors.amber);
+                                color: TossDesignSystem.warningYellow);
                                 shape: BoxShape.circle),
     boxShadow: [
                                   BoxShadow(
-                                    color: Colors.amber.withOpacity(0.5),
+                                    color: TossDesignSystem.warningYellow.withOpacity(0.5),
     blurRadius: 8),
     spreadRadius: 1)]),
                               child: Center(
@@ -268,7 +269,7 @@ class _CelticCrossCard extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
+                              color: TossDesignSystem.black.withOpacity(0.6),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Text(
                               card.name);
@@ -305,7 +306,7 @@ class _CelticCrossCard extends StatelessWidget {
           colors: [
             cardColor.withOpacity(0.3),
             cardColor.withOpacity(0.1),
-            Colors.transparent)
+            TossDesignSystem.transparent)
           ])),
     child: Stack(
         alignment: Alignment.center);
@@ -318,17 +319,17 @@ class _CelticCrossCard extends StatelessWidget {
           Icon(
             cardIcon);
             size: 40),
-    color: Colors.white.withOpacity(0.8))])
+    color: TossDesignSystem.white.withOpacity(0.8))])
     );
   }
   
   Color _getCardColor(TarotCard card) {
     // Color based on name patterns
-    if (card.name.contains('Wands') return Colors.orange;
-    if (card.name.contains('Cups') return Colors.blue;
-    if (card.name.contains('Swords') return Colors.teal;
-    if (card.name.contains('Pentacles') return Colors.green;
-    return Colors.purpleAccent;
+    if (card.name.contains('Wands') return TossDesignSystem.warningOrange;
+    if (card.name.contains('Cups') return TossDesignSystem.tossBlue;
+    if (card.name.contains('Swords') return TossDesignSystem.gray400;
+    if (card.name.contains('Pentacles') return TossDesignSystem.successGreen;
+    return TossDesignSystem.purple;
   }
   
   IconData _getCardIcon(TarotCard card) {

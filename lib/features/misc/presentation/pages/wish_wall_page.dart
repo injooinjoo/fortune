@@ -5,6 +5,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 // Wish model
 class WallWish {
@@ -270,7 +271,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
           // Write form
           if (_showWriteForm)
             Container(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: TossDesignSystem.black.withValues(alpha: 0.5),
               child: Center(
                 child: _buildWriteForm(theme, fontSize.value),
               ),
@@ -304,7 +305,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
               borderRadius: BorderRadius.circular(4),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: TossDesignSystem.black.withValues(alpha: 0.2),
                   blurRadius: 4,
                   offset: const Offset(2, 2))]),
             child: Column(
@@ -315,7 +316,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   wish.text,
                   style: TextStyle(
                     fontSize: fontSize - 2,
-                    color: Colors.black87,
+                    color: TossDesignSystem.black.withValues(alpha: 0.87),
                     height: 1.4),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis),
@@ -327,7 +328,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                       '- ${wish.author}',
                       style: TextStyle(
                         fontSize: fontSize - 4,
-                        color: Colors.black54,
+                        color: TossDesignSystem.black.withValues(alpha: 0.54),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -337,14 +338,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                         Icon(
                           wish.isLiked ? Icons.favorite : Icons.favorite_border,
                           size: 16,
-                          color: wish.isLiked ? Colors.red : Colors.black54,
+                          color: wish.isLiked ? TossDesignSystem.error : TossDesignSystem.black.withValues(alpha: 0.54),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           wish.likes.toString(),
                           style: TextStyle(
                             fontSize: fontSize - 4,
-                            color: Colors.black54,
+                            color: TossDesignSystem.black.withValues(alpha: 0.54),
                           ),
                         ),
                       ],
@@ -449,7 +450,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
     WallWish wish) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -487,7 +488,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     wish.text,
                     style: TextStyle(
                       fontSize: fontSize + 2,
-                      color: Colors.black87,
+                      color: TossDesignSystem.black.withValues(alpha: 0.87),
                       height: 1.5,
                     ),
                   ),
@@ -496,7 +497,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     '- ${wish.author}',
                     style: TextStyle(
                       fontSize: fontSize,
-                      color: Colors.black54,
+                      color: TossDesignSystem.black.withValues(alpha: 0.54),
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -525,7 +526,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     Icon(
                       Icons.favorite,
                       size: 16,
-                      color: Colors.red,
+                      color: TossDesignSystem.error,
                     ),
                     const SizedBox(width: 4),
                     Text(

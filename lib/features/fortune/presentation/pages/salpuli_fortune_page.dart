@@ -7,6 +7,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class SalpuliFortunePage extends BaseFortunePage {
   const SalpuliFortunePage({Key? key})
@@ -121,7 +122,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     return GlassCard(
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
-        colors: [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)],
+        colors: [TossDesignSystem.white.withValues(alpha: 0.1), TossDesignSystem.white.withValues(alpha: 0.05)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
@@ -176,7 +177,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -245,7 +246,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               Text(
                 '어떤 일로 고민하고 계신가요?',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -265,12 +266,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     child: Chip(
                       label: Text(type),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.error.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.error.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.error
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -312,8 +313,8 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
-                          : Colors.transparent,
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                          : TossDesignSystem.white.withValues(alpha: 0.0),
                       borderWidth: isSelected ? 2 : 0,
     child: Row(
                         children: [
@@ -355,7 +356,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               Text(
                 '해당되는 증상을 모두 선택하세요',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7)
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7)
                 )),
               const SizedBox(height: 16),
               Wrap(
@@ -378,12 +379,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     child: Chip(
                       label: Text(symptom),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.secondary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.secondary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.onSurface.withOpacity(0.3)
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3)
                       ),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
@@ -416,7 +417,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     borderRadius: BorderRadius.circular(12)
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5)
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)
                 ),
                 items: _birthTimes.entries.map((entry) {
                   return DropdownMenuItem(
@@ -526,13 +527,13 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.red.withOpacity(0.1),
-                    Colors.orange.withOpacity(0.1)
+                    TossDesignSystem.errorRed.withValues(alpha: 0.1),
+                    TossDesignSystem.warningOrange.withValues(alpha: 0.1)
                   ]
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.red.withOpacity(0.3)
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.3)
                 )
               ),
               child: Column(
@@ -542,7 +543,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     children: [
                       Icon(
                         Icons.warning_rounded,
-                        color: Colors.orange,
+                        color: TossDesignSystem.warningOrange,
                         size: 20
                       ),
                       const SizedBox(width: 8),
@@ -558,7 +559,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   Text(
                     '중간 정도의 액운이 감지됩니다. 조상의 도움이 필요한 시기이며, 정화 의식을 통해 나쁜 기운을 제거할 수 있습니다.',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.8)
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8)
                     )
                   )
                 ]
@@ -603,7 +604,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
           child: LinearProgressIndicator(
             value: severity / 100,
             minHeight: 12,
-            backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+            backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               _getSeverityColor(severity)
             )
@@ -623,9 +624,9 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
   }
 
   Color _getSeverityColor(int severity) {
-    if (severity >= 70) return Colors.red;
-    if (severity >= 40) return Colors.orange;
-    return Colors.yellow;
+    if (severity >= 70) return TossDesignSystem.errorRed;
+    if (severity >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.warningOrange;
   }
 
   Widget _buildEvilSpiritDiagnosis() {
@@ -636,25 +637,25 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
         'name': '역마살',
         'level': 3,
         'description': '이동과 변화의 기운. 안정이 필요합니다.',
-        'color': Colors.orange
+        'color': TossDesignSystem.warningOrange
       },
       {
         'name': '백호살',
         'level': 2,
         'description': '건강 주의. 몸조리가 필요한 시기입니다.',
-        'color': Colors.yellow
+        'color': TossDesignSystem.warningOrange
       },
       {
         'name': '도화살',
         'level': 1,
         'description': '이성 문제 주의. 신중한 판단이 필요합니다.',
-        'color': Colors.pink
+        'color': TossDesignSystem.pinkPrimary
       },
       {
         'name': '천을귀인',
         'level': -2,
         'description': '귀인의 도움. 좋은 인연이 다가옵니다.',
-        'color': Colors.green
+        'color': TossDesignSystem.successGreen
       }
     ];
     
@@ -688,7 +689,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (spirit['color'] as Color).withOpacity(0.1),
+                    color: (spirit['color'] as Color).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: spirit['color'] as Color
@@ -726,7 +727,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       Text(
                         spirit['description'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7)
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)
                         )
                       )
                     ]
@@ -806,7 +807,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.2)
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2)
                   )
                 ),
                 child: Column(
@@ -817,7 +818,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8)
                           ),
                           child: Icon(
@@ -841,13 +842,13 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                             vertical: 4
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.2),
+                            color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12)
                           ),
                           child: Text(
                             ritual['difficulty'] as String,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.green
+                              color: TossDesignSystem.successGreen
                             )
                           )
                         )
@@ -857,7 +858,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     Text(
                       ritual['description'] as String,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8)
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8)
                       )
                     )
                   ]
@@ -878,25 +879,25 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
         'name': '오방색 실',
         'purpose': '전체적인 보호',
         'usage': '손목이나 발목에 착용',
-        'color': Colors.purple
+        'color': TossDesignSystem.purple
       },
       {
         'name': '호신 부적',
         'purpose': '액운 차단',
         'usage': '지갑이나 주머니에 소지',
-        'color': Colors.red
+        'color': TossDesignSystem.errorRed
       },
       {
         'name': '수정 팔찌',
         'purpose': '에너지 정화',
         'usage': '왼손에 착용',
-        'color': Colors.blue
+        'color': TossDesignSystem.tossBlue
       },
       {
         'name': '복주머니',
         'purpose': '복을 부르는 아이템',
         'usage': '집안 현관에 걸기',
-        'color': Colors.green
+        'color': TossDesignSystem.successGreen
       }
     ];
     
@@ -941,7 +942,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: (charm['color'] as Color).withOpacity(0.2),
+                          color: (charm['color'] as Color).withValues(alpha: 0.2),
                           border: Border.all(
                             color: charm['color'] as Color,
                             width: 2
@@ -968,7 +969,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       Text(
                         charm['purpose'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7)
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)
                         ),
                         textAlign: TextAlign.center
                       )
@@ -1030,10 +1031,10 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface.withOpacity(0.5),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1)
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1)
                   )
                 ),
                 child: Column(
@@ -1068,7 +1069,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         vertical: 6
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16)
                       ),
                       child: Row(

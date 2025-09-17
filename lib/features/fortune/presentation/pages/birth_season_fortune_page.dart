@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -10,22 +11,22 @@ class BirthSeasonFortunePage extends StatelessWidget {
   final Map<String, Map<String, dynamic>> seasons = const {
     'spring': {
       'name': '봄', 'icon': Icons.local_florist,
-      'color': Colors.green,
+      'color': TossDesignSystem.successGreen,
       'months': [3, 4, 5],
       'personality': '따뜻하고 낙천적인 성격으로 새로운 시작을 즐깁니다. 창의력과 적응력이 뛰어난 편입니다.', 'fortune': '성장과 발전의 기운이 강해 도전하는 일마다 좋은 결실을 맺을 확률이 높습니다.'},
     'summer': {
       'name': '여름', 'icon': Icons.wb_sunny,
-      'color': Colors.orange,
+      'color': TossDesignSystem.warningOrange,
       'months': [6, 7, 8],
       'personality': '열정적이고 활력이 넘쳐 주변을 이끄는 리더십을 갖추고 있습니다.', 'fortune': '성공과 활약의 운세가 높아 목표를 향해 힘차게 나아갈 때 큰 성취를 얻습니다.'},
     'autumn': {
       'name': '가을', 'icon': Icons.eco,
-      'color': Colors.brown,
+      'color': TossDesignSystem.gray700,
       'months': [9, 10, 11],
       'personality': '침착하고 균형 감각이 뛰어나 분석적 사고를 잘 합니다.', 'fortune': '수확의 시기로 그동안 노력해온 일에서 안정적인 결과를 얻을 수 있습니다.'},
     'winter': {
       'name': '겨울', 'icon': Icons.ac_unit,
-      'color': Colors.blue,
+      'color': TossDesignSystem.tossBlue,
       'months': [12, 1, 2],
       'personality': '인내심이 강하고 내면의 힘이 단단해 어려움 속에서도 쉽게 흔들리지 않습니다.', 'fortune': '준비와 축적의 운이 좋으니 차분하게 계획을 세우면 다음 기회를 확실히 잡을 수 있습니다.'}};
 
@@ -51,7 +52,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.eco, color: Colors.green[700], size: 24),
+              Icon(Icons.eco, color: TossDesignSystem.successGreen, size: 24),
               const SizedBox(width: 8),
               const Text(
                 '계절별 운세 안내',
@@ -67,7 +68,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
             '프로필에 등록된 생년월일을 기반으로 태어난 계절의 운세를 확인합니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
+              color: TossDesignSystem.gray400,
             ),
           ),
           const SizedBox(height: 20),
@@ -112,9 +113,9 @@ class BirthSeasonFortunePage extends StatelessWidget {
                     ),
                     Text(
                       '${(season['months'] as List<int>).first}월-${(season['months'] as List<int>).last}월',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: TossDesignSystem.gray400,
                       ),
                     ),
                   ],
@@ -186,7 +187,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
             icon: Icons.person,
             title: '성격 특징',
             content: data['personality'],
-            iconColor: Colors.indigo,
+            iconColor: TossDesignSystem.tossBlue,
           ),
         const SizedBox(height: 16),
         
@@ -196,7 +197,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
             icon: Icons.auto_awesome,
             title: '운세 포인트',
             content: data['fortune'],
-            iconColor: Colors.purple,
+            iconColor: TossDesignSystem.purple,
           ),
         const SizedBox(height: 16),
         
@@ -210,7 +211,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
                     title: '행운의 색',
                     content: data['lucky_color'],
                     icon: Icons.palette,
-                    color: Colors.pink,
+                    color: TossDesignSystem.pinkPrimary,
                   ),
                 ),
               if (data['lucky_color'] != null && data['lucky_item'] != null)
@@ -221,7 +222,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
                     title: '행운의 아이템',
                     content: data['lucky_item'],
                     icon: Icons.star,
-                    color: Colors.amber,
+                    color: TossDesignSystem.warningYellow,
                   ),
                 ),
             ],
@@ -235,8 +236,8 @@ class BirthSeasonFortunePage extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.blue[50]!,
-                  Colors.purple[50]!,
+                  TossDesignSystem.tossBlue,
+                  TossDesignSystem.purple,
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -246,7 +247,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.lightbulb, color: Colors.orange[700], size: 20),
+                    Icon(Icons.lightbulb, color: TossDesignSystem.warningOrange, size: 20),
                     const SizedBox(width: 8),
                     const Text(
                       '계절의 조언',
@@ -262,7 +263,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
                   data['advice'],
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[700],
+                    color: TossDesignSystem.gray700,
                     height: 1.5,
                   ),
                 ),
@@ -293,9 +294,9 @@ class BirthSeasonFortunePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: TossDesignSystem.gray200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,7 +320,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
             content,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[700],
+              color: TossDesignSystem.gray700,
               height: 1.5,
             ),
           ),
@@ -355,9 +356,9 @@ class BirthSeasonFortunePage extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Colors.black87,
+              color: TossDesignSystem.black.withOpacity(0.87),
             ),
             textAlign: TextAlign.center,
           ),

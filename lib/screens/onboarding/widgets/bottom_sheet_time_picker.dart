@@ -4,6 +4,7 @@ import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class BottomSheetTimePicker extends StatelessWidget {
   final String? selectedTime;
@@ -32,7 +33,7 @@ class BottomSheetTimePicker extends StatelessWidget {
   static Future<String?> show(BuildContext context, {String? initialTime}) {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       isScrollControlled: true,
       builder: (context) => BottomSheetTimePicker(
         selectedTime: initialTime,

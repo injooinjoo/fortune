@@ -1,8 +1,8 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_typography.dart';
 
 enum ButtonVariant {
   
@@ -49,14 +49,14 @@ class CustomButton extends StatelessWidget {
     switch (variant) {
       case ButtonVariant.primary:
         bgColor = backgroundColor ?? theme.primaryColor;
-        fgColor = textColor ?? TossDesignSystem.grayDark900;
+        fgColor = textColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white);
         break;
       case ButtonVariant.secondary:
-        bgColor = backgroundColor ?? theme.primaryColor.withOpacity(0.1);
+        bgColor = backgroundColor ?? theme.primaryColor.withValues(alpha: 0.1);
         fgColor = textColor ?? theme.primaryColor;
         break;
       case ButtonVariant.outline:
-        bgColor = backgroundColor ?? Colors.transparent;
+        bgColor = backgroundColor ?? TossDesignSystem.white.withValues(alpha: 0.0);
         fgColor = textColor ?? theme.primaryColor;
         borderSide = BorderSide(color: theme.primaryColor);
         break;
@@ -65,12 +65,12 @@ class CustomButton extends StatelessWidget {
     final button = ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: gradient != null ? Colors.transparent : bgColor,
+        backgroundColor: gradient != null ? TossDesignSystem.white.withValues(alpha: 0.0) : bgColor,
         padding: padding ?? EdgeInsets.symmetric(
           horizontal: AppSpacing.spacing6,
           vertical: AppSpacing.spacing3),
         side: borderSide,
-        shadowColor: Colors.transparent),
+        shadowColor: TossDesignSystem.white.withValues(alpha: 0.0)),
       child: isLoading
           ? SizedBox(
               width: 20,
@@ -78,7 +78,9 @@ class CustomButton extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  variant == ButtonVariant.primary ? TossDesignSystem.grayDark900 : theme.primaryColor)))
+                  variant == ButtonVariant.primary
+                      ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white)
+                      : theme.primaryColor)))
           : Text(
               text,
               style: Theme.of(context).textTheme.titleMedium));

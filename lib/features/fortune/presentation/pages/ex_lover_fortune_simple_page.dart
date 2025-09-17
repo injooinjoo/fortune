@@ -115,7 +115,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -167,7 +167,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -272,7 +272,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                   ),
                   child: const Icon(
                     Icons.favorite_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 32,
                   ),
                 ),
@@ -388,7 +388,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                   ),
                   child: const Icon(
                     Icons.auto_awesome_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 32,
                   ),
                 ),
@@ -611,12 +611,12 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             border: Border.all(
               color: isSelected
                   ? Color(card.gradientColors[0])
-                  : Colors.transparent,
+                  : TossDesignSystem.white.withValues(alpha: 0.0),
               width: 2,
             ),
             gradient: isSelected
                 ? LinearGradient(
-                    colors: card.gradientColors.map((c) => Color(c).withOpacity(0.1)).toList(),
+                    colors: card.gradientColors.map((c) => Color(c).withValues(alpha: 0.1)).toList(),
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
@@ -690,7 +690,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             border: Border.all(
               color: isSelected
                   ? TossDesignSystem.purple
-                  : Colors.transparent,
+                  : TossDesignSystem.white.withValues(alpha: 0.0),
               width: 2,
             ),
             color: isSelected

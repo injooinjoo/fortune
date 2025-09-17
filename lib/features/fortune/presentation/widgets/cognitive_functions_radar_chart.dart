@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -101,10 +102,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
           decoration: BoxDecoration(
-            color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.2),
+            color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withValues(alpha:0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.5),
+              color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withValues(alpha:0.5),
               width: 1,
             ),
           ),
@@ -138,15 +139,15 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   tickCount: 5,
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha:0.2),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha:0.2),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
-                    color: Colors.purple.withOpacity(0.5),
+                    color: TossDesignSystem.purple.withValues(alpha:0.5),
                     width: 2,
                   ),
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
@@ -160,8 +161,8 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: Colors.purple.withOpacity(0.3),
-                      borderColor: Colors.purple,
+                      fillColor: TossDesignSystem.purple.withValues(alpha:0.3),
+                      borderColor: TossDesignSystem.purple,
                       borderWidth: 2,
                       entryRadius: 4,
                       dataEntries: _getRadarEntries(),
@@ -217,10 +218,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
           decoration: BoxDecoration(
-            color: _getFunctionColor(dominantFunction).withOpacity(0.2),
+            color: _getFunctionColor(dominantFunction).withValues(alpha:0.2),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: _getFunctionColor(dominantFunction).withOpacity(0.5),
+              color: _getFunctionColor(dominantFunction).withValues(alpha:0.5),
               width: 1,
             ),
           ),
@@ -257,12 +258,12 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             margin: const EdgeInsets.only(bottom: AppSpacing.spacing2),
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
-              color: _getFunctionColor(function).withOpacity(0.1),
+              color: _getFunctionColor(function).withValues(alpha:0.1),
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
                 color: _selectedIndex == MbtiCognitiveFunctionsService.cognitiveFunctions.indexOf(function)
                     ? _getFunctionColor(function)
-                    : Colors.transparent,
+                    : TossDesignSystem.transparent,
                 width: 2,
               ),
             ),
@@ -272,7 +273,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   width: 40,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: _getFunctionColor(function).withOpacity(0.2),
+                    color: _getFunctionColor(function).withValues(alpha:0.2),
                     borderRadius: AppDimensions.borderRadiusSmall,
                   ),
                   child: Center(
@@ -300,7 +301,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                               vertical: 4 * 0.5,
                             ),
                             decoration: BoxDecoration(
-                              color: _getStackPositionColor(stackIndex).withOpacity(0.2),
+                              color: _getStackPositionColor(stackIndex).withValues(alpha:0.2),
                               borderRadius: AppDimensions.borderRadiusMedium,
                             ),
                             child: Text(
@@ -362,10 +363,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildStackLegend('주기능', Colors.purple, 'Hero'),
-              _buildStackLegend('부기능', Colors.blue, 'Parent'),
-              _buildStackLegend('3차기능', Colors.green, 'Child'),
-              _buildStackLegend('열등기능', Colors.orange, 'Inferior'),
+              _buildStackLegend('주기능', TossDesignSystem.purple, 'Hero'),
+              _buildStackLegend('부기능', TossDesignSystem.tossBlue, 'Parent'),
+              _buildStackLegend('3차기능', TossDesignSystem.successGreen, 'Child'),
+              _buildStackLegend('열등기능', TossDesignSystem.warningOrange, 'Inferior'),
             ],
           ),
           const SizedBox(height: AppSpacing.spacing3),
@@ -408,19 +409,19 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Color _getLevelColor(double level) {
-    if (level >= 0.8) return Colors.green;
-    if (level >= 0.6) return Colors.blue;
-    if (level >= 0.4) return Colors.orange;
-    return Colors.red;
+    if (level >= 0.8) return TossDesignSystem.successGreen;
+    if (level >= 0.6) return TossDesignSystem.tossBlue;
+    if (level >= 0.4) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   Color _getStackPositionColor(int index) {
     switch (index) {
-      case 0: return Colors.purple;
-      case 1: return Colors.blue;
-      case 2: return Colors.green;
-      case 3: return Colors.orange;
-      default: return Colors.grey;
+      case 0: return TossDesignSystem.purple;
+      case 1: return TossDesignSystem.tossBlue;
+      case 2: return TossDesignSystem.successGreen;
+      case 3: return TossDesignSystem.warningOrange;
+      default: return TossDesignSystem.gray400;
     }
   }
 
@@ -437,7 +438,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   void _showFunctionDetail(String function, Map<String, dynamic> info) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -451,7 +452,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               width: 40,
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: TossDesignSystem.white.withValues(alpha:0.3),
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
@@ -482,7 +483,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   child: _buildDetailSection(
                     '강점',
                     (info['strengths'] as List<String>),
-                    Colors.green,
+                    TossDesignSystem.successGreen,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.spacing3),
@@ -490,7 +491,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   child: _buildDetailSection(
                     '약점',
                     (info['weaknesses'] as List<String>),
-                    Colors.orange,
+                    TossDesignSystem.warningOrange,
                   ),
                 ),
               ],
@@ -547,7 +548,7 @@ class _RadarGridPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withValues(alpha:0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

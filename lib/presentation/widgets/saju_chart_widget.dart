@@ -1,14 +1,14 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_dimensions.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/theme/fortune_colors.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'saju_loading_widget.dart';
 // import 'saju_element_explanation_bottom_sheet.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
 
 class SajuChartWidget extends ConsumerStatefulWidget {
   final Map<String, dynamic>? userProfile;
@@ -145,10 +145,12 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       return Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: TossDesignSystem.grayDark900,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark600
+              : TossDesignSystem.white,
           borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.1),
+            color: theme.colorScheme.outline.withValues(alpha: 0.1),
             width: 1)),
         child: Column(
           children: [
@@ -164,7 +166,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
             Text(
               '생년월일시를 입력하면 정확한 사주팔자를 계산해드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
           ],
@@ -175,10 +177,12 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: TossDesignSystem.grayDark900,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark600
+            : TossDesignSystem.white,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +233,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           Text(
             title,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           SizedBox(height: AppSpacing.spacing2),
@@ -239,7 +243,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               color: theme.colorScheme.surface,
               borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-                color: theme.colorScheme.outline.withOpacity(0.1),
+                color: theme.colorScheme.outline.withValues(alpha: 0.1),
               ),
             ),
             child: Text(
@@ -261,7 +265,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         // showModalBottomSheet(
         //   context: context,
         //   isScrollControlled: true,
-        //   backgroundColor: Colors.transparent,
+        //   backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         //   builder: (context) => SajuElementExplanationBottomSheet(
         //     element: heavenlyStem['name'] ?? '',
         //     elementHanja: heavenlyStem['hanja'] ?? '',
@@ -275,7 +279,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           Text(
             title,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           SizedBox(height: AppSpacing.spacing2),
@@ -286,12 +290,12 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _getColorForElement(heavenlyStem['element'] ?? '').withOpacity(0.8),
-                  _getColorForElement(earthlyBranch['element'] ?? '').withOpacity(0.6)]),
+                  _getColorForElement(heavenlyStem['element'] ?? '').withValues(alpha: 0.8),
+                  _getColorForElement(earthlyBranch['element'] ?? '').withValues(alpha: 0.6)]),
               borderRadius: AppDimensions.borderRadiusSmall,
               boxShadow: [
                 BoxShadow(
-                  color: _getColorForElement(heavenlyStem['element'] ?? '').withOpacity(0.3),
+                  color: _getColorForElement(heavenlyStem['element'] ?? '').withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4))]),
             child: Column(
@@ -299,12 +303,12 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 Text(
                   heavenlyStem['character'] ?? '',
                   style: AppTypography.headlineMedium.copyWith(
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold)),
                 Text(
                   earthlyBranch['character'] ?? '',
                   style: AppTypography.headlineMedium.copyWith(
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -325,7 +329,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         color: theme.colorScheme.surface,
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -375,8 +379,8 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               child: Center(
                 child: Text(
                   count.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

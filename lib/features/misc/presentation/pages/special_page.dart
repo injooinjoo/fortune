@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 // Special fortune item model
@@ -211,8 +212,8 @@ class SpecialPage extends ConsumerWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
+                      TossDesignSystem.white.withValues(alpha: 0.0),
+                      TossDesignSystem.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -239,7 +240,7 @@ class SpecialPage extends ConsumerWidget {
                           child: Text(
                             'NEW',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontSize: fontSize - 6,
                               fontWeight: FontWeight.bold),
                           ),
@@ -249,13 +250,13 @@ class SpecialPage extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.orange,
+                            color: TossDesignSystem.warningOrange,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             '${item.availableUntil!.month}/${item.availableUntil!.day}까지',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontSize: fontSize - 6,
                               fontWeight: FontWeight.bold),
                           ),
@@ -268,14 +269,14 @@ class SpecialPage extends ConsumerWidget {
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: fontSize + 4,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: TossDesignSystem.white),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.description,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: fontSize,
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: TossDesignSystem.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -409,7 +410,7 @@ class SpecialPage extends ConsumerWidget {
                   child: Text(
                     'NEW',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: fontSize - 6,
                       fontWeight: FontWeight.bold),
                   ),
@@ -427,10 +428,10 @@ class SpecialPage extends ConsumerWidget {
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.star_rounded,
                     size: 16,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                 ),
               ),

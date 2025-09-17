@@ -36,7 +36,7 @@ class FamilyFortuneCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected 
-              ? TossDesignSystem.tossBlue.withOpacity(0.05)
+              ? TossDesignSystem.tossBlue.withValues(alpha:0.05)
               : isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -47,7 +47,7 @@ class FamilyFortuneCard extends StatelessWidget {
           ),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -73,7 +73,7 @@ class FamilyFortuneCard extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 28,
                 ),
               ),
@@ -163,7 +163,7 @@ class FamilyMemberChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected 
-              ? chipColor.withOpacity(0.1)
+              ? chipColor.withValues(alpha:0.1)
               : isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
@@ -222,7 +222,7 @@ class FamilyActivityCard extends StatelessWidget {
     required this.duration,
     required this.benefit,
     this.icon = Icons.stars,
-    this.gradientColors = const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+    this.gradientColors = const [TossDesignSystem.primaryBlue, TossDesignSystem.purple],
   });
 
   @override
@@ -233,13 +233,13 @@ class FamilyActivityCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: gradientColors.map((c) => c.withOpacity(0.05)).toList(),
+          colors: gradientColors.map((c) => c.withValues(alpha:0.05)).toList(),
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: gradientColors[0].withOpacity(0.2),
+          color: gradientColors[0].withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -264,7 +264,7 @@ class FamilyActivityCard extends StatelessWidget {
                   ),
                   child: Icon(
                     icon,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 24,
                   ),
                 ),
@@ -312,7 +312,7 @@ class FamilyActivityCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.successGreen.withOpacity(0.05),
+                color: TossDesignSystem.successGreen.withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -345,7 +345,7 @@ class FamilyActivityCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
@@ -405,7 +405,7 @@ class FamilyMemberFortuneCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: moodColor.withOpacity(0.1),
+              color: moodColor.withValues(alpha:0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -434,7 +434,7 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: moodColor.withOpacity(0.1),
+                        color: moodColor.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

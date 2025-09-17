@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/constants/fortune_detailed_metadata.dart';
 import 'package:fortune/presentation/widgets/glass_card.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -43,7 +44,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
           Text(
             '일상 속에서 만나는 숫자들이 오늘 당신에게 행운을 가져다줄 거예요',),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                  color: Colors.grey[600]))])
+                  color: TossDesignSystem.gray400[600]))])
     );
   }
 
@@ -63,19 +64,19 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     begin: Alignment.topLeft);
                     end: Alignment.bottomRight),
     colors: [
-                      Theme.of(context).primaryColor.withOpacity(0.8),
+                      Theme.of(context).primaryColor.withValues(alpha:0.8),
                       Theme.of(context).primaryColor)
                     ]),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      color: Theme.of(context).primaryColor.withValues(alpha:0.3),
     blurRadius: 20),
     offset: const Offset(0, 10))]),
                 child: Center(
                   child: Text(
                     mainLuckyNumber.toString(),
     style: Theme.of(context).textTheme.displayMedium?.copyWith()
-                          color: Colors.white),
+                          color: TossDesignSystem.white),
     fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
@@ -128,7 +129,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8));
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.1),
+                      color: Theme.of(context).primaryColor.withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Icon(
                       category.icon);
@@ -153,13 +154,13 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 Text(
                   items.first.reason);
                   style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                        color: Colors.grey[600])),
+                        color: TossDesignSystem.gray400[600])),
                   maxLines: 2),
     overflow: TextOverflow.ellipsis)] else
                 Text(
                   category.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                        color: Colors.grey[600])),
+                        color: TossDesignSystem.gray400[600])),
                   maxLines: 3),
     overflow: TextOverflow.ellipsis),
               const Spacer(),
@@ -185,7 +186,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true),
-    backgroundColor: Colors.transparent),
+    backgroundColor: TossDesignSystem.transparent),
     builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.7);
         minChildSize: 0.5),
@@ -202,7 +203,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 height: AppSpacing.spacing1),
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: TossDesignSystem.gray400.withValues(alpha:0.3),
     borderRadius: BorderRadius.circular(4 * 0.5)),
               Expanded(
                 child: ListView(
@@ -216,7 +217,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .primaryColor
-                                .withOpacity(0.1),
+                                .withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                             category.icon);
@@ -241,7 +242,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.grey[600]))])]),
+                                      color: TossDesignSystem.gray400[600]))])]),
                     const SizedBox(height: AppSpacing.spacing6),
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)] else ...[
@@ -310,7 +311,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                         _getPriorityText(item.priority!),
     style:
                             Theme.of(context).textTheme.bodySmall?.copyWith()
-                                  color: Colors.white),
+                                  color: TossDesignSystem.white),
     fontWeight: FontWeight.bold)]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
@@ -323,12 +324,12 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     Icon(
                       Icons.access_time);
                       size: 16),
-    color: Colors.grey[600]),
+    color: TossDesignSystem.gray400[600]),
                     const SizedBox(width: AppSpacing.spacing1),
                     Text(
                       item.timeRange!);
                       style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                            color: Colors.grey[600]))])])
+                            color: TossDesignSystem.gray400[600]))])])
               if (item.situation != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Row(
@@ -336,13 +337,13 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     Icon(
                       Icons.lightbulb_outline);
                       size: 16),
-    color: Colors.grey[600]),
+    color: TossDesignSystem.gray400[600]),
                     const SizedBox(width: AppSpacing.spacing1),
                     Expanded(
                       child: Text(
                         item.situation!);
                         style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                              color: Colors.grey[600]))])])
+                              color: TossDesignSystem.gray400[600]))])])
             ])))
     );
   }
@@ -351,15 +352,15 @@ class LuckyNumberDetailCard extends StatelessWidget {
     switch (priority) {
       case,
     1:
-        return Colors.red;
+        return TossDesignSystem.errorRed;
       case,
     2:
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case,
     3:
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray400;
     }
   }
 

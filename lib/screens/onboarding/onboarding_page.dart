@@ -5,6 +5,7 @@ import '../../constants/fortune_constants.dart';
 import '../../models/user_profile.dart';
 import '../../services/storage_service.dart';
 import '../../utils/date_utils.dart';
+import '../../core/theme/toss_design_system.dart';
 import 'steps/toss_style_name_step.dart';
 import 'steps/toss_style_birth_step.dart';
 
@@ -254,7 +255,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red));
+            backgroundColor: TossDesignSystem.errorRed));
       }
     } finally {
       if (mounted) {
@@ -266,7 +267,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.grayDark50
+          : TossDesignSystem.white,
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),

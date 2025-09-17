@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -144,12 +145,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                       icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.black54,
+                          color: TossDesignSystem.black.withOpacity(0.54),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
                           Icons.close,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           size: 20,
                         ),
                       ),
@@ -312,7 +313,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     HapticUtils.lightImpact();
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => GlassContainer(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         child: SafeArea(
@@ -494,7 +495,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'face-reading',

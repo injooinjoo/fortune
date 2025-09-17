@@ -27,8 +27,8 @@ class TossBottomSheet {
       isDismissible: isDismissible,
       enableDrag: enableDrag,
       isScrollControlled: isScrollControlled,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5),
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      barrierColor: TossDesignSystem.black.withValues(alpha: 0.5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(TossDesignSystem.radiusXL),

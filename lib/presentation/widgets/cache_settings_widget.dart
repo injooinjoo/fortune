@@ -171,7 +171,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
         children: [
           Text(
             label,
-            style: const TextStyle(color: TossDesignSystem.gray600),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           Text(
             value,

@@ -57,7 +57,7 @@ class BaseCard extends StatelessWidget {
     
     if (onTap != null) {
       return Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),

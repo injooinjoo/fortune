@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/toss_theme.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
 
@@ -61,13 +62,15 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.grayDark100
+              : TossDesignSystem.white,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
           ),
@@ -90,7 +93,9 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark300
+                : TossDesignSystem.gray300,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -218,7 +223,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -231,14 +236,18 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
     required String logoPath,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey[300]!, width: 1),
+          color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+          border: Border.all(
+            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+            width: 1,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -252,10 +261,10 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
             const SizedBox(width: 12),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900,
               ),
             ),
           ],
@@ -266,8 +275,9 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -291,10 +301,10 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       // Title
                       Text(
                         '오늘의 이야기가\n완성되었어요!',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                           height: 1.2,
                         ),
                         textAlign: TextAlign.center,
@@ -307,7 +317,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                         '로그인하고 나만의 맞춤 운세를\n확인해보세요',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey[600],
+                          color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                           height: 1.4,
                         ),
                         textAlign: TextAlign.center,
@@ -325,7 +335,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                           child: Text(
                             '내 미래 미리보기',
                             style: TossTheme.button.copyWith(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                             ),
                           ),
                         ),
@@ -340,9 +350,9 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                           '로그인 없이 보기',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                             decoration: TextDecoration.underline,
-                            decorationColor: Colors.grey[600],
+                            decorationColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                           ),
                         ),
                       ),

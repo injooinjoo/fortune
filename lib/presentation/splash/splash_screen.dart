@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/theme/toss_design_system.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,14 +27,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.grayDark50
+          : TossDesignSystem.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo with inverted colors
-            SvgPicture.asset(
-              'assets/images/flower_transparent.svg',
+            // Logo with dark/light mode support
+            Image.asset(
+              Theme.of(context).brightness == Brightness.dark
+                ? 'assets/images/flower_transparent_white.png'
+                : 'assets/images/flower_transparent.png',
               width: 120,
               height: 120,
             )
@@ -51,7 +55,9 @@ class _SplashScreenState extends State<SplashScreen> {
             Text(
               'Fortune',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.white
+                    : TossDesignSystem.black,
                 fontWeight: FontWeight.w300,
                 letterSpacing: 2,
                 fontFamily: 'NotoSansKR',

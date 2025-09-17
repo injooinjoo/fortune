@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/shared/components/app_header.dart' show FontSize;
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -419,7 +420,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.lightbulb_outline,
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningOrange,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -473,7 +474,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.warning_amber_outlined,
-                        color: Colors.orange,
+                        color: TossDesignSystem.warningOrange,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(

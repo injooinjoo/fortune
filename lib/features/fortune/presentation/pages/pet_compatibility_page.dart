@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../data/models/pet_profile.dart';
@@ -113,13 +114,13 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       elevation: 0,
       leading: IconButton(
         icon: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
+            color: TossDesignSystem.white.withOpacity(0.9),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(Icons.arrow_back_ios, size: 18, color: TossTheme.textBlack),
@@ -200,12 +201,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: TossDesignSystem.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.pets,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 28,
                 ),
               ),
@@ -216,7 +217,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                 ),
               ),
@@ -227,7 +228,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             '나와 반려동물의 특별한 궁합을\n확인해보세요',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withValues(alpha: 0.9),
+              color: TossDesignSystem.white.withOpacity(0.9),
               height: 1.4,
             ),
           ),
@@ -257,11 +258,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
+                color: TossDesignSystem.black.withOpacity(0.06),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -334,11 +335,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         margin: const EdgeInsets.all(20),
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: TossDesignSystem.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: TossDesignSystem.black.withOpacity(0.06),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -402,7 +403,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => _buildAddPetForm(),
     );
   }
@@ -410,8 +411,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   Widget _buildAddPetForm() {
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: StatefulBuilder(
@@ -572,8 +573,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: isSelected 
-                ? TossTheme.primaryBlue.withValues(alpha: 0.1)
-                : Colors.grey.shade50,
+                ? TossTheme.primaryBlue.withOpacity(0.1)
+                : TossDesignSystem.gray50,
               border: Border.all(
                 color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
                 width: isSelected ? 2 : 1,
@@ -641,7 +642,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(petState.error!),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       } else {
@@ -649,7 +650,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('반려동물 등록에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -694,7 +695,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -722,15 +723,15 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  Colors.white,
+                  TossTheme.primaryBlue.withOpacity(0.1),
+                  TossDesignSystem.white,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+                color: TossTheme.primaryBlue.withOpacity(0.2),
                 width: 1,
               ),
             ),
@@ -783,11 +784,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
+                  color: TossDesignSystem.black.withOpacity(0.06),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),

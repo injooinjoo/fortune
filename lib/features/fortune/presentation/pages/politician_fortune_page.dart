@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../widgets/fortune_content_card.dart';
@@ -70,11 +71,11 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.backgroundPrimary,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.gray900.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -105,7 +106,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? tabColor : Colors.transparent,
+            color: isSelected ? tabColor : TossDesignSystem.white.withValues(alpha: 0.0),
             borderRadius: BorderRadius.circular(25),
           ),
           child: Row(
@@ -114,7 +115,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? Colors.white : Colors.grey,
+                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
               ),
               const SizedBox(width: 4),
               Text(
@@ -122,7 +123,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? Colors.white : Colors.grey,
+                  color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
                 ),
               ),
             ],
@@ -163,16 +164,16 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isSelected
-                    ? [partyColor, partyColor.withOpacity(0.7)]
-                    : [Colors.white, Colors.white]),
+                    ? [partyColor, partyColor.withValues(alpha: 0.7)]
+                    : [TossDesignSystem.backgroundPrimary, TossDesignSystem.backgroundPrimary]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isSelected ? partyColor : Colors.grey[300]!,
+                color: isSelected ? partyColor : TossDesignSystem.gray300,
                 width: isSelected ? 2 : 1),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: partyColor.withOpacity(0.3),
+                        color: partyColor.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 4))
                     ]
@@ -185,14 +186,14 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                   CircleAvatar(
                     radius: 28,
                     backgroundColor: isSelected 
-                        ? Colors.white.withOpacity(0.2)
-                        : partyColor.withOpacity(0.1),
+                        ? TossDesignSystem.white.withValues(alpha: 0.2)
+                        : partyColor.withValues(alpha: 0.1),
                     child: Text(
                       politician['name']!.substring(0, 1),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : partyColor,
+                        color: isSelected ? TossDesignSystem.white : partyColor,
                       ),
                     ),
                   ),
@@ -202,7 +203,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
                   ),
                   Text(
@@ -210,8 +211,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.8)
-                          : Colors.grey,
+                          ? TossDesignSystem.white.withValues(alpha: 0.8)
+                          : TossDesignSystem.gray500,
                     ),
                   ),
                   Text(
@@ -219,7 +220,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.7)
+                          ? TossDesignSystem.white.withValues(alpha: 0.7)
                           : partyColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -287,14 +288,14 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.9,
         minChildSize: 0.5,
         maxChildSize: 0.95,
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-            color: Colors.grey[100]!,
+            color: TossDesignSystem.gray100,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: ListView(
@@ -306,7 +307,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300]!,
+                    color: TossDesignSystem.gray300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -345,8 +346,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
+        gradient: LinearGradient(
+          colors: [TossDesignSystem.tossBlue, TossDesignSystem.tossBlueLight],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -358,7 +359,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
           const SizedBox(height: 8),
@@ -366,7 +367,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
             content.toString(),
             style: const TextStyle(
               fontSize: 14,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
         ],
@@ -379,9 +380,9 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.backgroundPrimary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.3)),
+        border: Border.all(color: TossDesignSystem.tossBlue.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,7 +392,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1976D2),
+              color: TossDesignSystem.tossBlue,
             ),
           ),
           const SizedBox(height: 12),
@@ -403,7 +404,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 Icon(
                   Icons.check_circle_outline,
                   size: 20,
-                  color: const Color(0xFF1976D2).withOpacity(0.7),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -421,7 +422,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                         entry.value.toString(),
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Colors.grey,
+                          color: TossDesignSystem.gray500,
                         ),
                       ),
                     ],
@@ -444,8 +445,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1976D2).withOpacity(0.1),
-            const Color(0xFF42A5F5).withOpacity(0.1),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            TossDesignSystem.tossBlueLight.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -458,7 +459,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1976D2),
+              color: TossDesignSystem.tossBlue,
             ),
           ),
           const SizedBox(height: 8),
@@ -472,7 +473,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
               '이정표: ${career['milestone']}',
               style: const TextStyle(
                 fontSize: 13,
-                color: Colors.grey,
+                color: TossDesignSystem.gray500,
                 fontStyle: FontStyle.italic,
               ),
             ),

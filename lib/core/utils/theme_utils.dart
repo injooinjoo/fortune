@@ -18,18 +18,18 @@ class ThemeUtils {
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         colors: [
-          TossDesignSystem.tossBlueDark.withOpacity(0.8),
-          TossDesignSystem.tossBlueDark.withOpacity(0.6),
-          TossDesignSystem.tossBlueDark.withOpacity(0.4)]
+          TossDesignSystem.tossBlueDark.withValues(alpha: 0.8),
+          TossDesignSystem.tossBlueDark.withValues(alpha: 0.6),
+          TossDesignSystem.tossBlueDark.withValues(alpha: 0.4)]
       );
     }
     return LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
       colors: [
-        TossDesignSystem.tossBlue.withOpacity(0.8),
-        TossDesignSystem.tossBlue.withOpacity(0.6),
-        TossDesignSystem.tossBlue.withOpacity(0.4)]
+        TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+        TossDesignSystem.tossBlue.withValues(alpha: 0.6),
+        TossDesignSystem.tossBlue.withValues(alpha: 0.4)]
     );
   }
 
@@ -38,13 +38,13 @@ class ThemeUtils {
     if (isDarkMode(context)) {
       return [
         BoxShadow(
-          color: Colors.black.withOpacity(0.3),
+          color: TossDesignSystem.black.withValues(alpha: 0.3),
           blurRadius: 8,
           offset: const Offset(0, 2))];
     }
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.04),
+        color: TossDesignSystem.black.withValues(alpha: 0.04),
         blurRadius: 10,
         offset: const Offset(0, 2))];
   }
@@ -53,8 +53,8 @@ class ThemeUtils {
   static Border getCardBorder(BuildContext context) {
     return Border.all(
       color: isDarkMode(context) 
-        ? TossDesignSystem.grayDark200.withOpacity(0.3)
-        : TossDesignSystem.gray200.withOpacity(0.5),
+        ? TossDesignSystem.grayDark200.withValues(alpha: 0.3)
+        : TossDesignSystem.gray200.withValues(alpha: 0.5),
       width: 1);
   }
 
@@ -65,18 +65,18 @@ class ThemeUtils {
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         colors: [
-          TossDesignSystem.purple.withOpacity(0.8),
-          TossDesignSystem.purple.withOpacity(0.6),
-          TossDesignSystem.purple.withOpacity(0.4)]
+          TossDesignSystem.purple.withValues(alpha: 0.8),
+          TossDesignSystem.purple.withValues(alpha: 0.6),
+          TossDesignSystem.purple.withValues(alpha: 0.4)]
       );
     }
     return LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
       colors: [
-        TossDesignSystem.purple.withOpacity(0.8),
-        TossDesignSystem.purple.withOpacity(0.6),
-        TossDesignSystem.purple.withOpacity(0.4)]
+        TossDesignSystem.purple.withValues(alpha: 0.8),
+        TossDesignSystem.purple.withValues(alpha: 0.6),
+        TossDesignSystem.purple.withValues(alpha: 0.4)]
     );
   }
 
@@ -105,15 +105,15 @@ class ThemeUtils {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return ShimmerColors(
       baseColor: fortuneTheme?.shimmerBase ?? TossDesignSystem.gray200,
-      highlightColor: fortuneTheme?.shimmerHighlight ?? TossDesignSystem.gray200.withOpacity(0.3));
+      highlightColor: fortuneTheme?.shimmerHighlight ?? TossDesignSystem.gray200.withValues(alpha: 0.3));
   }
 
   /// Get glass morphism colors
   static GlassColors getGlassColors(BuildContext context) {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return GlassColors(
-      background: fortuneTheme?.glassBackground ?? Colors.white.withOpacity(0.05),
-      border: fortuneTheme?.glassBorder ?? Colors.white.withOpacity(0.1));
+      background: fortuneTheme?.glassBackground ?? TossDesignSystem.white.withValues(alpha: 0.05),
+      border: fortuneTheme?.glassBorder ?? TossDesignSystem.white.withValues(alpha: 0.1));
   }
 }
 

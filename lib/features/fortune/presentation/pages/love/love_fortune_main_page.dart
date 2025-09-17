@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../services/ad_service.dart';
 import 'love_input_step1_page.dart';
@@ -115,7 +116,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Container(

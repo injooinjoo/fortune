@@ -6,6 +6,7 @@ import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class PalmistryFortunePage extends ConsumerStatefulWidget {
   const PalmistryFortunePage({super.key});
@@ -74,7 +75,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
             'AI가 당신의 손금을 분석하여 운명과 미래를 예측해드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
+              color: TossDesignSystem.gray500,
             ),
           ),
           const SizedBox(height: 24),
@@ -121,16 +122,16 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: TossDesignSystem.gray300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
             children: [
-              Icon(Icons.camera_alt, color: Colors.purple),
+              Icon(Icons.camera_alt, color: TossDesignSystem.purple),
               SizedBox(width: 8),
               Text(
                 '손 사진 촬영 (선택사항)',
@@ -165,8 +166,8 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                       },
                       icon: const Icon(Icons.close),
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.black54,
-                        foregroundColor: Colors.white,
+                        backgroundColor: TossDesignSystem.black.withValues(alpha: 0.54),
+                        foregroundColor: TossDesignSystem.white,
                       ),
                     ),
                   ),
@@ -204,17 +205,17 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Row(
               children: [
-                Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                Icon(Icons.info_outline, size: 16, color: TossDesignSystem.tossBlue),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '밝은 곳에서 손바닥을 평평하게 펴고 촬영해주세요',
-                    style: TextStyle(fontSize: 12, color: Colors.blue),
+                    style: TextStyle(fontSize: 12, color: TossDesignSystem.tossBlue),
                   ),
                 ),
               ],
@@ -265,10 +266,10 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.purple[50] : Colors.white,
+          color: isSelected ? TossDesignSystem.purple.withValues(alpha: 0.1) : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.purple : Colors.grey[300]!,
+            color: isSelected ? TossDesignSystem.purple : TossDesignSystem.gray300,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -277,14 +278,14 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
             Icon(
               icon,
               size: 32,
-              color: isSelected ? Colors.purple : Colors.grey[600],
+              color: isSelected ? TossDesignSystem.purple : TossDesignSystem.gray600,
             ),
             const SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? Colors.purple : Colors.grey[700],
+                color: isSelected ? TossDesignSystem.purple : TossDesignSystem.gray700,
               ),
             ),
           ],
@@ -325,10 +326,10 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.purple[50] : Colors.white,
+                  color: isSelected ? TossDesignSystem.purple.withValues(alpha: 0.1) : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? Colors.purple : Colors.grey[300]!,
+                    color: isSelected ? TossDesignSystem.purple : TossDesignSystem.gray300,
                     width: isSelected ? 2 : 1,
                   ),
                 ),
@@ -337,7 +338,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                     entry.value,
                     style: TextStyle(
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? Colors.purple : Colors.grey[700],
+                      color: isSelected ? TossDesignSystem.purple : TossDesignSystem.gray700,
                       fontSize: 13,
                     ),
                     textAlign: TextAlign.center,
@@ -368,7 +369,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           _lifeLine,
           (value) => setState(() => _lifeLine = value),
           Icons.favorite,
-          Colors.red,
+          TossDesignSystem.errorRed,
         ),
         const SizedBox(height: 16),
         _buildLineAnalysis(
@@ -376,7 +377,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           _heartLine,
           (value) => setState(() => _heartLine = value),
           Icons.volunteer_activism,
-          Colors.pink,
+          TossDesignSystem.pinkPrimary,
         ),
         const SizedBox(height: 16),
         _buildLineAnalysis(
@@ -384,7 +385,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           _headLine,
           (value) => setState(() => _headLine = value),
           Icons.psychology,
-          Colors.blue,
+          TossDesignSystem.tossBlue,
         ),
         const SizedBox(height: 16),
         _buildLineAnalysis(
@@ -392,7 +393,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           _fateLine,
           (value) => setState(() => _fateLine = value),
           Icons.stars,
-          Colors.purple,
+          TossDesignSystem.purple,
           isOptional: true,
         ),
       ],
@@ -427,7 +428,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                 '(선택사항)',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey,
+                  color: TossDesignSystem.gray500,
                 ),
               ),
             ],
@@ -442,7 +443,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               borderRadius: BorderRadius.circular(12),
             ),
             filled: true,
-            fillColor: Colors.grey[50],
+            fillColor: TossDesignSystem.gray50,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           items: [
@@ -496,7 +497,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
   Widget _buildSwitchTile(String title, bool value, Function(bool) onChanged, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.purple),
+        Icon(icon, size: 20, color: TossDesignSystem.purple),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -543,8 +544,8 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.purple[100]!,
-                Colors.blue[100]!,
+                TossDesignSystem.purple.withValues(alpha: 0.2),
+                TossDesignSystem.tossBlue.withValues(alpha: 0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
@@ -554,7 +555,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               const Icon(
                 Icons.pan_tool,
                 size: 64,
-                color: Colors.deepPurple,
+                color: TossDesignSystem.purple,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -570,7 +571,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                   result.mainFortune!,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[700],
+                    color: TossDesignSystem.gray700,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -585,9 +586,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               children: [
@@ -608,8 +609,8 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                       child: CircularProgressIndicator(
                         value: result.overallScore! / 100,
                         strokeWidth: 12,
-                        backgroundColor: Colors.grey[200],
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.purple),
+                        backgroundColor: TossDesignSystem.gray200,
+                        valueColor: const AlwaysStoppedAnimation<Color>(TossDesignSystem.purple),
                       ),
                     ),
                     Column(
@@ -619,14 +620,14 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Colors.purple,
+                            color: TossDesignSystem.purple,
                           ),
                         ),
                         Text(
                           '100점 만점',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: TossDesignSystem.gray600,
                           ),
                         ),
                       ],
@@ -644,16 +645,16 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.analytics, color: Colors.blue),
+                    Icon(Icons.analytics, color: TossDesignSystem.tossBlue),
                     SizedBox(width: 8),
                     Text(
                       '손금별 상세 분석',
@@ -684,8 +685,8 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.green[50]!,
-                  Colors.blue[50]!,
+                  TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -695,7 +696,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.lightbulb, color: Colors.green),
+                    Icon(Icons.lightbulb, color: TossDesignSystem.successGreen),
                     SizedBox(width: 8),
                     Text(
                       '운세 개선 조언',
@@ -715,7 +716,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                       const Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: Colors.green,
+                        color: TossDesignSystem.successGreen,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -807,14 +808,14 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
 
   Color _getLineColor(String key) {
     const colors = {
-      'life_line': Colors.red,
-      'heart_line': Colors.pink,
-      'head_line': Colors.blue,
-      'fate_line': Colors.purple,
-      'marriage_line': Colors.orange,
-      'children_line': Colors.green,
+      'life_line': TossDesignSystem.errorRed,
+      'heart_line': TossDesignSystem.pinkPrimary,
+      'head_line': TossDesignSystem.tossBlue,
+      'fate_line': TossDesignSystem.purple,
+      'marriage_line': TossDesignSystem.warningOrange,
+      'children_line': TossDesignSystem.successGreen,
     };
-    return colors[key] ?? Colors.grey;
+    return colors[key] ?? TossDesignSystem.gray500;
   }
 
   Future<void> _takePicture() async {
@@ -836,7 +837,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('사진 촬영에 실패했습니다: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -862,7 +863,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('이미지 선택에 실패했습니다: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }

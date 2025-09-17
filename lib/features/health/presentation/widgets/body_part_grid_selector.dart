@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class BodyPartGridSelector extends StatefulWidget {
   final List<BodyPart> selectedParts;
@@ -58,7 +59,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                       child: Text(
                         '${_selectedParts.length}',
                         style: TossTheme.caption.copyWith(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -135,21 +136,21 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: isSelected 
-              ? TossTheme.primaryBlue.withOpacity(0.1)
-              : Colors.white,
+              ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+              : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? TossTheme.primaryBlue
                 : canSelect 
                     ? TossTheme.borderGray200
-                    : TossTheme.borderGray200.withOpacity(0.5),
+                    : TossTheme.borderGray200.withValues(alpha: 0.5),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: TossTheme.primaryBlue.withOpacity(0.2),
+                    color: TossTheme.primaryBlue.withValues(alpha: 0.2),
                     offset: const Offset(0, 2),
                     blurRadius: 8,
                     spreadRadius: 0,
@@ -157,7 +158,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: TossDesignSystem.black.withValues(alpha: 0.04),
                     offset: const Offset(0, 2),
                     blurRadius: 4,
                     spreadRadius: 0,
@@ -180,7 +181,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                       height: 48,
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossTheme.primaryBlue.withOpacity(0.2)
+                            ? TossTheme.primaryBlue.withValues(alpha: 0.2)
                             : TossTheme.backgroundSecondary,
                         shape: BoxShape.circle,
                       ),
@@ -232,7 +233,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                     ),
                     child: const Icon(
                       Icons.check,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 16,
                     ),
                   ).animate()
@@ -252,10 +253,10 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossTheme.primaryBlue.withOpacity(0.05),
+        color: TossTheme.primaryBlue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossTheme.primaryBlue.withOpacity(0.2),
+          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -299,7 +300,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                backgroundColor: TossTheme.primaryBlue.withOpacity(0.1),
+                backgroundColor: TossTheme.primaryBlue.withValues(alpha: 0.1),
                 deleteIcon: Icon(
                   Icons.close,
                   size: 16,
@@ -307,7 +308,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                 ),
                 onDeleted: () => _toggleBodyPart(part),
                 side: BorderSide(
-                  color: TossTheme.primaryBlue.withOpacity(0.3),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.3),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 4),
               );

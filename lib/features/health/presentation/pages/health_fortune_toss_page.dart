@@ -8,6 +8,7 @@ import '../widgets/health_timeline_chart.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../data/services/health_fortune_service.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
@@ -45,7 +46,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Container(
@@ -139,8 +140,8 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  TossTheme.primaryBlue.withOpacity(0.1),
-                  TossTheme.success.withOpacity(0.1),
+                  TossTheme.primaryBlue.withValues(alpha: 0.1),
+                  TossTheme.success.withValues(alpha: 0.1),
                 ],
               ),
               shape: BoxShape.circle,
@@ -222,7 +223,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: TossTheme.borderGray200),
           ),
@@ -232,7 +233,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -339,7 +340,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withOpacity(0.05) : Colors.white,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
@@ -352,12 +353,12 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : Colors.transparent,
+                color: isSelected ? TossTheme.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
                 border: isSelected ? null : Border.all(color: TossTheme.borderGray300, width: 2),
                 shape: BoxShape.circle,
               ),
               child: isSelected
-                  ? const Icon(Icons.check, color: Colors.white, size: 16)
+                  ? const Icon(Icons.check, color: TossDesignSystem.white, size: 16)
                   : null,
             ),
             const SizedBox(width: 16),
@@ -436,12 +437,12 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: _useGridSelector ? Colors.white : Colors.transparent,
+                      color: _useGridSelector ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha: 0.0),
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: _useGridSelector
                           ? [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: TossDesignSystem.black.withValues(alpha: 0.08),
                                 offset: const Offset(0, 2),
                                 blurRadius: 4,
                               ),
@@ -485,12 +486,12 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: !_useGridSelector ? Colors.white : Colors.transparent,
+                      color: !_useGridSelector ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha: 0.0),
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: !_useGridSelector
                           ? [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: TossDesignSystem.black.withValues(alpha: 0.08),
                                 offset: const Offset(0, 2),
                                 blurRadius: 4,
                               ),
@@ -673,11 +674,11 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             offset: const Offset(0, 2),
             blurRadius: 16,
             spreadRadius: 0,
@@ -700,10 +701,10 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Color(bph.level.colorValue).withOpacity(0.1),
+                color: Color(bph.level.colorValue).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Color(bph.level.colorValue).withOpacity(0.3),
+                  color: Color(bph.level.colorValue).withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -728,7 +729,7 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
                         child: Text(
                           '${bph.score}점',
                           style: TossTheme.caption.copyWith(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -757,11 +758,11 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             offset: const Offset(0, 2),
             blurRadius: 16,
             spreadRadius: 0,
@@ -829,11 +830,11 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
             offset: const Offset(0, 2),
             blurRadius: 16,
             spreadRadius: 0,
@@ -868,10 +869,10 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: TossTheme.warning.withOpacity(0.1),
+                  color: TossTheme.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: TossTheme.warning.withOpacity(0.3),
+                    color: TossTheme.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -898,13 +899,13 @@ class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossTheme.primaryBlue.withOpacity(0.1),
-            TossTheme.success.withOpacity(0.1),
+            TossTheme.primaryBlue.withValues(alpha: 0.1),
+            TossTheme.success.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossTheme.primaryBlue.withOpacity(0.2),
+          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Column(

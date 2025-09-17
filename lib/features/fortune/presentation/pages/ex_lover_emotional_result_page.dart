@@ -24,7 +24,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -116,8 +116,8 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.purple.withOpacity(0.8),
-                  const Color(0xFFEC4899).withOpacity(0.8),
+                  TossDesignSystem.purple.withValues(alpha: 0.8),
+                  const Color(0xFFEC4899).withValues(alpha: 0.8),
                 ],
               ),
               shape: BoxShape.circle,
@@ -126,7 +126,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
               child: Text(
                 '${result.overallScore}',
                 style: TossDesignSystem.heading2.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -147,10 +147,10 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withOpacity(0.05),
+              color: TossDesignSystem.purple.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.purple.withOpacity(0.2),
+                color: TossDesignSystem.purple.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -181,7 +181,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -230,7 +230,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: prescription.healingProgress / 100,
-                  backgroundColor: TossDesignSystem.successGreen.withOpacity(0.1),
+                  backgroundColor: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                   valueColor: AlwaysStoppedAnimation(TossDesignSystem.successGreen),
                   minHeight: 8,
                 ),
@@ -307,10 +307,10 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -355,7 +355,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEC4899).withOpacity(0.1),
+                  color: const Color(0xFFEC4899).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -384,8 +384,8 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFEC4899).withOpacity(0.1),
-                    TossDesignSystem.purple.withOpacity(0.1),
+                    const Color(0xFFEC4899).withValues(alpha: 0.1),
+                    TossDesignSystem.purple.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -466,10 +466,10 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withOpacity(0.05),
+              color: TossDesignSystem.purple.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.purple.withOpacity(0.2),
+                color: TossDesignSystem.purple.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -523,7 +523,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withOpacity(0.1),
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -592,7 +592,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
                       child: CircularProgressIndicator(
                         value: newBeginning.readinessScore / 100,
                         strokeWidth: 4,
-                        backgroundColor: TossDesignSystem.successGreen.withOpacity(0.1),
+                        backgroundColor: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.successGreen),
                       ),
                     ),
@@ -666,10 +666,10 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withOpacity(0.05),
+              color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.successGreen.withOpacity(0.2),
+                color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),

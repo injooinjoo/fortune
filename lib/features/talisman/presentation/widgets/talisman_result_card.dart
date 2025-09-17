@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 
 class TalismanResultCard extends StatefulWidget {
@@ -79,7 +80,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: TossTheme.success.withOpacity(0.2),
+                  color: TossTheme.success.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -111,25 +112,25 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _categoryColor.withOpacity(0.1),
-                  _categoryColor.withOpacity(0.05),
-                  Colors.white,
+                  _categoryColor.withValues(alpha: 0.1),
+                  _categoryColor.withValues(alpha: 0.05),
+                  TossDesignSystem.white,
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: _categoryColor.withOpacity(0.3),
+                color: _categoryColor.withValues(alpha: 0.3),
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: _categoryColor.withOpacity(0.15),
+                  color: _categoryColor.withValues(alpha: 0.15),
                   offset: const Offset(0, 8),
                   blurRadius: 24,
                   spreadRadius: 0,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: TossDesignSystem.black.withValues(alpha: 0.04),
                   offset: const Offset(0, 2),
                   blurRadius: 8,
                   spreadRadius: 0,
@@ -142,7 +143,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _categoryColor.withOpacity(0.2),
+                    color: _categoryColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -173,15 +174,15 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: _categoryColor.withOpacity(0.4),
+                          color: _categoryColor.withValues(alpha: 0.4),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: _categoryColor.withOpacity(0.2),
+                            color: _categoryColor.withValues(alpha: 0.2),
                             offset: const Offset(0, 4),
                             blurRadius: 12,
                             spreadRadius: 0,
@@ -223,7 +224,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                               width: 12,
                               height: 12,
                               decoration: BoxDecoration(
-                                color: _categoryColor.withOpacity(0.7),
+                                color: _categoryColor.withValues(alpha: 0.7),
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -240,10 +241,10 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
+                    color: TossDesignSystem.white.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: _categoryColor.withOpacity(0.2),
+                      color: _categoryColor.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Text(
@@ -261,7 +262,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
           ).animate(delay: 300.ms)
             .fadeIn(duration: 600.ms)
             .slideY(begin: 0.2, end: 0)
-            .shimmer(duration: 1500.ms, color: _categoryColor.withOpacity(0.1)),
+            .shimmer(duration: 1500.ms, color: _categoryColor.withValues(alpha: 0.1)),
           
           const SizedBox(height: 32),
           
@@ -283,7 +284,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                       height: 20,
                       margin: const EdgeInsets.only(top: 2),
                       decoration: BoxDecoration(
-                        color: _categoryColor.withOpacity(0.2),
+                        color: _categoryColor.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -370,9 +371,9 @@ class _TalismanResultCardState extends State<TalismanResultCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _categoryColor.withOpacity(0.1),
-            _categoryColor.withOpacity(0.05),
-            Colors.white,
+            _categoryColor.withValues(alpha: 0.1),
+            _categoryColor.withValues(alpha: 0.05),
+            TossDesignSystem.white,
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -384,7 +385,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: _categoryColor.withOpacity(0.2),
+              color: _categoryColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(

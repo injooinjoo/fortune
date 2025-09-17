@@ -312,7 +312,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: TossDesignSystem.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -324,7 +324,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           children: [
             // 카드 이미지 (BoxFit.contain으로 변경하여 짤림 방지)
             Container(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               child: Center(
                 child: AspectRatio(
                   aspectRatio: 0.65, // 타로 카드 비율
@@ -356,13 +356,13 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.9),
+                    color: TossDesignSystem.error.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     '역방향',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: small ? 9 : 10,
                       fontWeight: FontWeight.w600,
                     ),
@@ -383,15 +383,15 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        TossDesignSystem.white.withValues(alpha: 0.0),
+                        TossDesignSystem.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
                   child: Text(
                     card.cardNameKr,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: large ? 14 : 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -484,7 +484,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: const Color(0xFFE5E7EB),

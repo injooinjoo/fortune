@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 
 class TalismanPremiumBottomSheet extends StatelessWidget {
@@ -21,7 +22,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => TalismanPremiumBottomSheet(
         onSubscribe: onSubscribe,
         onOneTimePurchase: onOneTimePurchase,
@@ -47,14 +48,14 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       TossTheme.primaryBlue,
-                      TossTheme.primaryBlue.withOpacity(0.7),
+                      TossTheme.primaryBlue.withValues(alpha: 0.7),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.workspace_premium,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 24,
                 ),
               ),
@@ -174,7 +175,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -224,7 +225,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
         color: TossTheme.backgroundSecondary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossTheme.primaryBlue.withOpacity(0.2),
+          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -233,10 +234,10 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withOpacity(0.1),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossTheme.primaryBlue.withOpacity(0.3),
+                color: TossTheme.primaryBlue.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -250,7 +251,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                   child: Text(
                     '추천',
                     style: TossTheme.caption.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

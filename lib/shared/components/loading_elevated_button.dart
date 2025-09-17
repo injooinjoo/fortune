@@ -97,14 +97,15 @@ class _LoadingElevatedButtonState extends State<LoadingElevatedButton>
   Widget _buildDot(int index) {
     final delay = index * 0.2;
     final progress = (_animation.value + delay) % 1.0;
-    
+    final theme = Theme.of(context);
+
     double opacity;
     if (progress < 0.5) {
       opacity = progress * 2; // 0 to 1
     } else {
       opacity = 2 - (progress * 2); // 1 to 0
     }
-    
+
     opacity = opacity.clamp(0.3, 1.0);
 
     return Container(
@@ -112,7 +113,7 @@ class _LoadingElevatedButtonState extends State<LoadingElevatedButton>
       height: 8,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(opacity),
+        color: theme.colorScheme.onPrimary.withOpacity(opacity),
       ),
     );
   }

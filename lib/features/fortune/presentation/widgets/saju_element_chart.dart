@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
@@ -184,7 +185,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
         title: count > 0 ? '${percentage.round()}%' : '',
         radius: radius,
         titleStyle: TossTheme.caption.copyWith(
-          color: Colors.white,
+          color: TossDesignSystem.white,
           fontWeight: FontWeight.bold,
           fontSize: isTouched ? 14 : 12,
         ),
@@ -213,7 +214,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       child: Text(
         '$element: $count',
         style: TossTheme.caption.copyWith(
-          color: Colors.white,
+          color: TossDesignSystem.white,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -382,7 +383,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                     child: Text(
                       element,
                       style: TossTheme.caption.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
                       ),

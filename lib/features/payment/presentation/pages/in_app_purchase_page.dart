@@ -181,14 +181,14 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                 Text(
                   '현재 보유 토큰',
                   style: TossDesignSystem.caption.copyWith(
-                    color: Colors.white70,
+                    color: TossDesignSystem.white.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${currentTokens}개',
                   style: TossDesignSystem.heading1.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -197,7 +197,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             Icon(
               Icons.account_balance_wallet,
               size: 48,
-              color: Colors.white.withOpacity(0.5),
+              color: TossDesignSystem.white.withValues(alpha: 0.5),
             ),
           ],
         ),
@@ -248,7 +248,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
               width: isSelected ? 2 : 1,
             ),
             color: isSelected 
-                ? TossDesignSystem.tossBlue.withOpacity(0.1) 
+                ? TossDesignSystem.tossBlue.withValues(alpha: 0.1) 
                 : TossDesignSystem.gray50,
           ),
           child: Padding(
@@ -265,13 +265,13 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                       width: 2,
                     ),
-                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.white.withValues(alpha: 0.0),
                   ),
                   child: isSelected
                       ? const Icon(
                           Icons.check,
                           size: 16,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         )
                       : null,
                 ),
@@ -304,7 +304,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                               child: Text(
                                 _getBadge(product.id)!,
                                 style: TossDesignSystem.caption.copyWith(
-                                  color: Colors.white,
+                                  color: TossDesignSystem.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -363,8 +363,8 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             gradient: isSelected
                 ? LinearGradient(
                     colors: [
-                      TossDesignSystem.tossBlue.withOpacity(0.1),
-                      TossDesignSystem.gray600.withOpacity(0.1),
+                      TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                      TossDesignSystem.gray600.withValues(alpha: 0.1),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -386,13 +386,13 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                       width: 2,
                     ),
-                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.white.withValues(alpha: 0.0),
                   ),
                   child: isSelected
                       ? const Icon(
                           Icons.check,
                           size: 16,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         )
                       : null,
                 ),
@@ -430,7 +430,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                             child: Text(
                               '인기',
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
                               ),
@@ -507,7 +507,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossDesignSystem.infoBlue.withOpacity(0.1),
+        color: TossDesignSystem.infoBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

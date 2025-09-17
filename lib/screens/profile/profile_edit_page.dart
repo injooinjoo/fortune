@@ -12,6 +12,7 @@ import '../../shared/glassmorphism/glass_container.dart';
 import '../../presentation/widgets/profile_image_picker.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
+import '../../core/theme/toss_design_system.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({super.key});
@@ -119,7 +120,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필을 불러오는 중 오류가 발생했습니다.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -158,7 +159,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필 이미지 업로드에 실패했습니다.'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -247,7 +248,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필이 성공적으로 업데이트되었습니다.'),
-            backgroundColor: Colors.green,
+            backgroundColor: TossDesignSystem.successGreen,
           ),
         );
         context.pop();
@@ -258,7 +259,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -470,7 +471,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 period.description,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.grayDark400
+                                      : TossDesignSystem.gray600,
                                 ),
                               ),
                             ],

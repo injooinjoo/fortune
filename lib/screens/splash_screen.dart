@@ -100,11 +100,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       body: Center(
         child: Image.asset(
-          'assets/images/flower_transparent.png',
+          isDark
+            ? 'assets/images/flower_transparent_white.png'
+            : 'assets/images/flower_transparent.png',
           width: 120,
           height: 120,
         ).animate()

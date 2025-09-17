@@ -4,6 +4,7 @@ import '../../../../services/mbti_cognitive_functions_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class MbtiCompatibilityMatrix extends StatefulWidget {
   final String? selectedType1;
@@ -170,7 +171,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
       children: [
         Icon(
           Icons.grid_on,
-          color: Colors.purple,
+          color: TossDesignSystem.purple,
           size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
@@ -253,8 +254,8 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                   borderRadius: AppDimensions.borderRadiusSmall,
                                   border: Border.all(
                                     color: isSelected
-                                        ? Colors.white
-                                        : Colors.transparent,
+                                        ? TossDesignSystem.white
+                                        : TossDesignSystem.transparent,
                                     width: isSelected ? 2 : 0),
                                   boxShadow: (isSelected || isHovered) ? [
                                     BoxShadow(
@@ -270,7 +271,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                       fontWeight: isHovered
                                           ? FontWeight.bold
                                           : FontWeight.normal,
-                                      color: Colors.white,
+                                      color: TossDesignSystem.white,
                                     ),
                                   ),
                                 ),
@@ -297,7 +298,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
         child: Text(
           '매트릭스에서 두 MBTI 유형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withOpacity(0.6),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
           textAlign: TextAlign.center),
       );
@@ -423,8 +424,8 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       func,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
-                            ? Colors.green
-                            : Colors.white.withOpacity(0.8),
+                            ? TossDesignSystem.successGreen
+                            : TossDesignSystem.white.withOpacity(0.8),
                       ),
                     ),
                   )).toList(),
@@ -434,7 +435,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Container(
               width: 1,
               height: AppSpacing.spacing20,
-              color: Colors.white.withOpacity(0.2),
+              color: TossDesignSystem.white.withOpacity(0.2),
               margin: AppSpacing.paddingHorizontal16),
             Expanded(
               child: Column(
@@ -451,8 +452,8 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       func,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
-                            ? Colors.green
-                            : Colors.white.withOpacity(0.8),
+                            ? TossDesignSystem.successGreen
+                            : TossDesignSystem.white.withOpacity(0.8),
                       ),
                     ),
                   )).toList(),
@@ -466,16 +467,16 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           Container(
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
+              color: TossDesignSystem.successGreen.withOpacity(0.1),
               borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-                color: Colors.green.withOpacity(0.3),
+                color: TossDesignSystem.successGreen.withOpacity(0.3),
                 width: 1)),
             child: Row(
               children: [
                 Icon(
                   Icons.sync,
-                  color: Colors.green,
+                  color: TossDesignSystem.successGreen,
                   size: 16,
                 ),
                 const SizedBox(width: AppSpacing.spacing2),
@@ -497,22 +498,22 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: TossDesignSystem.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: TossDesignSystem.white.withOpacity(0.1),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildLegendItem('최고 궁합', Colors.green, '85% 이상'),
+          _buildLegendItem('최고 궁합', TossDesignSystem.successGreen, '85% 이상'),
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('좋은 궁합', Colors.blue, '70-84%'),
+          _buildLegendItem('좋은 궁합', TossDesignSystem.tossBlue, '70-84%'),
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('보통 궁합', Colors.amber, '55-69%'),
+          _buildLegendItem('보통 궁합', TossDesignSystem.warningYellow, '55-69%'),
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('도전적 관계', Colors.orange, '55% 미만')]));
+          _buildLegendItem('도전적 관계', TossDesignSystem.warningOrange, '55% 미만')]));
   }
 
   Widget _buildLegendItem(String label, Color color, String range) {
@@ -534,31 +535,31 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Text(
               range,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: TossDesignSystem.white.withOpacity(0.6),
                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]);
   }
 
   Color _getCompatibilityColor(double score) {
-    if (score >= 0.85) return Colors.green;
-    if (score >= 0.7) return Colors.blue;
-    if (score >= 0.55) return Colors.amber;
-    return Colors.orange;
+    if (score >= 0.85) return TossDesignSystem.successGreen;
+    if (score >= 0.7) return TossDesignSystem.tossBlue;
+    if (score >= 0.55) return TossDesignSystem.warningYellow;
+    return TossDesignSystem.warningOrange;
 }
 
   Color _getTypeColor(String type) {
     // 타입별 색상
-    if (type.contains('NT')) return Colors.purple; // 분석가
-    if (type.contains('NF')) return Colors.blue;   // 외교관
-    if (type.contains('SJ')) return Colors.green;  // 수호자
-    if (type.contains('SP')) return Colors.orange; // 탐험가
+    if (type.contains('NT')) return TossDesignSystem.purple; // 분석가
+    if (type.contains('NF')) return TossDesignSystem.tossBlue;   // 외교관
+    if (type.contains('SJ')) return TossDesignSystem.successGreen;  // 수호자
+    if (type.contains('SP')) return TossDesignSystem.warningOrange; // 탐험가
     
     // 더 세부적인 분류
-    if (['INTJ', 'INTP', 'ENTJ', 'ENTP'].contains(type)) return Colors.purple;
-    if (['INFJ', 'INFP', 'ENFJ', 'ENFP'].contains(type)) return Colors.blue;
-    if (['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'].contains(type)) return Colors.green;
-    if (['ISTP', 'ISFP', 'ESTP', 'ESFP'].contains(type)) return Colors.orange;
+    if (['INTJ', 'INTP', 'ENTJ', 'ENTP'].contains(type)) return TossDesignSystem.purple;
+    if (['INFJ', 'INFP', 'ENFJ', 'ENFP'].contains(type)) return TossDesignSystem.tossBlue;
+    if (['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'].contains(type)) return TossDesignSystem.successGreen;
+    if (['ISTP', 'ISFP', 'ESTP', 'ESFP'].contains(type)) return TossDesignSystem.warningOrange;
     
-    return Colors.grey;
+    return TossDesignSystem.gray400;
 }
 
   Map<String, String> _getCompatibilityAnalysis(String type1, String type2) {

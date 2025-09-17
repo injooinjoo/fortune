@@ -353,7 +353,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             AppHeader(
               title: '타로 리딩',
               showBackButton: true,
-              backgroundColor: Colors.white,
+              backgroundColor: TossDesignSystem.white,
               elevation: 0.5,
               actions: [
                 IconButton(
@@ -386,11 +386,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: const Icon(
@@ -448,7 +448,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width * 0.42),
       child: Material(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
@@ -466,7 +466,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: TossDesignSystem.black.withOpacity(0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2))]),
             child: Text(
@@ -504,7 +504,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: TossDesignSystem.gray600,
@@ -522,14 +522,14 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isUser ? TossDesignSystem.gray900 : Colors.white,
+                color: isUser ? TossDesignSystem.gray900 : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(16),
                 border: !isUser ? Border.all(
                   color: TossDesignSystem.gray600,
                   width: 1) : null,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
+                    color: TossDesignSystem.black.withOpacity(0.02),
                     blurRadius: 4,
                     offset: const Offset(0, 2))]),
               child: Column(
@@ -553,7 +553,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                           message.text,
                           style: TextStyle(
                             fontSize: 14 * fontScale,
-                            color: isUser ? Colors.white : TossDesignSystem.gray900,
+                            color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
                           ),
                         ),
                       ],
@@ -563,7 +563,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                       message.text,
                       style: TextStyle(
                         fontSize: 14 * fontScale,
-                        color: isUser ? Colors.white : TossDesignSystem.gray900,
+                        color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
                         height: 1.4,
                       ),
                     ),
@@ -602,7 +602,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
           width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: TossDesignSystem.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -633,7 +633,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             ),
             // 카드 이름
             Container(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
@@ -675,7 +675,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         top: 12,
         bottom: MediaQuery.of(context).padding.bottom + 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         border: Border(
           top: BorderSide(
             color: TossDesignSystem.gray600,
@@ -717,7 +717,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             child: IconButton(
               icon: Icon(
                 Icons.send,
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 size: 20,
               ),
               onPressed: _isProcessing ? null : () => _sendMessage(_inputController.text),

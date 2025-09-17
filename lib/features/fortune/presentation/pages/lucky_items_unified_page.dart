@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -334,7 +335,7 @@ ${topRecommendations.join('\n')}
               decoration: BoxDecoration(
                 color: isSelected 
                     ? category['color'].withOpacity(0.2) 
-                    : Colors.white,
+                    : TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isSelected 
@@ -466,7 +467,7 @@ ${topRecommendations.join('\n')}
           const Icon(
             Icons.auto_awesome_rounded,
             size: 48,
-            color: Colors.white,
+            color: TossDesignSystem.gray100,
           ),
           const SizedBox(height: 12),
           const Text(
@@ -474,15 +475,15 @@ ${topRecommendations.join('\n')}
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: TossDesignSystem.gray100,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             '로또부터 투자까지, 실용적인 행운 정보를 얻어보세요',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white70,
+              color: TossDesignSystem.gray100.withOpacity(0.7),
               height: 1.4,
             ),
             textAlign: TextAlign.center,
@@ -494,14 +495,14 @@ ${topRecommendations.join('\n')}
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: TossDesignSystem.gray100.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
                 '👇 아래 카테고리를 선택하여 상세 정보를 확인하세요',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white,
+                  color: TossDesignSystem.gray100,
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -597,7 +598,7 @@ ${topRecommendations.join('\n')}
               decoration: BoxDecoration(
                 color: displayColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: TossDesignSystem.gray100, width: 2),
                 boxShadow: [
                   BoxShadow(
                     color: displayColor.withOpacity(0.4),
@@ -613,7 +614,7 @@ ${topRecommendations.join('\n')}
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: TossDesignSystem.gray100,
               ),
             ),
           ],
@@ -624,7 +625,7 @@ ${topRecommendations.join('\n')}
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: TossDesignSystem.gray100,
           ),
         );
       }
@@ -634,7 +635,7 @@ ${topRecommendations.join('\n')}
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.white),
+          color: TossDesignSystem.gray100),
         textAlign: TextAlign.center
       );
     }
@@ -663,14 +664,14 @@ ${topRecommendations.join('\n')}
           Icon(
             icon,
             size: 32,
-            color: Colors.white.withOpacity(0.9),
+            color: TossDesignSystem.gray100.withOpacity(0.9),
           ),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withOpacity(0.8),
+              color: TossDesignSystem.gray100.withOpacity(0.8),
             ),
           ),
           const SizedBox(height: 8),
@@ -983,7 +984,7 @@ ${topRecommendations.join('\n')}
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.gray100,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFF0F0F0)),
           ),
@@ -1019,7 +1020,7 @@ ${topRecommendations.join('\n')}
                       child: Text(
                         number.toString(),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.gray100,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1060,7 +1061,7 @@ ${topRecommendations.join('\n')}
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.gray100,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: const Color(0xFFF0F0F0)),
           ),
@@ -1096,7 +1097,7 @@ ${topRecommendations.join('\n')}
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.gray100,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF0F0F0)),
       ),
@@ -1267,22 +1268,22 @@ ${topRecommendations.join('\n')}
   /// 색상 이름을 Color 객체로 변환
   Color? _getColorFromName(String colorName) {
     final colorMap = {
-      '빨강': Colors.red,
-      '파랑': Colors.blue,
-      '노랑': Colors.yellow,
-      '초록': Colors.green,
-      '보라': Colors.purple,
-      '핑크': Colors.pink,
-      '주황': Colors.orange,
-      '검정': Colors.black,
-      '흰색': Colors.white,
-      '회색': Colors.grey,
-      '청색': Colors.indigo,
-      '하늘색': Colors.lightBlue,
-      '연두': Colors.lightGreen,
-      '갈색': Colors.brown,
-      '금색': Colors.amber,
-      '은색': Colors.grey[300],
+      '빨강': TossDesignSystem.errorRed,
+      '파랑': TossDesignSystem.tossBlue,
+      '노랑': TossDesignSystem.warningOrange,
+      '초록': TossDesignSystem.successGreen,
+      '보라': const Color(0xFF9C27B0),
+      '핑크': const Color(0xFFE91E63),
+      '주황': const Color(0xFFFF9800),
+      '검정': TossDesignSystem.gray900,
+      '흰색': TossDesignSystem.gray100,
+      '회색': TossDesignSystem.gray600,
+      '청색': const Color(0xFF3F51B5),
+      '하늘색': const Color(0xFF03A9F4),
+      '연두': const Color(0xFF8BC34A),
+      '갈색': const Color(0xFF795548),
+      '금색': const Color(0xFFFFC107),
+      '은색': const Color(0xFFE0E0E0),
     };
     
     return colorMap[colorName];

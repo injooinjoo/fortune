@@ -103,7 +103,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
               ),
               boxShadow: [
                 BoxShadow(
-                  color: gradientColors.first.withOpacity(0.3),
+                  color: gradientColors.first.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -119,13 +119,13 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                       Icon(
                         widget.category.icon,
                         size: 48,
-                        color: Colors.white.withOpacity(0.9),
+                        color: TossDesignSystem.white.withValues(alpha: 0.9),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         widget.category.title,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
@@ -144,7 +144,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
+                      color: TossDesignSystem.white.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -156,7 +156,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.15),
+                      color: TossDesignSystem.white.withValues(alpha: 0.15),
                     ),
                   ),
                 ),
@@ -170,11 +170,11 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS * 1.25, vertical: TossDesignSystem.spacingXS),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.9),
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: TossDesignSystem.black.withValues(alpha: 0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -183,7 +183,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                 child: const Text(
                   'NEW',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
@@ -196,11 +196,11 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
               child: Container(
                 padding: const EdgeInsets.all(TossDesignSystem.spacingXS * 1.5),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.9),
+                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: TossDesignSystem.black.withValues(alpha: 0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -209,7 +209,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                 child: const Icon(
                   Icons.lock_rounded,
                   size: 16,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                 ),
               ),
             ),
@@ -301,7 +301,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         icon: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
                           color: isFavorite 
-                            ? Colors.red 
+                            ? TossDesignSystem.errorRed 
                             : theme.colorScheme.onSurface,
                         ),
                         padding: EdgeInsets.zero,
@@ -355,13 +355,13 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS),
                         decoration: BoxDecoration(
                           color: widget.category.isFreeFortune 
-                              ? Colors.green.withOpacity( 0.2)
-                              : Colors.orange.withOpacity( 0.2),
+                              ? TossDesignSystem.successGreen.withValues(alpha: 0.2)
+                              : TossDesignSystem.warningOrange.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                           border: Border.all(
                             color: widget.category.isFreeFortune 
-                                ? Colors.green.withOpacity( 0.3)
-                                : Colors.orange.withOpacity( 0.3),
+                                ? TossDesignSystem.successGreen.withValues(alpha: 0.3)
+                                : TossDesignSystem.warningOrange.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -371,8 +371,8 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                               Icons.auto_awesome_rounded,
                               size: 12,
                               color: widget.category.isFreeFortune 
-                                  ? Colors.green
-                                  : Colors.orange),
+                                  ? TossDesignSystem.successGreen
+                                  : TossDesignSystem.warningOrange),
                             const SizedBox(width: TossDesignSystem.spacingXS),
                             Text(
                               widget.category.soulDescription,
@@ -399,7 +399,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         TextSpan(
                           text: widget.category.description,
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface.withOpacity( 0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -412,7 +412,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                   // Gray divider line
                   Container(
                     height: 0.5,
-                    color: theme.colorScheme.onSurface.withOpacity( 0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 class LoveFortuneResultPage extends StatelessWidget {
   final Map<String, dynamic> fortuneData;
@@ -16,7 +17,7 @@ class LoveFortuneResultPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossTheme.backgroundPrimary,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -66,21 +67,21 @@ class LoveFortuneResultPage extends StatelessWidget {
                 children: [
                   const Icon(
                     Icons.favorite_rounded,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 48,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     '오늘의 연애운',
                     style: TossTheme.body2.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: TossDesignSystem.white.withValues(alpha: 0.9),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${_calculateScore()}점',
                     style: TossTheme.heading1.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: 48,
                       fontWeight: FontWeight.w700,
                     ),
@@ -89,7 +90,7 @@ class LoveFortuneResultPage extends StatelessWidget {
                   Text(
                     _getMainMessage(),
                     style: TossTheme.body1.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
@@ -165,7 +166,7 @@ class LoveFortuneResultPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: TossTheme.borderGray200),
       ),

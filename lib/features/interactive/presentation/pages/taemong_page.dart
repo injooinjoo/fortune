@@ -239,7 +239,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
         child: Text(
           keyword,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: isSelected ? Colors.white : TossDesignSystem.gray900,
+            color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -266,7 +266,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   strokeWidth: 2,
                 ),
               )
@@ -456,7 +456,7 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'taemong',

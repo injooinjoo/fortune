@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/toss_number_pad.dart';
 import '../../../core/theme/toss_theme.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class TossStyleBirthStep extends StatefulWidget {
   final DateTime? initialDate;
@@ -356,7 +357,9 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
     print('[Build] ========== BUILD END ==========');
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.grayDark50
+          : TossDesignSystem.white,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
@@ -399,7 +402,9 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark100
+                            : TossDesignSystem.white,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 16,
@@ -441,14 +446,16 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                         decoration: InputDecoration(
                           hintText: '태어난 시간을 알려주세요',
                           hintStyle: TossTheme.inputStyle.copyWith(
-                            color: _isTimeUnknown ? TossTheme.textGray400.withOpacity(0.3) : TossTheme.textGray400,
+                            color: _isTimeUnknown ? TossTheme.textGray400.withValues(alpha: 0.3) : TossTheme.textGray400,
                           ),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark100
+                              : TossDesignSystem.white,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 16,
@@ -498,13 +505,15 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                                 color: _isTimeUnknown ? TossTheme.primaryBlue : TossTheme.textGray400,
                                 width: 2,
                               ),
-                              color: _isTimeUnknown ? TossTheme.primaryBlue : Colors.transparent,
+                              color: _isTimeUnknown ? TossTheme.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
                             ),
                             child: _isTimeUnknown
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
                                     size: 14,
-                                    color: Colors.white,
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                        ? TossDesignSystem.grayDark50
+                                        : TossDesignSystem.white,
                                   )
                                 : null,
                           ),
@@ -543,7 +552,9 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                     child: Text(
                       '다음',
                       style: TossTheme.button.copyWith(
-                        color: Colors.white,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark100
+                            : TossDesignSystem.white,
                       ),
                     ),
                   ),

@@ -382,7 +382,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               color: theme.colorScheme.primary,
               borderRadius: BorderRadius.circular(8),
             ),
-            labelColor: Colors.white,
+            labelColor: TossDesignSystem.white,
             unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
             tabs: [
               Tab(
@@ -658,7 +658,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       blur: 10,
                       borderColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.5)
-                          : Colors.transparent,
+                          : TossDesignSystem.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
                         children: [
@@ -763,7 +763,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       blur: 10,
                       borderColor: isSelected
                           ? theme.colorScheme.primary.withOpacity(0.5)
-                          : Colors.transparent,
+                          : TossDesignSystem.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
                         children: [
@@ -828,11 +828,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Chip(
                       label: Text(concern),
                       backgroundColor: isSelected
-                          ? Colors.orange.withOpacity(0.2)
+                          ? TossDesignSystem.warningOrange.withOpacity(0.2)
                           : theme.colorScheme.surface.withOpacity(0.5),
                       side: BorderSide(
                         color: isSelected
-                            ? Colors.orange
+                            ? TossDesignSystem.warningOrange
                             : theme.colorScheme.onSurface.withOpacity(0.3),
                       ),
                     ),
@@ -857,11 +857,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   Color _getConfidenceColor(int index) {
     final colors = [
-      Colors.red,
-      Colors.orange,
-      Colors.yellow,
-      Colors.lightGreen,
-      Colors.green];
+      TossDesignSystem.errorRed,
+      TossDesignSystem.warningOrange,
+      TossDesignSystem.warningYellow,
+      TossDesignSystem.successGreen.withOpacity(0.7),
+      TossDesignSystem.successGreen];
     return colors[index];
   }
 
@@ -1094,10 +1094,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.blue.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
                   ),
                 ),
                 child: Column(
@@ -1108,14 +1108,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Icon(
                           Icons.tips_and_updates,
                           size: 16,
-                          color: Colors.blue,
+                          color: TossDesignSystem.tossBlue,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'AI 추천 포인트',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            color: TossDesignSystem.tossBlue,
                           ),
                         ),
                       ],
@@ -1340,9 +1340,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   }
 
   Color _getSuccessColor(int rate) {
-    if (rate >= 80) return Colors.green;
-    if (rate >= 60) return Colors.orange;
-    return Colors.red;
+    if (rate >= 80) return TossDesignSystem.successGreen;
+    if (rate >= 60) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getSuccessMessage(int rate) {
@@ -1516,10 +1516,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: TossDesignSystem.errorRed.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.red.withOpacity(0.3)
+                  color: TossDesignSystem.errorRed.withOpacity(0.3)
                 )
               ),
               child: Column(
@@ -1530,13 +1530,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Icon(
                         Icons.warning_amber_rounded,
                         size: 16,
-                        color: Colors.red),
+                        color: TossDesignSystem.errorRed),
                       const SizedBox(width: 8),
                       Text(
                         '피해야 할 주제',
                         style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
-                          color: Colors.red))]),
+                          color: TossDesignSystem.errorRed))]),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -1642,8 +1642,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       color['name'],
                       style: theme.textTheme.bodySmall?.copyWith(
             color: (color['color'] as Color).computeLuminance() > 0.5
-                            ? Colors.black
-                            : Colors.white,
+                            ? TossDesignSystem.black
+                            : TossDesignSystem.white,
                         fontSize: 10,
                       ),
                     ),
@@ -1673,9 +1673,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   List<Map<String, dynamic>> _getLuckyColors() {
     return [
-      {'name': '블루', 'color': Colors.blue},
-      {'name': '화이트', 'color': Colors.white},
-      {'name': '핑크', 'color': Colors.pink},
+      {'name': '블루', 'color': TossDesignSystem.tossBlue},
+      {'name': '화이트', 'color': TossDesignSystem.white},
+      {'name': '핑크', 'color': TossDesignSystem.pinkPrimary},
     ];
   }
 
@@ -1825,10 +1825,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.05),
+                color: TossDesignSystem.successGreen.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.green.withOpacity(0.3)),
+                  color: TossDesignSystem.successGreen.withOpacity(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1838,13 +1838,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: Colors.green),
+                        color: TossDesignSystem.successGreen),
                       const SizedBox(width: 8),
                       Text(
                         'DO\'s - 꼭 하세요',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.green),
+                          color: TossDesignSystem.successGreen),
                       ),
                     ],
                   ),
@@ -1870,10 +1870,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.05),
+                color: TossDesignSystem.errorRed.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.red.withOpacity(0.3)),
+                  color: TossDesignSystem.errorRed.withOpacity(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1883,13 +1883,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Icon(
                         Icons.cancel,
                         size: 20,
-                        color: Colors.red),
+                        color: TossDesignSystem.errorRed),
                       const SizedBox(width: 8),
                       Text(
                         'DON\'Ts - 피하세요',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          color: TossDesignSystem.errorRed,
                         ),
                       ),
                     ],
@@ -1918,15 +1918,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.withOpacity(0.1),
-                    Colors.orange.withOpacity(0.1)]),
+                    TossDesignSystem.warningYellow.withOpacity(0.1),
+                    TossDesignSystem.warningOrange.withOpacity(0.1)]),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.auto_awesome,
-                    color: Colors.amber),
+                    color: TossDesignSystem.warningYellow),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

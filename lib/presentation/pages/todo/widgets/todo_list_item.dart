@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/domain/entities/todo.dart';
 import 'package:intl/intl.dart';
 
@@ -31,7 +32,7 @@ class TodoListItem extends StatelessWidget {
         color: colorScheme.error,
         child: const Icon(
           Icons.delete,
-          color: Colors.white)),
+          color: TossDesignSystem.white)),
       confirmDismiss: (direction) async {
         // Show confirmation dialog
         return await showDialog<bool>(

@@ -6,6 +6,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class TarotFortuneListCard extends ConsumerStatefulWidget {
   final String title;
@@ -83,7 +84,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                   child: Icon(
                     Icons.style_rounded,
                     size: 60,
-                    color: Colors.white.withOpacity(0.5)),
+                    color: TossDesignSystem.white.withOpacity(0.5)),
                 ),
               );
             },
@@ -98,7 +99,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 borderRadius: AppDimensions.borderRadiusLarge,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.purpleAccent.withOpacity(0.3 * _glowAnimation.value),
+                    color: TossDesignSystem.purple.withOpacity(0.3 * _glowAnimation.value),
                     blurRadius: 20,
                     spreadRadius: 5),
                 ],
@@ -113,11 +114,11 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.9),
+                color: TossDesignSystem.warningYellow.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.withOpacity(0.5),
+                    color: TossDesignSystem.warningYellow.withOpacity(0.5),
                     blurRadius: 8,
                     spreadRadius: 1),
                 ],
@@ -125,7 +126,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               child: const Icon(
                 Icons.star_rounded,
                 size: 20,
-                color: Colors.white),
+                color: TossDesignSystem.white),
             ),
           ),
         // Title overlay
@@ -143,9 +144,9 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.7),
-                  Colors.black.withOpacity(0.9)],
+                  TossDesignSystem.transparent,
+                  TossDesignSystem.black.withOpacity(0.7),
+                  TossDesignSystem.black.withOpacity(0.9)],
               ),
             ),
             child: Column(
@@ -154,14 +155,14 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 Text(
                   widget.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   widget.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withOpacity(0.8)),
+                    color: TossDesignSystem.white.withOpacity(0.8)),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -190,7 +191,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             child: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
               key: ValueKey(isFavorite),
-              color: isFavorite ? Colors.red : theme.colorScheme.onSurface)),
+              color: isFavorite ? TossDesignSystem.errorRed : theme.colorScheme.onSurface)),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -219,12 +220,12 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: widget.soulCost == 0
-                  ? [Colors.green, Colors.teal]
+                  ? [TossDesignSystem.successGreen, TossDesignSystem.tossBlue]
                   : [FortuneColors.spiritualPrimary, FortuneColors.spiritualDark]),
             borderRadius: AppDimensions.borderRadiusLarge,
             boxShadow: [
               BoxShadow(
-                color: (widget.soulCost == 0 ? Colors.green : FortuneColors.spiritualPrimary)
+                color: (widget.soulCost == 0 ? TossDesignSystem.successGreen : FortuneColors.spiritualPrimary)
                     .withOpacity(0.3),
                 blurRadius: 8,
                 spreadRadius: 1),
@@ -236,12 +237,12 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               Icon(
                 Icons.auto_awesome_rounded,
                 size: 14,
-                color: Colors.white),
+                color: TossDesignSystem.white),
               const SizedBox(width: AppSpacing.spacing1),
               Text(
                 widget.soulCost == 0 ? '무료' : '${widget.soulCost}소울',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontWeight: FontWeight.w600),
               ),
             ],

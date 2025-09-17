@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import './traditional_fortune_enhanced_page.dart';
@@ -56,13 +57,13 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFFEF4444).withOpacity(0.1),
-            Color(0xFFEC4899).withOpacity(0.05),
+            Color(0xFFEF4444).withValues(alpha:0.1),
+            Color(0xFFEC4899).withValues(alpha:0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Color(0xFFEF4444).withOpacity(0.3),
+          color: Color(0xFFEF4444).withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -135,7 +136,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: type.gradientColors[0].withOpacity(0.4),
+              color: type.gradientColors[0].withValues(alpha:0.4),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -160,7 +161,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                       Icon(
                         type.icon,
                         size: 36,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -172,14 +173,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                               ),
                             ),
                             Text(
                               type.description,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.white.withOpacity(0.9),
+                                color: TossDesignSystem.white.withValues(alpha:0.9),
                               ),
                             ),
                           ],
@@ -192,18 +193,18 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildElementIcon('목', Colors.green),
-                      _buildElementIcon('화', Colors.red),
-                      _buildElementIcon('토', Colors.yellow),
-                      _buildElementIcon('금', Colors.orange),
-                      _buildElementIcon('수', Colors.blue),
+                      _buildElementIcon('목', TossDesignSystem.successGreen),
+                      _buildElementIcon('화', TossDesignSystem.errorRed),
+                      _buildElementIcon('토', TossDesignSystem.warningOrange),
+                      _buildElementIcon('금', TossDesignSystem.warningOrange),
+                      _buildElementIcon('수', TossDesignSystem.tossBlue),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: TossDesignSystem.white.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -212,14 +213,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                         Icon(
                           Icons.access_time_rounded,
                           size: 16,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '생년월일시로 정밀 분석',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -237,7 +238,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.amber,
+                    color: TossDesignSystem.warningOrange,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Text(
@@ -245,7 +246,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: TossDesignSystem.gray900,
                     ),
                   ),
                 ),
@@ -273,7 +274,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: type.gradientColors[0].withOpacity(0.4),
+              color: type.gradientColors[0].withValues(alpha:0.4),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -289,7 +290,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: TossDesignSystem.white.withValues(alpha:0.1),
                   shape: BoxShape.circle,
                 ),
                 child: CustomPaint(
@@ -306,7 +307,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                   Icon(
                     type.icon,
                     size: 36,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -314,7 +315,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -322,14 +323,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     type.description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
+                      color: TossDesignSystem.white.withValues(alpha:0.9),
                     ),
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: TossDesignSystem.white.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -338,14 +339,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                         Icon(
                           Icons.analytics_rounded,
                           size: 16,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '인터랙티브 차트 분석',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -378,7 +379,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: type.gradientColors[0].withOpacity(0.4),
+              color: type.gradientColors[0].withValues(alpha:0.4),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -403,7 +404,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                       Icon(
                         type.icon,
                         size: 36,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -415,14 +416,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                               ),
                             ),
                             Text(
                               type.description,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.white.withOpacity(0.9),
+                                color: TossDesignSystem.white.withValues(alpha:0.9),
                               ),
                             ),
                           ],
@@ -442,7 +443,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: TossDesignSystem.white.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -451,14 +452,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                         Icon(
                           Icons.calendar_month_rounded,
                           size: 16,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '월별 상세 운세',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -476,7 +477,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.amber,
+                    color: TossDesignSystem.warningOrange,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Text(
@@ -484,7 +485,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: TossDesignSystem.gray900,
                     ),
                   ),
                 ),
@@ -502,17 +503,17 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.3),
+        color: color.withValues(alpha:0.3),
         shape: BoxShape.circle,
         border: Border.all(
-          color: Colors.white.withOpacity(0.5),
+          color: TossDesignSystem.white.withValues(alpha:0.5),
           width: 1),
       ),
       child: Center(
         child: Text(
           element,
           style: const TextStyle(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             fontWeight: FontWeight.bold,
             fontSize: 14)),
       ),
@@ -523,7 +524,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: TossDesignSystem.white.withValues(alpha:0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -532,14 +533,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             '☰',
             style: TextStyle(
               fontSize: 24,
-              color: Colors.white),
+              color: TossDesignSystem.white),
           ),
           const SizedBox(height: 4),
           Text(
             '건위천',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontWeight: FontWeight.w500)),
         ],
       ),
@@ -560,7 +561,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: type.gradientColors[0].withOpacity(0.3),
+              color: type.gradientColors[0].withValues(alpha:0.3),
               blurRadius: 12,
               offset: const Offset(0, 4)),
           ],
@@ -576,21 +577,21 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                   Icon(
                     type.icon,
                     size: 40,
-                    color: Colors.white),
+                    color: TossDesignSystem.white),
                   const SizedBox(height: 12),
                   Text(
                     type.label,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: TossDesignSystem.white),
                     textAlign: TextAlign.center),
                   const SizedBox(height: 4),
                   Text(
                     type.description,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white.withOpacity(0.8)),
+                      color: TossDesignSystem.white.withValues(alpha:0.8)),
                     textAlign: TextAlign.center),
                 ],
               ),
@@ -602,14 +603,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: TossDesignSystem.warningOrange,
                   borderRadius: BorderRadius.circular(12)),
                 child: const Text(
                   'Premium',
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87)),
+                    color: TossDesignSystem.gray900)),
               ),
             ),
           ],
@@ -653,7 +654,7 @@ class SajuPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withValues(alpha:0.1);
 
     // Draw Yin-Yang pattern
     final centerX = size.width * 0.85;
@@ -665,9 +666,9 @@ class SajuPatternPainter extends CustomPainter {
 
     // Inner circles
     paint.style = PaintingStyle.fill;
-    paint.color = Colors.white.withOpacity(0.15);
+    paint.color = TossDesignSystem.white.withValues(alpha:0.15);
     canvas.drawCircle(Offset(centerX - radius / 3, centerY), radius / 3, paint);
-    paint.color = Colors.black.withOpacity(0.15);
+    paint.color = TossDesignSystem.gray900.withValues(alpha:0.15);
     canvas.drawCircle(Offset(centerX + radius / 3, centerY), radius / 3, paint);
 }
 
@@ -682,7 +683,7 @@ class ChartPreviewPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
-      ..color = Colors.white.withOpacity(0.3);
+      ..color = TossDesignSystem.white.withValues(alpha:0.3);
 
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 3;
@@ -695,7 +696,7 @@ class ChartPreviewPainter extends CustomPainter {
       
       if (i == 0) {
         paint.style = PaintingStyle.fill;
-        paint.color = Colors.white.withOpacity(0.2);
+        paint.color = TossDesignSystem.white.withValues(alpha:0.2);
         canvas.drawPath(
           Path()
             ..moveTo(x, y)
@@ -708,7 +709,7 @@ class ChartPreviewPainter extends CustomPainter {
           paint
         );
         paint.style = PaintingStyle.stroke;
-        paint.color = Colors.white.withOpacity(0.3);
+        paint.color = TossDesignSystem.white.withValues(alpha:0.3);
       }
       
       if (i < 4) {
@@ -736,7 +737,7 @@ class TojeongPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withValues(alpha:0.1);
 
     // Draw traditional Korean pattern
     final spacing = 20.0;

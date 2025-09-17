@@ -26,6 +26,7 @@ class TossDesignSystem {
   static const Color gray50 = Color(0xFFF9FAFB);
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
+  static const Color transparent = Color(0x00000000);
   
   /// Dark Mode Grayscale (다크모드 회색 스케일)
   static const Color grayDark50 = Color(0xFF17171C);   // 다크모드 배경
@@ -42,9 +43,25 @@ class TossDesignSystem {
   /// Semantic Colors (의미론적 색상)
   static const Color successGreen = Color(0xFF10B981);  // 성공, 긍정
   static const Color warningOrange = Color(0xFFF59E0B);  // 경고, 주의
+  static const Color warningYellow = Color(0xFFEAB308);  // 황색 경고
   static const Color errorRed = Color(0xFFEF4444);    // 에러, 실패
   static const Color infoBlue = Color(0xFF3182F6);     // 정보
   static const Color purple = Color(0xFF8B5CF6);       // 보라색
+  static const Color purple50 = Color(0xFFF5F3FF);     // 매우 연한 보라색
+  static const Color teal = Color(0xFF06B6D4);         // 틸
+  static const Color orange = Color(0xFFF97316);       // 오렌지
+  static const Color pink = Color(0xFFEC4899);         // 핑크
+  static const Color bluePrimary = Color(0xFF3182F6);  // 블루 프라이머리
+
+  // Common aliases for Colors.* mapping
+  static const Color success = successGreen;
+  static const Color error = errorRed;
+  static const Color warning = warningOrange;
+  static const Color primaryBlue = tossBlue;  // Alias for Colors.blue mapping
+
+  // Additional semantic colors for fortune app
+  static const Color pinkPrimary = Color(0xFFEC4899);
+  static const Color brownPrimary = Color(0xFF8B5A3C);
   
   /// Dark Mode Semantic Colors (다크모드 의미론적 색상)
   static const Color successGreenDark = Color(0xFF34D399);
@@ -239,7 +256,7 @@ class TossDesignSystem {
   
   static List<BoxShadow> shadowXS = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.04),
+      color: gray900.withValues(alpha: 0.04),
       offset: const Offset(0, 1),
       blurRadius: 3,
       spreadRadius: 0,
@@ -248,7 +265,7 @@ class TossDesignSystem {
   
   static List<BoxShadow> shadowS = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.04),
+      color: gray900.withValues(alpha: 0.04),
       offset: const Offset(0, 2),
       blurRadius: 8,
       spreadRadius: 0,
@@ -257,7 +274,7 @@ class TossDesignSystem {
   
   static List<BoxShadow> shadowM = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.08),
+      color: gray900.withValues(alpha: 0.08),
       offset: const Offset(0, 4),
       blurRadius: 16,
       spreadRadius: 0,
@@ -266,7 +283,7 @@ class TossDesignSystem {
   
   static List<BoxShadow> shadowL = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.12),
+      color: gray900.withValues(alpha: 0.12),
       offset: const Offset(0, 8),
       blurRadius: 24,
       spreadRadius: 0,
@@ -275,7 +292,7 @@ class TossDesignSystem {
   
   static List<BoxShadow> shadowXL = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.16),
+      color: gray900.withValues(alpha: 0.16),
       offset: const Offset(0, 12),
       blurRadius: 32,
       spreadRadius: 0,
@@ -337,7 +354,7 @@ class TossDesignSystem {
       disabledBackgroundColor: gray300,
       disabledForegroundColor: gray500,
       elevation: 0,
-      shadowColor: Colors.transparent,
+      shadowColor: white.withValues(alpha: 0.0),
       fixedSize: fixedSize ?? Size.fromHeight(buttonHeightLarge),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusM),
@@ -360,7 +377,7 @@ class TossDesignSystem {
       disabledBackgroundColor: gray100,
       disabledForegroundColor: gray400,
       elevation: 0,
-      shadowColor: Colors.transparent,
+      shadowColor: white.withValues(alpha: 0.0),
       fixedSize: fixedSize ?? Size.fromHeight(buttonHeightLarge),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusM),
@@ -379,7 +396,7 @@ class TossDesignSystem {
   }) {
     return TextButton.styleFrom(
       foregroundColor: isEnabled ? tossBlue : gray400,
-      backgroundColor: Colors.transparent,
+      backgroundColor: white.withValues(alpha: 0.0),
       disabledForegroundColor: gray400,
       fixedSize: fixedSize,
       shape: RoundedRectangleBorder(
@@ -688,7 +705,7 @@ class TossDesignSystem {
           disabledBackgroundColor: grayDark300,
           disabledForegroundColor: grayDark500,
           elevation: 0,
-          shadowColor: Colors.transparent,
+          shadowColor: white.withValues(alpha: 0.0),
           fixedSize: const Size.fromHeight(buttonHeightLarge),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),
@@ -705,7 +722,7 @@ class TossDesignSystem {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: tossBlueDark,
-          backgroundColor: Colors.transparent,
+          backgroundColor: white.withValues(alpha: 0.0),
           disabledForegroundColor: grayDark400,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),

@@ -4,6 +4,7 @@ import '../../../../../core/constants/tarot_deck_metadata.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 /// Unified tarot card widget that handles both front and back display
 /// with flip animation support
@@ -141,7 +142,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       print('alpha: 0.6');
       return [
         BoxShadow(
-          color: widget.deck.primaryColor.withOpacity(0.6),
+          color: widget.deck.primaryColor.withValues(alpha: 0.6),
           blurRadius: 20,
           spreadRadius: 5,
         ),
@@ -150,7 +151,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       print('alpha: 0.4');
       return [
         BoxShadow(
-          color: widget.deck.primaryColor.withOpacity(0.4),
+          color: widget.deck.primaryColor.withValues(alpha: 0.4),
           blurRadius: 15,
           spreadRadius: 2,
         ),
@@ -159,7 +160,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       print('alpha: 0.3');
       return [
         BoxShadow(
-          color: Colors.black.withOpacity(0.3),
+          color: TossDesignSystem.black.withValues(alpha: 0.3),
           blurRadius: 10,
           offset: const Offset(0, 5),
         ),
@@ -197,7 +198,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 Icon(
                   Icons.auto_awesome,
                   size: widget.width * 0.33,
-                  color: Colors.white.withOpacity(0.8),
+                  color: TossDesignSystem.white.withValues(alpha: 0.8),
                 ),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
@@ -205,7 +206,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   style: TextStyle(
                     fontSize: widget.width * 0.12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     letterSpacing: 1),
                   textAlign: TextAlign.center,
                 ),
@@ -221,11 +222,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: TossDesignSystem.black.withValues(alpha: 0.3),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),
@@ -256,8 +257,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.white,
-            Colors.grey[100]!,
+            TossDesignSystem.white,
+            TossDesignSystem.gray100,
           ],
         ),
       ),
@@ -291,7 +292,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-                color: widget.deck.primaryColor.withOpacity(0.1),
+                color: widget.deck.primaryColor.withValues(alpha: 0.1),
                 borderRadius: AppDimensions.borderRadiusMedium),
               child: Text(
                 '${widget.cardIndex + 1}',
@@ -330,14 +331,14 @@ class TarotCardBackPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Outer circle
-    paint.color = Colors.white.withOpacity(isHighlighted ? 0.4 : 0.2);
+    paint.color = TossDesignSystem.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
     canvas.drawCircle(Offset(centerX, centerY), size.width * 0.3, paint);
 
     // Inner star pattern
     _drawStar(canvas, paint, centerX, centerY, size.width * 0.25);
 
     // Corner decorations
-    paint.color = Colors.white.withOpacity(isHighlighted ? 0.5 : 0.3);
+    paint.color = TossDesignSystem.white.withValues(alpha: isHighlighted ? 0.5 : 0.3);
     const cornerSize = 15.0;
     
     _drawCornerPattern(canvas, paint, 0, 0, cornerSize, false, false);
@@ -347,7 +348,7 @@ class TarotCardBackPainter extends CustomPainter {
 
     // Additional circles for highlighted state
     if (isHighlighted) {
-      paint.color = Colors.white.withOpacity(0.1);
+      paint.color = TossDesignSystem.white.withValues(alpha: 0.1);
       for (int i = 1; i <= 3; i++) {
         canvas.drawCircle(Offset(centerX, centerY), size.width * 0.15 * i, paint);
       }

@@ -276,7 +276,7 @@ class FortuneResultDisplay extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       child: ShimmerGlass(
-        shimmerColor: Colors.amber,
+        shimmerColor: TossDesignSystem.warningYellow,
         borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
         child: GlassCard(
           padding: AppSpacing.paddingAll20,
@@ -289,7 +289,7 @@ class FortuneResultDisplay extends StatelessWidget {
                     padding: AppSpacing.paddingAll8,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber.withOpacity(0.6), Colors.amber.withOpacity(0.8)],
+                        colors: [TossDesignSystem.warningYellow.withOpacity(0.6), TossDesignSystem.warningYellow.withOpacity(0.8)],
                       ),
                       borderRadius: AppDimensions.borderRadiusMedium,
                     ),
@@ -561,7 +561,7 @@ class GlassButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.transparent,
       child: InkWell(
         onTap: onPressed,
         borderRadius: AppDimensions.borderRadiusLarge,

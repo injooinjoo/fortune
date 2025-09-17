@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../pages/biorhythm_result_page.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 // 오늘의 전체 컨디션 카드
 class TodayOverallStatusCard extends StatelessWidget {
@@ -50,7 +51,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                 Text(
                   '${biorhythmData.overallScore}',
                   style: theme.textTheme.headlineLarge?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 36,
                   ),
@@ -58,7 +59,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                 Text(
                   '점',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: TossDesignSystem.white.withOpacity(0.9),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -440,7 +441,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       radius: 4,
                       color: const Color(0xFFFF5A5F),
                       strokeWidth: 2,
-                      strokeColor: Colors.white,
+                      strokeColor: TossDesignSystem.white,
                     );
                   },
                 ),
@@ -464,7 +465,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       radius: 4,
                       color: const Color(0xFF00C896),
                       strokeWidth: 2,
-                      strokeColor: Colors.white,
+                      strokeColor: TossDesignSystem.white,
                     );
                   },
                 ),
@@ -484,7 +485,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       radius: 4,
                       color: const Color(0xFF0068FF),
                       strokeWidth: 2,
-                      strokeColor: Colors.white,
+                      strokeColor: TossDesignSystem.white,
                     );
                   },
                 ),
@@ -1159,7 +1160,7 @@ class NextAnalysisCard extends StatelessWidget {
             ),
             child: const Icon(
               Icons.schedule_rounded,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               size: 24,
             ),
           ),

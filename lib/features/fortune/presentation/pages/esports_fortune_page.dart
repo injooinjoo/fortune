@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/external_api_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -198,12 +199,12 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppTheme.primaryColor.withOpacity(0.1)
-                      : Colors.transparent,
+                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                      : TossDesignSystem.white.withValues(alpha: 0.0),
                   border: Border.all(
                     color: isSelected
-                        ? AppTheme.primaryColor
-                        : AppTheme.dividerColor,
+                        ? TossDesignSystem.tossBlue
+                        : TossDesignSystem.gray300,
                     width: isSelected ? 2 : 1),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -221,7 +222,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                         child: Text(
                           game.label.substring(0, 2),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -235,8 +236,8 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
                         color: isSelected
-                            ? AppTheme.primaryColor
-                            : AppTheme.textColor,
+                            ? TossDesignSystem.tossBlue
+                            : TossDesignSystem.gray900,
                       ),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -258,10 +259,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                          fortune.score >= 40 ? '접전 예상' :
                          '패배 주의';
     
-    final predictionColor = fortune.score >= 80 ? Colors.green :
-                           fortune.score >= 60 ? Colors.blue :
-                           fortune.score >= 40 ? Colors.orange :
-                           Colors.red;
+    final predictionColor = fortune.score >= 80 ? TossDesignSystem.successGreen :
+                           fortune.score >= 60 ? TossDesignSystem.tossBlue :
+                           fortune.score >= 40 ? TossDesignSystem.warningOrange :
+                           TossDesignSystem.errorRed;
 
     return Card(
       elevation: 8,
@@ -343,7 +344,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           CircularProgressIndicator(
             value: score / 100,
             strokeWidth: 8,
-            backgroundColor: Colors.grey[300],
+            backgroundColor: TossDesignSystem.gray300,
             valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score)),
           ),
           Column(
@@ -361,7 +362,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 '승률',
                 style: TextStyle(
                   fontSize: 10,
-                  color: AppTheme.textSecondaryColor,
+                  color: TossDesignSystem.gray500,
                 ),
               ),
             ],
@@ -380,7 +381,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           children: [
             Row(
               children: [
-                Icon(Icons.trending_up, color: Colors.green, size: 24),
+                Icon(Icons.trending_up, color: TossDesignSystem.successGreen, size: 24),
                 const SizedBox(width: 8),
                 const Text(
                   '예상 퍼포먼스',
@@ -421,7 +422,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             ),
           ],
           radarShape: RadarShape.polygon,
-          radarBorderData: BorderSide(color: AppTheme.dividerColor),
+          radarBorderData: BorderSide(color: TossDesignSystem.gray300),
           titlePositionPercentageOffset: 0.2,
           titleTextStyle: const TextStyle(fontSize: 12),
           getTitle: (index, angle) {
@@ -432,9 +433,9 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           },
           tickCount: 5,
           ticksTextStyle: const TextStyle(fontSize: 10),
-          tickBorderData: BorderSide(color: AppTheme.dividerColor),
+          tickBorderData: BorderSide(color: TossDesignSystem.gray300),
           gridBorderData: BorderSide(
-            color: AppTheme.dividerColor.withOpacity(0.5),
+            color: TossDesignSystem.gray300.withOpacity(0.5),
           ),
         ),
       ),
@@ -459,7 +460,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           children: [
             Row(
               children: [
-                Icon(Icons.star, color: Colors.amber, size: 24),
+                Icon(Icons.star, color: TossDesignSystem.warningOrange, size: 24),
                 const SizedBox(width: 8),
                 const Text(
                   '오늘의 추천',
@@ -478,7 +479,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                     '최적 플레이 시간',
                     _bestPlayTime,
                     Icons.access_time,
-                    Colors.blue,
+                    TossDesignSystem.tossBlue,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -487,7 +488,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                     '추천 포지션',
                     _recommendedRole,
                     Icons.person,
-                    Colors.green,
+                    TossDesignSystem.successGreen,
                   ),
                 ),
               ],
@@ -535,7 +536,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           children: [
             Row(
               children: [
-                Icon(Icons.sports_esports, color: Colors.purple, size: 24),
+                Icon(Icons.sports_esports, color: TossDesignSystem.purple, size: 24),
                 const SizedBox(width: 8),
                 const Text(
                   'LCK 경기 일정',
@@ -559,10 +560,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isToday ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+        color: isToday ? TossDesignSystem.tossBlue.withOpacity(0.1) : TossDesignSystem.white.withValues(alpha: 0.0),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isToday ? Colors.blue : AppTheme.dividerColor)),
+          color: isToday ? TossDesignSystem.tossBlue : TossDesignSystem.gray300)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -579,7 +580,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 '${match.matchTime.hour}:${match.matchTime.minute.toString().padLeft(2, '0')}',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textSecondaryColor,
+                  color: TossDesignSystem.gray500,
                 ),
               ),
             ],
@@ -588,13 +589,13 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: TossDesignSystem.tossBlue,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
                 '오늘',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -614,7 +615,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           children: [
             Row(
               children: [
-                Icon(Icons.lightbulb, color: Colors.amber, size: 24),
+                Icon(Icons.lightbulb, color: TossDesignSystem.warningOrange, size: 24),
                 const SizedBox(width: 8),
                 const Text(
                   '승리를 위한 팁',
@@ -631,12 +632,12 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.psychology, color: AppTheme.primaryColor, size: 20),
+                  Icon(Icons.psychology, color: TossDesignSystem.tossBlue, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -720,22 +721,22 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
   Color _getGameColor(GameType game) {
     switch (game) {
       case GameType.lol:
-        return Colors.blue;
+        return TossDesignSystem.tossBlue;
       case GameType.valorant:
-        return Colors.red;
+        return TossDesignSystem.errorRed;
       case GameType.overwatch:
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case GameType.pubg:
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case GameType.fifa:
-        return Colors.purple;
+        return TossDesignSystem.purple;
     }
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }

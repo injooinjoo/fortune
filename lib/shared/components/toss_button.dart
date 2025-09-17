@@ -253,7 +253,7 @@ class TossButton extends StatelessWidget {
     if (!enabled) {
       return isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400;
     }
-    
+
     switch (style) {
       case TossButtonStyle.primary:
         return TossDesignSystem.white;
@@ -275,7 +275,7 @@ class TossButton extends StatelessWidget {
       disabledBackgroundColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
       elevation: 0,
-      shadowColor: Colors.transparent,
+      shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
       shape: RoundedRectangleBorder(
@@ -293,7 +293,7 @@ class TossButton extends StatelessWidget {
       disabledBackgroundColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
       elevation: 0,
-      shadowColor: Colors.transparent,
+      shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
       shape: RoundedRectangleBorder(
@@ -307,7 +307,7 @@ class TossButton extends StatelessWidget {
       foregroundColor: enabled 
           ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
           : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
@@ -328,7 +328,7 @@ class TossButton extends StatelessWidget {
       foregroundColor: enabled 
           ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
           : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
       padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS),
       shape: RoundedRectangleBorder(
@@ -378,7 +378,7 @@ class TossIconButton extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     
     Widget button = Material(
-      color: backgroundColor ?? Colors.transparent,
+      color: backgroundColor ?? TossDesignSystem.white.withValues(alpha: 0.0),
       borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
       child: InkWell(
         onTap: onPressed != null ? () {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import 'dart:math' as dart_math;
 
 class TarotLoadingButton extends StatefulWidget {
@@ -88,11 +89,11 @@ class _TarotLoadingButtonState extends State<TarotLoadingButton>
               onPressed: widget.isLoading ? null : widget.onPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: widget.isLoading 
-                    ? const Color(0xFF6B7280)
-                    : const Color(0xFF3182F6),
-                foregroundColor: Colors.white,
+                    ? TossDesignSystem.gray400
+                    : TossDesignSystem.primaryBlue,
+                foregroundColor: TossDesignSystem.white,
                 elevation: widget.isLoading ? 0 : 2,
-                shadowColor: const Color(0xFF3182F6).withOpacity(0.3),
+                shadowColor: TossDesignSystem.primaryBlue.withValues(alpha:0.3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -144,14 +145,14 @@ class _TarotLoadingButtonState extends State<TarotLoadingButton>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: TossDesignSystem.white.withValues(alpha:0.3),
                 width: 2,
               ),
             ),
             child: CustomPaint(
               painter: _LoadingSpinnerPainter(
                 progress: _rotationAnimation.value,
-                color: Colors.white,
+                color: TossDesignSystem.white,
               ),
             ),
           ),
@@ -162,7 +163,7 @@ class _TarotLoadingButtonState extends State<TarotLoadingButton>
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: Colors.white,
+            color: TossDesignSystem.white,
           ),
         ),
       ],
@@ -295,7 +296,7 @@ class _MysticalTarotLoadingButtonState extends State<MysticalTarotLoadingButton>
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withOpacity(_glowAnimation.value * 0.6),
+                      color: TossDesignSystem.purple.withValues(alpha:_glowAnimation.value * 0.6),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -306,9 +307,9 @@ class _MysticalTarotLoadingButtonState extends State<MysticalTarotLoadingButton>
             onPressed: widget.isLoading ? null : widget.onPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: widget.isLoading 
-                  ? const Color(0xFF7C3AED)
-                  : const Color(0xFF3182F6),
-              foregroundColor: Colors.white,
+                  ? TossDesignSystem.purple
+                  : TossDesignSystem.primaryBlue,
+              foregroundColor: TossDesignSystem.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -386,7 +387,7 @@ class _MysticalTarotLoadingButtonState extends State<MysticalTarotLoadingButton>
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: Colors.white.withOpacity(_glowAnimation.value),
+            color: TossDesignSystem.white.withValues(alpha:_glowAnimation.value),
           ),
         ),
       ],
@@ -403,7 +404,7 @@ class _ParticleEffectPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = TossDesignSystem.white.withValues(alpha:0.3)
       ..style = PaintingStyle.fill;
 
     // 작은 별들을 그리기
@@ -435,7 +436,7 @@ class _MysticalSymbolPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(opacity)
+      ..color = TossDesignSystem.white.withValues(alpha:opacity)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

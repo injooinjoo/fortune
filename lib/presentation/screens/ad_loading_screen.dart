@@ -11,6 +11,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/components/toss_fortune_loading_screen.dart';
+import '../../core/theme/toss_design_system.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -183,7 +184,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('발생했습니다: $e'),
-              backgroundColor: Colors.red,
+              backgroundColor: TossDesignSystem.errorRed,
             ),
           );
           // Navigate back using go_router
@@ -204,8 +205,9 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Stack(
           children: [
@@ -221,10 +223,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                       margin: AppSpacing.paddingHorizontal16,
                       padding: AppSpacing.paddingAll16,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: AppDimensions.borderRadiusMedium,
                         border: Border.all(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: theme.colorScheme.onSurface.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -238,7 +240,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           // 광고 위젯
                           CommonAdPlacements.largeAd(
                             padding: EdgeInsets.zero,
-                            backgroundColor: Colors.white,
+                            backgroundColor: theme.colorScheme.surface,
                           ),
                         ],
                       ),
@@ -253,7 +255,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           horizontal: AppSpacing.spacing6,
                           vertical: AppSpacing.spacing3),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: theme.colorScheme.surfaceContainerHighest,
                           borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxLarge)),
                         child: Text(
                           '광고가 ${_remainingSeconds}초 후에 닫힙니다',
@@ -269,7 +271,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           onPressed: _completeLoading,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
+                            foregroundColor: TossDesignSystem.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing12,
                               vertical: AppSpacing.spacing4),
@@ -321,10 +323,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                   horizontal: AppSpacing.spacing4,
                   vertical: AppSpacing.spacing4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: TossDesignSystem.black.withValues(alpha: 0.05),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -336,7 +338,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     IconButton(
                       icon: const Icon(
                         Icons.close,
-                        color: Colors.black87,
+                        color: TossDesignSystem.gray900,
                         size: 24),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -367,10 +369,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     top: AppSpacing.spacing6,
                     bottom: MediaQuery.of(context).padding.bottom + 24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: TossDesignSystem.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, -2),
                       ),
@@ -390,8 +392,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                         child: ElevatedButton(
                           onPressed: widget.onSkip,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black87,
-                            foregroundColor: Colors.white,
+                            backgroundColor: TossDesignSystem.gray900,
+                            foregroundColor: TossDesignSystem.white,
                             padding: const EdgeInsets.symmetric(
                               vertical: AppSpacing.spacing3 * 1.17),
                             shape: RoundedRectangleBorder(

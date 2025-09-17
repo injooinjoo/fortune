@@ -9,6 +9,7 @@ import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class RedisMonitorPage extends ConsumerStatefulWidget {
   const RedisMonitorPage({super.key});
@@ -109,7 +110,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
             height: 12,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isConnected ? Colors.green : Colors.red)),
+              color: isConnected ? TossDesignSystem.success : TossDesignSystem.error)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -176,7 +177,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                         Text(
                           cache.hits.toString(),
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.green,
+                            color: TossDesignSystem.success,
                             fontWeight: FontWeight.bold)),
                         Text(
                           'Hits',
@@ -186,7 +187,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                         Text(
                           cache.misses.toString(),
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.orange,
+                            color: TossDesignSystem.warningOrange,
                             fontWeight: FontWeight.bold)),
                         Text(
                           'Misses',
@@ -199,13 +200,13 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                 title: '총 키 개수',
                 value: cache.totalKeys.toString(),
                 icon: Icons.key,
-                iconColor: Colors.blue),
+                iconColor: TossDesignSystem.primaryBlue),
               const SizedBox(height: 16),
               StatsCard(
                 title: '메모리 사용량',
                 value: cache.memoryUsage,
                 icon: Icons.memory,
-                iconColor: Colors.purple)]))]);
+                iconColor: TossDesignSystem.purple)]))]);
   }
 
   Widget _buildOperationStats(RedisOperationStats operations) {
@@ -213,40 +214,40 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
       PieChartSectionData(
         value: operations.reads.toDouble(),
         title: '읽기\n${operations.reads}',
-        color: Colors.blue,
+        color: TossDesignSystem.primaryBlue,
         radius: 80,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white)),
+          color: TossDesignSystem.white)),
       PieChartSectionData(
         value: operations.writes.toDouble(),
         title: '쓰기\n${operations.writes}',
-        color: Colors.green,
+        color: TossDesignSystem.success,
         radius: 80,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white)),
+          color: TossDesignSystem.white)),
       PieChartSectionData(
         value: operations.deletes.toDouble(),
         title: '삭제\n${operations.deletes}',
-        color: Colors.orange,
+        color: TossDesignSystem.warningOrange,
         radius: 80,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white)),
+          color: TossDesignSystem.white)),
       if (operations.errors > 0)
         PieChartSectionData(
           value: operations.errors.toDouble(),
           title: '오류\n${operations.errors}',
-          color: Colors.red,
+          color: TossDesignSystem.error,
           radius: 80,
           titleStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.white))];
+            color: TossDesignSystem.white))];
 
     return ChartCard(
       title: '작업 통계',
@@ -272,22 +273,22 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
           title: '평균 응답 시간',
           value: '${performance.avgResponseTime.toStringAsFixed(2)}ms',
           icon: Icons.speed,
-          iconColor: Colors.teal),
+          iconColor: TossDesignSystem.primaryBlue),
         StatsCard(
           title: '최대 응답 시간',
           value: '${performance.maxResponseTime.toStringAsFixed(2)}ms',
           icon: Icons.trending_up,
-          iconColor: Colors.red),
+          iconColor: TossDesignSystem.error),
         StatsCard(
           title: '최소 응답 시간',
           value: '${performance.minResponseTime.toStringAsFixed(2)}ms',
           icon: Icons.trending_down,
-          iconColor: Colors.green),
+          iconColor: TossDesignSystem.success),
         StatsCard(
           title: '느린 쿼리',
           value: performance.slowQueries.toString(),
           icon: Icons.warning,
-          iconColor: Colors.orange)]);
+          iconColor: TossDesignSystem.warningOrange)]);
   }
 
   Widget _buildRateLimits(Map<String, RateLimitInfo> rateLimits) {
@@ -327,7 +328,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                     value: percentage,
                     backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      percentage > 0.8 ? Colors.red : theme.colorScheme.primary)),
+                      percentage > 0.8 ? TossDesignSystem.error : theme.colorScheme.primary)),
                   const SizedBox(height: 4),
                   Text(
                     '재설정: ${_formatResetTime(info.resetAt)}',

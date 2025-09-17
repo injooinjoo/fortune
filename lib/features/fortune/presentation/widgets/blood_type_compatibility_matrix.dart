@@ -86,7 +86,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
       children: [
         Icon(
           Icons.bloodtype,
-          color: Colors.red,
+          color: TossDesignSystem.errorRed,
           size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
@@ -214,8 +214,8 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                     borderRadius: AppDimensions.borderRadiusSmall,
                     border: Border.all(
                       color: isSelected
-                          ? Colors.white
-                          : Colors.transparent,
+                          ? TossDesignSystem.white
+                          : TossDesignSystem.transparent,
                       width: isSelected ? 2 : 0),
                     boxShadow: (isSelected || isHovered) ? [
                       BoxShadow(
@@ -234,7 +234,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                             fontWeight: isHovered
                                 ? FontWeight.bold
                                 : FontWeight.normal,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                           ),
                         ),
                         if (isHovered) Text(
@@ -262,7 +262,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         child: Text(
           '매트릭스에서 두 혈액형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
+            color: TossDesignSystem.white.withValues(alpha: 0.6),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
           textAlign: TextAlign.center,
         ),
@@ -358,11 +358,11 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [
-                Colors.red.withValues(alpha: 0.6),
-                Colors.red.withValues(alpha: 0.8)]),
+                TossDesignSystem.errorRed.withValues(alpha: 0.6),
+                TossDesignSystem.errorRed.withValues(alpha: 0.8)]),
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withValues(alpha: 0.4),
+                color: TossDesignSystem.errorRed.withValues(alpha: 0.4),
                 blurRadius: 10,
                 spreadRadius: 2)]),
           child: Center(
@@ -395,17 +395,17 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
               '소통',
               communication['compatibility'],
               Icons.chat,
-              Colors.blue),
+              TossDesignSystem.primaryBlue),
             _buildDynamicItem(
               '갈등해결',
               conflict['compatibility'],
               Icons.handshake,
-              Colors.green),
+              TossDesignSystem.successGreen),
             _buildDynamicItem(
               '성장가능성',
               growth['score'],
               Icons.trending_up,
-              Colors.purple,
+              TossDesignSystem.purple,
             ),
           ],
         ),
@@ -413,13 +413,13 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         Container(
           padding: AppSpacing.paddingAll12,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: TossDesignSystem.white.withValues(alpha: 0.05),
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [
               Icon(
                 Icons.lightbulb,
-                color: Colors.amber,
+                color: TossDesignSystem.warningOrange,
                 size: 20),
               const SizedBox(width: AppSpacing.spacing2),
               Expanded(
@@ -466,10 +466,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: TossDesignSystem.white.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadius(TossDesignSystem.radiusXL),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: TossDesignSystem.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -477,13 +477,13 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildLegendItem('최고 궁합', Colors.green, '90% 이상'),
+          _buildLegendItem('최고 궁합', TossDesignSystem.successGreen, '90% 이상'),
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('좋은 궁합', Colors.blue, '70-89%'),
+          _buildLegendItem('좋은 궁합', TossDesignSystem.primaryBlue, '70-89%'),
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('보통 궁합', Colors.amber, '50-69%'),
+          _buildLegendItem('보통 궁합', TossDesignSystem.warningOrange, '50-69%'),
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('도전적 관계', Colors.orange, '50% 미만'),
+          _buildLegendItem('도전적 관계', TossDesignSystem.warningOrange, '50% 미만'),
         ],
       ),
     );
@@ -510,7 +510,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             Text(
               range,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: TossDesignSystem.white.withValues(alpha: 0.6),
                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
               ),
             ),
@@ -521,9 +521,9 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
 }
 
   Color _getCompatibilityColor(double compatibility) {
-    if (compatibility >= 0.9) return Colors.green;
-    if (compatibility >= 0.7) return Colors.blue;
-    if (compatibility >= 0.5) return Colors.amber;
-    return Colors.orange;
+    if (compatibility >= 0.9) return TossDesignSystem.successGreen;
+    if (compatibility >= 0.7) return TossDesignSystem.primaryBlue;
+    if (compatibility >= 0.5) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.warningOrange;
   }
 }

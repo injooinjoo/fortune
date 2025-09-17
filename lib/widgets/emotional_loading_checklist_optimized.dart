@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 
+import '../core/theme/toss_design_system.dart';
 import '../presentation/providers/navigation_visibility_provider.dart';
 
 /// 최적화된 감성적인 로딩 체크리스트 위젯
@@ -195,7 +196,7 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
                 const Color(0xFF0f1624),
               ]
             : [
-                Colors.white,
+                TossDesignSystem.white,
                 const Color(0xFFF5F5F5),
               ],
         ),
@@ -315,13 +316,13 @@ class _OptimizedStepItem extends StatelessWidget {
             shape: BoxShape.circle,
             color: isCompleted 
               ? const Color(0xFF52C41A).withValues(alpha: 0.15)
-              : Colors.transparent,
+              : TossDesignSystem.transparent,
             border: Border.all(
               color: isCompleted
                 ? const Color(0xFF52C41A)
                 : isActive 
-                  ? (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.5)
-                  : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.2),
+                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.5)
+                  : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.2),
               width: isCompleted ? 2.5 : isActive ? 2 : 1.5,
             ),
           ),
@@ -364,8 +365,8 @@ class _OptimizedStepItem extends StatelessWidget {
                   fontSize: isActive ? 18 : 16,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
-                    ? (isDark ? Colors.white : Colors.black87)
-                    : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.5),
+                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+                    : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.5),
                 ),
                 child: Text(step.title),
               ),
@@ -379,7 +380,7 @@ class _OptimizedStepItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black87)
+                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
                           .withValues(alpha: 0.6),
                     ),
                   ),

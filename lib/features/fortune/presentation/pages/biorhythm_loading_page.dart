@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'biorhythm_result_page.dart';
 
 class BiorhythmLoadingPage extends StatefulWidget {
@@ -198,7 +199,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
@@ -271,7 +272,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (currentStepData['color'] as Color).withOpacity(0.1 - index * 0.03),
+                  color: (currentStepData['color'] as Color).withValues(alpha: 0.1 - index * 0.03),
                   width: 2,
                 ),
               ),
@@ -291,13 +292,13 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    (currentStepData['color'] as Color).withOpacity(0.8),
-                    (currentStepData['color'] as Color).withOpacity(0.3),
+                    (currentStepData['color'] as Color).withValues(alpha: 0.8),
+                    (currentStepData['color'] as Color).withValues(alpha: 0.3),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: (currentStepData['color'] as Color).withOpacity(0.4),
+                    color: (currentStepData['color'] as Color).withValues(alpha: 0.4),
                     blurRadius: 30,
                     offset: const Offset(0, 8),
                   ),
@@ -309,7 +310,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
                   angle: _rotationAnimation.value,
                   child: Icon(
                     currentStepData['icon'] as IconData,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 48,
                   ),
                 ),
@@ -333,7 +334,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
                     const Color(0xFFFF5A5F),  // Physical
                     const Color(0xFF00C896),  // Emotional
                     const Color(0xFF0068FF),  // Intellectual
-                  ][index].withOpacity(0.6),
+                  ][index].withValues(alpha: 0.6),
                   phase: index * math.pi / 3,
                 ),
                 child: const SizedBox(height: 20),

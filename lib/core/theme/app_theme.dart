@@ -18,6 +18,13 @@ class AppTheme {
   static const Color textSecondaryColor = TossDesignSystem.gray600;
   static const Color dividerColor = TossDesignSystem.gray200;
 
+  // Add missing color getters for backward compatibility
+  static Color get textPrimary => TossDesignSystem.gray900;
+  static Color get textSecondary => TossDesignSystem.gray600;
+  static Color get success => TossDesignSystem.successGreen;
+  static Color get warning => TossDesignSystem.warningOrange;
+  static Color get error => TossDesignSystem.errorRed;
+
   // Added for theme mode checking
   static bool isDarkMode = false;
 
@@ -51,7 +58,7 @@ class AppTheme {
         ),
         scaffoldBackgroundColor: TossDesignSystem.gray50,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+          backgroundColor: TossDesignSystem.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           iconTheme: IconThemeData(color: Color(0xFF1F2937)),
@@ -81,7 +88,7 @@ class AppTheme {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
+            foregroundColor: TossDesignSystem.white,
             backgroundColor: primaryColor,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
@@ -143,7 +150,7 @@ class AppTheme {
         ),
         scaffoldBackgroundColor: TossDesignSystem.black,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+          backgroundColor: TossDesignSystem.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           iconTheme: IconThemeData(color: TossDesignSystem.white),
@@ -173,7 +180,7 @@ class AppTheme {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
+            foregroundColor: TossDesignSystem.white,
             backgroundColor: primaryColor,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),

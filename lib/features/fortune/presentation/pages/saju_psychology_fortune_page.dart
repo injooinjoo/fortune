@@ -7,6 +7,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
+import '../../../../core/theme/toss_design_system.dart';
 
 class SajuPsychologyFortunePage extends ConsumerWidget {
   const SajuPsychologyFortunePage({super.key});
@@ -130,7 +131,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
           Text(
             '사주팔자와 심리학을 융합하여\n당신의 깊은 내면을 분석합니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.5),
           ),
           const SizedBox(height: 24),
@@ -149,11 +150,11 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
             ),
           ),
@@ -208,12 +209,12 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
@@ -222,7 +223,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
             color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5)),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                   ),
                 ],
               ),
@@ -252,12 +253,12 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.access_time, color: theme.colorScheme.primary.withOpacity(0.7)),
+                  Icon(Icons.access_time, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _birthTime != null
@@ -266,7 +267,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
             color: _birthTime != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5)),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                   ),
                 ],
               ),
@@ -294,7 +295,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     _selectedLifeGoal = selected ? goal : null;
                   });
                 },
-                selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface),
               );
@@ -322,7 +323,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     _selectedCurrentIssue = selected ? issue : null;
                   });
                 },
-                selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface),
               );
@@ -358,9 +359,9 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
                     }
                   });
                 },
-                selectedColor: Colors.purple.withOpacity(0.2),
+                selectedColor: TossDesignSystem.purple.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.purple : theme.colorScheme.onSurface),
+                  color: isSelected ? TossDesignSystem.purple : theme.colorScheme.onSurface),
               );
             }).toList(),
           ),
@@ -413,7 +414,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
               child: Text(
                 '사주 심리 분석 시작하기',
                 style: theme.textTheme.titleMedium?.copyWith(
-            color: Colors.white,
+            color: TossDesignSystem.white,
                   fontWeight: FontWeight.bold),
               ),
             ),
@@ -480,7 +481,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                       ),
                       child: Icon(
                         Icons.psychology_alt,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 28),
                     ),
                     const SizedBox(width: 16),
@@ -507,7 +508,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                               Text(
                                 _getScoreMessage(psychologyScore),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                               ),
                             ],
                           ),
@@ -543,7 +544,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.category,
-                        color: Colors.purple,
+                        color: TossDesignSystem.purple,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -605,7 +606,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.person_search,
-                        color: Colors.blue,
+                        color: TossDesignSystem.tossBlue,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -655,7 +656,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.visibility_off,
-                        color: Colors.indigo,
+                        color: TossDesignSystem.tossBlue,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -674,7 +675,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                         color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.2)),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -699,7 +700,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                                   Text(
                                     pattern['description'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                       fontSize: 12 + fontSize),
                                   ),
                                 ],
@@ -728,7 +729,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.auto_stories,
-                        color: Colors.orange,
+                        color: TossDesignSystem.warningOrange,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -748,7 +749,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                           width: 24,
                           height: 24,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
                             shape: BoxShape.circle),
                           child: Center(
                             child: Text(
@@ -790,7 +791,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.trending_up,
-                        color: Colors.green,
+                        color: TossDesignSystem.success,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -823,7 +824,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.lightbulb_outline,
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningOrange,
                         size: 24),
                       const SizedBox(width: 12),
                       Text(
@@ -903,7 +904,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
     
     dataSets.add(
       RadarDataSet(
-        fillColor: theme.colorScheme.primary.withOpacity(0.3),
+        fillColor: theme.colorScheme.primary.withValues(alpha: 0.3),
         borderColor: theme.colorScheme.primary,
         borderWidth: 2,
         dataEntries: values.map((v) => RadarEntry(value: v)).toList(),
@@ -913,13 +914,13 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
     return RadarChart(
       RadarChartData(
         radarShape: RadarShape.polygon,
-        radarBackgroundColor: Colors.transparent,
+        radarBackgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         borderData: FlBorderData(show: false),
         gridBorderData: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
           width: 1),
         tickBorderData: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
           width: 1),
         tickCount: 5,
         titlePositionPercentageOffset: 0.2,
@@ -935,7 +936,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
           fontSize: 14,
           fontWeight: FontWeight.bold),
         ticksTextStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           fontSize: 10),
       ),
     );
@@ -973,7 +974,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
           horizontalInterval: 20,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: theme.colorScheme.outline.withOpacity(0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
               strokeWidth: 1
             );
           }),
@@ -1020,10 +1021,10 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.success;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.error;
   }
   
   String _getScoreMessage(int score) {
@@ -1035,23 +1036,23 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
   
   Color _getElementColor(String element) {
     switch (element) {
-      case '목(木)': return Colors.green;
+      case '목(木)': return TossDesignSystem.success;
       case '화(火)':
-        return Colors.red;
+        return TossDesignSystem.error;
       case '토(土)':
-        return Colors.brown;
+        return TossDesignSystem.brownPrimary;
       case '금(金)':
-        return Colors.amber;
-      case '수(水)': return Colors.blue;
+        return TossDesignSystem.warningOrange;
+      case '수(水)': return TossDesignSystem.tossBlue;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray500;
     }
   }
   
   Color _getGrowthColor(num score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.success;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.error;
   }
 }

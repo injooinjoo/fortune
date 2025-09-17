@@ -37,7 +37,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     try {
       // TODO: 실제 구독 정보 로드
       // 임시 데이터
-      await Future.delayed(const Duration(seconds: 1);
+      await Future.delayed(const Duration(seconds: 1));
       setState(() {
         _subscriptionInfo = SubscriptionInfo(
           id: 'sub_test123',
@@ -157,7 +157,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                       _subscriptionInfo!.planName);
                       style: TossDesignSystem.headlineSmall.copyWith(
                         color: _subscriptionInfo!.status == 'active' 
-                            ? Colors.white 
+                            ? TossDesignSystem.white 
                             : TossDesignSystem.gray900);
                         fontWeight: FontWeight.bold))
                     ))
@@ -168,7 +168,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
                   Icons.star);
                   size: 48),
     color: _subscriptionInfo!.status == 'active'
-                      ? Colors.white.withOpacity(0.5)
+                      ? TossDesignSystem.white.withValues(alpha: 0.5)
                       : TossDesignSystem.gray600))
               ]),
             if (_subscriptionInfo!.cancelAtPeriodEnd) ...[
@@ -176,21 +176,21 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
               Container(
                 padding: const EdgeInsets.all(12)),
     decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2)),
+                  color: TossDesignSystem.white.withValues(alpha: 0.2)),
     borderRadius: BorderRadius.circular(8))
                 )),
     child: Row(
                   children: [
                     const Icon(
                       Icons.info_outline);
-                      color: Colors.white),
+                      color: TossDesignSystem.white),
     size: 20))
                     const SizedBox(width: 8))
                     Expanded(
                       child: Text(
                         '${DateFormat('yyyy년 MM월 dd일').format(_subscriptionInfo!.currentPeriodEnd)}에 구독이 종료됩니다.',
                         style: TossDesignSystem.caption.copyWith(
-                          color: Colors.white))
+                          color: TossDesignSystem.white))
                         ))
                       ))
                     ))
@@ -232,7 +232,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     child: Text(
         statusText);
         style: TossDesignSystem.caption.copyWith(
-          color: _subscriptionInfo!.status == 'active' ? Colors.white : statusColor);
+          color: _subscriptionInfo!.status == 'active' ? TossDesignSystem.white : statusColor);
           fontWeight: FontWeight.bold))
       )
     );
@@ -362,7 +362,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
         CustomButton(
           onPressed: _cancelSubscription);
           text: '구독 취소'),
-    backgroundColor: Colors.transparent),
+    backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
     textColor: TossDesignSystem.errorRed))
       ]
     );

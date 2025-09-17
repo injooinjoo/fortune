@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/fortune_history.dart';
 
 /// 운세 히스토리 캘린더 뷰
@@ -130,17 +131,17 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
     final isToday = _isToday(date);
     final hasFortune = fortune != null;
     
-    Color backgroundColor = Colors.transparent;
+    Color backgroundColor = TossDesignSystem.white.withValues(alpha: 0.0);
     Color textColor = TossTheme.textBlack;
     
     if (isToday) {
-      backgroundColor = TossTheme.primaryBlue.withOpacity(0.1);
+      backgroundColor = TossTheme.primaryBlue.withValues(alpha: 0.1);
       textColor = TossTheme.primaryBlue;
     }
     
     if (hasFortune) {
       final score = fortune.summary['score'] as int? ?? 0;
-      backgroundColor = _getScoreColor(score).withOpacity(0.2);
+      backgroundColor = _getScoreColor(score).withValues(alpha: 0.2);
       textColor = _getScoreColor(score);
     }
     
@@ -206,10 +207,10 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF10B981); // green
+    if (score >= 80) return TossDesignSystem.success;
     if (score >= 70) return TossTheme.primaryBlue;
-    if (score >= 60) return const Color(0xFFF59E0B); // yellow
-    return const Color(0xFFEF4444); // red
+    if (score >= 60) return TossDesignSystem.warningYellow;
+    return TossDesignSystem.error;
   }
 
   void _changeMonth(int delta) {

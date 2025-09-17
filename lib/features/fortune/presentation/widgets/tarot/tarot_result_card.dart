@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import '../../../../../core/theme/toss_design_system.dart';
 
 class TarotResultCard extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -417,13 +418,13 @@ class _TarotResultCardState extends State<TarotResultCard>
                       const Icon(
                         Icons.auto_awesome,
                         size: 60,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         widget.result['cardName'] ?? 'The Fool',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -447,9 +448,9 @@ class _TarotResultCardState extends State<TarotResultCard>
                         begin: Alignment(-1.0 + _shimmerController.value * 2, -1.0),
                         end: Alignment(1.0 + _shimmerController.value * 2, 1.0),
                         colors: [
-                          Colors.transparent,
-                          Colors.white.withOpacity(0.2),
-                          Colors.transparent,
+                          TossDesignSystem.white.withValues(alpha: 0.0),
+                          TossDesignSystem.white.withValues(alpha: 0.2),
+                          TossDesignSystem.white.withValues(alpha: 0.0),
                         ],
                         stops: const [0.0, 0.5, 1.0],
                       ),
@@ -540,7 +541,7 @@ class _TarotCardBackPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = TossDesignSystem.white.withValues(alpha: 0.3)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 

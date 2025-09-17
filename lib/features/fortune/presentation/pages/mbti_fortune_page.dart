@@ -392,7 +392,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: colors.first.withOpacity(0.3),
+                    color: colors.first.withValues(alpha:0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -405,7 +405,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             Icon(
               icon,
               size: 24,
-              color: isSelected ? Colors.white : TossDesignSystem.gray600,
+              color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
             ),
             const SizedBox(height: 4),
             Text(
@@ -413,7 +413,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? Colors.white : TossDesignSystem.gray700,
+                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray700,
               ),
             ),
           ],
@@ -444,7 +444,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 child: Text(
                   _selectedMbti!,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -512,7 +512,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   Icon(
                     category['icon'],
                     size: 16,
-                    color: isSelected ? Colors.white : category['color'],
+                    color: isSelected ? TossDesignSystem.white : category['color'],
                   ),
                   const SizedBox(width: 4),
                   Text(category['label']),
@@ -530,9 +530,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 HapticFeedback.selectionClick();
               },
               selectedColor: category['color'],
-              checkmarkColor: Colors.white,
+              checkmarkColor: TossDesignSystem.white,
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : TossDesignSystem.gray700,
+                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray700,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
               backgroundColor: TossDesignSystem.gray50,
@@ -662,7 +662,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             child: Text(
               '$_selectedMbti 오늘의 운세',
               style: const TextStyle(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -715,9 +715,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           children: items.entries.map((entry) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.warningOrange.withOpacity(0.1),
+              color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: TossDesignSystem.warningOrange.withOpacity(0.3)),
+              border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha:0.3)),
             ),
             child: Text(
               '${entry.value}',
@@ -876,7 +876,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       child: Text(
                         type,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),

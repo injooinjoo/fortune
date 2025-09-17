@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 소원 빌기 분수대 위젯
 class WishFountainWidget extends StatefulWidget {
@@ -132,7 +133,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: TossDesignSystem.white,
           ),
         ),
         const SizedBox(height: 12),
@@ -140,7 +141,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
           '간절한 마음으로 소원을 빌고\n분수대에 동전을 던져보세요',
           style: TextStyle(
             fontSize: 16,
-            color: Colors.white.withOpacity(0.9),
+            color: TossDesignSystem.white.withValues(alpha: 0.9),
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -151,10 +152,10 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: TossDesignSystem.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: TossDesignSystem.white.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -169,7 +170,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
               Text(
                 '분수대 동전: ${widget.coinCount}개',
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -242,10 +243,10 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: TossDesignSystem.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: TossDesignSystem.white.withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -254,7 +255,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                   children: [
                     Icon(
                       Icons.info_outline,
-                      color: Colors.white.withOpacity(0.8),
+                      color: TossDesignSystem.white.withValues(alpha: 0.8),
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -263,7 +264,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white.withOpacity(0.9),
+                        color: TossDesignSystem.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -275,7 +276,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                     : '1. 먼저 간절한 소원을 작성해주세요\n2. 소원을 작성한 후 동전을 던져보세요\n3. 신의 응답을 기다려보세요',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: TossDesignSystem.white.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -336,7 +337,7 @@ class FountainPainter extends CustomPainter {
     canvas.drawCircle(center, 30, paint);
     
     // 하이라이트 효과
-    paint.color = Colors.white.withOpacity(0.3);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.3);
     canvas.drawCircle(center + const Offset(-10, -10), 25, paint);
   }
 
@@ -346,12 +347,12 @@ class FountainPainter extends CustomPainter {
     canvas.drawCircle(center, 115, paint);
     
     // 물 하이라이트
-    paint.color = Colors.white.withOpacity(0.4);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.4);
     canvas.drawCircle(center + const Offset(-20, -20), 100, paint);
   }
 
   void _drawWaterDrops(Canvas canvas, Offset center, Paint paint) {
-    paint.color = Colors.white.withOpacity(0.7);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.7);
     
     // 중앙에서 분사되는 물방울들
     final dropCount = 8;
@@ -382,7 +383,7 @@ class FountainPainter extends CustomPainter {
   void _drawRipples(Canvas canvas, Offset center, Paint paint) {
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2;
-    paint.color = Colors.white.withOpacity(0.3 * (1 - rippleProgress));
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.3 * (1 - rippleProgress));
     
     // 여러 개의 동심원 물결
     for (int i = 0; i < 3; i++) {
@@ -409,7 +410,7 @@ class FountainPainter extends CustomPainter {
       final coinCenter = center + coinPositions[i] + Offset(0, coinFloatOffset + (i % 2 == 0 ? 2 : -2));
       
       // 동전 그림자
-      paint.color = Colors.black.withOpacity(0.2);
+      paint.color = TossDesignSystem.black.withValues(alpha: 0.2);
       canvas.drawCircle(coinCenter + const Offset(2, 2), 6, paint);
       
       // 동전 베이스
@@ -417,7 +418,7 @@ class FountainPainter extends CustomPainter {
       canvas.drawCircle(coinCenter, 6, paint);
       
       // 동전 하이라이트
-      paint.color = Colors.white.withOpacity(0.6);
+      paint.color = TossDesignSystem.white.withValues(alpha: 0.6);
       canvas.drawCircle(coinCenter + const Offset(-2, -2), 3, paint);
       
       // 동전 무늬 (간단한 점)

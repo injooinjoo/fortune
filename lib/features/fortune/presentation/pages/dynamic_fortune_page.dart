@@ -5,6 +5,7 @@ import '../../../../shared/components/toss_button.dart';
 
 import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -167,7 +168,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -199,7 +200,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         title: Text(
           metadata.title,
@@ -216,8 +217,8 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              metadata.primaryColor.withOpacity(0.1),
-              metadata.secondaryColor.withOpacity(0.05),
+              metadata.primaryColor.withValues(alpha: 0.1),
+              metadata.secondaryColor.withValues(alpha: 0.05),
               theme.scaffoldBackgroundColor,
             ],
           ),
@@ -313,20 +314,20 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: TossDesignSystem.white.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 metadata.icon,
                 size: 48,
-                color: Colors.white,
+                color: TossDesignSystem.white,
               ),
             ),
             const SizedBox(height: 16),
             Text(
               metadata.title,
               style: theme.textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -334,7 +335,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             Text(
               metadata.subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withValues(alpha: 0.9),
               ),
               textAlign: TextAlign.center,
             ),
@@ -343,7 +344,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: TossDesignSystem.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -352,13 +353,13 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                     const Icon(
                       Icons.toll,
                       size: 16,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '${metadata.tokenCost} 토큰',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -436,7 +437,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white),
                     ),
                   )
                 : Text(

@@ -12,6 +12,7 @@ import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 // Provider for dream entries
 final dreamEntriesProvider = StateNotifierProvider<DreamEntriesNotifier, List<DreamEntry>>(
@@ -644,15 +645,15 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => DreamDetailSheet(entry: entry));
   }
 
   Color _getLuckColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }
 
@@ -915,9 +916,9 @@ class DreamDetailSheet extends ConsumerWidget {
   }
 
   Color _getLuckColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -137,7 +138,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                       shape: BoxShape.circle),
                     child: Icon(
                       widget.selectedType.icon,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 32)).animate()
                     .fadeIn(duration: 600.ms)
                     .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1),
@@ -320,18 +321,18 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                         color: color,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected ? Colors.white : Colors.transparent,
+                          color: isSelected ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha: 0.0),
                           width: 3),
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
-                              color: color.withOpacity(0.5),
+                              color: color.withValues(alpha: 0.5),
                               blurRadius: 8,
                               spreadRadius: 2)]),
                       child: isSelected
                           ? const Icon(
                               Icons.check,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               size: 20)
                           : null));
                 }).toList()]),
@@ -368,18 +369,18 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                         color: color,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected ? Colors.white : Colors.transparent,
+                          color: isSelected ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha: 0.0),
                           width: 3),
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
-                              color: color.withOpacity(0.5),
+                              color: color.withValues(alpha: 0.5),
                               blurRadius: 8,
                               spreadRadius: 2)]),
                       child: isSelected
                           ? const Icon(
                               Icons.check,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               size: 20)
                           : null));
                 }).toList()])]).animate()
@@ -402,10 +403,10 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? TossDesignSystem.tossBlue : Colors.white,
+              color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? TossDesignSystem.tossBlue : Colors.grey[300]!),
+                color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray300),
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
@@ -415,7 +416,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
             child: Text(
               entry.value,
               style: TextStyle(
-                color: isSelected ? Colors.white : TossDesignSystem.gray900,
+                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
       }).toList()).animate()
         .fadeIn(duration: 400.ms, delay: 1200.ms);

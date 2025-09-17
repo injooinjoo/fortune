@@ -25,7 +25,7 @@ class HexagonChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
-    final effectiveBackgroundColor = backgroundColor ?? TossDesignSystem.gray600.withValues(alpha: 0.1);
+    final effectiveBackgroundColor = backgroundColor ?? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1);
     final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall ?? const TextStyle(fontSize: 12);
 
     return SizedBox(

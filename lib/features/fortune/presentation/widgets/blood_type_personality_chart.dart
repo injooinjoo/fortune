@@ -108,13 +108,13 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      Colors.red.withOpacity(0.6),
-                      Colors.red.withOpacity(0.8),
+                      TossDesignSystem.errorRed.withOpacity(0.6),
+                      TossDesignSystem.errorRed.withOpacity(0.8),
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.red.withOpacity(0.4),
+                      color: TossDesignSystem.errorRed.withOpacity(0.4),
                       blurRadius: 15,
                       spreadRadius: 3,
                     ),
@@ -135,7 +135,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     '${widget.bloodType}형 ${widget.rhType} 혈액형',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.spacing1),
@@ -181,7 +181,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.white.withOpacity(0.7),
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
@@ -227,7 +227,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       '성격 개요',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                        color: TossDesignSystem.white)),
                     const SizedBox(height: AppSpacing.spacing3),
                     Text(
                       characteristics['personality'],
@@ -239,14 +239,14 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     child: _buildTraitCard(
                       '긍정적 특성',
                       characteristics['positive_traits'],
-                      Colors.green,
+                      TossDesignSystem.successGreen,
                       Icons.thumb_up)),
                   const SizedBox(width: AppSpacing.spacing4),
                   Expanded(
                     child: _buildTraitCard(
                       '부정적 특성',
                       characteristics['negative_traits'],
-                      Colors.orange,
+                      TossDesignSystem.warningOrange,
                       Icons.thumb_down))]),
               const SizedBox(height: AppSpacing.spacing4),
               _buildLifeStyleCard(characteristics),
@@ -300,31 +300,31 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             '라이프스타일',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              color: TossDesignSystem.white)),
           const SizedBox(height: AppSpacing.spacing4),
           _buildLifeStyleItem(
             '연애 스타일',
             characteristics['love_style'],
             Icons.favorite,
-            Colors.pink),
+            TossDesignSystem.pinkPrimary),
           const SizedBox(height: AppSpacing.spacing3),
           _buildLifeStyleItem(
             '업무 스타일',
             characteristics['work_style'],
             Icons.work,
-            Colors.blue),
+            TossDesignSystem.tossBlue),
           const SizedBox(height: AppSpacing.spacing3),
           _buildLifeStyleItem(
             '스트레스 반응',
             characteristics['stress_response'],
             Icons.psychology,
-            Colors.purple),
+            TossDesignSystem.purple),
           const SizedBox(height: AppSpacing.spacing3),
           _buildLifeStyleItem(
             '건강 조언',
             characteristics['health_tips'],
             Icons.health_and_safety,
-            Colors.green)]));
+            TossDesignSystem.successGreen)]));
   }
 
   Widget _buildLifeStyleItem(String title, String content, IconData icon, Color color) {
@@ -363,8 +363,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.1),
-          Colors.purple.withOpacity(0.05)]),
+          TossDesignSystem.purple.withOpacity(0.1),
+          TossDesignSystem.purple.withOpacity(0.05)]),
       padding: AppSpacing.paddingAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,7 +373,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             children: [
               Icon(
                 Icons.science,
-                color: Colors.purple,
+                color: TossDesignSystem.purple,
                 size: 20),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
@@ -395,10 +395,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.2),
+                  color: TossDesignSystem.purple.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.purple.withOpacity(0.4),
+                    color: TossDesignSystem.purple.withOpacity(0.4),
                     width: 1)),
                 child: Text(
                   trait,
@@ -412,16 +412,16 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             Container(
               padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.1),
+                color: TossDesignSystem.warningYellow.withOpacity(0.1),
                 borderRadius: AppDimensions.borderRadiusSmall,
                 border: Border.all(
-                  color: Colors.amber.withOpacity(0.3),
+                  color: TossDesignSystem.warningYellow.withOpacity(0.3),
                   width: 1)),
               child: Row(
                 children: [
                   Icon(
                     Icons.info,
-                    color: Colors.amber,
+                    color: TossDesignSystem.warningYellow,
                     size: 16,
                   ),
                   const SizedBox(width: AppSpacing.spacing2),
@@ -510,7 +510,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     '오늘의 바이오리듬',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: TossDesignSystem.white)),
                   const SizedBox(height: AppSpacing.spacing5),
                   ...biorhythm.entries.map((entry) {
                     final color = _getBiorhythmColor(entry.key);
@@ -587,7 +587,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   '성격 강도 분석',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+                    color: TossDesignSystem.white)),
                 const SizedBox(height: AppSpacing.spacing5),
                 SizedBox(
                   height: 300,
@@ -595,20 +595,20 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     RadarChartData(
                       radarShape: RadarShape.polygon,
                       radarBorderData: BorderSide(
-                        color: Colors.white.withOpacity(0.3),
+                        color: TossDesignSystem.white.withOpacity(0.3),
                         width: 2),
                       gridBorderData: BorderSide(
-                        color: Colors.white.withOpacity(0.2),
+                        color: TossDesignSystem.white.withOpacity(0.2),
                         width: 1),
                       tickBorderData: BorderSide(
-                        color: Colors.white.withOpacity(0.2),
+                        color: TossDesignSystem.white.withOpacity(0.2),
                         width: 1),
                       titlePositionPercentageOffset: 0.2,
-                      radarBackgroundColor: Colors.transparent,
+                      radarBackgroundColor: TossDesignSystem.transparent,
                       dataSets: [
                         RadarDataSet(
-                          fillColor: Colors.red.withOpacity(0.3),
-                          borderColor: Colors.red,
+                          fillColor: TossDesignSystem.errorRed.withOpacity(0.3),
+                          borderColor: TossDesignSystem.errorRed,
                           borderWidth: 2,
                           dataEntries: strengths.entries
                               .map((e) => RadarEntry(value: e.value * 100))
@@ -621,7 +621,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       },
                       tickCount: 5,
                       ticksTextStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: TossDesignSystem.white.withOpacity(0.5),
                         fontSize: Theme.of(context).textTheme.bodySmall?.fontSize),
                       titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 14),
                     ),
@@ -655,7 +655,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               children: [
                 Icon(
                   Icons.star,
-                  color: Colors.amber,
+                  color: TossDesignSystem.warningYellow,
                   size: 16),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
@@ -677,16 +677,16 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
 
   Color _getBiorhythmColor(String type) {
     switch (type) {
-      case '체력': return Colors.red;
+      case '체력': return TossDesignSystem.errorRed;
       case '감정':
-        return Colors.blue;
+        return TossDesignSystem.tossBlue;
       case '지성':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case '직관':
-        return Colors.purple;
-      case '사회성': return Colors.orange;
+        return TossDesignSystem.purple;
+      case '사회성': return TossDesignSystem.warningOrange;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray400;
     }
   }
 }

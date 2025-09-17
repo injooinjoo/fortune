@@ -75,7 +75,7 @@ class FortuneCard extends StatelessWidget {
       onTap: onTap,
       showBorder: true,
       backgroundColor: isSelected 
-          ? TossDesignSystem.tossBlue.withOpacity(0.05)
+          ? TossDesignSystem.tossBlue.withValues(alpha: 0.05)
           : null,
       leading: icon != null 
           ? Container(
@@ -83,7 +83,7 @@ class FortuneCard extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected 
-                    ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                     : TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -100,7 +100,7 @@ class FortuneCard extends StatelessWidget {
               ? Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -135,7 +135,7 @@ class FortuneCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: (iconColor ?? TossDesignSystem.tossBlue).withOpacity(0.1),
+                color: (iconColor ?? TossDesignSystem.tossBlue).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -201,7 +201,7 @@ class FortuneCard extends StatelessWidget {
         boxShadow: elevation != null && elevation! > 0
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: TossDesignSystem.black.withValues(alpha: 0.04),
                   offset: const Offset(0, 2),
                   blurRadius: 8,
                   spreadRadius: 0,
@@ -210,7 +210,7 @@ class FortuneCard extends StatelessWidget {
             : null,
       ),
       child: Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.white.withValues(alpha: 0.0),
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
@@ -307,7 +307,7 @@ class _ScoreBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: scoreColor.withOpacity(0.1),
+        color: scoreColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

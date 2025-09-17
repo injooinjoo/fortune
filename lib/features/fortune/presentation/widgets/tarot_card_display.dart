@@ -8,6 +8,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TarotCardDisplay extends StatefulWidget {
   final TarotCardState cardState;
@@ -94,7 +95,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 borderRadius: AppDimensions.borderRadiusMedium);
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: TossDesignSystem.black.withOpacity(0.3),
     blurRadius: 10),
     offset: const Offset(0, 5))]),
               child: ClipRRect(
@@ -135,7 +136,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 Icon(
                   Icons.auto_awesome);
                   size: 40),
-    color: Colors.white.withOpacity(0.8)),
+    color: TossDesignSystem.white.withOpacity(0.8)),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   widget.selectedDeck.koreanName);
@@ -164,8 +165,8 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 begin: Alignment.topCenter);
                 end: Alignment.bottomCenter),
     colors: [
-                  Colors.transparent)
-                  Colors.black.withOpacity(0.7)]),
+                  TossDesignSystem.transparent)
+                  TossDesignSystem.black.withOpacity(0.7)]),
     stops: const [0.6, 1.0])),
           
           // Card information
@@ -190,8 +191,8 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
     decoration: BoxDecoration(
                         color: isReversed
-                            ? Colors.orange.withOpacity(0.8)
-                            : Colors.green.withOpacity(0.8),
+                            ? TossDesignSystem.warningOrange.withOpacity(0.8)
+                            : TossDesignSystem.successGreen.withOpacity(0.8),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Row(
                         mainAxisSize: MainAxisSize.min);
@@ -199,7 +200,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                           Icon(
                             isReversed ? Icons.arrow_downward : Icons.arrow_upward);
                             size: 12),
-    color: Colors.white),
+    color: TossDesignSystem.white),
                           const SizedBox(width: AppSpacing.spacing1),
                           Text(
                             widget.cardState.orientation.displayName);
@@ -232,7 +233,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 Icon(
                   _getCardIcon(cardInfo),
     size: 60),
-    color: Colors.white.withOpacity(0.8)),
+    color: TossDesignSystem.white.withOpacity(0.8)),
                 const SizedBox(height: AppSpacing.spacing4),
                 Text(
                   '${widget.cardState.cardIndex + 1}');
@@ -398,7 +399,7 @@ class _CardBackPatternPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Outer circle
-    paint.color = Colors.white.withOpacity(0.2);
+    paint.color = TossDesignSystem.white.withOpacity(0.2);
     canvas.drawCircle(Offset(centerX, centerY), 40, paint);
 
     // Inner star pattern
@@ -420,7 +421,7 @@ class _CardBackPatternPainter extends CustomPainter {
     canvas.drawPath(path, paint);
 
     // Corner decorations
-    paint.color = Colors.white.withOpacity(0.3);
+    paint.color = TossDesignSystem.white.withOpacity(0.3);
     const cornerSize = 15.0;
     
     // Draw corner patterns

@@ -23,7 +23,7 @@ class TossDialog {
       barrierDismissible: barrierDismissible,
       barrierColor: (Theme.of(context).brightness == Brightness.light
           ? TossDesignSystem.gray900
-          : TossDesignSystem.white).withOpacity(0.5),
+          : TossDesignSystem.white).withValues(alpha: 0.5),
       builder: (context) => _TossDialogWrapper(
         padding: padding,
         child: child,
@@ -146,7 +146,7 @@ class TossDialog {
       barrierDismissible: barrierDismissible,
       barrierColor: (Theme.of(context).brightness == Brightness.light
           ? TossDesignSystem.gray900
-          : TossDesignSystem.white).withOpacity(0.5),
+          : TossDesignSystem.white).withValues(alpha: 0.5),
       builder: (context) => _TossLoadingDialog(
         message: message,
       ),
@@ -231,7 +231,7 @@ class _TossConfirmationDialog extends StatelessWidget {
           style: TossDesignSystem.body2.copyWith(
             color: Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.gray600
-                : TossDesignSystem.grayDark400,
+                : TossDesignSystem.gray400,
           ),
         ),
         SizedBox(height: TossDesignSystem.spacingL),
@@ -289,7 +289,7 @@ class _TossAlertDialog extends StatelessWidget {
           style: TossDesignSystem.body2.copyWith(
             color: Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.gray600
-                : TossDesignSystem.grayDark400,
+                : TossDesignSystem.gray400,
           ),
         ),
         SizedBox(height: TossDesignSystem.spacingL),
@@ -330,7 +330,7 @@ class _TossSuccessDialog extends StatelessWidget {
           decoration: BoxDecoration(
             color: (Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.successGreen
-                : TossDesignSystem.successGreenDark).withOpacity(0.1),
+                : TossDesignSystem.successGreen).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -338,7 +338,7 @@ class _TossSuccessDialog extends StatelessWidget {
             size: 48,
             color: Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.successGreen
-                : TossDesignSystem.successGreenDark,
+                : TossDesignSystem.successGreen,
           ),
         )
             .animate()
@@ -359,10 +359,10 @@ class _TossSuccessDialog extends StatelessWidget {
           Text(
             message!,
             style: TextStyle(
-              fontSize: context.toss.dialogStyles.messageFontSize,
+              fontSize: 14,
               color: Theme.of(context).brightness == Brightness.light
-                  ? TossDesignSystem.gray600.withOpacity(0.7)
-                  : TossDesignSystem.gray600.withOpacity(0.3),
+                  ? TossDesignSystem.gray600.withValues(alpha: 0.7)
+                  : TossDesignSystem.gray600.withValues(alpha: 0.3),
               fontFamily: 'TossProductSans',
               height: 1.5,
             ),
@@ -407,7 +407,7 @@ class _TossErrorDialog extends StatelessWidget {
           decoration: BoxDecoration(
             color: (Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.errorRed
-                : TossDesignSystem.errorRedDark).withOpacity(0.1),
+                : TossDesignSystem.errorRed).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -415,7 +415,7 @@ class _TossErrorDialog extends StatelessWidget {
             size: 48,
             color: Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.errorRed
-                : TossDesignSystem.errorRedDark,
+                : TossDesignSystem.errorRed,
           ),
         )
             .animate()
@@ -432,7 +432,7 @@ class _TossErrorDialog extends StatelessWidget {
           style: TossDesignSystem.body2.copyWith(
             color: Theme.of(context).brightness == Brightness.light
                 ? TossDesignSystem.gray600
-                : TossDesignSystem.grayDark400,
+                : TossDesignSystem.gray400,
           ),
           textAlign: TextAlign.center,
         ),

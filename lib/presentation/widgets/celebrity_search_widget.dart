@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../data/models/celebrity_saju.dart';
 import '../providers/celebrity_saju_provider.dart';
 
@@ -80,19 +81,19 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: theme.colorScheme.outline.withOpacity(0.3),
+                color: TossDesignSystem.gray300,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: theme.colorScheme.outline.withOpacity(0.3),
+                color: TossDesignSystem.gray300,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: theme.colorScheme.primary,
+                color: TossDesignSystem.tossBlue,
                 width: 2,
               ),
             ),
@@ -160,14 +161,14 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: TossDesignSystem.backgroundPrimary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.3),
+          color: TossDesignSystem.gray300,
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.1),
+            color: TossDesignSystem.gray900.withValues(alpha:0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -186,14 +187,14 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
                   title,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: TossDesignSystem.tossBlue,
                   ),
                 ),
                 const Spacer(),
                 Text(
                   '${celebrities.length}명',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: TossDesignSystem.gray500,
                   ),
                 ),
               ],
@@ -226,11 +227,11 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: CircleAvatar(
-        backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+        backgroundColor: TossDesignSystem.tossBlue.withValues(alpha:0.2),
         child: Text(
           celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
           style: TextStyle(
-            color: theme.colorScheme.primary,
+            color: TossDesignSystem.tossBlue,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -249,7 +250,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           Text(
             '사주: ${celebrity.sajuString}',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.primary.withOpacity(0.8),
+              color: TossDesignSystem.tossBlue.withValues(alpha:0.8),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -258,7 +259,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
       trailing: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: _getElementColor(celebrity.dominantElement).withOpacity(0.2),
+          color: _getElementColor(celebrity.dominantElement).withValues(alpha:0.2),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
@@ -279,10 +280,10 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: TossDesignSystem.backgroundPrimary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.3),
+          color: TossDesignSystem.gray300,
         ),
       ),
       child: Column(
@@ -290,20 +291,20 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           Icon(
             Icons.search_off,
             size: 48,
-            color: theme.colorScheme.onSurface.withOpacity(0.4),
+            color: TossDesignSystem.gray400,
           ),
           const SizedBox(height: 12),
           Text(
             '검색 결과가 없습니다',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: TossDesignSystem.gray500,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '다른 연예인 이름으로 검색해보세요',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.4),
+              color: TossDesignSystem.gray400,
             ),
           ),
         ],
@@ -317,10 +318,10 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.errorContainer.withOpacity(0.1),
+        color: TossDesignSystem.errorRed.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.error.withOpacity(0.3),
+          color: TossDesignSystem.errorRed.withValues(alpha:0.3),
         ),
       ),
       child: Column(
@@ -328,20 +329,20 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           Icon(
             Icons.error_outline,
             size: 48,
-            color: theme.colorScheme.error,
+            color: TossDesignSystem.errorRed,
           ),
           const SizedBox(height: 12),
           Text(
             '검색 중 오류가 발생했습니다',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.error,
+              color: TossDesignSystem.errorRed,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             error,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: TossDesignSystem.gray500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -353,17 +354,17 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case '화':
-        return Colors.red;
+        return TossDesignSystem.warningOrange;
       case '토':
-        return Colors.brown;
+        return TossDesignSystem.brownPrimary;
       case '금':
-        return Colors.amber;
+        return TossDesignSystem.warningOrange;
       case '수':
-        return Colors.blue;
+        return TossDesignSystem.tossBlue;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray600;
     }
   }
 }

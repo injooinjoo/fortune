@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/toss_theme.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class TossProgressIndicator extends StatelessWidget {
   final int totalSteps;
@@ -75,7 +76,7 @@ class TossStepIndicator extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[700],
+                  color: TossDesignSystem.gray700,
                 ),
               ),
               Text(
@@ -83,7 +84,7 @@ class TossStepIndicator extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey[500],
+                  color: TossDesignSystem.gray500,
                 ),
               ),
             ],

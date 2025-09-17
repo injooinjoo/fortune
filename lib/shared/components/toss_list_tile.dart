@@ -38,7 +38,7 @@ class TossListTile extends StatelessWidget {
       child: Column(
         children: [
           Material(
-            color: Colors.transparent,
+            color: TossDesignSystem.transparent,
             child: InkWell(
               onTap: isEnabled ? () {
                 if (onTap != null) {

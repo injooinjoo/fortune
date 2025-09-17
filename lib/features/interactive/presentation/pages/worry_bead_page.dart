@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -269,7 +270,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                       ),
                       child: const Icon(
                         Icons.spa,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         size: 30,
                       ),
                     ),
@@ -312,7 +313,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       strokeWidth: 2,
                     ),
                   )
@@ -512,7 +513,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'worry_bead',

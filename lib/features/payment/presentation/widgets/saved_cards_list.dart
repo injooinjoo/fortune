@@ -96,7 +96,7 @@ class SavedCardsList extends StatelessWidget {
             color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
             width: isSelected ? 2 : 1),
           color: isSelected 
-              ? TossDesignSystem.tossBlue.withOpacity(0.05) 
+              ? TossDesignSystem.tossBlue.withValues(alpha: 0.05) 
               : TossDesignSystem.gray50),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -111,12 +111,12 @@ class SavedCardsList extends StatelessWidget {
                   border: Border.all(
                     color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
                     width: 2),
-                  color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent),
+                  color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.white.withValues(alpha: 0.0)),
                 child: isSelected
                     ? const Icon(
                         Icons.check,
                         size: 16,
-                        color: Colors.white)
+                        color: TossDesignSystem.white)
                     : null),
               const SizedBox(width: 16),
               

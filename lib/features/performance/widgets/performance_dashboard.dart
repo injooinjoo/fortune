@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/services/performance_cache_service.dart';
 import '../../../shared/glassmorphism/glass_container.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 /// Performance monitoring dashboard widget
 class PerformanceDashboard extends ConsumerStatefulWidget {
@@ -94,7 +95,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                 const SizedBox(height: 4))
                 LinearProgressIndicator(
                   value: double.tryParse(_cacheStats['hitRate']?.toString() ?? '0': null,
-                  backgroundColor: Colors.grey.withOpacity(0.2)),
+                  backgroundColor: TossDesignSystem.gray400.withOpacity(0.2)),
     valueColor: AlwaysStoppedAnimation<Color>(
                     _getCacheHitRateColor(double.tryParse(_cacheStats['hitRate']?.toString() ?? '0')))
                 ))
@@ -275,7 +276,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
             _buildActionButton(
               'Clear Cache');
               Icons.delete_sweep)
-              Colors.orange)
+              TossDesignSystem.warningOrange)
               () async {
                 await _cacheService.clearAll();
                 _refreshStats();
@@ -287,7 +288,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
             _buildActionButton(
               'Optimize Images');
               Icons.image)
-              Colors.blue)
+              TossDesignSystem.tossBlue)
               () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Image optimization started')))
@@ -297,7 +298,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
             _buildActionButton(
               'Run Performance Test');
               Icons.speed)
-              Colors.green)
+              TossDesignSystem.successGreen)
               () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Performance test started')))
@@ -365,11 +366,11 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
   
   Color _getCacheHitRateColor(double hitRate) {
     if (hitRate >= 80) {
-      return Colors.green;
+      return TossDesignSystem.successGreen;
     } else if (hitRate >= 60) {
-      return Colors.orange;
+      return TossDesignSystem.warningOrange;
     } else {
-      return Colors.red;
+      return TossDesignSystem.errorRed;
     }
   }
 }

@@ -196,11 +196,11 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.8),
+                      color: TossDesignSystem.warningOrange.withValues(alpha: 0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.amber.withOpacity(0.4),
+                          color: TossDesignSystem.warningOrange.withValues(alpha: 0.4),
                           blurRadius: 4,
                           spreadRadius: 1)
                       ],
@@ -232,7 +232,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                       children: [
                         Icon(
                           Icons.auto_awesome_rounded,
-                          color: Colors.amber,
+                          color: TossDesignSystem.warningOrange,
                           size: AppDimensions.iconSizeMedium).animate(onPlay: (controller) => controller.repeat())
                           .rotate(duration: 2000.ms)
                           .shimmer(duration: 1500.ms, color: TossDesignSystem.grayDark900),
@@ -240,7 +240,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                         Text(
                           '+${widget.soulAmount}',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.amber,
+                            color: TossDesignSystem.warningOrange,
                             fontWeight: FontWeight.bold)).animate()
                           .fadeIn(delay: 200.ms, duration: 300.ms)
                           .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms),

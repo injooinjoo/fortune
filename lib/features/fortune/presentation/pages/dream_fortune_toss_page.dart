@@ -5,6 +5,7 @@ import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class DreamFortuneTossPage extends ConsumerStatefulWidget {
   const DreamFortuneTossPage({super.key});
@@ -99,7 +100,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: TossDesignSystem.white,
       appBar: AppHeader(
         title: '꿈 해몽',
         showBackButton: true,
@@ -160,13 +161,13 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    Colors.deepPurple.shade400,
-                    Colors.blue.shade400,
+                    TossDesignSystem.purple.withValues(alpha: 0.8),
+                    TossDesignSystem.tossBlue.withValues(alpha: 0.8),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.deepPurple.withOpacity(0.3),
+                    color: TossDesignSystem.purple.withValues(alpha:0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -174,7 +175,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
               ),
               child: const Icon(
                 Icons.bedtime_rounded,
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 size: 28,
               ),
             ),
@@ -237,7 +238,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             color: _isInputFocused || hasText
-                ? TossTheme.primaryBlue.withOpacity(0.05)
+                ? TossTheme.primaryBlue.withValues(alpha:0.05)
                 : const Color(0xFFF8F9FA),
             border: Border.all(
               color: _isInputFocused || hasText
@@ -249,7 +250,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
             boxShadow: _isInputFocused || hasText
                 ? [
                     BoxShadow(
-                      color: TossTheme.primaryBlue.withOpacity(0.1),
+                      color: TossTheme.primaryBlue.withValues(alpha:0.1),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -332,7 +333,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
                 ),
                 child: const Icon(
                   Icons.lightbulb_outline,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 20,
                 ),
               ),

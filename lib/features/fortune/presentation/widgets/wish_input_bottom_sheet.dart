@@ -3,16 +3,17 @@ import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
-  love('💕', '사랑', '연애, 결혼, 짝사랑', Colors.pink),
-  money('💰', '돈', '재물, 투자, 사업', Colors.green),
-  health('🌿', '건강', '건강, 회복, 장수', Colors.lightGreen),
-  success('🏆', '성공', '취업, 승진, 성취', Colors.orange),
-  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', Colors.blue),
-  study('📚', '학업', '시험, 공부, 성적', Colors.indigo),
-  other('🌟', '기타', '소원이 있으시면', Colors.purple);
+  love('💕', '사랑', '연애, 결혼, 짝사랑', TossDesignSystem.errorRed),
+  money('💰', '돈', '재물, 투자, 사업', TossDesignSystem.success),
+  health('🌿', '건강', '건강, 회복, 장수', TossDesignSystem.successGreen),
+  success('🏆', '성공', '취업, 승진, 성취', TossDesignSystem.warningOrange),
+  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', TossDesignSystem.primaryBlue),
+  study('📚', '학업', '시험, 공부, 성적', TossDesignSystem.primaryBlue),
+  other('🌟', '기타', '소원이 있으시면', TossDesignSystem.primaryBlue);
 
   const WishCategory(this.emoji, this.name, this.description, this.color);
   
@@ -43,7 +44,7 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       // 키보드가 올라와도 바텀시트가 키보드 위에 위치하도록 설정
       useSafeArea: false,
       builder: (context) => WishInputBottomSheet(
@@ -170,7 +171,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF0F0F0)),
       ),
@@ -218,7 +219,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                       Text(
                         category.name,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : const Color(0xFF8B95A1),
+                          color: isSelected ? TossDesignSystem.white : const Color(0xFF8B95A1),
                           fontWeight: FontWeight.w500,
                           fontFamily: 'TossProductSans',
                         ),
@@ -239,7 +240,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF0F0F0)),
       ),
@@ -297,7 +298,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF0F0F0)),
       ),

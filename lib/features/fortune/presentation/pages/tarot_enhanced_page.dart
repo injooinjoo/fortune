@@ -13,6 +13,7 @@ import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../interactive/presentation/pages/tarot_card_page.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 enum TarotSpreadType {
   
@@ -164,9 +165,9 @@ class _MysticalBackground extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.deepPurple.withOpacity(0.05),
-            Colors.indigo.withOpacity(0.05),
-            Colors.purple.withOpacity(0.05)
+            TossDesignSystem.purple.withValues(alpha:0.05),
+            TossDesignSystem.tossBlue.withValues(alpha:0.05),
+            TossDesignSystem.purple.withValues(alpha:0.05)
           ]
         )
       ),
@@ -182,7 +183,7 @@ class _MysticalParticlesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.purple.withOpacity(0.1)
+      ..color = TossDesignSystem.purple.withValues(alpha:0.1)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);
@@ -260,7 +261,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
           Text(
             '마음을 가라앉히고 질문에 집중해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.7),
               fontSize: 16 * widget.fontScale)),
           const SizedBox(height: 32),
           
@@ -292,7 +293,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                   decoration: InputDecoration(
                     hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -320,22 +321,22 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.1),
+              color: TossDesignSystem.purple.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.purple.withOpacity(0.3))),
+                color: TossDesignSystem.purple.withValues(alpha:0.3))),
             child: Row(
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: Colors.purple,
+                  color: TossDesignSystem.purple,
                   size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                       fontSize: 14 * widget.fontScale,
                     ),
                   ),
@@ -355,8 +356,8 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                   onPressed: _proceed,
                   gradient: LinearGradient(
                     colors: [
-                      Colors.orange.shade400,
-                      Colors.orange.shade600]),
+                      TossDesignSystem.warningOrange.withValues(alpha: 0.8),
+                      TossDesignSystem.warningOrange]),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Row(
@@ -391,8 +392,8 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                   },
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple,
-                      Colors.indigo]),
+                      TossDesignSystem.purple,
+                      TossDesignSystem.tossBlue]),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Row(
@@ -459,7 +460,7 @@ class _SpreadSelectionView extends StatelessWidget {
           Text(
             '각 스프레드는 다른 통찰력을 제공합니다',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.7),
               fontSize: 16 * fontScale)),
           const SizedBox(height: 32),
           
@@ -493,8 +494,8 @@ class _TarotHeaderCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.3),
-          Colors.indigo.withOpacity(0.3)]),
+          TossDesignSystem.purple.withValues(alpha:0.3),
+          TossDesignSystem.tossBlue.withValues(alpha:0.3)]),
       child: Center(
         child: Icon(
           Icons.auto_awesome,
@@ -537,9 +538,9 @@ class _SpreadOptionCard extends StatelessWidget {
         width: 40,
         height: 60,
         decoration: BoxDecoration(
-          color: Colors.purple.withOpacity(0.2),
+          color: TossDesignSystem.purple.withValues(alpha:0.2),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.purple.withOpacity(0.5)),
+          border: Border.all(color: TossDesignSystem.purple.withValues(alpha:0.5)),
         ),
       ),
     );
@@ -554,9 +555,9 @@ class _SpreadOptionCard extends StatelessWidget {
           width: 30,
           height: 45,
           decoration: BoxDecoration(
-            color: Colors.purple.withOpacity(0.2),
+            color: TossDesignSystem.purple.withValues(alpha:0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.purple.withOpacity(0.5)),
+            border: Border.all(color: TossDesignSystem.purple.withValues(alpha:0.5)),
           ),
         ),
       )).toList(),
@@ -573,9 +574,9 @@ class _SpreadOptionCard extends StatelessWidget {
             width: 20,
             height: 30,
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.2),
+              color: TossDesignSystem.purple.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withOpacity(0.5)),
+              border: Border.all(color: TossDesignSystem.purple.withValues(alpha:0.5)),
             ),
           ),
         ),
@@ -585,9 +586,9 @@ class _SpreadOptionCard extends StatelessWidget {
             width: 20,
             height: 30,
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.2),
+              color: TossDesignSystem.purple.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withOpacity(0.5)),
+              border: Border.all(color: TossDesignSystem.purple.withValues(alpha:0.5)),
             ),
           ),
         ),
@@ -597,9 +598,9 @@ class _SpreadOptionCard extends StatelessWidget {
             width: 20,
             height: 30,
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.2),
+              color: TossDesignSystem.purple.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withOpacity(0.5)),
+              border: Border.all(color: TossDesignSystem.purple.withValues(alpha:0.5)),
             ),
           ),
         ),
@@ -615,19 +616,19 @@ class _SpreadOptionCard extends StatelessWidget {
           width: 25,
           height: 38,
           decoration: BoxDecoration(
-            color: Colors.pink.withOpacity(0.2),
+            color: TossDesignSystem.pinkPrimary.withValues(alpha:0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withOpacity(0.5)))),
+            border: Border.all(color: TossDesignSystem.pinkPrimary.withValues(alpha:0.5)))),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Icon(Icons.favorite, size: 20, color: Colors.pink.withOpacity(0.5))),
+          child: Icon(Icons.favorite, size: 20, color: TossDesignSystem.pinkPrimary.withValues(alpha:0.5))),
         Container(
           width: 25,
           height: 38,
           decoration: BoxDecoration(
-            color: Colors.pink.withOpacity(0.2),
+            color: TossDesignSystem.pinkPrimary.withValues(alpha:0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withOpacity(0.5)),
+            border: Border.all(color: TossDesignSystem.pinkPrimary.withValues(alpha:0.5)),
           ),
         ),
       ],
@@ -642,9 +643,9 @@ class _SpreadOptionCard extends StatelessWidget {
           width: 25,
           height: 38,
           decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.2),
+            color: TossDesignSystem.tossBlue.withValues(alpha:0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.blue.withOpacity(0.5)))),
+            border: Border.all(color: TossDesignSystem.tossBlue.withValues(alpha:0.5)))),
         SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -653,17 +654,17 @@ class _SpreadOptionCard extends StatelessWidget {
               width: 20,
               height: 30,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.2),
+                color: TossDesignSystem.successGreen.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.green.withOpacity(0.5)))),
+                border: Border.all(color: TossDesignSystem.successGreen.withValues(alpha:0.5)))),
             SizedBox(width: 8),
             Container(
               width: 20,
               height: 30,
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: TossDesignSystem.warningOrange.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.orange.withOpacity(0.5)),
+                border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha:0.5)),
               ),
             ),
           ],
@@ -682,8 +683,8 @@ class _SpreadOptionCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         gradient: LinearGradient(
           colors: [
-            theme.colorScheme.primary.withOpacity(0.05),
-            theme.colorScheme.secondary.withOpacity(0.05)]),
+            theme.colorScheme.primary.withValues(alpha:0.05),
+            theme.colorScheme.secondary.withValues(alpha:0.05)]),
         child: Row(
           children: [
             // Spread preview
@@ -707,7 +708,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   Text(
                     '${spread.cardCount}장의 카드',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                       fontSize: 14 * fontScale)),
                   const SizedBox(height: 8),
                   Row(
@@ -735,7 +736,7 @@ class _SpreadOptionCard extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.3),
             ),
           ],
         ),
@@ -809,8 +810,8 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
             padding: const EdgeInsets.all(20),
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withOpacity(0.1),
-                Colors.indigo.withOpacity(0.1)]),
+                TossDesignSystem.purple.withValues(alpha:0.1),
+                TossDesignSystem.tossBlue.withValues(alpha:0.1)]),
             child: Column(
               children: [
                 Icon(
@@ -827,7 +828,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                 Text(
                   _getSpreadDescription(widget.spreadType),
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                     fontSize: 16 * widget.fontScale),
                   textAlign: TextAlign.center,
                 ),
@@ -863,7 +864,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                     decoration: InputDecoration(
                       hintText: _getQuestionHint(widget.spreadType),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none),
@@ -883,8 +884,8 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
               onPressed: _startReading,
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple,
-                  Colors.indigo]),
+                  TossDesignSystem.purple,
+                  TossDesignSystem.tossBlue]),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Row(
@@ -958,7 +959,7 @@ class GlassButton extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Material(
-      color: Colors.transparent,
+      color: TossDesignSystem.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(12),
@@ -971,16 +972,16 @@ class GlassButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: (gradient?.colors.first ?? theme.colorScheme.primary).withOpacity(0.3),
+                color: (gradient?.colors.first ?? theme.colorScheme.primary).withValues(alpha:0.3),
                 blurRadius: 8,
                 offset: Offset(0, 4),
               ),
             ],
           ),
           child: DefaultTextStyle(
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: TossDesignSystem.white),
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: IconThemeData(color: TossDesignSystem.white),
               child: child,
             ),
           ),

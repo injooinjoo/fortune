@@ -1062,9 +1062,10 @@ class _UnifiedMovingFortuneResult extends ConsumerWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons.tips_and_updates_outlined);
-                        color: Colors.amber),
-    size: TossDesignSystem.iconSizeMedium),
+                        Icons.tips_and_updates_outlined,
+                        color: TossDesignSystem.warningOrange,
+                        size: TossDesignSystem.iconSizeMedium,
+                      ),
                       SizedBox(width: TossDesignSystem.spacingS),
                       Text(
                         '이사 준비 팁',

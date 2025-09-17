@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class TalismanShareService {
   // Add watermark to the talisman image
@@ -35,7 +36,7 @@ class TalismanShareService {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white.withOpacity(0.8)),
+            color: TossDesignSystem.white.withOpacity(0.8)),
         textDirection: TextDirection.ltr);
       textPainter.layout();
       
@@ -52,7 +53,7 @@ class TalismanShareService {
           text: DateTime.now().toString().split(' '),
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.6)),
+            color: TossDesignSystem.white.withOpacity(0.6)),
         textDirection: TextDirection.ltr);
       datePainter.layout();
       

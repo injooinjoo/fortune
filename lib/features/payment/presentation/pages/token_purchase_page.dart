@@ -53,7 +53,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       price: 8000,
       originalPrice: 10000,
       badge: '20% 할인',
-      color: Colors.blue),
+      color: TossDesignSystem.primaryBlue),
     TokenPackage(
       id: 'subscription_monthly',
       name: '무제한 이용권',
@@ -61,7 +61,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       price: 2500,
       originalPrice: null,
       badge: '추천',
-      color: Colors.purple,
+      color: TossDesignSystem.purple,
       isSubscription: true,
     ),
   ];
@@ -110,7 +110,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue, Colors.purple],
+          colors: [TossDesignSystem.primaryBlue, TossDesignSystem.purple],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -127,14 +127,14 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 Text(
                   '현재 보유 토큰',
                   style: TossDesignSystem.caption.copyWith(
-                    color: Colors.white70,
+                    color: TossDesignSystem.white.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Fortune cached: $currentTokens',
                   style: TossDesignSystem.heading1.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -143,7 +143,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             Icon(
               Icons.account_balance_wallet,
               size: 48,
-              color: Colors.white.withOpacity(0.5),
+              color: TossDesignSystem.white.withValues(alpha: 0.5),
             ),
           ],
         ),
@@ -190,7 +190,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             width: isSelected ? 2 : 1,
           ),
           color: isSelected 
-              ? package.color.withOpacity(0.1) 
+              ? package.color.withValues(alpha: 0.1) 
               : TossDesignSystem.gray50,
         ),
         child: Padding(
@@ -207,13 +207,13 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     color: isSelected ? package.color : TossDesignSystem.gray600,
                     width: 2,
                   ),
-                  color: isSelected ? package.color : Colors.transparent,
+                  color: isSelected ? package.color : TossDesignSystem.white.withValues(alpha: 0.0),
                 ),
                 child: isSelected
                     ? const Icon(
                         Icons.check,
                         size: 16,
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                       )
                     : null,
               ),
@@ -246,7 +246,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                             child: Text(
                               package.badge!,
                               style: TossDesignSystem.caption.copyWith(
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -366,7 +366,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossDesignSystem.infoBlue.withOpacity(0.1),
+        color: TossDesignSystem.infoBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

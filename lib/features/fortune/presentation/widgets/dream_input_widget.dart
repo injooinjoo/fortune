@@ -5,6 +5,7 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../providers/dream_chat_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class DreamInputWidget extends ConsumerStatefulWidget {
   final bool enabled;
@@ -207,7 +208,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         ),
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
-          color: Colors.white,
+          color: TossDesignSystem.white,
           size: 18,
         ),
       ),
@@ -231,7 +232,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         ),
         child: Icon(
           Icons.send_rounded,
-          color: Colors.white,
+          color: TossDesignSystem.white,
           size: 16,
         ),
       ),
@@ -251,7 +252,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           borderRadius: BorderRadius.circular(TossTheme.radiusL),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: TossDesignSystem.black.withOpacity(0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

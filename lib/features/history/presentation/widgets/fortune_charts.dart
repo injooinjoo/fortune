@@ -64,7 +64,7 @@ class CategoryPieChart extends StatelessWidget {
                           titleStyle: TextStyle(
                             fontSize: 12 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                           ),
                           color: colors[index % colors.length],
                         );

@@ -239,7 +239,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   borderRadius: BorderRadius.circular(borderRadius),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3 * (1 - progress * 0.5)),
+                      color: TossDesignSystem.black.withValues(alpha: 0.3 * (1 - progress * 0.5)),
                       blurRadius: 20 + (10 * progress),
                       offset: Offset(0, 10 * (1 - progress)),
                     ),
@@ -252,11 +252,16 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Colors.grey[300],
-                        child: const Icon(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark300
+                            : TossDesignSystem.gray300,
+                        child: Icon(
                           Icons.image,
                           size: 60,
-                          color: Colors.grey),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark400
+                              : TossDesignSystem.gray600,
+                        ),
                       );
                     },
                   ),
@@ -664,7 +669,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final groupedCategories = _groupCategoriesByType();
 
     return Scaffold(
-      backgroundColor: Colors.white, // 토스 스타일 순수 흰색 배경
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? TossDesignSystem.grayDark50
+          : TossDesignSystem.white,
       body: SafeArea(
         child: CustomScrollView(
           controller: _scrollController,
@@ -740,7 +747,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         bottom: isLastInSection ? 0 : 0, // 토스는 여백으로 구분
       ),
       child: Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.white.withValues(alpha: 0.0),
         child: InkWell(
           onTap: () => _handleCategoryTap(category),
           child: Padding(
@@ -762,7 +769,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   child: Icon(
                     category.icon,
                     size: 20,
-                    color: Colors.white,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark100
+                        : TossDesignSystem.white,
                   ),
                 ),
                 
@@ -796,12 +805,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                 color: const Color(0xFFFF6B6B),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'NEW',
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.grayDark100
+                                      : TossDesignSystem.white,
                                 ),
                               ),
                             ),
@@ -859,7 +870,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         useRootNavigator: true, // 네비게이션 바 숨김
         builder: (context) => PersonalityDNABottomSheet(
           onResult: (personalityDNA) {

@@ -78,7 +78,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                     const Color(0xFF1E293B),
                     const Color(0xFF0F172A)]
                 : [
-                    Colors.amber.withOpacity(0.08),
+                    TossDesignSystem.warningOrange.withValues(alpha: 0.08),
                     TossDesignSystem.grayDark900])),
         child: SafeArea(
           child: Column(
@@ -132,7 +132,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   _selectedFilter = entry.key;
                 });
               },
-              backgroundColor: Colors.transparent,
+              backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
               selectedColor: theme.colorScheme.primary.withOpacity(0.2),
               checkmarkColor: theme.colorScheme.primary,
               labelStyle: TextStyle(
@@ -350,7 +350,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
       case 'bonus':
         return TossDesignSystem.gray600;
       case 'refund':
-        return Colors.purple;
+        return TossDesignSystem.purple;
       default:
         return isAddition ? TossDesignSystem.gray600 : TossDesignSystem.gray600;
     }

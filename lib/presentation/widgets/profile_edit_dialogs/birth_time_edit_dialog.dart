@@ -1,13 +1,10 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../constants/fortune_constants.dart';
 import 'profile_field_edit_dialog.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class TimePeriod {
   final String value;
@@ -94,7 +91,9 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                         Text(
                           '정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: TossDesignSystem.gray600),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.gray300
+                                : TossDesignSystem.gray600),
                           textAlign: TextAlign.center),
           SizedBox(height: AppSpacing.spacing4),
           Container(
@@ -127,7 +126,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
     return Container(
       margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
       child: Material(
-        color: Colors.transparent,
+        color: TossDesignSystem.white.withValues(alpha: 0.0),
         child: InkWell(
           onTap: () {
             setState(() {
@@ -145,7 +144,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: AppDimensions.borderRadiusSmall,
-              color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.1) : null,
+              color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.1) : null,
             ),
             child: Row(
               children: [
@@ -180,13 +179,17 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                       Text(
                         label,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray900)),
+                          color: isSelected
+                              ? TossDesignSystem.tossBlue
+                              : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.gray300 : TossDesignSystem.gray900))),
                       if (description != null) ...[
                         SizedBox(height: AppSpacing.xxxSmall),
                         Text(
                           description,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: TossDesignSystem.gray600),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.gray400
+                                : TossDesignSystem.gray600),
                         ),
                       ],
                     ],

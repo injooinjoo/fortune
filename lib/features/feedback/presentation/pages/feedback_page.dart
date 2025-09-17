@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
@@ -252,9 +253,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                   icon: Icon(
                                     starValue <= _rating ? Icons.star : Icons.star_border,
                                     size: 36,
-                                    color: starValue <= _rating 
-                                        ? Colors.amber 
-                                        : theme.colorScheme.onSurface.withOpacity(0.3),
+                                    color: starValue <= _rating
+                                        ? TossDesignSystem.warningYellow
+                                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                                   ),
                                 );
                               })),
@@ -372,7 +373,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white,
+                                      color: TossDesignSystem.white,
                                     ),
                                   )
                                 : Text(
@@ -380,7 +381,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     style: TextStyle(
                                       fontSize: 18 * fontScale,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: TossDesignSystem.white,
                                     ),
                                   ),
                           ),
@@ -419,14 +420,14 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
     switch (rating) {
       case 1:
       case 2:
-        return Colors.red;
+        return TossDesignSystem.error;
       case 3:
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case 4:
       case 5:
-        return Colors.green;
+        return TossDesignSystem.success;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray500;
     }
   }
 }

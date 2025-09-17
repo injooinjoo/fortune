@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 토스 스타일 사주팔자 명식 테이블
 class SajuTableToss extends StatefulWidget {
@@ -415,7 +416,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
             ),
             child: Icon(
               Icons.star,
-              color: Colors.white,
+              color: TossDesignSystem.white,
               size: 16,
             ),
           ),

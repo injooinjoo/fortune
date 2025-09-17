@@ -80,7 +80,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => SocialShareBottomSheet(
         fortuneTitle: widget.result.type.displayName,
         fortuneContent: widget.result.meaning,
@@ -104,7 +104,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
       appBar: AppHeader(
         title: '부적 완성',
         showBackButton: true,
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -219,8 +219,8 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.orange.withOpacity(0.1),
-          Colors.orange.withOpacity(0.05)]),
+          TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+          TossDesignSystem.warningOrange.withValues(alpha: 0.05)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -228,13 +228,13 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             children: [
               Icon(
                 Icons.warning_amber_outlined,
-                color: Colors.orange[700]),
+                color: TossDesignSystem.warningOrange),
               const SizedBox(width: 8),
               Text(
                 '주의사항',
                 style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-                  color: Colors.orange[700]))]),
+                  color: TossDesignSystem.warningOrange))]),
           const SizedBox(height: 12),
           ...widget.result.precautions.map((precaution) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -244,13 +244,13 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 Text(
                   '• ',
                   style: TextStyle(
-                    color: Colors.orange[700],
+                    color: TossDesignSystem.warningOrange,
                     fontWeight: FontWeight.bold)),
                 Expanded(
                   child: Text(
                     precaution,
                     style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.orange[700])]).toList()]));
+            color: TossDesignSystem.warningOrange)]).toList()]));
   }
   
   Widget _buildActionButtons() {

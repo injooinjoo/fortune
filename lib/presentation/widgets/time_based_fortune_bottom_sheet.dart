@@ -30,11 +30,11 @@ class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
-      barrierColor: Colors.transparent,
+      barrierColor: TossDesignSystem.transparent,
       useRootNavigator: true,
       builder: (context) => TimeBasedFortuneBottomSheet(
         onDismiss: onDismiss,
@@ -187,15 +187,15 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     Color? borderColor;
     
     if (isPastDate || isFarFuture) {
-      textColor = theme.colorScheme.onSurface.withOpacity(0.3);
+      textColor = theme.colorScheme.onSurface.withValues(alpha:0.3);
     } else if (isSelected) {
       backgroundColor = AppTheme.primaryColor;
-      textColor = Colors.white;
+      textColor = TossDesignSystem.white;
     } else if (isToday) {
       borderColor = AppTheme.primaryColor;
       textColor = AppTheme.primaryColor;
     } else if (isHoliday || (isWeekend && !isPastDate)) {
-      textColor = Colors.red;
+      textColor = TossDesignSystem.errorRed;
     }
 
     return Container(
@@ -229,7 +229,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Colors.red,
+                        color: TossDesignSystem.errorRed,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -239,7 +239,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                       height: 6,
                       margin: const EdgeInsets.only(left: 2),
                       decoration: const BoxDecoration(
-                        color: Colors.orange,
+                        color: TossDesignSystem.warningOrange,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -249,7 +249,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                       height: 6,
                       margin: const EdgeInsets.only(left: 2),
                       decoration: const BoxDecoration(
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningOrange,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -275,10 +275,10 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        color: theme.colorScheme.surfaceVariant.withValues(alpha:0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.3),
+          color: theme.colorScheme.outline.withValues(alpha:0.3),
         ),
       ),
       child: Column(
@@ -313,19 +313,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: TossDesignSystem.errorRed.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red.withOpacity(0.3)),
+                      border: Border.all(color: TossDesignSystem.errorRed.withValues(alpha:0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.celebration, size: 14, color: Colors.red),
+                        const Icon(Icons.celebration, size: 14, color: TossDesignSystem.errorRed),
                         const SizedBox(width: 4),
                         Text(
                           eventInfo.holidayName!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.red,
+                            color: TossDesignSystem.errorRed,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -336,19 +336,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                      border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha:0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star, size: 14, color: Colors.orange),
+                        const Icon(Icons.star, size: 14, color: TossDesignSystem.warningOrange),
                         const SizedBox(width: 4),
                         Text(
                           eventInfo.specialName!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.orange,
+                            color: TossDesignSystem.warningOrange,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -359,19 +359,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.1),
+                      color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                      border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha:0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.home, size: 14, color: Colors.amber),
+                        const Icon(Icons.home, size: 14, color: TossDesignSystem.warningOrange),
                         const SizedBox(width: 4),
                         Text(
                           eventInfo.auspiciousName!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.amber.shade800,
+                            color: TossDesignSystem.warningOrange,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -380,7 +380,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                           Text(
                             '${eventInfo.auspiciousScore}점',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.amber.shade800,
+                              color: TossDesignSystem.warningOrange,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -399,14 +399,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: Colors.grey,
+                  color: TossDesignSystem.gray600,
                   size: 16,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '과거 날짜입니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
               ],
@@ -418,14 +418,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
               children: [
                 Icon(
                   Icons.warning_amber_outlined,
-                  color: Colors.orange,
+                  color: TossDesignSystem.warningOrange,
                   size: 16,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '운세는 30일 후까지만 볼 수 있습니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.orange,
+                    color: TossDesignSystem.warningOrange,
                   ),
                 ),
               ],
@@ -467,7 +467,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
               ),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.gray900.withOpacity(0.1),
+                  color: TossDesignSystem.gray900.withValues(alpha:0.1),
                   blurRadius: 20,
                   offset: const Offset(0, -5),
                 ),
@@ -518,7 +518,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       child: Text(
         '운세를 확인할 날짜를 선택해주세요',
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.7),
+          color: theme.colorScheme.onSurface.withValues(alpha:0.7),
         ),
         textAlign: TextAlign.center,
       ),
@@ -556,14 +556,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           onPageChanged: _onPageChanged,
           calendarStyle: CalendarStyle(
             outsideDaysVisible: false,
-            weekendTextStyle: const TextStyle(color: Colors.red),
-            holidayTextStyle: const TextStyle(color: Colors.red),
+            weekendTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
+            holidayTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
             selectedDecoration: BoxDecoration(
               color: AppTheme.primaryColor,
               shape: BoxShape.circle,
             ),
             todayDecoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.7),
+              color: AppTheme.primaryColor.withValues(alpha:0.7),
               shape: BoxShape.circle,
             ),
           ),
@@ -590,8 +590,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             titleTextFormatter: (date, locale) => DateFormat('yyyy년 M월', 'ko_KR').format(date),
           ),
           daysOfWeekStyle: DaysOfWeekStyle(
-            weekdayStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7)),
-            weekendStyle: TextStyle(color: Colors.red.withOpacity(0.7)),
+            weekdayStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha:0.7)),
+            weekendStyle: TextStyle(color: TossDesignSystem.errorRed.withValues(alpha:0.7)),
           ),
           daysOfWeekHeight: 40,
           locale: 'ko_KR',
@@ -612,7 +612,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         color: theme.scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.gray900.withOpacity(0.05),
+            color: TossDesignSystem.gray900.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -629,7 +629,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         size: TossButtonSize.large,
         isLoading: _isLoadingFortune,
         isEnabled: canGetFortune && !_isLoadingFortune,
-        icon: !_isLoadingFortune ? const Icon(Icons.auto_awesome, size: 20, color: Colors.white) : null,
+        icon: !_isLoadingFortune ? const Icon(Icons.auto_awesome, size: 20, color: TossDesignSystem.white) : null,
         width: double.infinity,
       ),
     );

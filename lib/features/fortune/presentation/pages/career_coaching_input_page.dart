@@ -142,7 +142,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
@@ -152,7 +152,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new, 
-            color: isDark ? Colors.white : Colors.black),
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -258,7 +258,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                   ),
                   child: const Icon(
                     Icons.work_outline,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 28,
                   ),
                 ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
@@ -463,7 +463,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                   ),
                   child: const Icon(
                     Icons.rocket_launch,
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     size: 28,
                   ),
                 ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
@@ -526,7 +526,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                         goal.title,
                         style: TossDesignSystem.body2.copyWith(
                           color: _shortTermGoal == goal.id
-                            ? Colors.white
+                            ? TossDesignSystem.white
                             : TossDesignSystem.gray800,
                           fontWeight: _shortTermGoal == goal.id
                             ? FontWeight.bold
@@ -571,7 +571,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                     value.title,
                     style: TossDesignSystem.body2.copyWith(
                       color: _coreValue == value.id
-                        ? Colors.white
+                        ? TossDesignSystem.white
                         : TossDesignSystem.gray800,
                       fontWeight: _coreValue == value.id
                         ? FontWeight.bold
@@ -686,11 +686,11 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               ),
               child: const Icon(
                 Icons.auto_awesome,
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 size: 48,
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.3))
+              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withOpacity(0.3))
               .rotate(duration: 3000.ms),
             
             const SizedBox(height: 32),

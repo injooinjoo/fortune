@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'base_fortune_page_v2.dart';
@@ -58,7 +59,7 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
         Text(
           '당신과 닮은 연예인을 찾아보세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha:0.8),
             height: 1.5)),
         const SizedBox(height: 24),
         
@@ -257,18 +258,18 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha:0.2),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 3)),
+                    border: Border.all(color: TossDesignSystem.white, width: 3)),
                   child: const Icon(
                     Icons.person,
                     size: 60,
-                    color: Colors.white)),
+                    color: TossDesignSystem.white)),
                 const SizedBox(height: 16),
                 Text(
                   celebrityName,
                   style: theme.textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 28 + _getFontSizeOffset(fontSize)),
                 ),
@@ -276,7 +277,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                 Text(
                   '$matchPercentage% 일치',
                   style: theme.textTheme.headlineLarge?.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 36 + _getFontSizeOffset(fontSize)),
                 ),
@@ -284,13 +285,13 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Text(
                     '닮은꼴 연예인',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w600)),
                 ),
               ],
@@ -383,7 +384,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.star, color: Colors.amber),
+                      const Icon(Icons.star, color: TossDesignSystem.warningOrange),
                       const SizedBox(width: 8),
                       Text(
                         '연예인 특징',
@@ -398,13 +399,13 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                     children: celebrityTraits.map((trait) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.2),
+                        color: TossDesignSystem.warningOrange.withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         trait.toString(),
                         style: TextStyle(
-                          color: Colors.amber.shade900,
+                          color: TossDesignSystem.warningOrange,
                           fontWeight: FontWeight.w500)),
                     )).toList(),
                   ),

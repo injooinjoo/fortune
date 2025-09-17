@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -33,37 +34,37 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
   final Map<int, Map<String, dynamic>> weekdayMeanings = {
     1: {
       'day': '월요일', 'planet': '달', 'element': '물', 'characteristics': ['감성적', '직관적', '배려심', '창의적'],
-      'color': Colors.blue,
+      'color': TossDesignSystem.tossBlue,
       'gemstone': '진주',
     },
     2: {
       'day': '화요일', 'planet': '화성', 'element': '불', 'characteristics': ['열정적', '도전적', '리더십', '용기'],
-      'color': Colors.red,
+      'color': TossDesignSystem.error,
       'gemstone': '루비',
     },
     3: {
       'day': '수요일', 'planet': '수성', 'element': '공기', 'characteristics': ['지적', '소통', '적응력', '다재다능'],
-      'color': Colors.green,
+      'color': TossDesignSystem.success,
       'gemstone': '에메랄드',
     },
     4: {
       'day': '목요일', 'planet': '목성', 'element': '나무', 'characteristics': ['관대함', '낙천적', '성장', '지혜'],
-      'color': Colors.purple,
+      'color': TossDesignSystem.purple,
       'gemstone': '자수정',
     },
     5: {
       'day': '금요일', 'planet': '금성', 'element': '금속', 'characteristics': ['예술적', '조화', '사랑', '아름다움'],
-      'color': Colors.pink,
+      'color': TossDesignSystem.pinkPrimary,
       'gemstone': '다이아몬드',
     },
     6: {
       'day': '토요일', 'planet': '토성', 'element': '흙', 'characteristics': ['책임감', '인내심', '실용적', '안정'],
-      'color': Colors.brown,
+      'color': TossDesignSystem.brownPrimary,
       'gemstone': '흑요석',
     },
     7: {
       'day': '일요일', 'planet': '태양', 'element': '빛', 'characteristics': ['활력', '자신감', '창조성', '카리스마'],
-      'color': Colors.orange,
+      'color': TossDesignSystem.warningOrange,
       'gemstone': '토파즈',
     },
   };
@@ -175,21 +176,21 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                     weekdayMeanings[_selectedDate!.weekday]!['day'],
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[600],
+                      color: TossDesignSystem.gray600,
                     ),
                   ),
                 ] else ...[
                   const Icon(
                     Icons.calendar_today,
                     size: 48,
-                    color: Colors.grey,
+                    color: TossDesignSystem.gray500,
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     '생년월일을 선택해주세요',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey,
+                      color: TossDesignSystem.gray500,
                     ),
                   ),
                 ],
@@ -246,7 +247,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -295,7 +296,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         children: [
           Text(
             label,
-            style: TextStyle(color: Colors.grey[600])
+            style: TextStyle(color: TossDesignSystem.gray600)
           ),
           Text(
             value,
@@ -333,8 +334,8 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                Theme.of(context).colorScheme.secondary.withOpacity(0.1)
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1)
               ]
             ),
             borderRadius: BorderRadius.circular(12),
@@ -345,7 +346,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                   shape: BoxShape.circle
                 ),
                 child: Center(
@@ -373,7 +374,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[600]
+                  color: TossDesignSystem.gray600
                 ),
               ),
             ],
@@ -385,9 +386,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: TossDesignSystem.gray200),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -415,7 +416,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 children: (weekdayInfo['characteristics'] as List<String>)
                     .map((trait) => Chip(
                           label: Text(trait),
-                          backgroundColor: (weekdayInfo['color'] as Color).withOpacity(0.3),
+                          backgroundColor: (weekdayInfo['color'] as Color).withValues(alpha: 0.3),
                         )).toList(),
               ),
               const SizedBox(height: 16),
@@ -436,9 +437,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: TossDesignSystem.gray200),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,19 +452,19 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildAnalysisRow('강점', lifePathInfo['strength']!, Colors.green),
+              _buildAnalysisRow('강점', lifePathInfo['strength']!, TossDesignSystem.success),
               const SizedBox(height: 12),
-              _buildAnalysisRow('약점', lifePathInfo['weakness']!, Colors.orange),
+              _buildAnalysisRow('약점', lifePathInfo['weakness']!, TossDesignSystem.warningOrange),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.lightbulb, color: Colors.blue),
+                    const Icon(Icons.lightbulb, color: TossDesignSystem.tossBlue),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -484,9 +485,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -521,14 +522,14 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600]
+            color: TossDesignSystem.gray600
           ),
         ),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -550,7 +551,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           width: 60,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(

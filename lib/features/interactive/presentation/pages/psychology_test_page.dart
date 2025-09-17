@@ -9,6 +9,7 @@ import '../../../../core/constants/api_endpoints.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 // Psychology test questions
 final psychologyQuestions = [
@@ -604,10 +605,10 @@ class _TestResultView extends ConsumerWidget {
   });
 
   Color _getLuckColor(int score) {
-    if (score >= 85) return Colors.green;
-    if (score >= 70) return Colors.blue;
-    if (score >= 55) return Colors.orange;
-    return Colors.red;
+    if (score >= 85) return TossDesignSystem.successGreen;
+    if (score >= 70) return TossDesignSystem.tossBlue;
+    if (score >= 55) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getLuckText(int score) {

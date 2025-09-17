@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
@@ -225,7 +226,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Container(
@@ -289,7 +290,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFEC4899).withOpacity(0.3),
+                              color: const Color(0xFFEC4899).withValues(alpha:0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -297,7 +298,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         ),
                         child: const Icon(
                           Icons.favorite,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           size: 36,
                         ),
                       ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
@@ -335,7 +336,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: TossTheme.primaryBlue.withOpacity(0.1),
+                        color: TossTheme.primaryBlue.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -481,13 +482,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           const Icon(
                             Icons.favorite,
                             size: 16,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             '상대방',
                             style: TossTheme.body2.copyWith(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -700,7 +701,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: TossTheme.primaryBlue.withOpacity(0.1),
+                        color: TossTheme.primaryBlue.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -780,7 +781,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEC4899).withOpacity(0.1),
+                        color: const Color(0xFFEC4899).withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -826,7 +827,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: TossTheme.success.withOpacity(0.1),
+                          color: TossTheme.success.withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(

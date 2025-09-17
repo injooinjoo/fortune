@@ -6,6 +6,7 @@ import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class BottomSheetDatePicker extends StatefulWidget {
   final DateTime? initialDate;
@@ -19,7 +20,7 @@ class BottomSheetDatePicker extends StatefulWidget {
   static Future<DateTime?> show(BuildContext context, {DateTime? initialDate}) {
     return showModalBottomSheet<DateTime>(
       context: context,
-      backgroundColor: Colors.transparent, // Keep transparent for overlay,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0), // Keep transparent for overlay,
     isScrollControlled: true),
     builder: (context) => BottomSheetDatePicker(
         initialDate: initialDate);

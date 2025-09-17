@@ -3,6 +3,7 @@ import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class DreamProgressIndicator extends StatefulWidget {
   final int currentStep;
@@ -37,14 +38,14 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
           Container(
             height: 8,
             decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.2),
+              color: TossDesignSystem.gray400.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(4),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: (widget.currentStep + 1) / widget.totalSteps,
-                backgroundColor: Colors.transparent,
+                backgroundColor: TossDesignSystem.transparent,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   theme.primaryColor,
                 ),
@@ -65,7 +66,7 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
                 decoration: BoxDecoration(
                   color: index <= widget.currentStep
                       ? theme.primaryColor
-                      : Colors.grey.withValues(alpha: 0.3),
+                      : TossDesignSystem.gray400.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: index == widget.currentStep
                       ? [
@@ -82,8 +83,8 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
                     '${index + 1}',
                     style: TextStyle(
                       color: index <= widget.currentStep
-                          ? Colors.white
-                          : Colors.grey,
+                          ? TossDesignSystem.white
+                          : TossDesignSystem.gray400,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -126,7 +127,7 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
               Text(
                 '${widget.currentStep + 1} / ${widget.totalSteps}',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.withValues(alpha: 0.7),
+                  color: TossDesignSystem.gray400.withValues(alpha: 0.7),
                 ),
               ),
               
@@ -215,7 +216,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
       builder: (context, child) {
         return LinearProgressIndicator(
           value: _animation.value,
-          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+          backgroundColor: TossDesignSystem.gray400.withValues(alpha: 0.2),
           valueColor: AlwaysStoppedAnimation<Color>(widget.color),
         );
       },

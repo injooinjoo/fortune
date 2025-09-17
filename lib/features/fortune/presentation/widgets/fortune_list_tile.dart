@@ -39,7 +39,7 @@ class FortuneListTile extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                 boxShadow: [
                   BoxShadow(
-                    color: gradientColors.first.withOpacity(0.25),
+                    color: gradientColors.first.withValues(alpha: 0.25),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -51,7 +51,7 @@ class FortuneListTile extends ConsumerWidget {
                     child: Icon(
                       category.icon,
                       size: 24,
-                      color: Colors.white.withOpacity(0.9),
+                      color: TossDesignSystem.white.withValues(alpha: 0.9),
                     ),
                   ),
                   // Small decorative element
@@ -63,7 +63,7 @@ class FortuneListTile extends ConsumerWidget {
                       height: 20,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.15),
+                        color: TossDesignSystem.white.withValues(alpha: 0.15),
                       ),
                     ),
                   ),
@@ -95,7 +95,7 @@ class FortuneListTile extends ConsumerWidget {
                           child: Text(
                             'NEW',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold)),
                         ),
@@ -108,7 +108,7 @@ class FortuneListTile extends ConsumerWidget {
                           child: const Icon(
                             Icons.star_rounded,
                             size: 12,
-                            color: Colors.white),
+                            color: TossDesignSystem.white),
                         ),
                     ],
                   ),
@@ -116,7 +116,7 @@ class FortuneListTile extends ConsumerWidget {
                   Text(
                     category.description,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity( 0.7)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
                 ],
@@ -125,7 +125,7 @@ class FortuneListTile extends ConsumerWidget {
             const SizedBox(width: TossDesignSystem.spacingS),
             Icon(
               Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withOpacity( 0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               size: 24),
           ],
         ),

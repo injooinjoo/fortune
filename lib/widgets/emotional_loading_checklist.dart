@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 
 import '../presentation/providers/navigation_visibility_provider.dart';
+import '../core/theme/toss_design_system.dart';
 
 /// 최적화된 감성적인 로딩 체크리스트 위젯 (픽셀 깨짐 방지)
 class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
@@ -217,7 +218,7 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
                 const Color(0xFF0f1624),
               ]
             : [
-                Colors.white,
+                TossDesignSystem.white,
                 const Color(0xFFF5F5F5),
               ],
         ),
@@ -344,13 +345,13 @@ class _OptimizedStepItem extends StatelessWidget {
             shape: BoxShape.circle,
             color: isCompleted 
               ? const Color(0xFF52C41A).withValues(alpha: 0.15)
-              : Colors.transparent,
+              : TossDesignSystem.transparent,
             border: Border.all(
               color: isCompleted
                 ? const Color(0xFF52C41A)
-                : isActive 
-                  ? (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.6)
-                  : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.3),
+                : isActive
+                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.6)
+                  : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.3),
               width: isCompleted ? 2.5 : isActive ? 2.2 : 1.8,
             ),
           ),
@@ -373,7 +374,7 @@ class _OptimizedStepItem extends StatelessWidget {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black54
+                                  isDark ? TossDesignSystem.white.withValues(alpha: 0.7) : TossDesignSystem.gray600
                                 ),
                               ),
                             )
@@ -404,8 +405,8 @@ class _OptimizedStepItem extends StatelessWidget {
                   fontSize: isActive ? 18 : 16,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
-                    ? (isDark ? Colors.white : Colors.black87)
-                    : (isDark ? Colors.white : Colors.black87).withValues(alpha: 0.5),
+                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+                    : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.5),
                   height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
                 ),
               ),
@@ -419,7 +420,7 @@ class _OptimizedStepItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black87)
+                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
                           .withValues(alpha: 0.6),
                       height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
                     ),

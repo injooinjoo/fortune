@@ -76,7 +76,7 @@ class _CognitiveQuestCardState extends State<CognitiveQuestCard>
                 border: Border.all(
                   color: _isCompleted 
                       ? TossDesignSystem.successGreen.withOpacity(0.3)
-                      : Colors.transparent,
+                      : TossDesignSystem.transparent,
                   width: 2,
                 ),
               ),

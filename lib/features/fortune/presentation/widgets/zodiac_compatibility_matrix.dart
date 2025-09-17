@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
@@ -76,7 +77,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
       children: [
         Icon(
           Icons.grid_on,
-          color: Colors.purple,
+          color: TossDesignSystem.purple,
           size: 24,
         ),
         const SizedBox(width: 8),
@@ -85,7 +86,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: TossDesignSystem.white,
           ),
         ),
       ],
@@ -116,8 +117,8 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: _hoveredCol == col
-                                  ? Colors.amber
-                                  : Colors.white.withOpacity(0.8)),
+                                  ? TossDesignSystem.warningYellow
+                                  : TossDesignSystem.white.withOpacity(0.8)),
                           ),
                         ),
                       ),
@@ -140,8 +141,8 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: _hoveredRow == row
-                              ? Colors.amber
-                              : Colors.white.withOpacity(0.8),
+                              ? TossDesignSystem.warningYellow
+                              : TossDesignSystem.white.withOpacity(0.8),
                         ),
                       ),
                     ),
@@ -177,8 +178,8 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: isSelected
-                                      ? Colors.white
-                                      : Colors.transparent,
+                                      ? TossDesignSystem.white
+                                      : TossDesignSystem.transparent,
                                   width: isSelected ? 2 : 0),
                                 boxShadow: (isSelected || isHovered) ? [
                                   BoxShadow(
@@ -194,7 +195,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                     fontWeight: isHovered
                                         ? FontWeight.bold
                                         : FontWeight.normal,
-                                    color: Colors.white,
+                                    color: TossDesignSystem.white,
                                   ),
                                 ),
                               ),
@@ -220,7 +221,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
         child: Text(
           '매트릭스에서 두 띠를 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withOpacity(0.6),
             fontSize: 14,
           ),
           textAlign: TextAlign.center,
@@ -278,7 +279,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
               description,
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 height: 1.5),
               textAlign: TextAlign.center)),
           const SizedBox(height: 16),
@@ -299,12 +300,12 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white)),
+            color: TossDesignSystem.white)),
         Text(
           '${info['hanja']} · ${info['element']}',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.8)))]);
+            color: TossDesignSystem.white.withOpacity(0.8)))]);
   }
 
   Widget _buildDetailedAnalysis() {
@@ -343,13 +344,13 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
   Widget _buildAnalysisItem(String title, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.6), size: 24),
+        Icon(icon, color: TossDesignSystem.white.withOpacity(0.6), size: 24),
         const SizedBox(height: 4),
         Text(
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withOpacity(0.6),
           ),
         ),
         const SizedBox(height: 2),
@@ -358,7 +359,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.white))]);
+            color: TossDesignSystem.white))]);
   }
 
   String _analyzeTraitCompatibility(List<String> traits1, List<String> traits2) {
@@ -392,11 +393,11 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
   }
 
   Color _getCompatibilityColor(double compatibility) {
-    if (compatibility >= 0.9) return Colors.green;
-    if (compatibility >= 0.8) return Colors.blue;
-    if (compatibility >= 0.6) return Colors.amber;
-    if (compatibility >= 0.4) return Colors.orange;
-    return Colors.red;
+    if (compatibility >= 0.9) return TossDesignSystem.successGreen;
+    if (compatibility >= 0.8) return TossDesignSystem.tossBlue;
+    if (compatibility >= 0.6) return TossDesignSystem.warningYellow;
+    if (compatibility >= 0.4) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getZodiacEmoji(String zodiac) {

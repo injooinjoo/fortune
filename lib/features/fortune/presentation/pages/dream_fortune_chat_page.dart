@@ -9,6 +9,7 @@ import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/ad_service.dart';
 import '../providers/dream_chat_provider.dart';
 import '../widgets/dream_chat_bubble.dart';
@@ -199,7 +200,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
             // Loading overlay
             if (chatState.isAnalyzing)
               Container(
-                color: Colors.white.withOpacity(0.8),
+                color: TossDesignSystem.white.withValues(alpha: 0.8),
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: TossTheme.primaryBlue,

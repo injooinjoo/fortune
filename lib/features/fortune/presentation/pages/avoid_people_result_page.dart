@@ -24,7 +24,7 @@ class AvoidPeopleResultPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -137,7 +137,7 @@ class AvoidPeopleResultPage extends ConsumerWidget {
                 Text(
                   '${riskLevel * 20}%',
                   style: TossDesignSystem.heading2.copyWith(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -147,8 +147,8 @@ class AvoidPeopleResultPage extends ConsumerWidget {
                   child: CircularProgressIndicator(
                     value: riskLevel / 5,
                     strokeWidth: 3,
-                    backgroundColor: Colors.white.withOpacity(0.2),
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    backgroundColor: TossDesignSystem.white.withValues(alpha: 0.2),
+                    valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white),
                   ),
                 ),
               ],
@@ -474,7 +474,7 @@ class AvoidPeopleResultPage extends ConsumerWidget {
                 ),
                 child: const Icon(
                   Icons.tips_and_updates_rounded,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 20,
                 ),
               ),

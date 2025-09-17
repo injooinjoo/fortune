@@ -265,7 +265,7 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
                   child: Text(
                     _heavenlyStems[index],
                     style: TossTheme.caption.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -301,7 +301,7 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
                   color: _getBranchColor(index).withOpacity(0.7),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.5),
+                    color: TossDesignSystem.white.withValues(alpha: 0.5),
                     width: 1,
                   ),
                 ),
@@ -309,7 +309,7 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
                   child: Text(
                     _earthlyBranches[index],
                     style: TossTheme.caption.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -347,7 +347,7 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
         child: Text(
           '사주\n팔자',
           style: TossTheme.caption.copyWith(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             fontWeight: FontWeight.bold,
             height: 1.2,
           ),

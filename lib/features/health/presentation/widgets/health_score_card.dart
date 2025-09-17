@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class HealthScoreCard extends StatefulWidget {
   final int score; // 0-100
@@ -95,25 +96,25 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _scoreColor.withOpacity(0.1),
-              _scoreColor.withOpacity(0.05),
-              Colors.white,
+              _scoreColor.withValues(alpha: 0.1),
+              _scoreColor.withValues(alpha: 0.05),
+              TossDesignSystem.white,
             ],
           ),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _scoreColor.withOpacity(0.2),
+            color: _scoreColor.withValues(alpha: 0.2),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: _scoreColor.withOpacity(0.1),
+              color: _scoreColor.withValues(alpha: 0.1),
               offset: const Offset(0, 8),
               blurRadius: 24,
               spreadRadius: 0,
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: TossDesignSystem.black.withValues(alpha: 0.04),
               offset: const Offset(0, 2),
               blurRadius: 8,
               spreadRadius: 0,
@@ -147,7 +148,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                         child: CustomPaint(
                           painter: _CircularProgressPainter(
                             progress: _progressAnimation.value,
-                            backgroundColor: Colors.grey.withOpacity(0.1),
+                            backgroundColor: TossDesignSystem.gray500.withValues(alpha: 0.1),
                             progressColor: _scoreColor,
                             strokeWidth: 12,
                           ),
@@ -192,10 +193,10 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
+                color: TossDesignSystem.white.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: _scoreColor.withOpacity(0.2),
+                  color: _scoreColor.withValues(alpha: 0.2),
                 ),
               ),
               child: Text(

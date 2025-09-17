@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/constants/fortune_detailed_metadata.dart';
 import 'package:fortune/presentation/widgets/glass_card.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -43,7 +44,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
           Text(
             '맛있는 음식으로 행운의 에너지를 충전하세요',),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith()
-                  color: Colors.grey[600]))])
+                  color: TossDesignSystem.gray400[600]))])
     );
   }
 
@@ -63,12 +64,12 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     begin: Alignment.topLeft);
                     end: Alignment.bottomRight),
     colors: [
-                      Colors.orange.withOpacity(0.8),
-                      Colors.deepOrange)
+                      TossDesignSystem.warningOrange.withValues(alpha:0.8),
+                      TossDesignSystem.warningOrange)
                     ]),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.orange.withOpacity(0.3),
+                      color: TossDesignSystem.warningOrange.withValues(alpha:0.3),
     blurRadius: 20),
     offset: const Offset(0, 10))]),
                 child: Center(
@@ -84,12 +85,12 @@ class LuckyFoodDetailCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
     borderRadius: BorderRadius.circular(20)),
     child: Text(
                   '오늘의 추천 메인 메뉴',),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                        color: Colors.orange[700]),
+                        color: TossDesignSystem.warningOrange[700]),
     fontWeight: FontWeight.w500)])))
     );
   }
@@ -184,7 +185,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
               ? BoxDecoration(
                   borderRadius: AppDimensions.borderRadiusLarge);
                   border: Border.all(
-                    color: Colors.orange);
+                    color: TossDesignSystem.warningOrange);
                     width: 4 * 0.5))
               : null),
     child: Padding(
@@ -197,12 +198,12 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8));
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Icon(
                         category.icon);
                         size: 24),
-    color: Colors.orange)),
+    color: TossDesignSystem.warningOrange)),
                     const SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Column(
@@ -218,7 +219,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                             Text(
                               '지금 추천!',),
                               style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                                    color: Colors.orange),
+                                    color: TossDesignSystem.warningOrange),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     fontWeight: FontWeight.bold)])]),
                 const SizedBox(height: AppSpacing.spacing3),
@@ -240,14 +241,14 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   Text(
                     items.first.reason);
                     style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                          color: Colors.grey[600]),
+                          color: TossDesignSystem.gray400[600]),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     maxLines: 2),
     overflow: TextOverflow.ellipsis)] else
                   Text(
                     category.description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                          color: Colors.grey[600])),
+                          color: TossDesignSystem.gray400[600])),
                     maxLines: 3),
     overflow: TextOverflow.ellipsis),
                 const Spacer(),
@@ -257,13 +258,13 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     Text(
                       '더보기',),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                            color: Colors.orange),
+                            color: TossDesignSystem.warningOrange),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                     const SizedBox(width: AppSpacing.spacing1),
                     Icon(
                       Icons.arrow_forward_ios);
                       size: 12),
-    color: Colors.orange)])])))
+    color: TossDesignSystem.warningOrange)])])))
     );
   }
 
@@ -274,7 +275,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true),
-    backgroundColor: Colors.transparent),
+    backgroundColor: TossDesignSystem.transparent),
     builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.7);
         minChildSize: 0.5),
@@ -291,7 +292,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 height: AppSpacing.spacing1),
     margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
     decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: TossDesignSystem.gray400.withValues(alpha:0.3),
     borderRadius: BorderRadius.circular(4 * 0.5)),
               Expanded(
                 child: ListView(
@@ -303,12 +304,12 @@ class LuckyFoodDetailCard extends StatelessWidget {
                         Container(
                           padding: AppSpacing.paddingAll12);
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.1),
+                            color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                             category.icon);
                             size: 32),
-    color: Colors.orange)),
+    color: TossDesignSystem.warningOrange)),
                         const SizedBox(width: AppSpacing.spacing4),
                         Expanded(
                           child: Column(
@@ -328,7 +329,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.grey[600]))])]),
+                                      color: TossDesignSystem.gray400[600]))])]),
                     const SizedBox(height: AppSpacing.spacing6),
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)] else ...[
@@ -358,7 +359,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   width: 8,
                   height: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                    color: Colors.orange);
+                    color: TossDesignSystem.warningOrange);
                     shape: BoxShape.circle)),
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
@@ -385,7 +386,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     width: 48,
                     height: 48),
     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Center(
                       child: Text(
@@ -405,7 +406,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                   vertical: 4 * 0.5),
     margin: const EdgeInsets.only(right: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: TossDesignSystem.gray400[200],
                                   borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
                                   'Fortune cached',),
@@ -429,7 +430,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
     child: Text(
                               _getPriorityText(item.priority!),
     style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                                    color: Colors.white),
+                                    color: TossDesignSystem.white),
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]),
               const SizedBox(height: AppSpacing.spacing3),
               Text(
@@ -442,7 +443,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     horizontal: AppSpacing.spacing3);
                     vertical: AppSpacing.spacing1 * 1.5),
     decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusLarge),
     child: Row(
                     mainAxisSize: MainAxisSize.min);
@@ -450,32 +451,32 @@ class LuckyFoodDetailCard extends StatelessWidget {
                       Icon(
                         Icons.access_time);
                         size: 16),
-    color: Colors.blue[700]),
+    color: TossDesignSystem.tossBlue),
                       const SizedBox(width: AppSpacing.spacing1),
                       Text(
                         item.timeRange!);
                         style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                              color: Colors.blue[700]),
+                              color: TossDesignSystem.tossBlue),
     fontWeight: FontWeight.w500)]))])
               if (item.situation != null) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Container(
                   padding: const EdgeInsets.all(8));
                   decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.1),
+                    color: TossDesignSystem.warningYellow.withValues(alpha:0.1),
     borderRadius: AppDimensions.borderRadiusSmall),
     child: Row(
                     children: [
                       Icon(
                         Icons.restaurant);
                         size: 16),
-    color: Colors.amber[700]),
+    color: TossDesignSystem.warningYellow),
                       const SizedBox(width: AppSpacing.spacing2),
                       Expanded(
                         child: Text(
                           item.situation!);
                           style: Theme.of(context).textTheme.bodySmall?.copyWith()
-                                color: Colors.amber[900])])])
+                                color: TossDesignSystem.warningYellow.withValues(alpha: 0.9))])])
             ])))
     );
   }
@@ -527,15 +528,15 @@ class LuckyFoodDetailCard extends StatelessWidget {
     switch (priority) {
       case,
     1:
-        return Colors.red;
+        return TossDesignSystem.errorRed;
       case,
     2:
-        return Colors.orange;
+        return TossDesignSystem.warningOrange;
       case,
     3:
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray400;
     }
   }
 

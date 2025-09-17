@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -166,10 +167,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 }
     
     final directions = {
-      '동쪽': {'angle': 0.0, 'color': Colors.blue},
-      '서쪽': {'angle': 180.0, 'color': Colors.orange},
-      '남쪽': {'angle': 90.0, 'color': Colors.red},
-      '북쪽': {'angle': 270.0, 'color': Colors.purple}};
+      '동쪽': {'angle': 0.0, 'color': TossDesignSystem.primaryBlue},
+      '서쪽': {'angle': 180.0, 'color': TossDesignSystem.warningOrange},
+      '남쪽': {'angle': 90.0, 'color': TossDesignSystem.errorRed},
+      '북쪽': {'angle': 270.0, 'color': TossDesignSystem.purple}};
     
     return Positioned.fill(
       child: IgnorePointer(
@@ -208,7 +209,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       borderRadius: AppDimensions.borderRadiusMedium,
                     ),
                     filled: true,
-                    fillColor: Colors.grey.withOpacity(0.9),
+                    fillColor: TossDesignSystem.gray400.withValues(alpha:0.9),
                   ),
                   onSubmitted: _searchLocation,
                 ),
@@ -219,7 +220,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 onPressed: _isLoading ? null : _getCurrentLocation,
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
+                  foregroundColor: TossDesignSystem.white,
                 ),
               ),
             ],
@@ -264,7 +265,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               _buildDirectionOverlay(),
               if (_isLoading)
                 Container(
-                  color: Colors.black26,
+                  color: TossDesignSystem.black26,
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -279,10 +280,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             width: double.infinity,
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.9),
+              color: TossDesignSystem.gray400.withValues(alpha:0.9),
               border: Border(
                 top: BorderSide(
-                  color: Colors.grey.withOpacity(0.5),
+                  color: TossDesignSystem.gray400.withValues(alpha:0.5),
                 ),
               ),
             ),
@@ -331,8 +332,8 @@ class DirectionOverlayPainter extends CustomPainter {
       
       final paint = Paint()
         ..color = isAuspicious 
-            ? color.withOpacity(0.4) 
-            : Colors.grey.withOpacity(0.2)
+            ? color.withValues(alpha:0.4) 
+            : TossDesignSystem.gray400.withValues(alpha:0.2)
         ..style = PaintingStyle.fill;
       
       // 방향별 섹터 그리기
@@ -354,7 +355,7 @@ class DirectionOverlayPainter extends CustomPainter {
           text: direction,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.black,
+            color: TossDesignSystem.black,
             fontWeight: FontWeight.bold)),
         textDirection: TextDirection.ltr);
       textPainter.layout();

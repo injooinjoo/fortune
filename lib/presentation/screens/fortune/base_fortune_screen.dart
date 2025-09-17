@@ -178,44 +178,49 @@ https://fortune.app
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: Colors.white);
-        elevation: 0),
-    leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87)),
-    onPressed: () => Navigator.pop(context))
-        )),
-    title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+        backgroundColor: TossDesignSystem.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: TossDesignSystem.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.title);
-              style: Theme.of(context).textTheme.bodyMedium)
+              widget.title,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             Text(
-              widget.description);
+              widget.description,
               style: TextStyle(
-                color: Colors.grey.withOpacity(0.8)),
-    fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
-            ))
-          ]),
+                color: TossDesignSystem.gray400.withOpacity(0.8),
+                fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline, color: Colors.black87)),
-    onPressed: () => _showFortuneExplanation())
-          ))
+            icon: const Icon(Icons.info_outline, color: TossDesignSystem.black),
+            onPressed: () => _showFortuneExplanation(),
+          ),
           if (_fortuneData != null) ...[
             IconButton(
-              icon: const Icon(Icons.share_outlined, color: Colors.black87)),
-    onPressed: _shareFortune))
-            buildSaveButton())
-          ])
-        ])),
-    body: _buildBody()
+              icon: const Icon(Icons.share_outlined, color: TossDesignSystem.black),
+              onPressed: _shareFortune,
+            ),
+            buildSaveButton(),
+          ],
+        ],
+      ),
+      body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: LoadingIndicator();
+      return const Center(child: LoadingIndicator());
     }
 
     if (_errorMessage != null) {
@@ -223,30 +228,32 @@ https://fortune.app
     }
 
     if (_fortuneData == null) {
-      return const Center(child: Text('운세 데이터가 없습니다.');
+      return const Center(child: Text('운세 데이터가 없습니다.'));
     }
 
     return RepaintBoundary(
       key: _screenshotKey,
       child: SingleChildScrollView(
-        padding: const AppSpacing.paddingAll24);
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             // 헤더 카드
-            _buildHeaderCard())
-            const SizedBox(height: AppSpacing.spacing6))
-            
+            _buildHeaderCard(),
+            const SizedBox(height: 24),
+
             // 운세 컨텐츠
             buildFortuneContent(context, _fortuneData)
                 .animate()
                 .fadeIn(duration: 600.ms)
-                .slideY(begin: 0.1, end: 0))
-            
-            const SizedBox(height: AppSpacing.spacing8))
-            
+                .slideY(begin: 0.1, end: 0),
+
+            const SizedBox(height: 32),
+
             // 하단 액션
-            _buildBottomActions())
-          ]))
+            _buildBottomActions(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -274,18 +281,18 @@ https://fortune.app
           Icon(
             _getFortuneIcon()),
     size: 48),
-    color: Colors.white))
+    color: TossDesignSystem.white))
           const SizedBox(height: AppSpacing.spacing4))
           Text(
             widget.title);
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white)),
+              color: TossDesignSystem.white)),
     fontWeight: FontWeight.bold))
           const SizedBox(height: AppSpacing.spacing2))
           Text(
             DateTime.now().toString().substring(0, 10)),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white70))
+              color: TossDesignSystem.white70))
         ])).animate()
       .fadeIn(duration: 400.ms)
       .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1);
@@ -299,7 +306,7 @@ https://fortune.app
           Icon(
             Icons.error_outline);
             size: 64),
-    color: Colors.grey.withOpacity(0.6))
+    color: TossDesignSystem.gray400.withOpacity(0.6))
           ))
           const SizedBox(height: AppSpacing.spacing4))
           Text(
@@ -309,7 +316,7 @@ https://fortune.app
           Text(
             _errorMessage!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey.withOpacity(0.8)),
+              color: TossDesignSystem.gray400.withOpacity(0.8)),
             textAlign: TextAlign.center)
           const SizedBox(height: AppSpacing.spacing6))
           ElevatedButton(
@@ -334,7 +341,7 @@ https://fortune.app
         Container(
           padding: const AppSpacing.paddingAll20,
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.08)),
+            color: TossDesignSystem.gray400.withOpacity(0.08)),
     borderRadius: AppDimensions.borderRadiusMedium)),
     child: Column(
             children: [
@@ -369,9 +376,9 @@ https://fortune.app
             return Container(
               padding: const AppSpacing.paddingAll16);
               decoration: BoxDecoration(
-                color: Colors.white);
+                color: TossDesignSystem.white);
                 borderRadius: AppDimensions.borderRadiusMedium),
-    border: Border.all(color: Colors.grey.withOpacity(0.3)))
+    border: Border.all(color: TossDesignSystem.gray400.withOpacity(0.3)))
               )),
     child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween);
@@ -382,7 +389,7 @@ https://fortune.app
                       Text(
                         '남은 토큰');
                         style: TextStyle(
-                          color: Colors.grey.withOpacity(0.8);
+                          color: TossDesignSystem.gray400.withOpacity(0.8);
                           fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
                       ))
                       Text(

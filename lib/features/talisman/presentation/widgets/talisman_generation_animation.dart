@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TalismanGenerationAnimation extends StatefulWidget {
   final TalismanCategory category;
@@ -108,9 +109,9 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  _categoryColor.withOpacity(0.3),
-                  _categoryColor.withOpacity(0.1),
-                  Colors.transparent,
+                  _categoryColor.withValues(alpha: 0.3),
+                  _categoryColor.withValues(alpha: 0.1),
+                  TossDesignSystem.white.withValues(alpha: 0.0),
                 ],
               ),
             ),
@@ -125,9 +126,9 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
                       height: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _categoryColor.withOpacity(0.2),
+                        color: _categoryColor.withValues(alpha: 0.2),
                         border: Border.all(
-                          color: _categoryColor.withOpacity(0.5),
+                          color: _categoryColor.withValues(alpha: 0.5),
                           width: 2,
                         ),
                       ),
@@ -143,7 +144,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
               ),
             ),
           ).animate(onPlay: (controller) => controller.repeat())
-            .shimmer(duration: 2000.ms, color: _categoryColor.withOpacity(0.3))
+            .shimmer(duration: 2000.ms, color: _categoryColor.withValues(alpha: 0.3))
             .then()
             .shake(duration: 500.ms),
           
@@ -227,7 +228,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
                     width: 6,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: _categoryColor.withOpacity(0.6),
+                      color: _categoryColor.withValues(alpha: 0.6),
                       shape: BoxShape.circle,
                     ),
                   ).animate(onPlay: (controller) => controller.repeat())

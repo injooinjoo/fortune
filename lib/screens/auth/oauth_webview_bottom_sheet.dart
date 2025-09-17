@@ -31,7 +31,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(25),
           topRight: Radius.circular(25),
@@ -43,14 +43,14 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: TossDesignSystem.gray900.withValues(alpha: 0.05),
                   offset: const Offset(0, 2),
                   blurRadius: 10,
                 ),
@@ -65,7 +65,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: TossDesignSystem.gray300,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -76,7 +76,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                 IconButton(
                   onPressed: widget.onCancel,
                   icon: const Icon(Icons.close),
-                  color: Colors.grey[600],
+                  color: TossDesignSystem.gray600,
                 ),
               ],
             ),
@@ -86,7 +86,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
           if (progress > 0 && progress < 1)
             LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: TossDesignSystem.gray200,
               valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
             ),
           
@@ -179,7 +179,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                 // Loading overlay
                 if (isLoading)
                   Container(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -191,7 +191,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                           Text(
                             'Google 로그인 페이지를 로드하는 중...',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: TossDesignSystem.gray600,
                               fontSize: 14,
                             ),
                           ),
@@ -219,7 +219,7 @@ Future<String?> showOAuthBottomSheet(
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
     builder: (context) => OAuthWebViewBottomSheet(
       oauthUrl: oauthUrl,
       redirectUrlScheme: redirectUrlScheme,

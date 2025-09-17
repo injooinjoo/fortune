@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 대운 타임라인 위젯
@@ -213,7 +214,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                               child: Text(
                                 '현재',
                                 style: TossTheme.caption.copyWith(
-                                  color: Colors.white,
+                                  color: TossDesignSystem.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 10,
                                 ),

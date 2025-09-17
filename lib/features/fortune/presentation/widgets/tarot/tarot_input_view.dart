@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
 import '../../../../../presentation/providers/font_size_provider.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 /// Simplified input view for tarot questions
 class TarotInputView extends ConsumerStatefulWidget {
@@ -117,17 +118,17 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.purple.withOpacity(0.1),
+            color: TossDesignSystem.purple.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.purple.withOpacity(0.3),
+              color: TossDesignSystem.purple.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.info_outline,
-                color: Colors.purple,
+                color: TossDesignSystem.purple,
                 size: 20,
               ),
               const SizedBox(width: 12),

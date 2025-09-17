@@ -27,9 +27,9 @@ class MbtiSynergyCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-              ? Colors.black.withOpacity(0.2)
-              : Colors.grey.withOpacity(0.08),
+            color: isDark
+              ? TossDesignSystem.black.withValues(alpha: 0.2)
+              : TossDesignSystem.gray400.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -81,7 +81,7 @@ class MbtiSynergyCard extends StatelessWidget {
             mbti: bestMatch['type'] as String? ?? '',
             score: bestMatch['score'] as int? ?? 0,
             reason: bestMatch['reason'] as String? ?? '',
-            color: TossDesignSystem.green,
+            color: TossDesignSystem.successGreen,
             icon: Icons.favorite,
           ),
           

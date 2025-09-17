@@ -5,6 +5,7 @@ import '../../../services/celebrity_crawling_service.dart';
 import '../../../core/components/toss_card.dart';
 import '../../../shared/components/toss_button.dart';
 import '../../../core/theme/toss_theme.dart';
+import '../../../core/theme/toss_design_system.dart';
 
 class CelebrityCrawlingPage extends ConsumerStatefulWidget {
   const CelebrityCrawlingPage({super.key});
@@ -36,8 +37,8 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           '유명인 정보 크롤링',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: TossDesignSystem.white,
+        foregroundColor: TossDesignSystem.black,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -102,7 +103,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 _buildStatItem(
                   '전체 유명인',
                   '${stats.totalCelebrities}명',
-                  Colors.grey[600]!,
+                  TossDesignSystem.gray600,
                 ),
                 const SizedBox(height: 12),
                 _buildStatItem(
@@ -121,7 +122,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                   _buildStatItem(
                     '마지막 크롤링',
                     _formatDateTime(stats.lastCrawledAt!),
-                    Colors.grey[600]!,
+                    TossDesignSystem.gray600,
                   ),
                 ],
               ],
@@ -131,7 +132,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ),
             error: (error, _) => Text(
               '통계 로드 실패: $error',
-              style: TextStyle(color: Colors.red[600]),
+              style: TextStyle(color: TossDesignSystem.error),
             ),
           ),
         ],
@@ -147,7 +148,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           label,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey[600],
+            color: TossDesignSystem.gray600,
           ),
         ),
         Text(
@@ -193,7 +194,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               hintText: '예: 송중기, 아이유, 손흥민',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: BorderSide(color: TossDesignSystem.gray300),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -263,7 +264,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               hintText: '송중기\n아이유\n손흥민\n...',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: BorderSide(color: TossDesignSystem.gray300),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -313,11 +314,11 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         statusIcon = Icons.sync;
         break;
       case CrawlingStatus.completed:
-        statusColor = Colors.green;
+        statusColor = TossDesignSystem.success;
         statusIcon = Icons.check_circle;
         break;
       case CrawlingStatus.error:
-        statusColor = Colors.red;
+        statusColor = TossDesignSystem.error;
         statusIcon = Icons.error;
         break;
       case CrawlingStatus.idle:
@@ -353,7 +354,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               state.message!,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey[700],
+                color: TossDesignSystem.gray700,
               ),
             ),
           
@@ -366,7 +367,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                   '진행률',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
                 Text(
@@ -381,7 +382,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             const SizedBox(height: 8),
             LinearProgressIndicator(
               value: state.total! > 0 ? state.current! / state.total! : 0,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: TossDesignSystem.gray300,
               valueColor: AlwaysStoppedAnimation(statusColor),
             ),
           ],
@@ -394,12 +395,12 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 _buildResultItem(
                   '성공',
                   '${state.result!.successCount}',
-                  Colors.green,
+                  TossDesignSystem.success,
                 ),
                 _buildResultItem(
                   '실패',
                   '${state.result!.failureCount}',
-                  Colors.red,
+                  TossDesignSystem.error,
                 ),
                 _buildResultItem(
                   '성공률',
@@ -442,7 +443,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: TossDesignSystem.gray600,
           ),
         ),
       ],

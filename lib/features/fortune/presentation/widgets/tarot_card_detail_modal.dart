@@ -24,7 +24,7 @@ class TarotCardDetailModal extends StatefulWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => TarotCardDetailModal(
         cardIndex: cardIndex,
         position: position));
@@ -87,7 +87,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           child: Container(
             height: screenHeight * 0.9,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.9),
+              color: TossDesignSystem.gray900.withValues(alpha: 0.9),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: Stack(
@@ -96,7 +96,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(color: Colors.transparent),
+                    child: Container(color: TossDesignSystem.transparent),
                   ),
                 ),
                 
@@ -109,7 +109,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: TossDesignSystem.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(4 * 0.5),
                       ),
                     ),
@@ -148,11 +148,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                   icon: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
+                                      color: TossDesignSystem.gray900.withValues(alpha: 0.5),
                                       shape: BoxShape.circle),
                                     child: const Icon(
                                       Icons.arrow_back_ios,
-                                      color: Colors.white,
+                                      color: TossDesignSystem.white,
                                       size: 20)),
                                   onPressed: () {
                                     _pageController.previousPage(
@@ -173,11 +173,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                   icon: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
+                                      color: TossDesignSystem.gray900.withValues(alpha: 0.5),
                                       shape: BoxShape.circle),
                                     child: const Icon(
                                       Icons.arrow_forward_ios,
-                                      color: Colors.white,
+                                      color: TossDesignSystem.white,
                                       size: 20)),
                                   onPressed: () {
                                     _pageController.nextPage(
@@ -242,7 +242,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingXXS * 1.5),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.3),
+                color: TossDesignSystem.purple.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(20)),
               child: Text(
                 widget.position!,
@@ -271,7 +271,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.3),
+                        color: TossDesignSystem.purple.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5)]),
                   child: ClipRRect(
@@ -290,8 +290,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingS),
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple.withOpacity(0.1),
-                  Colors.indigo.withOpacity(0.1)]),
+                  TossDesignSystem.purple.withValues(alpha: 0.1),
+                  TossDesignSystem.primaryBlue.withValues(alpha: 0.1)]),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -338,10 +338,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingXS),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.2),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.purple.withOpacity(0.3),
+                      color: TossDesignSystem.purple.withValues(alpha: 0.3),
                       width: 1)),
                   child: Text(
                     keyword,
@@ -383,7 +383,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               title: '정방향',
               meaning: cardInfo['uprightMeaning'],
               icon: Icons.arrow_upward,
-              color: Colors.green),
+              color: TossDesignSystem.successGreen),
             const SizedBox(height: TossDesignSystem.spacingM)],
           
           // Reversed meaning
@@ -392,7 +392,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               title: '역방향',
               meaning: cardInfo['reversedMeaning'],
               icon: Icons.arrow_downward,
-              color: Colors.orange),
+              color: TossDesignSystem.warningOrange),
             const SizedBox(height: TossDesignSystem.spacingM)],
           
           // Related cards
@@ -404,11 +404,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                 child: Row(
                   children: [
-                    const Icon(Icons.link, size: 16, color: Colors.purple),
+                    const Icon(Icons.link, size: 16, color: TossDesignSystem.purple),
                     const SizedBox(width: TossDesignSystem.spacingXS),
                     Text(
                       card,
-                      style: const TextStyle(color: Colors.white70),
+                      style: TextStyle(color: TossDesignSystem.white.withValues(alpha: 0.7)),
                     ),
                   ],
                 ),
@@ -437,14 +437,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.amber.withOpacity(0.1),
-                  Colors.orange.withOpacity(0.1)]),
+                  TossDesignSystem.warningOrange.withValues(alpha:0.1),
+                  TossDesignSystem.warningOrange.withValues(alpha:0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.lightbulb,
                     size: 48,
-                    color: Colors.amber),
+                    color: TossDesignSystem.warningOrange),
                   const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     cardInfo['advice'],
@@ -461,10 +461,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
                 padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                 decoration: BoxDecoration(
-                  color: Colors.indigo.withOpacity(0.1),
+                  color: TossDesignSystem.primaryBlue.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                   border: Border.all(
-                    color: Colors.indigo.withOpacity(0.3),
+                    color: TossDesignSystem.primaryBlue.withValues(alpha:0.3),
                     width: 1)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -472,7 +472,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     const Icon(
                       Icons.help_outline,
                       size: 20,
-                      color: Colors.indigo),
+                      color: TossDesignSystem.primaryBlue),
                     const SizedBox(width: TossDesignSystem.spacingS),
                     Expanded(
                       child: Text(
@@ -508,8 +508,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.3)])),
+            TossDesignSystem.transparent,
+            TossDesignSystem.gray900.withValues(alpha:0.3)])),
       child: Column(
         children: [
           // Page dots with labels
@@ -537,17 +537,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: isActive
-                                ? Colors.purple
-                                : Colors.white.withOpacity(0.2),
+                                ? TossDesignSystem.purple
+                                : TossDesignSystem.white.withValues(alpha:0.2),
                             border: Border.all(
                               color: isActive
-                                  ? Colors.purple.withOpacity(0.5)
-                                  : Colors.white.withOpacity(0.3),
+                                  ? TossDesignSystem.purple.withValues(alpha:0.5)
+                                  : TossDesignSystem.white.withValues(alpha:0.3),
                               width: 2),
                             boxShadow: isActive
                                 ? [
                                     BoxShadow(
-                                      color: Colors.purple.withOpacity(0.5),
+                                      color: TossDesignSystem.purple.withValues(alpha:0.5),
                                       blurRadius: 8,
                                       spreadRadius: 2)]
                                 : null),
@@ -555,7 +555,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                             child: Text(
                               '${index + 1}',
                               style: TextStyle(
-                                color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
+                                color: isActive ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha:0.7),
                                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                                 fontSize: isActive ? 14 : 12),
                             ),
@@ -591,7 +591,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       child: Icon(
                         Icons.swipe,
                         size: 20,
-                        color: Colors.white.withOpacity(0.7)),
+                        color: TossDesignSystem.white.withValues(alpha:0.7)),
                     ),
                     const SizedBox(width: TossDesignSystem.spacingXS),
                     Text(
@@ -615,12 +615,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     required String value}) {
     return Column(
       children: [
-        Icon(icon, color: Colors.purple, size: 24),
+        Icon(icon, color: TossDesignSystem.purple, size: 24),
         const SizedBox(height: TossDesignSystem.spacingXXS),
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: TossDesignSystem.white.withValues(alpha:0.7),
             fontSize: Theme.of(context).textTheme.bodySmall!.fontSize),
         ),
         const SizedBox(height: 4 * 0.5),
@@ -669,24 +669,24 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
   Widget _buildElementMeaning(String? element) {
     final elementData = {
       '불': {
-        'color': Colors.red,
+        'color': TossDesignSystem.errorRed,
         'meaning': '열정, 창의성, 행동력, 영감',
         'description': '불의 원소는 적극적이고 역동적인 에너지를 상징합니다.'},
       '물': {
-        'color': Colors.blue,
+        'color': TossDesignSystem.primaryBlue,
         'meaning': '감정, 직관, 치유, 흐름',
         'description': '물의 원소는 감정의 깊이와 직관적 지혜를 나타냅니다.'},
       '공기': {
-        'color': Colors.yellow,
+        'color': TossDesignSystem.warningOrange,
         'meaning': '지성, 소통, 아이디어, 자유',
         'description': '공기의 원소는 명확한 사고와 의사소통을 상징합니다.'},
       '땅': {
-        'color': Colors.green,
+        'color': TossDesignSystem.successGreen,
         'meaning': '안정, 실용성, 물질, 인내',
         'description': '땅의 원소는 현실적이고 안정적인 기반을 나타냅니다.'}};
 
     final data = elementData[element] ?? {
-      'color': Colors.purple,
+      'color': TossDesignSystem.purple,
       'meaning': '신비, 변화, 가능성',
       'description': '이 카드는 특별한 에너지를 담고 있습니다.'};
 
@@ -694,8 +694,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       padding: const EdgeInsets.all(TossDesignSystem.spacingXS),
       gradient: LinearGradient(
         colors: [
-          (data['color'] as Color).withOpacity(0.1),
-          (data['color'] as Color).withOpacity(0.1)]),
+          (data['color'] as Color).withValues(alpha:0.1),
+          (data['color'] as Color).withValues(alpha:0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -719,7 +719,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           Text(
             data['description'] as String,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: TossDesignSystem.white.withValues(alpha:0.7),
               fontSize: Theme.of(context).textTheme.bodySmall!.fontSize),
           ),
         ],
@@ -878,8 +878,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             padding: const EdgeInsets.all(TossDesignSystem.spacingL),
             gradient: LinearGradient(
               colors: [
-                Colors.deepPurple.withOpacity(0.1),
-                Colors.indigo.withOpacity(0.1)]),
+                TossDesignSystem.purple.withValues(alpha:0.1),
+                TossDesignSystem.primaryBlue.withValues(alpha:0.1)]),
             child: Text(
               tarotCardInfo!.story!,
               style: Theme.of(context).textTheme.bodyLarge)),
@@ -894,8 +894,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.amber.withOpacity(0.1),
-                  Colors.orange.withOpacity(0.1)]),
+                  TossDesignSystem.warningOrange.withValues(alpha:0.1),
+                  TossDesignSystem.warningOrange.withValues(alpha:0.1)]),
               child: Text(
                 tarotCardInfo.mythology!,
                 style: Theme.of(context).textTheme.bodyLarge))],
@@ -910,8 +910,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.teal.withOpacity(0.1),
-                  Colors.cyan.withOpacity(0.1)]),
+                  TossDesignSystem.successGreen.withValues(alpha:0.1),
+                  TossDesignSystem.primaryBlue.withValues(alpha:0.1)]),
               child: Text(
                 tarotCardInfo.historicalContext!,
                 style: Theme.of(context).textTheme.bodyLarge))]]));  
@@ -941,14 +941,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple.withOpacity(0.1),
-                  Colors.pink.withOpacity(0.1)]),
+                  TossDesignSystem.purple.withValues(alpha:0.1),
+                  TossDesignSystem.purple.withValues(alpha:0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.psychology,
                     size: 48,
-                    color: Colors.purple),
+                    color: TossDesignSystem.purple),
                   const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     tarotCardInfo!.psychologicalMeaning!,
@@ -969,14 +969,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.indigo.withOpacity(0.1),
-                  Colors.deepPurple.withOpacity(0.1)]),
+                  TossDesignSystem.primaryBlue.withValues(alpha:0.1),
+                  TossDesignSystem.purple.withValues(alpha:0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.self_improvement,
                     size: 48,
-                    color: Colors.indigo),
+                    color: TossDesignSystem.primaryBlue),
                   const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     tarotCardInfo!.spiritualMeaning!,
@@ -1019,14 +1019,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.green.withOpacity(0.1),
-                      Colors.teal.withOpacity(0.1)]),
+                      TossDesignSystem.successGreen.withValues(alpha:0.1),
+                      TossDesignSystem.successGreen.withValues(alpha:0.1)]),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(
                         Icons.check_circle,
-                        color: Colors.green,
+                        color: TossDesignSystem.successGreen,
                         size: 20),
                       const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
@@ -1052,14 +1052,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.blue.withOpacity(0.1),
-                  Colors.cyan.withOpacity(0.1)]),
+                  TossDesignSystem.primaryBlue.withValues(alpha:0.1),
+                  TossDesignSystem.primaryBlue.withValues(alpha:0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.spa,
                     size: 48,
-                    color: Colors.blue),
+                    color: TossDesignSystem.primaryBlue),
                   const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     tarotCardInfo!.meditation!,
@@ -1083,8 +1083,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.pink.withOpacity(0.1),
-                      Colors.purple.withOpacity(0.1)]),
+                      TossDesignSystem.purple.withValues(alpha:0.1),
+                      TossDesignSystem.purple.withValues(alpha:0.1)]),
                   child: Center(
                     child: Text(
                       '"$affirmation"',
@@ -1127,8 +1127,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 padding: const EdgeInsets.all(TossDesignSystem.spacingL),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.deepPurple.withOpacity(0.1),
-                    Colors.purple.withOpacity(0.1)]),
+                    TossDesignSystem.purple.withValues(alpha:0.1),
+                    TossDesignSystem.purple.withValues(alpha:0.1)]),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1136,7 +1136,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       children: [
                         const Icon(
                           Icons.link,
-                          color: Colors.purple,
+                          color: TossDesignSystem.purple,
                           size: 24),
                         const SizedBox(width: TossDesignSystem.spacingS),
                         Expanded(
@@ -1168,8 +1168,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(TossDesignSystem.spacingL),
               gradient: LinearGradient(
                 colors: [
-                  Colors.orange.withOpacity(0.1),
-                  Colors.yellow.withOpacity(0.1)]),
+                  TossDesignSystem.warningOrange.withValues(alpha:0.1),
+                  TossDesignSystem.warningOrange.withValues(alpha:0.1)]),
               child: Text(
                 tarotCardInfo.colorSymbolism!,
                 style: Theme.of(context).textTheme.bodyLarge,
@@ -1190,13 +1190,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   padding: const EdgeInsets.all(TossDesignSystem.spacingS),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.cyan.withOpacity(0.1),
-                      Colors.blue.withOpacity(0.1)]),
+                      TossDesignSystem.primaryBlue.withValues(alpha:0.1),
+                      TossDesignSystem.primaryBlue.withValues(alpha:0.1)]),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.diamond,
-                        color: Colors.cyan,
+                        color: TossDesignSystem.primaryBlue,
                         size: 20),
                       const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
@@ -1224,7 +1224,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           const Icon(
             Icons.hourglass_empty,
             size: 64,
-            color: Colors.purple),
+            color: TossDesignSystem.purple),
           const SizedBox(height: TossDesignSystem.spacingXL),
           Text(
             title,

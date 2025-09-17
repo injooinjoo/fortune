@@ -260,16 +260,16 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         title: Text(
           '헤어진 애인 운세',
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: TossDesignSystem.white),
           onPressed: () {
             if (currentStep > 0) {
               ref.read(exLoverStepProvider.notifier).previousStep();
@@ -359,8 +359,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         height: 4,
                         decoration: BoxDecoration(
                           color: isActive 
-                            ? Colors.white 
-                            : Colors.white.withOpacity(0.3),
+                            ? TossDesignSystem.white 
+                            : TossDesignSystem.white.withValues(alpha:0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -375,7 +375,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Text(
             steps[currentStep],
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontWeight: FontWeight.bold),
           ),
         ],
@@ -404,7 +404,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Text(
                   '정확한 운세 분석을 위해 필요합니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -420,7 +420,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                   ),
                   onChanged: (value) {
                     ref.read(exLoverDataProvider.notifier).update((state) {
@@ -455,7 +455,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                     ),
                     child: Text(
                       data.birthDate != null
@@ -464,7 +464,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       style: TextStyle(
                         color: data.birthDate != null
                             ? theme.colorScheme.onSurface
-                            : theme.colorScheme.onSurface.withOpacity(0.6),
+                            : theme.colorScheme.onSurface.withValues(alpha:0.6),
                       ),
                     ),
                   ),
@@ -493,12 +493,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
                                 color: data.gender == 'male'
-                                    ? theme.colorScheme.primary.withOpacity(0.2)
-                                    : theme.colorScheme.surface.withOpacity(0.5),
+                                    ? theme.colorScheme.primary.withValues(alpha:0.2)
+                                    : theme.colorScheme.surface.withValues(alpha:0.5),
                                 border: Border.all(
                                   color: data.gender == 'male'
                                       ? theme.colorScheme.primary
-                                      : Colors.transparent,
+                                      : TossDesignSystem.white.withValues(alpha: 0.0),
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
@@ -529,12 +529,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
                                 color: data.gender == 'female'
-                                    ? theme.colorScheme.primary.withOpacity(0.2)
-                                    : theme.colorScheme.surface.withOpacity(0.5),
+                                    ? theme.colorScheme.primary.withValues(alpha:0.2)
+                                    : theme.colorScheme.surface.withValues(alpha:0.5),
                                 border: Border.all(
                                   color: data.gender == 'female'
                                       ? theme.colorScheme.primary
-                                      : Colors.transparent,
+                                      : TossDesignSystem.white.withValues(alpha: 0.0),
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
@@ -568,7 +568,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                   ),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('선택 안함')),
@@ -707,7 +707,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha:0.2),
                     );
                   }).toList(),
                 ),
@@ -737,7 +737,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha:0.2),
                     );
                   }).toList(),
                 ),
@@ -767,7 +767,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha:0.2),
                     );
                   }).toList(),
                 ),
@@ -818,7 +818,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: _getFeelingColor(entry.key).withOpacity(0.2),
+                      selectedColor: _getFeelingColor(entry.key).withValues(alpha:0.2),
                     );
                   }).toList(),
                 ),
@@ -890,7 +890,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha:0.2),
                     );
                   }).toList(),
                 ),
@@ -941,7 +941,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Text(
                   '더 깊이 있는 분석을 원하시면 선택해주세요',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -995,7 +995,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                       errorText: _validateInstagramLink(data.instagramLink),
                     ),
                     onChanged: (value) {
@@ -1042,7 +1042,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: currentLength > maxLength! * 0.9
                                     ? theme.colorScheme.error
-                                    : theme.colorScheme.onSurface.withOpacity(0.6),
+                                    : theme.colorScheme.onSurface.withValues(alpha:0.6),
                               ),
                             ),
                           );
@@ -1054,7 +1054,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                             borderRadius: BorderRadius.circular(12),
                           ),
                           filled: true,
-                          fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                          fillColor: theme.colorScheme.surface.withValues(alpha:0.5),
                         ),
                         onChanged: (value) {
                           ref.read(exLoverDataProvider.notifier).update((state) {
@@ -1167,7 +1167,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -1232,11 +1232,11 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           border: Border.all(
             color: isSelected 
               ? theme.colorScheme.primary 
-              : theme.colorScheme.onSurface.withOpacity(0.3),
+              : theme.colorScheme.onSurface.withValues(alpha:0.3),
             width: isSelected ? 2 : 1),
           borderRadius: BorderRadius.circular(12),
           color: isSelected 
-            ? theme.colorScheme.primary.withOpacity(0.1) 
+            ? theme.colorScheme.primary.withValues(alpha:0.1) 
             : null),
         child: Row(
           children: [
@@ -1244,7 +1244,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               icon,
               color: isSelected 
                 ? theme.colorScheme.primary 
-                : theme.colorScheme.onSurface.withOpacity(0.6)),
+                : theme.colorScheme.onSurface.withValues(alpha:0.6)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -1258,7 +1258,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                     ),
                   ),
                 ],
@@ -1337,13 +1337,13 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: TossDesignSystem.black.withValues(alpha:0.5),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.close,
                             size: 16,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                           ),
                         ),
                       ),
@@ -1359,7 +1359,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     height: 100,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: theme.colorScheme.onSurface.withOpacity(0.3),
+                        color: theme.colorScheme.onSurface.withValues(alpha:0.3),
                         width: 2,
                         style: BorderStyle.solid,
                       ),
@@ -1379,13 +1379,13 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                             children: [
                               Icon(
                                 Icons.add_a_photo,
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface.withValues(alpha:0.6),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 '사진 추가',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                  color: theme.colorScheme.onSurface.withValues(alpha:0.6),
                                 ),
                               ),
                             ],
@@ -1410,7 +1410,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.7),
             ),
           ),
           Text(
@@ -1434,7 +1434,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Icon(
             isIncluded ? Icons.check_circle : Icons.cancel,
             size: 20,
-            color: isIncluded ? Colors.green : Colors.grey,
+            color: isIncluded ? TossDesignSystem.successGreen : TossDesignSystem.gray500,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -1602,21 +1602,21 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
   
   Color _getFeelingColor(String feeling) {
     switch (feeling) {
-      case 'miss': return Colors.blue;
+      case 'miss': return TossDesignSystem.tossBlue;
       case 'anger':
-        return Colors.red;
+        return TossDesignSystem.errorRed;
       case 'sadness':
-        return Colors.indigo;
+        return TossDesignSystem.tossBlue;
       case 'relief':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case 'indifferent':
-        return Colors.grey;
+        return TossDesignSystem.gray500;
       case 'grateful':
-        return Colors.amber;
+        return TossDesignSystem.warningOrange;
       case 'confused': 
-        return Colors.purple;
+        return TossDesignSystem.purple;
       default:
-        return Colors.grey;
+        return TossDesignSystem.gray500;
     }
   }
   
@@ -1687,7 +1687,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     // Show bottom sheet to choose between camera and gallery
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => Container(
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -1759,7 +1759,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('이미지 업로드 실패: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.errorRed,
           ),
         );
       }
@@ -1809,7 +1809,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const CircularProgressIndicator(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       strokeWidth: 3,
                     ),
                     const SizedBox(height: 24),
@@ -1819,7 +1819,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         loadingMessages[messageIndex],
                         key: ValueKey(messageIndex),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
@@ -1829,7 +1829,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     Text(
                       '잠시만 기다려주세요',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.8),
+                        color: TossDesignSystem.white.withValues(alpha:0.8),
                       ),
                     ),
                   ],
@@ -1983,7 +1983,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                    color: theme.colorScheme.errorContainer.withValues(alpha:0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -2050,7 +2050,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(

@@ -120,7 +120,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         title: const Text('AI 종합 운세 분석'),
       ),
@@ -129,7 +129,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
           gradient: LinearGradient(
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.surface.withOpacity(0.95),
+              theme.colorScheme.surface.withValues(alpha:0.95),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -187,7 +187,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             Text(
               '인공지능이 당신의 모든 정보를 종합하여\n가장 정확한 운세를 제공합니다',
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha:0.7),
               ),
               textAlign: TextAlign.center,
             ).animate()
@@ -237,8 +237,8 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        theme.colorScheme.primary.withOpacity(0.3),
-                        theme.colorScheme.primary.withOpacity(0.1),
+                        theme.colorScheme.primary.withValues(alpha:0.3),
+                        theme.colorScheme.primary.withValues(alpha:0.1),
                       ],
                     ),
                   ),
@@ -264,7 +264,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               .slideY(begin: 0.2, end: 0),
             const SizedBox(height: 8),
             LinearProgressIndicator(
-              backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+              backgroundColor: theme.colorScheme.primary.withValues(alpha:0.2),
               valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
             ),
           ],
@@ -294,12 +294,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        scoreColor.withOpacity(0.2),
-                        scoreColor.withOpacity(0.05),
+                        scoreColor.withValues(alpha:0.2),
+                        scoreColor.withValues(alpha:0.05),
                       ],
                     ),
                     border: Border.all(
-                      color: scoreColor.withOpacity(0.3),
+                      color: scoreColor.withValues(alpha:0.3),
                       width: 3,
                     ),
                   ),
@@ -372,7 +372,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                     children: [
                       const Icon(
                         Icons.star,
-                        color: Colors.amber,
+                        color: TossDesignSystem.warningOrange,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -446,7 +446,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             Text(
               _error ?? '알 수 없는 오류',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha:0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -539,7 +539,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
       return Text(
         '행운의 아이템이 준비 중입니다',
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha:0.6),
         ),
       );
     }

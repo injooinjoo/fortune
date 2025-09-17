@@ -39,9 +39,9 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: widget.isDark 
-              ? Colors.black.withOpacity(0.2)
-              : Colors.grey.withOpacity(0.08),
+            color: widget.isDark
+              ? TossDesignSystem.black.withValues(alpha: 0.2)
+              : TossDesignSystem.gray400.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -173,12 +173,12 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isCompleted 
-            ? TossDesignSystem.green.withOpacity(0.05)
+            ? TossDesignSystem.successGreen.withOpacity(0.05)
             : (widget.isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isCompleted 
-              ? TossDesignSystem.green.withOpacity(0.3)
+              ? TossDesignSystem.successGreen.withOpacity(0.3)
               : (widget.isDark 
                 ? TossDesignSystem.grayDark200.withOpacity(0.5)
                 : TossDesignSystem.gray200.withOpacity(0.5)),
@@ -236,7 +236,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
             if (isCompleted)
               Icon(
                 Icons.check_circle,
-                color: TossDesignSystem.green,
+                color: TossDesignSystem.successGreen,
                 size: 24,
               )
             else
@@ -315,7 +315,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
   Color _getDifficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {
       case 'easy':
-        return TossDesignSystem.green;
+        return TossDesignSystem.successGreen;
       case 'medium':
         return TossDesignSystem.tossBlue;
       case 'hard':

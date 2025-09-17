@@ -168,7 +168,7 @@ class _ToastWidgetState extends State<_ToastWidget>
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Material(
-            color: Colors.transparent,
+            color: TossDesignSystem.transparent,
             child: GestureDetector(
               onTap: widget.onTap ?? _dismiss,
               onHorizontalDragEnd: (details) {
@@ -186,7 +186,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                   borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: TossDesignSystem.gray900.withValues(alpha: 0.2),
                       offset: const Offset(0, 4),
                       blurRadius: 12,
                     ),

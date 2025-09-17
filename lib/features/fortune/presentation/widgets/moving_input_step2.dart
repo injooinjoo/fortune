@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 2단계: 이사 정보 입력
 class MovingInputStep2 extends StatefulWidget {
@@ -194,12 +195,12 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                               ),
                               color: _movingPeriod == period['title']
                                   ? TossTheme.primaryBlue
-                                  : Colors.transparent,
+                                  : TossDesignSystem.transparent,
                             ),
                             child: _movingPeriod == period['title']
                                 ? const Icon(
                                     Icons.check,
-                                    color: Colors.white,
+                                    color: TossDesignSystem.white,
                                     size: 14,
                                   )
                                 : null,
@@ -250,7 +251,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: TossDesignSystem.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),

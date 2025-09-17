@@ -148,7 +148,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, // Keep transparent for overlay
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0), // Keep transparent for overlay
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),

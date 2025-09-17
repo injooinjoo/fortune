@@ -147,13 +147,13 @@ class DailyInspiration {
     ];
     
     // Colors and icons
-    final colors = [
-      Colors.purple,
-      Colors.blue,
-      Colors.teal,
-      Colors.orange,
-      Colors.pink,
-      Colors.indigo,
+    const colors = [
+      TossDesignSystem.purple,
+      TossDesignSystem.tossBlue,
+      TossDesignSystem.teal,
+      TossDesignSystem.warningOrange,
+      TossDesignSystem.pinkPrimary,
+      TossDesignSystem.purple,
     ];
     
     final icons = [
@@ -266,7 +266,7 @@ ${inspiration.affirmation}
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
@@ -342,8 +342,8 @@ ${inspiration.affirmation}
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              inspiration.themeColor.withValues(alpha: 0.8),
-                              inspiration.themeColor.withValues(alpha: 0.4),
+                              inspiration.themeColor.withOpacity(0.8),
+                              inspiration.themeColor.withOpacity(0.4),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -351,7 +351,7 @@ ${inspiration.affirmation}
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: inspiration.themeColor.withValues(alpha: 0.3),
+                              color: inspiration.themeColor.withOpacity(0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -362,14 +362,14 @@ ${inspiration.affirmation}
                             Icon(
                               inspiration.icon,
                               size: 48,
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                             ),
                             const SizedBox(height: 20),
                             Text(
                               dateFormat.format(now),
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: TossDesignSystem.white.withOpacity(0.9),
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -378,7 +378,7 @@ ${inspiration.affirmation}
                               style: TextStyle(
                                 fontSize: 22 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 height: 1.4,
                               ),
                               textAlign: TextAlign.center,
@@ -388,7 +388,7 @@ ${inspiration.affirmation}
                               '- ${inspiration.author}',
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: TossDesignSystem.white.withOpacity(0.9),
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -406,11 +406,11 @@ ${inspiration.affirmation}
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: TossDesignSystem.black.withOpacity(0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -423,7 +423,7 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                                color: TossDesignSystem.tossBlue.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
@@ -469,13 +469,13 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.blue.withValues(alpha: 0.1),
-                          Colors.purple.withValues(alpha: 0.1),
+                          TossDesignSystem.tossBlue.withOpacity(0.1),
+                          TossDesignSystem.purple.withOpacity(0.1),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.2),
+                        color: TossDesignSystem.tossBlue.withOpacity(0.2),
                       ),
                     ),
                     child: Column(
@@ -485,7 +485,7 @@ ${inspiration.affirmation}
                           children: [
                             const Icon(
                               Icons.center_focus_strong,
-                              color: Colors.blue,
+                              color: TossDesignSystem.tossBlue,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -494,7 +494,7 @@ ${inspiration.affirmation}
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.blue,
+                                color: TossDesignSystem.tossBlue,
                               ),
                             ),
                           ],
@@ -522,11 +522,11 @@ ${inspiration.affirmation}
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: TossDesignSystem.black.withOpacity(0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -540,12 +540,12 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.amber.withValues(alpha: 0.1),
+                                color: TossDesignSystem.warningYellow.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
                                 Icons.lightbulb_outline,
-                                color: Colors.amber,
+                                color: TossDesignSystem.warningYellow,
                                 size: 20,
                               ),
                             ),
@@ -571,7 +571,7 @@ ${inspiration.affirmation}
                                 width: 6,
                                 height: 6,
                                 decoration: BoxDecoration(
-                                  color: Colors.amber,
+                                  color: TossDesignSystem.warningYellow,
                                   borderRadius: BorderRadius.circular(3),
                                 ),
                               ),
@@ -605,15 +605,15 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                          TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                          TossDesignSystem.tossBlue.withOpacity(0.1),
+                          TossDesignSystem.tossBlue.withOpacity(0.05),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                        color: TossDesignSystem.tossBlue.withOpacity(0.2),
                       ),
                     ),
                     child: Column(

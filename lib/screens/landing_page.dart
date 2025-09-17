@@ -16,6 +16,7 @@ import '../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../core/utils/url_cleaner_web.dart';
 import '../presentation/providers/theme_provider.dart';
 import '../core/utils/profile_validation.dart';
+import '../core/theme/toss_design_system.dart';
 
 class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
@@ -80,9 +81,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         if (mounted) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('로그인 성공!'),
-              backgroundColor: Colors.green,
+              backgroundColor: TossDesignSystem.successGreen,
             ),
           );
         }
@@ -361,7 +362,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
-            backgroundColor: Colors.red));
+            backgroundColor: TossDesignSystem.errorRed));
         
         // Clean error parameter from URL after showing message
         if (kIsWeb) {
@@ -403,9 +404,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Apple 로그인 성공!'),
-              backgroundColor: Colors.green,
+              backgroundColor: TossDesignSystem.successGreen,
             ),
           );
           
@@ -433,9 +434,11 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red));
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.errorRed
+                : TossDesignSystem.errorRed));
       }
     } finally {
       print('🍎 Setting _isAuthProcessing to false');
@@ -459,9 +462,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         // Naver Sign-In 성공
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('네이버 로그인 성공!'),
-              backgroundColor: Colors.green,
+              backgroundColor: TossDesignSystem.successGreen,
             )
           );
         }
@@ -480,9 +483,11 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.errorRed
+                : TossDesignSystem.errorRed
           )
         );
       }
@@ -502,9 +507,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       // Instagram login coming soon
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Instagram 로그인은 준비 중입니다.'),
-            backgroundColor: Colors.orange
+            backgroundColor: TossDesignSystem.warningOrange
           )
         );
       }
@@ -524,9 +529,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       // TikTok login coming soon
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('TikTok 로그인은 준비 중입니다.'),
-            backgroundColor: Colors.orange
+            backgroundColor: TossDesignSystem.warningOrange
           )
         );
       }
@@ -553,7 +558,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => DraggableScrollableSheet(
           initialChildSize: 0.7,
@@ -574,7 +579,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark300
+                      : TossDesignSystem.gray300,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -599,7 +606,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                         '소셜 계정으로 간편하게 시작해보세요',
                         style: TextStyle(
       fontSize: 16,
-                          color: Colors.grey[600])),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark400
+                              : TossDesignSystem.gray600)),
                       
                       const SizedBox(height: 40),
                       
@@ -670,7 +679,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       
                       const SizedBox(height: 30),
                       
-                      Divider(height: 1),
+                      Divider(
+                        height: 1,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark300
+                            : TossDesignSystem.gray300,
+                      ),
                       
                       const SizedBox(height: 20),
                       
@@ -679,7 +693,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                         '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark400
+                              : TossDesignSystem.gray600,
                           height: 1.5),
                         textAlign: TextAlign.center),
                       
@@ -723,7 +739,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                      valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white)),
                   ),
                   SizedBox(width: 16),
                   Text('Google 로그인 진행 중...'),
@@ -785,7 +801,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
-                backgroundColor: Colors.red));
+                backgroundColor: TossDesignSystem.errorRed));
           }
           rethrow;
         }
@@ -801,7 +817,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                      valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white)),
                   ),
                   SizedBox(width: 16),
                   Text('카카오 로그인 진행 중...'),
@@ -830,9 +846,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             // 성공 메시지 표시
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                SnackBar(
                   content: Text('카카오 로그인이 완료되었습니다.'),
-                  backgroundColor: Colors.green,
+                  backgroundColor: TossDesignSystem.successGreen,
                 ),
               );
             }
@@ -855,9 +871,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             // _startAuthTimeout(); 이미 _handleSocialLogin에서 시작됨
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                SnackBar(
                   content: Text('카카오 로그인을 처리하고 있습니다...'),
-                  backgroundColor: Colors.orange,
+                  backgroundColor: TossDesignSystem.warningOrange,
                 ),
               );
             }
@@ -874,7 +890,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('카카오 로그인 중 문제가 발생했습니다: ${kakaoError.toString()}'),
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.errorRed
+                    : TossDesignSystem.errorRed,
               ),
             );
           }
@@ -882,17 +900,22 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       } else if (provider == 'Instagram') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('인스타그램 로그인은 현재 준비 중입니다.')));
+            SnackBar(
+              content: Text('인스타그램 로그인은 현재 준비 중입니다.'),
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.warningOrange
+                  : TossDesignSystem.warningOrange));
         }
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red));
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.errorRed
+                : TossDesignSystem.errorRed));
       }
     } finally {
       if (mounted) {
@@ -937,7 +960,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                 '로그인 상태를 확인하고 있습니다...',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600]),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark400
+                      : TossDesignSystem.gray600),
               ),
             ],
           ),
@@ -989,9 +1014,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFFE8B4FF).withOpacity(0.5),  // 보라색
-                      Color(0xFFE8B4FF).withOpacity(0.3),
-                      Colors.transparent,
+                      Color(0xFFE8B4FF).withValues(alpha: 0.5),  // 보라색
+                      Color(0xFFE8B4FF).withValues(alpha: 0.3),
+                      TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -1009,9 +1034,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFFFFB4B4).withOpacity(0.5),  // 분홍색
-                      Color(0xFFFFB4B4).withOpacity(0.3),
-                      Colors.transparent,
+                      Color(0xFFFFB4B4).withValues(alpha: 0.5),  // 분홍색
+                      Color(0xFFFFB4B4).withValues(alpha: 0.3),
+                      TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -1029,9 +1054,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFFFFE4B4).withOpacity(0.4),  // 노란색
-                      Color(0xFFFFE4B4).withOpacity(0.2),
-                      Colors.transparent,
+                      Color(0xFFFFE4B4).withValues(alpha: 0.4),  // 노란색
+                      Color(0xFFFFE4B4).withValues(alpha: 0.2),
+                      TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -1051,9 +1076,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFF6B46C1).withOpacity(0.15),  // 보라색
-                      Color(0xFF6B46C1).withOpacity(0.08),
-                      Colors.transparent,
+                      Color(0xFF6B46C1).withValues(alpha: 0.15),  // 보라색
+                      Color(0xFF6B46C1).withValues(alpha: 0.08),
+                      TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -1071,9 +1096,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFF2563EB).withOpacity(0.15),  // 파란색
-                      Color(0xFF2563EB).withOpacity(0.08),
-                      Colors.transparent,
+                      Color(0xFF2563EB).withValues(alpha: 0.15),  // 파란색
+                      Color(0xFF2563EB).withValues(alpha: 0.08),
+                      TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -1111,19 +1136,19 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.grey[700]! 
-                              : Colors.grey[300]!,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark300
+                              : TossDesignSystem.gray300,
                           width: 1),
                       ),
                       child: Icon(
-                        Theme.of(context).brightness == Brightness.dark 
-                            ? Icons.light_mode_outlined 
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Icons.light_mode_outlined
                             : Icons.dark_mode_outlined,
                         size: 24,
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.grey[300] 
-                            : Colors.grey[600]),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark300
+                            : TossDesignSystem.gray600),
                       ),
                     ),
                   ),
@@ -1169,7 +1194,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark400
+                                : TossDesignSystem.gray600),
                         ).animate()
                           .fadeIn(delay: 400.ms, duration: 600.ms),
                         
@@ -1179,15 +1206,19 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                         Hero(
                           tag: 'start-button-hero',
                           child: Material(
-                            color: Colors.transparent,
+                            color: TossDesignSystem.white.withValues(alpha: 0.0),
                             child: SizedBox(
                               width: double.infinity,
                               height: 56,
                               child: ElevatedButton(
                                 onPressed: _startOnboarding,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.white
+                                      : TossDesignSystem.black,
+                                  foregroundColor: Theme.of(context).brightness == Brightness.dark
+                                      ? TossDesignSystem.black
+                                      : TossDesignSystem.white,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(28),
@@ -1231,17 +1262,17 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     
     switch (type) {
       case 'apple':
-        icon = Icon(Icons.apple, size: 24, color: Colors.white);
+        icon = Icon(Icons.apple, size: 24, color: TossDesignSystem.white);
         text = 'Apple로 계속하기';
-        backgroundColor = Colors.black;
-        foregroundColor = Colors.white;
+        backgroundColor = TossDesignSystem.black;
+        foregroundColor = TossDesignSystem.white;
         break;
       case 'google':
         // Use icon instead of network image to prevent loading issues on real devices
-        icon = Icon(Icons.g_mobiledata, size: 24, color: Colors.blue);
+        icon = Icon(Icons.g_mobiledata, size: 24, color: TossDesignSystem.tossBlue);
         text = 'Google로 계속하기';
-        backgroundColor = Colors.white;
-        foregroundColor = Colors.black87;
+        backgroundColor = TossDesignSystem.white;
+        foregroundColor = TossDesignSystem.black;
         break;
       case 'kakao':
         icon = Container(
@@ -1256,13 +1287,13 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black),
+                color: TossDesignSystem.black),
             ),
           ),
         );
         text = '카카오로 계속하기';
         backgroundColor = Color(0xFFFEE500);
-        foregroundColor = Colors.black87;
+        foregroundColor = TossDesignSystem.black;
         break;
       case 'naver':
         icon = Container(
@@ -1277,19 +1308,19 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white),
+                color: TossDesignSystem.white),
             ),
           ),
         );
         text = '네이버로 계속하기';
         backgroundColor = Color(0xFF03C75A);
-        foregroundColor = Colors.white;
+        foregroundColor = TossDesignSystem.white;
         break;
       default:
         icon = Container();
         text = '';
-        backgroundColor = Colors.grey;
-        foregroundColor = Colors.white;
+        backgroundColor = TossDesignSystem.gray300;
+        foregroundColor = TossDesignSystem.white;
     }
     
     return SizedBox(
@@ -1303,9 +1334,11 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
-            side: type == 'google' 
+            side: type == 'google'
                 ? BorderSide(
-                    color: Colors.grey[300]!,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark300
+                        : TossDesignSystem.gray300,
                     width: 1)
                 : BorderSide.none),
         ),
@@ -1336,9 +1369,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // All buttons have white background in both light and dark modes
-    final backgroundColor = Colors.white;
-    final foregroundColor = Colors.black87;
-    final borderColor = isDark ? Colors.grey[800] : Colors.grey[300];
+    final backgroundColor = TossDesignSystem.white;
+    final foregroundColor = TossDesignSystem.black;
+    final borderColor = isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray300;
     
     switch (type) {
       case 'apple':
@@ -1346,7 +1379,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           'assets/images/social/apple.svg',
           width: 24,
           height: 24,
-          colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(TossDesignSystem.black, BlendMode.srcIn),
         );
         text = 'Apple로 계속하기';
         break;
@@ -1387,7 +1420,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           'assets/images/social/tiktok.svg',
           width: 24,
           height: 24,
-          colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(TossDesignSystem.black, BlendMode.srcIn),
         );
         text = 'TikTok으로 계속하기';
         break;
@@ -1413,7 +1446,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
             side: BorderSide(
-              color: borderColor ?? Colors.transparent,
+              color: borderColor ?? TossDesignSystem.white.withValues(alpha: 0.0),
               width: 1),
           ),
         ),
@@ -1442,7 +1475,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     
     switch (type) {
       case 'apple':
-        icon = Icon(Icons.apple, size: 24, color: Colors.black);
+        icon = Icon(Icons.apple, size: 24, color: TossDesignSystem.black);
         text = 'Continue with Apple';
         break;
       case 'google':
@@ -1451,7 +1484,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           height: 24,
           width: 24,
           errorBuilder: (context, error, stackTrace) => 
-              Icon(Icons.g_mobiledata, size: 24, color: Colors.blue),
+              Icon(Icons.g_mobiledata, size: 24, color: TossDesignSystem.tossBlue),
         );
         text = 'Continue with Google';
         break;
@@ -1468,7 +1501,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black),
+                color: TossDesignSystem.black),
             ),
           ),
         );
@@ -1487,7 +1520,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white),
+                color: TossDesignSystem.white),
             ),
           ),
         );
@@ -1507,7 +1540,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           child: Icon(
             Icons.camera_alt,
             size: 16,
-            color: Colors.white),
+            color: TossDesignSystem.white),
         );
         text = 'Continue with Instagram';
         break;
@@ -1522,19 +1555,19 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).brightness == Brightness.dark 
-              ? Colors.white 
-              : Colors.black,
-          foregroundColor: Theme.of(context).brightness == Brightness.dark 
-              ? Colors.black 
-              : Colors.white,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.white
+              : TossDesignSystem.black,
+          foregroundColor: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.black
+              : TossDesignSystem.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(27),
             side: BorderSide(
-              color: Theme.of(context).brightness == Brightness.dark 
-                  ? Colors.grey[300]! 
-                  : Colors.grey[800]!,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.gray300
+                  : TossDesignSystem.gray800,
               width: 1),
           ),
         ),
@@ -1547,9 +1580,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).brightness == Brightness.dark 
-                      ? Colors.black 
-                      : Colors.white),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.black
+                      : TossDesignSystem.white),
                 textAlign: TextAlign.center),
             ),
             SizedBox(width: 24), // Balance the icon on left

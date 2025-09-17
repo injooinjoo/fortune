@@ -9,6 +9,7 @@ import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class TokenUsageStatsPage extends ConsumerWidget {
   const TokenUsageStatsPage({super.key});
@@ -125,25 +126,25 @@ class TokenUsageStatsPage extends ConsumerWidget {
           title: '총 사용 토큰',
           value: NumberFormat('#,###').format(summary.totalTokensUsed),
           icon: Icons.token,
-          iconColor: Colors.blue,
+          iconColor: TossDesignSystem.primaryBlue,
           subtitle: summary.period),
         StatsCard(
           title: '총 구매 토큰',
           value: NumberFormat('#,###').format(summary.totalTokensPurchased),
           icon: Icons.shopping_cart,
-          iconColor: Colors.green,
+          iconColor: TossDesignSystem.success,
           subtitle: summary.period),
         StatsCard(
           title: '활성 사용자',
           value: NumberFormat('#,###').format(summary.activeUsers),
           icon: Icons.people,
-          iconColor: Colors.purple,
+          iconColor: TossDesignSystem.purple,
           subtitle: '토큰 사용자'),
         StatsCard(
           title: '평균 사용량',
           value: summary.averageUsagePerUser.toStringAsFixed(1),
           icon: Icons.analytics,
-          iconColor: Colors.orange,
+          iconColor: TossDesignSystem.warningOrange,
           subtitle: '사용자당')]);
   }
 
@@ -161,7 +162,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           BarChartRodData(
             toY: entry.value.tokensPurchased.toDouble(),
-            color: Colors.green,
+            color: TossDesignSystem.success,
             width: 8,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)))]);
     }).toList();
@@ -273,14 +274,14 @@ class TokenUsageStatsPage extends ConsumerWidget {
                   title: '가장 인기 있는 패키지',
                   value: efficiency.mostPopular,
                   icon: Icons.star,
-                  iconColor: Colors.amber)),
+                  iconColor: TossDesignSystem.warningYellow)),
               const SizedBox(width: 16),
               Expanded(
                 child: _InfoCard(
                   title: '가장 가치 있는 패키지',
                   value: efficiency.bestValue,
                   icon: Icons.attach_money,
-                  iconColor: Colors.green))]),
+                  iconColor: TossDesignSystem.success))]),
           const SizedBox(height: 16),
           ...efficiency.packages.entries.map((entry) {
             final stats = entry.value;
@@ -301,7 +302,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       Text(
                         '₩${NumberFormat('#,###').format(stats.totalRevenue)}',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.green,
+                          color: TossDesignSystem.success,
                           fontWeight: FontWeight.bold))])]));
           }).toList()]));
   }
@@ -316,14 +317,14 @@ class TokenUsageStatsPage extends ConsumerWidget {
             title: '일일 성장률',
             value: '${trend.dailyGrowth > 0 ? '+' : ''}${trend.dailyGrowth.toStringAsFixed(1)}%',
             icon: Icons.trending_up,
-            iconColor: trend.dailyGrowth > 0 ? Colors.green : Colors.red)),
+            iconColor: trend.dailyGrowth > 0 ? TossDesignSystem.success : TossDesignSystem.error)),
         const SizedBox(width: 16),
         Expanded(
           child: StatsCard(
             title: '주간 성장률',
             value: '${trend.weeklyGrowth > 0 ? '+' : ''}${trend.weeklyGrowth.toStringAsFixed(1)}%',
             icon: Icons.show_chart,
-            iconColor: trend.weeklyGrowth > 0 ? Colors.green : Colors.red))]);
+            iconColor: trend.weeklyGrowth > 0 ? TossDesignSystem.success : TossDesignSystem.error))]);
   }
 
   Widget _buildTopUsers(BuildContext context, List<TopUserUsage> topUsers) {
@@ -369,12 +370,12 @@ class TokenUsageStatsPage extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: user.isUnlimited ? Colors.purple.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                        color: user.isUnlimited ? TossDesignSystem.purple.withValues(alpha: 0.1) : TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       child: Text(
                         user.isUnlimited ? '무제한' : '일반',
                         style: TextStyle(
-                          color: user.isUnlimited ? Colors.purple : Colors.blue,
+                          color: user.isUnlimited ? TossDesignSystem.purple : TossDesignSystem.primaryBlue,
                           fontSize: 12))]).toList())]);
   }
 }
@@ -401,12 +402,12 @@ class _PeriodButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          color: isSelected ? theme.colorScheme.primary : TossDesignSystem.white.withValues(alpha: 0.0),
           borderRadius: BorderRadius.circular(8),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+            color: isSelected ? TossDesignSystem.white : theme.colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
   }
 }

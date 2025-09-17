@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 동전 던지기 애니메이션 위젯
 class CoinThrowAnimation extends StatefulWidget {
@@ -158,7 +159,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.transparent,
         body: Stack(
           children: [
             // 배경 분수대 (고정)
@@ -225,7 +226,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: TossDesignSystem.black.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(2, 2),
                     ),
@@ -247,7 +248,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                       child: Text(
                         '¥',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -290,11 +291,11 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: TossDesignSystem.black.withOpacity(0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -339,7 +340,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: TossDesignSystem.white.withOpacity(0.9),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
@@ -422,14 +423,14 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
 
   Color _getCategoryColor() {
     switch (widget.category) {
-      case '사랑': return Colors.pink;
-      case '돈': return Colors.green;
-      case '건강': return Colors.lightGreen;
-      case '성공': return Colors.orange;
-      case '가족': return Colors.blue;
-      case '학업': return Colors.indigo;
-      case '기타': return Colors.purple;
-      default: return Colors.blue;
+      case '사랑': return TossDesignSystem.pinkPrimary;
+      case '돈': return TossDesignSystem.successGreen;
+      case '건강': return TossDesignSystem.successGreen;
+      case '성공': return TossDesignSystem.warningOrange;
+      case '가족': return TossDesignSystem.tossBlue;
+      case '학업': return TossDesignSystem.purple;
+      case '기타': return TossDesignSystem.purple;
+      default: return TossDesignSystem.tossBlue;
     }
   }
 }
@@ -456,7 +457,7 @@ class StaticFountainPainter extends CustomPainter {
     canvas.drawCircle(center, 115, paint);
     
     // 물 하이라이트
-    paint.color = Colors.white.withOpacity(0.4);
+    paint.color = TossDesignSystem.white.withOpacity(0.4);
     canvas.drawCircle(center + const Offset(-20, -20), 100, paint);
   }
 
@@ -481,7 +482,7 @@ class SplashEffectPainter extends CustomPainter {
 
     // 물 튀는 효과
     if (splashProgress > 0) {
-      paint.color = Colors.white.withOpacity(0.8 * (1 - splashProgress));
+      paint.color = TossDesignSystem.white.withOpacity(0.8 * (1 - splashProgress));
       
       final splashCount = 12;
       for (int i = 0; i < splashCount; i++) {
@@ -508,7 +509,7 @@ class SplashEffectPainter extends CustomPainter {
       for (int i = 0; i < 4; i++) {
         final opacity = (1 - rippleProgress) * (1 - i * 0.2);
         if (opacity > 0) {
-          paint.color = Colors.white.withOpacity(opacity);
+          paint.color = TossDesignSystem.white.withOpacity(opacity);
           final radius = rippleProgress * 150 + (i * 20);
           canvas.drawCircle(center, radius, paint);
         }

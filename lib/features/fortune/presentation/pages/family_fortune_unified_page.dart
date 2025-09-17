@@ -8,6 +8,7 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 enum FamilyType {
   children('자녀 운세', 'children', '우리 아이의 운세와 성장', Icons.child_care_rounded, [Color(0xFFFBBF24), Color(0xFFF59E0B)]),
@@ -166,7 +167,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isSelected ? TossTheme.primaryBlue.withOpacity(0.05) : Colors.white,
+              color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.05) : TossDesignSystem.backgroundPrimary,
               border: Border.all(
                 color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
                 width: isSelected ? 2 : 1,
@@ -184,7 +185,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   ),
                   child: Icon(
                     type.icon,
-                    color: isSelected ? Colors.white : type.gradientColors[0],
+                    color: isSelected ? TossDesignSystem.white : type.gradientColors[0],
                     size: 24,
                   ),
                 ),
@@ -592,7 +593,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: TossDesignSystem.gray900.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -609,7 +610,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   ),
                   child: Icon(
                     _selectedType.icon,
-                    color: Colors.white,
+                    color: TossDesignSystem.backgroundPrimary,
                     size: 32,
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class TalismanWishSelector extends StatefulWidget {
   final Function(TalismanCategory) onCategorySelected;
@@ -98,7 +99,7 @@ class _CategoryCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withOpacity(0.1) : Colors.white,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
@@ -106,7 +107,7 @@ class _CategoryCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: TossDesignSystem.black.withValues(alpha: 0.04),
               offset: const Offset(0, 2),
               blurRadius: 8,
               spreadRadius: 0,
@@ -120,8 +121,8 @@ class _CategoryCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: isSelected 
-                    ? TossTheme.primaryBlue.withOpacity(0.2)
+                color: isSelected
+                    ? TossTheme.primaryBlue.withValues(alpha: 0.2)
                     : TossTheme.backgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
               ),

@@ -190,7 +190,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
               ? Icons.all_inclusive 
               : Icons.toll,
             size: 40,
-            color: TossDesignSystem.tossBlue.withOpacity(0.3),
+            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -252,8 +252,8 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  TossDesignSystem.tossBlue.withOpacity(0.1),
-                  TossDesignSystem.tossBlue.withOpacity(0.05),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -273,7 +273,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected 
-                  ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                   : TossDesignSystem.gray50,
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -312,7 +312,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                           child: Text(
                             '인기',
                             style: TossDesignSystem.caption.copyWith(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

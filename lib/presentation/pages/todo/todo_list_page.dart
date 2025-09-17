@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/domain/entities/todo.dart';
 import 'package:fortune/presentation/pages/todo/widgets/todo_creation_dialog.dart';
@@ -46,7 +47,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => const TodoCreationDialog(),
     );
   }

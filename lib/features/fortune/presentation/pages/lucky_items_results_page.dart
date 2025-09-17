@@ -383,8 +383,8 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('오늘의 행운 아이템'),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: TossDesignSystem.white,
+          foregroundColor: TossDesignSystem.black,
           elevation: 0,
         ),
         body: const Center(
@@ -394,11 +394,11 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
         title: const Text('오늘의 행운 아이템'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: TossDesignSystem.white,
+        foregroundColor: TossDesignSystem.black,
         elevation: 0,
         actions: [
           IconButton(
@@ -430,7 +430,7 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: TossDesignSystem.black.withOpacity(0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -441,9 +441,9 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                 children: [
                   Text(
                     '$userName님의',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: TossDesignSystem.white.withOpacity(0.7),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -452,7 +452,7 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -460,17 +460,17 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                     children: [
                       Text(
                         '${_generatedResults['overallScore']}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         ),
                       ),
-                      const Text(
+                      Text(
                         '점',
                         style: TextStyle(
                           fontSize: 24,
-                          color: Colors.white70,
+                          color: TossDesignSystem.white.withOpacity(0.7),
                         ),
                       ),
                     ],
@@ -478,9 +478,9 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                   const SizedBox(height: 8),
                   Text(
                     '오늘의 최고 운: ${_generatedResults['bestCategory']}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white70,
+                      color: TossDesignSystem.white.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -494,11 +494,11 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: TossDesignSystem.black.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -585,11 +585,11 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: TossDesignSystem.black.withOpacity(0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
@@ -87,7 +88,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             '사주와 성향을 분석하여 당신에게 가장 잘 맞는 직업을 찾아드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
+              color: TossDesignSystem.gray600,
             ),
           ),
           const SizedBox(height: 24),
@@ -125,7 +126,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     : '생년월일을 선택해주세요',
                 style: TextStyle(
                   fontSize: 16,
-                  color: _birthdate != null ? null : Colors.grey,
+                  color: _birthdate != null ? null : TossDesignSystem.gray600,
                 ),
               ),
             ),
@@ -181,7 +182,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     Icon(
                       option['icon'],
                       size: 16,
-                      color: isSelected ? Colors.white : Colors.grey[600],
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
                     ),
                     const SizedBox(width: 4),
                     Text(option['label']),
@@ -204,8 +205,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     }
                   });
                 },
-                selectedColor: Colors.blue,
-                checkmarkColor: Colors.white,
+                selectedColor: TossDesignSystem.tossBlue,
+                checkmarkColor: TossDesignSystem.white,
               );
             }).toList(),
           ),
@@ -215,18 +216,18 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
+                  Icon(Icons.info_outline, size: 16, color: TossDesignSystem.tossBlue),
                   const SizedBox(width: 8),
                   Text(
                     '${_interests.length}/3개 선택됨',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.blue[700],
+                      color: TossDesignSystem.tossBlue,
                     ),
                   ),
                 ],
@@ -310,8 +311,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.blue[100]!,
-                  Colors.cyan[100]!,
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                  TossDesignSystem.warningOrange.withValues(alpha: 0.2),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
@@ -321,13 +322,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                 const Icon(
                   Icons.star,
                   size: 64,
-                  color: Colors.amber),
+                  color: TossDesignSystem.warningOrange),
                 const SizedBox(height: 16),
                 const Text(
                   '당신의 천직',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -345,7 +346,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                     data['job_description'],
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[700],
+                      color: TossDesignSystem.gray700,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -361,9 +362,9 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Row(
               children: [
@@ -373,7 +374,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   child: CircularProgressIndicator(
                     value: result.overallScore! / 100,
                     strokeWidth: 8,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: TossDesignSystem.gray200,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getScoreColor(result.overallScore!),
                     ),
@@ -404,7 +405,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         _getScoreMessage(result.overallScore!),
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: TossDesignSystem.gray600,
                         ),
                       ),
                     ],
@@ -421,16 +422,16 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.psychology, color: Colors.deepPurple),
+                    Icon(Icons.psychology, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '상세 분석',
@@ -460,16 +461,16 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.list, color: Colors.orange),
+                    Icon(Icons.list, color: TossDesignSystem.warningOrange),
                     SizedBox(width: 8),
                     Text(
                       '다른 추천 직업',
@@ -489,7 +490,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         width: 8,
                         height: 8,
                         decoration: const BoxDecoration(
-                          color: Colors.orange,
+                          color: TossDesignSystem.warningOrange,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -514,16 +515,16 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.checklist, color: Colors.green),
+                    Icon(Icons.checklist, color: TossDesignSystem.successGreen),
                     SizedBox(width: 8),
                     Text(
                       '필요한 역량',
@@ -555,8 +556,8 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple[50]!,
-                  Colors.blue[50]!,
+                  TossDesignSystem.purple.withValues(alpha: 0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -566,7 +567,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.trending_up, color: Colors.purple),
+                    Icon(Icons.trending_up, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '경력 개발 경로',
@@ -596,7 +597,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.green[50],
+              color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -604,7 +605,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.rocket_launch, color: Colors.green),
+                    Icon(Icons.rocket_launch, color: TossDesignSystem.successGreen),
                     SizedBox(width: 8),
                     Text(
                       '시작하기 위한 단계',
@@ -625,14 +626,14 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: TossDesignSystem.successGreen,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
                             '${entry.key + 1}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -658,10 +659,10 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
   
   String _getScoreMessage(int score) {

@@ -122,7 +122,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
               child: Text(
                 widget.centerText,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   fontWeight: FontWeight.bold),
               ),
             ),
@@ -152,7 +152,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,

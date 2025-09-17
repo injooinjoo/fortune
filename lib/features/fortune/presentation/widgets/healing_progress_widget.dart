@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class HealingProgressWidget extends StatefulWidget {
   final int currentStage;
@@ -24,11 +25,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
   late Animation<double> _progressAnimation;
   
   final stages = [
-    {'name': '부정', 'icon': Icons.block, 'color': Colors.red},
-    {'name': '분노', 'icon': Icons.bolt, 'color': Colors.orange},
-    {'name': '타협', 'icon': Icons.handshake, 'color': Colors.yellow},
-    {'name': '우울', 'icon': Icons.water_drop, 'color': Colors.blue},
-    {'name': '수용', 'icon': Icons.favorite, 'color': Colors.green},
+    {'name': '부정', 'icon': Icons.block, 'color': TossDesignSystem.errorRed},
+    {'name': '분노', 'icon': Icons.bolt, 'color': TossDesignSystem.warningOrange},
+    {'name': '타협', 'icon': Icons.handshake, 'color': TossDesignSystem.warningYellow},
+    {'name': '우울', 'icon': Icons.water_drop, 'color': TossDesignSystem.primaryBlue},
+    {'name': '수용', 'icon': Icons.favorite, 'color': TossDesignSystem.successGreen},
   ];
 
   @override
@@ -84,7 +85,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
           borderRadius: AppDimensions.borderRadiusLarge,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: TossDesignSystem.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -192,7 +193,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           stage['icon'] as IconData,
                           size: 20,
                           color: isCompleted || isCurrent
-                              ? Colors.white
+                              ? TossDesignSystem.white
                               : theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
                       ),

@@ -1,13 +1,11 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_dimensions.dart';
+import '../../core/theme/app_typography.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 class SocialAccountsSection extends StatefulWidget {
   final List<String>? linkedProviders;
@@ -226,7 +224,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             width: AppDimensions.buttonHeightSmall,
             height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
-              color: providerInfo.color.withOpacity(0.1),
+              color: providerInfo.color.withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusSmall,
             ),
             child: Center(
@@ -311,8 +309,8 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         return Icon(
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
-          color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple' 
-              ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
+          color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple'
+              ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
               : providerInfo.color,
         );
       case SocialIconType.text:
@@ -327,7 +325,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             child: Text(
               providerInfo.iconData as String,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -353,7 +351,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         Text(
           '여러 소셜 계정을 연결하여 편리하게 로그인하세요.',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         SizedBox(height: AppSpacing.spacing4),

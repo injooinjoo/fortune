@@ -112,7 +112,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -143,7 +143,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFF4081) : Colors.transparent,
+            color: isSelected ? const Color(0xFFFF4081) : TossDesignSystem.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
           child: Row(
@@ -152,7 +152,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? Colors.white : TossDesignSystem.gray600,
+                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
               ),
               if (MediaQuery.of(context).size.width > 360) ...[
                 const SizedBox(width: 4),
@@ -161,7 +161,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.white : TossDesignSystem.gray600,
+                    color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
                   ),
                 ),
               ],
@@ -232,13 +232,13 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.2)
+                          ? TossDesignSystem.white.withOpacity(0.2)
                           : const Color(0xFFFF4081).withOpacity(0.1),
                     ),
                     child: Icon(
                       _getCategoryIcon(celebrity['category'] ?? ''),
                       size: 24,
-                      color: isSelected ? Colors.white : const Color(0xFFFF4081),
+                      color: isSelected ? TossDesignSystem.white : const Color(0xFFFF4081),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -247,7 +247,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : TossDesignSystem.gray900,
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -256,7 +256,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.8)
+                          ? TossDesignSystem.white.withOpacity(0.8)
                           : TossDesignSystem.gray600,
                     ),
                   ),
@@ -265,7 +265,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.7)
+                          ? TossDesignSystem.white.withOpacity(0.7)
                           : TossDesignSystem.gray400,
                     ),
                   ),
@@ -336,7 +336,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.9,
         minChildSize: 0.5,
@@ -415,7 +415,7 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
                 child: CircularProgressIndicator(
                   value: scoreValue / 100,
                   strokeWidth: 12,
-                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  backgroundColor: TossDesignSystem.gray400.withOpacity(0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getScoreColor(scoreValue),
                   ),
@@ -445,10 +445,10 @@ class _CelebrityCompatibilityPageState extends ConsumerState<CelebrityCompatibil
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.pink;
-    if (score >= 60) return Colors.orange;
-    if (score >= 40) return Colors.amber;
-    return Colors.grey;
+    if (score >= 80) return TossDesignSystem.pinkPrimary;
+    if (score >= 60) return TossDesignSystem.warningOrange;
+    if (score >= 40) return TossDesignSystem.warningYellow;
+    return TossDesignSystem.gray400;
   }
 
   String _getScoreMessage(int score) {

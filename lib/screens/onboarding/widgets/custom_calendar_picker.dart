@@ -20,7 +20,7 @@ class CustomCalendarPicker extends StatefulWidget {
   static Future<DateTime?> show(BuildContext context, {DateTime? initialDate}) {
     return showModalBottomSheet<DateTime>(
       context: context,
-      backgroundColor: Colors.transparent, // Keep transparent for overlay,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0), // Keep transparent for overlay,
     isScrollControlled: true,
       builder: (context) => CustomCalendarPicker(
         initialDate: initialDate,
@@ -255,7 +255,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                       decoration: BoxDecoration(
                         color: isSelected 
                             ? Theme.of(context).primaryColor 
-                            : Colors.transparent,
+                            : TossDesignSystem.white.withValues(alpha: 0.0),
                         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight * 0.4),
                         border: isToday && !isSelected
                             ? Border.all(color: Theme.of(context).primaryColor, width: context.fortuneTheme.formStyles.focusBorderWidth)

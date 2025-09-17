@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../widgets/biorhythm_widgets.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class BiorhythmResultPage extends StatefulWidget {
   final DateTime birthDate;
@@ -71,7 +72,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(

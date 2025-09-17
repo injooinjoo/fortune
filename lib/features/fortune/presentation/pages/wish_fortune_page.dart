@@ -6,18 +6,19 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
-  love('💕', '사랑', '연애, 결혼, 짝사랑', Colors.pink),
-  money('💰', '돈', '재물, 투자, 사업', Colors.green),
-  health('🌿', '건강', '건강, 회복, 장수', Colors.lightGreen),
-  success('🏆', '성공', '취업, 승진, 성취', Colors.orange),
-  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', Colors.blue),
-  study('📚', '학업', '시험, 공부, 성적', Colors.indigo),
-  other('🌟', '기타', '소원이 있으시면', Colors.purple);
+  love('💕', '사랑', '연애, 결혼, 짝사랑', TossDesignSystem.errorRed),
+  money('💰', '돈', '재물, 투자, 사업', TossDesignSystem.successGreen),
+  health('🌿', '건강', '건강, 회복, 장수', TossDesignSystem.successGreen),
+  success('🏆', '성공', '취업, 승진, 성취', TossDesignSystem.warningOrange),
+  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', TossDesignSystem.tossBlue),
+  study('📚', '학업', '시험, 공부, 성적', TossDesignSystem.infoBlue),
+  other('🌟', '기타', '소원이 있으시면', TossDesignSystem.purple);
 
   const WishCategory(this.emoji, this.name, this.description, this.color);
 
@@ -182,7 +183,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   /// 소원 입력 화면
   Widget _buildInputView() {
     return Scaffold(
-      backgroundColor: TossTheme.backgroundWhite,
+      backgroundColor: TossDesignSystem.backgroundPrimary,
       appBar: AppHeader(
         title: '소원 빌기',
         showBackButton: true,
@@ -193,7 +194,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
         },
         actions: [
           IconButton(
-            icon: Icon(Icons.help_outline, color: TossTheme.textGray600),
+            icon: Icon(Icons.help_outline, color: TossDesignSystem.gray600),
             onPressed: () => _showHelpDialog(),
           ),
         ],
@@ -252,7 +253,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   /// 신의 응답 화면 - 토스 스타일로 개편
   Widget _buildDivineResponseView() {
     return Scaffold(
-      backgroundColor: TossTheme.backgroundWhite,
+      backgroundColor: TossDesignSystem.backgroundPrimary,
       appBar: AppHeader(
         title: '신의 응답',
         showBackButton: true,
@@ -263,7 +264,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
         },
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: TossTheme.textGray600),
+            icon: Icon(Icons.refresh, color: TossDesignSystem.gray600),
             onPressed: _makeNewWish,
           ),
         ],
@@ -341,13 +342,13 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             children: [
               Icon(
                 Icons.favorite,
-                color: TossTheme.primaryBlue,
+                color: TossDesignSystem.tossBlue,
                 size: 20,
               ),
               const SizedBox(width: TossTheme.spacingS),
               Text(
                 '당신의 소원',
-                style: TossTheme.heading5.copyWith(color: TossTheme.primaryBlue),
+                style: TossTheme.heading5.copyWith(color: TossDesignSystem.tossBlue),
               ),
             ],
           ),
@@ -356,7 +357,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             width: double.infinity,
             padding: const EdgeInsets.all(TossTheme.spacingM),
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withOpacity(0.05),
               borderRadius: BorderRadius.circular(TossTheme.radiusS),
             ),
             child: Text(
@@ -385,8 +386,8 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              TossTheme.primaryBlue,
-              TossTheme.primaryBlue.withOpacity(0.8),
+              TossDesignSystem.tossBlue,
+              TossDesignSystem.tossBlue.withOpacity(0.8),
             ],
           ),
         ),
@@ -397,13 +398,15 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 24,
                 ),
                 const SizedBox(width: TossTheme.spacingS),
                 Text(
                   '신의 응답',
-                  style: TossTheme.heading4.copyWith(color: Colors.white),
+                  style: TossTheme.heading4.copyWith(
+                    color: TossDesignSystem.white,
+                  ),
                 ),
               ],
             ),
@@ -411,7 +414,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             Text(
               _divineResponse,
               style: TossTheme.body2.copyWith(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 height: 1.6,
               ),
             ),
@@ -465,10 +468,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.backgroundSecondary,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                      color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
                     ),
                   ),
                   child: Row(
@@ -482,7 +485,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                       Text(
                         category.name,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : TossTheme.textGray600,
+                          color: isSelected
+                              ? TossDesignSystem.white
+                              : TossDesignSystem.gray600,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -516,22 +521,22 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             decoration: InputDecoration(
               hintText: '마음을 담아 소원을 적어보세요...',
               hintStyle: TextStyle(
-                color: TossTheme.textGray400,
+                color: TossDesignSystem.gray400,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                borderSide: BorderSide(color: TossTheme.borderGray200),
+                borderSide: BorderSide(color: TossDesignSystem.gray200),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                borderSide: BorderSide(color: TossTheme.borderGray200),
+                borderSide: BorderSide(color: TossDesignSystem.gray200),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                borderSide: BorderSide(color: TossTheme.primaryBlue),
+                borderSide: BorderSide(color: TossDesignSystem.tossBlue),
               ),
               filled: true,
-              fillColor: TossTheme.backgroundSecondary,
+              fillColor: TossDesignSystem.backgroundSecondary,
               contentPadding: const EdgeInsets.all(16),
             ),
             style: TossTheme.body3,
@@ -561,7 +566,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                   min: 1,
                   max: 5,
                   divisions: 4,
-                  activeColor: TossTheme.primaryBlue,
+                  activeColor: TossDesignSystem.tossBlue,
                   onChanged: (value) {
                     setState(() {
                       _urgencyLevel = value.round();
@@ -601,7 +606,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
         ),
         title: Row(
           children: [
-            Icon(Icons.help_outline, color: TossTheme.primaryBlue),
+            Icon(Icons.help_outline, color: TossDesignSystem.tossBlue),
             const SizedBox(width: TossTheme.spacingS),
             Text('소원 빌기란?', style: TossTheme.heading4),
           ],

@@ -240,7 +240,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Colors.purple, Colors.pink, Colors.orange],
+                          colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -248,14 +248,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                         children: [
                           const Icon(
                             Icons.camera_alt,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             size: 40,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             _uploadResult!.instagramUrl!,
                             style: TossDesignSystem.body2.copyWith(
-                              color: Colors.white,
+                              color: TossDesignSystem.white,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -311,7 +311,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               },
               isEnabled: !_isAnalyzing,
               isLoading: _isAnalyzing,
-              icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: Colors.white),
+              icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: TossDesignSystem.white),
             ),
           ),
           
@@ -346,7 +346,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withOpacity(0.1),
+              color: TossDesignSystem.purple.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -433,8 +433,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                TossDesignSystem.purple.withOpacity(0.1),
-                TossDesignSystem.tossBlue.withOpacity(0.1),
+                TossDesignSystem.purple.withValues(alpha:0.1),
+                TossDesignSystem.tossBlue.withValues(alpha:0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
@@ -562,10 +562,10 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.warningOrange.withOpacity(0.1),
+                        color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: TossDesignSystem.warningOrange.withOpacity(0.3),
+                          color: TossDesignSystem.warningOrange.withValues(alpha:0.3),
                         ),
                       ),
                       child: Text(
@@ -590,8 +590,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.successGreen.withOpacity(0.1),
-                  TossDesignSystem.tossBlue.withOpacity(0.1),
+                  TossDesignSystem.successGreen.withValues(alpha:0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha:0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
@@ -651,7 +651,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(

@@ -142,10 +142,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
-        color: Colors.purple.withOpacity(0.2),
+        color: TossDesignSystem.purple.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.purple.withOpacity(0.3),
+          color: TossDesignSystem.purple.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -154,7 +154,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
         children: [
           Icon(
             Icons.auto_awesome,
-            color: Colors.purple,
+            color: TossDesignSystem.purple,
             size: 16,
           ),
           const SizedBox(width: AppSpacing.spacing1),
@@ -188,15 +188,15 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   tickCount: 4,
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
-                    color: Colors.purple.withOpacity(0.5),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.5),
                     width: 2,
                   ),
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
@@ -210,8 +210,8 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: Colors.purple.withOpacity(0.3),
-                      borderColor: Colors.purple,
+                      fillColor: TossDesignSystem.purple.withValues(alpha: 0.3),
+                      borderColor: TossDesignSystem.purple,
                       borderWidth: 2,
                       entryRadius: 4,
                       dataEntries: _getRadarEntries(),
@@ -291,7 +291,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               border: Border.all(
                 color: isStrongest
                     ? (info['color'] as Color).withOpacity(0.3)
-                    : Colors.transparent,
+                    : TossDesignSystem.transparent,
                 width: 2,
               ),
             ),
@@ -328,7 +328,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                                 vertical: 4 * 0.5,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.2),
+                                color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
                                 borderRadius: AppDimensions.borderRadiusMedium,
                               ),
                               child: Text(
@@ -342,7 +342,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                                 vertical: 4 * 0.5,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.2),
+                                color: TossDesignSystem.warningOrange.withValues(alpha: 0.2),
                                 borderRadius: AppDimensions.borderRadiusMedium,
                               ),
                               child: Text(
@@ -401,7 +401,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 child: _buildRelationInfo(
                   '상생',
                   '목→화→토→금→수→목',
-                  Colors.green,
+                  TossDesignSystem.successGreen,
                   Icons.refresh,
                 ),
               ),
@@ -410,7 +410,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 child: _buildRelationInfo(
                   '상극',
                   '목→토→수→화→금→목',
-                  Colors.red,
+                  TossDesignSystem.errorRed,
                   Icons.close,
                 ),
               ),
@@ -495,7 +495,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
   void _showElementDetail(String element, Map<String, dynamic> info) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -509,7 +509,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               width: 40,
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: TossDesignSystem.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
@@ -569,7 +569,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withValues(alpha: 0.1);
     
     // 동심원 그리기
     for (int i = 1; i <= 4; i++) {

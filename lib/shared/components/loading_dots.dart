@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/toss_design_system.dart';
 
 /// 점 3개 로딩 애니메이션 위젯
 class LoadingDots extends StatefulWidget {
@@ -65,7 +66,7 @@ class _LoadingDotsState extends State<LoadingDots>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.color ?? Colors.white;
+    final color = widget.color ?? TossDesignSystem.white;
     
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -89,7 +90,7 @@ class _LoadingDotsState extends State<LoadingDots>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.8 + (0.2 * animation.value)),
+              color: color.withValues(alpha: 0.8 + (0.2 * animation.value)),
               shape: BoxShape.circle,
             ),
           ),

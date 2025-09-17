@@ -99,7 +99,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: Colors.red,
+                backgroundColor: TossDesignSystem.errorRed,
               ),
             );
           }
@@ -135,7 +135,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('전화번호가 성공적으로 변경되었습니다'),
-                  backgroundColor: Colors.green,
+                  backgroundColor: TossDesignSystem.successGreen,
                 ),
               );
               context.pop();
@@ -144,7 +144,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: Colors.red,
+                backgroundColor: TossDesignSystem.errorRed,
               ),
             );
           }
@@ -158,14 +158,14 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('인증번호가 재발송되었습니다'),
-                backgroundColor: Colors.green,
+                backgroundColor: TossDesignSystem.successGreen,
               ),
             );
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: Colors.red,
+                backgroundColor: TossDesignSystem.errorRed,
               ),
             );
           }
@@ -182,7 +182,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
     return Scaffold(
       backgroundColor: TossDesignSystem.gray600,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
@@ -238,7 +238,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: TossDesignSystem.gray600),
                     ),
@@ -281,7 +281,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                   horizontal: 8,
                                   vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.1),
+                                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Row(
@@ -289,14 +289,14 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                   children: [
                                     Icon(
                                       Icons.verified,
-                                      color: Colors.green,
+                                      color: TossDesignSystem.successGreen,
                                       size: 16,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
                                       '인증됨',
                                       style: TextStyle(
-                                        color: Colors.green,
+                                        color: TossDesignSystem.successGreen,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -317,7 +317,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: TossDesignSystem.gray600,
-                              foregroundColor: Colors.white,
+                              foregroundColor: TossDesignSystem.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),

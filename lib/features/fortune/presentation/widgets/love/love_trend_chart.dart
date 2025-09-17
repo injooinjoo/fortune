@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 
 class LoveTrendChart extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -160,7 +161,7 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                         return LineTooltipItem(
                           '${widget.data[index]['week']}\n${spot.y.toInt()}점',
                           TossTheme.caption.copyWith(
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                             fontWeight: FontWeight.w600,
                           ),
                         );

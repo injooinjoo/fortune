@@ -11,6 +11,7 @@ import '../../../../shared/components/custom_calendar_date_picker.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../data/models/celebrity.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class SameBirthdayCelebrityFortunePage extends ConsumerWidget {
   const SameBirthdayCelebrityFortunePage({super.key});
@@ -65,7 +66,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
         Text(
           '생일이 같은 연예인과의 특별한 인연!\n오늘의 운세를 확인해보세요.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -86,11 +87,11 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
           ),
         ),
@@ -110,7 +111,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
             await showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              backgroundColor: Colors.transparent,
+              backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
               builder: (context) => CustomCalendarDatePicker(
                 initialDate: _birthDate ?? DateTime(1990, 1, 1),
                 firstDate: DateTime(1900),
@@ -138,7 +139,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -156,7 +157,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -191,7 +192,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                   side: BorderSide(
                     color: _lunarSolarType == 'solar' 
                         ? theme.colorScheme.primary 
-                        : theme.colorScheme.outline.withOpacity(0.3),
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -212,7 +213,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                   side: BorderSide(
                     color: _lunarSolarType == 'lunar' 
                         ? theme.colorScheme.primary 
-                        : theme.colorScheme.outline.withOpacity(0.3),
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -226,10 +227,10 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -259,7 +260,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                   children: _sameBirthdayCelebrities.take(5).map((celebrity) {
                     return Chip(
                       avatar: CircleAvatar(
-                        backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                        backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                         child: Text(
                           celebrity.name.substring(0, 1),
                           style: TextStyle(
@@ -274,7 +275,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                       ),
                       backgroundColor: theme.colorScheme.surface,
                       side: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
                       ),
                     );
                   }).toList(),
@@ -284,7 +285,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                   Text(
                     '그 외 ${_sameBirthdayCelebrities.length - 5}명',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -384,8 +385,8 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.15),
-                  theme.colorScheme.secondary.withOpacity(0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.15),
+                  theme.colorScheme.secondary.withValues(alpha: 0.1),
                 ],
               ),
               child: Column(
@@ -393,7 +394,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.cake, size: 32, color: Colors.pink),
+                      const Icon(Icons.cake, size: 32, color: TossDesignSystem.pinkPrimary),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -442,8 +443,8 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                           shape: BoxShape.circle,
                           gradient: LinearGradient(
                             colors: [
-                              theme.colorScheme.primary.withOpacity(0.3),
-                              theme.colorScheme.secondary.withOpacity(0.3),
+                              theme.colorScheme.primary.withValues(alpha: 0.3),
+                              theme.colorScheme.secondary.withValues(alpha: 0.3),
                             ],
                           ),
                         ),
@@ -475,7 +476,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                               Text(
                                 celebrity['description'],
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -532,7 +533,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                   '행운의 숫자',
                   result.details?['lucky_number'] ?? '',
                   Icons.looks_one,
-                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.1),
                 ),
               ),
               const SizedBox(width: 12),
@@ -542,7 +543,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                   '행운의 색상',
                   result.details?['lucky_color'] ?? '',
                   Icons.palette,
-                  theme.colorScheme.secondary.withOpacity(0.1),
+                  theme.colorScheme.secondary.withValues(alpha: 0.1),
                 ),
               ),
             ],
@@ -556,7 +557,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                   '행운의 방향',
                   result.details?['lucky_direction'] ?? '',
                   Icons.explore,
-                  theme.colorScheme.tertiary.withOpacity(0.1),
+                  theme.colorScheme.tertiary.withValues(alpha: 0.1),
                 ),
               ),
               const SizedBox(width: 12),
@@ -566,7 +567,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                   '행운의 시간',
                   result.details?['lucky_time'] ?? '',
                   Icons.access_time,
-                  Colors.orange.withOpacity(0.1),
+                  TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                 ),
               ),
             ],
@@ -627,8 +628,8 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.purple.withOpacity(0.1),
-                  Colors.pink.withOpacity(0.05),
+                  TossDesignSystem.purple.withValues(alpha: 0.1),
+                  TossDesignSystem.pinkPrimary.withValues(alpha: 0.05),
                 ],
               ),
               child: Column(
@@ -636,7 +637,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 20),
+                      const Icon(Icons.star, color: TossDesignSystem.warningOrange, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         '연예인과의 특별한 인연',
@@ -676,7 +677,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
         end: Alignment.bottomRight,
         colors: [
           backgroundColor,
-          backgroundColor.withOpacity(0.5),
+          backgroundColor.withValues(alpha: 0.5),
         ],
       ),
       child: Column(
@@ -686,7 +687,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 4),
@@ -714,8 +715,8 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          color.withOpacity(0.1),
-          color.withOpacity(0.05),
+          color.withValues(alpha: 0.1),
+          color.withValues(alpha: 0.05),
         ],
       ),
       child: Column(

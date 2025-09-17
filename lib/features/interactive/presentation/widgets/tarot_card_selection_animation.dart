@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import '../../../../core/theme/toss_design_system.dart';
 
 class TarotCardSelectionAnimation extends StatefulWidget {
   final int selectedIndex;
@@ -144,7 +145,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           animation: _fadeAnimation,
           builder: (context, child) {
             return Container(
-              color: Colors.black.withOpacity(_fadeAnimation.value * 0.7),
+              color: TossDesignSystem.black.withOpacity(_fadeAnimation.value * 0.7),
             );
           },
         ),
@@ -218,7 +219,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                       Theme.of(context).primaryColor.withOpacity(0.6),
                       Theme.of(context).colorScheme.secondary.withOpacity(0.6)]),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withOpacity(0.2),
                     width: 2))));
         });
     });
@@ -234,7 +235,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: TossDesignSystem.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 5))]),
       child: ClipRRect(
@@ -256,9 +257,9 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.white.withOpacity(0),
-                        Colors.white.withOpacity(0.3),
-                        Colors.white.withOpacity(0)],
+                        TossDesignSystem.white.withOpacity(0),
+                        TossDesignSystem.white.withOpacity(0.3),
+                        TossDesignSystem.white.withOpacity(0)],
                       transform: GradientRotation(_flipAnimation.value * math.pi)))]));
   }
 
@@ -277,7 +278,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           Positioned.fill(
             child: CustomPaint(
               painter: AnimatedMandalaPainter(
-                color: Colors.white.withOpacity(0.2),
+                color: TossDesignSystem.white.withOpacity(0.2),
                 progress: _pickAnimation.value)),
           
           // Center icon
@@ -285,7 +286,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: Icon(
               Icons.auto_awesome,
               size: 60,
-              color: Colors.white.withOpacity(0.8))]);
+              color: TossDesignSystem.white.withOpacity(0.8))]);
   }
 
   Widget _buildCardFront() {
@@ -299,7 +300,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: Icon(
               Icons.image_not_supported,
               size: 60,
-              color: Colors.white)));
+              color: TossDesignSystem.white)));
       });
   }
 }

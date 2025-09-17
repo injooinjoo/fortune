@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -69,8 +70,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          scoreColor.withOpacity(0.2),
-          scoreColor.withOpacity(0.1),
+          scoreColor.withValues(alpha:0.2),
+          scoreColor.withValues(alpha:0.1),
         ],
       ),
       child: Row(
@@ -116,7 +117,7 @@ class FortuneDisplay extends StatelessWidget {
             children: [
               Icon(
                 Icons.stars,
-                color: Colors.amber,
+                color: TossDesignSystem.warningOrange,
                 size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
@@ -145,35 +146,35 @@ class FortuneDisplay extends StatelessWidget {
     switch (label) {
       case '숫자': case 'number':
         icon = Icons.looks_one;
-        color = Colors.blue;
+        color = TossDesignSystem.primaryBlue;
         break;
       case '색상':
       case 'color':
         icon = Icons.palette;
-        color = Colors.purple;
+        color = TossDesignSystem.purple;
         break;
       case '방향':
       case 'direction':
         icon = Icons.explore;
-        color = Colors.green;
+        color = TossDesignSystem.successGreen;
         break;
       case '시간':
       case 'time':
         icon = Icons.access_time;
-        color = Colors.orange;
+        color = TossDesignSystem.warningOrange;
         break;
       default:
         icon = Icons.star;
-        color = Colors.amber;
+        color = TossDesignSystem.warningOrange;
     }
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha:0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha:0.3),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -217,8 +218,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          Colors.green.withOpacity(0.2),
-          Colors.green.withOpacity(0.1)]),
+          TossDesignSystem.successGreen.withValues(alpha:0.2),
+          TossDesignSystem.successGreen.withValues(alpha:0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -226,7 +227,7 @@ class FortuneDisplay extends StatelessWidget {
             children: [
               Icon(
                 Icons.lightbulb,
-                color: Colors.green,
+                color: TossDesignSystem.successGreen,
                 size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
@@ -243,8 +244,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          Colors.orange.withOpacity(0.2),
-          Colors.orange.withOpacity(0.1)]),
+          TossDesignSystem.warningOrange.withValues(alpha:0.2),
+          TossDesignSystem.warningOrange.withValues(alpha:0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -252,7 +253,7 @@ class FortuneDisplay extends StatelessWidget {
             children: [
               Icon(
                 Icons.warning_amber,
-                color: Colors.orange,
+                color: TossDesignSystem.warningOrange,
                 size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
@@ -265,10 +266,10 @@ class FortuneDisplay extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.primaryBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
 }
 
   String _getScoreDescription(int score) {
@@ -300,19 +301,19 @@ class FortuneDisplay extends StatelessWidget {
   Color _getCategoryColor(String category) {
     switch (category) {
       case '재물운': case '금전운':
-        return Colors.amber;
+        return TossDesignSystem.warningOrange;
       case '연애운':
       case '애정운':
-        return Colors.pink;
+        return TossDesignSystem.purple;
       case '건강운':
-        return Colors.green;
+        return TossDesignSystem.successGreen;
       case '직업운':
       case '사업운':
-        return Colors.blue;
+        return TossDesignSystem.primaryBlue;
       case '학업운':
-        return Colors.purple;
+        return TossDesignSystem.purple;
       default:
-        return Colors.cyan;
+        return TossDesignSystem.primaryBlue;
     }
   }
 }

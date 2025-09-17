@@ -7,6 +7,7 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../services/saju_calculation_service.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 /// 토스 스타일 사주팔자 페이지
 class SajuTossPage extends ConsumerStatefulWidget {
@@ -465,7 +466,7 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
           TossListCard(
             leading: Icon(
               Icons.stars,
-              color: Colors.amber,
+              color: TossDesignSystem.warningOrange,
               size: 24,
             ),
             title: Text('공망'),
@@ -475,7 +476,7 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
           TossListCard(
             leading: Icon(
               Icons.flash_on,
-              color: Colors.orange,
+              color: TossDesignSystem.warningOrange,
               size: 24,
             ),
             title: Text('역마살'),
@@ -485,7 +486,7 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
           TossListCard(
             leading: Icon(
               Icons.auto_awesome,
-              color: Colors.purple,
+              color: TossDesignSystem.purple,
               size: 24,
             ),
             title: Text('화개살'),

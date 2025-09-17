@@ -489,12 +489,12 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      scoreColor.withOpacity(0.2),
-                      scoreColor.withOpacity(0.05),
+                      scoreColor.withValues(alpha: 0.2),
+                      scoreColor.withValues(alpha: 0.05),
                     ],
                   ),
                   border: Border.all(
-                    color: scoreColor.withOpacity(0.3),
+                    color: scoreColor.withValues(alpha: 0.3),
                     width: 3,
                   ),
                 ),
@@ -519,7 +519,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   child: IconButton(
                     icon: const Icon(
                       Icons.help_outline,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       size: 20),
                     onPressed: () {
                       HapticUtils.lightImpact();
@@ -553,7 +553,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           Text(
             _fortune?.category ?? widget.fortuneType,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
           ),
         ],
       ),
@@ -599,7 +599,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: score / 100,
-                    backgroundColor: color.withOpacity(0.2),
+                    backgroundColor: color.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 6,
                   ),
@@ -882,15 +882,15 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                            Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8),
                           ],
                         ),
                       ),
                       child: Icon(
                         Icons.auto_awesome_rounded,
                         size: 64,
-                        color: Colors.white.withOpacity(0.8),
+                        color: TossDesignSystem.white.withValues(alpha: 0.8),
                       ),
                     );
                   },
@@ -912,14 +912,14 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 Text(
                   widget.description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 Text(
                   '아래 버튼을 눌러 운세를 확인해보세요',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ],

@@ -6,6 +6,7 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class FiveBlessingsFortunePage extends ConsumerStatefulWidget {
   const FiveBlessingsFortunePage({super.key});
@@ -24,7 +25,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       'title': '수(壽) - 장수',
       'subtitle': '건강하고 오래 사는 삶',
       'icon': Icons.favorite,
-      'color': Colors.green,
+      'color': TossDesignSystem.successGreen,
       'description': '무병장수하며 건강한 노년을 보내는 축복'
     },
     {
@@ -32,7 +33,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       'title': '부(富) - 재물',
       'subtitle': '풍족하고 넉넉한 삶',
       'icon': Icons.monetization_on,
-      'color': Colors.amber,
+      'color': TossDesignSystem.warningOrange,
       'description': '경제적으로 풍요롭고 여유로운 삶의 축복'
     },
     {
@@ -40,7 +41,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       'title': '강녕(康寧) - 건강',
       'subtitle': '몸과 마음이 편안한 삶',
       'icon': Icons.spa,
-      'color': Colors.blue,
+      'color': TossDesignSystem.tossBlue,
       'description': '심신이 건강하고 평온한 상태를 유지하는 축복'
     },
     {
@@ -48,7 +49,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       'title': '유호덕(攸好德) - 덕행',
       'subtitle': '덕을 쌓고 베푸는 삶',
       'icon': Icons.volunteer_activism,
-      'color': Colors.purple,
+      'color': TossDesignSystem.purple,
       'description': '선행을 쌓고 타인에게 존경받는 삶의 축복'
     },
     {
@@ -56,7 +57,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       'title': '고종명(考終命) - 편안한 임종',
       'subtitle': '평화롭게 마무리하는 삶',
       'icon': Icons.nature_people,
-      'color': Colors.indigo,
+      'color': TossDesignSystem.tossBlue,
       'description': '천수를 다하고 편안하게 생을 마감하는 축복'
     }
   ];
@@ -111,7 +112,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             '전통 오복 중 당신이 가장 원하는 복을 선택하면, 그 복을 받을 수 있는 방법을 알려드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
+              color: TossDesignSystem.gray500,
             ),
           ),
           const SizedBox(height: 24),
@@ -122,13 +123,13 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(color: TossDesignSystem.gray300),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.calendar_today, color: Colors.grey),
+                  const Icon(Icons.calendar_today, color: TossDesignSystem.gray500),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -137,11 +138,11 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                           : '생년월일을 선택해주세요',
                       style: TextStyle(
                         fontSize: 16,
-                        color: _birthdate != null ? Colors.black : Colors.grey,
+                        color: _birthdate != null ? TossDesignSystem.gray900 : TossDesignSystem.gray500,
                       ),
                     ),
                   ),
-                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                  const Icon(Icons.arrow_drop_down, color: TossDesignSystem.gray500),
                 ],
               ),
             ),
@@ -174,12 +175,12 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 decoration: BoxDecoration(
                   color: _selectedGoal == blessing['id']
                       ? (blessing['color'] as Color).withValues(alpha: 0.1)
-                      : Colors.white,
+                      : TossDesignSystem.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: _selectedGoal == blessing['id']
                         ? blessing['color']
-                        : Colors.grey[300]!,
+                        : TossDesignSystem.gray300,
                     width: _selectedGoal == blessing['id'] ? 2.0 : 1.0,
                   ),
                 ),
@@ -210,14 +211,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                               fontWeight: FontWeight.bold,
                               color: _selectedGoal == blessing['id']
                                   ? blessing['color']
-                                  : Colors.black,
+                                  : TossDesignSystem.gray900,
                             ),
                           ),
                           Text(
                             blessing['subtitle'],
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],
+                              color: TossDesignSystem.gray600,
                             ),
                           ),
                         ],
@@ -240,9 +241,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: TossDesignSystem.gray50,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: TossDesignSystem.gray200),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +251,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                   Icon(
                     Icons.info_outline,
                     size: 20,
-                    color: Colors.grey[600],
+                    color: TossDesignSystem.gray600,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -258,7 +259,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       blessingGoals.firstWhere((b) => b['id'] == _selectedGoal)['description'],
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[700],
+                        color: TossDesignSystem.gray700,
                         height: 1.4,
                       ),
                     ),
@@ -333,7 +334,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               Icon(
                 selectedBlessing['icon'],
                 size: 64,
-                color: Colors.white,
+                color: TossDesignSystem.white,
               ),
               const SizedBox(height: 16),
               Text(
@@ -341,15 +342,15 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 selectedBlessing['subtitle'],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white70,
+                  color: TossDesignSystem.white.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -363,9 +364,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,9 +403,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               children: [
@@ -425,7 +426,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       child: CircularProgressIndicator(
                         value: result.overallScore! / 100,
                         strokeWidth: 12,
-                        backgroundColor: Colors.grey[200],
+                        backgroundColor: TossDesignSystem.gray200,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           selectedBlessing['color'],
                         ),
@@ -445,7 +446,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                           '달성 가능성',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: TossDesignSystem.gray600,
                           ),
                         ),
                       ],
@@ -463,9 +464,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,8 +505,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.yellow[50]!,
-                  Colors.orange[50]!,
+                  TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                  TossDesignSystem.warningOrange.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -515,7 +516,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.stars, color: Colors.orange),
+                    Icon(Icons.stars, color: TossDesignSystem.warningOrange),
                     SizedBox(width: 8),
                     Text(
                       '행운을 부르는 요소',
@@ -533,9 +534,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                   children: result.luckyItems!.entries.map((entry) => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.orange[200]!),
+                      border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha: 0.4)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -543,7 +544,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         Icon(
                           _getLuckyItemIcon(entry.key),
                           size: 16,
-                          color: Colors.orange,
+                          color: TossDesignSystem.warningOrange,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -568,7 +569,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.purple[50],
+              color: TossDesignSystem.purple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -576,7 +577,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.event_repeat, color: Colors.purple),
+                    Icon(Icons.event_repeat, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '매일 실천하기',
@@ -597,13 +598,13 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: Colors.purple.withValues(alpha: 0.2),
+                          color: TossDesignSystem.purple.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.check,
                           size: 16,
-                          color: Colors.purple,
+                          color: TossDesignSystem.purple,
                         ),
                       ),
                       const SizedBox(width: 8),

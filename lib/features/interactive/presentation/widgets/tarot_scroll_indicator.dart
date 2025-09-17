@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import '../../../../core/theme/toss_design_system.dart';
 
 class TarotScrollIndicator extends StatefulWidget {
   final bool isVisible;
@@ -76,15 +77,15 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: TossDesignSystem.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: TossDesignSystem.white.withOpacity(0.3),
                       width: 1)),
                   child: Text(
                     widget.text,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                   ),
@@ -129,7 +130,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
               child: CustomPaint(
                 size: const Size(30, 30),
                 painter: ArrowPainter(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   strokeWidth: 3,
                 ),
               ),
@@ -227,7 +228,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                 width: 60,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
+                  color: TossDesignSystem.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(

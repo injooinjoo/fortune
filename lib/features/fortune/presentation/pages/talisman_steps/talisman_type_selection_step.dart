@@ -1,6 +1,7 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -113,12 +114,12 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: type.gradientColors[0].withOpacity(0.3),
+                      color: type.gradientColors[0].withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4))]),
                 child: Icon(
                   type.icon,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 28)),
               const SizedBox(height: 12),
               Text(

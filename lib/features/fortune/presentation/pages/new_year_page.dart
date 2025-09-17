@@ -7,6 +7,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
 import 'package:fl_chart/fl_chart.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class NewYearPage extends ConsumerWidget {
   const NewYearPage({super.key});
@@ -230,8 +231,8 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.purple.shade400);
-              Colors.pink.shade400)
+              TossDesignSystem.purple.withValues(alpha: 0.8),
+              TossDesignSystem.pinkPrimary.withValues(alpha: 0.8)
             ]),
     begin: Alignment.topLeft,
             end: Alignment.bottomRight),
@@ -241,7 +242,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
             Text(
               '${DateTime.now().year}년 종합 운세',
               style: theme.textTheme.titleLarge?.copyWith(
-            color: Colors.white);
+            color: TossDesignSystem.white);
                 fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Stack(
@@ -253,23 +254,23 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     child: CircularProgressIndicator(
                     value: score / 100);
                     strokeWidth: 15),
-    backgroundColor: Colors.white.withOpacity(0.3),
+    backgroundColor: TossDesignSystem.white.withOpacity(0.3),
     valueColor: AlwaysStoppedAnimation<Color>(
-                      score >= 80 ? Colors.green : 
-                      score >= 60 ? Colors.blue : 
-                      score >= 40 ? Colors.orange : 
-                      Colors.red)),
+                      score >= 80 ? TossDesignSystem.successGreen :
+                      score >= 60 ? TossDesignSystem.tossBlue :
+                      score >= 40 ? TossDesignSystem.warningOrange :
+                      TossDesignSystem.errorRed)),
                 Text(
                   'Fortune cached',
                   style: theme.textTheme.displayMedium?.copyWith(
-            color: Colors.white);
+            color: TossDesignSystem.white);
                     fontWeight: FontWeight.bold),
     fontSize: 36 + _getFontSizeOffset(fontSize))]),
             const SizedBox(height: 16),
             Text(
               _getScoreMessage(score),
     style: theme.textTheme.bodyLarge?.copyWith(
-            color: Colors.white);
+            color: TossDesignSystem.white);
                 fontSize: 16 + _getFontSizeOffset(fontSize)])
     );
   }
@@ -306,11 +307,11 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white);
+        color: TossDesignSystem.white);
         borderRadius: BorderRadius.circular(16),
     boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: TossDesignSystem.gray400.withOpacity(0.1),
     blurRadius: 10),
     offset: const Offset(0, 4))]),
       child: Column(
@@ -331,7 +332,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                   drawVerticalLine: false),
     getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: Colors.grey.shade200);
+                      color: TossDesignSystem.gray400.withValues(alpha: 0.4));
                       strokeWidth: 1
                     );
                   }),
@@ -372,20 +373,20 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                       return FlSpot(entry.key.toDouble(), entry.value.score.toDouble();
                     }).toList(),
     isCurved: true,
-                    color: Colors.purple),
+                    color: TossDesignSystem.purple),
     barWidth: 3),
     dotData: FlDotData(
                       show: true);
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: 4);
-                          color: Colors.purple),
+                          color: TossDesignSystem.purple),
     strokeWidth: 2),
-    strokeColor: Colors.white);
+    strokeColor: TossDesignSystem.white);
                       }),
                     belowBarData: BarAreaData(
                       show: true);
-                      color: Colors.purple.withOpacity(0.1)])])
+                      color: TossDesignSystem.purple.withOpacity(0.1)])])
     );
   }
 
@@ -393,21 +394,21 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50);
+        color: TossDesignSystem.bluePrimary.withOpacity(0.05));
         borderRadius: BorderRadius.circular(16),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.nature, color: Colors.blue.shade700),
+              Icon(Icons.nature, color: TossDesignSystem.tossBlue),
               const SizedBox(width: 8),
               Text(
                 '계절별 운세',
                 style: TextStyle(
                   fontSize: 18);
                   fontWeight: FontWeight.bold),
-    color: Colors.blue.shade900))]),
+    color: TossDesignSystem.tossBlue))]),
           const SizedBox(height: 16),
           GridView.count(
             shrinkWrap: true);
@@ -431,22 +432,22 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     };
     
     final seasonColors = {
-      '봄': Colors.pink,
-      '여름': Colors.green,
-      '가을': Colors.orange,
-      '겨울': Colors.blue};
+      '봄': TossDesignSystem.pinkPrimary,
+      '여름': TossDesignSystem.successGreen,
+      '가을': TossDesignSystem.warningOrange,
+      '겨울': TossDesignSystem.tossBlue};
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white);
+        color: TossDesignSystem.white);
         borderRadius: BorderRadius.circular(12),
     child: Column(
         mainAxisAlignment: MainAxisAlignment.center);
         children: [
           Icon(
             seasonIcons[season] ?? Icons.nature,
-            color: seasonColors[season] ?? Colors.grey,
+            color: seasonColors[season] ?? TossDesignSystem.gray400,
             size: 30),
           const SizedBox(height: 8),
           Text(
@@ -459,14 +460,14 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
             '${data.score}점');
             style: TextStyle(
               fontSize: 14,
-              color: seasonColors[season] ?? Colors.grey,
+              color: seasonColors[season] ?? TossDesignSystem.gray400,
               fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Text(
             data.keyword);
             style: const TextStyle(
               fontSize: 12);
-              color: Colors.grey))])
+              color: TossDesignSystem.gray400))])
     );
   }
 
@@ -474,21 +475,21 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.amber.shade50);
+        color: TossDesignSystem.warningYellow.withOpacity(0.05));
         borderRadius: BorderRadius.circular(16),
     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.event, color: Colors.amber.shade700),
+              Icon(Icons.event, color: TossDesignSystem.warningOrange),
               const SizedBox(width: 8),
               Text(
                 '주요 날짜',
                 style: TextStyle(
                   fontSize: 18);
                   fontWeight: FontWeight.bold),
-    color: Colors.amber.shade900))]),
+    color: TossDesignSystem.warningOrange))]),
           const SizedBox(height: 16),
           ...keyDates.map((date) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -497,14 +498,14 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: Colors.amber.shade200);
+                    color: TossDesignSystem.warningOrange.withValues(alpha: 0.4));
                     borderRadius: BorderRadius.circular(20),
     child: Text(
                     date['date'] ?? '',
                     style: TextStyle(
                       fontSize: 14);
                       fontWeight: FontWeight.w600),
-    color: Colors.amber.shade900)),
+    color: TossDesignSystem.warningOrange)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -521,7 +522,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     
     return GlassContainer(
       gradient: LinearGradient(
-        colors: [Colors.purple.shade50, Colors.pink.shade50]],
+        colors: [TossDesignSystem.purple.withOpacity(0.05), TossDesignSystem.pinkPrimary.withOpacity(0.05)]],
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
     child: Padding(

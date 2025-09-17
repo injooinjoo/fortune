@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -202,7 +203,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             end: Alignment.bottomRight,
             colors: isSelected
                 ? type.gradientColors
-                : [Colors.grey[200]!, Colors.grey[300]!],
+                : [TossDesignSystem.gray200, TossDesignSystem.gray300],
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
@@ -224,13 +225,13 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                   Icon(
                     type.icon,
                     size: 36,
-                    color: isSelected ? Colors.white : Colors.grey[600],
+                    color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     type.label,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.grey[600],
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -242,7 +243,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                     child: Text(
                       type.description,
                       style: TextStyle(
-                        color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[500],
+                        color: isSelected ? TossDesignSystem.white.withOpacity(0.8) : TossDesignSystem.gray500,
                         fontSize: 11,
                       ),
                       textAlign: TextAlign.center,
@@ -260,15 +261,15 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.amber,
+                    color: TossDesignSystem.warningYellow,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Premium',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: TossDesignSystem.black.withOpacity(0.87),
                     ),
                   ),
                 ),
@@ -421,7 +422,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -467,7 +468,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: Colors.amber,
+                    color: TossDesignSystem.warningYellow,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -551,7 +552,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             Container(
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: TossDesignSystem.gray200,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
@@ -571,7 +572,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                 child: Text(
                   '$score%',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TossDesignSystem.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -585,9 +586,9 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 }

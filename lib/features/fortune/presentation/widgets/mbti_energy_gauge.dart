@@ -22,9 +22,9 @@ class MbtiEnergyGauge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-              ? Colors.black.withOpacity(0.2)
-              : Colors.grey.withOpacity(0.08),
+            color: isDark
+              ? TossDesignSystem.black.withValues(alpha: 0.2)
+              : TossDesignSystem.gray400.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -85,7 +85,7 @@ class MbtiEnergyGauge extends StatelessWidget {
           _buildEnergyBar(
             '유연성',
             energyLevels['flexibility'] ?? 0,
-            TossDesignSystem.green,
+            TossDesignSystem.successGreen,
             Icons.sync_alt,
             _getFlexibilityDescription(energyLevels['flexibility'] ?? 0),
           ),

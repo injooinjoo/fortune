@@ -8,6 +8,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../services/speech_recognition_service.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier, AsyncValue<DreamAnalysisResult?>, DreamInput>(
@@ -460,7 +461,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
         decoration: BoxDecoration(
           color: isSelected
               ? theme.colorScheme.primary.withValues(alpha: 0.2)
-              : Colors.transparent,
+              : TossDesignSystem.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -507,7 +508,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                 border: Border.all(
                   color: _isRecording 
                       ? theme.colorScheme.primary 
-                      : Colors.transparent,
+                      : TossDesignSystem.transparent,
                   width: 2,
                 ),
               ),
@@ -541,12 +542,12 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: _isRecording
-                    ? [Colors.red.shade400, Colors.red.shade600]
+                    ? [TossDesignSystem.errorRed.withValues(alpha: 0.8), TossDesignSystem.errorRed]
                     : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (_isRecording ? Colors.red : theme.colorScheme.primary)
+                  color: (_isRecording ? TossDesignSystem.errorRed : theme.colorScheme.primary)
                       .withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
@@ -556,7 +557,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
             child: Icon(
               _isRecording ? Icons.stop : Icons.mic,
               size: 40,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
         ),
@@ -589,10 +590,10 @@ class _DreamResultView extends ConsumerWidget {
   });
 
   Color _getLuckColor(int score) {
-    if (score >= 85) return Colors.green;
-    if (score >= 70) return Colors.blue;
-    if (score >= 55) return Colors.orange;
-    return Colors.red;
+    if (score >= 85) return TossDesignSystem.successGreen;
+    if (score >= 70) return TossDesignSystem.tossBlue;
+    if (score >= 55) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   String _getLuckText(int score) {

@@ -293,14 +293,14 @@ class _TossToastItemState extends State<_TossToastItem>
               borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: TossDesignSystem.black.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Material(
-              color: Colors.transparent,
+              color: TossDesignSystem.white.withValues(alpha: 0.0),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: TossDesignSystem.spacingM,
@@ -359,38 +359,38 @@ class _TossToastItemState extends State<_TossToastItem>
       case TossToastType.success:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.green.withOpacity(0.9)
-              : Colors.green.withOpacity(0.08),
-          iconColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9),
-          textColor: isDark ? Colors.white : Colors.black87,
-          actionColor: isDark ? Colors.green.withOpacity(0.5) : Colors.green.withOpacity(0.9),
+              ? TossDesignSystem.success.withValues(alpha: 0.9)
+              : TossDesignSystem.success.withValues(alpha: 0.08),
+          iconColor: isDark ? TossDesignSystem.success.withValues(alpha: 0.5) : TossDesignSystem.success.withValues(alpha: 0.9),
+          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
+          actionColor: isDark ? TossDesignSystem.success.withValues(alpha: 0.5) : TossDesignSystem.success.withValues(alpha: 0.9),
         );
       case TossToastType.error:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.red.withOpacity(0.9)
-              : Colors.red.withOpacity(0.08),
-          iconColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9),
-          textColor: isDark ? Colors.white : Colors.black87,
-          actionColor: isDark ? Colors.red.withOpacity(0.5) : Colors.red.withOpacity(0.9),
+              ? TossDesignSystem.error.withValues(alpha: 0.9)
+              : TossDesignSystem.error.withValues(alpha: 0.08),
+          iconColor: isDark ? TossDesignSystem.error.withValues(alpha: 0.5) : TossDesignSystem.error.withValues(alpha: 0.9),
+          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
+          actionColor: isDark ? TossDesignSystem.error.withValues(alpha: 0.5) : TossDesignSystem.error.withValues(alpha: 0.9),
         );
       case TossToastType.warning:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.orange.withOpacity(0.9)
-              : Colors.orange.withOpacity(0.08),
-          iconColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9),
-          textColor: isDark ? Colors.white : Colors.black87,
-          actionColor: isDark ? Colors.orange.withOpacity(0.5) : Colors.orange.withOpacity(0.9),
+              ? TossDesignSystem.warningOrange.withValues(alpha: 0.9)
+              : TossDesignSystem.warningOrange.withValues(alpha: 0.08),
+          iconColor: isDark ? TossDesignSystem.warningOrange.withValues(alpha: 0.5) : TossDesignSystem.warningOrange.withValues(alpha: 0.9),
+          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
+          actionColor: isDark ? TossDesignSystem.warningOrange.withValues(alpha: 0.5) : TossDesignSystem.warningOrange.withValues(alpha: 0.9),
         );
       case TossToastType.info:
         return _ToastColors(
           backgroundColor: isDark
-              ? Colors.grey.withOpacity(0.9)
-              : Colors.grey.withOpacity(0.08),
-          iconColor: isDark ? Colors.grey.withOpacity(0.5) : Colors.grey.withOpacity(0.9),
-          textColor: isDark ? Colors.white : Colors.black87,
-          actionColor: isDark ? Colors.blue.withOpacity(0.5) : Colors.blue.withOpacity(0.9),
+              ? TossDesignSystem.gray500.withValues(alpha: 0.9)
+              : TossDesignSystem.gray500.withValues(alpha: 0.08),
+          iconColor: isDark ? TossDesignSystem.gray500.withValues(alpha: 0.5) : TossDesignSystem.gray500.withValues(alpha: 0.9),
+          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
+          actionColor: isDark ? TossDesignSystem.tossBlue.withValues(alpha: 0.5) : TossDesignSystem.tossBlue.withValues(alpha: 0.9),
         );
     }
   }

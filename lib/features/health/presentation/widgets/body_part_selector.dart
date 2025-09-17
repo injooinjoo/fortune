@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 
 class BodyPartSelector extends StatefulWidget {
   final List<BodyPart> selectedParts;
@@ -64,11 +65,11 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
           height: 400,
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: TossDesignSystem.black.withValues(alpha: 0.04),
                 offset: const Offset(0, 2),
                 blurRadius: 16,
                 spreadRadius: 0,
@@ -168,7 +169,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
               if (isSelected)
                 Icon(
                   Icons.check_circle,
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                   size: 20,
                 ),
             ],

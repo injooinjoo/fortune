@@ -162,7 +162,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
       appBar: AppHeader(
         title: '부적 만들기',
         showBackButton: true,
-        backgroundColor: Colors.white,
+        backgroundColor: TossDesignSystem.white,
         elevation: 0),
       body: Column(
         children: [
@@ -204,10 +204,10 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.white,
         border: Border(
           bottom: BorderSide(
-            color: Colors.grey[200]!,
+            color: TossDesignSystem.gray200,
             width: 1)),
       child: Row(
         children: [
@@ -240,7 +240,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
         ? TossDesignSystem.tossBlue 
         : isActive 
             ? TossDesignSystem.tossBlue.withOpacity(0.6)
-            : Colors.grey[400]!;
+            : TossDesignSystem.gray400;
 
     return Expanded(
       child: Column(
@@ -250,7 +250,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: isCompleted ? color : Colors.white,
+              color: isCompleted ? color : TossDesignSystem.white,
               shape: BoxShape.circle,
               border: Border.all(
                 color: color,
@@ -260,13 +260,13 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
                   ? Icon(
                       Icons.check,
                       size: 16,
-                      color: Colors.white)
+                      color: TossDesignSystem.white)
                   : Text(
                       '$step',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: isActive ? color : Colors.grey[400]))).animate(target: isActive ? 1 : 0).scale(
+                        color: isActive ? color : TossDesignSystem.gray400))).animate(target: isActive ? 1 : 0).scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1.0, 1.0),
             duration: 300.ms,
@@ -277,7 +277,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
             style: TextStyle(
               fontSize: 12,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              color: isActive ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900 : Colors.grey[500]),
+              color: isActive ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900 : TossDesignSystem.gray500),
           ),
         ],
       ),
@@ -288,7 +288,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     return Container(
       height: 2,
       width: 24,
-      color: isActive ? TossDesignSystem.tossBlue : Colors.grey[300],
+      color: isActive ? TossDesignSystem.tossBlue : TossDesignSystem.gray300,
     ).animate(target: isActive ? 1 : 0).scaleX(
       begin: 0,
       end: 1,

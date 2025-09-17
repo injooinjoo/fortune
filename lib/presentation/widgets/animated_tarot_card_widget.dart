@@ -84,6 +84,8 @@ class _AnimatedTarotCardWidgetState extends State<AnimatedTarotCardWidget>
             sparkles: _sparkles,
             sparkleProgress: _sparkleAnimation.value,
             floatOffset: _floatAnimation.value,
+            symbolColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            sparkleColor: Theme.of(context).colorScheme.onSurface,
           ),
         );
       },
@@ -111,18 +113,22 @@ class _TarotCardPainter extends CustomPainter {
   final List<_Sparkle> sparkles;
   final double sparkleProgress;
   final double floatOffset;
-  
+  final Color symbolColor;
+  final Color sparkleColor;
+
   _TarotCardPainter({
     required this.sparkles,
     required this.sparkleProgress,
     required this.floatOffset,
+    required this.symbolColor,
+    required this.sparkleColor,
   });
   
   @override
   void paint(Canvas canvas, Size size) {
     // Draw mystical symbols
     final symbolPaint = Paint()
-      ..color = TossDesignSystem.grayDark900.withOpacity(0.1)
+      ..color = symbolColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     
@@ -181,7 +187,7 @@ class _TarotCardPainter extends CustomPainter {
       final opacity = math.sin(progress * math.pi).abs() * 0.8; // Use abs() to ensure positive value
       
       if (opacity > 0) {
-        sparklePaint.color = TossDesignSystem.grayDark900.withOpacity(opacity);
+        sparklePaint.color = sparkleColor.withOpacity(opacity);
         
         final x = size.width * sparkle.x;
         final y = size.height * sparkle.y + floatOffset * 0.5;

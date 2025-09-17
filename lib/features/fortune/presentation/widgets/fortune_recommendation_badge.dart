@@ -48,13 +48,13 @@ class FortuneRecommendationBadge extends StatelessWidget {
           Icon(
             badgeData.icon,
             size: 14,
-            color: Colors.white,
+            color: TossDesignSystem.white,
           ),
           const SizedBox(width: AppSpacing.spacing1),
           Text(
             type.displayName,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -63,11 +63,11 @@ class FortuneRecommendationBadge extends StatelessWidget {
             Text(
               '${(score! * 100).toInt()}%',
               style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withOpacity(0.9),
               ),
             ),
         ],
-      ),;
+      ),
   }
 
   _BadgeData _getBadgeData(RecommendationType type) {

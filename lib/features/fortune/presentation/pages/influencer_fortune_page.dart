@@ -15,10 +15,10 @@ class InfluencerFortunePage extends ConsumerWidget {
     return BaseFortunePageV2(
       title: '인플루언서 운세',
       fortuneType: 'influencer',
-      headerGradient: const LinearGradient(
+      headerGradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFE91E63), Color(0xFFAD1457)]),
+        colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha: 0.8)]),
       inputBuilder: (context, onSubmit) => _InfluencerInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => Container(
         child: Center(child: Text('Influencer Fortune Result'))),
@@ -104,11 +104,11 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: TossDesignSystem.backgroundPrimary,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: TossDesignSystem.gray900.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -139,7 +139,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFE91E63) : Colors.transparent,
+            color: isSelected ? TossDesignSystem.errorRed : TossDesignSystem.white.withValues(alpha: 0.0),
             borderRadius: BorderRadius.circular(25),
           ),
           child: Row(
@@ -148,7 +148,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? Colors.white : theme.colorScheme.onSurface.withOpacity(0.6),
+                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
               ),
               if (MediaQuery.of(context).size.width > 360) ...[
                 const SizedBox(width: 4),
@@ -157,7 +157,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.white : theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
                   ),
                 ),
               ],
@@ -199,20 +199,20 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isSelected
-                    ? [const Color(0xFFE91E63), const Color(0xFFF06292)]
-                    : [theme.colorScheme.surface, theme.colorScheme.surface],
+                    ? [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha: 0.7)]
+                    : [TossDesignSystem.backgroundPrimary, TossDesignSystem.backgroundPrimary],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isSelected 
-                    ? const Color(0xFFE91E63) 
-                    : theme.dividerColor,
+                color: isSelected
+                    ? TossDesignSystem.errorRed
+                    : TossDesignSystem.gray300,
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFE91E63).withOpacity(0.3),
+                        color: TossDesignSystem.errorRed.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -227,16 +227,16 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                   CircleAvatar(
                     radius: 30,
                     backgroundColor: isSelected 
-                        ? Colors.white.withOpacity(0.2)
-                        : const Color(0xFFE91E63).withOpacity(0.1),
+                        ? TossDesignSystem.white.withValues(alpha: 0.2)
+                        : TossDesignSystem.errorRed.withValues(alpha: 0.1),
                     child: Text(
                       influencer['name']![0],
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: isSelected 
-                            ? Colors.white 
-                            : const Color(0xFFE91E63),
+                        color: isSelected
+                            ? TossDesignSystem.white
+                            : TossDesignSystem.errorRed,
                       ),
                     ),
                   ),
@@ -246,9 +246,9 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isSelected 
-                          ? Colors.white 
-                          : Colors.black,
+                      color: isSelected
+                          ? TossDesignSystem.white
+                          : TossDesignSystem.gray900,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -256,18 +256,18 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                     influencer['category']!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isSelected 
-                          ? Colors.white.withOpacity(0.8)
-                          : Colors.grey,
+                      color: isSelected
+                          ? TossDesignSystem.white.withValues(alpha: 0.8)
+                          : TossDesignSystem.gray500,
                     ),
                   ),
                   Text(
                     influencer['followers'] ?? influencer['subscribers']!,
                     style: TextStyle(
                       fontSize: 11,
-                      color: isSelected 
-                          ? Colors.white.withOpacity(0.7)
-                          : Colors.grey[400]!,
+                      color: isSelected
+                          ? TossDesignSystem.white.withValues(alpha: 0.7)
+                          : TossDesignSystem.gray400,
                     ),
                   ),
                 ],
@@ -319,14 +319,14 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.9,
         minChildSize: 0.5,
         maxChildSize: 0.95,
         builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: Color(0xFFF5F5F5),
+            color: TossDesignSystem.gray100,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: ListView(
@@ -338,7 +338,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Color(0xFFE0E0E0),
+                    color: TossDesignSystem.gray300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -375,8 +375,8 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFE91E63), Color(0xFFF06292)],
+        gradient: LinearGradient(
+          colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha: 0.7)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -390,7 +390,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
           const SizedBox(height: 8),
@@ -398,7 +398,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
             content.toString(),
             style: const TextStyle(
               fontSize: 14,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
         ],
@@ -411,9 +411,9 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TossDesignSystem.backgroundPrimary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE91E63).withOpacity(0.3))
+        border: Border.all(color: TossDesignSystem.errorRed.withValues(alpha: 0.3))
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,7 +423,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFE91E63)),
+              color: TossDesignSystem.errorRed),
           ),
           const SizedBox(height: 8),
           ...tips.map((tip) => Padding(
@@ -431,7 +431,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('• ', style: TextStyle(color: Color(0xFFE91E63))),
+                const Text('• ', style: TextStyle(color: TossDesignSystem.errorRed)),
                 Expanded(
                   child: Text(
                     tip.toString(),

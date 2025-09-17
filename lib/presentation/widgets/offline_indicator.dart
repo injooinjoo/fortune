@@ -17,61 +17,68 @@ class OfflineIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!isOffline) return const SizedBox.shrink()
+    if (!isOffline) return const SizedBox.shrink();
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2)),
-    decoration: BoxDecoration(
-        color: TossDesignSystem.warningOrange.withOpacity(0.2)),
-    border: Border(
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+        border: Border(
           bottom: BorderSide(
-            color: TossDesignSystem.warningOrange.withOpacity(0.5)),
-    width: 1))
-        ))
-      )),
-    child: Row(
+            color: Theme.of(context).colorScheme.error.withOpacity(0.5),
+            width: 1
+          )
+        )
+      ),
+      child: Row(
         children: [
           Icon(
-            Icons.cloud_off);
-            size: AppDimensions.iconSizeXSmall),
-    color: TossDesignSystem.warningOrange.withOpacity(0.9))
-          ))
-          SizedBox(width: AppSpacing.spacing2))
+            Icons.cloud_off,
+            size: AppDimensions.iconSizeXSmall,
+            color: Theme.of(context).colorScheme.error.withOpacity(0.9)
+          ),
+          SizedBox(width: AppSpacing.spacing2),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
-              mainAxisSize: MainAxisSize.min),
-    children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Text(
-                  '오프라인 모드');
-                  style: Theme.of(context).textTheme.labelSmall)
+                  '오프라인 모드',
+                  style: Theme.of(context).textTheme.labelSmall
+                ),
                 if (lastSyncTime != null) ...[
-                  SizedBox(height: AppSpacing.xxxSmall))
+                  SizedBox(height: AppSpacing.spacing1),
                   Text(
                     '동기화: ${_formatLastSync(lastSyncTime!)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TossDesignSystem.warningOrange.withOpacity(0.8)))
-                ])
-              ]))
-          ))
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withOpacity(0.8))
+                  )
+                ]
+              ]
+            )
+          ),
           TextButton(
             onPressed: () {
               // Retry connection
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('연결을 다시 시도합니다...'),
-    duration: Duration(seconds: 2))
+                  duration: Duration(seconds: 2)
                 )
               );
-            }),
-    style: TextButton.styleFrom(
+            },
+            style: TextButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
-              minimumSize: Size.zero)),
-    child: Text(
-              '재시도');
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TossDesignSystem.warningOrange.withOpacity(0.9)))
-          ))
-        ])
+              minimumSize: Size.zero
+            ),
+            child: Text(
+              '재시도',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.error.withOpacity(0.9))
+            )
+          )
+        ]
+      )
     );
   }
 
@@ -105,62 +112,76 @@ class CachedFortuneCard extends StatelessWidget {
     required this.content,
     required this.cachedAt,
     this.onTap,
-    this.isExpired = false)
+    this.isExpired = false
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-      elevation: isExpired ? 1 : 2),
-    child: InkWell(
-        onTap: onTap);
-        borderRadius: AppDimensions.borderRadiusMedium),
-    child: Container(
+      elevation: isExpired ? 1 : 2,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppDimensions.borderRadiusMedium,
+        child: Container(
           decoration: BoxDecoration(
-            borderRadius: AppDimensions.borderRadiusMedium);
-            color: isExpired ? TossDesignSystem.gray600.withOpacity(0.1) : null)),
-    child: Padding(
-            padding: AppSpacing.paddingAll16);
+            borderRadius: AppDimensions.borderRadiusMedium,
+            color: isExpired ? Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.1) : null
+          ),
+          child: Padding(
+            padding: AppSpacing.paddingAll16,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Expanded(
                       child: Text(
-                        title);
-                        style: Theme.of(context).textTheme.titleMedium)
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium
+                      )
+                    ),
                     if (isExpired)
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.spacing2);
-                          vertical: AppSpacing.spacing1)),
-    decoration: BoxDecoration(
-                          color: TossDesignSystem.warningOrange.withOpacity(0.2)),
-    borderRadius: AppDimensions.borderRadiusMedium)),
-    child: Text(
-                          '만료됨');
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TossDesignSystem.warningOrange.withOpacity(0.9)))
-                      ))
-                    SizedBox(width: AppSpacing.spacing2))
+                          horizontal: AppSpacing.spacing2,
+                          vertical: AppSpacing.spacing1
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+                          borderRadius: AppDimensions.borderRadiusMedium
+                        ),
+                        child: Text(
+                          '만료됨',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withOpacity(0.9))
+                        )
+                      ),
+                    SizedBox(width: AppSpacing.spacing2),
                     Icon(
-                      Icons.offline_bolt);
-                      size: AppDimensions.iconSizeXSmall),
-    color: TossDesignSystem.gray600.withOpacity(0.6))
-                    ))
-                  ]),
-                SizedBox(height: AppSpacing.spacing2))
+                      Icons.offline_bolt,
+                      size: AppDimensions.iconSizeXSmall,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.6)
+                    )
+                  ]
+                ),
+                SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  content);
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: isExpired ? TossDesignSystem.gray600 : TossDesignSystem.gray900.withOpacity(0.87, maxLines: 3);
-                  overflow: TextOverflow.ellipsis))
-                SizedBox(height: AppSpacing.spacing2))
+                  content,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: isExpired ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface.withOpacity(0.87)
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis
+                ),
+                SizedBox(height: AppSpacing.spacing2),
                 Text(
                   '캐시됨: ${_formatCachedTime(cachedAt)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TossDesignSystem.gray600)))
-              ])))
-        ))
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)
+                )
+              ]
+            )
+          )
+        )
       )
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
@@ -64,7 +65,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('결과를 불러오는 중 오류가 발생했습니다: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: TossDesignSystem.error,
           ),
         );
       }
@@ -90,7 +91,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
@@ -100,13 +101,13 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new, 
-            color: isDark ? Colors.white : Colors.black),
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.share_outlined,
-              color: isDark ? Colors.white : Colors.black),
+              color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
             onPressed: () {
               // Share functionality
             },
@@ -129,7 +130,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 borderRadius: BorderRadius.circular(10),
               ),
               indicatorPadding: const EdgeInsets.all(2),
-              labelColor: Colors.white,
+              labelColor: TossDesignSystem.white,
               unselectedLabelColor: TossDesignSystem.gray600,
               labelStyle: TossDesignSystem.caption.copyWith(
                 fontWeight: FontWeight.bold,
@@ -471,7 +472,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                             child: Text(
                               '${week.weekNumber}주',
                               style: TossDesignSystem.caption.copyWith(
-                                color: Colors.white,
+                                color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -780,7 +781,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                               child: Text(
                                 _getPriorityLabel(skill.priority),
                                 style: TossDesignSystem.caption.copyWith(
-                                  color: Colors.white,
+                                  color: TossDesignSystem.white,
                                   fontSize: 10,
                                 ),
                               ),
@@ -813,7 +814,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
       ('성장', _result!.healthScore.growthScore, TossDesignSystem.successGreen),
       ('만족도', _result!.healthScore.satisfactionScore, TossDesignSystem.warningOrange),
       ('시장경쟁력', _result!.healthScore.marketScore, TossDesignSystem.tossBlue),
-      ('워라벨', _result!.healthScore.balanceScore, Colors.purple),
+      ('워라벨', _result!.healthScore.balanceScore, TossDesignSystem.purple),
     ];
     
     return Row(
@@ -959,7 +960,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
       case 'opportunity': return TossDesignSystem.successGreen;
       case 'warning': return TossDesignSystem.warningOrange;
       case 'trend': return TossDesignSystem.tossBlue;
-      case 'advice': return Colors.purple;
+      case 'advice': return TossDesignSystem.purple;
       default: return TossDesignSystem.gray600;
     }
   }
@@ -976,7 +977,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
   Color _getImpactColor(String impact) {
     switch (impact) {
-      case 'high': return Colors.red;
+      case 'high': return TossDesignSystem.error;
       case 'medium': return TossDesignSystem.warningOrange;
       case 'low': return TossDesignSystem.gray600;
       default: return TossDesignSystem.gray600;
@@ -994,7 +995,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
   Color _getPriorityColor(String priority) {
     switch (priority) {
-      case 'critical': return Colors.red;
+      case 'critical': return TossDesignSystem.error;
       case 'high': return TossDesignSystem.warningOrange;
       case 'medium': return TossDesignSystem.tossBlue;
       case 'low': return TossDesignSystem.gray600;
