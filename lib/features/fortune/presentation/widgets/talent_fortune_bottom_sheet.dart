@@ -66,12 +66,13 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       height: screenHeight * 0.9,
-      decoration: const BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
@@ -84,7 +85,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray300,
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -133,7 +134,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
               16 + MediaQuery.of(context).padding.bottom, // 하단 패딩 조정
             ),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
               boxShadow: [
                 BoxShadow(
                   color: TossDesignSystem.black.withValues(alpha: 0.05),
@@ -170,6 +171,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
           question,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
+            color: isDark ? TossDesignSystem.white : null,
           ),
         ),
         const SizedBox(height: 12),
@@ -186,14 +188,14 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
               onTap: () => onChanged(option['title']),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected 
+                  color: isSelected
                       ? option['color'].withValues(alpha: 0.1)
-                      : TossDesignSystem.gray50,
+                      : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected 
+                    color: isSelected
                         ? option['color']
-                        : TossDesignSystem.gray300,
+                        : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray300),
                     width: isSelected ? 2 : 1,
                   ),
                 ),
@@ -203,19 +205,19 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
                     Icon(
                       option['icon'],
                       size: 28,
-                      color: isSelected 
+                      color: isSelected
                           ? option['color']
-                          : TossDesignSystem.gray600,
+                          : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       option['title'],
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isSelected 
+                        color: isSelected
                             ? option['color']
-                            : TossDesignSystem.gray700,
-                        fontWeight: isSelected 
-                            ? FontWeight.w600 
+                            : (isDark ? TossDesignSystem.white : TossDesignSystem.gray700),
+                        fontWeight: isSelected
+                            ? FontWeight.w600
                             : FontWeight.normal,
                       ),
                       textAlign: TextAlign.center,

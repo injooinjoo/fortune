@@ -116,13 +116,19 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: isDark ? TossDesignSystem.grayDark900.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
-        title: const Text('AI 종합 운세 분석'),
+        title: Text(
+          'AI 종합 운세 분석',
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+          ),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -370,9 +376,9 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.star,
-                        color: TossDesignSystem.warningOrange,
+                        color: isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -465,10 +471,12 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (score >= 80) return isDark ? TossDesignSystem.primaryGreen : TossDesignSystem.successGreen;
+    if (score >= 60) return isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue;
+    if (score >= 40) return isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange;
+    return isDark ? TossDesignSystem.primaryRed : TossDesignSystem.errorRed;
   }
 
   String _getScoreMessage(int score) {

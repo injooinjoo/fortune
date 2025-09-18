@@ -132,8 +132,10 @@ class _NavItemWidget extends StatelessWidget {
             Icon(
               isSelected ? item.selectedIcon : item.icon,
               size: 24,
-              color: isSelected 
-                ? TossTheme.textBlack 
+              color: isSelected
+                ? (Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.white
+                    : TossTheme.textBlack)
                 : TossTheme.textGray600),
             const SizedBox(height: 2),
             Text(
@@ -141,8 +143,10 @@ class _NavItemWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected 
-                  ? TossTheme.textBlack 
+                color: isSelected
+                  ? (Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.white
+                      : TossTheme.textBlack)
                   : TossTheme.textGray600,
                 letterSpacing: -0.2,
               ),

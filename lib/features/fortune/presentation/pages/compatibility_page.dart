@@ -223,10 +223,12 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Container(
@@ -234,14 +236,14 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
           child: IconButton(
             onPressed: () => Navigator.pop(context),
             style: IconButton.styleFrom(
-              backgroundColor: TossTheme.backgroundSecondary,
+              backgroundColor: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             icon: Icon(
               Icons.arrow_back_ios_new,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
               size: 20,
             ),
           ),
@@ -249,7 +251,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         title: Text(
           '궁합 분석',
           style: TossTheme.heading3.copyWith(
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
@@ -308,7 +310,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       Text(
                         '두 사람의 궁합',
                         style: TossTheme.heading2.copyWith(
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center,
@@ -319,7 +321,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       Text(
                         '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
                         style: TossTheme.body2.copyWith(
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -392,7 +394,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           ),
                         ),
                         style: TossTheme.body2.copyWith(
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                         ),
                       ),
 
@@ -404,12 +406,12 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
-                            color: TossTheme.backgroundSecondary,
+                            color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: _person1BirthDate != null
                                   ? TossTheme.primaryBlue
-                                  : TossTheme.borderGray300,
+                                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
                               width: _person1BirthDate != null ? 1.5 : 1,
                             ),
                           ),
@@ -423,7 +425,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                                     Text(
                                       '생년월일',
                                       style: TossTheme.caption.copyWith(
-                                        color: TossTheme.textGray600,
+                                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                                         fontSize: 11,
                                       ),
                                     ),
@@ -434,8 +436,8 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                                           : '생년월일을 선택해주세요',
                                       style: TossTheme.body2.copyWith(
                                         color: _person1BirthDate != null
-                                            ? TossTheme.textBlack
-                                            : TossTheme.textGray600,
+                                            ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
+                                            : (isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600),
                                         fontWeight: _person1BirthDate != null
                                             ? FontWeight.w500
                                             : FontWeight.w400,
@@ -515,7 +517,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: TossTheme.borderGray300,
+                              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -526,7 +528,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           ),
                         ),
                         style: TossTheme.body1.copyWith(
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                         ),
                       ),
 
@@ -538,12 +540,12 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: TossTheme.backgroundSecondary,
+                            color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: _person2BirthDate != null
                                   ? TossTheme.primaryBlue
-                                  : TossTheme.borderGray300,
+                                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
                               width: _person2BirthDate != null ? 2 : 1,
                             ),
                           ),
@@ -556,7 +558,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                                   Text(
                                     '생년월일',
                                     style: TossTheme.caption.copyWith(
-                                      color: TossTheme.textGray600,
+                                      color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -566,8 +568,8 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                                         : '생년월일을 선택해주세요',
                                     style: TossTheme.body2.copyWith(
                                       color: _person2BirthDate != null
-                                          ? TossTheme.textBlack
-                                          : TossTheme.textGray600,
+                                          ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
+                                          : (isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600),
                                       fontWeight: _person2BirthDate != null
                                           ? FontWeight.w500
                                           : FontWeight.w400,
@@ -596,7 +598,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   child: Text(
                     '분석 결과는 참고용으로만 활용해 주세요',
                     style: TossTheme.caption.copyWith(
-                      color: TossTheme.textGray600,
+                      color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -625,7 +627,8 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     final fortune = _compatibilityData!['fortune'] as Fortune;
     final scores = _compatibilityData!['scores'] as Map<String, double>;
     final overallScore = scores['전체 궁합'] ?? 0.85;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -638,7 +641,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                 Text(
                   '${_person1NameController.text} ❤️ ${_person2NameController.text}',
                   style: TossTheme.heading3.copyWith(
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -662,13 +665,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       Text(
                         _getScoreText(overallScore),
                         style: TossTheme.caption.copyWith(
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                         ),
                       ),
                     ],
                   ),
                   progressColor: _getScoreColor(overallScore),
-                  backgroundColor: TossTheme.borderGray200,
+                  backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
                   circularStrokeCap: CircularStrokeCap.round,
                   animation: true,
                   animationDuration: 1200,
@@ -714,7 +717,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                     Text(
                       '세부 궁합 분석',
                       style: TossTheme.heading4.copyWith(
-                        color: TossTheme.textBlack,
+                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -735,7 +738,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                             Text(
                               entry.key,
                               style: TossTheme.body2.copyWith(
-                                color: TossTheme.textBlack,
+                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -751,7 +754,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         const SizedBox(height: 8),
                         LinearProgressIndicator(
                           value: entry.value,
-                          backgroundColor: TossTheme.borderGray200,
+                          backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _getScoreColor(entry.value),
                           ),
@@ -794,7 +797,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                     Text(
                       '궁합 분석 결과',
                       style: TossTheme.heading4.copyWith(
-                        color: TossTheme.textBlack,
+                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -806,7 +809,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                 Text(
                   fortune.content,
                   style: TossTheme.body2.copyWith(
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                     height: 1.6,
                   ),
                 ),
@@ -840,7 +843,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       Text(
                         '관계 개선 조언',
                         style: TossTheme.heading4.copyWith(
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -852,7 +855,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   Text(
                     fortune.advice!,
                     style: TossTheme.body2.copyWith(
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                       height: 1.6,
                     ),
                   ),

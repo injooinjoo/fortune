@@ -194,19 +194,20 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     }
 
     final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final currentStepData = _analysisSteps[_currentStep];
     
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: isDark ? TossDesignSystem.grayDark900.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
           '바이오리듬 분석 중',
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
@@ -353,7 +354,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
         Container(
           height: 8,
           decoration: BoxDecoration(
-            color: TossTheme.borderGray300,
+            color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray300,
             borderRadius: BorderRadius.circular(4),
           ),
           child: AnimatedBuilder(
@@ -385,7 +386,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             '${(_progressAnimation.value * 100).round()}%',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: TossTheme.primaryBlue,
+              color: isDark ? TossDesignSystem.primaryBlue : TossTheme.primaryBlue,
             ),
           ),
         ),
@@ -395,7 +396,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
 
   Widget _buildCurrentStepText() {
     final currentStepData = _analysisSteps[_currentStep];
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 500),
       child: Text(
@@ -403,7 +405,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
         key: ValueKey(_currentStep),
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w600,
-          color: TossTheme.textBlack,
+          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
         ),
         textAlign: TextAlign.center,
       ),
@@ -414,7 +416,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     return Text(
       '23일, 28일, 33일 주기의 3가지 리듬을\n정밀하게 분석하고 있습니다',
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-        color: TossTheme.textGray600,
+        color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
         height: 1.5,
       ),
       textAlign: TextAlign.center,
@@ -437,7 +439,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             child: Text(
               '분석 결과는 참고용으로만 활용해 주세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: TossTheme.textGray600,
+                color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
               ),
             ),
           ),

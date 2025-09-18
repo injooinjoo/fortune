@@ -175,7 +175,13 @@
       "Bash(nc localhost 59992)",
       "Bash(nc localhost 62111)",
       "Bash(nc localhost 63300)",
-      "Bash(npx playwright install:*)"
+      "Bash(npx playwright install:*)",
+      "Bash(node:*)",
+      "Bash(./test_dark_mode.sh:*)",
+      "Read(//Users/jacobmac/Library/Android/sdk/ndk/**)",
+      "Read(//Users/jacobmac/Library/Android/sdk/cmdline-tools/**)",
+      "Bash(/Users/jacobmac/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager \"ndk;26.3.11579264\")",
+      "Bash(convert:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

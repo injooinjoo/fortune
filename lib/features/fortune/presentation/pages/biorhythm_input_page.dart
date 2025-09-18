@@ -135,8 +135,8 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
     
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
-      decoration: const BoxDecoration(
-        color: TossDesignSystem.white,
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -158,7 +158,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                   ),
                 ),
                 TossButton(
@@ -252,16 +252,17 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
       appBar: AppBar(
         backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             size: 20,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -270,7 +271,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
           '바이오리듬 분석',
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
@@ -330,7 +331,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                         '당신의 생체 리듬을 분석하고\n최적의 타이밍을 찾아드릴게요',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           height: 1.4,
                         ),
                         textAlign: TextAlign.center,
@@ -365,7 +366,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                         '생년월일',
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -376,12 +377,12 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: TossTheme.backgroundSecondary,
+                            color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: _selectedDate != null 
-                                  ? TossTheme.primaryBlue 
-                                  : TossTheme.borderGray300,
+                              color: _selectedDate != null
+                                  ? TossTheme.primaryBlue
+                                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
                               width: _selectedDate != null ? 2 : 1,
                             ),
                           ),
@@ -393,9 +394,9 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                                     ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
                                     : '생년월일을 선택해주세요',
                                 style: theme.textTheme.bodyLarge?.copyWith(
-                                  color: _selectedDate != null 
-                                      ? TossTheme.textBlack 
-                                      : TossTheme.textGray600,
+                                  color: _selectedDate != null
+                                      ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
+                                      : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
                                   fontWeight: _selectedDate != null 
                                       ? FontWeight.w500 
                                       : FontWeight.w400,
@@ -403,9 +404,9 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                               ),
                               Icon(
                                 Icons.calendar_today_rounded,
-                                color: _selectedDate != null 
-                                    ? TossTheme.primaryBlue 
-                                    : TossTheme.textGray600,
+                                color: _selectedDate != null
+                                    ? TossTheme.primaryBlue
+                                    : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
                                 size: 20,
                               ),
                             ],
@@ -437,7 +438,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
               Text(
                 '분석 결과는 참고용으로만 활용해 주세요',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
                 ),
                 textAlign: TextAlign.center,
               ),

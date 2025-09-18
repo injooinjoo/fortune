@@ -17,6 +17,14 @@
 # Keep Stripe classes
 -keep class com.stripe.** { *; }
 
+# Keep Google Play Core classes (for deferred components and split install)
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
+# Keep Stripe push provisioning classes
+-keep class com.stripe.android.pushProvisioning.** { *; }
+-dontwarn com.stripe.android.pushProvisioning.**
+
 # Keep TossPay classes
 -keep class com.tosspayments.** { *; }
 

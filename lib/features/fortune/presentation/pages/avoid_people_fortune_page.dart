@@ -100,22 +100,22 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: isDark ? TossDesignSystem.grayDark900.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context), // Always go back to fortune page
           icon: Icon(
             Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
             size: 20,
           ),
         ),
         title: Text(
           '피해야 할 사람',
           style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
           ),
         ),
         centerTitle: true,

@@ -950,7 +950,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/flower_transparent.png',
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/flower_transparent_white.png'
+                    : 'assets/images/flower_transparent.png',
                 width: 64,
                 height: 64,
               ).animate(onPlay: (controller) => controller.repeat())
@@ -1162,7 +1164,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       children: [
                         // App Logo
                         Image.asset(
-                          'assets/images/flower_transparent.png',
+                          Theme.of(context).brightness == Brightness.dark
+                              ? 'assets/images/flower_transparent_white.png'
+                              : 'assets/images/flower_transparent.png',
                           width: 100,
                           height: 100,
                         ).animate()

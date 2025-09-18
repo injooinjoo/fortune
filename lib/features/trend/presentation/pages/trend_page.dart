@@ -121,9 +121,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     // Watch the navigation visibility state for debugging
     final navState = ref.watch(navigationVisibilityProvider);
     print('🎯 Navigation state - isVisible: ${navState.isVisible}, isAnimating: ${navState.isAnimating}');
-    
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -157,7 +159,12 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.notifications_outlined, color: TossDesignSystem.black.withValues(alpha: 0.87)),
+                        icon: Icon(
+                          Icons.notifications_outlined,
+                          color: isDark
+                            ? TossDesignSystem.white.withValues(alpha: 0.87)
+                            : TossDesignSystem.black.withValues(alpha: 0.87)
+                        ),
                         onPressed: () {},
                       ),
                     ],

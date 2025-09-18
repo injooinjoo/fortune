@@ -22,23 +22,23 @@ class FiveElementsWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final sajuState = ref.watch(sajuProvider);
-    
+
     // Get elements data from saju state
     final sajuData = sajuState.sajuData;
     if (sajuData == null || sajuData['elements'] == null) {
       return _buildEmptyState(context, theme);
     }
-    
+
     final elements = sajuData['elements'] as Map<String, dynamic>;
-    
+
     // Convert dynamic map to int map
     final elementMap = <String, int>{};
     elements.forEach((key, value) {
       elementMap[key] = value is int ? value : (value as num).toInt();
     });
-    
+
     final total = elementMap.values.isEmpty ? 1 : elementMap.values.reduce((a, b) => a + b);
-    
+
     // Get dominant and lacking elements
     final sajuDisplayData = ref.watch(sajuDisplayDataProvider);
     final dominantElement = sajuDisplayData?['dominantElement'] as String?;
@@ -48,11 +48,13 @@ class FiveElementsWidget extends ConsumerWidget {
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? TossDesignSystem.grayDark900
+            ? TossDesignSystem.grayDark100
             : TossDesignSystem.gray50,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+          color: theme.brightness == Brightness.dark
+              ? TossDesignSystem.grayDark200
+              : theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1),
       ),
       child: Column(
@@ -131,11 +133,13 @@ class FiveElementsWidget extends ConsumerWidget {
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? TossDesignSystem.grayDark900
+            ? TossDesignSystem.grayDark100
             : TossDesignSystem.gray50,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+          color: theme.brightness == Brightness.dark
+              ? TossDesignSystem.grayDark200
+              : theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1),
       ),
       child: Column(
@@ -173,7 +177,9 @@ class FiveElementsWidget extends ConsumerWidget {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.05),
+        color: theme.brightness == Brightness.dark
+            ? TossDesignSystem.grayDark200
+            : theme.colorScheme.primary.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium),
       child: Column(
         children: [
@@ -289,14 +295,22 @@ class FiveElementsWidget extends ConsumerWidget {
                       children: [
                         Text(
                           _getElementHanja(element),
-                          style: Theme.of(context).textTheme.headlineMedium),
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            color: theme.brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark900
+                                : null,
+                          )),
                         Text(
                           element,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: color)),
                         Text(
                           '$percentage%',
-                          style: Theme.of(context).textTheme.bodySmall),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: theme.brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark700
+                                : null,
+                          )),
                       ],
                     ),
                   ),
@@ -473,10 +487,14 @@ class FiveElementsWidget extends ConsumerWidget {
         top: AppSpacing.medium),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: theme.colorScheme.outline.withValues(alpha: 0.05),
+        color: theme.brightness == Brightness.dark
+            ? TossDesignSystem.grayDark200
+            : theme.colorScheme.outline.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1)),
+          color: theme.brightness == Brightness.dark
+              ? TossDesignSystem.grayDark300
+              : theme.colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

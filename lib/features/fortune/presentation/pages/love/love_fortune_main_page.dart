@@ -113,10 +113,12 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Container(
@@ -124,14 +126,14 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
           child: IconButton(
             onPressed: _currentStep == 0 ? () => Navigator.pop(context) : _previousStep,
             style: IconButton.styleFrom(
-              backgroundColor: TossTheme.backgroundSecondary,
+              backgroundColor: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             icon: Icon(
               Icons.arrow_back_ios_new,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
               size: 20,
             ),
           ),
@@ -139,7 +141,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
         title: Text(
           '연애운세',
           style: TossTheme.heading3.copyWith(
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
@@ -158,7 +160,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
                     Text(
                       '${_currentStep + 1} / $_totalSteps',
                       style: TossTheme.body2.copyWith(
-                        color: TossTheme.textGray600,
+                        color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -174,7 +176,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: (_currentStep + 1) / _totalSteps,
-                  backgroundColor: TossTheme.borderGray200,
+                  backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
                   valueColor: const AlwaysStoppedAnimation<Color>(TossTheme.primaryBlue),
                   minHeight: 6,
                   borderRadius: BorderRadius.circular(3),

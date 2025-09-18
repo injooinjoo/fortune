@@ -225,9 +225,11 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       return super.build(context);
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     // Show MBTI selection UI
     return Scaffold(
-      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
+      backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
       appBar: AppHeader(
         title: widget.title,
         showShareButton: false,
@@ -293,7 +295,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w700,
-            color: TossDesignSystem.gray900,
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray900,
             height: 1.3,
           ),
         ),
@@ -302,7 +304,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           '16가지 성격 유형 중 나와 맞는 유형을 선택하세요',
           style: TextStyle(
             fontSize: 15,
-            color: TossDesignSystem.gray600,
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
             height: 1.4,
           ),
         ),
@@ -337,7 +339,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossDesignSystem.gray800,
+                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray800,
                     ),
                   ),
                 ],
@@ -383,10 +385,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   end: Alignment.bottomRight,
                 )
               : null,
-          color: isSelected ? null : TossDesignSystem.gray50,
+          color: isSelected ? null : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? colors.first : TossDesignSystem.gray200,
+            color: isSelected ? colors.first : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -405,7 +407,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             Icon(
               icon,
               size: 24,
-              color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray600,
+              color: isSelected ? TossDesignSystem.white : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
             ),
             const SizedBox(height: 4),
             Text(
@@ -413,7 +415,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray700,
+                color: isSelected ? TossDesignSystem.white : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700),
               ),
             ),
           ],

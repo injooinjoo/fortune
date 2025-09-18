@@ -127,6 +127,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return BaseFortunePageV2(
       title: '생일 운세',
       fortuneType: 'birthdate',
@@ -176,21 +177,21 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                     weekdayMeanings[_selectedDate!.weekday]!['day'],
                     style: TextStyle(
                       fontSize: 16,
-                      color: TossDesignSystem.gray600,
+                      color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
                     ),
                   ),
                 ] else ...[
-                  const Icon(
+                  Icon(
                     Icons.calendar_today,
                     size: 48,
-                    color: TossDesignSystem.gray500,
+                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray500,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     '생년월일을 선택해주세요',
                     style: TextStyle(
                       fontSize: 16,
-                      color: TossDesignSystem.gray500,
+                      color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray500,
                     ),
                   ),
                 ],
@@ -247,7 +248,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.gray100,
+                color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -289,6 +290,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -296,7 +298,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         children: [
           Text(
             label,
-            style: TextStyle(color: TossDesignSystem.gray600)
+            style: TextStyle(color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600)
           ),
           Text(
             value,
@@ -374,7 +376,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: TossDesignSystem.gray600
+                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600
                 ),
               ),
             ],
@@ -386,9 +388,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white,
+            color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: TossDesignSystem.gray200),
+            border: Border.all(color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,9 +439,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white,
+            color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: TossDesignSystem.gray200),
+            border: Border.all(color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,9 +487,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: TossDesignSystem.gray200),
+              border: Border.all(color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,13 +518,14 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
   }
 
   Widget _buildInfoChip(BuildContext context, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: TossDesignSystem.gray600
+            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600
           ),
         ),
         const SizedBox(height: 4),

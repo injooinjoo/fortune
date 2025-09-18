@@ -825,7 +825,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
+      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
       appBar: AppHeader(
         title: widget.title,
         showShareButton: widget.showShareButton,

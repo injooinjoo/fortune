@@ -73,6 +73,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
 }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -81,14 +83,20 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           children: [
             Text(
               '시간별 운기',
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+              )),
             const SizedBox(height: TossDesignSystem.spacingXS),
             Text(
               '오늘의 시간대별 운세 흐름',
-              style: Theme.of(context).textTheme.bodyMedium)]),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+              ))]),
         Icon(
           Icons.access_time,
-          color: TossDesignSystem.white.withValues(alpha: 0.54),
+          color: isDark
+            ? TossDesignSystem.grayDark100.withValues(alpha: 0.7)
+            : TossDesignSystem.gray600.withValues(alpha: 0.7),
           size: 32)]);
   }
 
@@ -106,7 +114,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
 
   LineChartData _mainChartData() {
     final hourlyFortune = _calculateHourlyFortune();
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -116,7 +125,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         verticalInterval: 2,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: TossDesignSystem.white.withOpacity(0.1),
+            color: isDark
+              ? TossDesignSystem.grayDark300.withOpacity(0.3)
+              : TossDesignSystem.gray300.withOpacity(0.5),
             strokeWidth: 1
           );
 },
@@ -129,7 +140,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
               dashArray: [5, 5]);
 }
           return FlLine(
-            color: TossDesignSystem.white.withOpacity(0.1),
+            color: isDark
+              ? TossDesignSystem.grayDark300.withOpacity(0.3)
+              : TossDesignSystem.gray300.withOpacity(0.5),
             strokeWidth: 1
           );
 }),
@@ -147,7 +160,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
                   padding: const EdgeInsets.only(top: TossDesignSystem.spacingS),
                   child: Text(
                     timeNames[hour ~/ 2],
-                    style: Theme.of(context).textTheme.bodyMedium)
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                    ))
                 );
 }
               return const SizedBox();
@@ -160,7 +175,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             getTitlesWidget: (value, meta) {
               return Text(
                 '${(value * 100).toInt()}%',
-                style: Theme.of(context).textTheme.bodyMedium);
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                ));
             })),
         topTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false)),
@@ -169,7 +186,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       borderData: FlBorderData(
         show: true,
         border: Border.all(
-          color: TossDesignSystem.white.withOpacity(0.2),
+          color: isDark
+            ? TossDesignSystem.grayDark300.withOpacity(0.4)
+            : TossDesignSystem.gray300.withOpacity(0.6),
           width: 1)),
       minX: 0,
       maxX: 23,
@@ -250,6 +269,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
   }
 
   Widget _buildLegendItem(String label, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -262,16 +283,19 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         const SizedBox(width: TossDesignSystem.spacingXS),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium)]
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+          ))]
     );
 }
 
   Widget _buildCurrentTimeInfo() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final currentHour = widget.currentTime.hour;
     final currentFortune = _calculateHourlyFortune()[currentHour];
     final currentElement = _getHourElement(currentHour);
     final timeName = timeNames[currentHour ~/ 2];
-    
+
     return GlassContainer(
       padding: AppSpacing.paddingAll16,
       gradient: LinearGradient(
@@ -286,7 +310,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             children: [
               Text(
                 '현재 시간 운세',
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                )),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: TossDesignSystem.spacingXS * 1.5),
                 decoration: BoxDecoration(
@@ -294,23 +320,30 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
                   borderRadius: BorderRadius.circular(20)),
                 child: Text(
                   '${(currentFortune * 100).toInt()}%',
-                  style: Theme.of(context).textTheme.bodyMedium))]),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: TossDesignSystem.white,
+                  )))]),
           const SizedBox(height: TossDesignSystem.spacingS),
           Text(
             '${currentHour.toString().padLeft(2, '0')}:00 - $timeName (${currentElement}원소)',
-            style: Theme.of(context).textTheme.bodyMedium),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+            )),
           const SizedBox(height: TossDesignSystem.spacingS),
           Text(
             _getFortuneDescription(currentFortune, currentElement),
-            style: Theme.of(context).textTheme.bodyMedium),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+            )),
           const SizedBox(height: TossDesignSystem.spacingS),
           _buildFortuneAdvice(currentFortune, currentElement)]));
   }
 
   Widget _buildFortuneAdvice(double fortune, String element) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     String advice;
     IconData icon;
-    
+
     if (fortune >= 0.8) {
       advice = '최고의 운기! 중요한 일을 추진하기 좋은 시간입니다.';
       icon = Icons.star;
@@ -324,7 +357,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       advice = '신중함이 필요한 시간입니다. 중요한 결정은 미루세요.';
       icon = Icons.warning_amber;
 }
-    
+
     return Row(
       children: [
         Icon(
@@ -335,7 +368,9 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         Expanded(
           child: Text(
             advice,
-            style: Theme.of(context).textTheme.bodyMedium))]
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+            )))]
     );
 }
 

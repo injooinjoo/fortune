@@ -701,10 +701,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                         padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
                         child: Text(
                           categoryDisplayName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF191919),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.white
+                                : const Color(0xFF191919),
                             height: 1.2,
                           ),
                         ),
@@ -788,10 +790,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                           Flexible(
                             child: Text(
                               category.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF191919),
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.white
+                                    : const Color(0xFF191919),
                                 height: 1.3,
                               ),
                             ),
@@ -825,10 +829,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       // 부제목 (설명)
                       Text(
                         category.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Color(0xFF8B95A1),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark600
+                              : const Color(0xFF8B95A1),
                           height: 1.3,
                         ),
                       ),
@@ -841,10 +847,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 // 우측 액션 텍스트 (토스 스타일)
                 Text(
                   category.isFreeFortune ? '포인트 받기' : '${category.soulCost}원 받기',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF4E5968),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark700
+                        : const Color(0xFF4E5968),
                   ),
                 ),
               ],

@@ -133,7 +133,7 @@ class TossScoreCard extends StatelessWidget {
         Text(
           score,
           style: TossDesignSystem.display1.copyWith(
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
             fontFamily: TossDesignSystem.fontFamilyNumber,
           ),
         ),
@@ -188,7 +188,7 @@ class TossScoreCard extends StatelessWidget {
               Text(
                 score,
                 style: TossDesignSystem.display2.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   fontFamily: TossDesignSystem.fontFamilyNumber,
                 ),
               ),

@@ -22,6 +22,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final batchState = ref.watch(batchFortuneProvider);
     final tokenBalanceObj = ref.watch(tokenBalanceProvider);
     final tokenBalance = tokenBalanceObj?.balance ?? 0;
@@ -30,7 +31,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('운세 패키지'),
-        backgroundColor: TossDesignSystem.tossBlue,
+        backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.tossBlue,
         foregroundColor: TossDesignSystem.white,
         elevation: 0),
       body: SingleChildScrollView(
@@ -41,7 +42,10 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
+                  colors: isDark ? [
+                    TossDesignSystem.grayDark900,
+                    TossDesignSystem.grayDark700,
+                  ] : [
                     TossDesignSystem.tossBlue,
                     TossDesignSystem.tossBlue.withValues(alpha: 0.8),
                   ],
@@ -120,11 +124,12 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     '운세 패키지 선택',
                     style: TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? TossDesignSystem.white : null)),
                   const SizedBox(height: 16),
                   
                   // 패키지 카드들
@@ -152,11 +157,12 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           '생성된 운세',
                           style: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? TossDesignSystem.white : null)),
                         TextButton(
                           onPressed: () {
                             ref.read(batchFortuneProvider.notifier).clearResults();
