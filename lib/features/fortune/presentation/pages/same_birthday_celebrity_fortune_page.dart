@@ -9,7 +9,7 @@ import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/custom_calendar_date_picker.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../data/models/celebrity.dart';
+import '../../../../data/models/celebrity_simple.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
@@ -313,10 +313,10 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
               final celebrityData = _sameBirthdayCelebrities.map((celebrity) => {
                 'id': celebrity.id,
                 'name': celebrity.name,
-                'category': celebrity.category.displayName,
+                'category': celebrity.celebrityType.displayName,
                 'age': celebrity.age,
                 'zodiac': celebrity.zodiacSign,
-                'description': celebrity.description,
+                'description': celebrity.notes ?? celebrity.celebrityType.displayName,
               }).toList();
               
               widget.onSubmit({

@@ -11,6 +11,9 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../shared/components/app_header.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/fortune_button.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../../../../services/ad_service.dart';
@@ -67,8 +70,8 @@ class InvestmentFortuneData {
   int? investmentHorizon; // 투자 기간 (개월)
   
   // Step 2: 관심 섹터
-  List<InvestmentSector> selectedSectors = [];
-  Map<InvestmentSector, double> sectorPriorities = {};
+  List<String> selectedSectors = [];
+  Map<String, double> sectorPriorities = {};
   
   // Step 3: 상세 분석
   bool wantPortfolioReview = false;
@@ -158,93 +161,97 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       data.birthDate = userProfile.birthDate;
       data.gender = userProfile.gender;
       data.birthTime = userProfile.birthTime;
+    } else {
+      // 테스트용 임시 사용자 데이터
+      final data = ref.read(investmentDataProvider);
+      data.userId = 'test-user-123';
+      data.name = '테스트 사용자';
+      data.birthDate = DateTime(1990, 1, 1);
+      data.gender = 'M';
+      data.birthTime = '09:00';
     }
   }
   
   @override
   Widget build(BuildContext context) {
     final currentStep = ref.watch(investmentStepProvider);
-    final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header with back button and progress
-            _buildHeader(context, currentStep),
-            
-            // Step indicator
-            _buildStepIndicator(currentStep),
-            
-            // Content
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _buildStep1(),
-                  _buildStep2(),
-                  _buildStep3(),
-                  _buildStep4(),
-                ],
-              ),
-            ),
-            
-            // Bottom navigation
-            _buildBottomNavigation(context, currentStep),
-          ],
-        ),
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      appBar: AppHeader(
+        title: '투자 운세',
+        showBackButton: true,
+        centerTitle: true,
+        onBackPressed: () {
+          if (currentStep > 0) {
+            ref.read(investmentStepProvider.notifier).previousStep();
+            _pageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          } else {
+            context.pop();
+          }
+        },
       ),
-    );
-  }
-  
-  Widget _buildHeader(BuildContext context, int currentStep) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
+      body: Stack(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            onPressed: () {
-              if (currentStep > 0) {
-                ref.read(investmentStepProvider.notifier).previousStep();
-                _pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut
-                );
-              } else {
-                context.pop();
-              }
-            }),
-          Expanded(
-            child: Text(
-              '투자 운세',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+          Column(
+            children: [
+              // Step indicator
+              _buildStepIndicator(currentStep),
+
+              // Content
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildStep1(),
+                    _buildStep2(),
+                    _buildStep3(),
+                    _buildStep4(),
+                  ],
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
+
+              // Bottom spacing for floating button
+              const BottomButtonSpacing(),
+            ],
           ),
-          const SizedBox(width: 48), // Balance the back button
+
+          // Floating bottom button
+          _buildFloatingBottomButton(context, currentStep),
         ],
       ),
     );
   }
   
+  
   Widget _buildStepIndicator(int currentStep) {
-    final steps = [
-      '투자 프로필', '관심 섹터',
-      '상세 분석', '운세 보기'
-    ];
-    
+    final steps = ['투자 프로필', '관심 섹터', '상세 분석', '운세 보기'];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+        boxShadow: [
+          BoxShadow(
+            color: TossDesignSystem.gray900.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: List.generate(steps.length, (index) {
           final isActive = index == currentStep;
           final isCompleted = index < currentStep;
-          
+
           return Expanded(
             child: Column(
               children: [
@@ -254,27 +261,50 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       Expanded(
                         child: Container(
                           height: 2,
-                          color: isCompleted
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor),
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: isCompleted
+                                ? TossDesignSystem.tossBlue
+                                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        ),
                       ),
-                    Container(
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isActive || isCompleted
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.surfaceContainerHighest,
+                            ? TossDesignSystem.tossBlue
+                            : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                        boxShadow: isActive || isCompleted
+                            ? [
+                                BoxShadow(
+                                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : [],
                       ),
                       child: Center(
                         child: isCompleted
-                            ? const Icon(Icons.check, size: 16, color: TossDesignSystem.white)
+                            ? const Icon(
+                                Icons.check_rounded,
+                                size: 18,
+                                color: TossDesignSystem.white,
+                              )
                             : Text(
                                 '${index + 1}',
                                 style: TextStyle(
-                                  color: isActive ? TossDesignSystem.white : Theme.of(context).colorScheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.bold),
+                                  color: isActive
+                                      ? TossDesignSystem.white
+                                      : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray500,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
                               ),
                       ),
                     ),
@@ -282,20 +312,28 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       Expanded(
                         child: Container(
                           height: 2,
-                          color: isCompleted
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor),
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: isCompleted && index < currentStep - 1
+                                ? TossDesignSystem.tossBlue
+                                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        ),
                       ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
                   steps[index],
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: isActive
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                    color: isActive
+                        ? TossDesignSystem.tossBlue
+                        : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -305,54 +343,34 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
     );
   }
   
-  Widget _buildBottomNavigation(BuildContext context, int currentStep) {
+  Widget _buildFloatingBottomButton(BuildContext context, int currentStep) {
     final data = ref.watch(investmentDataProvider);
     final isValid = _validateStep(currentStep, data);
-    
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.gray900.withValues(alpha:0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: currentStep == 3
-          ? FortuneButton.viewFortune(
-              onPressed: isValid ? _generateFortune : null,
-              isEnabled: isValid,
-              isLoading: false,
-              text: '💰 나의 투자 운명 확인하기',
-            )
-          : FortuneButtonGroup.navigation(
-              onPrevious: currentStep > 0
-                  ? () {
-                      ref.read(investmentStepProvider.notifier).previousStep();
-                      _pageController.previousPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  : null,
-              onNext: isValid
-                  ? () {
-                      ref.read(investmentStepProvider.notifier).nextStep();
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  : null,
-              showPrevious: currentStep > 0,
-              isNextEnabled: isValid,
-              nextText: '다음',
-              position: FortuneButtonPosition.inline,
-            ),
-    );
+
+    if (currentStep == 3) {
+      return FloatingBottomButton(
+        text: '💰 나의 투자 운명 확인하기',
+        onPressed: isValid ? _generateFortune : null,
+        isEnabled: isValid,
+        isLoading: false,
+        style: TossButtonStyle.primary,
+      );
+    } else {
+      return FloatingBottomButton(
+        text: '다음',
+        onPressed: isValid
+            ? () {
+                ref.read(investmentStepProvider.notifier).nextStep();
+                _pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            : null,
+        isEnabled: isValid,
+        style: TossButtonStyle.primary,
+      );
+    }
   }
   
   bool _validateStep(int step, InvestmentFortuneData data) {
@@ -375,51 +393,91 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   // Step 1: 투자 프로필
   Widget _buildStep1() {
     final data = ref.watch(investmentDataProvider);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '투자 성향을 알려주세요',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold),
+              // Header Section
+              TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                TossDesignSystem.tossBlue,
+                                TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.trending_up_rounded,
+                            color: TossDesignSystem.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '투자 성향을 알려주세요',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '맞춤형 투자 운세를 위해 필요합니다',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                '맞춤형 투자 운세를 위해 필요합니다',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
-              ),
-              const SizedBox(height: 32),
-              
+
+              const SizedBox(height: 24),
+
               // Risk tolerance
-              _buildSectionTitle('위험 성향'),
-              const SizedBox(height: 12),
-              _buildRiskToleranceSelector(data),
-              const SizedBox(height: 24),
-              
+              _buildSectionCard('위험 성향', _buildRiskToleranceSelector(data)),
+              const SizedBox(height: 16),
+
               // Investment experience
-              _buildSectionTitle('투자 경험'),
-              const SizedBox(height: 12),
-              _buildExperienceSelector(data),
-              const SizedBox(height: 24),
-              
+              _buildSectionCard('투자 경험', _buildExperienceSelector(data)),
+              const SizedBox(height: 16),
+
               // Investment goal
-              _buildSectionTitle('투자 목표'),
-              const SizedBox(height: 12),
-              _buildGoalSelector(data),
-              const SizedBox(height: 24),
-              
+              _buildSectionCard('투자 목표', _buildGoalSelector(data)),
+              const SizedBox(height: 16),
+
               // Investment horizon
-              _buildSectionTitle('투자 기간'),
-              const SizedBox(height: 12),
-              _buildHorizonSelector(data),
+              _buildSectionCard('투자 기간', _buildHorizonSelector(data)),
+
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -427,11 +485,26 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
     );
   }
   
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold),
+  Widget _buildSectionCard(String title, Widget child) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return TossCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
     );
   }
   
@@ -441,66 +514,107 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       {'value': 'moderate', 'label': '중립형', 'description': '균형잡힌 수익과 안정'},
       {'value': 'aggressive', 'label': '공격형', 'description': '높은 수익 추구'},
     ];
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: options.map((option) {
         final isSelected = data.riskTolerance == option['value'];
-        
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
+          child: GestureDetector(
             onTap: () {
+              print('🎯 위험 감수도 선택: ${option['value']}');
               ref.read(investmentDataProvider.notifier).update((state) {
-                state.riskTolerance = option['value'] as String;
-                return state;
+                final newData = InvestmentFortuneData()
+                  ..userId = state.userId
+                  ..name = state.name
+                  ..birthDate = state.birthDate
+                  ..gender = state.gender
+                  ..birthTime = state.birthTime
+                  ..riskTolerance = option['value'] as String
+                  ..investmentExperience = state.investmentExperience
+                  ..investmentGoal = state.investmentGoal
+                  ..investmentHorizon = state.investmentHorizon
+                  ..selectedSectors = List.from(state.selectedSectors)
+                  ..sectorPriorities = Map.from(state.sectorPriorities)
+                  ..wantPortfolioReview = state.wantPortfolioReview
+                  ..wantMarketTiming = state.wantMarketTiming
+                  ..wantLuckyNumbers = state.wantLuckyNumbers
+                  ..wantRiskAnalysis = state.wantRiskAnalysis
+                  ..specificQuestion = state.specificQuestion;
+                print('🔄 상태 업데이트 완료: riskTolerance = ${newData.riskTolerance}');
+                return newData;
               });
             },
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
+            child: TossCard(
+              style: TossCardStyle.outlined,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isSelected
+                        ? TossDesignSystem.tossBlue
+                        : Colors.transparent,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                   color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).dividerColor,
-                  width: isSelected ? 2 : 1,
+                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.08)
+                      : Colors.transparent,
                 ),
-                borderRadius: BorderRadius.circular(12),
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary.withValues(alpha:0.1)
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Radio<String>(
-                    value: option['value'] as String,
-                    groupValue: data.riskTolerance,
-                    onChanged: (value) {
-                      ref.read(investmentDataProvider.notifier).update((state) {
-                        state.riskTolerance = value;
-                        return state;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          option['label'] as String? ?? '',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected
+                              ? TossDesignSystem.tossBlue
+                              : isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                          width: 2,
                         ),
-                        Text(
-                          option['description'] as String? ?? '',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        ),
-                      ],
+                        color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                      ),
+                      child: isSelected
+                          ? const Icon(
+                              Icons.check,
+                              size: 12,
+                              color: TossDesignSystem.white,
+                            )
+                          : null,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            option['label'] as String? ?? '',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? TossDesignSystem.tossBlue
+                                  : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            option['description'] as String? ?? '',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -515,31 +629,83 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       {'value': 'intermediate', 'label': '중급자', 'description': '1-5년'},
       {'value': 'expert', 'label': '전문가', 'description': '5년 이상'},
     ];
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Wrap(
       spacing: 12,
       runSpacing: 12,
       children: options.map((option) {
         final isSelected = data.investmentExperience == option['value'];
-        
-        return ChoiceChip(
-          label: Column(
-            children: [
-              Text(option['label'] as String? ?? ''),
-              Text(
-                option['description'] as String? ?? '',
-                style: Theme.of(context).textTheme.bodySmall),
-            ],
-          ),
-          selected: isSelected,
-          onSelected: (selected) {
-            if (selected) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.investmentExperience = option['value'] as String;
-                return state;
-              });
-            }
+
+        return GestureDetector(
+          onTap: () {
+            ref.read(investmentDataProvider.notifier).update((state) {
+              return InvestmentFortuneData()
+                ..userId = state.userId
+                ..name = state.name
+                ..birthDate = state.birthDate
+                ..gender = state.gender
+                ..birthTime = state.birthTime
+                ..riskTolerance = state.riskTolerance
+                ..investmentExperience = option['value'] as String
+                ..investmentGoal = state.investmentGoal
+                ..investmentHorizon = state.investmentHorizon
+                ..selectedSectors = List.from(state.selectedSectors)
+                ..sectorPriorities = Map.from(state.sectorPriorities)
+                ..wantPortfolioReview = state.wantPortfolioReview
+                ..wantMarketTiming = state.wantMarketTiming
+                ..wantLuckyNumbers = state.wantLuckyNumbers
+                ..wantRiskAnalysis = state.wantRiskAnalysis
+                ..specificQuestion = state.specificQuestion;
+            });
           },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? TossDesignSystem.tossBlue
+                  : isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+              borderRadius: BorderRadius.circular(20),
+              border: isSelected
+                  ? Border.all(color: TossDesignSystem.tossBlue, width: 2)
+                  : null,
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : [],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  option['label'] as String? ?? '',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? TossDesignSystem.white
+                        : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  option['description'] as String? ?? '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isSelected
+                        ? TossDesignSystem.white.withValues(alpha: 0.9)
+                        : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       }).toList(),
     );
@@ -547,66 +713,96 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   
   Widget _buildGoalSelector(InvestmentFortuneData data) {
     final options = [
-      {'value': 'wealth', 'label': '자산 증식', 'icon': Icons.trending_up},
-      {'value': 'stability', 'label': '안정적 수익', 'icon': Icons.shield},
-      {'value': 'speculation', 'label': '단기 수익', 'icon': Icons.flash_on},
-      {'value': 'retirement', 'label': '노후 준비', 'icon': Icons.home},
+      {'value': 'wealth', 'label': '자산 증식', 'icon': Icons.trending_up_rounded},
+      {'value': 'stability', 'label': '안정적 수익', 'icon': Icons.shield_rounded},
+      {'value': 'speculation', 'label': '단기 수익', 'icon': Icons.flash_on_rounded},
+      {'value': 'retirement', 'label': '노후 준비', 'icon': Icons.home_rounded},
     ];
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 1.5,
+      childAspectRatio: 1.3,
       children: options.map((option) {
         final isSelected = data.investmentGoal == option['value'];
-        
-        return InkWell(
+
+        return GestureDetector(
           onTap: () {
             ref.read(investmentDataProvider.notifier).update((state) {
-              state.investmentGoal = option['value'] as String;
-              return state;
+              return InvestmentFortuneData()
+                ..userId = state.userId
+                ..name = state.name
+                ..birthDate = state.birthDate
+                ..gender = state.gender
+                ..birthTime = state.birthTime
+                ..riskTolerance = state.riskTolerance
+                ..investmentExperience = state.investmentExperience
+                ..investmentGoal = option['value'] as String
+                ..investmentHorizon = state.investmentHorizon
+                ..selectedSectors = List.from(state.selectedSectors)
+                ..sectorPriorities = Map.from(state.sectorPriorities)
+                ..wantPortfolioReview = state.wantPortfolioReview
+                ..wantMarketTiming = state.wantMarketTiming
+                ..wantLuckyNumbers = state.wantLuckyNumbers
+                ..wantRiskAnalysis = state.wantRiskAnalysis
+                ..specificQuestion = state.specificQuestion;
             });
           },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
               gradient: isSelected
                   ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                       colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withValues(alpha:0.8),
+                        TossDesignSystem.tossBlue,
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.8),
                       ],
                     )
                   : null,
-              border: Border.all(
-                color: isSelected
-                    ? TossDesignSystem.white.withValues(alpha: 0.0)
-                    : Theme.of(context).dividerColor,
-              ),
-              borderRadius: BorderRadius.circular(12),
+              color: !isSelected
+                  ? isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100
+                  : null,
+              borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+              border: isSelected
+                  ? Border.all(color: TossDesignSystem.tossBlue, width: 2)
+                  : null,
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : [],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  option['icon'] as IconData? ?? Icons.help,
+                  option['icon'] as IconData? ?? Icons.help_rounded,
                   size: 32,
                   color: isSelected
                       ? TossDesignSystem.white
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                      : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   option['label'] as String? ?? '',
                   style: TextStyle(
+                    fontSize: 14,
                     color: isSelected
                         ? TossDesignSystem.white
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    fontWeight: FontWeight.w600,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -624,23 +820,68 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       {'months': 36, 'label': '3년'},
       {'months': 60, 'label': '5년 이상'},
     ];
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Wrap(
       spacing: 12,
+      runSpacing: 12,
       children: horizons.map((horizon) {
         final isSelected = data.investmentHorizon == horizon['months'];
-        
-        return ChoiceChip(
-          label: Text(horizon['label'] as String? ?? ''),
-          selected: isSelected,
-          onSelected: (selected) {
-            if (selected) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.investmentHorizon = horizon['months'] as int;
-                return state;
-              });
-            }
+
+        return GestureDetector(
+          onTap: () {
+            ref.read(investmentDataProvider.notifier).update((state) {
+              return InvestmentFortuneData()
+                ..userId = state.userId
+                ..name = state.name
+                ..birthDate = state.birthDate
+                ..gender = state.gender
+                ..birthTime = state.birthTime
+                ..riskTolerance = state.riskTolerance
+                ..investmentExperience = state.investmentExperience
+                ..investmentGoal = state.investmentGoal
+                ..investmentHorizon = horizon['months'] as int
+                ..selectedSectors = List.from(state.selectedSectors)
+                ..sectorPriorities = Map.from(state.sectorPriorities)
+                ..wantPortfolioReview = state.wantPortfolioReview
+                ..wantMarketTiming = state.wantMarketTiming
+                ..wantLuckyNumbers = state.wantLuckyNumbers
+                ..wantRiskAnalysis = state.wantRiskAnalysis
+                ..specificQuestion = state.specificQuestion;
+            });
           },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? TossDesignSystem.tossBlue
+                  : isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+              borderRadius: BorderRadius.circular(20),
+              border: isSelected
+                  ? Border.all(color: TossDesignSystem.tossBlue, width: 2)
+                  : null,
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : [],
+            ),
+            child: Text(
+              horizon['label'] as String? ?? '',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isSelected
+                    ? TossDesignSystem.white
+                    : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              ),
+            ),
+          ),
         );
       }).toList(),
     );
@@ -649,75 +890,159 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   // Step 2: 관심 섹터 선택
   Widget _buildStep2() {
     final data = ref.watch(investmentDataProvider);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '관심 있는 투자 섹터를 선택하세요',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '최대 5개까지 선택 가능합니다',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
-          ),
-          const SizedBox(height: 24),
-          
-          // Sector grid
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.0,
-            children: InvestmentSector.values.map((sector) {
-              final isSelected = data.selectedSectors.contains(sector);
-              final canSelect = data.selectedSectors.length < 5 || isSelected;
-              
-              return _buildSectorCard(sector, isSelected, canSelect);
-            }).toList(),
-          ),
-          
-          if (data.selectedSectors.isNotEmpty) ...[
-            const SizedBox(height: 32),
-            Text(
-              '우선순위 설정',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold),
+          // Header Section
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            TossDesignSystem.purple,
+                            TossDesignSystem.purple.withValues(alpha: 0.8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.dashboard_rounded,
+                        color: TossDesignSystem.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '관심 있는 투자 섹터를 선택하세요',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '최대 5개까지 선택 가능합니다',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            ...data.selectedSectors.map((sector) {
-              return _buildPrioritySlider(sector, data);
-            }).toList(),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Sector grid
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.0,
+              children: InvestmentSector.values.map((sector) {
+                final isSelected = data.selectedSectors.contains(sector.name);
+                final canSelect = data.selectedSectors.length < 5 || isSelected;
+
+                return _buildSectorCard(sector, isSelected, canSelect);
+              }).toList(),
+            ),
+          ),
+
+          if (data.selectedSectors.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            TossCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '우선순위 설정',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ...data.selectedSectors.map((sectorName) {
+                    final sector = InvestmentSector.values.firstWhere((s) => s.name == sectorName);
+                    return _buildPrioritySlider(sector, data);
+                  }).toList(),
+                ],
+              ),
+            ),
           ],
+
+          const SizedBox(height: 24),
         ],
       ),
     );
   }
   
   Widget _buildSectorCard(InvestmentSector sector, bool isSelected, bool canSelect) {
-    return InkWell(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
       onTap: canSelect
           ? () {
               ref.read(investmentDataProvider.notifier).update((state) {
+                final newSelectedSectors = List<String>.from(state.selectedSectors);
+                final newSectorPriorities = Map<String, double>.from(state.sectorPriorities);
+
                 if (isSelected) {
-                  state.selectedSectors.remove(sector);
-                  state.sectorPriorities.remove(sector);
+                  newSelectedSectors.remove(sector.name);
+                  newSectorPriorities.remove(sector.name);
                 } else {
-                  state.selectedSectors.add(sector);
-                  state.sectorPriorities[sector] = 50.0;
+                  newSelectedSectors.add(sector.name);
+                  newSectorPriorities[sector.name] = 50.0;
                 }
-                return state;
+
+                return InvestmentFortuneData()
+                  ..userId = state.userId
+                  ..name = state.name
+                  ..birthDate = state.birthDate
+                  ..gender = state.gender
+                  ..birthTime = state.birthTime
+                  ..riskTolerance = state.riskTolerance
+                  ..investmentExperience = state.investmentExperience
+                  ..investmentGoal = state.investmentGoal
+                  ..investmentHorizon = state.investmentHorizon
+                  ..selectedSectors = newSelectedSectors
+                  ..sectorPriorities = newSectorPriorities
+                  ..wantPortfolioReview = state.wantPortfolioReview
+                  ..wantMarketTiming = state.wantMarketTiming
+                  ..wantLuckyNumbers = state.wantLuckyNumbers
+                  ..wantRiskAnalysis = state.wantRiskAnalysis
+                  ..specificQuestion = state.specificQuestion;
               });
             }
           : null,
-      borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -729,19 +1054,27 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 )
               : null,
           color: !isSelected
-              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              ? isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100
               : null,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.white.withValues(alpha: 0.0)
-                : Theme.of(context).dividerColor,
-            width: 2,
-          ),
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          border: isSelected
+              ? Border.all(
+                  color: sector.gradientColors[0],
+                  width: 2,
+                )
+              : canSelect
+                  ? Border.all(
+                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      width: 1,
+                    )
+                  : Border.all(
+                      color: isDark ? TossDesignSystem.grayDark300.withValues(alpha: 0.5) : TossDesignSystem.gray200.withValues(alpha: 0.5),
+                      width: 1,
+                    ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: sector.gradientColors[0].withValues(alpha:0.4),
+                    color: sector.gradientColors[0].withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -757,34 +1090,38 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 children: [
                   Icon(
                     sector.icon,
-                    size: 48,
+                    size: 40,
                     color: isSelected
                         ? TossDesignSystem.white
                         : canSelect
-                            ? Theme.of(context).colorScheme.onSurfaceVariant
-                            : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha:0.5)),
+                            ? isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600
+                            : isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     sector.label,
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                       color: isSelected
                           ? TossDesignSystem.white
                           : canSelect
-                              ? Theme.of(context).colorScheme.onSurface
-                              : Theme.of(context).colorScheme.onSurface.withValues(alpha:0.5)),
-                    textAlign: TextAlign.center),
+                              ? isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900
+                              : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     sector.description,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: isSelected
-                          ? TossDesignSystem.white.withValues(alpha:0.9)
+                          ? TossDesignSystem.white.withValues(alpha: 0.9)
                           : canSelect
-                              ? Theme.of(context).colorScheme.onSurfaceVariant
-                              : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha:0.5)),
+                              ? isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600
+                              : isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -797,16 +1134,25 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 top: 8,
                 right: 8,
                 child: Container(
-                  width: 24,
-                  height: 24,
+                  width: 20,
+                  height: 20,
                   decoration: const BoxDecoration(
                     color: TossDesignSystem.white,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Icons.check,
-                    size: 16,
+                    Icons.check_rounded,
+                    size: 12,
                     color: sector.gradientColors[0],
+                  ),
+                ),
+              ),
+            if (!canSelect && !isSelected)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? TossDesignSystem.grayDark100.withValues(alpha: 0.8) : TossDesignSystem.white.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                   ),
                 ),
               ),
@@ -815,57 +1161,116 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       ),
     ).animate()
       .fadeIn(duration: 300.ms, delay: (InvestmentSector.values.indexOf(sector) * 50).ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
+      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0));
   }
   
   Widget _buildPrioritySlider(InvestmentSector sector, InvestmentFortuneData data) {
-    final priority = data.sectorPriorities[sector] ?? 50.0;
-    
+    final priority = data.sectorPriorities[sector.name] ?? 50.0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(sector.icon, size: 24, color: sector.gradientColors[0]),
-              const SizedBox(width: 8),
-              Text(
-                sector.label,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const Spacer(),
-              Text(
-                '${priority.round()}%',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: sector.gradientColors[0],
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray50,
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          border: Border.all(
+            color: sector.gradientColors[0].withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: sector.gradientColors,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    sector.icon,
+                    size: 18,
+                    color: TossDesignSystem.white,
+                  ),
                 ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    sector.label,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: sector.gradientColors[0].withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    '${priority.round()}%',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: sector.gradientColors[0],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: sector.gradientColors[0],
+                inactiveTrackColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                thumbColor: sector.gradientColors[0],
+                overlayColor: sector.gradientColors[0].withValues(alpha: 0.2),
+                trackHeight: 6,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: sector.gradientColors[0],
-              inactiveTrackColor: sector.gradientColors[0].withValues(alpha:0.3),
-              thumbColor: sector.gradientColors[0],
-              overlayColor: sector.gradientColors[0].withValues(alpha:0.3),
+              child: Slider(
+                value: priority,
+                min: 0,
+                max: 100,
+                divisions: 20,
+                onChanged: (value) {
+                  ref.read(investmentDataProvider.notifier).update((state) {
+                    final newSectorPriorities = Map<String, double>.from(state.sectorPriorities);
+                    newSectorPriorities[sector.name] = value;
+
+                    return InvestmentFortuneData()
+                      ..userId = state.userId
+                      ..name = state.name
+                      ..birthDate = state.birthDate
+                      ..gender = state.gender
+                      ..birthTime = state.birthTime
+                      ..riskTolerance = state.riskTolerance
+                      ..investmentExperience = state.investmentExperience
+                      ..investmentGoal = state.investmentGoal
+                      ..investmentHorizon = state.investmentHorizon
+                      ..selectedSectors = List.from(state.selectedSectors)
+                      ..sectorPriorities = newSectorPriorities
+                      ..wantPortfolioReview = state.wantPortfolioReview
+                      ..wantMarketTiming = state.wantMarketTiming
+                      ..wantLuckyNumbers = state.wantLuckyNumbers
+                      ..wantRiskAnalysis = state.wantRiskAnalysis
+                      ..specificQuestion = state.specificQuestion;
+                  });
+                },
+              ),
             ),
-            child: Slider(
-              value: priority,
-              min: 0,
-              max: 100,
-              divisions: 20,
-              onChanged: (value) {
-                ref.read(investmentDataProvider.notifier).update((state) {
-                  state.sectorPriorities[sector] = value;
-                  return state;
-                });
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -873,108 +1278,280 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   // Step 3: 상세 분석 옵션
   Widget _buildStep3() {
     final data = ref.watch(investmentDataProvider);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '추가 분석 옵션',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+          // Header Section
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            TossDesignSystem.warningOrange,
+                            TossDesignSystem.warningOrange.withValues(alpha: 0.8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.analytics_rounded,
+                        color: TossDesignSystem.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '추가 분석 옵션',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '더 정확한 운세를 위해 선택하세요',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '더 정확한 운세를 위해 선택하세요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 32),
-          
+
+          const SizedBox(height: 24),
+
           // Analysis options
-          _buildAnalysisOption(
-            '포트폴리오 검토',
-            '현재 투자 포트폴리오 분석',
-            Icons.pie_chart_rounded,
-            data.wantPortfolioReview,
-            (value) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.wantPortfolioReview = value;
-                return state;
-              });
-            },
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '분석 옵션',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildAnalysisOption(
+                  '포트폴리오 검토',
+                  '현재 투자 포트폴리오 분석',
+                  Icons.pie_chart_rounded,
+                  data.wantPortfolioReview,
+                  (value) {
+                    ref.read(investmentDataProvider.notifier).update((state) {
+                      return InvestmentFortuneData()
+                        ..userId = state.userId
+                        ..name = state.name
+                        ..birthDate = state.birthDate
+                        ..gender = state.gender
+                        ..birthTime = state.birthTime
+                        ..riskTolerance = state.riskTolerance
+                        ..investmentExperience = state.investmentExperience
+                        ..investmentGoal = state.investmentGoal
+                        ..investmentHorizon = state.investmentHorizon
+                        ..selectedSectors = List.from(state.selectedSectors)
+                        ..sectorPriorities = Map.from(state.sectorPriorities)
+                        ..wantPortfolioReview = value
+                        ..wantMarketTiming = state.wantMarketTiming
+                        ..wantLuckyNumbers = state.wantLuckyNumbers
+                        ..wantRiskAnalysis = state.wantRiskAnalysis
+                        ..specificQuestion = state.specificQuestion;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildAnalysisOption(
+                  '시장 타이밍 분석',
+                  '매수/매도 적기 분석',
+                  Icons.access_time_rounded,
+                  data.wantMarketTiming,
+                  (value) {
+                    ref.read(investmentDataProvider.notifier).update((state) {
+                      return InvestmentFortuneData()
+                        ..userId = state.userId
+                        ..name = state.name
+                        ..birthDate = state.birthDate
+                        ..gender = state.gender
+                        ..birthTime = state.birthTime
+                        ..riskTolerance = state.riskTolerance
+                        ..investmentExperience = state.investmentExperience
+                        ..investmentGoal = state.investmentGoal
+                        ..investmentHorizon = state.investmentHorizon
+                        ..selectedSectors = List.from(state.selectedSectors)
+                        ..sectorPriorities = Map.from(state.sectorPriorities)
+                        ..wantPortfolioReview = state.wantPortfolioReview
+                        ..wantMarketTiming = value
+                        ..wantLuckyNumbers = state.wantLuckyNumbers
+                        ..wantRiskAnalysis = state.wantRiskAnalysis
+                        ..specificQuestion = state.specificQuestion;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildAnalysisOption(
+                  '행운의 숫자',
+                  '로또 번호 및 행운의 숫자',
+                  Icons.casino_rounded,
+                  data.wantLuckyNumbers,
+                  (value) {
+                    ref.read(investmentDataProvider.notifier).update((state) {
+                      return InvestmentFortuneData()
+                        ..userId = state.userId
+                        ..name = state.name
+                        ..birthDate = state.birthDate
+                        ..gender = state.gender
+                        ..birthTime = state.birthTime
+                        ..riskTolerance = state.riskTolerance
+                        ..investmentExperience = state.investmentExperience
+                        ..investmentGoal = state.investmentGoal
+                        ..investmentHorizon = state.investmentHorizon
+                        ..selectedSectors = List.from(state.selectedSectors)
+                        ..sectorPriorities = Map.from(state.sectorPriorities)
+                        ..wantPortfolioReview = state.wantPortfolioReview
+                        ..wantMarketTiming = state.wantMarketTiming
+                        ..wantLuckyNumbers = value
+                        ..wantRiskAnalysis = state.wantRiskAnalysis
+                        ..specificQuestion = state.specificQuestion;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildAnalysisOption(
+                  '위험 관리 분석',
+                  '투자 위험 요소 점검',
+                  Icons.warning_rounded,
+                  data.wantRiskAnalysis,
+                  (value) {
+                    ref.read(investmentDataProvider.notifier).update((state) {
+                      return InvestmentFortuneData()
+                        ..userId = state.userId
+                        ..name = state.name
+                        ..birthDate = state.birthDate
+                        ..gender = state.gender
+                        ..birthTime = state.birthTime
+                        ..riskTolerance = state.riskTolerance
+                        ..investmentExperience = state.investmentExperience
+                        ..investmentGoal = state.investmentGoal
+                        ..investmentHorizon = state.investmentHorizon
+                        ..selectedSectors = List.from(state.selectedSectors)
+                        ..sectorPriorities = Map.from(state.sectorPriorities)
+                        ..wantPortfolioReview = state.wantPortfolioReview
+                        ..wantMarketTiming = state.wantMarketTiming
+                        ..wantLuckyNumbers = state.wantLuckyNumbers
+                        ..wantRiskAnalysis = value
+                        ..specificQuestion = state.specificQuestion;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          
-          _buildAnalysisOption(
-            '시장 타이밍 분석',
-            '매수/매도 적기 분석',
-            Icons.access_time_rounded,
-            data.wantMarketTiming,
-            (value) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.wantMarketTiming = value;
-                return state;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-          
-          _buildAnalysisOption(
-            '행운의 숫자',
-            '로또 번호 및 행운의 숫자',
-            Icons.casino_rounded,
-            data.wantLuckyNumbers,
-            (value) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.wantLuckyNumbers = value;
-                return state;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-          
-          _buildAnalysisOption(
-            '위험 관리 분석',
-            '투자 위험 요소 점검',
-            Icons.warning_rounded,
-            data.wantRiskAnalysis,
-            (value) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.wantRiskAnalysis = value;
-                return state;
-              });
-            },
-          ),
-          const SizedBox(height: 32),
-          
+
+          const SizedBox(height: 24),
+
           // Specific question
-          Text(
-            '궁금한 점이 있으신가요?',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '궁금한 점이 있으신가요?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: '예: 올해 부동산 투자가 좋을까요?',
+                    hintStyle: TextStyle(
+                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                      borderSide: BorderSide(
+                        color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                      borderSide: BorderSide(
+                        color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                      borderSide: const BorderSide(
+                        color: TossDesignSystem.tossBlue,
+                        width: 2,
+                      ),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.help_outline_rounded,
+                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    ),
+                    contentPadding: const EdgeInsets.all(16),
+                  ),
+                  maxLines: 3,
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                  onChanged: (value) {
+                    ref.read(investmentDataProvider.notifier).update((state) {
+                      return InvestmentFortuneData()
+                        ..userId = state.userId
+                        ..name = state.name
+                        ..birthDate = state.birthDate
+                        ..gender = state.gender
+                        ..birthTime = state.birthTime
+                        ..riskTolerance = state.riskTolerance
+                        ..investmentExperience = state.investmentExperience
+                        ..investmentGoal = state.investmentGoal
+                        ..investmentHorizon = state.investmentHorizon
+                        ..selectedSectors = List.from(state.selectedSectors)
+                        ..sectorPriorities = Map.from(state.sectorPriorities)
+                        ..wantPortfolioReview = state.wantPortfolioReview
+                        ..wantMarketTiming = state.wantMarketTiming
+                        ..wantLuckyNumbers = state.wantLuckyNumbers
+                        ..wantRiskAnalysis = state.wantRiskAnalysis
+                        ..specificQuestion = value;
+                    });
+                  },
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          TextField(
-            decoration: InputDecoration(
-              hintText: '예: 올해 부동산 투자가 좋을까요?',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              prefixIcon: const Icon(Icons.help_outline_rounded),
-            ),
-            maxLines: 3,
-            onChanged: (value) {
-              ref.read(investmentDataProvider.notifier).update((state) {
-                state.specificQuestion = value;
-                return state;
-              });
-            },
-          ),
+
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -986,31 +1563,43 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
     IconData icon,
     bool value,
     ValueChanged<bool> onChanged) {
-    return InkWell(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
       onTap: () => onChanged(!value),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
+          color: value
+              ? TossDesignSystem.tossBlue.withValues(alpha: 0.08)
+              : isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray50,
           border: Border.all(
             color: value
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).dividerColor,
+                ? TossDesignSystem.tossBlue
+                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             width: value ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
-          color: value
-              ? Theme.of(context).colorScheme.primary.withValues(alpha:0.1)
-              : null,
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 32,
-              color: value
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: value
+                    ? TossDesignSystem.tossBlue
+                    : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: value
+                    ? TossDesignSystem.white
+                    : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -1019,22 +1608,52 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: value
+                          ? TossDesignSystem.tossBlue
+                          : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     description,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                     ),
                   ),
                 ],
               ),
             ),
-            Switch(
-              value: value,
-              onChanged: onChanged,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 50,
+              height: 30,
+              decoration: BoxDecoration(
+                color: value
+                    ? TossDesignSystem.tossBlue
+                    : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 200),
+                    left: value ? 22 : 2,
+                    top: 2,
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      decoration: const BoxDecoration(
+                        color: TossDesignSystem.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -1045,27 +1664,71 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
   // Step 4: 최종 확인
   Widget _buildStep4() {
     final data = ref.watch(investmentDataProvider);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '투자 운세 준비 완료!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+          // Header Section
+          TossCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            TossDesignSystem.successGreen,
+                            TossDesignSystem.successGreen.withValues(alpha: 0.8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.check_circle_rounded,
+                        color: TossDesignSystem.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '투자 운세 준비 완료!',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '입력하신 정보를 확인해주세요',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '입력하신 정보를 확인해주세요',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 32),
-          
+
+          const SizedBox(height: 24),
+
           // Summary
           _buildSummaryCard('투자 프로필', [
             '성향: ${_getRiskToleranceLabel(data.riskTolerance)}',
@@ -1073,16 +1736,19 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             '목표: ${_getGoalLabel(data.investmentGoal)}',
             '기간: ${_getHorizonLabel(data.investmentHorizon)}',
           ]),
+
           const SizedBox(height: 16),
-          
+
           _buildSummaryCard('관심 섹터', [
-            ...data.selectedSectors.map((sector) {
-              final priority = data.sectorPriorities[sector] ?? 50.0;
+            ...data.selectedSectors.map((sectorName) {
+              final sector = InvestmentSector.values.firstWhere((s) => s.name == sectorName);
+              final priority = data.sectorPriorities[sectorName] ?? 50.0;
               return '${sector.label} (${priority.round()}%)';
             }).toList(),
           ]),
+
           const SizedBox(height: 16),
-          
+
           if (_hasAnyAnalysisOption(data))
             _buildSummaryCard('추가 분석', [
               if (data.wantPortfolioReview) '포트폴리오 검토',
@@ -1092,66 +1758,105 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               if (data.specificQuestion?.isNotEmpty ?? false)
                 '질문: ${data.specificQuestion}',
             ]),
-          
+
           const SizedBox(height: 32),
-          
+
           // Fortune preview animation
           Center(
             child: Container(
-              width: 200,
-              height: 200,
+              width: 160,
+              height: 160,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
+                    TossDesignSystem.tossBlue,
+                    TossDesignSystem.purple,
                   ],
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
               child: const Icon(
                 Icons.auto_graph_rounded,
-                size: 80,
+                size: 64,
                 color: TossDesignSystem.white,
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha:0.5))
+              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.4))
               .rotate(duration: 20000.ms),
           ),
+
+          const SizedBox(height: 24),
         ],
       ),
     );
   }
   
   Widget _buildSummaryCard(String title, List<String> items) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-      ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return TossCard(
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.summarize_rounded,
+                  size: 18,
+                  color: TossDesignSystem.tossBlue,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           ...items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.check_circle_outline, size: 16),
-                    const SizedBox(width: 8),
+                    Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: TossDesignSystem.tossBlue,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         item,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                        ),
                       ),
                     ),
                   ],
@@ -1273,8 +1978,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         'investmentExperience': data.investmentExperience,
         'investmentGoal': data.investmentGoal,
         'investmentHorizon': data.investmentHorizon,
-        'selectedSectors': data.selectedSectors.map((s) => s.name).toList(),
-        'sectorPriorities': data.sectorPriorities.map((k, v) => MapEntry(k.name, v)),
+        'selectedSectors': data.selectedSectors,
+        'sectorPriorities': data.sectorPriorities,
         'wantPortfolioReview': data.wantPortfolioReview,
         'wantMarketTiming': data.wantMarketTiming,
         'wantLuckyNumbers': data.wantLuckyNumbers,
@@ -1286,7 +1991,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       final fortuneService = ref.read(fortuneServiceProvider);
       final fortune = await fortuneService.getInvestmentEnhancedFortune(
         userId: data.userId!,
-        params: params);
+        investmentData: params);
       
       // Navigate to result page
       if (mounted) {

@@ -63,6 +63,7 @@ class ApiEndpoints {
   static const String wealthFortune = '/api/fortune/wealth';
   static const String luckyInvestment = '/api/fortune/lucky-investment';
   static const String luckyRealEstate = '/api/fortune/lucky-realestate';
+  static const String investmentEnhanced = '/api/fortune/investment-enhanced';
 
   // 이사/생활
   static const String moving = '/api/fortune/moving';

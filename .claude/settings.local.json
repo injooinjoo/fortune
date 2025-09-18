@@ -174,7 +174,8 @@
       "Bash(nc localhost 58960)",
       "Bash(nc localhost 59992)",
       "Bash(nc localhost 62111)",
-      "Bash(nc localhost 63300)"
+      "Bash(nc localhost 63300)",
+      "Bash(npx playwright install:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

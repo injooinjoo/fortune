@@ -8,7 +8,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../data/models/celebrity.dart';
+import '../../../../data/models/celebrity_simple.dart';
 import '../../../../core/utils/logger.dart';
 import '../widgets/fortune_card.dart';
 import '../widgets/fortune_result_card.dart';
@@ -25,7 +25,7 @@ class CelebrityFortuneEnhancedPage extends ConsumerStatefulWidget {
 
 class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneEnhancedPage> {
   int _currentStep = 0;
-  CelebrityCategory? _selectedCategory;
+  CelebrityType? _selectedCategory;
   Celebrity? _selectedCelebrity;
   String _connectionType = 'ideal_match'; // ideal_match, compatibility, career_advice
   String _questionType = 'love'; // love, career, personality, future
@@ -169,7 +169,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           const SizedBox(height: 12),
           
           // Individual categories
-          ...CelebrityCategory.values.map((category) {
+          ...CelebrityType.values.map((category) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: _buildCategoryCard(
@@ -185,7 +185,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
   }
 
-  Widget _buildCategoryCard(CelebrityCategory? category, String title, String description, IconData icon) {
+  Widget _buildCategoryCard(CelebrityType? category, String title, String description, IconData icon) {
     final isSelected = _selectedCategory == category;
     
     return GestureDetector(
@@ -470,7 +470,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                celebrity.category.displayName,
+                                celebrity.celebrityType.displayName,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: TossTheme.textGray500,
@@ -1018,35 +1018,47 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     ).animate().fadeIn(duration: 600.ms);
   }
 
-  String _getCategoryDescription(CelebrityCategory category) {
+  String _getCategoryDescription(CelebrityType category) {
     switch (category) {
-      case CelebrityCategory.actor:
+      case CelebrityType.actor:
         return '배우, 탤런트, 영화배우';
-      case CelebrityCategory.singer:
-        return '가수, 아이돌, 뮤지션';
-      case CelebrityCategory.politician:
+      case CelebrityType.soloSinger:
+        return '솔로 가수, 뮤지션';
+      case CelebrityType.idolMember:
+        return '아이돌 멤버, 그룹 가수';
+      case CelebrityType.politician:
         return '정치인, 공인, 사회인사';
-      case CelebrityCategory.sports:
+      case CelebrityType.athlete:
         return '운동선수, 스포츠 스타';
-      case CelebrityCategory.youtuber:
-        return '방송인, 개그맨, MC';
+      case CelebrityType.streamer:
+        return '스트리머, 인플루언서';
+      case CelebrityType.proGamer:
+        return '프로게이머, 이스포츠 선수';
+      case CelebrityType.business:
+        return '기업인, 경영자';
       default:
         return '다양한 분야의 유명인';
     }
   }
 
-  IconData _getCategoryIcon(CelebrityCategory category) {
+  IconData _getCategoryIcon(CelebrityType category) {
     switch (category) {
-      case CelebrityCategory.actor:
+      case CelebrityType.actor:
         return Icons.movie;
-      case CelebrityCategory.singer:
+      case CelebrityType.soloSinger:
         return Icons.music_note;
-      case CelebrityCategory.politician:
+      case CelebrityType.idolMember:
+        return Icons.groups;
+      case CelebrityType.politician:
         return Icons.account_balance;
-      case CelebrityCategory.sports:
+      case CelebrityType.athlete:
         return Icons.sports;
-      case CelebrityCategory.youtuber:
+      case CelebrityType.streamer:
         return Icons.tv;
+      case CelebrityType.proGamer:
+        return Icons.sports_esports;
+      case CelebrityType.business:
+        return Icons.business;
       default:
         return Icons.person;
     }

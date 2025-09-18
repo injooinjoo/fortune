@@ -15,7 +15,9 @@ import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../services/celebrity_service.dart';
+import '../../services/celebrity_service_new.dart' as new_service;
 import '../../services/fortune_history_service.dart';
+import '../../data/models/celebrity_simple.dart';
 
 /// 운세 스토리 완료 후 표시되는 화면
 class FortuneCompletionPage extends ConsumerStatefulWidget {
@@ -67,6 +69,18 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     _scrollController = ScrollController();
     _scrollController.addListener(_handleScroll);
     // Removed _dailyScoresFuture initialization - will use provider directly
+
+    // 데이터베이스에서 연예인 데이터 로드
+    _loadCelebritiesFromDatabase();
+
+    // Provider 초기화를 initState에서 한 번만 실행
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(fortuneHistoryProvider.notifier).loadHistory();
+        // 네비게이션 바 표시 확인
+        ref.read(navigationVisibilityProvider.notifier).show();
+      }
+    });
   }
 
   @override
@@ -117,24 +131,22 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🎭 [BUILD] FortuneCompletionPage build() called');
+    debugPrint('🎭 [BUILD] Widget properties:');
+    debugPrint('🎭 [BUILD] - Fortune: ${widget.fortune != null ? "exists" : "null"}');
+    debugPrint('🎭 [BUILD] - UserProfile: ${widget.userProfile != null ? "exists" : "null"}');
+    debugPrint('🎭 [BUILD] - Database celebrities: ${_databaseCelebrities.length}');
+
     // Use comprehensive data if available, fallback to fortune data
     final score = widget.overall?['score'] ?? widget.fortune?.overallScore ?? 75;
     final displayUserName = widget.userName ?? widget.userProfile?.name ?? '회원';
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    // Load fortune history for statistics
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(fortuneHistoryProvider.notifier).loadHistory();
-      
-      // 네비게이션 바 표시 확인
-      ref.read(navigationVisibilityProvider.notifier).show();
-    });
-    
     // Extract keywords from fortune data
     final keywords = _extractKeywords(widget.fortune);
     final keywordWeights = _calculateKeywordWeights(keywords);
     final hourlyScores = _generateHourlyScores(widget.fortune);
-    final fortuneHistory = ref.watch(fortuneHistoryProvider);
+    final fortuneHistory = ref.read(fortuneHistoryProvider);  // read 대신 watch 사용 (rebuild 방지)
     final userStats = _calculateUserStats(widget.fortune, fortuneHistory);
     
     return Scaffold(
@@ -848,72 +860,10 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   
                   const SizedBox(height: 32),
                   
-                  // Lucky Items Grid (사주 데이터가 없을 때)
-                  if (widget.sajuInsight == null && widget.fortune?.luckyItems != null) ...[
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: isDark 
-                          ? const Color(0xFF1E293B)
-                          : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark 
-                            ? const Color(0xFF6366F1).withValues(alpha:0.1)
-                            : const Color(0xFF3B82F6).withValues(alpha:0.1),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isDark 
-                              ? const Color(0xFF6366F1).withValues(alpha:0.1)
-                              : const Color(0xFF3B82F6).withValues(alpha:0.1),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.stars_rounded,
-                                  color: isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '오늘의 행운 아이템',
-                                style: TextStyle(
-                                  color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          FortuneInfographicWidgets.buildLuckyItemsGrid(
-                            luckyItems: Map<String, String>.from(
-                              widget.fortune!.luckyItems!.map((key, value) => 
-                                MapEntry(key, value.toString())
-                              )
-                            ),
-                            itemSize: 100,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+                  // Lucky Items Grid (Edge Function 데이터 활용)
+                  _buildEnhancedLuckyItemsSection(),
+
+                  const SizedBox(height: 32),
                   
                   // Mini Statistics Dashboard
                   FortuneInfographicWidgets.buildMiniStatsDashboard(
@@ -991,58 +941,80 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                     future: _getTodayCelebrities(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          height: 200,
-                          child: const Center(child: CircularProgressIndicator()),
-                        );
+                        return const SizedBox.shrink(); // Show nothing while loading
                       }
-                      
-                      final celebrities = snapshot.data ?? _generateTodayCelebrities();
-                      return FortuneInfographicWidgets.buildTossStyleCelebrityList(
-                        title: _getTodayCelebrityTitle(),
-                        subtitle: '',
-                        celebrities: celebrities,
+
+                      final celebrities = snapshot.data ?? [];
+                      // Only show the card if there are celebrities
+                      if (celebrities.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Column(
+                        children: [
+                          FortuneInfographicWidgets.buildTossStyleCelebrityList(
+                            title: _getTodayCelebrityTitle(),
+                            subtitle: '',
+                            celebrities: celebrities,
+                          ),
+                          const SizedBox(height: 32),
+                        ],
                       );
                     },
                   ),
                   
-                  const SizedBox(height: 32),
-                  
                   // 비슷한 사주의 연예인 (동적 데이터 사용)
-                  if (widget.fortune?.metadata?['celebrities_similar_saju'] != null) ...[
-                    FortuneInfographicWidgets.buildTossStyleCelebrityList(
-                      title: '비슷한 사주의 연예인',
-                      subtitle: '',
-                      celebrities: (widget.fortune!.metadata!['celebrities_similar_saju'] as List?)
+                  () {
+                    debugPrint('🎭 [CELEBRITY_CARD] Building similar saju celebrities card');
+                    debugPrint('🎭 [CELEBRITY_CARD] Fortune metadata: ${widget.fortune?.metadata != null ? "exists" : "null"}');
+                    debugPrint('🎭 [CELEBRITY_CARD] celebrities_similar_saju in metadata: ${widget.fortune?.metadata?['celebrities_similar_saju'] != null ? "exists" : "null"}');
+
+                    List<Map<String, String>> celebrities = [];
+                    String dataSource = '';
+
+                    // 우선순위: 데이터베이스 > 메타데이터 (샘플 데이터 방지)
+                    if (_databaseCelebrities.isNotEmpty) {
+                      dataSource = 'database';
+                      celebrities = _generateSimilarSajuCelebrities();
+                      debugPrint('🎭 [CELEBRITY_CARD] Using database celebrities: ${celebrities.length} found');
+                      debugPrint('🎭 [CELEBRITY_CARD] Database celebrities cached: ${_databaseCelebrities.length} entries');
+                      debugPrint('🎭 [CELEBRITY_CARD] User profile: ${widget.userProfile != null ? "exists" : "null"}');
+                    } else if (widget.fortune?.metadata?['celebrities_similar_saju'] != null) {
+                      dataSource = 'metadata';
+                      final rawCelebrities = (widget.fortune!.metadata!['celebrities_similar_saju'] as List?)
                           ?.map((e) => (e as Map<String, dynamic>).cast<String, String>())
-                          .toList() ?? <Map<String, String>>[],
-                    ),
-                  ] else ...[
-                    // 폴백 - 기존 하드코딩 데이터
-                    FortuneInfographicWidgets.buildTossStyleCelebrityList(
-                      title: '비슷한 사주의 연예인',
-                      subtitle: '',
-                      celebrities: [
-                        {
-                          'year': '',
-                          'name': '박찬석',
-                          'description': '대한민국의 정치인',
-                        },
-                        {
-                          'year': '',
-                          'name': '누리 사헌',
-                          'description': '터키의 축구 선수',
-                        },
-                        {
-                          'year': '',
-                          'name': '펠리페 카이세도',
-                          'description': '에콰도르의 축구 선수',
-                        },
+                          .toList() ?? <Map<String, String>>[];
+                      celebrities = rawCelebrities;
+                      debugPrint('🎭 [CELEBRITY_CARD] Fallback to metadata celebrities: ${celebrities.length} found');
+                    } else {
+                      dataSource = 'fallback';
+                      celebrities = _getDefaultSimilarCelebrities();
+                      debugPrint('🎭 [CELEBRITY_CARD] Using fallback default celebrities: ${celebrities.length} found');
+                    }
+
+                    debugPrint('🎭 [CELEBRITY_CARD] Final celebrities count: ${celebrities.length} from $dataSource');
+
+                    if (celebrities.isEmpty) {
+                      debugPrint('🎭 [CELEBRITY_CARD] No celebrities found - returning empty widget');
+                      return const SizedBox.shrink();
+                    }
+
+                    debugPrint('🎭 [CELEBRITY_CARD] Building celebrity list widget with ${celebrities.length} celebrities');
+                    for (int i = 0; i < celebrities.length; i++) {
+                      debugPrint('🎭 [CELEBRITY_CARD] Celebrity $i: ${celebrities[i]['name']} (${celebrities[i]['year']}) - ${celebrities[i]['description']}');
+                    }
+
+                    return Column(
+                      children: [
+                        FortuneInfographicWidgets.buildTossStyleCelebrityList(
+                          title: '비슷한 사주의 연예인',
+                          subtitle: '',
+                          celebrities: celebrities,
+                        ),
+                        const SizedBox(height: 32),
                       ],
-                    ),
-                  ],
-                  
-                  const SizedBox(height: 32),
+                    );
+                  }(),
                   
                   // 사용자 년생 운세 (동적 데이터 사용)
                   if (widget.userProfile?.birthdate != null) ...[
@@ -1051,8 +1023,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         final birthYear = widget.userProfile!.birthdate!.year;
                         final birthYearSuffix = '${birthYear.toString().substring(2)}년생';
                         
-                        // Edge Function에서 제공하는 년생별 운세 데이터 사용
-                        final ageFortuneData = widget.fortune?.metadata?['age_fortune'] ?? _getAgeFortuneData(birthYear);
+                        // Edge Function에서 제공하는 년생별 운세 데이터 사용 (우선)
+                        final ageFortuneData = _getEnhancedAgeFortuneData(birthYear);
                         
                         return SizedBox(
                           width: double.infinity,
@@ -1940,28 +1912,28 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
           .toList();
     }
     
-    // 데이터베이스 호출은 일시적으로 비활성화 (무한 로그 문제 해결까지)
     // Try to get from database
-    // try {
-    //   final celebService = CelebrityService();
-    //   final dbCelebrities = await celebService.getTodaysCelebrities();
-    //   
-    //   if (dbCelebrities.isNotEmpty) {
-    //     return dbCelebrities.take(4).map((celebrity) {
-    //       final birthDate = DateTime.parse(celebrity['birth_date'] as String);
-    //       return {
-    //         'year': birthDate.year.toString(),
-    //         'name': celebrity['name'] as String,
-    //         'description': celebrity['description'] as String? ?? '',
-    //       };
-    //     }).toList();
-    //   }
-    // } catch (e) {
-    //   print('Error fetching celebrities from database: $e');
-    // }
-    
-    // Fallback: Generate celebrities based on today's date
-    return _generateTodayCelebrities();
+    try {
+      final celebService = CelebrityService();
+      final dbCelebrities = await celebService.getTodaysCelebrities();
+
+      if (dbCelebrities.isNotEmpty) {
+        return dbCelebrities.take(4).map((celebrity) {
+          final birthDate = DateTime.parse(celebrity['birth_date'] as String);
+          return {
+            'year': birthDate.year.toString(),
+            'name': celebrity['name'] as String,
+            'description': celebrity['description'] as String? ?? '',
+          };
+        }).toList();
+      }
+    } catch (e) {
+      // Silently handle error
+      debugPrint('CelebrityService error: $e');
+    }
+
+    // Return empty list if no celebrities found
+    return [];
   }
   
   /// Generate celebrities for today's date
@@ -2264,11 +2236,131 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     }
   }
 
-  /// 년생별 운세 데이터 가져오기
+  /// 강화된 년생별 운세 데이터 가져오기 (Edge Function 우선)
+  Map<String, String> _getEnhancedAgeFortuneData(int birthYear) {
+    // 1. Edge Function 데이터 우선 사용
+    final edgeAgeFortuneData = widget.fortune?.metadata?['age_fortune'] as Map<String, dynamic>?;
+    if (edgeAgeFortuneData != null) {
+      return {
+        'title': edgeAgeFortuneData['title']?.toString() ?? '특별한 운세',
+        'description': edgeAgeFortuneData['description']?.toString() ?? '오늘은 새로운 기회가 찾아올 것입니다.',
+      };
+    }
+
+    // 2. 사용자 프로필 기반 개인화된 운세
+    final userProfile = widget.userProfile;
+    if (userProfile != null) {
+      final personalizedFortune = _generatePersonalizedAgeFortune(birthYear, userProfile);
+      if (personalizedFortune != null) {
+        return personalizedFortune;
+      }
+    }
+
+    // 3. 폴백: 기존 년생별 데이터
+    return _getAgeFortuneData(birthYear);
+  }
+
+  /// 개인화된 년생별 운세 생성
+  Map<String, String>? _generatePersonalizedAgeFortune(int birthYear, UserProfile userProfile) {
+    final currentYear = DateTime.now().year;
+    final age = currentYear - birthYear;
+    final zodiacAnimal = userProfile.zodiacAnimal;
+    final mbti = userProfile.mbti;
+    final overallScore = widget.fortune?.overallScore ?? 75;
+
+    // 나이대별 기본 메시지
+    String baseTitle;
+    String baseDescription;
+
+    if (age <= 25) {
+      baseTitle = '무한한 가능성의 시기';
+      baseDescription = '젊음의 에너지가 넘치는 시기입니다. 도전을 두려워하지 말고 적극적으로 나아가세요.';
+    } else if (age <= 35) {
+      baseTitle = '성장과 발전의 황금기';
+      baseDescription = '경험과 열정이 조화를 이루는 시기입니다. 안정적인 기반 위에서 더 큰 도약을 준비하세요.';
+    } else if (age <= 45) {
+      baseTitle = '지혜와 경험이 빛나는 시기';
+      baseDescription = '쌓아온 경험이 큰 자산이 되는 때입니다. 후배들에게 길잡이가 되어주세요.';
+    } else if (age <= 55) {
+      baseTitle = '원숙함과 안정의 시기';
+      baseDescription = '인생의 중요한 결정들을 내려야 하는 시기입니다. 신중하면서도 과감한 선택이 필요합니다.';
+    } else {
+      baseTitle = '인생의 참된 의미를 깨닫는 시기';
+      baseDescription = '오랜 세월의 지혜가 빛을 발하는 때입니다. 여유롭고 평온한 마음으로 하루를 보내세요.';
+    }
+
+    // 띠별 특성 추가
+    if (zodiacAnimal != null) {
+      switch (zodiacAnimal) {
+        case '쥐':
+          baseDescription += ' 특히 새로운 기회를 포착하는 능력이 뛰어난 시기입니다.';
+          break;
+        case '소':
+          baseDescription += ' 꾸준히 노력한 결과가 서서히 나타나는 시기입니다.';
+          break;
+        case '호랑이':
+          baseDescription += ' 리더십을 발휘할 기회가 많이 찾아올 것입니다.';
+          break;
+        case '토끼':
+          baseDescription += ' 온화하고 조화로운 인간관계가 큰 힘이 되는 시기입니다.';
+          break;
+        case '용':
+          baseDescription += ' 창의적이고 혁신적인 아이디어가 빛을 발하는 때입니다.';
+          break;
+        case '뱀':
+          baseDescription += ' 직감과 통찰력이 특히 예리해지는 시기입니다.';
+          break;
+        case '말':
+          baseDescription += ' 활발한 활동과 도전 정신이 좋은 결과를 가져올 것입니다.';
+          break;
+        case '양':
+          baseDescription += ' 예술적 감각과 섬세함이 높이 평가받는 시기입니다.';
+          break;
+        case '원숭이':
+          baseDescription += ' 기발한 아이디어와 재치가 돋보이는 시기입니다.';
+          break;
+        case '닭':
+          baseDescription += ' 계획성 있는 행동이 큰 성과를 가져다줄 것입니다.';
+          break;
+        case '개':
+          baseDescription += ' 성실함과 충실함이 주변 사람들에게 인정받는 시기입니다.';
+          break;
+        case '돼지':
+          baseDescription += ' 관대함과 포용력이 큰 덕목이 되는 시기입니다.';
+          break;
+      }
+    }
+
+    // MBTI별 조언 추가
+    if (mbti != null) {
+      if (mbti.startsWith('E')) {
+        baseDescription += ' 사람들과의 활발한 교류가 특히 도움이 될 것입니다.';
+      } else {
+        baseDescription += ' 내면의 성찰과 집중이 큰 힘이 되는 시기입니다.';
+      }
+    }
+
+    // 운세 점수에 따른 조정
+    if (overallScore >= 85) {
+      baseTitle = '최고의 운기를 맞이하는 ${baseTitle.replaceAll('시기', '황금기')}';
+    } else if (overallScore >= 70) {
+      baseTitle = '좋은 기운이 가득한 $baseTitle';
+    } else if (overallScore < 60) {
+      baseTitle = '신중함이 필요한 $baseTitle';
+      baseDescription += ' 다만 조심스럽게 행동하며 무리하지 않는 것이 좋겠습니다.';
+    }
+
+    return {
+      'title': baseTitle,
+      'description': baseDescription,
+    };
+  }
+
+  /// 년생별 운세 데이터 가져오기 (기존 폴백)
   Map<String, String> _getAgeFortuneData(int birthYear) {
     // 년생별로 다른 운세 제공 (기본 데이터)
     final yearLastTwoDigits = birthYear % 100;
-    
+
     if (yearLastTwoDigits >= 80 && yearLastTwoDigits <= 89) {
       return {
         'title': '노력한 만큼의 성과를 올릴 수가 있다',
@@ -2290,5 +2382,446 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         'description': '변화의 바람이 불고 있습니다. 새로운 도전을 위해 마음의 준비를 하고 기회를 놓치지 마세요.',
       };
     }
+  }
+
+  /// 비슷한 사주의 연예인 동적 생성 (실제 데이터베이스 사용)
+  List<Map<String, String>> _generateSimilarSajuCelebrities() {
+    debugPrint('🎭 [GENERATE] _generateSimilarSajuCelebrities called');
+    final userProfile = widget.userProfile;
+
+    if (userProfile == null) {
+      debugPrint('🎭 [GENERATE] User profile is null, returning default celebrities');
+      return _getDefaultSimilarCelebrities();
+    }
+
+    debugPrint('🎭 [GENERATE] User profile exists: ${userProfile.name}');
+    debugPrint('🎭 [GENERATE] Database celebrities count: ${_databaseCelebrities.length}');
+
+    // 이미 로드된 데이터베이스 기반 연예인 데이터가 있으면 사용
+    if (_databaseCelebrities.isNotEmpty) {
+      debugPrint('🎭 [GENERATE] Using database celebrities');
+      final result = _findSimilarCelebritiesFromDatabase(userProfile);
+      debugPrint('🎭 [GENERATE] Database search returned ${result.length} celebrities');
+      return result;
+    }
+
+    // 데이터베이스 데이터가 없으면 기본값 반환
+    debugPrint('🎭 [GENERATE] No database celebrities available, returning default');
+    return _getDefaultSimilarCelebrities();
+  }
+
+  // 데이터베이스 연예인 캐시
+  List<Celebrity> _databaseCelebrities = [];
+
+  /// 데이터베이스에서 연예인 데이터 로드
+  Future<void> _loadCelebritiesFromDatabase() async {
+    debugPrint('🎭 [DB_LOAD] Starting to load celebrities from database');
+    try {
+      final celebrityService = new_service.CelebrityService();
+      debugPrint('🎭 [DB_LOAD] Celebrity service created');
+
+      // 100명 정도만 로드 (성능 고려)
+      final celebrities = await celebrityService.getAllCelebrities(limit: 100);
+      debugPrint('🎭 [DB_LOAD] Database query completed: ${celebrities.length} celebrities retrieved');
+
+      if (mounted) {
+        setState(() {
+          _databaseCelebrities = celebrities;
+        });
+        debugPrint('✅ [DB_LOAD] Successfully loaded ${celebrities.length} celebrities from database');
+
+        // 샘플 데이터 로깅
+        if (celebrities.isNotEmpty) {
+          for (int i = 0; i < math.min(5, celebrities.length); i++) {
+            final celeb = celebrities[i];
+            debugPrint('🎭 [DB_LOAD] Sample celebrity $i: ${celeb.displayName} (${celeb.birthDate.year}) - ${celeb.celebrityType.displayName} - ${celeb.zodiacSign} - ${celeb.chineseZodiac}');
+          }
+        }
+      } else {
+        debugPrint('⚠️ [DB_LOAD] Widget not mounted, skipping setState');
+      }
+    } catch (e) {
+      debugPrint('❌ [DB_LOAD] Failed to load celebrities from database: $e');
+      debugPrint('❌ [DB_LOAD] Error type: ${e.runtimeType}');
+      // 에러 시 빈 리스트 유지 (기본값 사용됨)
+    }
+  }
+
+  /// 데이터베이스에서 비슷한 연예인 찾기
+  List<Map<String, String>> _findSimilarCelebritiesFromDatabase(UserProfile userProfile) {
+    debugPrint('🎭 [FIND] _findSimilarCelebritiesFromDatabase called');
+    final userBirthDate = userProfile.birthdate;
+
+    if (userBirthDate == null) {
+      debugPrint('🎭 [FIND] User birth date is null, returning default celebrities');
+      return _getDefaultSimilarCelebrities();
+    }
+
+    final userZodiacAnimal = userProfile.zodiacAnimal;
+    final userZodiacSign = userProfile.zodiacSign;
+    final userBirthYear = userBirthDate.year;
+    final userGender = userProfile.gender;
+
+    debugPrint('🎭 [FIND] User info:');
+    debugPrint('🎭 [FIND] - Birth year: $userBirthYear');
+    debugPrint('🎭 [FIND] - Zodiac animal: $userZodiacAnimal');
+    debugPrint('🎭 [FIND] - Zodiac sign: $userZodiacSign');
+    debugPrint('🎭 [FIND] - Gender: $userGender');
+    debugPrint('🎭 [FIND] - Available celebrities: ${_databaseCelebrities.length}');
+
+    final similarCelebrities = <Celebrity>[];
+
+    // 1. 같은 띠의 연예인 찾기
+    if (userZodiacAnimal != null) {
+      debugPrint('🎭 [FIND] Step 1: Finding celebrities with same zodiac animal: $userZodiacAnimal');
+      final sameZodiacCelebrities = _databaseCelebrities
+          .where((celebrity) => celebrity.chineseZodiac == userZodiacAnimal)
+          .toList();
+      debugPrint('🎭 [FIND] Found ${sameZodiacCelebrities.length} celebrities with same zodiac animal');
+      if (sameZodiacCelebrities.isNotEmpty) {
+        similarCelebrities.add(sameZodiacCelebrities.first);
+        debugPrint('🎭 [FIND] Added ${sameZodiacCelebrities.first.displayName} (same zodiac animal)');
+      }
+    }
+
+    // 2. 같은 별자리의 연예인 찾기
+    if (userZodiacSign != null && similarCelebrities.length < 3) {
+      debugPrint('🎭 [FIND] Step 2: Finding celebrities with same zodiac sign: $userZodiacSign');
+      final sameSignCelebrities = _databaseCelebrities
+          .where((celebrity) =>
+            celebrity.zodiacSign == userZodiacSign &&
+            !similarCelebrities.contains(celebrity))
+          .toList();
+      debugPrint('🎭 [FIND] Found ${sameSignCelebrities.length} celebrities with same zodiac sign');
+      if (sameSignCelebrities.isNotEmpty) {
+        similarCelebrities.add(sameSignCelebrities.first);
+        debugPrint('🎭 [FIND] Added ${sameSignCelebrities.first.displayName} (same zodiac sign)');
+      }
+    }
+
+    // 3. 같은 성별의 연예인 찾기
+    if (userGender != null && similarCelebrities.length < 3) {
+      debugPrint('🎭 [FIND] Step 3: Finding celebrities with same gender: $userGender');
+      final sameGenderCelebrities = _databaseCelebrities
+          .where((celebrity) =>
+            celebrity.gender.displayName == userGender &&
+            !similarCelebrities.contains(celebrity))
+          .toList();
+      debugPrint('🎭 [FIND] Found ${sameGenderCelebrities.length} celebrities with same gender');
+      if (sameGenderCelebrities.isNotEmpty) {
+        similarCelebrities.add(sameGenderCelebrities.first);
+        debugPrint('🎭 [FIND] Added ${sameGenderCelebrities.first.displayName} (same gender)');
+      }
+    }
+
+    // 4. 비슷한 연대의 연예인으로 채우기 (±5년)
+    if (similarCelebrities.length < 3) {
+      debugPrint('🎭 [FIND] Step 4: Finding celebrities with similar age (±5 years from $userBirthYear)');
+      final similarAgeCelebrities = _databaseCelebrities
+          .where((celebrity) {
+            final celebBirthYear = celebrity.birthDate.year;
+            final yearDiff = (celebBirthYear - userBirthYear).abs();
+            return yearDiff <= 5 && !similarCelebrities.contains(celebrity);
+          }).toList();
+      debugPrint('🎭 [FIND] Found ${similarAgeCelebrities.length} celebrities with similar age');
+
+      for (final celebrity in similarAgeCelebrities.take(3 - similarCelebrities.length)) {
+        similarCelebrities.add(celebrity);
+        debugPrint('🎭 [FIND] Added ${celebrity.displayName} (similar age: ${celebrity.birthDate.year})');
+      }
+    }
+
+    // 5. 여전히 부족하면 랜덤으로 채우기
+    if (similarCelebrities.length < 3) {
+      debugPrint('🎭 [FIND] Step 5: Random selection to fill remaining slots');
+      final remainingCelebrities = _databaseCelebrities
+          .where((celebrity) => !similarCelebrities.contains(celebrity))
+          .toList();
+      debugPrint('🎭 [FIND] ${remainingCelebrities.length} celebrities available for random selection');
+
+      // 사용자 ID 기반 시드로 일관된 랜덤 선택
+      final seed = userProfile.id?.hashCode ?? DateTime.now().millisecondsSinceEpoch;
+      remainingCelebrities.shuffle(math.Random(seed));
+      debugPrint('🎭 [FIND] Shuffled with seed: $seed');
+
+      for (final celebrity in remainingCelebrities.take(3 - similarCelebrities.length)) {
+        similarCelebrities.add(celebrity);
+        debugPrint('🎭 [FIND] Added ${celebrity.displayName} (random selection)');
+      }
+    }
+
+    // Celebrity 객체를 Map으로 변환
+    debugPrint('🎭 [FIND] Final result: ${similarCelebrities.length} celebrities selected');
+    final result = similarCelebrities.take(3).map((celebrity) => {
+      'year': celebrity.birthDate.year.toString(),
+      'name': celebrity.displayName,
+      'description': celebrity.celebrityType.displayName,
+    }).toList();
+
+    debugPrint('🎭 [FIND] Converted to map format:');
+    for (int i = 0; i < result.length; i++) {
+      debugPrint('🎭 [FIND] Final celebrity $i: ${result[i]['name']} (${result[i]['year']}) - ${result[i]['description']}');
+    }
+
+    return result;
+  }
+
+  // *** 하드코딩된 연예인 풀 - 데이터베이스로 대체됨 ***
+  /*
+  /// 연예인 풀 데이터 (띠, 별자리, MBTI 포함) - DEPRECATED: 데이터베이스 사용
+  List<Map<String, String>> _getCelebrityPool() {
+    return [
+      // K-POP 아이돌
+      {'name': '아이유', 'year': '1993', 'description': '대한민국의 가수', 'zodiacAnimal': '닭', 'zodiacSign': '황소자리', 'mbti': 'INFP'},
+      // ... 하드코딩된 데이터는 이제 데이터베이스에서 가져옴
+    ];
+  }
+
+  /// 연예인 데이터를 표시 형식으로 변환 - DEPRECATED
+  Map<String, String> _formatCelebrity(Map<String, String> celebrity) {
+    return {
+      'year': celebrity['year'] ?? '',
+      'name': celebrity['name'] ?? '',
+      'description': celebrity['description'] ?? '',
+    };
+  }
+  */
+
+  /// 기본 연예인 리스트 (프로필이 없을 때)
+  List<Map<String, String>> _getDefaultSimilarCelebrities() {
+    debugPrint('🎭 [DEFAULT] Using default similar celebrities (fallback)');
+    final defaultCelebrities = [
+      {'year': '1993', 'name': '아이유', 'description': '대한민국의 가수'},
+      {'year': '1988', 'name': '지드래곤', 'description': '대한민국의 가수'},
+      {'year': '1993', 'name': '박보검', 'description': '대한민국의 배우'},
+    ];
+
+    for (int i = 0; i < defaultCelebrities.length; i++) {
+      debugPrint('🎭 [DEFAULT] Default celebrity $i: ${defaultCelebrities[i]['name']} (${defaultCelebrities[i]['year']}) - ${defaultCelebrities[i]['description']}');
+    }
+
+    return defaultCelebrities;
+  }
+
+  /// 강화된 행운 아이템 섹션 구성 (Edge Function 데이터 활용)
+  Widget _buildEnhancedLuckyItemsSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Edge Function에서 제공하는 데이터들 수집
+    final edgeLuckyItems = widget.fortune?.metadata?['lucky_items'] as Map<String, dynamic>?;
+    final sajuInsight = widget.sajuInsight;
+    final luckyOutfit = widget.fortune?.metadata?['lucky_outfit'] as Map<String, dynamic>?;
+
+    // 기존 fortune luckyItems도 포함
+    final fortuneLuckyItems = widget.fortune?.luckyItems;
+
+    // 데이터가 없으면 표시하지 않음
+    if (edgeLuckyItems == null && sajuInsight == null && luckyOutfit == null && fortuneLuckyItems == null) {
+      return const SizedBox.shrink();
+    }
+
+    // 행운 아이템들을 통합
+    final Map<String, String> allLuckyItems = {};
+
+    // Edge Function lucky_items 추가
+    if (edgeLuckyItems != null) {
+      if (edgeLuckyItems['time'] != null) allLuckyItems['시간'] = edgeLuckyItems['time'].toString();
+      if (edgeLuckyItems['color'] != null) allLuckyItems['색상'] = edgeLuckyItems['color'].toString();
+      if (edgeLuckyItems['number'] != null) allLuckyItems['숫자'] = edgeLuckyItems['number'].toString();
+      if (edgeLuckyItems['direction'] != null) allLuckyItems['방향'] = edgeLuckyItems['direction'].toString();
+      if (edgeLuckyItems['food'] != null) allLuckyItems['음식'] = edgeLuckyItems['food'].toString();
+      if (edgeLuckyItems['item'] != null) allLuckyItems['아이템'] = edgeLuckyItems['item'].toString();
+    }
+
+    // 사주 인사이트 데이터 추가
+    if (sajuInsight != null) {
+      if (sajuInsight['lucky_color'] != null) allLuckyItems['행운색'] = sajuInsight['lucky_color'].toString();
+      if (sajuInsight['lucky_food'] != null) allLuckyItems['행운음식'] = sajuInsight['lucky_food'].toString();
+      if (sajuInsight['lucky_item'] != null) allLuckyItems['행운템'] = sajuInsight['lucky_item'].toString();
+      if (sajuInsight['luck_direction'] != null) allLuckyItems['행운방향'] = sajuInsight['luck_direction'].toString();
+    }
+
+    // 기존 fortune luckyItems 추가
+    if (fortuneLuckyItems != null) {
+      fortuneLuckyItems.forEach((key, value) {
+        if (value != null) {
+          allLuckyItems[key] = value.toString();
+        }
+      });
+    }
+
+    // 행운 의상 정보
+    String? luckyOutfitTitle;
+    String? luckyOutfitDescription;
+    List<String>? luckyOutfitItems;
+
+    if (luckyOutfit != null) {
+      luckyOutfitTitle = luckyOutfit['title']?.toString();
+      luckyOutfitDescription = luckyOutfit['description']?.toString();
+      luckyOutfitItems = (luckyOutfit['items'] as List?)?.map((e) => e.toString()).toList();
+    }
+
+    return Column(
+      children: [
+        // 기본 행운 아이템 그리드
+        if (allLuckyItems.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark
+                ? const Color(0xFF1E293B)
+                : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark
+                  ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                  : const Color(0xFF3B82F6).withValues(alpha:0.1),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                    ? const Color(0xFF6366F1).withValues(alpha:0.1)
+                    : const Color(0xFF3B82F6).withValues(alpha:0.1),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.stars_rounded,
+                        color: isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '오늘의 행운 아이템',
+                      style: TextStyle(
+                        color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                FortuneInfographicWidgets.buildLuckyItemsGrid(
+                  luckyItems: allLuckyItems,
+                  itemSize: 100,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+
+        // 행운 의상 섹션
+        if (luckyOutfitTitle != null && luckyOutfitDescription != null) ...[
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark
+                ? const Color(0xFF1E293B)
+                : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark
+                  ? const Color(0xFFA855F7).withValues(alpha:0.1)
+                  : const Color(0xFF8B5CF6).withValues(alpha:0.1),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                    ? const Color(0xFFA855F7).withValues(alpha:0.1)
+                    : const Color(0xFF8B5CF6).withValues(alpha:0.1),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: (isDark ? const Color(0xFFA855F7) : const Color(0xFF8B5CF6)).withValues(alpha:0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.checkroom_rounded,
+                        color: isDark ? const Color(0xFFA855F7) : const Color(0xFF8B5CF6),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        luckyOutfitTitle,
+                        style: TextStyle(
+                          color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  luckyOutfitDescription,
+                  style: TextStyle(
+                    color: isDark
+                      ? TossDesignSystem.white.withValues(alpha: 0.8)
+                      : const Color(0xFF6B7280),
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
+                ),
+                if (luckyOutfitItems != null && luckyOutfitItems.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: luckyOutfitItems.map((item) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: (isDark ? const Color(0xFFA855F7) : const Color(0xFF8B5CF6)).withValues(alpha:0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: (isDark ? const Color(0xFFA855F7) : const Color(0xFF8B5CF6)).withValues(alpha:0.2),
+                        ),
+                      ),
+                      child: Text(
+                        item,
+                        style: TextStyle(
+                          color: isDark ? const Color(0xFFA855F7) : const Color(0xFF8B5CF6),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
   }
 }

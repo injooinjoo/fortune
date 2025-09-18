@@ -83,39 +83,70 @@ class CelebrityService {
   /// Get celebrities with same birthday (month and day)
   Future<List<Map<String, dynamic>>> getCelebritiesWithBirthday(DateTime date) async {
     try {
+      final dateString = date.toIso8601String().split('T')[0];
       final response = await _supabase
           .from('celebrities')
           .select('''
             id,
             name,
-            name_en,
-            category,
+            stage_name,
+            celebrity_type,
             gender,
             birth_date,
-            profile_image_url,
-            description,
-            keywords,
-            popularity_score
+            nationality,
+            profession_data
           ''')
-          .eq('is_active', true)
-          .like('birth_date', '%${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}')
-          .order('popularity_score', ascending: false)
+          .eq('birth_date', dateString)
+          .order('name')
           .limit(10);
 
       final celebrities = List<Map<String, dynamic>>.from(response);
-      
-      // If no celebrities found with exact birthday, return fallback data silently
-      if (celebrities.isEmpty) {
-        return _getFallbackCelebrities(date.month, date.day);
+
+      if (celebrities.isNotEmpty) {
+        return celebrities.map((celebrity) {
+          return {
+            'id': celebrity['id'],
+            'name': celebrity['stage_name'] ?? celebrity['name'],
+            'birth_date': celebrity['birth_date'],
+            'description': _getCelebrityTypeDescription(celebrity['celebrity_type']),
+            'keywords': [celebrity['celebrity_type']],
+            'popularity_score': 85, // Default score
+          };
+        }).toList();
       }
-      
-      return celebrities;
+
+      // If no celebrities found, return empty list instead of fallback
+      return [];
     } catch (e) {
-      // Return fallback data silently without print
-      return _getFallbackCelebrities(date.month, date.day);
+      // Return empty list if query fails
+      return [];
     }
   }
   
+  /// Get description for celebrity type
+  static String _getCelebrityTypeDescription(String? celebrityType) {
+    switch (celebrityType) {
+      case 'pro_gamer':
+        return '프로게이머';
+      case 'streamer':
+        return '스트리머';
+      case 'politician':
+        return '정치인';
+      case 'business':
+        return '기업인';
+      case 'solo_singer':
+        return '솔로 가수';
+      case 'idol_member':
+        return '아이돌 멤버';
+      case 'actor':
+        return '배우';
+      case 'athlete':
+        return '운동선수';
+      default:
+        return '유명인';
+    }
+  }
+
   /// Generate fallback celebrity data based on birth month and day
   static List<Map<String, dynamic>> _getFallbackCelebrities(int month, int day) {
     final fallbackCelebrities = [

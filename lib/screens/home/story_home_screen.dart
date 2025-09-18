@@ -54,22 +54,34 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   bool _hasViewedStoryToday = false; // 오늘 스토리를 이미 봤는지 확인
   bool _isReallyLoggedIn = false; // 실제 로그인 여부 (익명 아닌)
   bool _showPreviewScreen = false; // 프리뷰 화면 표시 여부
+  bool _isInitializing = false; // 초기화 중복 방지
   
-  // Pull-to-refresh를 위한 새로고침 함수
+  // Pull-to-refresh를 위한 새로고침 함수 (하루 1회 제한)
   Future<void> _refreshFortuneData() async {
     try {
+      // 마지막 새로고침 시간 확인 (하루 1회 제한)
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now();
+      final todayKey = '${today.year}-${today.month}-${today.day}';
+      final lastRefreshDate = prefs.getString('last_refresh_date');
+
+      if (lastRefreshDate == todayKey) {
+        debugPrint('🔄 Pull-to-refresh 제한: 오늘 이미 새로고침 완료');
+        return; // 오늘 이미 새로고침했으면 실행하지 않음
+      }
+
       debugPrint('🔄 Pull-to-refresh initiated - clearing cache and loading fresh data');
-      
+
       // 캐시 무효화
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
         await _cacheService.removeCachedFortune('daily', {'userId': userId});
         await _cacheService.removeCachedStorySegments('daily', {'userId': userId});
       }
-      
+
       // Provider 상태 초기화
       ref.read(dailyFortuneProvider.notifier).reset();
-      
+
       // 새로운 데이터 로드
       setState(() {
         isLoadingFortune = true;
@@ -77,9 +89,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         storySegments = null;
         _hasViewedStoryToday = false; // 새로운 스토리 보기 위해 재설정
       });
-      
+
       await _loadTodaysFortune();
-      
+
+      // 새로고침 날짜 저장
+      await prefs.setString('last_refresh_date', todayKey);
+
       debugPrint('✅ Pull-to-refresh completed');
     } catch (e) {
       debugPrint('❌ Pull-to-refresh failed: $e');
@@ -92,25 +107,33 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _checkIfAlreadyViewed();
     _checkRealLoginStatus(); // 초기 로그인 상태 확인
     _initializeDataWithCacheCheck();
-    
+
     // 인증 상태 변화 리스너 추가
     supabase.auth.onAuthStateChange.listen((data) {
       debugPrint('🔐 [StoryHomeScreen] Auth state changed: ${data.event}');
       debugPrint('🔐 [StoryHomeScreen] Session exists: ${data.session != null}');
       debugPrint('🔐 [StoryHomeScreen] Current _showPreviewScreen: $_showPreviewScreen');
-      
+      debugPrint('🔐 [StoryHomeScreen] Is initializing: $_isInitializing');
+
       if ((data.event == AuthChangeEvent.signedIn || data.event == AuthChangeEvent.initialSession) && data.session != null) {
         debugPrint('🔐 [StoryHomeScreen] User signed in or session restored, updating login status');
         _checkRealLoginStatus();
-        
-        // PreviewScreen에서 로그인한 경우 자동으로 스토리 표시
-        if (_showPreviewScreen) {
+
+        // PreviewScreen에서 로그인한 경우에만 자동으로 스토리 표시 (중복 초기화 방지)
+        if (_showPreviewScreen && !_isInitializing) {
           debugPrint('🔐 [StoryHomeScreen] Hiding PreviewScreen and loading story');
           setState(() {
             _showPreviewScreen = false;
             isLoadingFortune = true;
+            _isInitializing = true;
           });
-          _initializeData();
+          _initializeData().then((_) {
+            if (mounted) {
+              setState(() {
+                _isInitializing = false;
+              });
+            }
+          });
         }
       } else if (data.event == AuthChangeEvent.signedOut) {
         debugPrint('🔐 [StoryHomeScreen] User signed out');
@@ -184,30 +207,51 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   
   // 캐시 체크와 함께 데이터 초기화
   Future<void> _initializeDataWithCacheCheck() async {
+    if (_isInitializing) {
+      debugPrint('⚠️ Already initializing, skipping duplicate call');
+      return;
+    }
+
     try {
+      setState(() {
+        _isInitializing = true;
+      });
+
       // 먼저 캐시가 있는지 확인
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
         final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
         final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
-        
+
         // 캐시된 데이터가 완전하면 로딩 상태를 false로 시작
         if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
           debugPrint('🚀 Found complete cached data - starting without loading screen');
+
+          final fortuneEntity = cachedFortuneData.toEntity();
+
           setState(() {
             isLoadingFortune = false;
-            todaysFortune = cachedFortuneData.toEntity();
+            todaysFortune = fortuneEntity;
             storySegments = cachedStorySegments;
+            _isInitializing = false;
           });
+
+          return; // 캐시 데이터로 완료, 추가 초기화 불필요
         }
       }
-      
-      // 일반적인 초기화 계속 진행
+
+      // 캐시가 없는 경우에만 일반적인 초기화 진행
       await _initializeData();
     } catch (e) {
       debugPrint('❌ Error in cache check initialization: $e');
       // 에러가 발생하면 일반적인 초기화로 fallback
       await _initializeData();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+        });
+      }
     }
   }
   
@@ -1110,48 +1154,42 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(navigationVisibilityProvider.notifier).show();
       });
-      
-      return RefreshIndicator(
-        onRefresh: _refreshFortuneData,
-        child: FortuneCompletionPage(
-          fortune: todaysFortune,
-          userName: userProfile?.name,
-          userProfile: userProfile,
-          sajuAnalysis: sajuAnalysisData,
-          meta: metaData,
-          weatherSummary: weatherSummaryData,
-          overall: overallData,
-          categories: categoriesData,
-          sajuInsight: sajuInsightData,
-          personalActions: personalActionsData,
-          notification: notificationData,
-          shareCard: shareCardData,
-          onReplay: () {
-            // 다시 스토리 보기
-            setState(() {
-              _hasViewedStoryToday = false;
-            });
-          },
-        ),
+
+      return FortuneCompletionPage(
+        fortune: todaysFortune,
+        userName: userProfile?.name,
+        userProfile: userProfile,
+        sajuAnalysis: sajuAnalysisData,
+        meta: metaData,
+        weatherSummary: weatherSummaryData,
+        overall: overallData,
+        categories: categoriesData,
+        sajuInsight: sajuInsightData,
+        personalActions: personalActionsData,
+        notification: notificationData,
+        shareCard: shareCardData,
+        onReplay: () {
+          // 다시 스토리 보기
+          setState(() {
+            _hasViewedStoryToday = false;
+          });
+        },
       );
     }
     
     // 스토리 뷰어 또는 기본 화면
     if (storySegments != null && storySegments!.isNotEmpty) {
-      return RefreshIndicator(
-        onRefresh: _refreshFortuneData,
-        child: FortuneStoryViewer(
-          segments: storySegments!,
-          userName: userProfile?.name,
-          onComplete: () {
-            // 완료 화면으로 이동
-            _showCompletionPage();
-          },
-          onSkip: () {
-            // 건너뛰기 시에도 완료 화면으로
-            _showCompletionPage();
-          },
-        ),
+      return FortuneStoryViewer(
+        segments: storySegments!,
+        userName: userProfile?.name,
+        onComplete: () {
+          // 완료 화면으로 이동
+          _showCompletionPage();
+        },
+        onSkip: () {
+          // 건너뛰기 시에도 완료 화면으로
+          _showCompletionPage();
+        },
       );
     } else {
       // 운세 데이터가 없는 경우 기본 완료 화면 표시

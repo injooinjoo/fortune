@@ -1964,6 +1964,7 @@ class FortuneInfographicWidgets {
                       ],
                     ),
                     indicatorPadding: const EdgeInsets.all(4),
+                    indicatorSize: TabBarIndicatorSize.tab, // 탭 전체 영역을 지시자로 사용
                     labelColor: const Color(0xFF1F2937),
                     unselectedLabelColor: const Color(0xFF6B7280),
                     labelStyle: const TextStyle(
@@ -1976,10 +1977,23 @@ class FortuneInfographicWidgets {
                     ),
                     dividerHeight: 0,
                     tabAlignment: TabAlignment.fill, // 탭을 균등하게 채움
-                    tabs: const [
-                      Tab(text: '띠'),
-                      Tab(text: '별자리'),
-                      Tab(text: 'MBTI'),
+                    tabs: [
+                      // 각 탭의 높이와 패딩을 통일
+                      Container(
+                        height: 40, // 고정 높이
+                        alignment: Alignment.center,
+                        child: const Text('띠'),
+                      ),
+                      Container(
+                        height: 40, // 고정 높이
+                        alignment: Alignment.center,
+                        child: const Text('별자리'),
+                      ),
+                      Container(
+                        height: 40, // 고정 높이
+                        alignment: Alignment.center,
+                        child: const Text('MBTI'),
+                      ),
                     ],
                   ),
                 ),

@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../services/celebrity_supabase_service.dart';
+import '../../services/celebrity_service_new.dart';
 import '../../services/celebrity_crawling_service.dart';
-import '../../data/models/celebrity.dart';
+import '../../data/models/celebrity_simple.dart';
 
 // Celebrity service providers
-final celebrityServiceProvider = Provider<CelebritySupabaseService>((ref) {
-  return CelebritySupabaseService();
+final celebrityServiceProvider = Provider<CelebrityService>((ref) {
+  return CelebrityService();
 });
 
 final celebrityCrawlingServiceProvider = Provider<CelebrityCrawlingService>((ref) {
@@ -15,13 +15,13 @@ final celebrityCrawlingServiceProvider = Provider<CelebrityCrawlingService>((ref
 // All celebrities provider
 final allCelebritiesProvider = FutureProvider<List<Celebrity>>((ref) async {
   final service = ref.watch(celebrityServiceProvider);
-  return await service.fetchAllCelebrities();
+  return await service.getAllCelebrities();
 });
 
 // Celebrity by category provider
-final celebritiesByCategoryProvider = FutureProvider.family<List<Celebrity>, CelebrityCategory>((ref, category) async {
+final celebritiesByCategoryProvider = FutureProvider.family<List<Celebrity>, CelebrityType>((ref, type) async {
   final service = ref.watch(celebrityServiceProvider);
-  return await service.fetchCelebritiesByCategory(category);
+  return await service.getCelebritiesByType(type);
 });
 
 // Celebrity search provider
@@ -32,27 +32,31 @@ final celebritySearchProvider = StateNotifierProvider<CelebritySearchNotifier, A
 
 // Celebrity search notifier
 class CelebritySearchNotifier extends StateNotifier<AsyncValue<List<Celebrity>>> {
-  final CelebritySupabaseService _service;
-  
+  final CelebrityService _service;
+
   CelebritySearchNotifier(this._service) : super(const AsyncValue.data([]));
-  
+
   Future<void> search({
     String? query,
-    CelebrityFilter? filter,
+    CelebrityType? type,
+    Gender? gender,
+    String? nationality,
     int? limit,
   }) async {
-    if ((query == null || query.isEmpty) && filter == null) {
+    if (query == null || query.isEmpty) {
       state = const AsyncValue.data([]);
       return;
     }
-    
+
     state = const AsyncValue.loading();
-    
+
     try {
       final results = await _service.searchCelebrities(
-        query: query,
-        filter: filter,
-        limit: limit,
+        query,
+        type: type,
+        gender: gender,
+        nationality: nationality,
+        limit: limit ?? 50,
       );
       state = AsyncValue.data(results);
     } catch (e, stackTrace) {
@@ -71,27 +75,31 @@ final selectedCelebrityProvider = StateProvider<Celebrity?>((ref) => null);
 // Celebrity suggestions provider (for autocomplete)
 final celebritySuggestionsProvider = FutureProvider.family<List<Celebrity>, String>((ref, query) async {
   if (query.isEmpty) return [];
-  
+
   final service = ref.watch(celebrityServiceProvider);
-  return await service.getSuggestions(query, limit: 10);
+  return await service.searchCelebrities(query, limit: 10);
 });
 
 // Popular celebrities provider
-final popularCelebritiesProvider = FutureProvider.family<List<Celebrity>, CelebrityCategory?>((ref, category) async {
+final popularCelebritiesProvider = FutureProvider.family<List<Celebrity>, CelebrityType?>((ref, type) async {
   final service = ref.watch(celebrityServiceProvider);
-  return await service.getPopularCelebrities(category: category, limit: 10);
+  if (type != null) {
+    return await service.getCelebritiesByType(type, limit: 10);
+  } else {
+    return await service.getAllCelebrities(limit: 10);
+  }
 });
 
 // Random celebrities provider
-final randomCelebritiesProvider = FutureProvider.family<List<Celebrity>, CelebrityCategory?>((ref, category) async {
+final randomCelebritiesProvider = FutureProvider.family<List<Celebrity>, CelebrityType?>((ref, type) async {
   final service = ref.watch(celebrityServiceProvider);
-  return await service.getRandomCelebrities(category: category, limit: 10);
+  return await service.getRandomCelebrities(type: type, count: 10);
 });
 
 // Celebrities with birthday provider
 final celebritiesWithBirthdayProvider = FutureProvider.family<List<Celebrity>, DateTime>((ref, date) async {
   final service = ref.watch(celebrityServiceProvider);
-  return await service.getCelebritiesWithBirthday(date);
+  return await service.getCelebritiesWithSameBirthday(date);
 });
 
 // Celebrity by ID provider
@@ -101,7 +109,7 @@ final celebrityByIdProvider = FutureProvider.family<Celebrity?, String>((ref, id
 });
 
 // Celebrity statistics provider
-final celebrityStatisticsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final celebrityStatisticsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final service = ref.watch(celebrityServiceProvider);
   return await service.getCelebrityStatistics();
 });
@@ -112,54 +120,70 @@ final celebrityFilterProvider = StateNotifierProvider<CelebrityFilterNotifier, C
 });
 
 class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
-  CelebrityFilterNotifier() : super(CelebrityFilter());
-  
-  void updateCategory(CelebrityCategory? category) {
+  CelebrityFilterNotifier() : super(const CelebrityFilter());
+
+  void updateCelebrityType(CelebrityType? celebrityType) {
     state = CelebrityFilter(
-      category: category,
+      celebrityType: celebrityType,
       gender: state.gender,
       minAge: state.minAge,
       maxAge: state.maxAge,
       searchQuery: state.searchQuery,
+      nationality: state.nationality,
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac);
   }
-  
+
   void updateGender(Gender? gender) {
     state = CelebrityFilter(
-      category: state.category,
+      celebrityType: state.celebrityType,
       gender: gender,
       minAge: state.minAge,
       maxAge: state.maxAge,
       searchQuery: state.searchQuery,
+      nationality: state.nationality,
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac);
   }
-  
+
   void updateAgeRange(int? minAge, int? maxAge) {
     state = CelebrityFilter(
-      category: state.category,
+      celebrityType: state.celebrityType,
       gender: state.gender,
       minAge: minAge,
       maxAge: maxAge,
       searchQuery: state.searchQuery,
+      nationality: state.nationality,
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac);
   }
-  
+
   void updateSearchQuery(String? query) {
     state = CelebrityFilter(
-      category: state.category,
+      celebrityType: state.celebrityType,
       gender: state.gender,
       minAge: state.minAge,
       maxAge: state.maxAge,
       searchQuery: query,
+      nationality: state.nationality,
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac);
   }
-  
+
+  void updateNationality(String? nationality) {
+    state = CelebrityFilter(
+      celebrityType: state.celebrityType,
+      gender: state.gender,
+      minAge: state.minAge,
+      maxAge: state.maxAge,
+      searchQuery: state.searchQuery,
+      nationality: nationality,
+      zodiacSign: state.zodiacSign,
+      chineseZodiac: state.chineseZodiac);
+  }
+
   void reset() {
-    state = CelebrityFilter();
+    state = const CelebrityFilter();
   }
 }
 

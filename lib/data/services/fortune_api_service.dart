@@ -437,6 +437,59 @@ class FortuneApiService {
     }
   }
 
+  // Investment Enhanced Fortune
+  Future<Fortune> getInvestmentEnhancedFortune({
+    required String userId,
+    Map<String, dynamic>? investmentData}) async {
+    final stopwatch = Logger.startTimer('getInvestmentEnhancedFortune - Total');
+
+    Logger.info('🔍 [FortuneApiService] getInvestmentEnhancedFortune called', {
+      'userId': userId,
+      'hasInvestmentData': investmentData != null,
+      'dataKeys': investmentData?.keys.toList()});
+
+    try {
+      Logger.debug('🔍 [FortuneApiService] Making API call', {
+        'endpoint': ApiEndpoints.investmentEnhanced,
+        'method': 'POST'});
+
+      final apiStopwatch = Logger.startTimer('API Call - investment-enhanced');
+      final response = await _apiClient.post(
+        ApiEndpoints.investmentEnhanced,
+        data: {
+          'userId': userId,
+          ...?investmentData,
+        });
+      Logger.endTimer('API Call - investment-enhanced', apiStopwatch);
+
+      Logger.info('🔍 [FortuneApiService] API response received', {
+        'statusCode': response.statusCode,
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
+
+      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortune = fortuneResponse.toEntity();
+
+      Logger.endTimer('getInvestmentEnhancedFortune - Total', stopwatch);
+      Logger.info('✅ [FortuneApiService] getInvestmentEnhancedFortune completed', {
+        'fortuneId': fortune.id,
+        'overallScore': fortune.overallScore,
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
+
+      return fortune;
+    } on DioException catch (e) {
+      Logger.endTimer('getInvestmentEnhancedFortune - Total', stopwatch);
+      Logger.error('❌ [FortuneApiService] DioException in getInvestmentEnhancedFortune', {
+        'type': e.type.toString(),
+        'message': e.message,
+        'statusCode': e.response?.statusCode});
+      throw _handleDioError(e);
+    } catch (e, stackTrace) {
+      Logger.endTimer('getInvestmentEnhancedFortune - Total', stopwatch);
+      Logger.error('❌ [FortuneApiService] Unexpected error in getInvestmentEnhancedFortune', e, stackTrace);
+      rethrow;
+    }
+  }
+
   // MBTI Fortune
   Future<Fortune> getMbtiFortune({
     required String userId,
@@ -1201,15 +1254,6 @@ class FortuneApiService {
       params: params);
   }
   
-  // Investment Enhanced Fortune (for enhanced investment fortune page)
-  Future<Fortune> getInvestmentEnhancedFortune({
-    required String userId,
-    Map<String, dynamic>? params}) async {
-    return getFortune(
-      fortuneType: 'investment-enhanced',
-      userId: userId,
-      params: params);
-  }
 
   // Sports Fortune (for unified sports fortune page)
   Future<Fortune> getSportsFortune({

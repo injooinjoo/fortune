@@ -119,18 +119,15 @@ class CelebrityCrawlingService {
         issues.add('생년월일 정보가 없습니다');
       }
       
-      if (celebrity.description?.isEmpty ?? true) {
+      if (celebrity.notes?.isEmpty ?? true) {
         issues.add('설명이 비어있습니다');
       }
-      
-      if (celebrity.keywords?.isEmpty ?? true) {
-        issues.add('키워드가 없습니다');
+
+      if (celebrity.aliases.isEmpty) {
+        issues.add('별명이 없습니다');
       }
 
-      // 이미지 URL 유효성 확인
-      if (celebrity.profileImageUrl?.contains('placeholder') ?? false) {
-        issues.add('기본 이미지를 사용하고 있습니다');
-      }
+      // Note: profileImageUrl property not available in current Celebrity model
 
       return ValidationResult(
         isValid: issues.isEmpty,
