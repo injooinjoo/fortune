@@ -263,6 +263,8 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   }
 
   Widget _buildInputView() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       children: [
         SingleChildScrollView(

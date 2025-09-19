@@ -164,6 +164,8 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
     String? selectedValue,
     ValueChanged<String?> onChanged,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

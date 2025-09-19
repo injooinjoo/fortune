@@ -77,7 +77,8 @@ class FortuneEmotionalDescriptions {
         'inputLabel': '혈액형',
         'inputHint': 'A형',
         'inputType': 'dropdown',
-        'dropdownOptions': ['A형', 'B형', 'O형', 'AB형': null},
+        'dropdownOptions': ['A형', 'B형', 'O형', 'AB형']
+      },
       // 추가 운세 타입들
       'personality': {
         'emotionalDescription': '당신만의 독특한 성격이 만들어내는 운명의 길. 내면의 특성이 이끄는 대로 따라가다 보면, 더욱 행복하고 성공적인 미래가 펼쳐집니다.',

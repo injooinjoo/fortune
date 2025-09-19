@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
+import '../../core/theme/toss_design_system.dart';
 
 /// Collection of infographic widgets for fortune completion page
 class FortuneInfographicWidgets {
-  
+
   /// 토스 스타일 메인 점수 표시 (깔끔한 흰 배경)
   static Widget buildTossStyleMainScore({
     required int score,
@@ -28,1355 +26,170 @@ class FortuneInfographicWidgets {
             width: 1,
           ),
         ),
-      child: Column(
-        children: [
-          // 토스 스타일 점수 표시 (큰 숫자만)
-          Text(
-            '$score',
-            style: TextStyle(
-              color: TossDesignSystem.gray900,
-              fontSize: size * 0.3,
-              fontWeight: FontWeight.w300,
-              letterSpacing: -4,
-              height: 1.0,
-            ),
-          ).animate()
-            .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
-            .fadeIn(duration: 600.ms),
-          
-          const SizedBox(height: 24),
-          
-          // 메시지
-          Text(
-            message,
-            style: const TextStyle(
-              color: TossDesignSystem.gray900,
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-            ),
-            textAlign: TextAlign.center,
-          ).animate()
-            .fadeIn(delay: 400.ms, duration: 600.ms)
-            .slideY(begin: 0.2, curve: Curves.easeOut),
-        ],
-      ),
-    ));
-  }
+        child: Column(
+          children: [
+            // 토스 스타일 점수 표시 (큰 숫자만)
+            Text(
+              '$score',
+              style: TextStyle(
+                color: TossDesignSystem.gray900,
+                fontSize: size * 0.3,
+                fontWeight: FontWeight.w300,
+                letterSpacing: -4,
+                height: 1.0,
+              ),
+            ).animate()
+              .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
+              .fadeIn(duration: 600.ms),
 
-  /// Circular progress chart for overall fortune score (토스 스타일)
-  static Widget buildHeroScoreChart({
-    required int score,
-    required String message,
-    required String userName,
-    double size = 200,
-  }) {
-    return Builder(
-      builder: (context) => Container(
-        width: size + 20,
-        height: size + 20,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
-              : TossDesignSystem.white,
-          boxShadow: [
-            BoxShadow(
-              color: TossDesignSystem.black.withValues(alpha:0.05),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
+            const SizedBox(height: 24),
+
+            // 메시지
+            Text(
+              message,
+              style: const TextStyle(
+                color: TossDesignSystem.gray700,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ).animate()
+              .fadeIn(duration: 800.ms, delay: 400.ms)
+              .slideY(begin: 0.3, curve: Curves.easeOut),
           ],
         ),
-      child: Center(
-        child: Container(
+      ),
+    );
+  }
+
+  /// Hero-style score chart (원형 점수 차트)
+  static Widget buildHeroScoreChart({
+    required int score,
+    required String title,
+    double size = 200,
+    Color? color,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final chartColor = color ?? TossDesignSystem.tossBlue;
+
+        return SizedBox(
           width: size,
           height: size,
           child: Stack(
+            alignment: Alignment.center,
             children: [
-              // Progress circle
               SizedBox(
                 width: size,
                 height: size,
                 child: CircularProgressIndicator(
-                  value: score / 100,
+                  value: score / 100.0,
                   strokeWidth: 8,
-                  backgroundColor: TossDesignSystem.gray100,
-                  valueColor: const AlwaysStoppedAnimation<Color>(TossDesignSystem.gray600),
-                ),
-              ).animate()
-                .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
-                .fadeIn(duration: 600.ms),
-              
-              // Center content
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '$score',
-                      style: TextStyle(
-                        color: TossDesignSystem.gray900,
-                        fontSize: size * 0.18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ).animate()
-                      .fadeIn(delay: 400.ms, duration: 600.ms)
-                      .scale(begin: const Offset(0.5, 0.5), curve: Curves.elasticOut),
-                    
-                    Text(
-                      '점',
-                      style: TextStyle(
-                        color: TossDesignSystem.gray600,
-                        fontSize: size * 0.06,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ).animate()
-                      .fadeIn(delay: 600.ms, duration: 400.ms),
-                  ],
+                  backgroundColor: isDark
+                      ? TossDesignSystem.grayDark300
+                      : TossDesignSystem.gray200,
+                  valueColor: AlwaysStoppedAnimation<Color>(chartColor),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    ));
-  }
-
-  /// 토스 스타일 5각형 레이더 차트 (총운 중심)
-  static Widget buildTossStyleRadarChart({
-    required Map<String, int> categories,
-    double size = 300, // 사이즈 증가
-  }) {
-    // 기본 5개 카테고리: 총운, 재물운, 연애운, 건강운, 학업운
-    final categoryOrder = ['총운', '학업운', '재물운', '연애운', '건강운'];
-    final scores = categoryOrder.map((cat) => categories[cat]?.toDouble() ?? 70.0).toList();
-
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return Container(
-        width: size,
-        height: size + 30, // 높이 더 증가로 텍스트 잘림 방지
-        padding: const EdgeInsets.all(30), // 패딩 더 증가
-        decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
-              : TossDesignSystem.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : const Color(0xFFF2F4F6),
-            width: 1,
-          ),
-        ),
-      child: Stack(
-        children: [
-          // 토스 스타일 5각형 차트 (더 연한 색상)
-          Container(
-            padding: const EdgeInsets.all(35), // 패딩 조정
-            child: RadarChart(
-              RadarChartData(
-                radarTouchData: RadarTouchData(enabled: false),
-                dataSets: [
-                  RadarDataSet(
-                    fillColor: const Color(0xFF4ECDC4).withValues(alpha:0.15), // 더 연하게
-                    borderColor: const Color(0xFF4ECDC4),
-                    entryRadius: 3,
-                    dataEntries: scores.map((score) => RadarEntry(value: score)).toList(),
-                    borderWidth: 2,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$score',
+                    style: TextStyle(
+                      fontSize: size * 0.2,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    ),
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: size * 0.08,
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
                   ),
                 ],
-                radarBackgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-                borderData: FlBorderData(show: false),
-                radarBorderData: BorderSide(color: TossDesignSystem.white.withValues(alpha: 0.0)),
-                titlePositionPercentageOffset: 0.15, // 텍스트를 차트에서 더 멀리
-                titleTextStyle: TextStyle(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray600,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-                getTitle: (index, angle) {
-                  return RadarChartTitle(
-                    text: categoryOrder[index],
-                    angle: 0, // 항상 수평으로 표시
-                  );
-                },
-                tickCount: 5,
-                ticksTextStyle: TextStyle(
-                  color: TossDesignSystem.white.withValues(alpha: 0.0), // 숫자 숨김
-                  fontSize: 0,
-                ),
-                tickBorderData: BorderSide(color: TossDesignSystem.white.withValues(alpha: 0.0)),
-                gridBorderData: BorderSide(
-                  color: isDark ? TossDesignSystem.grayDark400 : const Color(0xFFF2F4F6),
-                  width: 1
-                ), // 다크모드에서 보이는 격자
-                radarShape: RadarShape.polygon,
-              ),
-            ),
-          ),
-          
-          // 각 카테고리 점수 표시 (토스 스타일) - 텍스트 직하단 위치
-          ...categoryOrder.asMap().entries.map((entry) {
-            final index = entry.key;
-            final category = entry.value;
-            final score = categories[category] ?? 70;
-            
-            // 텍스트 위치를 기준으로 점수 위치 계산
-            final chartCenter = size * 0.5;
-            final textRadius = size * 0.42; // 텍스트 위치 반지름
-            final angleRadians = (index * 2 * math.pi / 5) - math.pi / 2;
-            final scoreCircleRadius = 12.0; // 점수 원 반지름 축소
-            
-            // 텍스트 바로 아래에 점수 위치 계산
-            final textX = chartCenter + textRadius * math.cos(angleRadians);
-            final textY = chartCenter + textRadius * math.sin(angleRadians);
-            
-            return Positioned(
-              left: textX - scoreCircleRadius,
-              top: textY + 12, // 텍스트 바로 아래 12px 간격
-              child: Container(
-                width: scoreCircleRadius * 2,
-                height: scoreCircleRadius * 2,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4ECDC4),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha:0.15),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '$score',
-                    style: const TextStyle(
-                      color: TossDesignSystem.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-      },
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 500.ms)
-      .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOut);
-  }
-
-  /// Radar chart for fortune categories (토스 스타일)
-  static Widget buildRadarChart({
-    required Map<String, int> scores,
-    double size = 180,
-  }) {
-    return Builder(
-      builder: (context) => Container(
-        width: size,
-        height: size,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
-              : TossDesignSystem.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray200,
-            width: 1,
-          ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: RadarChart(
-        RadarChartData(
-          radarTouchData: RadarTouchData(enabled: false),
-          dataSets: [
-            RadarDataSet(
-              fillColor: TossDesignSystem.gray600.withValues(alpha:0.1),
-              borderColor: TossDesignSystem.gray600,
-              entryRadius: 3,
-              dataEntries: scores.entries.map((entry) {
-                return RadarEntry(value: entry.value.toDouble());
-              }).toList(),
-              borderWidth: 2,
-            ),
-          ],
-          radarBackgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-          borderData: FlBorderData(show: false),
-          radarBorderData: BorderSide(color: TossDesignSystem.gray200, width: 1),
-          titlePositionPercentageOffset: 0.2,
-          titleTextStyle: const TextStyle(
-            color: TossDesignSystem.gray600,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-          ),
-          getTitle: (index, angle) {
-            final categories = scores.keys.toList();
-            return RadarChartTitle(
-              text: categories[index],
-              angle: angle,
-            );
-          },
-          tickCount: 5,
-          ticksTextStyle: const TextStyle(
-            color: TossDesignSystem.gray600,
-            fontSize: 9,
-          ),
-          tickBorderData: BorderSide(color: TossDesignSystem.gray300, width: 1),
-          gridBorderData: BorderSide(color: TossDesignSystem.gray200, width: 1),
-        ),
-      ),
-    )).animate()
-      .fadeIn(duration: 800.ms, delay: 500.ms)
-      .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOut);
-  }
-
-  /// 5대 카테고리 점수 카드 (토스 스타일) - 미니멀 디자인
-  static Widget buildCategoryCards(Map<String, dynamic>? categories, {bool isDarkMode = true}) {
-    if (categories == null) return const SizedBox.shrink();
-    
-    final categoryList = [
-      {'key': 'total', 'title': '총운', 'icon': Icons.star_outline},
-      {'key': 'love', 'title': '연애운', 'icon': Icons.favorite_outline},
-      {'key': 'money', 'title': '재물운', 'icon': Icons.monetization_on_outlined},
-      {'key': 'work', 'title': '직장운', 'icon': Icons.work_outline},
-      {'key': 'health', 'title': '건강운', 'icon': Icons.health_and_safety_outlined},
-    ];
-    
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      itemCount: categoryList.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final category = categoryList[index];
-        final categoryData = categories[category['key']] as Map<String, dynamic>?;
-        final score = categoryData?['score'] ?? 0;
-        
-        return _buildTossStyleCategoryCard(category, score, index);
-      },
-    );
-  }
-
-  static Widget _buildTossStyleCategoryCard(Map<String, dynamic> category, int score, int index) {
-    return Builder(
-      builder: (context) {
-        // 토스 스타일 점수별 색상
-        Color scoreColor;
-        Color backgroundColor = Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark200
-            : TossDesignSystem.white;
-    
-    if (score >= 90) {
-      scoreColor = const Color(0xFF0066FF); // 토스 블루
-    } else if (score >= 80) {
-      scoreColor = const Color(0xFF10B981); // 성공 그린
-    } else if (score >= 70) {
-      scoreColor = const Color(0xFF000000); // 일반 블랙
-    } else if (score >= 60) {
-      scoreColor = const Color(0xFFF59E0B); // 경고 오렌지
-    } else {
-      scoreColor = const Color(0xFFEF4444); // 에러 레드
-    }
-    
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : const Color(0xFFEEEEEE),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          // 아이콘
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark300
-                  : const Color(0xFFF8F9FA),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              category['icon'] as IconData,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.gray400
-                  : const Color(0xFF666666),
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          
-          // 카테고리 정보
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  category['title'] as String,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.white
-                        : const Color(0xFF000000),
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _getScoreGrade(score),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: scoreColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          // 점수
-          Text(
-            '$score',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : scoreColor,
-              height: 1.0,
-            ),
-          ),
-
-          Text(
-            '점',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.white.withValues(alpha:0.7)
-                  : scoreColor.withValues(alpha:0.7),
-            ),
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(delay: Duration(milliseconds: 100 * index))
-      .slideX(begin: 0.2, curve: Curves.easeOut);
-      },
-    );
-  }
-
-  /// 추천 활동 번호 매김 리스트 (토스 스타일)
-  static Widget buildActionChecklist(List<Map<String, dynamic>>? actions, {bool isDarkMode = true}) {
-    if (actions == null || actions.isEmpty) return const SizedBox.shrink();
-
-    return Builder(
-      builder: (context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: actions.take(3).toList().asMap().entries.map((entry) {
-          final index = entry.key;
-          final action = entry.value;
-          final title = action['title'] ?? '';
-          final why = action['why'] ?? '';
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray200,
-                width: 1,
-              ),
-            boxShadow: [
-              BoxShadow(
-                color: TossDesignSystem.black.withValues(alpha:0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.gray600,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Text(
-                    '${index + 1}',
-                    style: const TextStyle(
-                      color: TossDesignSystem.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.gray900,
-                        height: 1.3,
-                      ),
-                    ),
-                    if (why.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.only(left: 12),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                              color: TossDesignSystem.gray300,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          why,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: TossDesignSystem.gray600,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
               ),
             ],
           ),
         ).animate()
-          .fadeIn(delay: Duration(milliseconds: 180 * index))
-          .slideX(begin: 0.2, curve: Curves.easeOutBack);
-      }).toList(),
-      ),
+          .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
+          .fadeIn(duration: 600.ms);
+      },
     );
   }
 
-  /// 사주 기반 행운 요소 (토스 스타일)
-  static Widget buildSajuLuckyItems(Map<String, dynamic>? sajuInsight, {bool isDarkMode = true}) {
-    if (sajuInsight == null) return const SizedBox.shrink();
-
-    final luckyColor = sajuInsight['lucky_color'] ?? '파란색';
-    final luckyItem = sajuInsight['lucky_item'] ?? '작은 노트';
-    final luckDirection = sajuInsight['luck_direction'] ?? '동쪽';
-    final keyword = sajuInsight['keyword'] ?? '정돈';
-
-    return Builder(
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
-              : TossDesignSystem.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray200,
-            width: 1,
-          ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.gray100,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.auto_awesome_rounded,
-                  color: TossDesignSystem.gray600,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Text(
-                '행운 요소',
-                style: TextStyle(
-                  color: TossDesignSystem.gray900,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            childAspectRatio: 2.2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            children: [
-              _buildLuckyItem('🎨', '행운의 색', luckyColor),
-              _buildLuckyItem('🎁', '행운 아이템', luckyItem),
-              _buildLuckyItem('🧭', '행운의 방향', luckDirection),
-              _buildLuckyItem('🔑', '오늘의 키워드', keyword),
-            ],
-          ),
-        ],
-      ),
-    )).animate()
-      .fadeIn(duration: 800.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOutBack);
-  }
-  
-  static Widget _buildLuckyItem(String emoji, String title, String value) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: TossDesignSystem.gray200,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.gray200,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  emoji, 
-                  style: const TextStyle(fontSize: 14)
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: TossDesignSystem.gray600,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              color: TossDesignSystem.gray900,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
+  /// Helper methods for color scoring
+  static Color _getScoreColor(int score) {
+    if (score >= 90) return const Color(0xFF00D2FF);
+    if (score >= 80) return const Color(0xFF0066FF);
+    if (score >= 70) return const Color(0xFF7C4DFF);
+    if (score >= 60) return const Color(0xFFFF6B35);
+    return const Color(0xFFFF4757);
   }
 
-  /// 날씨와 운세 연계 표시
-  static Widget buildWeatherFortune(Map<String, dynamic>? weather, int? score) {
-    if (weather == null || score == null) return const SizedBox.shrink();
-    
-    // 다양한 데이터 구조를 지원
-    final weatherData = weather['weather'] ?? weather; // 중첩된 구조 지원
-    
-    final icon = weatherData['icon'] ?? weatherData['weather_icon'] ?? '☀';
-    final condition = weatherData['condition'] ?? weatherData['weather_condition'] ?? '맑음';
-    final tempHigh = weatherData['temp_high'] ?? weatherData['high_temp'] ?? weatherData['temperature'] ?? 25;
-    final tempLow = weatherData['temp_low'] ?? weatherData['low_temp'] ?? weatherData['min_temp'] ?? 18;
-    
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            TossDesignSystem.tossBlue.withValues(alpha: 0.7),
-            TossDesignSystem.tossBlue.withValues(alpha: 0.9),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha:0.2),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Center(
-              child: Text(
-                icon,
-                style: const TextStyle(fontSize: 32),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  condition,
-                  style: const TextStyle(
-                    color: TossDesignSystem.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '$tempLow°C - $tempHigh°C',
-                  style: TextStyle(
-                    color: TossDesignSystem.white.withValues(alpha:0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '날씨와 운세가 조화를 이루는 날',
-                  style: TextStyle(
-                    color: TossDesignSystem.white.withValues(alpha:0.8),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha:0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '$score점',
-              style: const TextStyle(
-                color: TossDesignSystem.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideX(begin: -0.3, curve: Curves.easeOut);
+  static String _getScoreGrade(int score) {
+    if (score >= 90) return 'S';
+    if (score >= 80) return 'A';
+    if (score >= 70) return 'B';
+    if (score >= 60) return 'C';
+    return 'D';
   }
 
-  /// 공유용 카드 UI
-  static Widget buildShareableCard(Map<String, dynamic>? shareCard) {
-    if (shareCard == null) return const SizedBox.shrink();
-    
-    final title = shareCard['title'] ?? '오늘의 운세';
-    final subtitle = shareCard['subtitle'] ?? '';
-    final emoji = shareCard['emoji'] ?? '✨';
-    final hashtags = (shareCard['hashtags'] as List?)?.cast<String>() ?? [];
-    
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            TossDesignSystem.pinkPrimary.withValues(alpha: 0.7),
-            TossDesignSystem.warningOrange.withValues(alpha: 0.7),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.pinkPrimary.withValues(alpha:0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                emoji,
-                style: const TextStyle(fontSize: 32),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: TossDesignSystem.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: TossDesignSystem.white.withValues(alpha:0.9),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.share, color: TossDesignSystem.white),
-                onPressed: () {
-                  // TODO: 공유 기능 구현
-                },
-              ),
-            ],
-          ),
-          if (hashtags.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              children: hashtags.map((tag) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withValues(alpha:0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  tag,
-                  style: TextStyle(
-                    color: TossDesignSystem.white.withValues(alpha:0.9),
-                    fontSize: 12,
-                  ),
-                ),
-              )).toList(),
-            ),
-          ],
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms)
-      .scale(begin: const Offset(0.9, 0.9), curve: Curves.easeOut);
+  static Color _getScoreGradeColor(int score) {
+    if (score >= 90) return const Color(0xFF00D2FF);
+    if (score >= 80) return const Color(0xFF0066FF);
+    if (score >= 70) return const Color(0xFF7C4DFF);
+    if (score >= 60) return const Color(0xFFFF6B35);
+    return const Color(0xFFFF4757);
   }
 
-  /// Keyword tag cloud
-  static Widget buildKeywordCloud({
-    required List<String> keywords,
-    required List<double> importance, // 0.0 to 1.0
-  }) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: keywords.asMap().entries.map((entry) {
-        final index = entry.key;
-        final keyword = entry.value;
-        final weight = importance.length > index ? importance[index] : 0.5;
-        
-        return Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 12 + (weight * 8),
-            vertical: 6 + (weight * 4),
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                _getKeywordColor(weight).withValues(alpha:0.8),
-                _getKeywordColor(weight).withValues(alpha:0.6),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: _getKeywordColor(weight).withValues(alpha:0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Text(
-            '#$keyword',
-            style: TextStyle(
-              color: TossDesignSystem.white,
-              fontSize: 12 + (weight * 6),
-              fontWeight: weight > 0.7 ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        ).animate(delay: Duration(milliseconds: index * 100))
-          .fadeIn(duration: 400.ms)
-          .scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut);
-      }).toList(),
-    );
+  static Color _getKeywordColor(double weight) {
+    if (weight >= 0.8) return const Color(0xFF00D2FF);
+    if (weight >= 0.6) return const Color(0xFF0066FF);
+    if (weight >= 0.4) return const Color(0xFF7C4DFF);
+    if (weight >= 0.2) return const Color(0xFFFF6B35);
+    return const Color(0xFFFF4757);
   }
 
-  /// 토스 스타일 일별 운세 곡선 그래프
-  static Widget buildTossStyleWeeklyChart({
-    List<int>? dailyScores, // 7일간 점수
-    int? todayIndex, // 오늘의 인덱스 (자동 계산)
-    int? currentScore, // 현재 점수 (메인 스코어와 동일하게 사용)
-    double height = 160, // 높이 증가
-  }) {
-    // 실제 DB 데이터 사용 (dailyScores가 null이면 빈 배열)
-    final scores = dailyScores ?? [];
-    final today = todayIndex ?? (scores.length - 1); // 오늘은 마지막 인덱스
-    final todayScore = currentScore ?? (scores.isNotEmpty ? scores.last : 75); // 오늘의 총점수
-    final weekdays = ['6일전', '5일전', '4일전', '3일전', '2일전', '어제', '오늘']; // 7일 데이터
-    
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      height: height + 90, // 총점수 표시 공간 추가
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFF2F4F6),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '일별 운세',
-                style: TextStyle(
-                  color: TossDesignSystem.gray900,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  show: true,
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        // 안전한 인덱스 범위 체크
-                        if (index >= 0 && index < weekdays.length && index < scores.length) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              weekdays[index],
-                              style: TextStyle(
-                                color: index == today 
-                                    ? const Color(0xFF4ECDC4)
-                                    : TossDesignSystem.gray600,
-                                fontSize: 12,
-                                fontWeight: index == today 
-                                    ? FontWeight.w600 
-                                    : FontWeight.w400,
-                              ),
-                            ),
-                          );
-                        }
-                        return const Text('');
-                      },
-                      reservedSize: 30,
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                minX: 0,
-                maxX: math.min(scores.length - 1, weekdays.length - 1).toDouble(),
-                minY: math.max(0, scores.reduce(math.min) - 10).toDouble(),
-                maxY: math.min(100, scores.reduce(math.max) + 10).toDouble(),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: scores.asMap().entries.where((entry) {
-                      // 유효한 인덱스만 사용
-                      return entry.key >= 0 && entry.key < weekdays.length;
-                    }).map((entry) {
-                      return FlSpot(entry.key.toDouble(), entry.value.toDouble());
-                    }).toList(),
-                    isCurved: true,
-                    color: const Color(0xFF4ECDC4),
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        return FlDotCirclePainter(
-                          radius: index == today ? 6 : 4,
-                          color: index == today 
-                              ? const Color(0xFF4ECDC4)
-                              : TossDesignSystem.white,
-                          strokeWidth: 2,
-                          strokeColor: const Color(0xFF4ECDC4),
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: const Color(0xFF4ECDC4).withValues(alpha:0.1),
-                    ),
-                  ),
-                ],
-                lineTouchData: LineTouchData(
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map((spot) {
-                        return LineTooltipItem(
-                          '${spot.y.toInt()}점',
-                          const TextStyle(
-                            color: TossDesignSystem.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        );
-                      }).toList();
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // 오늘 점수 강조 표시 (실제 API 점수 사용)
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF4ECDC4).withValues(alpha:0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '${weekdays[today]} ${todayScore}점',
-              style: const TextStyle(
-                color: Color(0xFF4ECDC4),
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 600.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
+  static Color _getLuckyItemColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'color':
+      case '색상':
+        return const Color(0xFFFF6B35);
+      case 'food':
+      case '음식':
+        return const Color(0xFF00D2FF);
+      case 'item':
+      case '아이템':
+        return const Color(0xFF7C4DFF);
+      case 'number':
+      case '숫자':
+        return const Color(0xFF0066FF);
+      default:
+        return TossDesignSystem.tossBlue;
+    }
   }
 
-  /// 24-hour timeline mini chart (토스 스타일)
-  static Widget buildTimelineChart({
-    required List<int> hourlyScores, // 24 items
-    int? currentHour,
-    double height = 80,
-  }) {
-    return Container(
-      height: height + 40,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: TossDesignSystem.gray200,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: 100,
-          barTouchData: BarTouchData(enabled: false),
-          titlesData: FlTitlesData(
-            show: true,
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  if (value.toInt() % 6 == 0) {
-                    return Text(
-                      '${value.toInt()}',
-                      style: const TextStyle(
-                        color: TossDesignSystem.gray600,
-                        fontSize: 9,
-                      ),
-                    );
-                  }
-                  return const Text('');
-                },
-                reservedSize: 16,
-              ),
-            ),
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          borderData: FlBorderData(show: false),
-          barGroups: hourlyScores.asMap().entries.map((entry) {
-            final hour = entry.key;
-            final score = entry.value;
-            final isCurrent = hour == currentHour;
-            
-            return BarChartGroupData(
-              x: hour,
-              barRods: [
-                BarChartRodData(
-                  toY: score.toDouble(),
-                  color: isCurrent ? TossDesignSystem.gray600 : TossDesignSystem.gray300,
-                  width: 3,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 600.ms)
-      .slideX(begin: 0.2, curve: Curves.easeOut);
-  }
-
-  /// Lucky items grid
-  static Widget buildLuckyItemsGrid({
-    required Map<String, String> luckyItems,
-    double itemSize = 100,
-  }) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: luckyItems.entries.map((entry) {
-        final type = entry.key;
-        final value = entry.value;
-        
-        return Container(
-          width: itemSize,
-          height: itemSize,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _getLuckyItemColor(type).withValues(alpha:0.8),
-                _getLuckyItemColor(type).withValues(alpha:0.4),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: _getLuckyItemColor(type).withValues(alpha:0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                _getLuckyItemIcon(type),
-                color: TossDesignSystem.white,
-                size: itemSize * 0.3,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                type,
-                style: TextStyle(
-                  color: TossDesignSystem.white.withValues(alpha:0.8),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  color: TossDesignSystem.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ).animate(delay: Duration(milliseconds: luckyItems.keys.toList().indexOf(type) * 150))
-          .fadeIn(duration: 500.ms)
-          .scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut);
-      }).toList(),
-    );
-  }
-
-  /// AI insights card (토스 스타일)
-  static Widget buildAIInsightsCard({
-    required String insight,
-    required List<String> tips,
-  }) {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: TossDesignSystem.black.withValues(alpha:0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.psychology,
-                      color: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'AI 인사이트',
-                    style: TextStyle(
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(
-                insight,
-                style: TextStyle(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                  fontSize: 15,
-                  height: 1.6,
-                ),
-              ),
-              if (tips.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                ...tips.map((tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 2),
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          tip,
-                          style: TextStyle(
-                            color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
-                            fontSize: 14,
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ],
-          ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 700.ms)
-      .slideY(begin: 0.1, curve: Curves.easeOut);
+  static IconData _getLuckyItemIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'color':
+      case '색상':
+        return Icons.palette;
+      case 'food':
+      case '음식':
+        return Icons.restaurant;
+      case 'item':
+      case '아이템':
+        return Icons.stars;
+      case 'number':
+      case '숫자':
+        return Icons.numbers;
+      default:
+        return Icons.auto_awesome;
+    }
   }
 
   /// Mini statistics dashboard (토스 스타일)
@@ -1399,998 +212,1156 @@ class FortuneInfographicWidgets {
         ),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
         children: [
-          _buildStatItem(
-            context: context,
-            icon: Icons.trending_up,
-            label: '연속 일수',
-            value: '${stats['streak'] ?? 0}일',
-          ),
-          _buildStatItem(
-            context: context,
-            icon: Icons.favorite,
-            label: '평균 점수',
-            value: '${stats['average'] ?? 0}점',
-          ),
-          _buildStatItem(
-            context: context,
-            icon: Icons.star,
-            label: '최고 점수',
-            value: '${stats['highest'] ?? 0}점',
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  title: '총 점수',
+                  value: '${stats['totalScore'] ?? 0}',
+                  context: context,
+                ),
+              ),
+              Container(width: 1, height: 40, color: TossDesignSystem.gray200),
+              Expanded(
+                child: _buildStatItem(
+                  title: '등급',
+                  value: _getScoreGrade(stats['totalScore'] ?? 0),
+                  context: context,
+                ),
+              ),
+              Container(width: 1, height: 40, color: TossDesignSystem.gray200),
+              Expanded(
+                child: _buildStatItem(
+                  title: '랭킹',
+                  value: '${stats['ranking'] ?? '-'}위',
+                  context: context,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     ).animate()
-      .fadeIn(duration: 600.ms, delay: 800.ms)
+      .fadeIn(duration: 800.ms, delay: 700.ms)
       .slideY(begin: 0.1, curve: Curves.easeOut);
   }
 
   static Widget _buildStatItem({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
+    required String title,
     required String value,
+    required BuildContext context,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray100,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(
-            icon,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.gray400
-                : TossDesignSystem.gray600,
-            size: 16,
-          ),
-        ),
-        const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(
-            color: TossDesignSystem.gray900,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         Text(
-          label,
-          style: const TextStyle(
-            color: TossDesignSystem.gray600,
-            fontSize: 11,
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
           ),
         ),
       ],
     );
   }
 
-  // Helper methods
-  static Color _getScoreColor(int score) {
-    if (score >= 90) return TossDesignSystem.success;
-    if (score >= 80) return TossDesignSystem.tossBlue;
-    if (score >= 70) return TossDesignSystem.warningOrange;
-    if (score >= 60) return TossDesignSystem.warningYellow;
-    return TossDesignSystem.error;
-  }
-  
-  static String _getScoreGrade(int score) {
-    if (score >= 90) return 'A+';
-    if (score >= 85) return 'A';
-    if (score >= 80) return 'A-';
-    if (score >= 75) return 'B+';
-    if (score >= 70) return 'B';
-    if (score >= 65) return 'B-';
-    if (score >= 60) return 'C+';
-    if (score >= 55) return 'C';
-    if (score >= 50) return 'C-';
-    return 'D';
-  }
-  
-  static Color _getScoreGradeColor(int score) {
-    if (score >= 85) return const Color(0xFF10B981); // 그린
-    if (score >= 75) return const Color(0xFF3B82F6); // 블루
-    if (score >= 65) return const Color(0xFFF59E0B); // 앤버
-    if (score >= 55) return const Color(0xFFF97316); // 오렌지
-    return const Color(0xFFEF4444); // 레드
-  }
-
-  static Color _getKeywordColor(double weight) {
-    if (weight > 0.8) return TossDesignSystem.pinkPrimary;
-    if (weight > 0.6) return TossDesignSystem.purple;
-    if (weight > 0.4) return TossDesignSystem.tossBlue;
-    if (weight > 0.2) return TossDesignSystem.tossBlue;
-    return TossDesignSystem.success;
-  }
-
-  static Color _getLuckyItemColor(String type) {
-    switch (type.toLowerCase()) {
-      case '색상':
-      case 'color':
-        return TossDesignSystem.pinkPrimary;
-      case '숫자':
-      case 'number':
-        return TossDesignSystem.tossBlue;
-      case '시간':
-      case 'time':
-        return TossDesignSystem.warningOrange;
-      case '방향':
-      case 'direction':
-        return TossDesignSystem.success;
-      case '음식':
-      case 'food':
-        return TossDesignSystem.error;
-      default:
-        return TossDesignSystem.purple;
-    }
-  }
-
-  static IconData _getLuckyItemIcon(String type) {
-    switch (type.toLowerCase()) {
-      case '색상':
-      case 'color':
-        return Icons.palette;
-      case '숫자':
-      case 'number':
-        return Icons.looks_one;
-      case '시간':
-      case 'time':
-        return Icons.access_time;
-      case '방향':
-      case 'direction':
-        return Icons.explore;
-      case '음식':
-      case 'food':
-        return Icons.restaurant;
-      default:
-        return Icons.star;
-    }
-  }
-
-  /// 토스 스타일 행운의 요소 태그들
-  static Widget buildTossStyleLuckyTags({
-    required BuildContext context,
-    String? luckyColor,
-    String? luckyFood,
-    List<String>? luckyNumbers,
-    String? luckyDirection,
+  /// Keyword cloud widget
+  static Widget buildKeywordCloud({
+    required List<String> keywords,
+    double maxFontSize = 32,
+    double minFontSize = 14,
+    Map<String, double>? importance,
   }) {
-    final items = <Map<String, String>>[];
-    
-    if (luckyColor != null) items.add({'label': '색상', 'value': luckyColor});
-    if (luckyFood != null) items.add({'label': '음식', 'value': luckyFood});
-    if (luckyNumbers != null && luckyNumbers.isNotEmpty) {
-      items.add({'label': '숫자', 'value': luckyNumbers.join(', ')});
-    }
-    if (luckyDirection != null) items.add({'label': '방향', 'value': luckyDirection});
-    
-    if (items.isEmpty) return const SizedBox.shrink();
-    
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : const Color(0xFFF2F4F6),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '행운을 가져오는 것들',
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-              fontSize: 18,
-              fontWeight: FontWeight.w700, // 토스 스타일 굵은 제목
-            ),
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 2.5, // 가로:세로 비율 조정
-            children: items.map((item) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : const Color(0xFFF2F4F6), // 토스 배경색
-                borderRadius: BorderRadius.circular(24), // 더 둥글게
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    item['label']!,
-                    style: TextStyle(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      item['value']!,
-                      style: TextStyle(
-                        color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 400.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
-  }
-
-  /// 토스 스타일 행운의 코디 섹션
-  static Widget buildTossStyleLuckyOutfit({
-    required BuildContext context,
-    required String title,
-    required String description,
-    List<String>? items,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : const Color(0xFFF2F4F6),
-          width: 1,
-        ),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            description,
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
-              fontSize: 14,
-              height: 1.5,
-            ),
-          ),
-          if (items != null && items.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            ...items.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: TextStyle(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                        fontSize: 14,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )),
-          ],
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 500.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
-  }
-
-  /// 토스 스타일 유명인 리스트 (띠별/별자리별)
-  static Widget buildTossStyleCelebrityList({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required List<Map<String, String>> celebrities,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          if (subtitle.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(
-                color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
-                fontSize: 14,
-              ),
-            ),
-          ],
-          const SizedBox(height: 20),
-          ...celebrities.map((celeb) => Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      celeb['year'] ?? '',
-                      style: TextStyle(
-                        color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        celeb['name'] ?? '',
-                        style: TextStyle(
-                          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if ((celeb['description'] ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          celeb['description'] ?? '',
-                          style: TextStyle(
-                            color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 600.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
-  }
-
-  /// 토스 스타일 년생별 운세 카드
-  static Widget buildTossStyleAgeFortuneCard({
-    required String ageGroup,
-    required String title,
-    required String description,
-    String? zodiacAnimal,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                ageGroup,
-                style: const TextStyle(
-                  color: TossDesignSystem.gray900,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (zodiacAnimal != null) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.gray100,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    zodiacAnimal,
-                    style: const TextStyle(
-                      color: TossDesignSystem.gray600,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              color: TossDesignSystem.gray900,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            description,
-            style: const TextStyle(
-              color: TossDesignSystem.gray600,
-              fontSize: 14,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 700.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
-  }
-
-  /// 토스 스타일 운세 요약 위젯
-  static Widget buildTossStyleFortuneSummary({
-    required Map<String, dynamic>? fortuneSummary,
-    required String? userZodiacAnimal,
-    required String? userZodiacSign,
-    required String? userMBTI,
-  }) {
-    if (fortuneSummary == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark200
-            : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : const Color(0xFFE5E7EB),
-          width: 1
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 제목
-          Row(
-            children: [
-              const Icon(
-                Icons.auto_awesome,
-                color: Color(0xFF8B5CF6),
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '나만의 오늘 운세',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          
-          // 탭 형태의 운세 요약
-          DefaultTabController(
-            length: 3,
-            child: Column(
-              children: [
-                // 탭 바
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TabBar(
-                    isScrollable: false, // 균등 분할을 위해 추가
-                    indicator: BoxDecoration(
-                      color: TossDesignSystem.white,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: TossDesignSystem.black.withValues(alpha: 0.06),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    indicatorPadding: const EdgeInsets.all(4),
-                    indicatorSize: TabBarIndicatorSize.tab, // 탭 전체 영역을 지시자로 사용
-                    labelColor: const Color(0xFF1F2937),
-                    unselectedLabelColor: const Color(0xFF6B7280),
-                    labelStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    unselectedLabelStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    dividerHeight: 0,
-                    tabAlignment: TabAlignment.fill, // 탭을 균등하게 채움
-                    tabs: [
-                      // 각 탭의 높이와 패딩을 통일
-                      Container(
-                        height: 40, // 고정 높이
-                        alignment: Alignment.center,
-                        child: const Text('띠'),
-                      ),
-                      Container(
-                        height: 40, // 고정 높이
-                        alignment: Alignment.center,
-                        child: const Text('별자리'),
-                      ),
-                      Container(
-                        height: 40, // 고정 높이
-                        alignment: Alignment.center,
-                        child: const Text('MBTI'),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // 탭 내용
-                SizedBox(
-                  height: 180,
-                  child: TabBarView(
-                    children: [
-                      // 띠 기준 운세
-                      _buildFortuneSummaryTab(
-                        type: '띠',
-                        userType: userZodiacAnimal ?? '',
-                        fortuneData: fortuneSummary['byZodiacAnimal'],
-                        icon: '🐉',
-                      ),
-                      
-                      // 별자리 기준 운세
-                      _buildFortuneSummaryTab(
-                        type: '별자리',
-                        userType: userZodiacSign ?? '',
-                        fortuneData: fortuneSummary['byZodiacSign'],
-                        icon: '⭐',
-                      ),
-                      
-                      // MBTI 기준 운세
-                      _buildFortuneSummaryTab(
-                        type: 'MBTI',
-                        userType: userMBTI ?? '',
-                        fortuneData: fortuneSummary['byMBTI'],
-                        icon: '🧠',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 800.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
-  }
-
-  static Widget _buildFortuneSummaryTab({
-    required String type,
-    required String userType,
-    required Map<String, dynamic>? fortuneData,
-    required String icon,
-  }) {
-    if (fortuneData == null) {
+    if (keywords.isEmpty) {
       return const Center(
         child: Text(
-          '운세 정보를 불러올 수 없습니다',
-          style: TextStyle(
-            color: Color(0xFF9CA3AF),
-            fontSize: 14,
+          '키워드가 없습니다',
+          style: TextStyle(color: TossDesignSystem.gray500),
+        ),
+      );
+    }
+
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: keywords.map((keyword) {
+            final weight = importance?[keyword] ?? 0.5;
+            final fontSize = minFontSize + (maxFontSize - minFontSize) * weight;
+
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _getKeywordColor(weight).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: _getKeywordColor(weight).withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                keyword,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? TossDesignSystem.white : _getKeywordColor(weight),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  /// Lucky items grid
+  static Widget buildLuckyItemsGrid({
+    required List<Map<String, dynamic>> items,
+    int crossAxisCount = 2,
+    double? itemSize,  // Added for alternate signature
+    List<Map<String, dynamic>>? luckyItems,  // Added for alternate signature
+  }) {
+    // Handle alternate signature
+    final actualItems = luckyItems ?? items;
+
+    if (actualItems.isEmpty) {
+      return const Center(
+        child: Text(
+          '행운 아이템이 없습니다',
+          style: TextStyle(color: TossDesignSystem.gray500),
+        ),
+      );
+    }
+
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: 1,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: actualItems.length,
+          itemBuilder: (context, index) {
+            final item = actualItems[index];
+            final type = item['type'] ?? '';
+            final title = item['title'] ?? '';
+            final value = item['value'] ?? '';
+
+            return Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? TossDesignSystem.grayDark200
+                    : TossDesignSystem.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _getLuckyItemColor(type).withValues(alpha: 0.3),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: TossDesignSystem.black.withValues(alpha: 0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _getLuckyItemIcon(type),
+                    size: itemSize ?? 32,
+                    color: _getLuckyItemColor(type),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ).animate()
+              .scale(begin: const Offset(0.8, 0.8), duration: 600.ms)
+              .fadeIn(duration: 400.ms, delay: Duration(milliseconds: index * 100));
+          },
+        );
+      },
+    );
+  }
+
+  /// Category cards implementation
+  static Widget buildCategoryCards(
+    Map<String, dynamic> categories, {
+    required bool isDarkMode,
+  }) {
+    // 카테고리 데이터 정리
+    final categoryEntries = categories.entries.where((entry) =>
+      entry.value is Map &&
+      entry.value['score'] != null &&
+      entry.key != 'total' // total은 전체 점수로 제외
+    ).toList();
+
+    if (categoryEntries.isEmpty) {
+      return Container(
+        height: 120,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            '카테고리 데이터를 불러오는 중...',
+            style: TextStyle(
+              color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              fontSize: 16,
+            ),
           ),
         ),
       );
     }
 
-    final title = fortuneData['title'] as String? ?? '';
-    final content = fortuneData['content'] as String? ?? '';
-    final score = fortuneData['score'] as int? ?? 80;
+    return Column(
+      children: [
+        // 카테고리 그리드
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2.5,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: categoryEntries.length,
+          itemBuilder: (context, index) {
+            final entry = categoryEntries[index];
+            final categoryKey = entry.key;
+            final categoryData = entry.value as Map<String, dynamic>;
+            final score = categoryData['score'] as int? ?? 0;
+            final title = categoryData['title'] as String? ?? _getDefaultCategoryTitle(categoryKey);
+            final short = categoryData['short'] as String? ?? _getDefaultCategoryShort(categoryKey, score);
 
-    return SingleChildScrollView(
+            return _buildCategoryCard(
+              title: title,
+              score: score,
+              description: short,
+              isDarkMode: isDarkMode,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  static Widget _buildCategoryCard({
+    required String title,
+    required int score,
+    required String description,
+    required bool isDarkMode,
+  }) {
+    final scoreColor = _getCategoryScoreColor(score, isDarkMode);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 사용자 정보
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  icon,
-                  style: const TextStyle(fontSize: 20),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '$userType인 당신',
-                  style: const TextStyle(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF374151),
+                    fontWeight: FontWeight.w600,
+                    color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getScoreColor(score).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '$score점',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: _getScoreColor(score),
-                    ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: scoreColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '$score점',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: scoreColor,
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // 운세 제목
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1F2937),
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
-          
-          // 운세 내용
           Text(
-            content,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF6B7280),
-              height: 1.5,
+            description,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+              height: 1.3,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
 
-  /// 토스 스타일 공유 섹션
-  static Widget buildTossStyleShareSection({
-    required String shareCount,
-    VoidCallback? onShare,
-    VoidCallback? onSave,
-    VoidCallback? onReview,
-    VoidCallback? onOtherFortune,
-  }) {
+  static Color _getCategoryScoreColor(int score, bool isDarkMode) {
+    if (score >= 80) {
+      return isDarkMode ? TossDesignSystem.primaryGreen : TossDesignSystem.successGreen;
+    } else if (score >= 60) {
+      return isDarkMode ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue;
+    } else if (score >= 40) {
+      return isDarkMode ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange;
+    } else {
+      return isDarkMode ? TossDesignSystem.primaryRed : TossDesignSystem.errorRed;
+    }
+  }
+
+  static String _getDefaultCategoryTitle(String key) {
+    switch (key) {
+      case 'love':
+        return '연애운';
+      case 'money':
+        return '금전운';
+      case 'work':
+      case 'career':
+        return '직장운';
+      case 'health':
+        return '건강운';
+      default:
+        return key.toUpperCase();
+    }
+  }
+
+  static String _getDefaultCategoryShort(String key, int score) {
+    switch (key) {
+      case 'love':
+        return score >= 70 ? '순조로운 연애운' : score >= 50 ? '평범한 연애운' : '조심스러운 연애운';
+      case 'money':
+        return score >= 70 ? '안정적인 금전운' : score >= 50 ? '보통의 금전운' : '신중한 소비 필요';
+      case 'work':
+      case 'career':
+        return score >= 70 ? '발전하는 직장운' : score >= 50 ? '평범한 직장운' : '주의가 필요한 시기';
+      case 'health':
+        return score >= 70 ? '건강한 컨디션' : score >= 50 ? '보통의 건강상태' : '건강 관리 필요';
+      default:
+        return score >= 70 ? '좋은 운세' : score >= 50 ? '보통 운세' : '주의 필요';
+    }
+  }
+
+  static String _getDefaultFortuneSummary(String? zodiacAnimal, String? zodiacSign, String? mbti) {
+    final elements = <String>[];
+
+    if (zodiacAnimal != null) {
+      elements.add('${zodiacAnimal}띠');
+    }
+    if (zodiacSign != null) {
+      elements.add(zodiacSign);
+    }
+    if (mbti != null) {
+      elements.add(mbti);
+    }
+
+    final profile = elements.isNotEmpty ? elements.join(', ') + '의 ' : '';
+
+    return '${profile}오늘의 운세를 종합적으로 분석한 결과, 전반적으로 균형 잡힌 하루가 될 것으로 예상됩니다. 새로운 기회와 도전이 함께 찾아올 수 있으니 긍정적인 마음가짐을 유지하세요.';
+  }
+
+  static Widget _buildProfileTag(String text, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF667EEA),
-            const Color(0xFF764BA2),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: isDark
+          ? TossDesignSystem.primaryBlue.withOpacity(0.2)
+          : TossDesignSystem.tossBlue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
       ),
-      child: Column(
-        children: [
-          const Text(
-            '나의 운세를 공유해보세요!',
-            style: TextStyle(
-              color: TossDesignSystem.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+        ),
+      ),
+    );
+  }
+
+  /// Fortune summary with user profile information
+  static Widget buildTossStyleFortuneSummary({
+    Map<String, dynamic>? fortuneSummary,
+    String? userZodiacAnimal,
+    String? userZodiacSign,
+    String? userMBTI,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        // Extract summary from fortuneSummary data
+        final summary = fortuneSummary?['summary'] as String? ??
+                       fortuneSummary?['description'] as String? ??
+                       _getDefaultFortuneSummary(userZodiacAnimal, userZodiacSign, userMBTI);
+
+        final title = fortuneSummary?['title'] as String? ?? '오늘의 운세 요약';
+        final score = fortuneSummary?['score'] as int? ?? 75;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '$shareCount명이 공유했습니다.',
-            style: TextStyle(
-              color: TossDesignSystem.white.withValues(alpha:0.8),
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Column(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 20,
+                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                  ),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: _buildShareButton(
-                      icon: Icons.share,
-                      label: '공유하기',
-                      onTap: onShare,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildShareButton(
-                      icon: Icons.bookmark,
-                      label: '저장하기',
-                      onTap: onSave,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _getCategoryScoreColor(score, isDark).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      '$score점',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: _getCategoryScoreColor(score, isDark),
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
+              Text(
+                summary,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                ),
+              ),
+              if (userZodiacAnimal != null || userZodiacSign != null || userMBTI != null) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    if (userZodiacAnimal != null) ...[
+                      _buildProfileTag(userZodiacAnimal!, isDark),
+                      const SizedBox(width: 8),
+                    ],
+                    if (userZodiacSign != null) ...[
+                      _buildProfileTag(userZodiacSign!, isDark),
+                      const SizedBox(width: 8),
+                    ],
+                    if (userMBTI != null) ...[
+                      _buildProfileTag(userMBTI!, isDark),
+                    ],
+                  ],
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Lucky tags with color, food, numbers, and direction
+  static Widget buildTossStyleLuckyTags({
+    String? luckyColor,
+    String? luckyFood,
+    List<String>? luckyNumbers,
+    String? luckyDirection,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        // Collect all lucky items
+        final luckyItems = <Widget>[];
+
+        if (luckyColor != null && luckyColor.isNotEmpty) {
+          luckyItems.add(_buildLuckyTag(
+            icon: Icons.palette,
+            label: '행운의 색상',
+            value: luckyColor,
+            isDark: isDark,
+          ));
+        }
+
+        if (luckyFood != null && luckyFood.isNotEmpty) {
+          luckyItems.add(_buildLuckyTag(
+            icon: Icons.restaurant,
+            label: '행운의 음식',
+            value: luckyFood,
+            isDark: isDark,
+          ));
+        }
+
+        if (luckyNumbers != null && luckyNumbers.isNotEmpty) {
+          luckyItems.add(_buildLuckyTag(
+            icon: Icons.looks_one,
+            label: '행운의 숫자',
+            value: luckyNumbers.join(', '),
+            isDark: isDark,
+          ));
+        }
+
+        if (luckyDirection != null && luckyDirection.isNotEmpty) {
+          luckyItems.add(_buildLuckyTag(
+            icon: Icons.explore,
+            label: '행운의 방향',
+            value: luckyDirection,
+            isDark: isDark,
+          ));
+        }
+
+        // If no items, show default message
+        if (luckyItems.isEmpty) {
+          luckyItems.add(_buildLuckyTag(
+            icon: Icons.star,
+            label: '행운의 아이템',
+            value: '오늘의 행운이 함께합니다',
+            isDark: isDark,
+          ));
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
                 children: [
-                  Expanded(
-                    child: _buildShareButton(
-                      icon: Icons.refresh,
-                      label: '다시보기',
-                      onTap: onReview,
-                    ),
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 20,
+                    color: isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildShareButton(
-                      icon: Icons.auto_awesome,
-                      label: '다른운세보기',
-                      onTap: onOtherFortune,
+                  const SizedBox(width: 8),
+                  Text(
+                    '행운의 요소들',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: luckyItems,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static Widget _buildLuckyTag({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark
+          ? TossDesignSystem.primaryYellow.withOpacity(0.2)
+          : TossDesignSystem.warningOrange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark
+            ? TossDesignSystem.primaryYellow.withOpacity(0.3)
+            : TossDesignSystem.warningOrange.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange,
+          ),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray600,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                ),
               ),
             ],
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 800.ms)
-      .slideY(begin: 0.2, curve: Curves.easeOut);
+    );
   }
 
-  static Widget _buildShareButton({
-    required IconData icon,
-    required String label,
-    VoidCallback? onTap,
+  /// Lucky outfit (placeholder implementation)
+  static Widget buildTossStyleLuckyOutfit({
+    required String title,
+    required String description,
+    required List<String> items,
+    String? imagePath,
   }) {
-    return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: TossDesignSystem.white.withValues(alpha:0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: TossDesignSystem.white.withValues(alpha:0.2),
-            width: 1,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 160,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha:0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                color: TossDesignSystem.white,
-                size: 20,
-              ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '행운의 코디 준비 중...',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: TossDesignSystem.white.withValues(alpha:0.9),
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Saju lucky items (placeholder implementation)
+  static Widget buildSajuLuckyItems(
+    Map<String, dynamic>? sajuInsight, {
+    required bool isDarkMode,
+  }) {
+    return Container(
+      height: 120,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
         ),
       ),
-    ));
+      child: Center(
+        child: Text(
+          '사주 행운 아이템 준비 중...',
+          style: TextStyle(
+            color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
   }
 
-  /// 토스 스타일 액션 버튼들 (공유하기, 저장하기, 다시보기, 다른운세보기)
-  static Widget buildTossStyleActionButtons({
-    VoidCallback? onShare,
+  /// Radar chart (placeholder implementation)
+  static Widget buildRadarChart({
+    required Map<String, int> scores,
+    double? size,
+    Color? primaryColor,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: size ?? 200,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '레이더 차트 준비 중...',
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Action checklist (placeholder implementation)
+  static Widget buildActionChecklist(
+    List<Map<String, dynamic>>? actions, {
+    required bool isDarkMode,
+  }) {
+    return Container(
+      height: 120,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          '액션 체크리스트 준비 중...',
+          style: TextStyle(
+            color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Weather fortune widget
+  static Widget buildWeatherFortune(
+    Map<String, dynamic>? weatherSummary,
+    int score,
+  ) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: TossDesignSystem.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.wb_sunny,
+                    color: TossDesignSystem.warningOrange,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '날씨 운세',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                weatherSummary?['description'] ?? '오늘의 날씨와 함께하는 운세를 확인해보세요.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                  height: 1.5,
+                ),
+              ),
+              if (weatherSummary?['temperature'] != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '온도: ${weatherSummary!['temperature']}°C',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: TossDesignSystem.tossBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ).animate()
+          .fadeIn(duration: 600.ms)
+          .slideY(begin: 0.1, curve: Curves.easeOut);
+      },
+    );
+  }
+
+  /// Shareable card (placeholder implementation)
+  static Widget buildShareableCard(Map<String, dynamic>? shareCard) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 180,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '공유 카드 준비 중...',
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Timeline chart (placeholder implementation)
+  static Widget buildTimelineChart({
+    required List<int> hourlyScores,
+    required int currentHour,
+    required double height,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: height,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '타임라인 차트 준비 중...',
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// AI insights card (placeholder implementation)
+  static Widget buildAIInsightsCard({
+    String? insight,
+    List<String>? tips,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 160,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'AI 인사이트 카드 준비 중...',
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Celebrity list (placeholder implementation)
+  static Widget buildTossStyleCelebrityList({
+    required String title,
+    required String subtitle,
+    required List<Map<String, dynamic>> celebrities,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 140,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '연예인 목록 준비 중...',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Age fortune card (placeholder implementation)
+  static Widget buildTossStyleAgeFortuneCard({
+    required String ageGroup,
+    required String title,
+    required String description,
+    String? zodiacAnimal,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 140,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$ageGroup 운세',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '연령별 운세 준비 중...',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Share section (placeholder implementation)
+  static Widget buildTossStyleShareSection({
+    required String shareCount,
+    required VoidCallback onShare,
     VoidCallback? onSave,
     VoidCallback? onReview,
     VoidCallback? onOtherFortune,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildTossActionButton(
-            icon: Icons.share,
-            label: '공유하기',
-            onTap: onShare,
-          ),
-          _buildTossActionButton(
-            icon: Icons.bookmark,
-            label: '저장하기',
-            onTap: onSave,
-          ),
-          _buildTossActionButton(
-            icon: Icons.refresh,
-            label: '다시보기',
-            onTap: onReview,
-          ),
-          _buildTossActionButton(
-            icon: Icons.auto_awesome,
-            label: '다른운세보기',
-            onTap: onOtherFortune,
-          ),
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 900.ms)
-      .slideY(begin: 0.1, curve: Curves.easeOut);
-  }
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  static Widget _buildTossActionButton({
-    required IconData icon,
-    required String label,
-    VoidCallback? onTap,
-  }) {
-    return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: const Color(0xFF9CA3AF),
-              size: 20,
+        return Container(
+          height: 100,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Color(0xFF6B7280),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '공유하기',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$shareCount명이 공유했어요',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ));
+          ),
+        );
+      },
+    );
   }
 }

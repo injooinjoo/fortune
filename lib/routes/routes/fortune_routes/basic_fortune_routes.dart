@@ -2,11 +2,8 @@ import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/saju_page.dart';
 import '../../../features/fortune/presentation/pages/mbti_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/destiny_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/past_life_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/wish_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/timeline_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/network_report_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/daily_inspiration_page.dart';
 import '../../../features/history/presentation/pages/fortune_history_page.dart';
 
 final basicFortuneRoutes = [
@@ -37,35 +34,21 @@ final basicFortuneRoutes = [
     name: 'fortune-destiny',
     builder: (context, state) => const DestinyFortunePage()),
   
-  // Past Life
-  GoRoute(
-    path: '/past-life',
-    name: 'fortune-past-life',
-    builder: (context, state) => const PastLifeFortunePage()),
-  
+  // Past Life - removed (page deleted)
+  // Timeline - removed (page deleted)
+  // Daily Inspiration - removed (page deleted)
+
   // Wish
   GoRoute(
     path: '/wish',
     name: 'fortune-wish',
     builder: (context, state) => const WishFortunePage()),
-  
-  // Timeline
-  GoRoute(
-    path: '/timeline',
-    name: 'fortune-timeline',
-    builder: (context, state) => const TimelineFortunePage()),
-  
+
   // Network Report
   GoRoute(
     path: '/network-report',
     name: 'fortune-network-report',
     builder: (context, state) => const NetworkReportFortunePage()),
-  
-  // Daily Inspiration
-  GoRoute(
-    path: '/inspiration',
-    name: 'fortune-inspiration',
-    builder: (context, state) => const DailyInspirationPage()),
   
   // History
   GoRoute(

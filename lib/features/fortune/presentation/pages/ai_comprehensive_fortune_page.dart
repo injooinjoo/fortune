@@ -8,6 +8,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/utils/dark_mode_helper.dart';
 import '../../../../services/ad_service.dart';
 
 class AiComprehensiveFortunePage extends ConsumerStatefulWidget {
@@ -116,17 +117,24 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.grayDark900.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: DarkModeHelper.getColor(
+          context: context,
+          light: TossDesignSystem.white.withValues(alpha: 0.0),
+          dark: TossDesignSystem.grayDark900.withValues(alpha: 0.0),
+        ),
         elevation: 0,
         title: Text(
           'AI 종합 운세 분석',
           style: TextStyle(
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            color: DarkModeHelper.getColor(
+              context: context,
+              light: TossDesignSystem.gray900,
+              dark: TossDesignSystem.white,
+            ),
           ),
         ),
       ),
@@ -378,7 +386,11 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
                     children: [
                       Icon(
                         Icons.star,
-                        color: isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange,
+                        color: DarkModeHelper.getColor(
+                          context: context,
+                          light: TossDesignSystem.warningOrange,
+                          dark: TossDesignSystem.primaryYellow,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -471,12 +483,26 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   }
 
   Color _getScoreColor(int score) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (score >= 80) return isDark ? TossDesignSystem.primaryGreen : TossDesignSystem.successGreen;
-    if (score >= 60) return isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue;
-    if (score >= 40) return isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange;
-    return isDark ? TossDesignSystem.primaryRed : TossDesignSystem.errorRed;
+    if (score >= 80) return DarkModeHelper.getColor(
+      context: context,
+      light: TossDesignSystem.successGreen,
+      dark: TossDesignSystem.primaryGreen,
+    );
+    if (score >= 60) return DarkModeHelper.getColor(
+      context: context,
+      light: TossDesignSystem.tossBlue,
+      dark: TossDesignSystem.primaryBlue,
+    );
+    if (score >= 40) return DarkModeHelper.getColor(
+      context: context,
+      light: TossDesignSystem.warningOrange,
+      dark: TossDesignSystem.primaryYellow,
+    );
+    return DarkModeHelper.getColor(
+      context: context,
+      light: TossDesignSystem.errorRed,
+      dark: TossDesignSystem.primaryRed,
+    );
   }
 
   String _getScoreMessage(int score) {

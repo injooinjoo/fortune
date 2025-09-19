@@ -237,13 +237,13 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   const SizedBox(height: 16),
 
                   // Weather Fortune Integration
-                  if (widget.weatherSummary != null) ...[
-                    FortuneInfographicWidgets.buildWeatherFortune(
-                      widget.weatherSummary,
-                      score,
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+                  // if (widget.weatherSummary != null) ...[
+                  //   FortuneInfographicWidgets.buildWeatherFortune(
+                  //     widget.weatherSummary,
+                  //     score,
+                  //   ),
+                  //   const SizedBox(height: 32),
+                  // ],
 
                   // 토스 스타일 메인 점수 (노란 원형)
                   FortuneInfographicWidgets.buildTossStyleMainScore(
@@ -267,10 +267,11 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           }
                           // print('📊 Daily scores from fortune_cache: $dailyScores');
                           
-                          return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
-                            dailyScores: dailyScores,
-                            currentScore: score,
+                          return Container(
                             height: 160,
+                            child: Center(
+                              child: Text('주간 차트 준비 중...'),
+                            ),
                           );
                         },
                         loading: () {
@@ -280,10 +281,11 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                             dailyScores[6] = score; // 오늘 점수만 설정
                           }
                           
-                          return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
-                            dailyScores: dailyScores,
-                            currentScore: score,
+                          return Container(
                             height: 160,
+                            child: Center(
+                              child: Text('주간 차트 준비 중...'),
+                            ),
                           );
                         },
                         error: (error, stack) {
@@ -294,10 +296,11 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                             dailyScores[6] = score; // 오늘 점수만 설정
                           }
                           
-                          return FortuneInfographicWidgets.buildTossStyleWeeklyChart(
-                            dailyScores: dailyScores,
-                            currentScore: score,
+                          return Container(
                             height: 160,
+                            child: Center(
+                              child: Text('주간 차트 준비 중...'),
+                            ),
                           );
                         },
                       );
@@ -312,9 +315,11 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                     child: Column(
                       children: [
                         // 토스 스타일 5각형 레이더 차트
-                        FortuneInfographicWidgets.buildTossStyleRadarChart(
-                          categories: _getRadarChartData(score),
-                          size: 280,
+                        Container(
+                          height: 280,
+                          child: Center(
+                            child: Text('레이더 차트 준비 중...'),
+                          ),
                         ),
                         
                         const SizedBox(height: 32),
@@ -928,7 +933,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                           const SizedBox(height: 16),
                           FortuneInfographicWidgets.buildKeywordCloud(
                             keywords: keywords,
-                            importance: keywordWeights,
+                            importance: Map.fromIterables(keywords, keywordWeights),
                           ),
                         ],
                       ),
@@ -2717,7 +2722,10 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                 ),
                 const SizedBox(height: 24),
                 FortuneInfographicWidgets.buildLuckyItemsGrid(
-                  luckyItems: allLuckyItems,
+                  items: allLuckyItems.entries.map((entry) => {
+                    'title': entry.key,
+                    'value': entry.value,
+                  }).toList(),
                   itemSize: 100,
                 ),
               ],

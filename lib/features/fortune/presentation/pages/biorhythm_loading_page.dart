@@ -354,7 +354,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
         Container(
           height: 8,
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray300,
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark600 : TossTheme.borderGray300,
             borderRadius: BorderRadius.circular(4),
           ),
           child: AnimatedBuilder(
@@ -386,7 +386,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             '${(_progressAnimation.value * 100).round()}%',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.primaryBlue : TossTheme.primaryBlue,
+              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.primaryBlue : TossTheme.primaryBlue,
             ),
           ),
         ),
@@ -416,7 +416,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     return Text(
       '23일, 28일, 33일 주기의 3가지 리듬을\n정밀하게 분석하고 있습니다',
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-        color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
+        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
         height: 1.5,
       ),
       textAlign: TextAlign.center,
@@ -439,7 +439,7 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             child: Text(
               '분석 결과는 참고용으로만 활용해 주세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
               ),
             ),
           ),

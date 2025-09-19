@@ -181,7 +181,8 @@
       "Read(//Users/jacobmac/Library/Android/sdk/ndk/**)",
       "Read(//Users/jacobmac/Library/Android/sdk/cmdline-tools/**)",
       "Bash(/Users/jacobmac/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager \"ndk;26.3.11579264\")",
-      "Bash(convert:*)"
+      "Bash(convert:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

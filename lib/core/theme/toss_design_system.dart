@@ -44,6 +44,9 @@ class TossDesignSystem {
   static const Color successGreen = Color(0xFF10B981);  // 성공, 긍정
   static const Color warningOrange = Color(0xFFF59E0B);  // 경고, 주의
   static const Color warningYellow = Color(0xFFEAB308);  // 황색 경고
+  static const Color primaryYellow = Color(0xFFEAB308); // 프라이머리 황색 (warningYellow와 동일)
+  static const Color primaryGreen = Color(0xFF10B981); // 프라이머리 녹색 (successGreen과 동일)
+  static const Color primaryRed = Color(0xFFEF4444);   // 프라이머리 빨강 (errorRed와 동일)
   static const Color errorRed = Color(0xFFEF4444);    // 에러, 실패
   static const Color infoBlue = Color(0xFF3182F6);     // 정보
   static const Color purple = Color(0xFF8B5CF6);       // 보라색

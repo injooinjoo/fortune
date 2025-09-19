@@ -131,8 +131,9 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
   }
 
   Widget _buildDatePickerModal() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     DateTime tempDate = _selectedDate ?? DateTime.now().subtract(const Duration(days: 365 * 25));
-    
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
       decoration: BoxDecoration(
