@@ -28,6 +28,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
   String? _selectedZodiac;
   String? _selectedZodiacAnimal;
   bool _isLoading = false;
+  bool _showDetailedView = false; // 상세 선택 화면 표시 여부
 
   @override
   void initState() {
@@ -94,7 +95,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '성격 DNA 분석',
+                        _showDetailedView ? '성격 DNA 정보 입력' : '성격 DNA 분석',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -106,7 +107,9 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '4가지 정보로 당신만의 DNA를 만들어보세요',
+                        _showDetailedView
+                            ? '4가지 정보를 선택해 주세요'
+                            : '현재 설정을 확인하고 DNA 분석을 시작하세요',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -143,26 +146,14 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             ),
           ),
           
-          // Content
+          // Content - 조건부 렌더링
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  _buildMbtiSelector(),
-                  const SizedBox(height: 20),
-                  _buildBloodTypeSelector(),
-                  const SizedBox(height: 20),
-                  _buildZodiacSelector(),
-                  const SizedBox(height: 20),
-                  _buildZodiacAnimalSelector(),
-                  const SizedBox(height: 30),
-                ],
-              ),
-            ),
+            child: _showDetailedView
+                ? _buildDetailedSelectionView()
+                : _buildSummaryView(),
           ),
           
-          // Generate Button (토스 스타일)
+          // Bottom Button (토스 스타일)
           Container(
             padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
             decoration: BoxDecoration(
@@ -179,19 +170,235 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
               ),
             ),
             child: SafeArea(
-              child: TossButton(
-                text: '🧬 나만의 성격 DNA 발견하기',
-                onPressed: _canGenerate && !_isLoading
-                    ? _generatePersonalityDNA
-                    : null,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                isLoading: _isLoading,
-                isEnabled: _canGenerate && !_isLoading,
-                width: double.infinity,
+              child: _showDetailedView
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: TossButton(
+                            text: '이전',
+                            onPressed: () {
+                              setState(() {
+                                _showDetailedView = false;
+                              });
+                            },
+                            style: TossButtonStyle.secondary,
+                            size: TossButtonSize.large,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: TossButton(
+                            text: '🧬 나만의 성격 DNA 발견하기',
+                            onPressed: _canGenerate && !_isLoading
+                                ? _generatePersonalityDNA
+                                : null,
+                            style: TossButtonStyle.primary,
+                            size: TossButtonSize.large,
+                            isLoading: _isLoading,
+                            isEnabled: _canGenerate && !_isLoading,
+                          ),
+                        ),
+                      ],
+                    )
+                  : TossButton(
+                      text: _canGenerate
+                          ? '🧬 나만의 성격 DNA 발견하기'
+                          : '📝 정보 수정하기',
+                      onPressed: _canGenerate && !_isLoading
+                          ? _generatePersonalityDNA
+                          : () {
+                              setState(() {
+                                _showDetailedView = true;
+                              });
+                            },
+                      style: TossButtonStyle.primary,
+                      size: TossButtonSize.large,
+                      isLoading: _isLoading,
+                      width: double.infinity,
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 요약 뷰 - 현재 선택된 값들을 카드 형태로 표시
+  Widget _buildSummaryView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '현재 설정된 정보',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark900
+                  : TossDesignSystem.gray900,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // 정보 카드들
+          _buildSummaryCard('MBTI', _selectedMbti ?? '미설정', '🧠'),
+          const SizedBox(height: 12),
+          _buildSummaryCard('혈액형', _selectedBloodType != null ? '${_selectedBloodType}형' : '미설정', '🩸'),
+          const SizedBox(height: 12),
+          _buildSummaryCard('별자리', _selectedZodiac ?? '미설정', '⭐'),
+          const SizedBox(height: 12),
+          _buildSummaryCard('띠 (12지)', _selectedZodiacAnimal ?? '미설정', '🐉'),
+
+          const SizedBox(height: 30),
+
+          // 설명 텍스트
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark200
+                  : TossDesignSystem.blue50,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '💡 성격 DNA란?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark900
+                        : TossDesignSystem.gray900,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'MBTI, 혈액형, 별자리, 띠를 조합하여 당신만의 독특한 성격 분석 결과를 만들어드립니다.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark600
+                        : TossDesignSystem.gray600,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
+
+  /// 요약 카드 위젯
+  Widget _buildSummaryCard(String title, String value, String emoji) {
+    final bool isSet = value != '미설정';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark100
+            : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isSet
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.tossBlue.withOpacity(0.3)
+                  : TossDesignSystem.tossBlue.withOpacity(0.2))
+              : (Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark300
+                  : TossDesignSystem.gray200),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isSet
+                  ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark200
+                      : TossDesignSystem.gray100),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                emoji,
+                style: const TextStyle(fontSize: 20),
               ),
             ),
           ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark600
+                        : TossDesignSystem.gray600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: isSet
+                        ? (Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark900
+                            : TossDesignSystem.gray900)
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark400
+                            : TossDesignSystem.gray400),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (!isSet)
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.grayDark400
+                  : TossDesignSystem.gray400,
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 상세 선택 뷰 - 기존 선택 UI들
+  Widget _buildDetailedSelectionView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          _buildMbtiSelector(),
+          const SizedBox(height: 20),
+          _buildBloodTypeSelector(),
+          const SizedBox(height: 20),
+          _buildZodiacSelector(),
+          const SizedBox(height: 20),
+          _buildZodiacAnimalSelector(),
+          const SizedBox(height: 30),
         ],
       ),
     );
