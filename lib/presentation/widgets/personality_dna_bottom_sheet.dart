@@ -260,7 +260,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.blue50,
+                  : TossDesignSystem.gray50,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
