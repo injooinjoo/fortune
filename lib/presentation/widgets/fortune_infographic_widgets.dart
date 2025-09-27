@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/toss_design_system.dart';
@@ -32,7 +33,9 @@ class FortuneInfographicWidgets {
             Text(
               '$score',
               style: TextStyle(
-                color: TossDesignSystem.gray900,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.white
+                    : TossDesignSystem.gray900,
                 fontSize: size * 0.3,
                 fontWeight: FontWeight.w300,
                 letterSpacing: -4,
@@ -47,8 +50,10 @@ class FortuneInfographicWidgets {
             // 메시지
             Text(
               message,
-              style: const TextStyle(
-                color: TossDesignSystem.gray700,
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.grayDark100
+                    : TossDesignSystem.gray700,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -717,7 +722,7 @@ class FortuneInfographicWidgets {
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.4,
-                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                 ),
               ),
               if (userZodiacAnimal != null || userZodiacSign != null || userMBTI != null) ...[
@@ -884,7 +889,7 @@ class FortuneInfographicWidgets {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray600,
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                 ),
               ),
               Text(
@@ -936,13 +941,29 @@ class FortuneInfographicWidgets {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  '행운의 코디 준비 중...',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 14,
+                if (items.isNotEmpty) ...[
+                  for (String item in items.take(2)) // Show max 2 items
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: Text(
+                        item,
+                        style: TextStyle(
+                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                          fontSize: 14,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ] else
+                  Text(
+                    '행운의 코디 준비 중...',
+                    style: TextStyle(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -978,7 +999,7 @@ class FortuneInfographicWidgets {
     );
   }
 
-  /// Radar chart (placeholder implementation)
+  /// Radar chart with real score data
   static Widget buildRadarChart({
     required Map<String, int> scores,
     double? size,
@@ -998,15 +1019,24 @@ class FortuneInfographicWidgets {
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Text(
-              '레이더 차트 준비 중...',
-              style: TextStyle(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                fontSize: 16,
+          child: scores.isNotEmpty ?
+            CustomPaint(
+              size: Size((size ?? 200) - 32, (size ?? 200) - 32),
+              painter: RadarChartPainter(
+                scores: scores,
+                isDark: isDark,
+                primaryColor: primaryColor ?? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue),
+              ),
+            ) :
+            Center(
+              child: Text(
+                '레이더 차트 준비 중...',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  fontSize: 16,
+                ),
               ),
             ),
-          ),
         );
       },
     );
@@ -1151,7 +1181,7 @@ class FortuneInfographicWidgets {
     );
   }
 
-  /// Timeline chart (placeholder implementation)
+  /// Timeline chart with real hourly data
   static Widget buildTimelineChart({
     required List<int> hourlyScores,
     required int currentHour,
@@ -1171,21 +1201,68 @@ class FortuneInfographicWidgets {
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Text(
-              '타임라인 차트 준비 중...',
-              style: TextStyle(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                fontSize: 16,
+          child: Column(
+            children: [
+              // Chart header with current hour indicator
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '현재 ${currentHour}시',
+                    style: TextStyle(
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${hourlyScores[currentHour]}점',
+                    style: TextStyle(
+                      color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
+              const SizedBox(height: 12),
+
+              // Timeline chart
+              Expanded(
+                child: CustomPaint(
+                  size: Size.infinite,
+                  painter: TimelineChartPainter(
+                    hourlyScores: hourlyScores,
+                    currentHour: currentHour,
+                    isDark: isDark,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Time labels
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (int i = 0; i < 24; i += 6)
+                    Text(
+                      '${i.toString().padLeft(2, '0')}:00',
+                      style: TextStyle(
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        fontSize: 10,
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  /// AI insights card (placeholder implementation)
+  /// AI insights card with real data display
   static Widget buildAIInsightsCard({
     String? insight,
     List<String>? tips,
@@ -1195,7 +1272,6 @@ class FortuneInfographicWidgets {
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Container(
-          height: 160,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
@@ -1204,14 +1280,117 @@ class FortuneInfographicWidgets {
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Text(
-              'AI 인사이트 카드 준비 중...',
-              style: TextStyle(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                fontSize: 16,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with AI icon
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.psychology,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'AI 인사이트',
+                    style: TextStyle(
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ),
+              const SizedBox(height: 16),
+
+              // Main insight text
+              if (insight != null && insight.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? TossDesignSystem.grayDark300.withValues(alpha: 0.5)
+                        : TossDesignSystem.gray50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    insight,
+                    style: TextStyle(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+
+              // Tips section
+              if (tips != null && tips.isNotEmpty) ...[
+                Text(
+                  '✨ 추천 팁',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...tips.take(3).map((tip) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 4,
+                        margin: const EdgeInsets.only(top: 6, right: 8),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF6366f1),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          tip,
+                          style: TextStyle(
+                            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            fontSize: 12,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )).toList(),
+              ],
+
+              // Fallback when no data
+              if ((insight == null || insight.isEmpty) && (tips == null || tips.isEmpty))
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      'AI 인사이트 준비 중...',
+                      style: TextStyle(
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         );
       },
@@ -1238,28 +1417,131 @@ class FortuneInfographicWidgets {
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header section
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFf59e0b), Color(0xFFef4444)],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.star,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (subtitle.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            subtitle,
+                            style: TextStyle(
+                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Celebrity list
+              if (celebrities.isNotEmpty) ...[
+                Expanded(
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: celebrities.take(3).length,
+                    separatorBuilder: (context, index) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final celebrity = celebrities[index];
+                      return Container(
+                        width: 80,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? TossDesignSystem.grayDark300
+                                    : TossDesignSystem.gray100,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                color: isDark
+                                    ? TossDesignSystem.grayDark600
+                                    : TossDesignSystem.gray400,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              celebrity['name'] ?? '연예인',
+                              style: TextStyle(
+                                color: isDark
+                                    ? TossDesignSystem.grayDark700
+                                    : TossDesignSystem.gray700,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (celebrity['similarity'] != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                '${celebrity['similarity']}%',
+                                style: TextStyle(
+                                  color: Color(0xFFf59e0b),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '연예인 목록 준비 중...',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 14,
+              ] else
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      '연예인 목록 준비 중...',
+                      style: TextStyle(
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ),
-              ],
-            ),
+            ],
           ),
         );
       },
@@ -1287,28 +1569,93 @@ class FortuneInfographicWidgets {
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with zodiac icon
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF10b981), Color(0xFF059669)],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.cake,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$ageGroup 운세',
+                          style: TextStyle(
+                            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (zodiacAnimal != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            '$zodiacAnimal띠',
+                            style: TextStyle(
+                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Fortune content
+              if (title.isNotEmpty && description.isNotEmpty) ...[
                 Text(
-                  '$ageGroup 운세',
+                  title,
                   style: TextStyle(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  '연령별 운세 준비 중...',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 14,
+                Expanded(
+                  child: Text(
+                    description,
+                    style: TextStyle(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      fontSize: 12,
+                      height: 1.4,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ],
-            ),
+              ] else
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      '연령별 운세 준비 중...',
+                      style: TextStyle(
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         );
       },
@@ -1363,5 +1710,302 @@ class FortuneInfographicWidgets {
         );
       },
     );
+  }
+}
+
+/// Custom painter for drawing timeline chart with real hourly scores
+class TimelineChartPainter extends CustomPainter {
+  final List<int> hourlyScores;
+  final int currentHour;
+  final bool isDark;
+
+  TimelineChartPainter({
+    required this.hourlyScores,
+    required this.currentHour,
+    required this.isDark,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const padding = 8.0;
+    final chartWidth = size.width - (padding * 2);
+    final chartHeight = size.height - (padding * 2);
+
+    if (hourlyScores.isEmpty) return;
+
+    // Calculate data points for the line chart
+    final points = <Offset>[];
+    final maxScore = 100;
+    final minScore = 20;
+
+    for (int i = 0; i < hourlyScores.length; i++) {
+      final x = padding + (i / (hourlyScores.length - 1)) * chartWidth;
+      final normalizedScore = (hourlyScores[i] - minScore) / (maxScore - minScore);
+      final y = padding + chartHeight - (normalizedScore * chartHeight);
+      points.add(Offset(x, y));
+    }
+
+    // Draw gradient background
+    final backgroundPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue).withValues(alpha: 0.1),
+          (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue).withValues(alpha: 0.05),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    // Create path for the area under the curve
+    final areaPath = Path();
+    if (points.isNotEmpty) {
+      areaPath.moveTo(points.first.dx, size.height - padding);
+      for (final point in points) {
+        areaPath.lineTo(point.dx, point.dy);
+      }
+      areaPath.lineTo(points.last.dx, size.height - padding);
+      areaPath.close();
+    }
+
+    // Draw the area under the curve
+    canvas.drawPath(areaPath, backgroundPaint);
+
+    // Draw the main line
+    final linePaint = Paint()
+      ..color = isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    if (points.length > 1) {
+      final linePath = Path();
+      linePath.moveTo(points.first.dx, points.first.dy);
+      for (int i = 1; i < points.length; i++) {
+        // Create smooth curves between points
+        if (i < points.length - 1) {
+          final cp1 = Offset(
+            points[i - 1].dx + (points[i].dx - points[i - 1].dx) * 0.5,
+            points[i - 1].dy,
+          );
+          final cp2 = Offset(
+            points[i - 1].dx + (points[i].dx - points[i - 1].dx) * 0.5,
+            points[i].dy,
+          );
+          linePath.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, points[i].dx, points[i].dy);
+        } else {
+          linePath.lineTo(points[i].dx, points[i].dy);
+        }
+      }
+      canvas.drawPath(linePath, linePaint);
+    }
+
+    // Draw points on the line
+    final pointPaint = Paint()
+      ..color = isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue
+      ..style = PaintingStyle.fill;
+
+    final pointBorderPaint = Paint()
+      ..color = isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white
+      ..style = PaintingStyle.fill;
+
+    for (int i = 0; i < points.length; i++) {
+      final point = points[i];
+
+      // Draw larger point for current hour
+      if (i == currentHour) {
+        // Draw border
+        canvas.drawCircle(point, 5, pointBorderPaint);
+        // Draw center
+        canvas.drawCircle(point, 3, pointPaint);
+
+        // Draw current hour indicator line
+        final indicatorPaint = Paint()
+          ..color = (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue).withValues(alpha: 0.3)
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.stroke;
+
+        canvas.drawLine(
+          Offset(point.dx, padding),
+          Offset(point.dx, size.height - padding),
+          indicatorPaint,
+        );
+      } else {
+        // Draw smaller points for other hours
+        canvas.drawCircle(point, 2, pointPaint);
+      }
+    }
+
+    // Draw horizontal reference lines
+    final gridPaint = Paint()
+      ..color = (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray300).withValues(alpha: 0.3)
+      ..strokeWidth = 0.5
+      ..style = PaintingStyle.stroke;
+
+    // Draw reference lines at 25%, 50%, 75% heights
+    for (double ratio in [0.25, 0.5, 0.75]) {
+      final y = padding + chartHeight * (1 - ratio);
+      canvas.drawLine(
+        Offset(padding, y),
+        Offset(size.width - padding, y),
+        gridPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(TimelineChartPainter oldDelegate) {
+    return oldDelegate.hourlyScores != hourlyScores ||
+           oldDelegate.currentHour != currentHour ||
+           oldDelegate.isDark != isDark;
+  }
+}
+
+/// Custom painter for drawing radar chart with multiple score categories
+class RadarChartPainter extends CustomPainter {
+  final Map<String, int> scores;
+  final bool isDark;
+  final Color primaryColor;
+
+  RadarChartPainter({
+    required this.scores,
+    required this.isDark,
+    required this.primaryColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (scores.isEmpty) return;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = math.min(size.width, size.height) / 2 - 20;
+    final categories = scores.keys.toList();
+    final values = scores.values.toList();
+    final categoryCount = categories.length;
+
+    if (categoryCount == 0) return;
+
+    // Draw background grid
+    final gridPaint = Paint()
+      ..color = (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray300).withValues(alpha: 0.3)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    // Draw concentric circles (grid lines)
+    for (int i = 1; i <= 5; i++) {
+      final gridRadius = radius * (i / 5.0);
+      canvas.drawCircle(center, gridRadius, gridPaint);
+    }
+
+    // Draw category axes
+    for (int i = 0; i < categoryCount; i++) {
+      final angle = (i * 2 * math.pi / categoryCount) - (math.pi / 2);
+      final end = Offset(
+        center.dx + radius * math.cos(angle),
+        center.dy + radius * math.sin(angle),
+      );
+      canvas.drawLine(center, end, gridPaint);
+
+      // Draw category labels
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: _getCategoryLabel(categories[i]),
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+
+      final labelOffset = Offset(
+        center.dx + (radius + 15) * math.cos(angle) - textPainter.width / 2,
+        center.dy + (radius + 15) * math.sin(angle) - textPainter.height / 2,
+      );
+      textPainter.paint(canvas, labelOffset);
+    }
+
+    // Draw data area
+    final dataPath = Path();
+    final dataPoints = <Offset>[];
+
+    for (int i = 0; i < categoryCount; i++) {
+      final score = values[i].clamp(0, 100);
+      final angle = (i * 2 * math.pi / categoryCount) - (math.pi / 2);
+      final distance = radius * (score / 100.0);
+      final point = Offset(
+        center.dx + distance * math.cos(angle),
+        center.dy + distance * math.sin(angle),
+      );
+      dataPoints.add(point);
+
+      if (i == 0) {
+        dataPath.moveTo(point.dx, point.dy);
+      } else {
+        dataPath.lineTo(point.dx, point.dy);
+      }
+    }
+    dataPath.close();
+
+    // Fill the data area
+    final fillPaint = Paint()
+      ..color = primaryColor.withValues(alpha: 0.2)
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(dataPath, fillPaint);
+
+    // Draw the data outline
+    final linePaint = Paint()
+      ..color = primaryColor
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(dataPath, linePaint);
+
+    // Draw data points
+    final pointPaint = Paint()
+      ..color = primaryColor
+      ..style = PaintingStyle.fill;
+
+    final pointBorderPaint = Paint()
+      ..color = isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white
+      ..style = PaintingStyle.fill;
+
+    for (final point in dataPoints) {
+      canvas.drawCircle(point, 4, pointBorderPaint);
+      canvas.drawCircle(point, 3, pointPaint);
+    }
+  }
+
+  String _getCategoryLabel(String key) {
+    switch (key.toLowerCase()) {
+      case 'love':
+      case '연애':
+        return '연애';
+      case 'money':
+      case '금전':
+        return '금전';
+      case 'work':
+      case 'career':
+      case '직장':
+        return '직장';
+      case 'health':
+      case '건강':
+        return '건강';
+      case 'study':
+      case '학업':
+        return '학업';
+      default:
+        return key.length > 2 ? key.substring(0, 2) : key;
+    }
+  }
+
+  @override
+  bool shouldRepaint(RadarChartPainter oldDelegate) {
+    return oldDelegate.scores != scores ||
+           oldDelegate.isDark != isDark ||
+           oldDelegate.primaryColor != primaryColor;
   }
 }

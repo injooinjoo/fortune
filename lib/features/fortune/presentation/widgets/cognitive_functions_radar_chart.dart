@@ -65,6 +65,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -80,8 +83,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Widget _buildHeader() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final typeInfo = MbtiCognitiveFunctionsService.mbtiDescriptions[widget.mbtiType]!;
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -90,12 +95,16 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           children: [
             Text(
               '인지기능 분석',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              ),
             ),
             const SizedBox(height: AppSpacing.spacing1),
             Text(
               '${widget.mbtiType} - ${typeInfo['title']}의 오늘 상태',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+              ),
             ),
           ],
         ),
@@ -111,7 +120,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           ),
           child: Text(
             typeInfo['group'],
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))),
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
@@ -119,6 +131,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Widget _buildChart() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
@@ -130,27 +145,39 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               // 배경 그리드
               CustomPaint(
                 size: Size.infinite,
-                painter: _RadarGridPainter(),
+                painter: _RadarGridPainter(isDark: isDark),
               ),
               // 레이더 차트
               RadarChart(
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 5,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray600,
+                  ) ?? TextStyle(
+                    fontSize: 12,
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray600,
+                  ),
                   tickBorderData: BorderSide(
-                    color: TossDesignSystem.white.withValues(alpha:0.2),
+                    color: isDark ? TossDesignSystem.grayDark300.withValues(alpha:0.3) : TossDesignSystem.gray300.withValues(alpha:0.3),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: TossDesignSystem.white.withValues(alpha:0.2),
+                    color: isDark ? TossDesignSystem.grayDark300.withValues(alpha:0.3) : TossDesignSystem.gray300.withValues(alpha:0.3),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
                     color: TossDesignSystem.purple.withValues(alpha:0.5),
                     width: 2,
                   ),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    fontWeight: FontWeight.w600,
+                  ) ?? TextStyle(
+                    fontSize: 12,
+                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    fontWeight: FontWeight.w600,
+                  ),
                   titlePositionPercentageOffset: 0.15,
                   getTitle: (index, angle) {
                     final functions = MbtiCognitiveFunctionsService.cognitiveFunctions;
@@ -203,16 +230,20 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Widget _buildCenterInfo() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final stack = MbtiCognitiveFunctionsService.mbtiStacks[widget.mbtiType]!;
     final dominantFunction = stack[0];
     final dominantLevel = widget.functionLevels[dominantFunction] ?? 0;
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           '주기능',
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+          ),
         ),
         const SizedBox(height: AppSpacing.spacing1),
         Container(
@@ -227,7 +258,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           ),
           child: Text(
             dominantFunction,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: _getFunctionColor(dominantFunction),
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.spacing1),
@@ -235,7 +269,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           '${(dominantLevel * 100).toInt()}%',
           style: TextStyle(
             color: _getLevelColor(dominantLevel),
-            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+            fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -244,8 +278,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Widget _buildFunctionsList() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final stack = MbtiCognitiveFunctionsService.mbtiStacks[widget.mbtiType]!;
-    
+
     return Column(
       children: stack.take(4).map((function) {
         final level = widget.functionLevels[function] ?? 0;
@@ -279,7 +315,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   child: Center(
                     child: Text(
                       info['icon'],
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
@@ -292,7 +330,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                         children: [
                           Text(
                             '$function - ${info['name']}',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.spacing2),
                           Container(
@@ -308,7 +349,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                               _getStackPositionName(stackIndex),
                               style: TextStyle(
                                 color: _getStackPositionColor(stackIndex),
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                                fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * 0.85,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -318,7 +359,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         info['nameEn'],
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                          fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * 0.9,
+                        ),
                       ),
                     ],
                   ),
@@ -331,13 +375,16 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                       '${(level * 100).toInt()}%',
                       style: TextStyle(
                         color: _getLevelColor(level),
-                        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                        fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       _getFunctionStatus(level),
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * 0.85,
+                      ),
                     ),
                   ],
                 ),
@@ -350,6 +397,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Widget _buildStackInfo() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GlassContainer(
       padding: AppSpacing.paddingAll16,
       child: Column(
@@ -357,7 +407,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         children: [
           Text(
             '인지기능 스택 구조',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: AppSpacing.spacing3),
           Row(
@@ -372,7 +425,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             '* 주기능부터 열등기능까지 4개가 의식적으로 사용되는 기능입니다',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * 0.9,
+            ),
           ),
         ],
       ),
@@ -380,6 +436,9 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
   }
 
   Widget _buildStackLegend(String name, Color color, String english) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       children: [
         Container(
@@ -393,11 +452,18 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         const SizedBox(height: AppSpacing.spacing1),
         Text(
           name,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+            fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * 0.9,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         Text(
           english,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * 0.8,
+          ),
         ),
       ],
     );
@@ -439,11 +505,15 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
     showModalBottomSheet(
       context: context,
       backgroundColor: TossDesignSystem.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
+      builder: (context) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
         padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -459,21 +529,33 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             const SizedBox(height: AppSpacing.spacing5),
             Text(
               info['icon'],
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 32,
+              ),
             ),
             const SizedBox(height: AppSpacing.spacing3),
             Text(
               '$function - ${info['name']}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
             ),
             Text(
               info['nameEn'],
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               info['description'],
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.spacing5),
@@ -499,21 +581,32 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             const SizedBox(height: AppSpacing.spacing5),
             Text(
               '활성도: ${(widget.functionLevels[function]! * 100).toInt()}%',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: _getLevelColor(widget.functionLevels[function]!),
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildDetailSection(String title, List<String> items, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
         ),
         const SizedBox(height: AppSpacing.spacing2),
         ...items.map((item) => Padding(
@@ -528,7 +621,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               Expanded(
                 child: Text(
                   item,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ],
@@ -540,15 +636,21 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
 }
 
 class _RadarGridPainter extends CustomPainter {
+  final bool isDark;
+
+  _RadarGridPainter({required this.isDark});
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2 - 40;
-    
+
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = TossDesignSystem.white.withValues(alpha:0.1);
+      ..color = isDark
+          ? TossDesignSystem.grayDark400.withValues(alpha:0.2)
+          : TossDesignSystem.gray300.withValues(alpha:0.3);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

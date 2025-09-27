@@ -86,6 +86,9 @@ class _HealthScoreCardState extends State<HealthScoreCard>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
@@ -98,7 +101,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             colors: [
               _scoreColor.withValues(alpha: 0.1),
               _scoreColor.withValues(alpha: 0.05),
-              TossDesignSystem.white,
+              isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
             ],
           ),
           borderRadius: BorderRadius.circular(24),
@@ -106,7 +109,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             color: _scoreColor.withValues(alpha: 0.2),
             width: 1.5,
           ),
-          boxShadow: [
+          boxShadow: isDark ? null : [
             BoxShadow(
               color: _scoreColor.withValues(alpha: 0.1),
               offset: const Offset(0, 8),
@@ -126,8 +129,8 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             // 제목
             Text(
               '오늘의 건강 점수',
-              style: TossTheme.heading3.copyWith(
-                color: TossTheme.textBlack,
+              style: TossDesignSystem.heading3.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
             const SizedBox(height: 24),
@@ -148,7 +151,9 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                         child: CustomPaint(
                           painter: _CircularProgressPainter(
                             progress: _progressAnimation.value,
-                            backgroundColor: TossDesignSystem.gray500.withValues(alpha: 0.1),
+                            backgroundColor: isDark
+                                ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
+                                : TossDesignSystem.gray500.withValues(alpha: 0.1),
                             progressColor: _scoreColor,
                             strokeWidth: 12,
                           ),
@@ -166,7 +171,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                           const SizedBox(height: 8),
                           Text(
                             '${(widget.score * _progressAnimation.value).round()}',
-                            style: TossTheme.heading1.copyWith(
+                            style: TossDesignSystem.heading1.copyWith(
                               fontSize: 36,
                               fontWeight: FontWeight.w800,
                               color: _scoreColor,
@@ -174,7 +179,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                           ),
                           Text(
                             _scoreLabel,
-                            style: TossTheme.body2.copyWith(
+                            style: TossDesignSystem.body2.copyWith(
                               color: _scoreColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -193,7 +198,9 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha: 0.7),
+                color: isDark
+                    ? TossDesignSystem.grayDark200.withValues(alpha: 0.7)
+                    : TossDesignSystem.white.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: _scoreColor.withValues(alpha: 0.2),
@@ -201,8 +208,8 @@ class _HealthScoreCardState extends State<HealthScoreCard>
               ),
               child: Text(
                 widget.mainMessage,
-                style: TossTheme.body2.copyWith(
-                  color: TossTheme.textBlack,
+                style: TossDesignSystem.body2.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   height: 1.4,
                   fontWeight: FontWeight.w500,
                 ),
@@ -219,13 +226,13 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                   Icon(
                     Icons.touch_app,
                     size: 16,
-                    color: TossTheme.textGray400,
+                    color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '탭하여 자세히 보기',
-                    style: TossTheme.caption.copyWith(
-                      color: TossTheme.textGray400,
+                    style: TossDesignSystem.caption.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
                     ),
                   ),
                 ],

@@ -229,6 +229,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
           final fortuneEntity = cachedFortuneData.toEntity();
 
+          // 캐시 로딩 시에도 사용자 프로필 로드 필요
+          await _loadUserProfile();
+
           setState(() {
             isLoadingFortune = false;
             todaysFortune = fortuneEntity;
@@ -258,16 +261,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _initializeData() async {
     try {
       debugPrint('🚀 Starting data initialization');
-      
+
       // 실제 로그인 여부 체크 (익명이 아닌)
       _checkRealLoginStatus();
-      
+
       // 로그인된 사용자는 PreviewScreen을 절대 보면 안 됨
       if (_isReallyLoggedIn) {
         debugPrint('🔐 Logged in user detected - ensuring no PreviewScreen');
         setState(() {
           _showPreviewScreen = false;
         });
+
+        // 로그인된 사용자가 이미 데이터를 가지고 있다면 로딩 상태를 즉시 해제
+        if (userProfile != null && (todaysFortune != null || storySegments != null)) {
+          debugPrint('⚡ Already have data for logged in user - skipping loading screen');
+          setState(() {
+            isLoadingFortune = false;
+          });
+          return; // 데이터가 이미 있으므로 추가 로딩 불필요
+        }
       }
       
       // 사용자가 로그인하지 않은 경우 익명 인증

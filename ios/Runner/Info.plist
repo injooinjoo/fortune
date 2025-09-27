@@ -118,6 +118,10 @@
 		</array>
 		<key>NSUserNotificationUsageDescription</key>
 		<string>This app sends daily fortune notifications to keep you updated with your personalized fortunes.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Fortune AI가 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<key>NSLocationUsageDescription</key>
+		<string>Fortune AI가 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
@@ -256,6 +260,11 @@
 			<string>fetch</string>
 			<string>remote-notification</string>
 			<string>processing</string>
+		</array>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>com.beyond.fortune.refresh</string>
+			<string>com.beyond.fortune.processing</string>
 		</array>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>

@@ -321,8 +321,8 @@ class _OptimizedStepItem extends StatelessWidget {
               color: isCompleted
                 ? const Color(0xFF52C41A)
                 : isActive 
-                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.5)
-                  : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.2),
+                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.5)
+                  : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.2),
               width: isCompleted ? 2.5 : isActive ? 2 : 1.5,
             ),
           ),
@@ -365,8 +365,8 @@ class _OptimizedStepItem extends StatelessWidget {
                   fontSize: isActive ? 18 : 16,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
-                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
-                    : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.5),
+                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.black)
+                    : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.5),
                 ),
                 child: Text(step.title),
               ),
@@ -380,7 +380,7 @@ class _OptimizedStepItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.black)
                           .withValues(alpha: 0.6),
                     ),
                   ),

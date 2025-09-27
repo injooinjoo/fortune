@@ -13,6 +13,7 @@ import '../../presentation/providers/fortune_history_provider.dart';
 import '../../presentation/providers/fortune_cache_provider.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
+import '../../features/fortune/presentation/widgets/emotion_radar_chart.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../services/celebrity_service.dart';
 import '../../services/celebrity_service_new.dart' as new_service;
@@ -254,87 +255,130 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   
                   const SizedBox(height: 40),
 
-                  // 일별 운세 곡선 그래프 - fortune_cache 테이블에서 데이터 가져오기
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final cacheScoresAsync = ref.watch(fortuneCacheScoresProvider(score));
-                      
-                      return cacheScoresAsync.when(
-                        data: (dailyScores) {
-                          // 오늘 점수가 0이면 현재 API 점수로 업데이트
-                          if (dailyScores.isNotEmpty && dailyScores.last == 0 && score != null) {
-                            dailyScores[dailyScores.length - 1] = score;
-                          }
-                          // print('📊 Daily scores from fortune_cache: $dailyScores');
-                          
-                          return Container(
-                            height: 160,
-                            child: Center(
-                              child: Text('주간 차트 준비 중...'),
-                            ),
-                          );
-                        },
-                        loading: () {
-                          // 로딩 중 - 기본 데이터 사용
-                          List<int> dailyScores = List.filled(7, 0);
-                          if (score != null) {
-                            dailyScores[6] = score; // 오늘 점수만 설정
-                          }
-                          
-                          return Container(
-                            height: 160,
-                            child: Center(
-                              child: Text('주간 차트 준비 중...'),
-                            ),
-                          );
-                        },
-                        error: (error, stack) {
-                          print('❌ Error loading daily scores: $error');
-                          // 에러 시 기본 데이터 사용
-                          List<int> dailyScores = List.filled(7, 0);
-                          if (score != null) {
-                            dailyScores[6] = score; // 오늘 점수만 설정
-                          }
-                          
-                          return Container(
-                            height: 160,
-                            child: Center(
-                              child: Text('주간 차트 준비 중...'),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  
-                  const SizedBox(height: 32),
-
-                  // 5각형 레이더 차트 - 항상 표시, fallback 데이터 사용
+                  // 일별 운세 곡선 그래프 - 카드로 감싸기
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.grayDark200
+                          : TossDesignSystem.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark300
+                            : TossDesignSystem.gray200,
+                      ),
+                    ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 토스 스타일 5각형 레이더 차트
-                        Container(
-                          height: 280,
-                          child: Center(
-                            child: Text('레이더 차트 준비 중...'),
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 32),
-                        
                         Text(
-                          '5대 영역별 운세',
+                          '주간 운세 변화',
                           style: TextStyle(
-                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark900
+                                : TossDesignSystem.gray900,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 16),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final cacheScoresAsync = ref.watch(fortuneCacheScoresProvider(score));
+
+                            return cacheScoresAsync.when(
+                              data: (dailyScores) {
+                                // 오늘 점수가 0이면 현재 API 점수로 업데이트
+                                if (dailyScores.isNotEmpty && dailyScores.last == 0 && score != null) {
+                                  dailyScores[dailyScores.length - 1] = score;
+                                }
+
+                                return _buildWeeklyLineChart(dailyScores);
+                              },
+                              loading: () {
+                                return Container(
+                                  height: 160,
+                                  child: Center(
+                                    child: Text(
+                                      '주간 차트 준비 중...',
+                                      style: TextStyle(
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                            ? TossDesignSystem.grayDark700
+                                            : TossDesignSystem.gray600,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              error: (error, stack) {
+                                print('❌ Error loading daily scores: $error');
+                                // 에러 시 기본 데이터 사용
+                                List<int> dailyScores = List.filled(7, 0);
+                                if (score != null) {
+                                  dailyScores[6] = score; // 오늘 점수만 설정
+                                }
+
+                                return _buildWeeklyLineChart(dailyScores);
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 32),
+
+                  // 5각형 레이더 차트 - 카드로 감싸기
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.grayDark200
+                          : TossDesignSystem.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? TossDesignSystem.grayDark300
+                            : TossDesignSystem.gray200,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '5대 영역별 운세',
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark900
+                                : TossDesignSystem.gray900,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // 토스 스타일 5각형 레이더 차트
+                        Container(
+                          height: 280,
+                          child: EmotionRadarChart(
+                            emotions: _getRadarChartDataDouble(score),
+                            size: 280,
+                            primaryColor: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.teal
+                                : TossDesignSystem.tossBlue,
+                            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.grayDark200
+                                : TossDesignSystem.gray200,
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
                         FortuneInfographicWidgets.buildCategoryCards(
-                          _getCategoryCardsData(score), 
+                          _getCategoryCardsData(score),
                           isDarkMode: isDark
                         ),
                       ],
@@ -849,7 +893,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         FortuneInfographicWidgets.buildTimelineChart(
                           hourlyScores: hourlyScores,
                           currentHour: DateTime.now().hour,
-                          height: 100,
+                          height: 180,
                         ),
                       ],
                     ),
@@ -2439,7 +2483,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         if (celebrities.isNotEmpty) {
           for (int i = 0; i < math.min(5, celebrities.length); i++) {
             final celeb = celebrities[i];
-            debugPrint('🎭 [DB_LOAD] Sample celebrity $i: ${celeb.displayName} (${celeb.birthDate.year}) - ${celeb.celebrityType.displayName} - ${celeb.zodiacSign} - ${celeb.chineseZodiac}');
+            debugPrint('🎭 [DB_LOAD] Sample celebrity $i: ${celeb.displayName} (${celeb.birthDate.year}) - ${celeb.celebrityType.displayName} - ${celeb.zodiacSign} - ${celeb.chineseZodiac} - Gender: ${celeb.gender.name}');
           }
         }
       } else {
@@ -2509,7 +2553,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       debugPrint('🎭 [FIND] Step 3: Finding celebrities with same gender: $userGender');
       final sameGenderCelebrities = _databaseCelebrities
           .where((celebrity) =>
-            celebrity.gender.displayName == userGender &&
+            celebrity.gender.name == userGender &&
             !similarCelebrities.contains(celebrity))
           .toList();
       debugPrint('🎭 [FIND] Found ${sameGenderCelebrities.length} celebrities with same gender');
@@ -2831,5 +2875,113 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         ],
       ],
     );
+  }
+
+  /// 점수를 레이더 차트용 감정 데이터로 변환
+  Map<String, double> _getRadarChartDataDouble(int? score) {
+    if (score == null) {
+      return {
+        'healing': 60.0,
+        'acceptance': 65.0,
+        'growth': 70.0,
+        'peace': 62.0,
+        'hope': 68.0,
+        'strength': 66.0,
+      };
+    }
+
+    // 점수를 기반으로 6개 감정 영역의 값을 계산
+    final baseValue = score.toDouble();
+    return {
+      'healing': (baseValue * 0.9 + 10).clamp(0.0, 100.0),      // 치유
+      'acceptance': (baseValue * 0.95 + 5).clamp(0.0, 100.0),   // 수용
+      'growth': (baseValue * 1.1 - 5).clamp(0.0, 100.0),       // 성장
+      'peace': (baseValue * 0.85 + 15).clamp(0.0, 100.0),      // 평화
+      'hope': (baseValue * 1.05 - 2).clamp(0.0, 100.0),        // 희망
+      'strength': (baseValue * 0.98 + 3).clamp(0.0, 100.0),    // 강인함
+    };
+  }
+
+  /// 주간 차트용 간단한 라인 차트 위젯
+  Widget _buildWeeklyLineChart(List<int> dailyScores) {
+    if (dailyScores.isEmpty) {
+      return Container(
+        height: 160,
+        child: Center(
+          child: Text('데이터 없음'),
+        ),
+      );
+    }
+
+    return CustomPaint(
+      size: Size(double.infinity, 160),
+      painter: _WeeklyLineChartPainter(
+        scores: dailyScores,
+        isDark: Theme.of(context).brightness == Brightness.dark,
+      ),
+    );
+  }
+}
+
+/// 주간 차트용 커스텀 페인터
+class _WeeklyLineChartPainter extends CustomPainter {
+  final List<int> scores;
+  final bool isDark;
+
+  _WeeklyLineChartPainter({
+    required this.scores,
+    required this.isDark,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (scores.isEmpty) return;
+
+    final paint = Paint()
+      ..color = isDark ? TossDesignSystem.teal : TossDesignSystem.tossBlue
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    final pointPaint = Paint()
+      ..color = isDark ? TossDesignSystem.teal : TossDesignSystem.tossBlue
+      ..style = PaintingStyle.fill;
+
+    final gridPaint = Paint()
+      ..color = (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200).withOpacity(0.5)
+      ..strokeWidth = 1;
+
+    // 격자 그리기
+    for (int i = 0; i <= 4; i++) {
+      final y = size.height * i / 4;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    }
+
+    // 데이터 점들 계산
+    final points = <Offset>[];
+    for (int i = 0; i < scores.length; i++) {
+      final x = size.width * i / (scores.length - 1);
+      final y = size.height - (scores[i] / 100.0 * size.height);
+      points.add(Offset(x, y));
+    }
+
+    // 선 그리기
+    if (points.length > 1) {
+      final path = Path();
+      path.moveTo(points[0].dx, points[0].dy);
+      for (int i = 1; i < points.length; i++) {
+        path.lineTo(points[i].dx, points[i].dy);
+      }
+      canvas.drawPath(path, paint);
+    }
+
+    // 점들 그리기
+    for (final point in points) {
+      canvas.drawCircle(point, 4, pointPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_WeeklyLineChartPainter oldDelegate) {
+    return oldDelegate.scores != scores || oldDelegate.isDark != isDark;
   }
 }

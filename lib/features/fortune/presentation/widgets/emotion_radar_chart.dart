@@ -79,13 +79,30 @@ class _RadarChartPainter extends CustomPainter {
         y - textPainter.height / 2
       );
 
-      // Adjust label position to avoid overlap with chart
-      final adjustedX = labelOffset.dx + 
-          (x > center.dx ? 10 : -10) + 
-          (x == center.dx ? -textPainter.width / 2 : 0);
-      final adjustedY = labelOffset.dy + 
-          (y > center.dy ? 10 : -10) + 
-          (y == center.dy ? -textPainter.height / 2 : 0);
+      // 라벨 위치를 더 정확하게 계산하여 가운데 정렬
+      double adjustedX = x;
+      double adjustedY = y;
+
+      // 각 방향별로 라벨 위치 조정
+      if (x > center.dx + 5) {
+        // 오른쪽
+        adjustedX = x + 15;
+        adjustedY = y - textPainter.height / 2;
+      } else if (x < center.dx - 5) {
+        // 왼쪽
+        adjustedX = x - textPainter.width - 15;
+        adjustedY = y - textPainter.height / 2;
+      } else {
+        // 위/아래 (중앙)
+        adjustedX = x - textPainter.width / 2;
+        if (y < center.dy) {
+          // 위쪽
+          adjustedY = y - textPainter.height - 10;
+        } else {
+          // 아래쪽
+          adjustedY = y + 10;
+        }
+      }
 
       textPainter.paint(canvas, Offset(adjustedX, adjustedY));
     });

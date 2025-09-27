@@ -89,12 +89,21 @@ class FortuneApiService {
             ApiEndpoints.dailyFortune,
             queryParameters: queryParams);
       Logger.endTimer('API Call - daily', apiStopwatch);
-      
+
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final responseData = _getResponseData(response);
+      Logger.info('🔍 [FortuneApiService] Raw response data structure', {
+        'responseKeys': responseData is Map ? responseData.keys.toList() : 'Not a map',
+        'responseType': responseData.runtimeType.toString(),
+        'hasFortuneKey': responseData is Map ? responseData.containsKey('fortune') : false,
+        'hasDataKey': responseData is Map ? responseData.containsKey('data') : false,
+        'hasStorySegmentsKey': responseData is Map ? responseData.containsKey('storySegments') : false,
+      });
+
+      final fortuneResponse = FortuneResponseModel.fromJson(responseData);
       final fortune = fortuneResponse.toEntity();
       
       Logger.info('🔍 [FortuneApiService] Fortune processed successfully', {
@@ -200,10 +209,10 @@ class FortuneApiService {
       Logger.endTimer('API Call - saju', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
       
       Logger.info('🔍 [FortuneApiService] Saju fortune processed successfully', {
@@ -276,10 +285,10 @@ class FortuneApiService {
       Logger.endTimer('API Call - compatibility', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
       
       Logger.endTimer('getCompatibilityFortune - Total', stopwatch);
@@ -337,10 +346,10 @@ class FortuneApiService {
       Logger.endTimer('API Call - love', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
       
       Logger.info('🔍 [FortuneApiService] Love fortune processed successfully', {
@@ -410,10 +419,10 @@ class FortuneApiService {
       Logger.endTimer('API Call - wealth', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
       
       Logger.endTimer('getWealthFortune - Total', stopwatch);
@@ -463,10 +472,10 @@ class FortuneApiService {
       Logger.endTimer('API Call - investment-enhanced', apiStopwatch);
 
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
 
       Logger.endTimer('getInvestmentEnhancedFortune - Total', stopwatch);
@@ -518,10 +527,10 @@ class FortuneApiService {
       Logger.endTimer('API Call - mbti', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
       
       Logger.endTimer('getMbtiFortune - Total', stopwatch);
@@ -830,10 +839,10 @@ class FortuneApiService {
 
       Logger.info('🔍 [FortuneApiService] API response received', {
         'fortuneType': fortuneType,
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(response.data);
+      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
       final fortune = fortuneResponse.toEntity();
       
       Logger.info('🔍 [FortuneApiService] Fortune processed successfully', {
@@ -908,10 +917,11 @@ class FortuneApiService {
       Logger.endTimer('API Call - batch', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] Batch API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortunes = (response.data['fortunes'] as List)
+      final responseData = _getResponseData(response);
+      final fortunes = (responseData['fortunes'] as List)
           .map((json) => FortuneResponseModel.fromJson(json).toEntity())
           .toList();
       
@@ -963,10 +973,11 @@ class FortuneApiService {
       Logger.endTimer('API Call - history', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] History API response received', {
-        'statusCode': response.statusCode,
+        'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortunes = (response.data['history'] as List)
+      final responseData = _getResponseData(response);
+      final fortunes = (responseData['history'] as List)
           .map((json) => FortuneResponseModel.fromJson(json).toEntity())
           .toList();
       
@@ -1145,6 +1156,28 @@ class FortuneApiService {
            error.type == DioExceptionType.receiveTimeout;
   }
 
+  // Helper method to safely get status code from response
+  int? _getStatusCode(dynamic response) {
+    if (response is Response) {
+      return response.statusCode;
+    } else if (response is Map<String, dynamic>) {
+      // Edge Functions return Map directly - assume success if we get data
+      return 200;
+    }
+    return null;
+  }
+
+  // Helper method to safely get response data
+  dynamic _getResponseData(dynamic response) {
+    if (response is Response) {
+      return response.data;
+    } else if (response is Map<String, dynamic>) {
+      // Edge Functions return Map directly
+      return response;
+    }
+    return response;
+  }
+
   // Convert Fortune entity to FortuneModel for caching
   FortuneModel _entityToFortuneModel(Fortune fortune, String type) {
     return FortuneModel(
@@ -1166,7 +1199,7 @@ class FortuneApiService {
   Future<dynamic> post(String endpoint, {Map<String, dynamic>? data}) async {
     try {
       final response = await _apiClient.post(endpoint, data: data);
-      return response;
+      return _getResponseData(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

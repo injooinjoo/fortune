@@ -4,7 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:fortune/main.dart' as app;
 import 'package:fortune/screens/landing_page.dart';
 import 'package:fortune/screens/auth/signup_screen.dart';
-import 'package:fortune/screens/home/home_screen_updated.dart';
+import 'package:fortune/presentation/screens/home/home_screen.dart' as home;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       // Verify navigation to onboarding or home
-      expect(find.byType(HomeScreenUpdated), findsOneWidget);
+      expect(find.byType(home.HomeScreen), findsOneWidget);
     });
 
     testWidgets('Email login flow', (WidgetTester tester) async {
@@ -52,7 +52,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       // Verify successful login
-      expect(find.byType(HomeScreenUpdated), findsOneWidget);
+      expect(find.byType(home.HomeScreen), findsOneWidget);
     });
 
     testWidgets('Social login - Google', (WidgetTester tester) async {
@@ -81,9 +81,9 @@ void main() {
 
       // Find and tap Kakao login button
       final kakaoLoginButton = find.byWidgetPredicate(
-        (widget) => widget is Container && 
+        (widget) => widget is Container &&
           widget.decoration is BoxDecoration &&
-          (widget.decoration as BoxDecoration).color == const Color(0xFFFEE500,
+          (widget.decoration as BoxDecoration).color == const Color(0xFFFEE500)
     );
       
       if (kakaoLoginButton.evaluate().isNotEmpty) {

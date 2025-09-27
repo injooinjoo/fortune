@@ -16,10 +16,28 @@ class FortuneResponseModel {
     this.remainingTokens});
 
   factory FortuneResponseModel.fromJson(Map<String, dynamic> json) {
+    // Handle three cases:
+    // 1. Traditional API response: { success: bool, data: {...}, tokensUsed: int }
+    // 2. Edge Functions response: { fortune: {...}, storySegments: [...], tokensUsed: int }
+    // 3. Direct fortune data format (no wrapper)
+
+    FortuneData? fortuneData;
+
+    if (json['data'] != null) {
+      // Traditional API format
+      fortuneData = FortuneData.fromJson(json['data']);
+    } else if (json['fortune'] != null) {
+      // Edge Functions format - fortune field contains the actual fortune data
+      fortuneData = FortuneData.fromJson(json['fortune']);
+    } else if (json.containsKey('overall_score') || json.containsKey('summary') || json.containsKey('advice')) {
+      // Direct fortune data format (Edge Functions fortune object)
+      fortuneData = FortuneData.fromJson(json);
+    }
+
     return FortuneResponseModel(
-      success: json['success'],
+      success: json['success'] ?? true,  // Default to true if not provided
       message: json['message'],
-      data: json['data'] != null ? FortuneData.fromJson(json['data']) : null,
+      data: fortuneData,
       tokensUsed: json['tokensUsed'],
       remainingTokens: json['remainingTokens']);
   }
@@ -286,7 +304,7 @@ class FortuneData {
     return FortuneData(
       id: json['id'],
       userId: json['userId'],
-      type: json['type'] ?? 'general',
+      type: json['type'] ?? 'daily',
       content: json['content'],
       createdAt: json['createdAt'] != null 
           ? DateTime.parse(json['createdAt']) 
@@ -295,17 +313,17 @@ class FortuneData {
       
       // Daily fortune fields,
     score: json['score'] ?? json['overall_score'],
-      keywords: json['keywords'] != null 
-          ? List<String>.from(json['keywords']) 
+      keywords: json['keywords'] != null
+          ? List<String>.from(json['keywords'])
           : null,
       summary: json['summary'],
-      luckyColor: json['luckyColor'],
-      luckyNumber: json['luckyNumber'],
+      luckyColor: json['luckyColor'] ?? json['lucky_items']?['color'],
+      luckyNumber: json['luckyNumber'] ?? json['lucky_items']?['number'],
       energy: json['energy'],
       mood: json['mood'],
       advice: json['advice'],
       caution: json['caution'],
-      bestTime: json['bestTime'],
+      bestTime: json['bestTime'] ?? json['lucky_items']?['time'],
       compatibility: json['compatibility'],
       elements: json['elements'] != null 
           ? Map<String, int>.from(json['elements']) 
@@ -347,9 +365,9 @@ class FortuneData {
           : null,
       
       // Additional lucky items,
-    luckyDirection: json['luckyDirection'],
-      luckyFood: json['luckyFood'],
-      luckyItem: json['luckyItem'],
+    luckyDirection: json['luckyDirection'] ?? json['lucky_items']?['direction'],
+      luckyFood: json['luckyFood'] ?? json['lucky_items']?['food'],
+      luckyItem: json['luckyItem'] ?? json['lucky_items']?['item'],
       
       // Detailed lucky items,
     detailedLuckyNumbers: json['detailedLuckyNumbers'],

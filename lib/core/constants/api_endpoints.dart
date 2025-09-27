@@ -11,7 +11,7 @@ class ApiEndpoints {
 
   // Fortune endpoints - 59개 운세 타입
   // 일일/시간별 운세
-  static const String dailyFortune = '/api/fortune/daily';
+  static const String dailyFortune = '/fortune-daily';
   static const String today = '/api/fortune/today';
   static const String tomorrow = '/api/fortune/tomorrow';
   static const String hourly = '/api/fortune/hourly';

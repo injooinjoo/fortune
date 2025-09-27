@@ -1,0 +1,19 @@
+{
+  "name": "fortune-flutter-tests",
+  "version": "1.0.0",
+  "description": "E2E testing for Fortune Flutter App",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:install": "playwright install",
+    "test:codegen": "playwright codegen"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "author": "Fortune Team",
+  "license": "MIT"
+}

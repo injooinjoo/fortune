@@ -1355,7 +1355,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               text,
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w600),
+                fontWeight: FontWeight.w600,
+                color: foregroundColor ?? Colors.black,
+              ),
             ),
           ],
         ),
@@ -1463,7 +1465,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               text,
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w600),
+                fontWeight: FontWeight.w600,
+                color: foregroundColor ?? Colors.black,
+              ),
             ),
           ],
         ),

@@ -350,8 +350,8 @@ class _OptimizedStepItem extends StatelessWidget {
               color: isCompleted
                 ? const Color(0xFF52C41A)
                 : isActive
-                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.6)
-                  : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.3),
+                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.6)
+                  : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.3),
               width: isCompleted ? 2.5 : isActive ? 2.2 : 1.8,
             ),
           ),
@@ -374,7 +374,7 @@ class _OptimizedStepItem extends StatelessWidget {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  isDark ? TossDesignSystem.white.withValues(alpha: 0.7) : TossDesignSystem.gray600
+                                  isDark ? TossDesignSystem.white.withValues(alpha: 0.7) : TossDesignSystem.black.withValues(alpha: 0.6)
                                 ),
                               ),
                             )
@@ -405,8 +405,8 @@ class _OptimizedStepItem extends StatelessWidget {
                   fontSize: isActive ? 18 : 16,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
-                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
-                    : (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900).withValues(alpha: 0.5),
+                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.black)
+                    : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.5),
                   height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
                 ),
               ),
@@ -420,7 +420,7 @@ class _OptimizedStepItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.black)
                           .withValues(alpha: 0.6),
                       height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
                     ),
