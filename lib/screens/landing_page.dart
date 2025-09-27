@@ -437,7 +437,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           SnackBar(
             content: Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRed
+                ? TossDesignSystem.errorRedDark
                 : TossDesignSystem.errorRed));
       }
     } finally {
@@ -486,7 +486,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           SnackBar(
             content: Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRed
+                ? TossDesignSystem.errorRedDark
                 : TossDesignSystem.errorRed
           )
         );
@@ -914,7 +914,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           SnackBar(
             content: Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRed
+                ? TossDesignSystem.errorRedDark
                 : TossDesignSystem.errorRed));
       }
     } finally {
