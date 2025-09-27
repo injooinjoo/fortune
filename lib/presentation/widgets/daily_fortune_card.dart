@@ -137,57 +137,79 @@ class DailyFortuneCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 점수와 기분
+        // 점수와 기분 - 가로 길이 통일
         Row(
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)
-              ),
-              child: Text(
-                '${fortune!.score}점',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.headlineSmall?.color
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)
+                ),
+                child: Center(
+                  child: Text(
+                    '${fortune!.score}점',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.headlineSmall?.color
+                    )
+                  )
                 )
               )
             ),
             SizedBox(width: AppSpacing.spacing2),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)
-              ),
-              child: Text(
-                fortune!.mood,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).textTheme.bodyMedium?.color
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)
+                ),
+                child: Center(
+                  child: Text(
+                    fortune!.mood,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyMedium?.color
+                    )
+                  )
                 )
               )
             ),
-            const Spacer(),
-            Row(
-              children: [
-                Icon(Icons.bolt, size: AppDimensions.iconSizeXSmall, color: context.fortuneTheme.subtitleText),
-                SizedBox(width: AppSpacing.spacing1),
-                Text(
-                  '에너지 ${fortune!.energy}%',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: context.fortuneTheme.subtitleText
-                  )
+            SizedBox(width: AppSpacing.spacing2),
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.bolt, size: AppDimensions.iconSizeXSmall, color: context.fortuneTheme.subtitleText),
+                    SizedBox(width: AppSpacing.spacing1),
+                    Text(
+                      '에너지 ${fortune!.energy}%',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.fortuneTheme.subtitleText
+                      )
+                    )
+                  ]
                 )
-              ]
+              )
             )
           ],
         ),
         SizedBox(height: AppSpacing.spacing4),
 
-        // 운세 요약
+        // 운세 요약 - 위 요소들과 동일한 가로폭
         Container(
+          width: double.infinity, // 전체 너비 사용
           padding: AppSpacing.paddingAll12,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
