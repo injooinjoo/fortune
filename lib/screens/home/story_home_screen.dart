@@ -501,44 +501,57 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         debugPrint('❌ No user ID found for fortune loading');
         return;
       }
-      
+
+      // 중복 호출 방지 - 이미 오늘의 운세가 로드되어 있으면 스킵
+      if (todaysFortune != null && !isLoadingFortune) {
+        debugPrint('✅ Today\'s fortune already loaded, skipping duplicate load');
+        return;
+      }
+
       debugPrint('🎯 Loading today\'s fortune for user: $userId');
-      
+
       // 현재 날짜 키 생성 (CacheService와 동일한 로직)
       final now = DateTime.now();
       final dateKey = '${now.year}-${now.month}-${now.day}';
-      
+
       debugPrint('📅 Current date key: $dateKey');
-      
+
       // 1. 캐시된 운세와 스토리 모두 확인 (Provider 상태보다 우선)
       final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
       final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
-      
+
       debugPrint('📦 Cache check - fortune: ${cachedFortuneData != null}, story: ${cachedStorySegments != null && cachedStorySegments.isNotEmpty}');
-      
+
       // 2. Provider 상태 우선 확인 (최신 데이터)
       final currentProviderState = ref.read(dailyFortuneProvider);
       final hasProviderFortune = currentProviderState.fortune != null && !currentProviderState.isLoading;
-      
+
       debugPrint('📊 Provider state - hasFortune: $hasProviderFortune, isLoading: ${currentProviderState.isLoading}');
       
       // 3. Provider에 데이터가 있으면 Provider 우선 사용 (캐시보다 최신)
       if (hasProviderFortune) {
         final providerFortune = currentProviderState.fortune!;
         debugPrint('🚀 Using Provider data (latest) - score: ${providerFortune.overallScore}');
-        
+
+        // 중복 데이터 설정 방지 - 이미 같은 데이터가 있으면 스킵
+        if (todaysFortune?.id == providerFortune.id &&
+            todaysFortune?.overallScore == providerFortune.overallScore) {
+          debugPrint('✅ Same Provider data already set, skipping duplicate');
+          return;
+        }
+
         setState(() {
           todaysFortune = providerFortune;
           isLoadingFortune = false;
         });
-        
+
         // Provider 데이터가 있으면 스토리만 생성/확인
-        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty && storySegments == null) {
           debugPrint('✅ Using cached story segments');
           setState(() {
             storySegments = cachedStorySegments;
           });
-        } else {
+        } else if (storySegments == null) {
           debugPrint('📝 Generating new story for Provider fortune');
           await _generateStory(providerFortune);
         }
@@ -548,17 +561,25 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 4. Provider에 없으면 캐시 확인 (단, 유효한 데이터만)
       if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
         final cachedFortune = cachedFortuneData.toEntity();
-        
+
         // 디버그: 캐시 데이터 상세 정보 확인
         debugPrint('🔍 DEBUG - Cached data analysis:');
         debugPrint('  - Metadata: ${cachedFortuneData.metadata}');
         debugPrint('  - Mapped overallScore: ${cachedFortune.overallScore}');
         debugPrint('  - Metadata overallScore: ${cachedFortuneData.metadata?['overallScore']}');
-        
+
         // 캐시된 운세에 유효한 점수가 있는지 확인
         if (cachedFortune.overallScore != null) {
+          // 중복 데이터 설정 방지 - 이미 같은 캐시 데이터가 있으면 스킵
+          if (todaysFortune?.id == cachedFortune.id &&
+              todaysFortune?.overallScore == cachedFortune.overallScore &&
+              storySegments != null) {
+            debugPrint('✅ Same cached data already set, skipping duplicate');
+            return;
+          }
+
           debugPrint('✅ Using cached data as fallback - score: ${cachedFortune.overallScore}');
-          
+
           setState(() {
             todaysFortune = cachedFortune;
             storySegments = cachedStorySegments;
