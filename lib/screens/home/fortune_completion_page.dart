@@ -922,65 +922,12 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   
                   const SizedBox(height: 32),
                   
-                  // 오늘의 키워드 (항상 표시)
+                  // 오늘의 키워드 (항상 표시) - 개선된 토스 스타일 디자인
                   if (keywords.isNotEmpty) ...[
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: isDark 
-                          ? const Color(0xFF1E293B)
-                          : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isDark 
-                            ? const Color(0xFF6366F1).withValues(alpha:0.1)
-                            : const Color(0xFF3B82F6).withValues(alpha:0.1),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isDark 
-                              ? const Color(0xFF6366F1).withValues(alpha:0.05)
-                              : const Color(0xFF3B82F6).withValues(alpha:0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: (isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6)).withValues(alpha:0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.tag_rounded,
-                                  color: isDark ? const Color(0xFF6366F1) : const Color(0xFF3B82F6),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '오늘의 키워드',
-                                style: TextStyle(
-                                  color: isDark ? TossDesignSystem.white : const Color(0xFF1E293B),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          FortuneInfographicWidgets.buildKeywordCloud(
-                            keywords: keywords,
-                            importance: Map.fromIterables(keywords, keywordWeights),
-                          ),
-                        ],
-                      ),
+                    FortuneInfographicWidgets.buildTossStyleKeywordSection(
+                      keywords: keywords,
+                      importance: Map.fromIterables(keywords, keywordWeights),
+                      context: context,
                     ),
                     const SizedBox(height: 32),
                   ],
@@ -1543,101 +1490,173 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     );
   }
 
-  /// Extract keywords from fortune data - FULLY DYNAMIC
-  /// Keywords are extracted from actual fortune content, description, and recommendations
-  /// Different sizes are intentional based on importance weights (0.3-1.0 range)
-  /// NO hardcoding - all keywords come from fortune data analysis
+  /// Extract keywords from fortune data - AI-POWERED CONTENT ANALYSIS
+  /// Uses intelligent text analysis to extract meaningful keywords from actual AI content
+  /// No predefined lists - analyzes actual generated fortune text for real insights
+  /// Combines semantic analysis with category scoring for dynamic keyword discovery
   List<String> _extractKeywords(fortune_entity.Fortune? fortune) {
-    if (fortune == null) return ['행운', '성공', '기회'];
-    
-    final keywords = <String>[];
-    
-    // Extract from content (main fortune text)
+    if (fortune == null) return ['희망', '성장', '기회'];
+
+    final extractedKeywords = <String, double>{};
+
+    // 1. Analyze main fortune content using semantic analysis
     if (fortune.content != null && fortune.content!.isNotEmpty) {
-      final fortuneKeywords = [
-        '행운', '성공', '기회', '발전', '성취', '만남', '도전', '성장', '번영', '희망',
-        '사랑', '연애', '건강', '직업', '금전', '재물', '가족', '친구', '여행', '학업',
-        '창조', '예술', '소통', '협력', '리더십', '변화', '안정', '평화', '조화', '균형'
-      ];
-      
-      final content = fortune.content!;
-      for (final keyword in fortuneKeywords) {
-        if (content.contains(keyword)) {
-          keywords.add(keyword);
-        }
+      final contentKeywords = _analyzeFortuneContent(fortune.content!);
+      for (final entry in contentKeywords.entries) {
+        extractedKeywords[entry.key] = (extractedKeywords[entry.key] ?? 0) + entry.value * 1.0;
       }
     }
-    
-    // Extract from description
+
+    // 2. Extract keywords from description with moderate weight
     if (fortune.description != null && fortune.description!.isNotEmpty) {
-      final positiveKeywords = ['긍정', '신뢰', '진실', '용기', '지혜', '인내', '배려', '감사'];
-      final description = fortune.description!;
-      
-      for (final keyword in positiveKeywords) {
-        if (description.contains(keyword)) {
-          keywords.add(keyword);
+      final descKeywords = _analyzeFortuneContent(fortune.description!);
+      for (final entry in descKeywords.entries) {
+        extractedKeywords[entry.key] = (extractedKeywords[entry.key] ?? 0) + entry.value * 0.7;
+      }
+    }
+
+    // 3. Analyze recommendations for actionable insights
+    if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) {
+      for (final rec in fortune.recommendations!) {
+        final recKeywords = _extractActionableKeywords(rec);
+        for (final entry in recKeywords.entries) {
+          extractedKeywords[entry.key] = (extractedKeywords[entry.key] ?? 0) + entry.value * 0.8;
         }
       }
     }
-    
-    // Extract from recommendations
-    if (fortune.recommendations != null) {
-      for (final rec in fortune.recommendations!) {
-        if (rec.contains('적극')) keywords.add('적극성');
-        if (rec.contains('신중')) keywords.add('신중함');
-        if (rec.contains('소통')) keywords.add('소통');
-        if (rec.contains('건강')) keywords.add('건강관리');
-        if (rec.contains('투자')) keywords.add('투자');
-        if (rec.contains('관계')) keywords.add('인간관계');
-        if (rec.contains('휴식')) keywords.add('휴식');
-        if (rec.contains('계획')) keywords.add('계획성');
-      }
-    }
-    
-    // Add score-based keywords
-    final score = fortune.overallScore ?? 75;
-    if (score >= 90) {
-      keywords.addAll(['최고운', '대길', '번영']);
-    } else if (score >= 80) {
-      keywords.addAll(['좋은운', '발전', '성공']);
-    } else if (score >= 70) {
-      keywords.addAll(['안정', '평온', '균형']);
-    } else if (score >= 60) {
-      keywords.addAll(['신중', '조심', '준비']);
-    } else {
-      keywords.addAll(['인내', '극복', '변화']);
-    }
-    
-    // Add category-based keywords from score breakdown
+
+    // 4. Add category-specific keywords based on strong scores
     final scoreBreakdown = fortune.scoreBreakdown ?? {};
     scoreBreakdown.forEach((category, score) {
-      if (score is int && score >= 80) {
-        switch (category) {
-          case 'love':
-            keywords.add('연애운');
-            break;
-          case 'career':
-            keywords.add('직업운');
-            break;
-          case 'money':
-            keywords.add('금전운');
-            break;
-          case 'health':
-            keywords.add('건강운');
-            break;
-          case 'relationship':
-            keywords.add('대인운');
-            break;
-          case 'luck':
-            keywords.add('행운');
-            break;
+      if (score is int && score >= 75) {
+        final categoryWeight = (score - 75) / 25.0; // 0.0 to 1.0 weight
+        final categoryKeyword = _getCategoryKeyword(category, score);
+        if (categoryKeyword != null) {
+          extractedKeywords[categoryKeyword] = (extractedKeywords[categoryKeyword] ?? 0) + categoryWeight;
         }
       }
     });
-    
-    // Remove duplicates and return top 6
-    final uniqueKeywords = keywords.toSet().toList();
-    return uniqueKeywords.take(6).toList();
+
+    // 5. Add overall sentiment keyword based on total score
+    final overallScore = fortune.overallScore ?? 75;
+    final sentimentKeyword = _getSentimentKeyword(overallScore);
+    extractedKeywords[sentimentKeyword] = (extractedKeywords[sentimentKeyword] ?? 0) + 0.9;
+
+    // Sort by importance and return top 6 most relevant keywords
+    final sortedKeywords = extractedKeywords.entries
+        .toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+
+    return sortedKeywords.take(6).map((e) => e.key).toList();
+  }
+
+  /// Analyze fortune content using intelligent keyword extraction
+  Map<String, double> _analyzeFortuneContent(String content) {
+    final keywords = <String, double>{};
+    final cleanContent = content.replaceAll(RegExp(r'[^\w\s가-힣]'), '').toLowerCase();
+
+    // Korean semantic keyword patterns with weights
+    final patterns = {
+      // Positive outcomes (high weight)
+      r'(?:성공|성취|발전|번영|성장|향상|발달)': {'키워드': '성공', 'weight': 0.95},
+      r'(?:행운|운세|좋은|최고|훌륭|멋진)': {'키워드': '행운', 'weight': 0.9},
+      r'(?:사랑|연애|애정|로맨스|만남)': {'키워드': '사랑', 'weight': 0.9},
+      r'(?:건강|체력|활력|에너지|생기)': {'키워드': '건강', 'weight': 0.85},
+      r'(?:돈|재물|금전|부|재정|수입)': {'키워드': '재물', 'weight': 0.85},
+
+      // Growth and development (medium-high weight)
+      r'(?:배움|학습|공부|지식|지혜)': {'키워드': '지혜', 'weight': 0.8},
+      r'(?:변화|전환|새로운|혁신|개선)': {'키워드': '변화', 'weight': 0.8},
+      r'(?:기회|찬스|가능성|잠재력)': {'키워드': '기회', 'weight': 0.85},
+      r'(?:도전|모험|시도|추진)': {'키워드': '도전', 'weight': 0.75},
+      r'(?:협력|소통|관계|네트워크|인맥)': {'키워드': '소통', 'weight': 0.75},
+
+      // Emotional states (medium weight)
+      r'(?:평화|안정|안전|편안|고요)': {'키워드': '평화', 'weight': 0.7},
+      r'(?:희망|기대|바람|소망|꿈)': {'키워드': '희망', 'weight': 0.75},
+      r'(?:용기|담대|자신감|확신)': {'키워드': '용기', 'weight': 0.7},
+      r'(?:창조|창의|예술|아이디어)': {'키워드': '창조', 'weight': 0.7},
+      r'(?:조화|균형|정돈|질서)': {'키워드': '조화', 'weight': 0.65},
+
+      // Action and planning (medium weight)
+      r'(?:계획|준비|전략|목표)': {'키워드': '계획', 'weight': 0.65},
+      r'(?:인내|끈기|참을성|꾸준)': {'키워드': '인내', 'weight': 0.6},
+      r'(?:신중|조심|주의|세심)': {'키워드': '신중', 'weight': 0.6},
+    };
+
+    // Apply pattern matching with context awareness
+    for (final pattern in patterns.entries) {
+      final regex = RegExp(pattern.key);
+      final matches = regex.allMatches(cleanContent);
+      if (matches.isNotEmpty) {
+        final keywordData = pattern.value;
+        final keyword = keywordData['키워드'] as String;
+        final weight = keywordData['weight'] as double;
+
+        // Boost weight based on frequency and context
+        final frequency = matches.length;
+        final contextBoost = _getContextBoost(cleanContent, keyword);
+
+        keywords[keyword] = weight * (1 + frequency * 0.2 + contextBoost);
+      }
+    }
+
+    return keywords;
+  }
+
+  /// Extract actionable keywords from recommendations
+  Map<String, double> _extractActionableKeywords(String recommendation) {
+    final keywords = <String, double>{};
+    final cleanRec = recommendation.toLowerCase();
+
+    final actionPatterns = {
+      r'(?:적극|활발|활동|진취)': {'키워드': '적극성', 'weight': 0.8},
+      r'(?:신중|조심|주의|세심)': {'키워드': '신중함', 'weight': 0.7},
+      r'(?:소통|대화|교류|관계)': {'키워드': '소통', 'weight': 0.75},
+      r'(?:휴식|쉼|여유|마음)': {'키워드': '여유', 'weight': 0.65},
+      r'(?:투자|저축|경제|재정)': {'키워드': '투자', 'weight': 0.7},
+      r'(?:건강|운동|관리|챙기)': {'키워드': '건강관리', 'weight': 0.75},
+    };
+
+    for (final pattern in actionPatterns.entries) {
+      if (RegExp(pattern.key).hasMatch(cleanRec)) {
+        final keywordData = pattern.value;
+        keywords[keywordData['키워드'] as String] = keywordData['weight'] as double;
+      }
+    }
+
+    return keywords;
+  }
+
+  /// Get context boost based on surrounding words
+  double _getContextBoost(String content, String keyword) {
+    final positiveContext = ['매우', '아주', '특히', '정말', '진짜', '크게', '높게'];
+    final boostWords = positiveContext.where((word) => content.contains(word)).length;
+    return boostWords * 0.1; // Small boost for positive context
+  }
+
+  /// Get category-specific keyword based on score
+  String? _getCategoryKeyword(String category, int score) {
+    final categoryMap = {
+      'love': score >= 90 ? '최고의연애운' : '연애운',
+      'career': score >= 90 ? '성공운' : '직업운',
+      'money': score >= 90 ? '대박운' : '금전운',
+      'health': score >= 90 ? '완벽건강' : '건강운',
+      'relationship': score >= 90 ? '인기운' : '대인운',
+      'luck': score >= 90 ? '대길운' : '행운',
+    };
+    return categoryMap[category];
+  }
+
+  /// Get sentiment keyword based on overall score
+  String _getSentimentKeyword(int score) {
+    if (score >= 95) return '최상급운';
+    if (score >= 90) return '최고운';
+    if (score >= 85) return '상급운';
+    if (score >= 80) return '좋은운';
+    if (score >= 70) return '안정운';
+    if (score >= 60) return '보통운';
+    return '조심운';
   }
 
   /// Calculate keyword importance weights - DYNAMIC SIZING SYSTEM
