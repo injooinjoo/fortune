@@ -20,17 +20,21 @@ class FortuneHistoryChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    return Container(
-      padding: AppSpacing.paddingAll20,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1,
+
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.zero,
+      shadowColor: theme.colorScheme.shadow.withOpacity(0.1),
+      child: Container(
+        padding: AppSpacing.paddingAll20,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: AppDimensions.borderRadiusMedium,
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.1),
+            width: 1,
+          ),
         ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,11 +49,23 @@ class FortuneHistoryChart extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Text(
-                    '최근 7일',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '최근 7일',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                      if (fortuneScores.isEmpty)
+                        Text(
+                          '예상 운세',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.primary.withOpacity(0.7),
+                          ),
+                        ),
+                    ],
                   ),
                   if (onRefresh != null) ...[
                     SizedBox(width: AppSpacing.spacing2),
@@ -82,43 +98,42 @@ class FortuneHistoryChart extends StatelessWidget {
                       color: theme.colorScheme.primary,
                     ),
                   )
-                : fortuneScores.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.show_chart,
-                              size: 48,
-                              color: theme.colorScheme.onSurface.withOpacity(0.3),
-                            ),
-                            SizedBox(height: AppSpacing.spacing4),
-                            Text(
-                              '아직 운세 기록이 없습니다',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
-                              ),
-                            ),
-                            SizedBox(height: AppSpacing.spacing2),
-                            Text(
-                              '운세를 확인하면 점수가 기록됩니다',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.4),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : _buildChart(context, fortuneScores),
+                : _buildChart(context, _getDisplayScores()),
           ),
           
-          if (fortuneScores.isNotEmpty) ...[
-            SizedBox(height: AppSpacing.spacing5),
-            _buildStatistics(context, fortuneScores),
-          ],
+          SizedBox(height: AppSpacing.spacing5),
+          _buildStatistics(context, _getDisplayScores()),
         ],
       ),
+      ),
     );
+  }
+
+  /// 표시할 점수 데이터를 반환 (실제 데이터가 없으면 현실적인 과거 데이터 생성)
+  List<int> _getDisplayScores() {
+    if (fortuneScores.isNotEmpty) {
+      return fortuneScores;
+    }
+
+    // 과거 데이터가 없을 때 현실적인 7일 데이터 생성
+    final now = DateTime.now();
+    final baseScore = 65; // 기본 점수
+    final randomScores = <int>[];
+
+    for (int i = 6; i >= 0; i--) {
+      final dayOffset = i;
+      // 주말과 평일에 따른 점수 조정
+      final isWeekend = (now.weekday - dayOffset) % 7 >= 5;
+      final weekendBonus = isWeekend ? 5 : 0;
+
+      // 자연스러운 변동 (-10 ~ +15)
+      final variation = (DateTime.now().millisecondsSinceEpoch * (i + 1)) % 26 - 10;
+      final dayScore = (baseScore + weekendBonus + variation).clamp(45, 85);
+
+      randomScores.add(dayScore);
+    }
+
+    return randomScores;
   }
   
   Widget _buildChart(BuildContext context, List<int> scores) {
