@@ -28,16 +28,16 @@ class TossDesignSystem {
   static const Color black = Color(0xFF000000);
   static const Color transparent = Color(0x00000000);
   
-  /// Dark Mode Grayscale (다크모드 회색 스케일)
+  /// Dark Mode Grayscale (다크모드 회색 스케일) - 개선된 대비
   static const Color grayDark50 = Color(0xFF17171C);   // 다크모드 배경
   static const Color grayDark100 = Color(0xFF26262E);  // 다크모드 카드
   static const Color grayDark200 = Color(0xFF3A3A42);  // 다크모드 표면
   static const Color grayDark300 = Color(0xFF404048);  // 다크모드 테두리
-  static const Color grayDark400 = Color(0xFF6B7280);  // 다크모드 보조 텍스트
-  static const Color grayDark500 = Color(0xFF9CA3AF);  // 다크모드 힌트
-  static const Color grayDark600 = Color(0xFFB0B8C1);
-  static const Color grayDark700 = Color(0xFFD1D6DB);
-  static const Color grayDark800 = Color(0xFFE5E8EB);
+  static const Color grayDark400 = Color(0xFF9CA3AF);  // 다크모드 보조 텍스트 (개선된 대비)
+  static const Color grayDark500 = Color(0xFFD1D6DB);  // 다크모드 힌트 (개선된 대비)
+  static const Color grayDark600 = Color(0xFFE5E8EB);  // 밝은 보조 텍스트
+  static const Color grayDark700 = Color(0xFFF2F4F6);  // 매우 밝은 텍스트
+  static const Color grayDark800 = Color(0xFFF9FAFB);  // 거의 화이트
   static const Color grayDark900 = Color(0xFFFFFFFF);  // 다크모드 주 텍스트
   
   /// Semantic Colors (의미론적 색상)
@@ -657,7 +657,7 @@ class TossDesignSystem {
       primaryColor: tossBlueDark,
       scaffoldBackgroundColor: grayDark50,
       
-      // Color Scheme
+      // Color Scheme (개선된 대비)
       colorScheme: const ColorScheme.dark(
         primary: tossBlueDark,
         secondary: tossBlueDark,
@@ -669,6 +669,8 @@ class TossDesignSystem {
         onSurface: grayDark900,
         onBackground: grayDark900,
         onError: white,
+        outline: grayDark400,  // 개선된 테두리 색상
+        shadow: grayDark300,   // 그림자 색상
       ),
       
       // App Bar Theme
@@ -696,8 +698,8 @@ class TossDesignSystem {
         bodyMedium: body2.copyWith(color: grayDark900),
         bodySmall: body3.copyWith(color: grayDark900),
         labelLarge: button.copyWith(color: grayDark900),
-        labelMedium: caption.copyWith(color: grayDark500),
-        labelSmall: small.copyWith(color: grayDark500),
+        labelMedium: caption.copyWith(color: grayDark400),
+        labelSmall: small.copyWith(color: grayDark400),
       ),
       
       // Elevated Button Theme
@@ -706,7 +708,7 @@ class TossDesignSystem {
           backgroundColor: tossBlueDark,
           foregroundColor: white,
           disabledBackgroundColor: grayDark300,
-          disabledForegroundColor: grayDark500,
+          disabledForegroundColor: grayDark400,
           elevation: 0,
           shadowColor: white.withValues(alpha: 0.0),
           fixedSize: const Size.fromHeight(buttonHeightLarge),
@@ -726,7 +728,7 @@ class TossDesignSystem {
         style: TextButton.styleFrom(
           foregroundColor: tossBlueDark,
           backgroundColor: white.withValues(alpha: 0.0),
-          disabledForegroundColor: grayDark400,
+          disabledForegroundColor: grayDark500,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),
           ),
@@ -762,7 +764,7 @@ class TossDesignSystem {
           borderRadius: BorderRadius.circular(radiusS),
           borderSide: const BorderSide(color: errorRedDark, width: 2),
         ),
-        hintStyle: body2.copyWith(color: grayDark400),
+        hintStyle: body2.copyWith(color: grayDark500),
         errorStyle: caption1.copyWith(color: errorRedDark),
       ),
       
