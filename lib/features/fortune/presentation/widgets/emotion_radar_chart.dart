@@ -66,43 +66,23 @@ class _RadarChartPainter extends CustomPainter {
       final y = center.dy + radius * math.sin(angle * index - math.pi / 2);
       canvas.drawLine(center, Offset(x, y), axisPaint);
 
-      // Draw labels
+      // Draw labels - 완전히 중앙 정렬된 라벨
       final textPainter = TextPainter(
         text: TextSpan(
           text: _getEmotionLabel(key),
           style: const TextStyle(fontSize: 12, color: TossDesignSystem.black)),
-        textDirection: TextDirection.ltr);
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center);
       textPainter.layout();
 
-      final labelOffset = Offset(
-        x - textPainter.width / 2,
-        y - textPainter.height / 2
-      );
+      // 라벨을 축에서 조금 더 바깥쪽으로 배치하여 가독성 향상
+      final labelRadius = radius * 1.15;
+      final labelX = center.dx + labelRadius * math.cos(angle * index - math.pi / 2);
+      final labelY = center.dy + labelRadius * math.sin(angle * index - math.pi / 2);
 
-      // 라벨 위치를 더 정확하게 계산하여 가운데 정렬
-      double adjustedX = x;
-      double adjustedY = y;
-
-      // 각 방향별로 라벨 위치 조정
-      if (x > center.dx + 5) {
-        // 오른쪽
-        adjustedX = x + 15;
-        adjustedY = y - textPainter.height / 2;
-      } else if (x < center.dx - 5) {
-        // 왼쪽
-        adjustedX = x - textPainter.width - 15;
-        adjustedY = y - textPainter.height / 2;
-      } else {
-        // 위/아래 (중앙)
-        adjustedX = x - textPainter.width / 2;
-        if (y < center.dy) {
-          // 위쪽
-          adjustedY = y - textPainter.height - 10;
-        } else {
-          // 아래쪽
-          adjustedY = y + 10;
-        }
-      }
+      // 텍스트를 완전히 중앙 정렬
+      final adjustedX = labelX - textPainter.width / 2;
+      final adjustedY = labelY - textPainter.height / 2;
 
       textPainter.paint(canvas, Offset(adjustedX, adjustedY));
     });
