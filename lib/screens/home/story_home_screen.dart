@@ -212,6 +212,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
+    // 이미 데이터가 있다면 초기화 건너뛰기 (네비게이션 바 홈 클릭 최적화)
+    if (todaysFortune != null && storySegments != null && storySegments!.isNotEmpty) {
+      debugPrint('✅ Data already available, skipping initialization');
+      setState(() {
+        isLoadingFortune = false;
+      });
+      return;
+    }
+
     try {
       setState(() {
         _isInitializing = true;
