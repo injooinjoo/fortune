@@ -893,7 +893,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                         FortuneInfographicWidgets.buildTimelineChart(
                           hourlyScores: hourlyScores,
                           currentHour: DateTime.now().hour,
-                          height: 180,
+                          height: 250,
                         ),
                       ],
                     ),
