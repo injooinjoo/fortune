@@ -2517,24 +2517,34 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     debugPrint('🎭 [GENERATE] _generateSimilarSajuCelebrities called');
     final userProfile = widget.userProfile;
 
-    if (userProfile == null) {
-      debugPrint('🎭 [GENERATE] User profile is null, returning default celebrities');
-      return _getDefaultSimilarCelebrities();
-    }
-
-    debugPrint('🎭 [GENERATE] User profile exists: ${userProfile.name}');
+    debugPrint('🎭 [GENERATE] User profile: ${userProfile?.name ?? 'null'}');
     debugPrint('🎭 [GENERATE] Database celebrities count: ${_databaseCelebrities.length}');
+    debugPrint('🎭 [GENERATE] Is loading celebrities: $_isLoadingCelebrities');
 
-    // 이미 로드된 데이터베이스 기반 연예인 데이터가 있으면 사용
+    // 데이터베이스에서 연예인이 로드되어 있으면 사용
     if (_databaseCelebrities.isNotEmpty) {
-      debugPrint('🎭 [GENERATE] Using database celebrities');
-      final result = _findSimilarCelebritiesFromDatabase(userProfile);
-      debugPrint('🎭 [GENERATE] Database search returned ${result.length} celebrities');
-      return result;
+      if (userProfile != null) {
+        debugPrint('🎭 [GENERATE] Using database celebrities with user profile matching');
+        final result = _findSimilarCelebritiesFromDatabase(userProfile);
+        debugPrint('🎭 [GENERATE] Profile-based search returned ${result.length} celebrities');
+        return result;
+      } else {
+        debugPrint('🎭 [GENERATE] Using database celebrities with random selection (no profile)');
+        return _getDefaultSimilarCelebrities(); // 이제 이 함수가 데이터베이스에서 랜덤 선택함
+      }
     }
 
-    // 데이터베이스 데이터가 없으면 기본값 반환
-    debugPrint('🎭 [GENERATE] No database celebrities available, returning default');
+    // 데이터베이스가 아직 로딩 중이거나 비어있는 경우
+    if (_isLoadingCelebrities) {
+      debugPrint('🎭 [GENERATE] Database still loading, will use fallback');
+    } else {
+      debugPrint('🎭 [GENERATE] Database loading completed but empty, triggering reload');
+      // 데이터베이스 로딩 재시도
+      _loadCelebritiesFromDatabase();
+    }
+
+    // 기본값 반환 (개선된 _getDefaultSimilarCelebrities가 처리)
+    debugPrint('🎭 [GENERATE] Returning default celebrities (may use database if available)');
     return _getDefaultSimilarCelebrities();
   }
 
@@ -2717,20 +2727,49 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
   }
   */
 
-  /// 기본 연예인 리스트 (프로필이 없을 때)
+  /// 기본 연예인 리스트 (프로필이 없을 때) - 데이터베이스에서 랜덤 선택
   List<Map<String, String>> _getDefaultSimilarCelebrities() {
-    debugPrint('🎭 [DEFAULT] Using default similar celebrities (fallback)');
-    final defaultCelebrities = [
-      {'year': '1993', 'name': '아이유', 'description': '대한민국의 가수'},
-      {'year': '1988', 'name': '지드래곤', 'description': '대한민국의 가수'},
-      {'year': '1993', 'name': '박보검', 'description': '대한민국의 배우'},
-    ];
+    debugPrint('🎭 [DEFAULT] Getting default similar celebrities from database');
 
-    for (int i = 0; i < defaultCelebrities.length; i++) {
-      debugPrint('🎭 [DEFAULT] Default celebrity $i: ${defaultCelebrities[i]['name']} (${defaultCelebrities[i]['year']}) - ${defaultCelebrities[i]['description']}');
+    // 데이터베이스에서 연예인이 로드되어 있으면 랜덤하게 선택
+    if (_databaseCelebrities.isNotEmpty) {
+      debugPrint('🎭 [DEFAULT] Using database celebrities (${_databaseCelebrities.length} available)');
+
+      // 일관된 랜덤 선택을 위해 현재 날짜를 시드로 사용
+      final today = DateTime.now();
+      final seed = today.year * 10000 + today.month * 100 + today.day;
+      final random = math.Random(seed);
+
+      final shuffledCelebrities = List<Celebrity>.from(_databaseCelebrities);
+      shuffledCelebrities.shuffle(random);
+
+      final selectedCelebrities = shuffledCelebrities.take(3).map((celebrity) => {
+        'year': celebrity.birthDate.year.toString(),
+        'name': celebrity.displayName,
+        'description': celebrity.celebrityType.displayName,
+      }).toList();
+
+      debugPrint('🎭 [DEFAULT] Selected from database:');
+      for (int i = 0; i < selectedCelebrities.length; i++) {
+        debugPrint('🎭 [DEFAULT] Celebrity $i: ${selectedCelebrities[i]['name']} (${selectedCelebrities[i]['year']}) - ${selectedCelebrities[i]['description']}');
+      }
+
+      return selectedCelebrities;
     }
 
-    return defaultCelebrities;
+    // 데이터베이스가 비어있으면 하드코딩된 기본값 사용 (최후의 수단)
+    debugPrint('🎭 [DEFAULT] Database empty, using hardcoded fallback');
+    final fallbackCelebrities = [
+      {'year': '1993', 'name': '아이유', 'description': '가수'},
+      {'year': '1988', 'name': '지드래곤', 'description': '가수'},
+      {'year': '1993', 'name': '박보검', 'description': '배우'},
+    ];
+
+    for (int i = 0; i < fallbackCelebrities.length; i++) {
+      debugPrint('🎭 [DEFAULT] Fallback celebrity $i: ${fallbackCelebrities[i]['name']} (${fallbackCelebrities[i]['year']}) - ${fallbackCelebrities[i]['description']}');
+    }
+
+    return fallbackCelebrities;
   }
 
   /// 강화된 행운 아이템 섹션 구성 (Edge Function 데이터 활용)
