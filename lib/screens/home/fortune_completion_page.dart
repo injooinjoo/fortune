@@ -1012,9 +1012,9 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                     },
                   ),
                   
-                  // 비슷한 사주의 연예인 (동적 데이터 사용)
-                  () {
-                    debugPrint('🎭 [CELEBRITY_CARD] Building similar saju celebrities card');
+                  // 비슷한 사주의 연예인 (동적 데이터 사용 - 로딩 완료 후에만 렌더링)
+                  if (!_isLoadingCelebrities) () {
+                    debugPrint('🎭 [CELEBRITY_CARD] Building similar saju celebrities card (loading completed)');
                     debugPrint('🎭 [CELEBRITY_CARD] Fortune metadata: ${widget.fortune?.metadata != null ? "exists" : "null"}');
                     debugPrint('🎭 [CELEBRITY_CARD] celebrities_similar_saju in metadata: ${widget.fortune?.metadata?['celebrities_similar_saju'] != null ? "exists" : "null"}');
 
@@ -2461,6 +2461,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
 
   // 데이터베이스 연예인 캐시
   List<Celebrity> _databaseCelebrities = [];
+  bool _isLoadingCelebrities = true;
 
   /// 데이터베이스에서 연예인 데이터 로드
   Future<void> _loadCelebritiesFromDatabase() async {
@@ -2476,6 +2477,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       if (mounted) {
         setState(() {
           _databaseCelebrities = celebrities;
+          _isLoadingCelebrities = false;
         });
         debugPrint('✅ [DB_LOAD] Successfully loaded ${celebrities.length} celebrities from database');
 
