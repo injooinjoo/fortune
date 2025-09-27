@@ -196,7 +196,9 @@
       "WebFetch(domain:beyond-app.atlassian.net)",
       "Bash(./scripts/create_ux_request.sh:*)",
       "Bash(./scripts/parse_ux_request.sh:*)",
-      "Bash(./scripts/git_jira_commit.sh:*)"
+      "Bash(./scripts/git_jira_commit.sh:*)",
+      "Bash(\"https://beyond-app.atlassian.net/rest/api/3/search?jql=project=KAN AND status NOT IN (Done,Closed)\" )",
+      "Read(//private/var/folders/**)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

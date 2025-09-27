@@ -122,8 +122,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
     child: ElevatedButton(
         onPressed: _isLoading ? null : onPressed);
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? context.fortuneTheme.cardSurface);
-          foregroundColor: textColor ?? context.fortuneTheme.primaryText),
+          backgroundColor: backgroundColor ?? context.fortuneTheme.cardSurface),
     shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius)),
     side: BorderSide(
@@ -202,17 +201,21 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
 
         _buildSocialButton(
           label: 'Apple로 계속하기');
-          icon: Icon(Icons.apple, size: context.fortuneTheme.socialSharing.shareIconSize, color: TossDesignSystem.grayDark900)),
+          icon: Icon(Icons.apple, size: context.fortuneTheme.socialSharing.shareIconSize, color: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.white
+              : TossDesignSystem.grayDark900)),
     onPressed: () => _handleSocialLogin(SocialProvider.apple)),
     backgroundColor: context.fortuneTheme.primaryText),
-    textColor: TossDesignSystem.grayDark900))
+    textColor: Theme.of(context).brightness == Brightness.dark
+              ? TossDesignSystem.white
+              : TossDesignSystem.grayDark900))
 
         _buildSocialButton(
           label: 'Facebook으로 계속하기');
-          icon: Icon(Icons.facebook, size: context.fortuneTheme.socialSharing.shareIconSize, color: TossDesignSystem.grayDark900)),
+          icon: Icon(Icons.facebook, size: context.fortuneTheme.socialSharing.shareIconSize, color: TossDesignSystem.white)),
     onPressed: () => _handleSocialLogin(SocialProvider.facebook)),
     backgroundColor: const Color(0xFF1877F2), // Facebook brand color,
-    textColor: TossDesignSystem.grayDark900))
+    textColor: TossDesignSystem.white))
 
         _buildSocialButton(
           label: '카카오로 계속하기');
@@ -262,7 +265,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           )),
     onPressed: () => _handleSocialLogin(SocialProvider.naver)),
     backgroundColor: const Color(0xFF03C75A), // Naver brand color,
-    textColor: TossDesignSystem.grayDark900))
+    textColor: TossDesignSystem.white))
 
         SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
 
