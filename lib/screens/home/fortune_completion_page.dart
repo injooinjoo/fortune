@@ -2058,32 +2058,45 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
   /// Calculate user statistics using actual user data
   Map<String, dynamic> _calculateUserStats(fortune_entity.Fortune? fortune, AsyncValue<List<dynamic>> historyAsync) {
     final currentScore = fortune?.overallScore ?? 75;
-    
+
     return historyAsync.when(
       data: (history) {
         if (history.isEmpty) {
+          final totalScore = currentScore;
           return {
             'streak': 1,
             'average': currentScore,
             'highest': currentScore,
+            'totalScore': totalScore,
+            'ranking': _calculateRanking(totalScore),
           };
         }
-        
+
+        final average = _calculateAverageFromHistory(history, currentScore);
+        final highest = _calculateHighestFromHistory(history, currentScore);
+        final totalScore = _calculateTotalScore(history, currentScore);
+
         return {
           'streak': _calculateStreakFromHistory(history),
-          'average': _calculateAverageFromHistory(history, currentScore),
-          'highest': _calculateHighestFromHistory(history, currentScore),
+          'average': average,
+          'highest': highest,
+          'totalScore': totalScore,
+          'ranking': _calculateRanking(totalScore),
         };
       },
       loading: () => {
         'streak': 1,
         'average': currentScore,
         'highest': currentScore,
+        'totalScore': currentScore,
+        'ranking': _calculateRanking(currentScore),
       },
       error: (_, __) => {
         'streak': 1,
         'average': currentScore,
         'highest': currentScore,
+        'totalScore': currentScore,
+        'ranking': _calculateRanking(currentScore),
       },
     );
   }
@@ -2168,6 +2181,53 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     }
     
     return highest;
+  }
+
+  /// Calculate total score from history
+  int _calculateTotalScore(List<dynamic> history, int currentScore) {
+    final scores = <int>[];
+    scores.add(currentScore); // Include today's score
+
+    for (final item in history) {
+      final summary = item.summary as Map<String, dynamic>?;
+      if (summary != null && summary['overall_score'] != null) {
+        final score = summary['overall_score'];
+        if (score is int) {
+          scores.add(score);
+        } else if (score is double) {
+          scores.add(score.round());
+        } else if (score is String) {
+          final parsed = int.tryParse(score);
+          if (parsed != null) scores.add(parsed);
+        }
+      }
+    }
+
+    // Calculate total score based on cumulative performance
+    if (scores.isEmpty) return currentScore;
+
+    final sum = scores.reduce((a, b) => a + b);
+    final average = sum / scores.length;
+    final streak = _calculateStreakFromHistory(history);
+
+    // Bonus for consistency (streak multiplier)
+    final streakBonus = (streak * 0.1).clamp(0.0, 0.3);
+    final totalScore = (average * (1 + streakBonus)).round();
+
+    return math.min(100, math.max(0, totalScore));
+  }
+
+  /// Calculate ranking based on total score
+  int _calculateRanking(int totalScore) {
+    // Simulate ranking based on score distribution
+    if (totalScore >= 95) return 1;
+    if (totalScore >= 90) return math.Random().nextInt(10) + 2;     // 2-11위
+    if (totalScore >= 85) return math.Random().nextInt(20) + 12;    // 12-31위
+    if (totalScore >= 80) return math.Random().nextInt(50) + 32;    // 32-81위
+    if (totalScore >= 75) return math.Random().nextInt(100) + 82;   // 82-181위
+    if (totalScore >= 70) return math.Random().nextInt(200) + 182;  // 182-381위
+    if (totalScore >= 65) return math.Random().nextInt(500) + 382;  // 382-881위
+    return math.Random().nextInt(1000) + 882; // 882-1881위
   }
 
   /// Generate AI insight based on fortune data
