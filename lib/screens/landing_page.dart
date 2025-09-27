@@ -1373,11 +1373,11 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     Widget icon;
     String text;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    // All buttons have white background in both light and dark modes
-    final backgroundColor = TossDesignSystem.white;
-    final foregroundColor = TossDesignSystem.black;
-    final borderColor = isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray300;
+
+    // 다크모드에서도 읽기 쉽도록 배경과 텍스트 색상 개선
+    final backgroundColor = isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white;
+    final foregroundColor = isDark ? TossDesignSystem.white : TossDesignSystem.black;
+    final borderColor = isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300;
     
     switch (type) {
       case 'apple':
@@ -1385,7 +1385,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           'assets/images/social/apple.svg',
           width: 24,
           height: 24,
-          colorFilter: ColorFilter.mode(TossDesignSystem.black, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
         );
         text = 'Apple로 계속하기';
         break;
@@ -1426,7 +1426,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           'assets/images/social/tiktok.svg',
           width: 24,
           height: 24,
-          colorFilter: ColorFilter.mode(TossDesignSystem.black, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
         );
         text = 'TikTok으로 계속하기';
         break;

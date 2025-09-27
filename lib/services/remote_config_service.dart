@@ -57,7 +57,7 @@ class RemoteConfigService {
       
       // 값 가져오기 및 활성화
       final updated = await _remoteConfig.fetchAndActivate();
-      Logger.info('Supabase initialized successfully');
+      Logger.info('Remote Config initialized successfully (updated: $updated)');
       
       // 변경사항 리스너 설정
       _remoteConfig.onConfigUpdated.listen((event) async {
@@ -66,9 +66,11 @@ class RemoteConfigService {
       });
       
       _isInitialized = true;
-    } catch (e) {
-      Logger.error('Failed to initialize Remote Config', e);
+    } catch (e, stackTrace) {
+      Logger.error('Failed to initialize Remote Config: $e', stackTrace);
       _isInitialized = false;
+      // 초기화 실패시 기본값으로 동작할 수 있도록 설정
+      rethrow;
     }
   }
   
