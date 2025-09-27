@@ -70,13 +70,12 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
 
   @override
   void dispose() {
-    _animationController.dispose();
-    
     // 네비게이션 바 즉시 복원 - dispose 전에 실행
     if (mounted) {
       ref.read(navigationVisibilityProvider.notifier).show();
     }
-    
+
+    _animationController.dispose();
     super.dispose();
   }
 

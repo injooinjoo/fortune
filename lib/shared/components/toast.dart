@@ -19,7 +19,11 @@ class Toast {
     _currentToast?.remove();
     _currentToast = null;
 
-    final overlay = Overlay.of(context);
+    final overlay = Overlay.maybeOf(context);
+    if (overlay == null) {
+      // Overlay가 없는 경우 조기 리턴
+      return;
+    }
     final theme = Theme.of(context);
 
     final toast = OverlayEntry(

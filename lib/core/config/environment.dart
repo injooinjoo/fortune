@@ -27,11 +27,11 @@ class Environment {
   static String get apiBaseUrl {
     switch (current) {
       case production:
-        return dotenv.env['PROD_API_BASE_URL'] ?? '';
+        return dotenv.env['PROD_API_BASE_URL'] ?? '${supabaseUrl}/functions/v1';
       case staging:
-        return dotenv.env['STAGING_API_BASE_URL'] ?? '';
+        return dotenv.env['STAGING_API_BASE_URL'] ?? '${supabaseUrl}/functions/v1';
       default:
-        return dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000';
+        return dotenv.env['API_BASE_URL'] ?? '${supabaseUrl}/functions/v1';
     }
   }
   
