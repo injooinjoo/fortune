@@ -72,6 +72,7 @@ import 'routes/fortune_routes.dart';
 import 'routes/interactive_routes.dart';
 
 import '../core/utils/profile_validation.dart';
+import '../core/utils/page_transitions.dart';
 import '../services/storage_service.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -108,19 +109,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/home',
             name: 'home',
-            builder: (context, state) => const HomeScreen(),
+            pageBuilder: (context, state) => PageTransitions.tabTransition(
+              context,
+              state,
+              const HomeScreen(),
+            ),
           ),
           
           // Profile routes
           GoRoute(
             path: '/profile',
             name: 'profile',
-            builder: (context, state) => const ProfileScreen(),
+            pageBuilder: (context, state) => PageTransitions.tabTransition(
+              context,
+              state,
+              const ProfileScreen(),
+            ),
             routes: [
               GoRoute(
                 path: 'edit',
                 name: 'profile-edit',
-                builder: (context, state) => const ProfileEditPage(),
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const ProfileEditPage(),
+                ),
               ),
             ],
           ),
@@ -129,21 +142,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/premium',
             name: 'premium',
-            builder: (context, state) => const PremiumScreen(),
+            pageBuilder: (context, state) => PageTransitions.tabTransition(
+              context,
+              state,
+              const PremiumScreen(),
+            ),
           ),
-          
+
           // Feature pages
           GoRoute(
             path: '/trend',
             name: 'trend',
-            builder: (context, state) => const TrendPage(),
+            pageBuilder: (context, state) => PageTransitions.tabTransition(
+              context,
+              state,
+              const TrendPage(),
+            ),
           ),
-          
+
           // Main fortune page
           GoRoute(
             path: '/fortune',
             name: 'fortune',
-            builder: (context, state) => const FortuneListPage(),
+            pageBuilder: (context, state) => PageTransitions.tabTransition(
+              context,
+              state,
+              const FortuneListPage(),
+            ),
           ),
           
           // Fortune routes (inside shell for navigation bar)
@@ -158,22 +183,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/settings',
         name: 'settings',
-        builder: (context, state) => const SettingsScreen(),
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const SettingsScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'social-accounts',
             name: 'social-accounts',
-            builder: (context, state) => const SocialAccountsScreen(),
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const SocialAccountsScreen(),
+            ),
           ),
           GoRoute(
             path: 'phone-management',
             name: 'phone-management',
-            builder: (context, state) => const PhoneManagementScreen(),
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const PhoneManagementScreen(),
+            ),
           ),
           GoRoute(
             path: 'notifications',
             name: 'notification-settings',
-            builder: (context, state) => const NotificationSettingsPage(),
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const NotificationSettingsPage(),
+            ),
           ),
         ],
       ),
@@ -182,25 +223,42 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/health-toss',
         name: 'fortune-health-toss',
-        builder: (context, state) => const HealthFortuneTossPage(),
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const HealthFortuneTossPage(),
+        ),
       ),
       GoRoute(
         path: '/exercise',
         name: 'fortune-exercise',
-        builder: (context, state) => const ExerciseFortunePage(),
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const ExerciseFortunePage(),
+        ),
       ),
       GoRoute(
         path: '/sports-game',
         name: 'fortune-sports-game',
-        builder: (context, state) => const ExerciseFortunePage()),
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const ExerciseFortunePage(),
+        ),
+      ),
       
       // Fortune routes that need to hide navigation bar (additional)
       GoRoute(
         path: '/compatibility',
         name: 'fortune-compatibility',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final params = state.uri.queryParameters;
-          return CompatibilityPage(initialParams: params.isNotEmpty ? params : null);
+          return PageTransitions.slideTransition(
+            context,
+            state,
+            CompatibilityPage(initialParams: params.isNotEmpty ? params : null),
+          );
         },
       ),
       GoRoute(
