@@ -125,20 +125,20 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: TossDesignSystem.iconButtonSizeSmall,
+                    height: TossDesignSystem.iconButtonSizeSmall,
                     decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
                           ? TossDesignSystem.grayDark200
                           : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(TossDesignSystem.iconButtonSizeSmall / 2),
                     ),
                     child: Icon(
                       Icons.close,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? TossDesignSystem.grayDark400
                           : TossDesignSystem.gray600,
-                      size: 20,
+                      size: TossDesignSystem.iconSizeSmall,
                     ),
                   ),
                 ),

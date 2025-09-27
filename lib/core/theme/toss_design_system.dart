@@ -323,10 +323,22 @@ class TossDesignSystem {
   // 7. COMPONENT STYLES (컴포넌트 스타일)
   // ==========================================
   
-  /// Button Heights
+  /// Button Heights (접근성 개선)
   static const double buttonHeightLarge = 56.0;
   static const double buttonHeightMedium = 48.0;
-  static const double buttonHeightSmall = 40.0;
+  static const double buttonHeightSmall = 48.0;  // 40 → 48 (최소 터치 영역 보장)
+
+  /// Touch Target Guidelines (터치 영역 가이드라인)
+  /// 접근성 및 사용성을 위한 최소 터치 영역 기준
+  static const double minTouchTarget = 48.0;        // 최소 터치 영역 (WCAG 2.1 AA)
+  static const double iconButtonSizeSmall = 48.0;   // 작은 아이콘 버튼
+  static const double iconButtonSizeMedium = 52.0;  // 중간 아이콘 버튼
+  static const double iconButtonSizeLarge = 56.0;   // 큰 아이콘 버튼
+
+  /// Icon Sizes (아이콘 크기)
+  static const double iconSizeSmall = 20.0;
+  static const double iconSizeMedium = 24.0;
+  static const double iconSizeLarge = 28.0;
   
   /// Input Field Heights
   static const double inputHeightDefault = 48.0;
@@ -496,9 +508,6 @@ class TossDesignSystem {
   // 10. ACCESSIBILITY (접근성)
   // ==========================================
   
-  /// Minimum touch target size
-  static const double minTouchTarget = 44.0;
-  static const double recommendedTouchTarget = 48.0;
   
   /// Text contrast ratios
   static const double contrastRatioAA = 4.5;
