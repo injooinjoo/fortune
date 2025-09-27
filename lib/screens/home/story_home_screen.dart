@@ -842,7 +842,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return [
         StorySegment(
           text: '운세를 불러오는 중...',
-          fontSize: 24,
+          fontSize: TossDesignSystem.heading3.fontSize!,
           fontWeight: FontWeight.w300,
         ),
       ];
@@ -854,7 +854,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // 1. 인사 페이지
     segments.add(StorySegment(
       text: userName.isNotEmpty ? userName + '님' : '오늘의 주인공',
-      fontSize: 36,
+      fontSize: TossDesignSystem.heading1.fontSize!,
       fontWeight: FontWeight.w200,
     ));
     
@@ -864,14 +864,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         : '맑은 하늘';
     segments.add(StorySegment(
       text: '${now.month}월 ${now.day}일\n${_getWeekdayKorean(now.weekday)}',
-      fontSize: 28,
+      fontSize: TossDesignSystem.heading2.fontSize!,
       fontWeight: FontWeight.w300,
     ));
     
     // 3. 오늘의 총평
     segments.add(StorySegment(
       text: _getEnergyDescription(score),
-      fontSize: 26,
+      fontSize: TossDesignSystem.heading3.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: score >= 80 ? '✨' : score >= 60 ? '☁️' : '🌙',
     ));
@@ -890,7 +890,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           segments.add(StorySegment(
             subtitle: subtitle,
             text: chunk,
-            fontSize: 24,
+            fontSize: TossDesignSystem.heading3.fontSize!,
             fontWeight: FontWeight.w300,
           ));
         }
@@ -899,17 +899,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 기본 운세 텍스트
       segments.add(StorySegment(
           text: _getFortuneText1(score),
-        fontSize: 24,
+        fontSize: TossDesignSystem.heading3.fontSize!,
         fontWeight: FontWeight.w300,
       ));
       segments.add(StorySegment(
           text: _getFortuneText2(score),
-        fontSize: 24,
+        fontSize: TossDesignSystem.heading3.fontSize!,
         fontWeight: FontWeight.w300,
       ));
       segments.add(StorySegment(
           text: _getFortuneText3(score),
-        fontSize: 24,
+        fontSize: TossDesignSystem.heading3.fontSize!,
         fontWeight: FontWeight.w300,
       ));
     }
@@ -919,7 +919,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     segments.add(StorySegment(
       subtitle: '⚠️ 주의',
       text: cautionText,
-      fontSize: 22,
+      fontSize: TossDesignSystem.heading4.fontSize!,
       fontWeight: FontWeight.w300,
     ));
     
@@ -942,7 +942,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     segments.add(StorySegment(
       subtitle: '🍀 행운',
       text: luckyText,
-      fontSize: 24,
+      fontSize: TossDesignSystem.heading3.fontSize!,
       fontWeight: FontWeight.w300,
     ));
     
@@ -951,7 +951,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     segments.add(StorySegment(
       subtitle: '💡 조언',
       text: adviceText,
-      fontSize: 24,
+      fontSize: TossDesignSystem.heading3.fontSize!,
       fontWeight: FontWeight.w300,
     ));
     
@@ -959,7 +959,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     segments.add(StorySegment(
       subtitle: '마무리',
       text: '좋은 하루 되세요',
-      fontSize: 28,
+      fontSize: TossDesignSystem.heading2.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: '✨',
     ));
