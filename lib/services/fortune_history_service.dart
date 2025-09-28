@@ -65,8 +65,7 @@ class FortuneHistoryService {
       return fortuneId;
 
     } catch (error, stackTrace) {
-      Logger.error('[FortuneHistoryService] Failed to save fortune to history',
-          error, stackTrace);
+      Logger.warning('[FortuneHistoryService] 운세 히스토리 저장 실패 (테이블 없음, 폴백 모드): $error');
       return null;
     }
   }
@@ -79,7 +78,7 @@ class FortuneHistoryService {
       
       Logger.debug('[FortuneHistoryService] View count incremented: $fortuneId');
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to increment view count: $error');
+      Logger.warning('[FortuneHistoryService] 조회수 증가 실패 (RPC 함수 없음, 무시): $error');
     }
   }
 
@@ -93,7 +92,7 @@ class FortuneHistoryService {
       
       Logger.debug('[FortuneHistoryService] Share status updated: $fortuneId -> $isShared');
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to update share status: $error');
+      Logger.warning('[FortuneHistoryService] 공유 상태 업데이트 실패 (테이블 없음, 무시): $error');
     }
   }
 
@@ -107,7 +106,7 @@ class FortuneHistoryService {
       
       Logger.debug('[FortuneHistoryService] Actual result recorded: $fortuneId');
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to record actual result: $error');
+      Logger.warning('[FortuneHistoryService] 실제 결과 기록 실패 (테이블 없음, 무시): $error');
     }
   }
 
@@ -158,7 +157,7 @@ class FortuneHistoryService {
         .toList();
 
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to get recent history: $error');
+      Logger.warning('[FortuneHistoryService] 최근 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
       return [];
     }
   }
@@ -205,7 +204,7 @@ class FortuneHistoryService {
         .toList();
 
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to get daily fortune history: $error');
+      Logger.warning('[FortuneHistoryService] 일일 운세 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
       return [];
     }
   }
@@ -229,7 +228,7 @@ class FortuneHistoryService {
         .toList();
 
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to get history by type: $error');
+      Logger.warning('[FortuneHistoryService] 타입별 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
       return [];
     }
   }
@@ -300,8 +299,7 @@ class FortuneHistoryService {
       return historyId;
 
     } catch (error, stackTrace) {
-      Logger.error('[FortuneHistoryService] Failed to save daily fortune',
-          error, stackTrace);
+      Logger.warning('[FortuneHistoryService] 일일 운세 저장 실패 (테이블 없음, 폴백 모드): $error');
       return null;
     }
   }
@@ -322,7 +320,7 @@ class FortuneHistoryService {
       return true;
 
     } catch (error) {
-      Logger.error('[FortuneHistoryService] Failed to delete fortune: $error');
+      Logger.warning('[FortuneHistoryService] 운세 삭제 실패 (테이블 없음, 무시): $error');
       return false;
     }
   }
@@ -372,7 +370,7 @@ class FortuneHistoryService {
       return scores;
 
     } catch (error, stackTrace) {
-      Logger.error('[FortuneHistoryService] Failed to get 7 days scores from history', error, stackTrace);
+      Logger.warning('[FortuneHistoryService] 7일 점수 조회 실패 (RPC 함수 없음, 폴백 데이터 사용): $error');
       _cachedDailyScores = List.filled(7, 0);
       _lastCacheTime = now;
       return _cachedDailyScores!;
