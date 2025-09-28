@@ -67,7 +67,7 @@ class RemoteConfigService {
       
       _isInitialized = true;
     } catch (e, stackTrace) {
-      Logger.error('Failed to initialize Remote Config: $e', stackTrace);
+      Logger.warning('[RemoteConfigService] Remote Config 초기화 실패 (기본값 사용): $e');
       _isInitialized = false;
       // 초기화 실패시 기본값으로 동작할 수 있도록 설정
       rethrow;
@@ -153,7 +153,7 @@ class RemoteConfigService {
       final featuresJson = _remoteConfig.getString(subscriptionFeaturesKey);
       return List<String>.from(json.decode(featuresJson));
     } catch (e) {
-      Logger.error('Failed to parse subscription features', e);
+      Logger.warning('[RemoteConfigService] 구독 기능 목록 파싱 실패 (빈 목록 반환): $e');
       return [];
     }
   }
@@ -184,7 +184,7 @@ class RemoteConfigService {
       final packagesJson = _remoteConfig.getString(tokenPackagesKey);
       return List<Map<String, dynamic>>.from(json.decode(packagesJson));
     } catch (e) {
-      Logger.error('Failed to parse token packages', e);
+      Logger.warning('[RemoteConfigService] 토큰 패키지 목록 파싱 실패 (빈 목록 반환): $e');
       return [];
     }
   }
@@ -273,7 +273,7 @@ class RemoteConfigService {
       final updated = await _remoteConfig.fetchAndActivate();
       return updated;
     } catch (e) {
-      Logger.error('Failed to refresh Remote Config', e);
+      Logger.warning('[RemoteConfigService] Remote Config 새로고침 실패 (이전 값 유지): $e');
       return false;
     }
   }
