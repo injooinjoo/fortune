@@ -89,7 +89,7 @@ class RegionService {
       // 모든 검색 실패 시 로컬 폴백 검색
       return _searchLocalFallback(query);
     } catch (e) {
-      Logger.error('[RegionService] 지역 검색 실패: $e');
+      Logger.warning('[RegionService] 지역 검색 실패 (폴백 데이터 사용): $e');
       return _searchLocalFallback(query);
     }
   }
@@ -176,11 +176,11 @@ class RegionService {
         Logger.info('[RegionService] Kakao API 검색 완료: ${regions.length}개');
         return regions;
       } else {
-        Logger.error('[RegionService] Kakao API 응답 오류: ${response.statusCode}');
+        Logger.warning('[RegionService] Kakao API 응답 오류 (키워드 검색 시도): ${response.statusCode}');
         return await _searchKakaoKeyword(query);
       }
     } catch (e) {
-      Logger.error('[RegionService] Kakao API 검색 실패: $e');
+      Logger.warning('[RegionService] Kakao API 검색 실패 (키워드 검색 시도): $e');
       // 네트워크 오류 시 키워드 검색 시도
       return await _searchKakaoKeyword(query);
     }
@@ -228,7 +228,7 @@ class RegionService {
         return [];
       }
     } catch (e) {
-      Logger.error('[RegionService] Kakao 키워드 검색 실패: $e');
+      Logger.warning('[RegionService] Kakao 키워드 검색 실패 (빈 결과 반환): $e');
       return [];
     }
   }
