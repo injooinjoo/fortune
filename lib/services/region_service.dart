@@ -44,7 +44,7 @@ class RegionService {
   Future<List<Region>> getPopularRegions() async {
     try {
       Logger.info('[RegionService] 인기 지역 목록 조회 시작');
-      
+
       final response = await _supabase
           .from('popular_regions')
           .select()
@@ -59,8 +59,8 @@ class RegionService {
       Logger.info('[RegionService] 인기 지역 ${regions.length}개 조회 완료');
       return regions;
     } catch (e) {
-      Logger.error('[RegionService] 인기 지역 조회 실패: $e');
-      // 폴백 데이터 반환
+      Logger.warning('[RegionService] 인기 지역 조회 실패, 폴백 데이터 사용: $e');
+      // 폴백 데이터 반환 (에러를 warning으로 변경)
       return _getFallbackRegions();
     }
   }
@@ -109,7 +109,7 @@ class RegionService {
           .map((json) => Region.fromJson(json))
           .toList();
     } catch (e) {
-      Logger.error('[RegionService] 인기 지역 검색 실패: $e');
+      Logger.warning('[RegionService] 인기 지역 검색 실패, 빈 결과 반환: $e');
       return [];
     }
   }
@@ -243,7 +243,7 @@ class RegionService {
       
       Logger.info('[RegionService] 지역 사용 횟수 증가: $displayName');
     } catch (e) {
-      Logger.error('[RegionService] 사용 횟수 증가 실패: $e');
+      Logger.warning('[RegionService] 사용 횟수 증가 실패 (테이블 없음, 무시): $e');
     }
   }
 
