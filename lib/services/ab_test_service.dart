@@ -73,7 +73,7 @@ class ABTestService {
             _activeVariants[experimentId] = variant;
           }
         } catch (e) {
-          Logger.error('Failed to load saved variant for $key', e);
+          Logger.warning('[ABTestService] 저장된 variant 로드 실패 (기본값 사용): $key - $e');
         }
       }
     }
@@ -114,7 +114,7 @@ class ABTestService {
         parameters: parameters,
       );
     } catch (e) {
-      Logger.error('Failed to get variant from RemoteConfig for $experimentId', e);
+      Logger.warning('[ABTestService] RemoteConfig에서 variant 가져오기 실패 (기본값 사용): $experimentId - $e');
       return null;
     }
   }
@@ -442,13 +442,13 @@ class ABTestService {
 
     final experiment = _experiments[experimentId];
     if (experiment == null) {
-      Logger.error('Experiment not found: $experimentId');
+      Logger.warning('[ABTestService] 실험을 찾을 수 없음 (디버그 모드): $experimentId');
       return;
     }
 
     final variant = experiment.getVariant(variantId);
     if (variant == null) {
-      Logger.error('Variant not found: $variantId in experiment: $experimentId');
+      Logger.warning('[ABTestService] Variant를 찾을 수 없음 (디버그 모드): $variantId in $experimentId');
       return;
     }
 
