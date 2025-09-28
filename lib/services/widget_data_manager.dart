@@ -20,7 +20,7 @@ class WidgetDataManager {
       await _checkAndUpdateWidgets();
       Logger.info('Widget data manager initialized');
     } catch (e) {
-      Logger.error('Failed to initialize widget data manager', e);
+      Logger.warning('[WidgetDataManager] 위젯 데이터 매니저 초기화 실패 (선택적 기능, 위젯 데이터 비활성화): $e');
     }
   }
   
@@ -59,7 +59,7 @@ class WidgetDataManager {
       
       Logger.info('Daily fortune widget updated');
     } catch (e) {
-      Logger.error('Failed to update daily fortune widget', e);
+      Logger.warning('[WidgetDataManager] 일일 운세 위젯 업데이트 실패 (선택적 기능, 위젯 비활성화): $e');
     }
   }
   
@@ -87,7 +87,7 @@ class WidgetDataManager {
       
       Logger.info('Love fortune widget updated');
     } catch (e) {
-      Logger.error('Failed to update love fortune widget', e);
+      Logger.warning('[WidgetDataManager] 사랑 운세 위젯 업데이트 실패 (선택적 기능, 위젯 비활성화): $e');
     }
   }
   
@@ -104,7 +104,7 @@ class WidgetDataManager {
       
       Logger.info('All widget data cleared');
     } catch (e) {
-      Logger.error('Failed to clear widget data', e);
+      Logger.warning('[WidgetDataManager] 위젯 데이터 삭제 실패 (선택적 기능, 일부 데이터 유지됨): $e');
     }
   }
   
@@ -124,7 +124,7 @@ class WidgetDataManager {
         }
       }
     } catch (e) {
-      Logger.error('Failed to check widget updates', e);
+      Logger.warning('[WidgetDataManager] 위젯 업데이트 확인 실패 (선택적 기능, 자동 업데이트 비활성화): $e');
     }
   }
   
@@ -155,7 +155,7 @@ class WidgetDataManager {
       // Update last update time
       await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
     } catch (e) {
-      Logger.error('Failed to load and update widgets', e);
+      Logger.warning('[WidgetDataManager] 위젯 데이터 로드 및 업데이트 실패 (선택적 기능, 위젯 비활성화): $e');
     }
   }
   
@@ -175,7 +175,7 @@ class WidgetDataManager {
           'summary': null} : null}));
       await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
     } catch (e) {
-      Logger.error('Failed to save fortune data', e);
+      Logger.warning('[WidgetDataManager] 운세 데이터 저장 실패 (선택적 기능, 위젯 업데이트 안됨): $e');
     }
   }
   
@@ -210,7 +210,7 @@ class WidgetDataManager {
       // Navigate to appropriate screen based on widget type
       // This should be implemented based on your navigation structure
     } catch (e) {
-      Logger.error('Failed to handle widget click', e);
+      Logger.warning('[WidgetDataManager] 위젯 클릭 처리 실패 (선택적 기능, 앱 직접 실행 필요): $e');
     }
   }
 }
