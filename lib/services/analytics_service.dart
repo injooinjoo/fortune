@@ -44,7 +44,7 @@ class AnalyticsService {
       // Log app open event
       await logEvent('app_open');
     } catch (e) {
-      Logger.error('Failed to initialize Firebase Analytics', e);
+      Logger.warning('[AnalyticsService] Firebase Analytics 초기화 실패 (분석 없이 진행): $e');
     }
   }
 
@@ -92,7 +92,7 @@ class AnalyticsService {
       
       Logger.info('User properties set successfully');
     } catch (e) {
-      Logger.error('Failed to set user properties', e);
+      Logger.warning('[AnalyticsService] 사용자 속성 설정 실패 (분석 없이 진행): $e');
     }
   }
 
@@ -116,7 +116,7 @@ class AnalyticsService {
       );
       Logger.info('Event logged: $name', parameters);
     } catch (e) {
-      Logger.error('Failed to log event: $name', e);
+      Logger.warning('[AnalyticsService] 이벤트 로깅 실패 (분석 없이 진행): $name - $e');
     }
   }
 
@@ -194,7 +194,7 @@ class AnalyticsService {
       
       Logger.info('Supabase initialized successfully');
     } catch (e) {
-      Logger.error('Failed to log screen view: $screenName', e);
+      Logger.warning('[AnalyticsService] 화면 뷰 로깅 실패 (분석 없이 진행): $screenName - $e');
     }
   }
 
@@ -347,7 +347,7 @@ class AnalyticsService {
       await _analytics!.resetAnalyticsData();
       Logger.info('Analytics reset successfully');
     } catch (e) {
-      Logger.error('Failed to reset analytics', e);
+      Logger.warning('[AnalyticsService] Analytics 리셋 실패 (무시): $e');
     }
   }
 
@@ -500,7 +500,7 @@ class AnalyticsService {
       
       Logger.info('Set A/B test user property: $experimentId = $variantId');
     } catch (e) {
-      Logger.error('Failed to set A/B test user property', e);
+      Logger.warning('[AnalyticsService] A/B 테스트 사용자 속성 설정 실패 (분석 없이 진행): $e');
     }
   }
 
