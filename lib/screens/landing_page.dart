@@ -1439,9 +1439,32 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         text = '';
     }
     
-    // 디버깅: 버튼 상태 로그
+    // 🔥 상세 디버깅 로그 - 정확한 원인 파악
+    print('');
+    print('🔥🔥🔥 [$type] 소셜 버튼 빌딩 시작 🔥🔥🔥');
+    print('🎨 Theme brightness: ${Theme.of(context).brightness}');
+    print('🌓 isDark: $isDark');
+    print('📱 backgroundColor: $backgroundColor (${backgroundColor.value.toRadixString(16)})');
+    print('✏️ foregroundColor: $foregroundColor (${foregroundColor.value.toRadixString(16)})');
+    print('🔤 text: "$text"');
+    print('🎯 onPressed: ${onPressed != null ? 'enabled' : 'disabled'}');
+    print('📐 borderColor: $borderColor');
+
+    // TossDesignSystem 색상 값 확인
+    if (!isDark) {
+      print('💡 라이트 모드 - TossDesignSystem.white: ${TossDesignSystem.white.value.toRadixString(16)}');
+      print('💡 라이트 모드 - TossDesignSystem.gray900: ${TossDesignSystem.gray900.value.toRadixString(16)}');
+    } else {
+      print('🌙 다크 모드 - TossDesignSystem.grayDark100: ${TossDesignSystem.grayDark100.value.toRadixString(16)}');
+      print('🌙 다크 모드 - TossDesignSystem.grayDark900: ${TossDesignSystem.grayDark900.value.toRadixString(16)}');
+    }
+
+    // 🚨 강제로 bottomsheet 테스트 (첫 번째 빌드에서만)
     if (type == 'apple') {
-      print('🔴 Building Apple button - onPressed: ${onPressed != null ? 'enabled' : 'disabled'}');
+      Future.delayed(Duration(seconds: 3), () {
+        print('🚨🚨🚨 강제로 bottomsheet 테스트 시작! 🚨🚨🚨');
+        _showSocialLoginBottomSheet();
+      });
     }
     
     return SizedBox(
@@ -1451,7 +1474,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
+          // foregroundColor: foregroundColor, // 🔥 임시 제거 - 텍스트 색상 충돌 확인
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
@@ -1465,12 +1488,24 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           children: [
             icon,
             const SizedBox(width: 12),
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: foregroundColor,
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.yellow.withOpacity(0.3), // 🔥 배경색으로 텍스트 영역 확인
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(0.5, 0.5),
+                      blurRadius: 1.0,
+                      color: isDark ? Colors.black : Colors.white,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
