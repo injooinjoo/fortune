@@ -99,13 +99,17 @@ class ApiClient {
           // Log fortune-specific errors
           if (error.requestOptions.uri.toString().contains('/fortune/')) {
             final fortuneType = error.requestOptions.uri.pathSegments.lastOrNull ?? 'unknown';
+            final errorMessage = error.response?.data?.toString() ?? error.message ?? 'Unknown error';
             Logger.error('❌ [ApiClient] Fortune API request failed', {
               'requestId': error.requestOptions.extra['requestId'],
               'fortuneType': fortuneType,
               'statusCode': error.response?.statusCode ?? 0,
               'errorType': error.type.toString(),
               'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
-              'errorMessage': null});
+              'errorMessage': errorMessage,
+              'requestUrl': error.requestOptions.uri.toString(),
+              'requestMethod': error.requestOptions.method,
+              'requestData': error.requestOptions.data?.toString()});
           }
           
           handler.next(error);
