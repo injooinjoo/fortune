@@ -350,9 +350,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         userId: userId,
         fortuneType: 'mbti',
         data: {
-          'mbtiType': mbtiType});
+          'mbtiType': mbtiType,
+          if (categories != null && categories.isNotEmpty) 'categories': categories,
+        });
     }
-    
+
     // Fall back to parent class method
     return super.getMbtiFortune(userId: userId, mbtiType: mbtiType, categories: categories);
   }
