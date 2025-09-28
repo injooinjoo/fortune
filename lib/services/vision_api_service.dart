@@ -158,11 +158,11 @@ class VisionApiService {
         // 결과 파싱
         return _parseAnalysisResult(responses);
       } else {
-        Logger.error('Vision API error: ${response.statusCode}', response.body);
+        Logger.warning('[VisionAPIService] Vision API 요청 실패 (이미지 분석 불가): ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      Logger.error('Failed to analyze image', e);
+      Logger.warning('[VisionAPIService] 이미지 분석 실패 (기능 비활성화): $e');
       return null;
     }
   }
