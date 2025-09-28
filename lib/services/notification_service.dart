@@ -47,7 +47,7 @@ class NotificationService {
       _isInitialized = true;
       Logger.info('Notification service initialized');
     } catch (e) {
-      Logger.error('Failed to initialize notification service', e);
+      Logger.warning('[NotificationService] 노티피케이션 서비스 초기화 실패 (선택적 기능, 노티피케이션 비활성화): $e');
     }
   }
   
@@ -68,7 +68,7 @@ class NotificationService {
       
       return nativePermission && (flutterPermission ?? true);
     } catch (e) {
-      Logger.error('Failed to request notification permissions', e);
+      Logger.warning('[NotificationService] 노티피케이션 권한 요청 실패 (선택적 기능, 수동 설정 필요): $e');
       return false;
     }
   }
@@ -112,7 +112,7 @@ class NotificationService {
       
       Logger.info('Notification scheduled successfully');
     } catch (e) {
-      Logger.error('Failed to show notification', e);
+      Logger.warning('[NotificationService] 노티피케이션 표시 실패 (선택적 기능, 앱 내 메시지 사용): $e');
     }
   }
   
@@ -181,7 +181,7 @@ class NotificationService {
       
       Logger.info('Notification scheduled successfully');
     } catch (e) {
-      Logger.error('Failed to schedule notification', e);
+      Logger.warning('[NotificationService] 노티피케이션 예약 실패 (선택적 기능, 수동 알림 설정 필요): $e');
     }
   }
   
@@ -192,7 +192,7 @@ class NotificationService {
       await NativePlatformService.cancelNotification(id);
       Logger.info('Notification scheduled successfully');
     } catch (e) {
-      Logger.error('Failed to cancel notification', e);
+      Logger.warning('[NotificationService] 노티피케이션 취소 실패 (선택적 기능, 예약된 알림 유지): $e');
     }
   }
   
@@ -202,7 +202,7 @@ class NotificationService {
       await _notifications.cancelAll();
       Logger.info('All notifications cancelled');
     } catch (e) {
-      Logger.error('Failed to cancel all notifications', e);
+      Logger.warning('[NotificationService] 전체 노티피케이션 취소 실패 (선택적 기능, 예약된 알림 유지): $e');
     }
   }
   
