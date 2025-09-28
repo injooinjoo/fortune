@@ -17,7 +17,7 @@ class WidgetService {
       }
       Logger.info('Widget service initialized');
     } catch (e) {
-      Logger.error('Failed to initialize widget service', e);
+      Logger.warning('[WidgetService] 위젯 서비스 초기화 실패 (선택적 기능, 위젯 비활성화): $e');
     }
   }
   
@@ -58,7 +58,7 @@ class WidgetService {
       
       Logger.info('Daily fortune widget updated');
     } catch (e) {
-      Logger.error('Failed to update daily fortune widget', e);
+      Logger.warning('[WidgetService] 일일 운세 위젯 업데이트 실패 (선택적 기능, 위젯 비활성화): $e');
     }
   }
   
@@ -96,7 +96,7 @@ class WidgetService {
       
       Logger.info('Love fortune widget updated');
     } catch (e) {
-      Logger.error('Failed to update love fortune widget', e);
+      Logger.warning('[WidgetService] 사랑 운세 위젯 업데이트 실패 (선택적 기능, 위젯 비활성화): $e');
     }
   }
   
@@ -113,7 +113,7 @@ class WidgetService {
         return uri.queryParameters;
       }
     } catch (e) {
-      Logger.error('Failed to get initial widget data', e);
+      Logger.warning('[WidgetService] 초기 위젯 데이터 가져오기 실패 (선택적 기능, null 반환): $e');
     }
     return null;
   }
