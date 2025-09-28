@@ -33,7 +33,7 @@ class SocialAuthService {
       
       // Verify the URL is correct
       if (supabaseUrl.contains('your-project')) {
-        Logger.error('Supabase URL is not properly configured');
+        Logger.warning('[SocialAuthService] Supabase URL 설정 오류 (선택적 기능, 설정 확인 필요): Supabase URL이 제대로 설정되지 않음');
         throw Exception('Supabase URL is not properly configured');
       }
       
@@ -67,8 +67,8 @@ class SocialAuthService {
       return null;
       
     } catch (error, stackTrace) {
-      Logger.error('=== GOOGLE OAUTH SUPABASE FAILED ===', error, stackTrace);
-      Logger.error('Error type: ${error.runtimeType}');
+      Logger.warning('[SocialAuthService] Google OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning('[SocialAuthService] Google OAuth 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
       rethrow;
     }
   }
@@ -163,7 +163,7 @@ class SocialAuthService {
       return null;
       
     } catch (error) {
-      Logger.error('Failed to exchange code for session', error);
+      Logger.warning('[SocialAuthService] 인증 코드 세션 교환 실패 (선택적 기능, 재시도 권장): $error');
       return null;
     }
   }
@@ -183,7 +183,7 @@ class SocialAuthService {
         return await _signInWithAppleOAuth();
       }
     } catch (error) {
-      Logger.error('Apple Sign-In failed', error);
+      Logger.warning('[SocialAuthService] Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -240,7 +240,7 @@ class SocialAuthService {
           email: credential.email,
           name: '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
           provider: 'apple').catchError((error) {
-          Logger.error('Background profile update failed', error);
+          Logger.warning('[SocialAuthService] 백그라운드 프로필 업데이트 실패 (선택적 기능, 나중에 재시도): $error');
         });
       }
       
@@ -252,24 +252,24 @@ class SocialAuthService {
         // Return null for user cancellation - don't throw error
         return null;
       } else if (e.code == AuthorizationErrorCode.failed) {
-        Logger.error('Apple Sign-In authorization failed', e);
+        Logger.warning('[SocialAuthService] Apple 로그인 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
         throw Exception('Apple 로그인 인증에 실패했습니다. 다시 시도해주세요.');
       } else if (e.code == AuthorizationErrorCode.invalidResponse) {
-        Logger.error('Invalid response from Apple Sign-In', e);
+        Logger.warning('[SocialAuthService] Apple 로그인 응답 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
         throw Exception('Apple 서버 응답 오류가 발생했습니다.');
       } else if (e.code == AuthorizationErrorCode.notHandled) {
-        Logger.error('Apple Sign-In not handled', e);
+        Logger.warning('[SocialAuthService] Apple 로그인 처리 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
         throw Exception('Apple 로그인을 처리할 수 없습니다.');
       } else if (e.code == AuthorizationErrorCode.unknown) {
         // Add detailed logging for unknown errors
-        Logger.error('Unknown Apple Sign-In error - code: ${e.code}', e);
-        Logger.error('Error message: ${e.message}');
-        Logger.error('Full error details: ${e.toString()}');
+        Logger.warning('[SocialAuthService] Apple 로그인 알 수 없는 오류 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.code}');
+        Logger.warning('[SocialAuthService] Apple 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.message}');
+        Logger.warning('[SocialAuthService] Apple 로그인 전체 오류 세부사항 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.toString()}');
         
         // Check for specific error code 1000
         if (e.message?.contains('1000') ?? false || e.toString().contains('1000')) {
-          Logger.error('Apple Sign-In Error 1000 - Configuration issue detected');
-          Logger.error('This usually means the app ID configuration is incorrect');
+          Logger.warning('[SocialAuthService] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
+          Logger.warning('[SocialAuthService] Apple 로그인 설정 문제 (선택적 기능, 앱 ID 설정 확인 필요): 앱 ID 구성이 올바르지 않을 가능성');
           throw Exception('Apple ID 설정을 확인해주세요');
         }
         
@@ -279,11 +279,11 @@ class SocialAuthService {
         }
         throw Exception('알 수 없는 오류가 발생했습니다. (${e.code})');
       } else {
-        Logger.error('Apple Sign-In error', e);
+        Logger.warning('[SocialAuthService] Apple 로그인 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
         throw Exception('Apple 로그인 중 오류가 발생했습니다.');
       }
     } catch (error) {
-      Logger.error('Native Apple Sign-In failed', error);
+      Logger.warning('[SocialAuthService] 네이티브 Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       // Check if it's a simulator-specific error
       if (error.toString().contains('not available') || 
           error.toString().contains('simulator')) {
@@ -312,7 +312,7 @@ class SocialAuthService {
       Logger.securityCheckpoint('Apple OAuth sign in initiated');
       return null; // OAuth flow will handle the callback
     } catch (error) {
-      Logger.error('Apple OAuth Sign-In failed', error);
+      Logger.warning('[SocialAuthService] Apple OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -371,7 +371,7 @@ class SocialAuthService {
           await _supabase.from('user_profiles').insert(profileData);
           Logger.info('Profile created successfully with social auth columns');
         } catch (insertError) {
-          Logger.error('Error creating profile with social auth', insertError);
+          Logger.warning('[SocialAuthService] 소셜 인증으로 프로필 생성 실패 (선택적 기능, 기본 프로필로 계속): $insertError');
           
           // Handle various schema issues
           if (insertError.toString().contains('linked_providers') || 
@@ -401,11 +401,11 @@ class SocialAuthService {
                     .update({'profile_image_url': photoUrl})
                     .eq('id', userId);
                 } catch (e) {
-                  Logger.warning('Fortune cached');
+                  Logger.warning('[SocialAuthService] 프로필 이미지 업데이트 실패 (선택적 기능, 기본 이미지 사용): 프로필 이미지 업데이트 실패');
                 }
               }
             } catch (fallbackError) {
-              Logger.error('Failed to create minimal profile', fallbackError);
+              Logger.warning('[SocialAuthService] 최소 프로필 생성 실패 (선택적 기능, 로그인은 계속): $fallbackError');
               // Don't throw - allow login to continue
             }
           } else {
@@ -462,7 +462,7 @@ class SocialAuthService {
         }
       }
     } catch (error) {
-      Logger.error('Failed to update user profile', error);
+      Logger.warning('[SocialAuthService] 사용자 프로필 업데이트 실패 (선택적 기능, 로그인은 계속): $error');
       // 프로필 업데이트 실패는 로그인을 막지 않음
     }
   }
@@ -490,7 +490,7 @@ class SocialAuthService {
       // 완료 후 앱으로 돌아올 때 Supabase가 자동으로 세션을 처리합니다.
       return null;
     } catch (error) {
-      Logger.error('Facebook Sign-In failed', error);
+      Logger.warning('[SocialAuthService] Facebook 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -514,9 +514,9 @@ class SocialAuthService {
         return result;
       }
     } catch (error) {
-      Logger.error('=== KAKAO SIGN-IN FAILED ===', error);
-      Logger.error('Error type: ${error.runtimeType}');
-      Logger.error('Error message: ${error.toString()}');
+      Logger.warning('[SocialAuthService] Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning('[SocialAuthService] Kakao 로그인 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
+      Logger.warning('[SocialAuthService] Kakao 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.toString()}');
       rethrow;
     }
   }
@@ -571,7 +571,7 @@ class SocialAuthService {
         );
         
         if (response.status != 200) {
-          Logger.error('Kakao OAuth Edge Function failed: ${response.status}');
+          Logger.warning('[SocialAuthService] Kakao OAuth Edge Function 실패 (선택적 기능, 대체 인증 방법 사용): ${response.status}');
           throw Exception('Kakao OAuth failed: ${response.data}');
         }
         
@@ -628,7 +628,7 @@ class SocialAuthService {
         );
         
       } catch (edgeFunctionError) {
-        Logger.error('Kakao Edge Function failed, falling back to manual user creation', edgeFunctionError);
+        Logger.warning('[SocialAuthService] Kakao Edge Function 실패, 수동 사용자 생성으로 대체 (선택적 기능, 대체 인증 방법 사용): $edgeFunctionError');
         
         // Fallback: 직접 사용자 생성 후 OAuth 세션 처리
         try {
@@ -716,12 +716,12 @@ class SocialAuthService {
             return signUpResponse;
           }
         } catch (fallbackError) {
-          Logger.error('Kakao fallback authentication failed', fallbackError);
+          Logger.warning('[SocialAuthService] Kakao 대체 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $fallbackError');
           throw Exception('Kakao authentication failed: $fallbackError');
         }
       }
     } catch (error) {
-      Logger.error('Native Kakao Sign-In failed', error);
+      Logger.warning('[SocialAuthService] 네이티브 Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -776,7 +776,7 @@ class SocialAuthService {
         return null;
       }
     } catch (e) {
-      Logger.error('Failed to create manual session', e);
+      Logger.warning('[SocialAuthService] 수동 세션 생성 실패 (선택적 기능, 재시도 권장): $e');
       // If password sign-in fails, try with a legacy password pattern
       try {
         // Try with the timestamp-based password that might have been used before
@@ -793,7 +793,7 @@ class SocialAuthService {
           return legacySignIn;
         }
       } catch (legacyError) {
-        Logger.error('Legacy password sign-in also failed', legacyError);
+        Logger.warning('[SocialAuthService] 레거시 비밀번호 로그인도 실패 (선택적 기능, 새 인증 필요): $legacyError');
       }
       return null;
     }
@@ -818,7 +818,7 @@ class SocialAuthService {
       Logger.securityCheckpoint('Kakao OAuth sign in initiated');
       return null; // OAuth flow will handle the callback
     } catch (error) {
-      Logger.error('Kakao OAuth Sign-In failed', error);
+      Logger.warning('[SocialAuthService] Kakao OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -864,16 +864,16 @@ class SocialAuthService {
       Logger.info('Edge Function response data: ${response.data}');
       
       if (response.status != 200) {
-        Logger.error('Naver OAuth Edge Function failed: ${response.status}');
-        Logger.error('Response data: ${response.data}');
+        Logger.warning('[SocialAuthService] Naver OAuth Edge Function 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.status}');
+        Logger.warning('[SocialAuthService] Naver OAuth 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.data}');
         throw Exception('Naver OAuth failed: Status ${response.status}, Data: ${response.data}');
       }
       
       final data = response.data as Map<String, dynamic>;
       
       if (data['success'] != true) {
-        Logger.error('Naver OAuth failed: ${data['error'] ?? 'Unknown error'}');
-        Logger.error('Full response data: $data');
+        Logger.warning('[SocialAuthService] Naver OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${data['error'] ?? 'Unknown error'}');
+        Logger.warning('[SocialAuthService] Naver OAuth 전체 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): $data');
         throw Exception(data['error'] ?? 'Naver OAuth failed');
       }
       
@@ -933,7 +933,7 @@ class SocialAuthService {
       final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
       
       if (sessionResponse.session == null) {
-        Logger.error('Failed to set session with tokens');
+        Logger.warning('[SocialAuthService] 토큰으로 세션 설정 실패 (선택적 기능, 재시도 권장): 토큰으로 세션 설정 실패');
         throw Exception('Failed to create session from Naver OAuth tokens');
       }
       
@@ -946,7 +946,7 @@ class SocialAuthService {
       );
       
     } catch (error) {
-      Logger.error('Naver Sign-In failed', error);
+      Logger.warning('[SocialAuthService] Naver 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -982,7 +982,7 @@ class SocialAuthService {
       
       Logger.securityCheckpoint('User signed out');
     } catch (error) {
-      Logger.error('Sign out failed', error);
+      Logger.warning('[SocialAuthService] 로그아웃 실패 (선택적 기능, 수동 로그아웃 가능): $error');
       rethrow;
     }
   }
@@ -1009,7 +1009,7 @@ class SocialAuthService {
     try {
       await kakao.UserApi.instance.unlink();
     } catch (e) {
-      Logger.error('Failed to disconnect Kakao', e);
+      Logger.warning('[SocialAuthService] Kakao 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
     }
   }
   
@@ -1018,7 +1018,7 @@ class SocialAuthService {
     try {
       await _naverChannel.invokeMethod('logoutNaver');
     } catch (e) {
-      Logger.error('Failed to disconnect Naver', e);
+      Logger.warning('[SocialAuthService] Naver 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
     }
   }
   
@@ -1050,7 +1050,7 @@ class SocialAuthService {
           return false;
       }
     } catch (e) {
-      Logger.error('account: $provider', e);
+      Logger.warning('[SocialAuthService] 계정 연결 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $provider - $e');
       return false;
     }
   }
@@ -1073,7 +1073,7 @@ class SocialAuthService {
       
       return [];
     } catch (e) {
-      Logger.error('Failed to get linked providers', e);
+      Logger.warning('[SocialAuthService] 연결된 계정 조회 실패 (선택적 기능, 비어 있는 목록 반환): $e');
       return [];
     }
   }
@@ -1107,7 +1107,7 @@ class SocialAuthService {
       
       Logger.securityCheckpoint('Fortune cached');
     } catch (e) {
-      Logger.error('Fortune cached');
+      Logger.warning('[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): 계정 연결 해제 실패');
       rethrow;
     }
   }
@@ -1139,7 +1139,7 @@ class SocialAuthService {
         'updated_at': null}).eq('id', userId);
       
     } catch (e) {
-      Logger.error('Fortune cached');
+      Logger.warning('[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): 계정 연결 해제 실패');
       // Non-critical error, don't rethrow
     }
   }
