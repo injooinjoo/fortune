@@ -32,7 +32,7 @@ class MbtiFortuneEnhancedService {
       Logger.warning('Using local MBTI energy calculation as fallback');
       return _calculateLocalEnergyData(mbtiType, DateTime.now());
     } catch (e) {
-      Logger.error('Error fetching MBTI energy data', e);
+      Logger.warning('[MbtiFortuneEnhancedService] MBTI 에너지 데이터 로드 실패 (로컬 계산 사용): $e');
       // Fallback to local calculation
       return _calculateLocalEnergyData(mbtiType, DateTime.now());
     }
