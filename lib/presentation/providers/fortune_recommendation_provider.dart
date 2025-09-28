@@ -48,8 +48,8 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
   /// Fetch fortune recommendations from the server
   Future<void> fetchRecommendations({bool forceRefresh = false}) async {
     // Check cache
-    if (!forceRefresh && 
-        _lastFetchTime != null && 
+    if (!forceRefresh &&
+        _lastFetchTime != null &&
         DateTime.now().difference(_lastFetchTime!) < _cacheDuration &&
         state.hasValue) {
       return;
@@ -66,6 +66,22 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
         return;
       }
 
+      // TODO: Fortune Recommendations API is not implemented yet
+      // Temporarily disable API call to prevent errors
+      Logger.info('Fortune Recommendations API disabled - using empty fallback');
+      state = const AsyncValue.data([]);
+      _lastFetchTime = DateTime.now();
+
+      // Log analytics event for monitoring
+      await AnalyticsService.instance.logEvent(
+        'fortune_recommendations_disabled',
+        parameters: {
+          'reason': 'api_not_implemented',
+          'timestamp': DateTime.now().toIso8601String(),
+        });
+
+      // TODO: Uncomment when API is implemented
+      /*
       // Make API call
       final response = await _dio.get(
         EdgeFunctionsEndpoints.fortuneRecommendations,
@@ -92,6 +108,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
       } else {
         throw Exception('Failed to fetch recommendations: ${response.statusCode}');
       }
+      */
     } catch (error, stackTrace) {
       Logger.error('Failed to fetch fortune recommendations - using empty fallback', error, stackTrace);
       // Provide empty data instead of error state to prevent UI blocking
