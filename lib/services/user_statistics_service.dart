@@ -136,7 +136,7 @@ class UserStatisticsService {
       // If not found, create initial statistics
       return await _createInitialStatistics(userId);
     } catch (e) {
-      Logger.error('Failed to get user statistics', e);
+      Logger.warning('[UserStatisticsService] 사용자 통계 조회 실패 (테이블 없음, 폴백 모드): $e');
       
       // Fallback to local storage
       final localStats = await _storageService.getUserStatistics();
@@ -164,10 +164,7 @@ class UserStatisticsService {
       Logger.info('✅ [UserStatisticsService] Initial statistics created successfully');
       return initialStats;
     } catch (e, stackTrace) {
-      Logger.error('❌ [UserStatisticsService] Failed to create initial statistics', {
-        'userId': userId,
-        'error': e.toString()
-      }, stackTrace);
+      Logger.warning('[UserStatisticsService] 초기 통계 생성 실패 (테이블 없음, 폴백 모드): $e');
       return initialStats;
     }
   }
@@ -221,11 +218,7 @@ class UserStatisticsService {
         'fortuneType': fortuneType
       });
     } catch (e, stackTrace) {
-      Logger.error('❌ [UserStatisticsService] Failed to increment fortune count', {
-        'userId': userId,
-        'fortuneType': fortuneType,
-        'error': e.toString()
-      }, stackTrace);
+      Logger.warning('[UserStatisticsService] 운세 횟수 증가 실패 (테이블 없음, 무시): $e');
     }
   }
 
@@ -275,7 +268,7 @@ class UserStatisticsService {
           'last_login': now.toIso8601String()});
       }
     } catch (e) {
-      Logger.error('Failed to update consecutive days', e);
+      Logger.warning('[UserStatisticsService] 연속 일수 업데이트 실패 (테이블 없음, 무시): $e');
     }
   }
 
@@ -290,12 +283,7 @@ class UserStatisticsService {
 
       // TODO: Implement achievements when user_achievements table is created
     } catch (e, stackTrace) {
-      Logger.error('Failed to update token usage', {
-        'userId': userId,
-        'tokensUsed': tokensUsed,
-        'tokensEarned': tokensEarned,
-        'error': e.toString()
-      }, stackTrace);
+      Logger.warning('[UserStatisticsService] 토큰 사용량 업데이트 실패 (테이블 없음, 무시): $e');
     }
   }
 
