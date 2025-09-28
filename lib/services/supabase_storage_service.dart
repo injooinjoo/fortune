@@ -24,7 +24,7 @@ class SupabaseStorageService {
         Logger.info('Created profile images bucket');
       }
     } catch (e) {
-      Logger.error('Error ensuring bucket exists', e);
+      Logger.warning('[SupabaseStorageService] 스토리지 버킷 생성 실패 (선택적 기능, 업로드 기능 비활성화): $e');
       // Bucket might already exist, continue
     }
   }
@@ -63,7 +63,7 @@ class SupabaseStorageService {
       Logger.info('Supabase initialized successfully');
       return publicUrl;
     } catch (e) {
-      Logger.error('Error uploading profile image', e);
+      Logger.warning('[SupabaseStorageService] 프로필 이미지 업로드 실패 (선택적 기능, 기존 이미지 유지): $e');
       return null;
     }
   }
@@ -95,7 +95,7 @@ class SupabaseStorageService {
         }
       }
     } catch (e) {
-      Logger.error('Error cleaning up old profile images', e);
+      Logger.warning('[SupabaseStorageService] 이전 프로필 이미지 정리 실패 (선택적 기능, 이전 파일 유지): $e');
       // Non-critical error, continue
     }
   }
@@ -115,7 +115,7 @@ class SupabaseStorageService {
       );
       return image;
     } catch (e) {
-      Logger.error('Error picking image from gallery', e);
+      Logger.warning('[SupabaseStorageService] 갤러리 이미지 선택 실패 (선택적 기능, 카메라 사용 권장): $e');
       return null;
     }
   }
@@ -132,7 +132,7 @@ class SupabaseStorageService {
       );
       return image;
     } catch (e) {
-      Logger.error('Error picking image from camera', e);
+      Logger.warning('[SupabaseStorageService] 카메라 이미지 촬영 실패 (선택적 기능, 갤러리 사용 권장): $e');
       return null;
     }
   }
@@ -147,7 +147,7 @@ class SupabaseStorageService {
     final fileExtension = file.path.split('.').last.toLowerCase();
     
     if (!validExtensions.contains(fileExtension)) {
-      Logger.error('Fortune cached');
+      Logger.warning('[SupabaseStorageService] 이미지 파일 형식 오류 (선택적 기능, 올바른 형식 선택 필요): 지원되지 않는 파일 형식');
       return false;
     }
     
