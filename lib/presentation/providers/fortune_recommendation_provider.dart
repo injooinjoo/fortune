@@ -110,7 +110,9 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
       }
       */
     } catch (error, stackTrace) {
-      Logger.error('Failed to fetch fortune recommendations - using empty fallback', error, stackTrace);
+      // This catch block should not be reached since API is disabled above
+      // But keeping it for future API implementation
+      Logger.warning('Fortune recommendations API disabled - using empty fallback');
       // Provide empty data instead of error state to prevent UI blocking
       state = const AsyncValue.data([]);
     }
