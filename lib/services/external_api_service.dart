@@ -91,7 +91,7 @@ class ExternalApiService {
       
       return schedule;
     } catch (e) {
-      Logger.error('Baseball API error', e);
+      Logger.warning('[ExternalApiService] 야구 일정 API 호출 실패 (기본 데이터 사용): $e');
       return [];
     }
   }
@@ -115,7 +115,7 @@ class ExternalApiService {
       
       return schedule;
     } catch (e) {
-      Logger.error('LCK API error', e);
+      Logger.warning('[ExternalApiService] LCK 일정 API 호출 실패 (기본 데이터 사용): $e');
       return [];
     }
   }
@@ -139,7 +139,7 @@ class ExternalApiService {
       
       return courses;
     } catch (e) {
-      Logger.error('Golf Course API error', e);
+      Logger.warning('[ExternalApiService] 골프장 정보 API 호출 실패 (기본 데이터 사용): $e');
       return [];
     }
   }
@@ -177,7 +177,7 @@ class ExternalApiService {
       
       return marketData;
     } catch (e) {
-      Logger.error('Crypto API error', e);
+      Logger.warning('[ExternalApiService] 암호화폐 시세 API 호출 실패 (기본 데이터 사용): $e');
       return {};
     }
   }
@@ -208,7 +208,7 @@ class ExternalApiService {
       
       return stats;
     } catch (e) {
-      Logger.error('Lotto API error', e);
+      Logger.warning('[ExternalApiService] 로또 통계 API 호출 실패 (기본 데이터 사용): $e');
       return {};
     }
   }
