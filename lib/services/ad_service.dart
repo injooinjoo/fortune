@@ -103,7 +103,7 @@ class AdService {
       // Don't preload ads automatically - this can cause delays on real devices
       // Ads will be loaded on-demand when needed
     } catch (e) {
-      Logger.error('Failed to initialize AdMob SDK: $e');
+      Logger.warning('[AdService] AdMob SDK 초기화 실패 (광고 없이 진행): $e');
       // Don't throw - let the app continue without ads
       _isInitialized = false;
     }
@@ -175,7 +175,7 @@ class AdService {
         onAdFailedToLoad: (ad, error) {
           _isBannerAdReady = false;
           ad.dispose();
-          Logger.error('Banner ad failed to load', error);
+          Logger.warning('[AdService] 배너 광고 로드 실패 (광고 없이 진행): $error');
           onAdFailedToLoad?.call(ad, error);
         },
         onAdOpened: (ad) => Logger.info('Banner ad opened'),
@@ -216,7 +216,7 @@ class AdService {
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
               _isInterstitialAdReady = false;
-              Logger.error('Interstitial ad failed to show', error);
+              Logger.warning('[AdService] 전면 광고 표시 실패 (무시): $error');
             },
             onAdShowedFullScreenContent: (ad) {
               Logger.info('Interstitial ad showed');
@@ -224,7 +224,7 @@ class AdService {
         },
         onAdFailedToLoad: (error) {
           _isInterstitialAdReady = false;
-          Logger.error('Interstitial ad failed to load', error);
+          Logger.warning('[AdService] 전면 광고 로드 실패 (광고 없이 진행): $error');
           onAdFailedToLoad?.call(error);
         },
       ),
@@ -260,7 +260,7 @@ class AdService {
         onAdFailedToShowFullScreenContent: (ad, error) {
           ad.dispose();
           _isInterstitialAdReady = false;
-          Logger.error('Interstitial ad failed to show', error);
+          Logger.warning('[AdService] 전면 광고 표시 실패 (콜백 실행): $error');
           // Execute failure callback
           onAdFailed?.call();
         },
@@ -307,7 +307,7 @@ class AdService {
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
               _isRewardedAdReady = false;
-              Logger.error('Rewarded ad failed to show', error);
+              Logger.warning('[AdService] 리워드 광고 표시 실패 (무시): $error');
             },
             onAdShowedFullScreenContent: (ad) {
               Logger.info('Rewarded ad showed');
@@ -315,7 +315,7 @@ class AdService {
         },
         onAdFailedToLoad: (error) {
           _isRewardedAdReady = false;
-          Logger.error('Rewarded ad failed to load', error);
+          Logger.warning('[AdService] 리워드 광고 로드 실패 (광고 없이 진행): $error');
           onAdFailedToLoad?.call(error);
         },
       ),
