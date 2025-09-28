@@ -59,7 +59,7 @@ class ScreenshotDetectionService {
       _isListening = true;
       Logger.info('Screenshot detection service initialized');
     } catch (e) {
-      Logger.error('Failed to initialize screenshot detection', e);
+      Logger.warning('[ScreenshotService] 스크린샷 감지 초기화 실패 (선택적 기능, 무시): $e');
     }
   }
   
@@ -150,7 +150,7 @@ class ScreenshotDetectionService {
         pixelRatio: 3.0);
       return image;
     } catch (e) {
-      Logger.error('Failed to capture fortune image', e);
+      Logger.warning('[ScreenshotService] 운세 이미지 캡처 실패 (텍스트로 공유): $e');
       return null;
     }
   }
@@ -282,7 +282,7 @@ class ScreenshotDetectionService {
         });
       }
     } catch (e) {
-      Logger.error('Failed to share fortune', e);
+      Logger.warning('[ScreenshotService] 운세 공유 실패 (사용자에게 알림): $e');
       if (context.mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -301,7 +301,7 @@ class ScreenshotDetectionService {
         text: '🌟 $title\n\n$content\n\n#운세 #FortuneAI #오늘의운세'
       );
     } catch (e) {
-      Logger.error('Failed to share to KakaoTalk', e);
+      Logger.warning('[ScreenshotService] 카카오톡 공유 실패 (대체 방법 사용): $e');
       throw e;
     }
   }
@@ -315,7 +315,7 @@ class ScreenshotDetectionService {
         text: '나만의 운세를 확인해보세요! 🔮'
       );
     } catch (e) {
-      Logger.error('Failed to share to Instagram', e);
+      Logger.warning('[ScreenshotService] 인스타그램 공유 실패 (대체 방법 사용): $e');
       throw e;
     }
   }
@@ -328,7 +328,7 @@ class ScreenshotDetectionService {
         text: '🌟 $title - Fortune AI에서 확인한 오늘의 운세'
       );
     } catch (e) {
-      Logger.error('Failed to share to Facebook', e);
+      Logger.warning('[ScreenshotService] 페이스북 공유 실패 (대체 방법 사용): $e');
       throw e;
     }
   }
@@ -341,7 +341,7 @@ class ScreenshotDetectionService {
         text: '🌟 $title\n\n#운세 #FortuneAI #오늘의운세 #AI운세'
       );
     } catch (e) {
-      Logger.error('Failed to share to Twitter', e);
+      Logger.warning('[ScreenshotService] 트위터 공유 실패 (대체 방법 사용): $e');
       throw e;
     }
   }
@@ -354,7 +354,7 @@ class ScreenshotDetectionService {
         text: '🌟 $title\n\nFortune AI에서 확인한 오늘의 운세입니다!'
       );
     } catch (e) {
-      Logger.error('Failed to share to WhatsApp', e);
+      Logger.warning('[ScreenshotService] WhatsApp 공유 실패 (대체 방법 사용): $e');
       throw e;
     }
   }
@@ -385,7 +385,7 @@ class ScreenshotDetectionService {
             backgroundColor: result['isSuccess'] == true ? TossDesignSystem.gray600 : TossDesignSystem.gray600));
       }
     } catch (e) {
-      Logger.error('Failed to save to gallery', e);
+      Logger.warning('[ScreenshotService] 갤러리 저장 실패 (문서 폴더로 저장): $e');
       throw e;
     }
   }
@@ -402,7 +402,7 @@ class ScreenshotDetectionService {
             backgroundColor: TossDesignSystem.gray600));
       }
     } catch (e) {
-      Logger.error('Failed to copy to clipboard', e);
+      Logger.warning('[ScreenshotService] 클립보드 복사 실패 (기능 제한): $e');
       throw e;
     }
   }
@@ -454,7 +454,7 @@ class ScreenshotDetectionService {
       await imageFile.writeAsBytes(image);
       return true;
     } catch (e) {
-      Logger.error('Failed to save fortune to gallery', e);
+      Logger.warning('[ScreenshotService] 운세 갤러리 저장 실패 (문서 폴더로 저장): $e');
       return false;
     }
   }
@@ -468,7 +468,7 @@ extension AndroidScreenshotDetection on Android {
       await NativePlatformService.androidChannel.invokeMethod('startScreenshotDetection');
       Logger.info('Android screenshot detection started');
     } on PlatformException catch (e) {
-      Logger.error('Failed to start Android screenshot detection', e);
+      Logger.warning('[ScreenshotService] Android 스크린샷 감지 시작 실패 (선택적 기능): $e');
     }
   }
   
@@ -478,7 +478,7 @@ extension AndroidScreenshotDetection on Android {
       await NativePlatformService.androidChannel.invokeMethod('stopScreenshotDetection');
       Logger.info('Android screenshot detection stopped');
     } on PlatformException catch (e) {
-      Logger.error('Failed to stop Android screenshot detection', e);
+      Logger.warning('[ScreenshotService] Android 스크린샷 감지 중지 실패 (무시): $e');
     }
   }
 }
@@ -491,7 +491,7 @@ extension IOSScreenshotDetection on iOS {
       await NativePlatformService.iosChannel.invokeMethod('startScreenshotDetection');
       Logger.info('iOS screenshot detection started');
     } on PlatformException catch (e) {
-      Logger.error('Failed to start iOS screenshot detection', e);
+      Logger.warning('[ScreenshotService] iOS 스크린샷 감지 시작 실패 (선택적 기능): $e');
     }
   }
   
@@ -501,7 +501,7 @@ extension IOSScreenshotDetection on iOS {
       await NativePlatformService.iosChannel.invokeMethod('stopScreenshotDetection');
       Logger.info('iOS screenshot detection stopped');
     } on PlatformException catch (e) {
-      Logger.error('Failed to stop iOS screenshot detection', e);
+      Logger.warning('[ScreenshotService] iOS 스크린샷 감지 중지 실패 (무시): $e');
     }
   }
 }
