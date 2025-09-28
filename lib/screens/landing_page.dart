@@ -1472,16 +1472,17 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       height: 52,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          // foregroundColor: foregroundColor, // 🔥 임시 제거 - 텍스트 색상 충돌 확인
-          elevation: 0,
-          shape: RoundedRectangleBorder(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(backgroundColor),
+          foregroundColor: MaterialStateProperty.all(Colors.transparent), // 🔥 완전히 투명하게
+          overlayColor: MaterialStateProperty.all(Colors.transparent),
+          elevation: MaterialStateProperty.all(0),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
             side: BorderSide(
               color: borderColor ?? TossDesignSystem.white.withValues(alpha: 0.0),
               width: 1),
-          ),
+          )),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1489,20 +1490,23 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             icon,
             const SizedBox(width: 12),
             Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.yellow.withOpacity(0.3), // 🔥 배경색으로 텍스트 영역 확인
+                color: Colors.red, // 🔥 강력한 빨간색 배경
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Colors.blue, width: 2), // 🔥 파란색 테두리
               ),
               child: Text(
                 text,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Colors.black,
+                  fontSize: 18, // 🔥 더 큰 폰트
+                  fontWeight: FontWeight.w900, // 🔥 가장 굵게
+                  color: Colors.white, // 🔥 흰색 텍스트
                   shadows: [
                     Shadow(
-                      offset: Offset(0.5, 0.5),
-                      blurRadius: 1.0,
-                      color: isDark ? Colors.black : Colors.white,
+                      offset: Offset(2, 2),
+                      blurRadius: 3.0,
+                      color: Colors.black,
                     ),
                   ],
                 ),
