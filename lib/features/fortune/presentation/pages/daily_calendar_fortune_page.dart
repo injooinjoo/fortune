@@ -41,19 +41,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     final fortuneService = ref.read(fortuneServiceProvider);
     final userId = ref.read(userProvider).value?.id ?? 'anonymous';
     
-    // Use getTimeFortune with daily period for date-based fortune
-    return await fortuneService.getTimeFortune(
+    // Use getDailyFortune for date-based fortune
+    return await fortuneService.getDailyFortune(
       userId: userId,
-      fortuneType: 'daily_calendar',
-      params: {
-        'period': 'daily',
-        'date': _selectedDate.toIso8601String(),
-        'isHoliday': _isHoliday,
-        'holidayName': _holidayName,
-        'specialName': _specialName,
-        'selectedDateFormatted': DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(_selectedDate),
-        ...params,
-      }
+      date: _selectedDate,
     );
   }
 
