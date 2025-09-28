@@ -37,7 +37,7 @@ class LiveActivityService {
       
       return activityId;
     } catch (e) {
-      Logger.error('Failed to start live activity', e);
+      Logger.warning('[LiveActivityService] Live Activity 시작 실패 (선택적 기능, 무시): $e');
       return null;
     }
   }
@@ -58,9 +58,9 @@ class LiveActivityService {
       await NativePlatformService.ios.updateDynamicIsland(
         activityId: activityId,
         content: updatedData);
-      Logger.info('Supabase initialized successfully');
+      Logger.info('Live Activity updated successfully');
     } catch (e) {
-      Logger.error('Failed to update live activity', e);
+      Logger.warning('[LiveActivityService] Live Activity 업데이트 실패 (선택적 기능, 무시): $e');
     }
   }
   
@@ -77,9 +77,9 @@ class LiveActivityService {
     try {
       await NativePlatformService.ios.endLiveActivity(activityId);
       _activeActivities.remove(fortuneType);
-      Logger.info('Supabase initialized successfully');
+      Logger.info('Live Activity ended successfully');
     } catch (e) {
-      Logger.error('Failed to end live activity', e);
+      Logger.warning('[LiveActivityService] Live Activity 종료 실패 (선택적 기능, 무시): $e');
     }
   }
   
