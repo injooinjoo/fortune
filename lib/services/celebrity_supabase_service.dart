@@ -30,7 +30,7 @@ class CelebritySupabaseService {
       
       return celebrities;
     } catch (e) {
-      Logger.error('Failed to fetch all celebrities: $e');
+      Logger.warning('[CelebritySupabaseService] 전체 유명인 목록 로드 실패 (기본 데이터 사용): $e');
       // Return fallback data on error instead of throwing
       return _getDefaultCelebrities();
     }
@@ -59,7 +59,7 @@ class CelebritySupabaseService {
       
       return celebrities;
     } catch (e) {
-      Logger.error('Failed to fetch celebrities by category: ${category.name}, error: $e');
+      Logger.warning('[CelebritySupabaseService] 카테고리별 유명인 로드 실패 (기본 데이터 사용): $e');
       // Return filtered fallback data on error
       return _getDefaultCelebrities()
           .where((c) => c.category == category)
@@ -110,7 +110,7 @@ class CelebritySupabaseService {
       final response = await orderedBuilder;
       return _mapToCelebrities(response);
     } catch (e) {
-      Logger.error('Failed to search celebrities', e);
+      Logger.warning('[CelebritySupabaseService] 유명인 검색 실패 (빈 결과 반환): $e');
       throw Exception('유명인 검색에 실패했습니다: $e');
     }
   }
@@ -128,7 +128,7 @@ class CelebritySupabaseService {
       if (response == null) return null;
       return _mapToCelebrity(response);
     } catch (e) {
-      Logger.error('Failed to get celebrity by id: $id', e);
+      Logger.warning('[CelebritySupabaseService] 특정 유명인 조회 실패 (null 반환): $e');
       throw Exception('유명인 정보를 불러오는데 실패했습니다: $e');
     }
   }
@@ -155,7 +155,7 @@ class CelebritySupabaseService {
 
       return _mapToCelebrities(response);
     } catch (e) {
-      Logger.error('Failed to get popular celebrities', e);
+      Logger.warning('[CelebritySupabaseService] 인기 유명인 조회 실패 (기본 목록 사용): $e');
       throw Exception('인기 유명인 목록을 불러오는데 실패했습니다: $e');
     }
   }
@@ -184,7 +184,7 @@ class CelebritySupabaseService {
       celebrities.shuffle(); // 클라이언트에서 셔플
       return celebrities.take(limit).toList();
     } catch (e) {
-      Logger.error('Failed to get random celebrities', e);
+      Logger.warning('[CelebritySupabaseService] 랜덤 유명인 조회 실패 (기본 목록 사용): $e');
       throw Exception('랜덤 유명인 목록을 불러오는데 실패했습니다: $e');
     }
   }
@@ -209,7 +209,7 @@ class CelebritySupabaseService {
       
       return celebrities;
     } catch (e) {
-      Logger.error('Failed to fetch celebrities with birthday: ${date.month}/${date.day}', e);
+      Logger.warning('[CelebritySupabaseService] 생일 유명인 조회 실패 (빈 목록 반환): $e');
       return _getFallbackCelebrities(date.month, date.day);
     }
   }
@@ -311,7 +311,7 @@ class CelebritySupabaseService {
 
       return _mapToCelebrities(response);
     } catch (e) {
-      Logger.error('Failed to get celebrity suggestions for query: $query', e);
+      Logger.warning('[CelebritySupabaseService] 유명인 제안 조회 실패 (빈 목록 반환): $e');
       throw Exception('자동완성 제안을 가져오는데 실패했습니다: $e');
     }
   }
@@ -359,7 +359,7 @@ class CelebritySupabaseService {
 
       return stats;
     } catch (e) {
-      Logger.error('Failed to get celebrity statistics', e);
+      Logger.warning('[CelebritySupabaseService] 유명인 통계 조회 실패 (기본값 반환): $e');
       throw Exception('유명인 통계를 가져오는데 실패했습니다: $e');
     }
   }
@@ -376,7 +376,7 @@ class CelebritySupabaseService {
 
       return _mapToCelebrity(response);
     } catch (e) {
-      Logger.error('Failed to add celebrity', e);
+      Logger.warning('[CelebritySupabaseService] 유명인 추가 실패 (선택적 기능): $e');
       throw Exception('유명인 추가에 실패했습니다: $e');
     }
   }
@@ -393,7 +393,7 @@ class CelebritySupabaseService {
 
       return _mapToCelebrity(response);
     } catch (e) {
-      Logger.error('Failed to update celebrity: $id', e);
+      Logger.warning('[CelebritySupabaseService] 유명인 업데이트 실패 (선택적 기능): $e');
       throw Exception('유명인 정보 수정에 실패했습니다: $e');
     }
   }
@@ -409,7 +409,7 @@ class CelebritySupabaseService {
           })
           .eq('id', id);
     } catch (e) {
-      Logger.error('Failed to deactivate celebrity: $id', e);
+      Logger.warning('[CelebritySupabaseService] 유명인 비활성화 실패 (선택적 기능): $e');
       throw Exception('유명인 비활성화에 실패했습니다: $e');
     }
   }
