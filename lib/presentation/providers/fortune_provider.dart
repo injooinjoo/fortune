@@ -476,14 +476,50 @@ class MbtiFortuneNotifier extends BaseFortuneNotifier {
 
   @override
   Future<Fortune> generateFortune(String userId) async {
-    if (_mbtiType == null || _categories.isEmpty) {
-      throw const ValidationException(message: 'MBTI 타입과 카테고리를 선택해주세요');
+    // Enhanced validation
+    if (_mbtiType == null || _mbtiType!.isEmpty) {
+      Logger.error('❌ [MbtiFortuneNotifier] Invalid MBTI type', {
+        'mbtiType': _mbtiType,
+        'userId': userId
+      });
+      throw const ValidationException(message: 'MBTI 타입을 선택해주세요');
     }
 
-    return await _apiService.getMbtiFortune(
-      userId: userId,
-      mbtiType: _mbtiType!,
-      categories: _categories);
+    if (_categories.isEmpty) {
+      Logger.error('❌ [MbtiFortuneNotifier] No categories selected', {
+        'mbtiType': _mbtiType,
+        'categoriesCount': _categories.length,
+        'userId': userId
+      });
+      throw const ValidationException(message: '카테고리를 하나 이상 선택해주세요');
+    }
+
+    // Validate MBTI type format (should be 4 characters like INTJ, ENFP)
+    if (_mbtiType!.length != 4) {
+      Logger.error('❌ [MbtiFortuneNotifier] Invalid MBTI format', {
+        'mbtiType': _mbtiType,
+        'length': _mbtiType!.length,
+        'userId': userId
+      });
+      throw const ValidationException(message: '유효하지 않은 MBTI 타입입니다');
+    }
+
+    Logger.info('🧠 [MbtiFortuneNotifier] Generating MBTI fortune', {
+      'mbtiType': _mbtiType,
+      'categoriesCount': _categories.length,
+      'categories': _categories,
+      'userId': userId
+    });
+
+    try {
+      return await _apiService.getMbtiFortune(
+        userId: userId,
+        mbtiType: _mbtiType!,
+        categories: _categories);
+    } catch (e, stackTrace) {
+      Logger.error('❌ [MbtiFortuneNotifier] Failed to generate MBTI fortune', e, stackTrace);
+      rethrow;
+    }
   }
 }
 

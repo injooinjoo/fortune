@@ -47,7 +47,7 @@ class UserStatistics {
       'favorite_fortune_type': favoriteFortuneType,
       'fortune_type_count': fortuneTypeCount,
       'total_tokens_used': totalTokensUsed,
-      'total_tokens_earned': null};
+      'total_tokens_earned': totalTokensEarned};
   }
 }
 
@@ -150,28 +150,41 @@ class UserStatisticsService {
 
   Future<UserStatistics> _createInitialStatistics(String userId) async {
     final initialStats = UserStatistics.empty();
-    
+
     try {
+      Logger.info('🔧 [UserStatisticsService] Creating initial statistics', {
+        'userId': userId
+      });
+
       await _supabase.from('user_statistics').insert({
         'user_id': userId,
         ...initialStats.toJson(),
-        'created_at': null});
-      
+        'created_at': DateTime.now().toIso8601String()});
+
+      Logger.info('✅ [UserStatisticsService] Initial statistics created successfully');
       return initialStats;
-    } catch (e) {
-      Logger.error('Failed to create initial statistics', e);
+    } catch (e, stackTrace) {
+      Logger.error('❌ [UserStatisticsService] Failed to create initial statistics', {
+        'userId': userId,
+        'error': e.toString()
+      }, stackTrace);
       return initialStats;
     }
   }
 
   Future<void> incrementFortuneCount(String userId, String fortuneType) async {
     try {
+      Logger.info('🔧 [UserStatisticsService] Incrementing fortune count', {
+        'userId': userId,
+        'fortuneType': fortuneType
+      });
+
       final stats = await getUserStatistics(userId);
-      
+
       // Update fortune counts
       final newFortuneTypeCount = Map<String, int>.from(stats.fortuneTypeCount);
       newFortuneTypeCount[fortuneType] = (newFortuneTypeCount[fortuneType] ?? 0) + 1;
-      
+
       // Find favorite fortune type
       String? favoriteType;
       int maxCount = 0;
@@ -181,23 +194,38 @@ class UserStatisticsService {
           favoriteType = type;
         }
       });
-      
+
+      Logger.debug('🔧 [UserStatisticsService] Updating statistics in database', {
+        'newTotalFortunes': stats.totalFortunes + 1,
+        'favoriteType': favoriteType,
+        'typeCountKeys': newFortuneTypeCount.keys.toList()
+      });
+
       // Update statistics
       await _supabase.from('user_statistics').update({
         'total_fortunes': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
         'favorite_fortune_type': favoriteType,
-        'updated_at': null}).eq('user_id', userId);
-      
+        'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
+
       // TODO: Implement achievements when user_achievements table is created
-      
+
       // Update local storage
       await _storageService.saveUserStatistics({
         'total_fortunes': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
-        'favorite_fortune_type': null});
-    } catch (e) {
-      Logger.error('Failed to increment fortune count', e);
+        'favorite_fortune_type': favoriteType});
+
+      Logger.info('✅ [UserStatisticsService] Fortune count incremented successfully', {
+        'newTotal': stats.totalFortunes + 1,
+        'fortuneType': fortuneType
+      });
+    } catch (e, stackTrace) {
+      Logger.error('❌ [UserStatisticsService] Failed to increment fortune count', {
+        'userId': userId,
+        'fortuneType': fortuneType,
+        'error': e.toString()
+      }, stackTrace);
     }
   }
 
@@ -237,14 +265,14 @@ class UserStatisticsService {
         await _supabase.from('user_statistics').update({
           'consecutive_days': newConsecutiveDays,
           'last_login': now.toIso8601String(),
-          'updated_at': null}).eq('user_id', userId);
-        
+          'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
+
         // TODO: Implement achievements when user_achievements table is created
-        
+
         // Update local storage
         await _storageService.saveUserStatistics({
           'consecutive_days': newConsecutiveDays,
-          'last_login': null});
+          'last_login': now.toIso8601String()});
       }
     } catch (e) {
       Logger.error('Failed to update consecutive days', e);
@@ -254,15 +282,20 @@ class UserStatisticsService {
   Future<void> updateTokenUsage(String userId, int tokensUsed, int tokensEarned) async {
     try {
       final stats = await getUserStatistics(userId);
-      
+
       await _supabase.from('user_statistics').update({
         'total_tokens_used': stats.totalTokensUsed + tokensUsed,
         'total_tokens_earned': stats.totalTokensEarned + tokensEarned,
-        'updated_at': null}).eq('user_id', userId);
-      
+        'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
+
       // TODO: Implement achievements when user_achievements table is created
-    } catch (e) {
-      Logger.error('Failed to update token usage', e);
+    } catch (e, stackTrace) {
+      Logger.error('Failed to update token usage', {
+        'userId': userId,
+        'tokensUsed': tokensUsed,
+        'tokensEarned': tokensEarned,
+        'error': e.toString()
+      }, stackTrace);
     }
   }
 

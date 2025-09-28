@@ -566,7 +566,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           maxChildSize: 0.9,
           builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.grayDark50
+                : TossDesignSystem.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25)),
@@ -599,7 +601,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                         style: TextStyle(
       fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark900
+                              : TossDesignSystem.gray900,
                           letterSpacing: -0.5)),
                       const SizedBox(height: 12),
                       Text(
@@ -607,8 +611,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                         style: TextStyle(
       fontSize: 16,
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray600)),
+                              ? TossDesignSystem.grayDark700
+                              : TossDesignSystem.gray700)),
                       
                       const SizedBox(height: 40),
                       
@@ -694,8 +698,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray600,
+                              ? TossDesignSystem.grayDark600
+                              : TossDesignSystem.gray700,
                           height: 1.5),
                         textAlign: TextAlign.center),
                       
@@ -1374,9 +1378,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     String text;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // 다크모드에서도 읽기 쉽도록 배경과 텍스트 색상 개선
+    // 라이트모드와 다크모드에서 모두 읽기 쉽도록 배경과 텍스트 색상 개선
     final backgroundColor = isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white;
-    final foregroundColor = isDark ? TossDesignSystem.white : TossDesignSystem.black;
+    final foregroundColor = isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
     final borderColor = isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300;
     
     switch (type) {

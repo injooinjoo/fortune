@@ -505,51 +505,100 @@ class FortuneApiService {
     required String mbtiType,
     List<String>? categories}) async {
     final stopwatch = Logger.startTimer('getMbtiFortune - Total');
-    
+
+    // Enhanced parameter validation
+    if (userId.isEmpty) {
+      Logger.error('❌ [FortuneApiService] Invalid userId for MBTI fortune', {
+        'userId': userId,
+        'mbtiType': mbtiType
+      });
+      throw const ValidationException(message: '유효하지 않은 사용자 ID입니다');
+    }
+
+    if (mbtiType.isEmpty || mbtiType.length != 4) {
+      Logger.error('❌ [FortuneApiService] Invalid MBTI type format', {
+        'userId': userId,
+        'mbtiType': mbtiType,
+        'length': mbtiType.length
+      });
+      throw const ValidationException(message: '유효하지 않은 MBTI 타입입니다');
+    }
+
+    if (categories?.isEmpty == true) {
+      Logger.error('❌ [FortuneApiService] Empty categories provided', {
+        'userId': userId,
+        'mbtiType': mbtiType
+      });
+      throw const ValidationException(message: '카테고리를 선택해주세요');
+    }
+
     Logger.info('🔍 [FortuneApiService] getMbtiFortune called', {
       'userId': userId,
       'mbtiType': mbtiType,
       'categoriesCount': categories?.length ?? 0,
-      'categories': null});
-    
+      'categories': categories});
+
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.mbtiFortune,
-        'mbtiType': null});
-      
+        'mbtiType': mbtiType,
+        'hasCategories': categories != null});
+
+      final requestData = {
+        'mbtiType': mbtiType,
+        'userId': userId,
+        if (categories != null && categories.isNotEmpty) 'categories': categories,
+      };
+
+      Logger.debug('🔍 [FortuneApiService] Request data prepared', {
+        'dataKeys': requestData.keys.toList(),
+        'requestSize': requestData.toString().length
+      });
+
       final apiStopwatch = Logger.startTimer('API Call - mbti');
       final response = await _apiClient.post(
         ApiEndpoints.mbtiFortune,
-        data: {
-          'mbtiType': mbtiType,
-          if (categories != null) 'categories': categories,
-        });
+        data: requestData);
       Logger.endTimer('API Call - mbti', apiStopwatch);
-      
+
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': _getStatusCode(response),
         'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
-      final fortuneResponse = FortuneResponseModel.fromJson(_getResponseData(response));
+      final responseData = _getResponseData(response);
+      Logger.debug('🔍 [FortuneApiService] Processing response data', {
+        'responseType': responseData.runtimeType.toString(),
+        'hasFortuneKey': responseData is Map ? responseData.containsKey('fortune') : false
+      });
+
+      final fortuneResponse = FortuneResponseModel.fromJson(responseData);
       final fortune = fortuneResponse.toEntity();
-      
+
       Logger.endTimer('getMbtiFortune - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] getMbtiFortune completed', {
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
         'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
-      
+
       return fortune;
     } on DioException catch (e) {
       Logger.endTimer('getMbtiFortune - Total', stopwatch);
       Logger.error('❌ [FortuneApiService] DioException in getMbtiFortune', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null});
+        'statusCode': e.response?.statusCode,
+        'responseData': e.response?.data,
+        'mbtiType': mbtiType,
+        'userId': userId});
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       Logger.endTimer('getMbtiFortune - Total', stopwatch);
-      Logger.error('❌ [FortuneApiService] Unexpected error in getMbtiFortune', e, stackTrace);
+      Logger.error('❌ [FortuneApiService] Unexpected error in getMbtiFortune', {
+        'error': e.toString(),
+        'mbtiType': mbtiType,
+        'userId': userId,
+        'categoriesCount': categories?.length ?? 0
+      }, stackTrace);
       rethrow;
     }
   }

@@ -44,3 +44,15 @@
 - No batch modifications across files (no mass `sed/awk/regex` or multi‑file scripts). Edit one file at a time with context.
 - On UX complaints/improvements, auto‑create JIRA via `./scripts/parse_ux_request.sh` and close via `./scripts/git_jira_commit.sh ... done`.
 - Before PR: format, analyze clean, tests green, clean reinstall validated, and no secrets/debug prints.
+
+## When To Refer To Other Docs
+- `README.md`: quick overview, tech stack, and basic run/build.
+- `docs/SETUP_GUIDE.md`: full environment setup, env vars, Firebase/Stripe/Toss.
+- `docs/TESTING_GUIDE.md`: structure, commands, coverage targets, troubleshooting.
+- `CLAUDE.md` / `CLAUDE_CODE_PERMANENT_INSTRUCTIONS.md`: automation rules, banned batch edits, workflow triggers.
+- `GIT_JIRA_WORKFLOW.md` / `UX_REQUEST_GUIDE.md`: create/update JIRA from scripts; UX categories and examples.
+- `docs/PROJECT_OVERVIEW.md`: architecture, module map, data flow, performance goals.
+- `docs/DESIGN_SYSTEM.md` + `lib/core/theme/THEME_GUIDELINES.md`: UI tokens, components, theming conventions.
+- `docs/IOS_NATIVE_FEATURES_IMPLEMENTATION.md` / `docs/ANDROID_NATIVE_FEATURES_IMPLEMENTATION.md`: platform features, deep links, widgets.
+- `docs/API_USAGE.md` + `docs/DB_SCHEMA.md` + `docs/MIGRATION_GUIDE.md`: backend models, schema, and migrations.
+- Deploy/Store: `docs/PRODUCTION_DEPLOYMENT_GUIDE.md`, `DEPLOYMENT_GUIDE.md`, `APP_STORE_LAUNCH_GUIDE.md`, `GOOGLE_PLAY_CONSOLE_GUIDE.md`.
