@@ -38,7 +38,7 @@ class NativePlatformService {
       final result = await _channel.invokeMethod('initialize');
       Logger.info('Native platform initialized successfully');
     } on PlatformException catch (e) {
-      Logger.error('Failed to initialize native platform', e);
+      Logger.warning('[NativePlatformService] 네이티브 플랫폼 초기화 실패 (선택적 기능, 네이티브 기능 비활성화): $e');
     }
   }
   
@@ -52,7 +52,7 @@ class NativePlatformService {
         'data': data});
       Logger.info('Native platform initialized successfully');
     } on PlatformException catch (e) {
-      Logger.error('Failed to update widget', e);
+      Logger.warning('[NativePlatformService] 위젯 업데이트 실패 (선택적 기능, 위젯 데이터 비활성화): $e');
     }
   }
   
@@ -62,7 +62,7 @@ class NativePlatformService {
       final result = await _channel.invokeMethod<bool>('requestNotificationPermission');
       return result ?? false;
     } on PlatformException catch (e) {
-      Logger.error('Failed to request notification permission', e);
+      Logger.warning('[NativePlatformService] 노티피케이션 권한 요청 실패 (선택적 기능, 수동 설정 필요): $e');
       return false;
     }
   }
@@ -83,7 +83,7 @@ class NativePlatformService {
         'payload': payload});
       Logger.info('Native platform initialized successfully');
     } on PlatformException catch (e) {
-      Logger.error('Failed to schedule notification', e);
+      Logger.warning('[NativePlatformService] 노티피케이션 예약 실패 (선택적 기능, 수동 알림 설정 필요): $e');
     }
   }
   
@@ -93,7 +93,7 @@ class NativePlatformService {
       await _channel.invokeMethod('cancelNotification', {'id': id});
       Logger.info('Native platform initialized successfully');
     } on PlatformException catch (e) {
-      Logger.error('Failed to cancel notification', e);
+      Logger.warning('[NativePlatformService] 노티피케이션 취소 실패 (선택적 기능, 예약된 알림 유지): $e');
     }
   }
   
@@ -124,7 +124,7 @@ class iOS {
           'content': content});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
-        Logger.error('Failed to update Dynamic Island', e);
+        Logger.warning('[NativePlatformService] 다이내믹 아일랜드 업데이트 실패 (선택적 기능, iOS 16.1+ 전용): $e');
       }
     }
     
@@ -141,7 +141,7 @@ class iOS {
         Logger.info('Native platform initialized successfully');
         return activityId;
       } on PlatformException catch (e) {
-        Logger.error('Failed to start Live Activity', e);
+        Logger.warning('[NativePlatformService] 라이브 액티비티 시작 실패 (선택적 기능, iOS 16.1+ 전용): $e');
         return null;
       }
     }
@@ -154,7 +154,7 @@ class iOS {
         await NativePlatformService.iosChannel.invokeMethod('endLiveActivity', {'activityId': activityId});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
-        Logger.error('Failed to end Live Activity', e);
+        Logger.warning('[NativePlatformService] 라이브 액티비티 종료 실패 (선택적 기능, iOS 16.1+ 전용): $e');
       }
     }
     
@@ -174,7 +174,7 @@ class iOS {
           'userInfo': userInfo});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
-        Logger.error('Failed to add Siri shortcut', e);
+        Logger.warning('[NativePlatformService] Siri 단축어 추가 실패 (선택적 기능, iOS 전용): $e');
       }
     }
 }
@@ -195,7 +195,7 @@ class Android {
           'data': data});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
-        Logger.error('Failed to update home widget', e);
+        Logger.warning('[NativePlatformService] 홈 위젯 업데이트 실패 (선택적 기능, Android 전용): $e');
       }
     }
     
@@ -208,7 +208,7 @@ class Android {
         Logger.info('Material You colors retrieved');
         return colors;
       } on PlatformException catch (e) {
-        Logger.error('Failed to get Material You colors', e);
+        Logger.warning('[NativePlatformService] Material You 색상 가져오기 실패 (선택적 기능, Android 12+ 전용): $e');
         return null;
       }
     }
@@ -229,7 +229,7 @@ class Android {
           'importance': null});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
-        Logger.error('Failed to create notification channel', e);
+        Logger.warning('[NativePlatformService] 노티피케이션 채널 생성 실패 (선택적 기능, Android 전용): $e');
       }
     }
 }
