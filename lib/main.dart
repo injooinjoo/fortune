@@ -75,7 +75,7 @@ void main() async {
     Logger.error('Hive initialization failed', e);
   }
 
-  // Initialize Firebase in background - don't block app startup
+  // Initialize Firebase and Firebase-dependent services in background
   Future(() async {
     try {
       print('🚀 [STARTUP] Initializing Firebase in background...');
@@ -84,12 +84,28 @@ void main() async {
       );
       print('🚀 [STARTUP] Firebase initialized successfully in background');
       Logger.info('Firebase initialized successfully in background');
+
+      // Initialize Firebase-dependent services after Firebase is ready
+      try {
+        await RemoteConfigService().initialize();
+        Logger.info('Remote Config initialized in background');
+      } catch (e) {
+        Logger.error('Remote Config initialization failed in background', e);
+      }
+
+      try {
+        await AnalyticsService.instance.initialize();
+        Logger.info('Analytics initialized in background');
+      } catch (e) {
+        Logger.error('Analytics initialization failed in background', e);
+      }
+
     } catch (e) {
       print('❌ [STARTUP] Firebase initialization failed in background: $e');
       Logger.error('Firebase initialization failed in background', e);
     }
   });
-  
+
   // Initialize Supabase with error handling
   try {
     print('🚀 [STARTUP] Initializing Supabase...');
@@ -112,7 +128,7 @@ void main() async {
     print('❌ [STARTUP] Supabase initialization failed: $e');
     Logger.error('Supabase initialization failed', e);
   }
-  
+
   // Initialize Social Login SDKs with error handling
   if (!kIsWeb) {
     try {
@@ -124,28 +140,11 @@ void main() async {
     } catch (e) {
       Logger.error('Kakao SDK initialization failed', e);
     }
-    
+
     // Naver SDK doesn't require explicit initialization in Flutter
     // The SDK is initialized when first login is attempted
     Logger.info('Naver SDK ready (initialized on first use)');
   }
-  
-  // Initialize Analytics and Remote Config in background
-  Future(() async {
-    try {
-      await AnalyticsService.instance.initialize();
-      Logger.info('Analytics initialized in background');
-    } catch (e) {
-      Logger.error('Analytics initialization failed in background', e);
-    }
-
-    try {
-      await RemoteConfigService().initialize();
-      Logger.info('Remote Config initialized in background');
-    } catch (e) {
-      Logger.error('Remote Config initialization failed in background', e);
-    }
-  });
   
   // Initialize Ad Service in background - don't block app startup
   // DISABLE ADS FOR TESTING ON REAL DEVICES
