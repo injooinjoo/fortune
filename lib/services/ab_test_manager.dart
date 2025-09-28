@@ -24,7 +24,7 @@ class ABTestManager {
       
       Logger.info('Supabase initialized successfully');
     } catch (e) {
-      Logger.error('Failed to set experiment group', e);
+      Logger.warning('[ABTestManager] 실험 그룹 설정 실패 (선택적 기능, 무시): $e');
     }
   }
   
@@ -57,11 +57,11 @@ class ABTestManager {
       
       await _analytics.logEvent(
         name: eventName,
-        parameters: params);
+        parameters: params.cast<String, Object>());
       
       Logger.debug('Fortune cached');
     } catch (e) {
-      Logger.error('event: $eventName', e);
+      Logger.warning('[ABTestManager] 이벤트 로깅 실패 (분석 데이터 손실): $eventName, $e');
     }
   }
   
@@ -114,7 +114,7 @@ class ABTestManager {
         await _analytics.logPurchase(
           value: value.toDouble(),
           currency: currency ?? 'KRW',
-          parameters: params);
+          parameters: params.cast<String, Object>());
         break;
         
       case 'signup':
@@ -130,7 +130,7 @@ class ABTestManager {
     
     // 추가로 커스텀 전환 이벤트도 로깅
     await logEvent(
-      eventName: 'conversion_${conversionType}',
+      eventName: 'conversion_$conversionType',
       parameters: params);
   }
   
@@ -208,7 +208,7 @@ class ABTestManager {
       }
       Logger.info('properties: ${properties.keys.join('), ')}');
     } catch (e) {
-      Logger.error('Failed to set user properties', e);
+      Logger.warning('[ABTestManager] 사용자 속성 설정 실패 (분석 정확도 저하): $e');
     }
   }
   
@@ -218,7 +218,7 @@ class ABTestManager {
       await _analytics.setUserId(id: userId);
       Logger.info('ID: ${userId ??')null'}');
     } catch (e) {
-      Logger.error('Failed to set user ID', e);
+      Logger.warning('[ABTestManager] 사용자 ID 설정 실패 (분석 정확도 저하): $e');
     }
   }
   
