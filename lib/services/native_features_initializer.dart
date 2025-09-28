@@ -52,7 +52,7 @@ class NativeFeaturesInitializer {
       _isInitialized = true;
       Logger.info('Native platform features initialized successfully');
     } catch (e) {
-      Logger.error('Failed to initialize native features', e);
+      Logger.warning('[NativeFeaturesInitializer] 네이티브 기능 초기화 실패 (선택적 기능, 무시): $e');
     }
   }
 
@@ -64,7 +64,7 @@ class NativeFeaturesInitializer {
       }
       return notificationPermission;
     } catch (e) {
-      Logger.error('Failed to request permissions', e);
+      Logger.warning('[NativeFeaturesInitializer] 권한 요청 실패 (선택적 기능, 무시): $e');
       return false;
     }
   }
@@ -86,7 +86,7 @@ class NativeFeaturesInitializer {
           networkType: NetworkType.connected));
       Logger.info('Background tasks registered');
     } catch (e) {
-      Logger.error('Failed to register background tasks', e);
+      Logger.warning('[NativeFeaturesInitializer] 백그라운드 작업 등록 실패 (선택적 기능, 무시): $e');
     }
   }
 
