@@ -26,7 +26,7 @@ class PetService {
           .map((json) => PetProfile.fromJson(json))
           .toList();
     } catch (e) {
-      Logger.error('Failed to get user pets - returning empty list', e);
+      Logger.warning('[PetService] 사용자 반려동물 목록 조회 실패 (선택적 기능, 빈 목록 반환): $e');
       return []; // 항상 빈 리스트 반환으로 UI 블로킹 방지
     }
   }
@@ -43,7 +43,7 @@ class PetService {
       if (response == null) return null;
       return PetProfile.fromJson(response);
     } catch (e) {
-      Logger.error('Failed to get pet', e);
+      Logger.warning('[PetService] 반려동물 조회 실패 (선택적 기능, null 반환): $e');
       return null;
     }
   }
@@ -76,7 +76,7 @@ class PetService {
       Logger.info('✅ Pet created successfully: ${response['name']} (ID: ${response['id']})');
       return PetProfile.fromJson(response);
     } catch (e) {
-      Logger.error('❌ Failed to create pet', e);
+      Logger.warning('[PetService] 반려동물 등록 실패 (선택적 기능, null 반환): $e');
       return null;
     }
   }
@@ -107,7 +107,7 @@ class PetService {
       Logger.info('Pet updated successfully');
       return PetProfile.fromJson(response);
     } catch (e) {
-      Logger.error('Failed to update pet', e);
+      Logger.warning('[PetService] 반려동물 정보 수정 실패 (선택적 기능, null 반환): $e');
       return null;
     }
   }
@@ -123,7 +123,7 @@ class PetService {
       Logger.info('Pet deleted successfully');
       return true;
     } catch (e) {
-      Logger.error('Failed to delete pet', e);
+      Logger.warning('[PetService] 반려동물 삭제 실패 (선택적 기능, false 반환): $e');
       return false;
     }
   }
@@ -139,7 +139,7 @@ class PetService {
 
       return response.count;
     } catch (e) {
-      Logger.error('Failed to get pet count', e);
+      Logger.warning('[PetService] 반려동물 수 조회 실패 (선택적 기능, 0 반환): $e');
       return 0;
     }
   }
@@ -160,7 +160,7 @@ class PetService {
       final response = await query.maybeSingle();
       return response != null;
     } catch (e) {
-      Logger.error('Failed to check pet name', e);
+      Logger.warning('[PetService] 반려동물 이름 중복 확인 실패 (선택적 기능, false 반환): $e');
       return false;
     }
   }
