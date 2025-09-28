@@ -44,7 +44,7 @@ class CareerCoachingService {
       // Convert API response to CareerCoachingResult
       return _convertFortuneToCareerResult(fortune, input);
     } catch (e) {
-      Logger.error('Failed to get career coaching from API', e);
+      Logger.warning('[CareerCoachingService] API 커리어 코칭 데이터 로드 실패 (로컬 분석 사용): $e');
       // Fallback to mock data
       return _generateMockResult(input);
     }
@@ -91,7 +91,7 @@ class CareerCoachingService {
         motivationalMessage: motivationalMessage,
       );
     } catch (e) {
-      Logger.error('Failed to parse career coaching result', e);
+      Logger.warning('[CareerCoachingService] 커리어 코칭 결과 파싱 실패 (기본 분석 사용): $e');
       // Fallback to mock if parsing fails
       return _generateMockResult(input);
     }
