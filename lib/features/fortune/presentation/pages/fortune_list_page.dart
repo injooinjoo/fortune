@@ -5,7 +5,6 @@ import '../../../../shared/components/app_header.dart';
 import '../widgets/fortune_list_card.dart';
 import '../widgets/fortune_list_tile.dart';
 // import '../../../../presentation/widgets/simple_fortune_info_sheet.dart'; // File doesn't exist
-import '../../../../presentation/screens/ad_loading_screen.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../widgets/tarot_fortune_list_card.dart';
 import '../../../../core/constants/fortune_card_images.dart';
