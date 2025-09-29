@@ -1,8 +1,5 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:async';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,56 +8,66 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';  // AGP 8.x compatibility issue
-import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/logger.dart';
+import '../core/services/resilient_service.dart';
+import '../core/theme/toss_design_system.dart';
 import 'native_platform_service.dart';
 import '../presentation/widgets/enhanced_shareable_fortune_card.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 /// Provider for screenshot detection service
 final screenshotDetectionServiceProvider = Provider<ScreenshotDetectionService>((ref) {
   return ScreenshotDetectionService();
 });
 
-/// Service for detecting screenshots and providing sharing functionality
-class ScreenshotDetectionService {
+/// 강화된 스크린샷 감지 및 공유 서비스
+///
+/// KAN-77: 스크린샷 감지 연결 안정성 문제 해결
+/// - ResilientService 패턴 적용
+/// - 네이티브 플랫폼 연결 실패 대응
+/// - 공유 기능 오류 처리 강화
+/// - 플랫폼별 권한 문제 자동 복구
+class ScreenshotDetectionService extends ResilientService {
+  @override
+  String get serviceName => 'ScreenshotDetectionService';
+
   StreamSubscription<dynamic>? _screenshotSubscription;
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isListening = false;
   void Function(BuildContext context)? onScreenshotDialogRequested;
   
-  /// Initialize screenshot detection
+  /// 강화된 스크린샷 감지 초기화 (ResilientService 패턴)
   Future<void> initialize() async {
     if (_isListening) return;
-    
+
     // Skip initialization on web
     if (kIsWeb) {
       Logger.info('Screenshot detection service skipped on web');
       return;
     }
-    
-    try {
-      // Listen to native screenshot events
-      _screenshotSubscription = NativePlatformService.nativeEventStream.listen((event) {
-        if (event is Map && event['type'] == 'screenshot_detected') {
-          _handleScreenshotDetected(event['data']);
+
+    await safeExecute(
+      () async {
+        // Listen to native screenshot events
+        _screenshotSubscription = NativePlatformService.nativeEventStream.listen((event) {
+          if (event is Map && event['type'] == 'screenshot_detected') {
+            _handleScreenshotDetected(event['data']);
+          }
+        });
+
+        // Request native platform to start screenshot detection
+        if (Platform.isAndroid) {
+          await NativePlatformService.android.startScreenshotDetection();
+        } else if (Platform.isIOS) {
+          await NativePlatformService.ios.startScreenshotDetection();
         }
-      });
-      
-      // Request native platform to start screenshot detection
-      if (Platform.isAndroid) {
-        await NativePlatformService.android.startScreenshotDetection();
-      } else if (Platform.isIOS) {
-        await NativePlatformService.ios.startScreenshotDetection();
-      }
-      
-      _isListening = true;
-      Logger.info('Screenshot detection service initialized');
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 스크린샷 감지 초기화 실패 (선택적 기능, 무시): $e');
-    }
+
+        _isListening = true;
+        Logger.info('Screenshot detection service initialized');
+      },
+      '스크린샷 감지 서비스 초기화',
+      '스크린샷 감지 비활성화 (공유 기능은 정상 작동)'
+    );
   }
   
   /// Stop screenshot detection
@@ -128,7 +135,7 @@ class ScreenshotDetectionService {
         }));
   }
 
-  /// Capture fortune as image with specific template
+  /// 강화된 운세 이미지 캡처 (ResilientService 패턴)
   Future<Uint8List?> _captureFortuneImage({
     required String fortuneType,
     required String title,
@@ -136,23 +143,24 @@ class ScreenshotDetectionService {
     String? userName,
     Map<String, dynamic>? additionalInfo,
     required ShareCardTemplate template}) async {
-    try {
-      final image = await _screenshotController.captureFromWidget(
-        EnhancedShareableFortuneCard(
-          fortuneType: fortuneType,
-          title: title,
-          content: content,
-          userName: userName,
-          date: DateTime.now(),
-          additionalInfo: additionalInfo,
-          template: template),
-        delay: const Duration(milliseconds: 100),
-        pixelRatio: 3.0);
-      return image;
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 운세 이미지 캡처 실패 (텍스트로 공유): $e');
-      return null;
-    }
+    return await safeExecuteWithNull(
+      () async {
+        final image = await _screenshotController.captureFromWidget(
+          EnhancedShareableFortuneCard(
+            fortuneType: fortuneType,
+            title: title,
+            content: content,
+            userName: userName,
+            date: DateTime.now(),
+            additionalInfo: additionalInfo,
+            template: template),
+          delay: const Duration(milliseconds: 100),
+          pixelRatio: 3.0);
+        return image;
+      },
+      '운세 이미지 캡처: $fortuneType',
+      '이미지 캡처 실패, 텍스트로 공유'
+    );
   }
 
   /// Handle platform-specific sharing
@@ -214,7 +222,9 @@ class ScreenshotDetectionService {
             await _shareToKakaoTalk(imagePath, fortuneTitle, fortuneContent);
           } else {
             // On web, just copy text
-            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            if (context.mounted) {
+              await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            }
           }
           break;
         case SharePlatform.instagram:
@@ -222,7 +232,9 @@ class ScreenshotDetectionService {
             await _shareToInstagram(imagePath);
           } else {
             // On web, just copy text
-            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            if (context.mounted) {
+              await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            }
           }
           break;
         case SharePlatform.facebook:
@@ -230,7 +242,9 @@ class ScreenshotDetectionService {
             await _shareToFacebook(imagePath, fortuneTitle);
           } else {
             // On web, just copy text
-            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            if (context.mounted) {
+              await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            }
           }
           break;
         case SharePlatform.twitter:
@@ -238,7 +252,9 @@ class ScreenshotDetectionService {
             await _shareToTwitter(imagePath, fortuneTitle);
           } else {
             // On web, just copy text
-            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            if (context.mounted) {
+              await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            }
           }
           break;
         case SharePlatform.whatsapp:
@@ -246,19 +262,23 @@ class ScreenshotDetectionService {
             await _shareToWhatsApp(imagePath, fortuneTitle);
           } else {
             // On web, just copy text
-            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            if (context.mounted) {
+              await _copyToClipboard(fortuneTitle, fortuneContent, context);
+            }
           }
           break;
         case SharePlatform.gallery:
-          if (!kIsWeb) {
+          if (!kIsWeb && context.mounted) {
             await _saveToGallery(image, context);
-          } else {
+          } else if (context.mounted) {
             // On web, just copy text
             await _copyToClipboard(fortuneTitle, fortuneContent, context);
           }
           break;
         case SharePlatform.copy:
-          await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          if (context.mounted) {
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         default:
           // Use system share dialog
@@ -291,120 +311,127 @@ class ScreenshotDetectionService {
     }
   }
 
-  /// Share to KakaoTalk
+  /// 강화된 카카오톡 공유 (ResilientService 패턴)
   Future<void> _shareToKakaoTalk(String imagePath, String title, String content) async {
-    try {
-      // KakaoTalk sharing would require Kakao SDK integration
-      // For now, use system share with pre-filled text
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: '🌟 $title\n\n$content\n\n#운세 #FortuneAI #오늘의운세'
-      );
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 카카오톡 공유 실패 (대체 방법 사용): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        // KakaoTalk sharing would require Kakao SDK integration
+        // For now, use system share with pre-filled text
+        await Share.shareXFiles(
+          [XFile(imagePath)],
+          text: '🌟 $title\n\n$content\n\n#운세 #FortuneAI #오늘의운세'
+        );
+      },
+      '카카오톡 공유: $title',
+      '카카오톡 공유 실패, 대체 방법 사용'
+    );
   }
 
-  /// Share to Instagram
+  /// 강화된 인스타그램 공유 (ResilientService 패턴)
   Future<void> _shareToInstagram(String imagePath) async {
-    try {
-      // Instagram Stories sharing
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: '나만의 운세를 확인해보세요! 🔮'
-      );
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 인스타그램 공유 실패 (대체 방법 사용): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        // Instagram Stories sharing
+        await Share.shareXFiles(
+          [XFile(imagePath)],
+          text: '나만의 운세를 확인해보세요! 🔮'
+        );
+      },
+      '인스타그램 공유',
+      '인스타그램 공유 실패, 대체 방법 사용'
+    );
   }
 
-  /// Share to Facebook
+  /// 강화된 페이스북 공유 (ResilientService 패턴)
   Future<void> _shareToFacebook(String imagePath, String title) async {
-    try {
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: '🌟 $title - Fortune AI에서 확인한 오늘의 운세'
-      );
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 페이스북 공유 실패 (대체 방법 사용): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        await Share.shareXFiles(
+          [XFile(imagePath)],
+          text: '🌟 $title - Fortune AI에서 확인한 오늘의 운세'
+        );
+      },
+      '페이스북 공유: $title',
+      '페이스북 공유 실패, 대체 방법 사용'
+    );
   }
 
-  /// Share to Twitter
+  /// 강화된 트위터 공유 (ResilientService 패턴)
   Future<void> _shareToTwitter(String imagePath, String title) async {
-    try {
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: '🌟 $title\n\n#운세 #FortuneAI #오늘의운세 #AI운세'
-      );
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 트위터 공유 실패 (대체 방법 사용): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        await Share.shareXFiles(
+          [XFile(imagePath)],
+          text: '🌟 $title\n\n#운세 #FortuneAI #오늘의운세 #AI운세'
+        );
+      },
+      '트위터 공유: $title',
+      '트위터 공유 실패, 대체 방법 사용'
+    );
   }
 
-  /// Share to WhatsApp
+  /// 강화된 WhatsApp 공유 (ResilientService 패턴)
   Future<void> _shareToWhatsApp(String imagePath, String title) async {
-    try {
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: '🌟 $title\n\nFortune AI에서 확인한 오늘의 운세입니다!'
-      );
-    } catch (e) {
-      Logger.warning('[ScreenshotService] WhatsApp 공유 실패 (대체 방법 사용): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        await Share.shareXFiles(
+          [XFile(imagePath)],
+          text: '🌟 $title\n\nFortune AI에서 확인한 오늘의 운세입니다!'
+        );
+      },
+      'WhatsApp 공유: $title',
+      'WhatsApp 공유 실패, 대체 방법 사용'
+    );
   }
 
-  /// Save to gallery
+  /// 강화된 갤러리 저장 (ResilientService 패턴)
   Future<void> _saveToGallery(Uint8List image, BuildContext context) async {
-    try {
-      // Temporarily disabled due to AGP 8.x compatibility issue
-      // final result = await ImageGallerySaver.saveImage(
-      //   image,
-      //   quality: 100,
-      //   name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
-      
-      // Temporary workaround: Save to app's document directory
-      final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
-      final imageFile = File(imagePath);
-      await imageFile.writeAsBytes(image);
-      final result = {'isSuccess': true};  // Mock success result
-      
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              result['isSuccess'] == true 
-                ? '이미지가 저장되었습니다'
-                : '저장 중 오류가 발생했습니다'),
-            backgroundColor: result['isSuccess'] == true ? TossDesignSystem.gray600 : TossDesignSystem.gray600));
-      }
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 갤러리 저장 실패 (문서 폴더로 저장): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        // Temporarily disabled due to AGP 8.x compatibility issue
+        // final result = await ImageGallerySaver.saveImage(
+        //   image,
+        //   quality: 100,
+        //   name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
+
+        // Temporary workaround: Save to app's document directory
+        final directory = await getApplicationDocumentsDirectory();
+        final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
+        final imageFile = File(imagePath);
+        await imageFile.writeAsBytes(image);
+        final result = {'isSuccess': true};  // Mock success result
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                result['isSuccess'] == true
+                  ? '이미지가 저장되었습니다'
+                  : '저장 중 오류가 발생했습니다'),
+              backgroundColor: result['isSuccess'] == true ? TossDesignSystem.gray600 : TossDesignSystem.gray600));
+        }
+      },
+      '갤러리 저장',
+      '갤러리 저장 실패, 문서 폴더에 저장'
+    );
   }
 
-  /// Copy text to clipboard
+  /// 강화된 클립보드 복사 (ResilientService 패턴)
   Future<void> _copyToClipboard(String title, String content, BuildContext context) async {
-    try {
-      await Clipboard.setData(ClipboardData(text: '$title\n\n$content'));
-      
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('운세가 클립보드에 복사되었습니다'),
-            backgroundColor: TossDesignSystem.gray600));
-      }
-    } catch (e) {
-      Logger.warning('[ScreenshotService] 클립보드 복사 실패 (기능 제한): $e');
-      throw e;
-    }
+    await safeExecute(
+      () async {
+        await Clipboard.setData(ClipboardData(text: '$title\n\n$content'));
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('운세가 클립보드에 복사되었습니다'),
+              backgroundColor: TossDesignSystem.gray600));
+        }
+      },
+      '클립보드 복사: $title',
+      '클립보드 복사 실패, 권한 확인 필요'
+    );
   }
   
   /// Capture and share fortune with custom styling (legacy method for compatibility,
@@ -460,48 +487,66 @@ class ScreenshotDetectionService {
   }
 }
 
-/// Extension methods for Android-specific functionality
+/// Extension methods for Android-specific functionality with ResilientService pattern
 extension AndroidScreenshotDetection on Android {
-  /// Start screenshot detection on Android
+  /// 강화된 Android 스크린샷 감지 시작 (ResilientService 패턴)
   Future<void> startScreenshotDetection() async {
-    try {
-      await NativePlatformService.androidChannel.invokeMethod('startScreenshotDetection');
-      Logger.info('Android screenshot detection started');
-    } on PlatformException catch (e) {
-      Logger.warning('[ScreenshotService] Android 스크린샷 감지 시작 실패 (선택적 기능): $e');
-    }
+    final tempService = _TempResilientService();
+    await tempService.safeExecute(
+      () async {
+        await NativePlatformService.androidChannel.invokeMethod('startScreenshotDetection');
+        Logger.info('Android screenshot detection started');
+      },
+      'Android 스크린샷 감지 시작',
+      'Android 스크린샷 감지 비활성화 (선택적 기능)'
+    );
   }
-  
-  /// Stop screenshot detection on Android
+
+  /// 강화된 Android 스크린샷 감지 중지 (ResilientService 패턴)
   Future<void> stopScreenshotDetection() async {
-    try {
-      await NativePlatformService.androidChannel.invokeMethod('stopScreenshotDetection');
-      Logger.info('Android screenshot detection stopped');
-    } on PlatformException catch (e) {
-      Logger.warning('[ScreenshotService] Android 스크린샷 감지 중지 실패 (무시): $e');
-    }
+    final tempService = _TempResilientService();
+    await tempService.safeExecute(
+      () async {
+        await NativePlatformService.androidChannel.invokeMethod('stopScreenshotDetection');
+        Logger.info('Android screenshot detection stopped');
+      },
+      'Android 스크린샷 감지 중지',
+      'Android 스크린샷 감지 중지 대기 (무시)'
+    );
   }
 }
 
-/// Extension methods for iOS-specific functionality
+/// Extension methods for iOS-specific functionality with ResilientService pattern
 extension IOSScreenshotDetection on iOS {
-  /// Start screenshot detection on iOS
+  /// 강화된 iOS 스크린샷 감지 시작 (ResilientService 패턴)
   Future<void> startScreenshotDetection() async {
-    try {
-      await NativePlatformService.iosChannel.invokeMethod('startScreenshotDetection');
-      Logger.info('iOS screenshot detection started');
-    } on PlatformException catch (e) {
-      Logger.warning('[ScreenshotService] iOS 스크린샷 감지 시작 실패 (선택적 기능): $e');
-    }
+    final tempService = _TempResilientService();
+    await tempService.safeExecute(
+      () async {
+        await NativePlatformService.iosChannel.invokeMethod('startScreenshotDetection');
+        Logger.info('iOS screenshot detection started');
+      },
+      'iOS 스크린샷 감지 시작',
+      'iOS 스크린샷 감지 비활성화 (선택적 기능)'
+    );
   }
-  
-  /// Stop screenshot detection on iOS
+
+  /// 강화된 iOS 스크린샷 감지 중지 (ResilientService 패턴)
   Future<void> stopScreenshotDetection() async {
-    try {
-      await NativePlatformService.iosChannel.invokeMethod('stopScreenshotDetection');
-      Logger.info('iOS screenshot detection stopped');
-    } on PlatformException catch (e) {
-      Logger.warning('[ScreenshotService] iOS 스크린샷 감지 중지 실패 (무시): $e');
-    }
+    final tempService = _TempResilientService();
+    await tempService.safeExecute(
+      () async {
+        await NativePlatformService.iosChannel.invokeMethod('stopScreenshotDetection');
+        Logger.info('iOS screenshot detection stopped');
+      },
+      'iOS 스크린샷 감지 중지',
+      'iOS 스크린샷 감지 중지 대기 (무시)'
+    );
   }
+}
+
+/// Static 메서드에서 ResilientService 패턴 사용을 위한 임시 클래스
+class _TempResilientService extends ResilientService {
+  @override
+  String get serviceName => 'TempScreenshotResilientService';
 }

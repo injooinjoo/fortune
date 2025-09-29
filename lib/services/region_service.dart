@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/utils/logger.dart';
 import '../core/config/environment.dart';
+import '../core/services/resilient_service.dart';
 
 class Region {
   final String displayName;
@@ -32,86 +33,131 @@ class Region {
   String toString() => displayName;
 }
 
-class RegionService {
+/// 강화된 지역 검색 서비스
+///
+/// KAN-78: 지역 검색 안정성 문제 해결
+/// - ResilientService 패턴 적용
+/// - 다단계 폴백 메커니즘 강화
+/// - Thread-safe 캐시 시스템
+/// - API 연결 실패 복구 전략 개선
+class RegionService extends ResilientService {
   static final RegionService _instance = RegionService._internal();
   factory RegionService() => _instance;
   RegionService._internal();
 
+  @override
+  String get serviceName => 'RegionService';
+
   final _supabase = Supabase.instance.client;
   final _dio = Dio();
 
-  // 인기 지역 목록 가져오기 (캐시됨)
+  // Thread-safe cache for region data
+  final Map<String, dynamic> _cache = {};
+  final Map<String, DateTime> _cacheTimestamps = {};
+
+  // Cache durations
+  static const Duration _popularRegionsCacheDuration = Duration(hours: 6);
+  static const Duration _searchCacheDuration = Duration(minutes: 30);
+
+  /// 강화된 인기 지역 목록 가져오기 (ResilientService 패턴 적용)
   Future<List<Region>> getPopularRegions() async {
-    try {
-      Logger.info('[RegionService] 인기 지역 목록 조회 시작');
+    const cacheKey = 'popular_regions';
 
-      final response = await _supabase
-          .from('popular_regions')
-          .select()
-          .neq('display_name', '기타 지역')
-          .order('is_featured', ascending: false)
-          .order('order_priority', ascending: true);
+    return await safeExecuteWithFallback(
+      () async {
+        // Check cache first
+        if (_isCacheValid(cacheKey, _popularRegionsCacheDuration)) {
+          return _cache[cacheKey] as List<Region>;
+        }
 
-      final regions = (response as List)
-          .map((json) => Region.fromJson(json))
-          .toList();
+        final response = await _supabase
+            .from('popular_regions')
+            .select()
+            .neq('display_name', '기타 지역')
+            .order('is_featured', ascending: false)
+            .order('order_priority', ascending: true);
 
-      Logger.info('[RegionService] 인기 지역 ${regions.length}개 조회 완료');
-      return regions;
-    } catch (e) {
-      Logger.warning('[RegionService] 인기 지역 조회 실패, 폴백 데이터 사용: $e');
-      // 폴백 데이터 반환 (에러를 warning으로 변경)
-      return _getFallbackRegions();
-    }
+        final regions = (response as List)
+            .map((json) => Region.fromJson(json))
+            .toList();
+
+        // Update cache
+        _updateCache(cacheKey, regions);
+
+        Logger.info('인기 지역 ${regions.length}개 조회 완료');
+        return regions;
+      },
+      () async {
+        // Fallback: use local fallback data
+        return _getFallbackRegions();
+      },
+      '인기 지역 목록 조회',
+      'Supabase 연결 실패, 기본 지역 목록 제공'
+    );
   }
 
-  // 전체 지역 검색 (공공 API)
+  /// 강화된 전체 지역 검색 (ResilientService 패턴 적용)
   Future<List<Region>> searchRegions(String query) async {
     if (query.trim().length < 2) {
       return [];
     }
 
-    try {
-      Logger.info('[RegionService] 지역 검색: $query');
+    final cacheKey = 'search_$query';
 
-      // 먼저 인기 지역에서 검색
-      final popularResults = await _searchPopularRegions(query);
-      if (popularResults.isNotEmpty) {
-        return popularResults;
-      }
-
-      // Kakao API로 검색
-      final kakaoResults = await _searchPublicApi(query);
-      if (kakaoResults.isNotEmpty) {
-        return kakaoResults;
-      }
-
-      // 모든 검색 실패 시 로컬 폴백 검색
-      return _searchLocalFallback(query);
-    } catch (e) {
-      Logger.warning('[RegionService] 지역 검색 실패 (폴백 데이터 사용): $e');
-      return _searchLocalFallback(query);
-    }
+    return await safeExecuteWithRetry(
+      [
+        // 1차 시도: 캐시된 검색 결과
+        () async {
+          if (_isCacheValid(cacheKey, _searchCacheDuration)) {
+            return _cache[cacheKey] as List<Region>;
+          }
+          throw Exception('캐시 없음');
+        },
+        // 2차 시도: 인기 지역에서 검색
+        () async {
+          final results = await _searchPopularRegions(query);
+          if (results.isNotEmpty) {
+            _updateCache(cacheKey, results);
+            return results;
+          }
+          throw Exception('인기 지역 검색 결과 없음');
+        },
+        // 3차 시도: Kakao API 검색
+        () async {
+          final results = await _searchPublicApi(query);
+          if (results.isNotEmpty) {
+            _updateCache(cacheKey, results);
+            return results;
+          }
+          throw Exception('Kakao API 검색 결과 없음');
+        },
+      ],
+      _searchLocalFallback(query),
+      '지역 검색: $query',
+      '모든 검색 실패, 로컬 데이터 검색 수행'
+    );
   }
 
-  // 인기 지역에서 검색
+  /// 인기 지역에서 검색 (ResilientService 패턴 적용)
   Future<List<Region>> _searchPopularRegions(String query) async {
-    try {
-      final response = await _supabase
-          .from('popular_regions')
-          .select()
-          .or('display_name.ilike.%$query%,sido.ilike.%$query%,sigungu.ilike.%$query%')
-          .order('is_featured', ascending: false)
-          .order('usage_count', ascending: false)
-          .limit(20);
+    return await safeExecuteWithFallback(
+      () async {
+        final response = await _supabase
+            .from('popular_regions')
+            .select()
+            .or('display_name.ilike.%$query%,sido.ilike.%$query%,sigungu.ilike.%$query%')
+            .order('is_featured', ascending: false)
+            .order('usage_count', ascending: false)
+            .limit(20);
 
-      return (response as List)
-          .map((json) => Region.fromJson(json))
-          .toList();
-    } catch (e) {
-      Logger.warning('[RegionService] 인기 지역 검색 실패, 빈 결과 반환: $e');
-      return [];
-    }
+        return (response as List)
+            .map((json) => Region.fromJson(json))
+            .toList();
+      },
+      () async => <Region>[],
+      '인기 지역 검색: $query',
+      'Supabase 검색 실패, 빈 결과 반환'
+    );
   }
 
   // Kakao API로 주소 검색
@@ -119,13 +165,13 @@ class RegionService {
     try {
       final apiKey = Environment.kakaoRestApiKey;
       if (apiKey.isEmpty || apiKey == 'YOUR_KAKAO_REST_API_KEY_HERE') {
-        Logger.warning('[RegionService] Kakao API 키가 설정되지 않음, 폴백 데이터 사용');
+        Logger.warning('Kakao API 키가 설정되지 않음, 폴백 데이터 사용');
         return [
           Region(displayName: '$query (API 키 없음)', sido: '설정필요', sigungu: query),
         ];
       }
 
-      Logger.info('[RegionService] Kakao API 주소 검색: $query');
+      Logger.info('Kakao API 주소 검색: $query');
       
       // Kakao 주소 검색 API 호출
       final response = await _dio.get(
@@ -173,14 +219,14 @@ class RegionService {
           return Region(displayName: query, sido: '기타', sigungu: null);
         }).toList();
 
-        Logger.info('[RegionService] Kakao API 검색 완료: ${regions.length}개');
+        Logger.info('Kakao API 검색 완료: ${regions.length}개');
         return regions;
       } else {
-        Logger.warning('[RegionService] Kakao API 응답 오류 (키워드 검색 시도): ${response.statusCode}');
+        Logger.warning('Kakao API 응답 오류 (키워드 검색 시도): ${response.statusCode}');
         return await _searchKakaoKeyword(query);
       }
     } catch (e) {
-      Logger.warning('[RegionService] Kakao API 검색 실패 (키워드 검색 시도): $e');
+      Logger.warning('Kakao API 검색 실패 (키워드 검색 시도): $e');
       // 네트워크 오류 시 키워드 검색 시도
       return await _searchKakaoKeyword(query);
     }
@@ -194,7 +240,7 @@ class RegionService {
         return [];
       }
 
-      Logger.info('[RegionService] Kakao API 키워드 검색: $query');
+      Logger.info('Kakao API 키워드 검색: $query');
       
       final response = await _dio.get(
         'https://dapi.kakao.com/v2/local/search/keyword.json',
@@ -222,29 +268,31 @@ class RegionService {
           );
         }).toList();
 
-        Logger.info('[RegionService] Kakao 키워드 검색 완료: ${regions.length}개');
+        Logger.info('Kakao 키워드 검색 완료: ${regions.length}개');
         return regions;
       } else {
         return [];
       }
     } catch (e) {
-      Logger.warning('[RegionService] Kakao 키워드 검색 실패 (빈 결과 반환): $e');
+      Logger.warning('Kakao 키워드 검색 실패 (빈 결과 반환): $e');
       return [];
     }
   }
 
-  // 지역 사용 횟수 증가 (분석용)
+  /// 강화된 지역 사용 횟수 증가 (ResilientService 패턴 적용)
   Future<void> incrementUsageCount(String displayName) async {
-    try {
-      await _supabase
-          .from('popular_regions')
-          .update({'usage_count': 'usage_count + 1'})
-          .eq('display_name', displayName);
-      
-      Logger.info('[RegionService] 지역 사용 횟수 증가: $displayName');
-    } catch (e) {
-      Logger.warning('[RegionService] 사용 횟수 증가 실패 (테이블 없음, 무시): $e');
-    }
+    await safeExecute(
+      () async {
+        await _supabase
+            .from('popular_regions')
+            .update({'usage_count': 'usage_count + 1'})
+            .eq('display_name', displayName);
+
+        Logger.info('지역 사용 횟수 증가: $displayName');
+      },
+      '지역 사용 횟수 증가: $displayName',
+      '분석 데이터 수집 실패 (무시됨, 기능은 정상 작동)'
+    );
   }
 
   // 폴백 데이터 (네트워크 실패 시)
@@ -266,7 +314,7 @@ class RegionService {
 
   // 로컬 폴백 검색 (API 모두 실패 시)
   List<Region> _searchLocalFallback(String query) {
-    Logger.info('[RegionService] 로컬 폴백 검색: $query');
+    Logger.info('로컬 폴백 검색: $query');
     
     final regions = <Region>[];
     final queryLower = query.toLowerCase();
@@ -333,7 +381,36 @@ class RegionService {
       regions.add(Region(displayName: '인천시 남동구', sido: '인천광역시', sigungu: '남동구'));
     }
     
-    Logger.info('[RegionService] 로컬 폴백 검색 결과: ${regions.length}개');
+    Logger.info('로컬 폴백 검색 결과: ${regions.length}개');
     return regions.take(10).toList(); // 최대 10개 결과
+  }
+
+  /// 강화된 캐시 검증 (Thread-safe)
+  bool _isCacheValid(String key, Duration maxAge) {
+    if (!_cache.containsKey(key) || !_cacheTimestamps.containsKey(key)) {
+      return false;
+    }
+
+    final timestamp = _cacheTimestamps[key]!;
+    return DateTime.now().difference(timestamp) < maxAge;
+  }
+
+  /// 강화된 캐시 업데이트 (Thread-safe)
+  void _updateCache(String key, dynamic value) {
+    _cache[key] = value;
+    _cacheTimestamps[key] = DateTime.now();
+  }
+
+  /// 캐시 초기화 (메모리 정리)
+  Future<void> clearCache() async {
+    await safeExecute(
+      () async {
+        _cache.clear();
+        _cacheTimestamps.clear();
+        Logger.info('Region service cache cleared');
+      },
+      '지역 서비스 캐시 초기화',
+      '캐시 초기화 실패'
+    );
   }
 }

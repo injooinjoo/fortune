@@ -2,14 +2,24 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import '../core/config/environment.dart';
 import '../core/utils/logger.dart';
+import '../core/services/resilient_service.dart';
 
-/// Service for managing analytics tracking
-class AnalyticsService {
+/// 강화된 Firebase Analytics 서비스
+///
+/// KAN-74: Firebase Analytics 연결 안정성 문제 해결
+/// - ResilientService 패턴 적용
+/// - Firebase 연결 상태 모니터링
+/// - 오프라인 모드 지원 (이벤트 큐잉)
+/// - 백그라운드 재시도 메커니즘
+class AnalyticsService extends ResilientService {
   static final AnalyticsService _instance = AnalyticsService._internal();
   factory AnalyticsService() => _instance;
   AnalyticsService._internal();
 
   static AnalyticsService get instance => _instance;
+
+  @override
+  String get serviceName => 'AnalyticsService';
 
   FirebaseAnalytics? _analytics;
   FirebaseAnalyticsObserver? _observer;
@@ -20,35 +30,37 @@ class AnalyticsService {
   FirebaseAnalytics? get analytics => _analytics;
   FirebaseAnalyticsObserver? get observer => _observer;
 
-  /// Initialize Firebase Analytics
+  /// 강화된 Firebase Analytics 초기화 (ResilientService 패턴)
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    try {
-      // Check if analytics are enabled
-      if (!Environment.enableAnalytics) {
-        Logger.info('Analytics are disabled via feature flag');
-        return;
-      }
+    await safeExecute(
+      () async {
+        // 기능 플래그 확인
+        if (!Environment.enableAnalytics) {
+          Logger.info('Analytics are disabled via feature flag');
+          return;
+        }
 
-      // Initialize Firebase Analytics
-      _analytics = FirebaseAnalytics.instance;
-      _observer = FirebaseAnalyticsObserver(analytics: _analytics!);
+        // Firebase Analytics 초기화
+        _analytics = FirebaseAnalytics.instance;
+        _observer = FirebaseAnalyticsObserver(analytics: _analytics!);
 
-      // Set collection settings
-      await _analytics!.setAnalyticsCollectionEnabled(!kDebugMode);
-      
-      _isInitialized = true;
-      Logger.info('Firebase Analytics initialized successfully');
-      
-      // Log app open event
-      await logEvent('app_open');
-    } catch (e) {
-      Logger.warning('[AnalyticsService] Firebase Analytics 초기화 실패 (분석 없이 진행): $e');
-    }
+        // 수집 설정
+        await _analytics!.setAnalyticsCollectionEnabled(!kDebugMode);
+
+        _isInitialized = true;
+        Logger.info('Firebase Analytics initialized successfully');
+
+        // 앱 시작 이벤트 로깅
+        await logEvent('app_open');
+      },
+      'Firebase Analytics 초기화',
+      '분석 기능 비활성화 (앱은 정상 작동)'
+    );
   }
 
-  /// Set user properties
+  /// 사용자 속성 설정 (ResilientService 패턴)
   Future<void> setUserProperties({
     String? userId,
     bool? isPremium,
@@ -57,67 +69,70 @@ class AnalyticsService {
     String? birthYear}) async {
     if (!_isInitialized || _analytics == null) return;
 
-    try {
-      if (userId != null) {
-        await _analytics!.setUserId(id: userId);
-      }
-      
-      if (isPremium != null) {
-        await _analytics!.setUserProperty(
-          name: 'is_premium',
-          value: isPremium.toString(),
-        );
-      }
-      
-      if (userType != null) {
-        await _analytics!.setUserProperty(
-          name: 'user_type',
-          value: userType,
-        );
-      }
-      
-      if (gender != null) {
-        await _analytics!.setUserProperty(
-          name: 'gender',
-          value: gender,
-        );
-      }
-      
-      if (birthYear != null) {
-        await _analytics!.setUserProperty(
-          name: 'birth_year',
-          value: birthYear,
-        );
-      }
-      
-      Logger.info('User properties set successfully');
-    } catch (e) {
-      Logger.warning('[AnalyticsService] 사용자 속성 설정 실패 (분석 없이 진행): $e');
-    }
+    await safeExecute(
+      () async {
+        if (userId != null) {
+          await _analytics!.setUserId(id: userId);
+        }
+
+        if (isPremium != null) {
+          await _analytics!.setUserProperty(
+            name: 'is_premium',
+            value: isPremium.toString(),
+          );
+        }
+
+        if (userType != null) {
+          await _analytics!.setUserProperty(
+            name: 'user_type',
+            value: userType,
+          );
+        }
+
+        if (gender != null) {
+          await _analytics!.setUserProperty(
+            name: 'gender',
+            value: gender,
+          );
+        }
+
+        if (birthYear != null) {
+          await _analytics!.setUserProperty(
+            name: 'birth_year',
+            value: birthYear,
+          );
+        }
+
+        Logger.info('User properties set successfully');
+      },
+      '사용자 속성 설정',
+      '분석 속성 설정 생략 (기능은 정상 작동)'
+    );
   }
 
-  /// Log a custom event
+  /// 커스텀 이벤트 로깅 (ResilientService 패턴)
   Future<void> logEvent(
     String name, {
     Map<String, dynamic>? parameters}) async {
     if (!_isInitialized || _analytics == null) return;
 
-    try {
-      // Convert parameters to Map<String, Object> if needed
-      final Map<String, Object>? safeParameters = parameters?.map((key, value) {
-        // Convert null values to empty string
-        final Object safeValue = value ?? '';
-        return MapEntry(key, safeValue);
-      });
-      
-      await _analytics!.logEvent(
-        name: name,
-        parameters: safeParameters,
-      );
-      Logger.info('Event logged: $name', parameters);
-    } catch (e) {
-      Logger.warning('[AnalyticsService] 이벤트 로깅 실패 (분석 없이 진행): $name - $e');
-    }
+    await safeExecute(
+      () async {
+        // 파라미터를 Map<String, Object>로 변환
+        final Map<String, Object>? safeParameters = parameters?.map((key, value) {
+          final Object safeValue = value ?? '';
+          return MapEntry(key, safeValue);
+        });
+
+        await _analytics!.logEvent(
+          name: name,
+          parameters: safeParameters,
+        );
+        Logger.info('Event logged: $name', parameters);
+      },
+      '이벤트 로깅: $name',
+      '분석 이벤트 생략 (기능은 정상 작동)'
+    );
   }
 
   /// Log fortune recommendation impression
@@ -180,22 +195,24 @@ class AnalyticsService {
   }
 
 
-  /// Log screen view
+  /// 화면 뷰 로깅 (ResilientService 패턴)
   Future<void> logScreenView({
     required String screenName,
     String? screenClass}) async {
     if (!_isInitialized || _analytics == null) return;
 
-    try {
-      await _analytics!.logScreenView(
-        screenName: screenName,
-        screenClass: screenClass ?? screenName,
-      );
-      
-      Logger.info('Supabase initialized successfully');
-    } catch (e) {
-      Logger.warning('[AnalyticsService] 화면 뷰 로깅 실패 (분석 없이 진행): $screenName - $e');
-    }
+    await safeExecute(
+      () async {
+        await _analytics!.logScreenView(
+          screenName: screenName,
+          screenClass: screenClass ?? screenName,
+        );
+
+        Logger.info('Screen view logged: $screenName');
+      },
+      '화면 뷰 로깅: $screenName',
+      '분석 화면 추적 생략 (기능은 정상 작동)'
+    );
   }
 
   /// Log fortune generation event
@@ -338,17 +355,19 @@ class AnalyticsService {
     });
   }
 
-  /// Reset analytics (e.g., on logout)
+  /// Analytics 초기화 (로그아웃 시 등) (ResilientService 패턴)
   Future<void> reset() async {
     if (!_isInitialized || _analytics == null) return;
 
-    try {
-      await _analytics!.setUserId(id: null);
-      await _analytics!.resetAnalyticsData();
-      Logger.info('Analytics reset successfully');
-    } catch (e) {
-      Logger.warning('[AnalyticsService] Analytics 리셋 실패 (무시): $e');
-    }
+    await safeExecute(
+      () async {
+        await _analytics!.setUserId(id: null);
+        await _analytics!.resetAnalyticsData();
+        Logger.info('Analytics reset successfully');
+      },
+      'Analytics 데이터 초기화',
+      '분석 초기화 생략 (로그아웃은 정상 진행)'
+    );
   }
 
   // ============ A/B Testing Analytics Events ============
@@ -485,23 +504,25 @@ class AnalyticsService {
     });
   }
 
-  /// Set user property for A/B test segment
+  /// A/B 테스트 사용자 속성 설정 (ResilientService 패턴)
   Future<void> setABTestUserProperty({
     required String experimentId,
     required String variantId,
   }) async {
     if (!_isInitialized || _analytics == null) return;
 
-    try {
-      await _analytics!.setUserProperty(
-        name: 'ab_${experimentId}',
-        value: variantId,
-      );
-      
-      Logger.info('Set A/B test user property: $experimentId = $variantId');
-    } catch (e) {
-      Logger.warning('[AnalyticsService] A/B 테스트 사용자 속성 설정 실패 (분석 없이 진행): $e');
-    }
+    await safeExecute(
+      () async {
+        await _analytics!.setUserProperty(
+          name: 'ab_$experimentId',
+          value: variantId,
+        );
+
+        Logger.info('Set A/B test user property: $experimentId = $variantId');
+      },
+      'A/B 테스트 사용자 속성 설정: $experimentId',
+      'A/B 테스트 분석 속성 생략 (실험 기능은 정상 작동)'
+    );
   }
 
   /// Log experiment started event

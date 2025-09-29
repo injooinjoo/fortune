@@ -33,6 +33,7 @@ import 'services/analytics_service.dart';
 import 'services/remote_config_service.dart';
 import 'presentation/providers/font_size_provider.dart';
 import 'core/services/test_auth_service.dart';
+import 'core/services/supabase_connection_service.dart';
 
 void main() async {
   print('🚀 [STARTUP] App main() started');
@@ -106,28 +107,29 @@ void main() async {
     }
   });
 
-  // Initialize Supabase with error handling
-  try {
-    print('🚀 [STARTUP] Initializing Supabase...');
-    final supabaseUrl = dotenv.dotenv.env['SUPABASE_URL'];
-    final supabaseAnonKey = dotenv.dotenv.env['SUPABASE_ANON_KEY'];
-
-    if (supabaseUrl != null && supabaseAnonKey != null &&
-        supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty) {
-      await Supabase.initialize(
-        url: supabaseUrl,
-        anonKey: supabaseAnonKey,
+  // Initialize Supabase with enhanced connection management
+  print('🚀 [STARTUP] Initializing Supabase with enhanced connection service...');
+  // 백그라운드에서 Supabase 연결 초기화 (앱 시작을 막지 않도록)
+  Future(() async {
+    try {
+      final success = await SupabaseConnectionService.initialize(
+        maxRetries: 3,
+        timeout: Duration(seconds: 15),
+        retryDelay: Duration(seconds: 2),
       );
-      print('🚀 [STARTUP] Supabase initialized successfully');
-      Logger.info('Supabase initialized successfully');
-    } else {
-      print('⚠️ [STARTUP] Supabase credentials not found in environment');
-      Logger.error('Supabase credentials not found in environment');
+
+      if (success) {
+        print('🚀 [STARTUP] Supabase 강화된 연결 서비스 초기화 성공');
+        Logger.info('Supabase 강화된 연결 서비스 초기화 성공');
+      } else {
+        print('⚠️ [STARTUP] Supabase 연결 실패, 오프라인 모드 활성화');
+        Logger.warning('Supabase 연결 실패 (선택적 기능, 오프라인 모드 사용): 네트워크 또는 설정 확인 필요');
+      }
+    } catch (e) {
+      print('❌ [STARTUP] Supabase 연결 서비스 초기화 오류: $e');
+      Logger.warning('Supabase 연결 서비스 초기화 실패 (선택적 기능, 오프라인 모드 사용): $e');
     }
-  } catch (e) {
-    print('❌ [STARTUP] Supabase initialization failed: $e');
-    Logger.error('Supabase initialization failed', e);
-  }
+  });
 
   // Initialize Social Login SDKs with error handling
   if (!kIsWeb) {

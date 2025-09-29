@@ -1,45 +1,62 @@
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:fortune/core/utils/logger.dart';
+import 'package:fortune/core/services/resilient_service.dart';
 
 /// Service for communicating with native platform features
 /// Handles iOS and Android platform-specific functionality
-class NativePlatformService {
+class NativePlatformService extends ResilientService {
+  static final NativePlatformService _instance = NativePlatformService._internal();
+  factory NativePlatformService() => _instance;
+  NativePlatformService._internal();
+
+  @override
+  String get serviceName => 'NativePlatformService';
+
   // Platform channels - made public for extensions
   static const MethodChannel iosChannel = MethodChannel('com.fortune.fortune/ios');
   static const MethodChannel androidChannel = MethodChannel('com.fortune.fortune/android');
-  
+
   // Event channels for receiving native updates
   static const EventChannel _iosEventChannel = EventChannel('com.fortune.fortune/ios/events');
   static const EventChannel _androidEventChannel = EventChannel('com.fortune.fortune/android/events');
-  
-  // Get the appropriate channel based on platform
+
+  // Improved platform detection using Platform.isIOS/isAndroid
+  static bool get _isIOS => Platform.isIOS;
+  static bool get _isAndroid => Platform.isAndroid;
+
+  // Get the appropriate channel based on actual platform
   static MethodChannel get _channel {
-    if (const String.fromEnvironment('PLATFORM') == 'ios') {
+    if (_isIOS) {
       return iosChannel;
-    } else if (const String.fromEnvironment('PLATFORM') == 'android') {
+    } else if (_isAndroid) {
       return androidChannel;
     }
-    // Default fallback
+    // Fallback channel for unsupported platforms
     return const MethodChannel('com.fortune.fortune/native');
   }
-  
+
   static EventChannel get _eventChannel {
-    if (const String.fromEnvironment('PLATFORM') == 'ios') {
+    if (_isIOS) {
       return _iosEventChannel;
-    } else if (const String.fromEnvironment('PLATFORM') == 'android') {
+    } else if (_isAndroid) {
       return _androidEventChannel;
     }
     return const EventChannel('com.fortune.fortune/native/events');
   }
   
   /// Initialize native platform features
-  static Future<void> initialize() async {
-    try {
-      final result = await _channel.invokeMethod('initialize');
-      Logger.info('Native platform initialized successfully');
-    } on PlatformException catch (e) {
-      Logger.warning('[NativePlatformService] 네이티브 플랫폼 초기화 실패 (선택적 기능, 네이티브 기능 비활성화): $e');
-    }
+  static Future<void> initialize() async => _instance._initializeInternal();
+
+  Future<void> _initializeInternal() async {
+    await safeExecute(
+      () async {
+        final result = await _channel.invokeMethod('initialize');
+        Logger.info('Native platform initialized successfully: $result');
+      },
+      '네이티브 플랫폼 초기화',
+      '네이티브 기능 비활성화'
+    );
   }
   
   /// Update widget data on the native side
@@ -109,24 +126,31 @@ class NativePlatformService {
   static final Android android = Android._();
 }
 
-class iOS {
+class iOS extends ResilientService {
   iOS._();
-  
+
+  @override
+  String get serviceName => 'NativePlatformService.iOS';
+
   /// Update Dynamic Island content
   Future<void> updateDynamicIsland({
-      required String activityId,
-      required Map<String, dynamic> content}) async {
-      if (const String.fromEnvironment('PLATFORM') != 'ios') return;
-      
-      try {
+    required String activityId,
+    required Map<String, dynamic> content,
+  }) async {
+    await safeExecuteWithCondition(
+      NativePlatformService._isIOS,
+      () async {
         await NativePlatformService.iosChannel.invokeMethod('updateDynamicIsland', {
           'activityId': activityId,
-          'content': content});
-        Logger.info('Native platform initialized successfully');
-      } on PlatformException catch (e) {
-        Logger.warning('[NativePlatformService] 다이내믹 아일랜드 업데이트 실패 (선택적 기능, iOS 16.1+ 전용): $e');
-      }
-    }
+          'content': content,
+        });
+      },
+      null,
+      '다이내믹 아일랜드 업데이트',
+      'iOS 플랫폼 필요',
+      '다이내믹 아일랜드 기능 비활성화'
+    );
+  }
     
     /// Start a Live Activity
   Future<String?> startLiveActivity({

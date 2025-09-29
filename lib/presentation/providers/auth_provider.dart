@@ -87,8 +87,7 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
     Logger.info('❌ [userProfileProvider] Profile data is null');
     return null;
   } catch (e, stackTrace) {
-    Logger.error('❌ [userProfileProvider] Failed to fetch or create user profile', e);
-    Logger.error('Fortune cached');
+    Logger.warning('[userProfileProvider] 사용자 프로필 조회/생성 실패 (선택적 기능, 기본 프로필 사용): $e');
     return null;
   }
 });
