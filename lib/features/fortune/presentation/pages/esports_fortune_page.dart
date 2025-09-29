@@ -54,7 +54,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
 
   Future<void> _loadEsportsData() async {
     if (_selectedGame == GameType.lol) {
-      _lckSchedule = await ExternalApiService.getLCKSchedule();
+      // _lckSchedule = await ExternalApiService.getLCKSchedule();
     }
   }
 

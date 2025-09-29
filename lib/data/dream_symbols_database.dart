@@ -120,16 +120,16 @@ class DreamSymbolsDatabase {
       'category': '교통수단',
       'meaning': '높은 목표와 야망. 빠른 변화',
       'positive': '목표 달성과 성공',
-      'negative': '현실 도피나 불안정')
-      'advice': '목표를 현실적으로 설정하세요')
-    })
+      'negative': '현실 도피나 불안정',
+      'advice': '목표를 현실적으로 설정하세요'
+    },
     '컴퓨터': {
       'category': '사물',
       'meaning': '논리적 사고와 정보 처리',
       'positive': '문제 해결 능력',
-      'negative': '감정 억압이나 기계적 사고')
-      'advice': '이성과 감성의 균형을 맞추세요')
-    })
+      'negative': '감정 억압이나 기계적 사고',
+      'advice': '이성과 감성의 균형을 맞추세요'
+    }
   };
 
   // 문화별 차이점
@@ -138,20 +138,20 @@ class DreamSymbolsDatabase {
       'korean': '재물운이나 지혜의 상징. 때로는 배신 경고',
       'western': '변화와 재생. 성적 에너지나 치유',
       'indian': '쿤달리니 에너지. 영적 각성',
-      'chinese': '행운과 지혜. 용의 전 단계')
-    })
+      'chinese': '행운과 지혜. 용의 전 단계'
+    },
     '죽음': {
       'korean': '오히려 장수나 새로운 시작을 의미',
       'western': '변화와 전환. 옛것의 종료',
       'mexican': '축제와 재생. 조상과의 연결',
-      'african': '조상의 메시지. 영적 전환')
-    })
+      'african': '조상의 메시지. 영적 전환'
+    },
     '물': {
       'korean': '재물이나 생명력. 맑으면 길, 탁하면 흉',
       'western': '무의식과 감정. 정화와 재생',
-      'japanese': '정화와 순수. 신성한 힘')
-      'native_american': '생명의 원천. 영적 정화')
-    })
+      'japanese': '정화와 순수. 신성한 힘',
+      'native_american': '생명의 원천. 영적 정화'
+    }
   };
 
   // 꿈 해석 가이드

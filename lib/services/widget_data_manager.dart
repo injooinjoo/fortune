@@ -46,13 +46,13 @@ class WidgetDataManager {
           'createdAt': DateTime.now().toIso8601String()});
       
       // Update live activity if iOS
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        await LiveActivityService.startDailyFortune(
-          score: score.toString(),
-          message: fortune.data?.content ?? '',
-          luckyColor: luckyColor,
-      luckyNumber: luckyNumber);
-      }
+      // if (defaultTargetPlatform == TargetPlatform.iOS) {
+      //   await LiveActivityService.startDailyFortune(
+      //     score: score.toString(),
+      //     message: fortune.data?.content ?? '',
+      //     luckyColor: luckyColor,
+      // luckyNumber: luckyNumber);
+      // }
       
       // Save to local storage
       await _saveFortuneData(_dailyFortuneKey, fortune);
@@ -100,7 +100,7 @@ class WidgetDataManager {
       await prefs.remove(_lastUpdateKey);
       
       // End all live activities
-      await LiveActivityService.endAllActivities();
+      // await LiveActivityService.endAllActivities();
       
       Logger.info('All widget data cleared');
     } catch (e) {

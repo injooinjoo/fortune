@@ -63,7 +63,7 @@ class RegionService extends ResilientService {
   Future<List<Region>> getPopularRegions() async {
     const cacheKey = 'popular_regions';
 
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache first
         if (_isCacheValid(cacheKey, _popularRegionsCacheDuration)) {
@@ -140,7 +140,7 @@ class RegionService extends ResilientService {
 
   /// 인기 지역에서 검색 (ResilientService 패턴 적용)
   Future<List<Region>> _searchPopularRegions(String query) async {
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         final response = await _supabase
             .from('popular_regions')

@@ -134,14 +134,14 @@ abstract class ResilientService {
   ///
   /// 예시:
   /// ```dart
-  /// final data = await safeExecuteWithFallback(
+  /// final data = await safeExecuteWithFallbackFunction(
   ///   () => fetchFromApi(),
   ///   () => getCachedData(),
   ///   'API 데이터 조회',
   ///   '캐시된 데이터로 대체'
   /// );
   /// ```
-  Future<T> safeExecuteWithFallback<T>(
+  Future<T> safeExecuteWithFallbackFunction<T>(
     Future<T> Function() operation,
     Future<T> Function() fallback,
     String operationName,

@@ -440,7 +440,7 @@ class TodoRepositoryImpl implements TodoRepository {
         }
       });
     } catch (e) {
-      return Stream.value(Left(ServerFailure(e.toString()));
+      return Stream.value(Left(ServerFailure(e.toString())));
     }
   }
 

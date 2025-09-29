@@ -13,7 +13,6 @@ import '../../../../presentation/widgets/fortune_card.dart';
 import '../../../../presentation/widgets/fortune_explanation_bottom_sheet.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../widgets/fortune_content_card.dart';
-import '../../../payment/presentation/pages/token_purchase_page.dart';
 
 /// Dynamic fortune page that handles all fortune types
 class DynamicFortunePage extends ConsumerStatefulWidget {

@@ -81,7 +81,7 @@ class ExternalApiService extends ResilientService {
   
   /// 강화된 날씨 정보 조회 (ResilientService 패턴)
   Future<WeatherInfo> getWeatherData(String location) async {
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Use the current location weather method for now
         // In the future, can add location-specific search
@@ -116,7 +116,7 @@ class ExternalApiService extends ResilientService {
   Future<List<GameSchedule>> getBaseballSchedule(String team) async {
     final cacheKey = 'baseball_$team';
 
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache first
         if (_isCacheValid(cacheKey, _scheduleCacheDuration)) {
@@ -150,7 +150,7 @@ class ExternalApiService extends ResilientService {
   Future<List<EsportsMatch>> getLCKSchedule({String? team}) async {
     final cacheKey = 'lck_${team ?? 'all'}';
 
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache first
         if (_isCacheValid(cacheKey, _scheduleCacheDuration)) {
@@ -184,7 +184,7 @@ class ExternalApiService extends ResilientService {
   Future<List<GolfCourse>> getGolfCourseInfo(String region) async {
     final cacheKey = 'golf_$region';
 
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache first
         if (_isCacheValid(cacheKey, _golfCourseCacheDuration)) {
@@ -218,7 +218,7 @@ class ExternalApiService extends ResilientService {
   Future<Map<String, dynamic>> getCryptoMarketData() async {
     final cacheKey = 'crypto_market';
 
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache (shorter duration for crypto)
         if (_isCacheValid(cacheKey, Duration(minutes: 5))) {
@@ -280,7 +280,7 @@ class ExternalApiService extends ResilientService {
   Future<Map<String, dynamic>> getLottoStatistics() async {
     final cacheKey = 'lotto_stats';
 
-    return await safeExecuteWithFallback(
+    return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache first
         if (_isCacheValid(cacheKey, Duration(days: 1))) {
