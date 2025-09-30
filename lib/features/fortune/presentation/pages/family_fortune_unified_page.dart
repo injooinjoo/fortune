@@ -5,6 +5,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
@@ -74,24 +75,31 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Widget _buildInputScreen() {
-    return Column(
+    return Stack(
       children: [
-        // Progress indicator
-        _buildProgressIndicator(),
-        
-        // Step content
-        Expanded(
-          child: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _buildStep1FamilyType(),
-              _buildStep2FamilyInfo(),
-            ],
-            controller: PageController(initialPage: _currentStep),
-          ),
+        Column(
+          children: [
+            // Progress indicator
+            _buildProgressIndicator(),
+
+            // Step content
+            Expanded(
+              child: PageView(
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildStep1FamilyType(),
+                  _buildStep2FamilyInfo(),
+                ],
+                controller: PageController(initialPage: _currentStep),
+              ),
+            ),
+
+            // Space for floating button
+            const SizedBox(height: 80),
+          ],
         ),
-        
-        // Bottom button
+
+        // Floating bottom button
         _buildBottomButton(),
       ],
     );
@@ -500,16 +508,11 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Widget _buildBottomButton() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      color: TossTheme.backgroundWhite,
-      child: SafeArea(
-        child: TossButton(
-          text: _currentStep == 1 ? '가족 운세 보기' : '다음',
-          onPressed: _canProceed() ? _handleNext : null,
-          isLoading: _isLoading,
-        ),
-      ),
+    return FloatingBottomButton(
+      text: _currentStep == 1 ? '가족 운세 보기' : '다음',
+      onPressed: _canProceed() ? _handleNext : null,
+      isLoading: _isLoading,
+      size: TossButtonSize.large,
     );
   }
 

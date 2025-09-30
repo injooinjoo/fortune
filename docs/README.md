@@ -1,115 +1,177 @@
 # Fortune App Documentation
 
-이 폴더는 Fortune Flutter 앱의 문서들을 포함합니다.
-
-## 유명인 데이터베이스 관련 문서
-
-### 📋 [DB_SCHEMA.md](./DB_SCHEMA.md)
-- **목적**: 새로운 Celebrity DB 스키마의 전체 구조 설명
-- **내용**:
-  - 테이블 구조 및 필드 상세 설명
-  - 직군별 특화 정보 스키마 (JSON 구조)
-  - 인덱스 및 성능 최적화 정보
-  - 헬퍼 함수 및 통계 뷰
-  - Flutter 모델과의 매핑 관계
-
-### 🔄 [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)
-- **목적**: 기존 스키마에서 새 스키마로의 마이그레이션 가이드
-- **내용**:
-  - 5단계 마이그레이션 프로세스
-  - 데이터 변환 규칙 및 매핑
-  - 검증 및 테스트 방법
-  - 롤백 계획 및 문제 해결 가이드
-  - 성능 영향 분석
-
-### 💻 [API_USAGE.md](./API_USAGE.md)
-- **목적**: Flutter 앱에서 Celebrity API 사용법
-- **내용**:
-  - Celebrity 모델 클래스 사용법
-  - Supabase 서비스 구현 예시
-  - UI 컴포넌트 개발 가이드
-  - 에러 처리 및 성능 최적화 팁
-
-## 마이그레이션 파일
-
-다음 Supabase 마이그레이션 파일들이 생성되었습니다:
-
-1. **20250119000001_backup_existing_celebrities.sql** - 기존 데이터 백업
-2. **20250119000002_create_new_celebrity_schema.sql** - 새 스키마 생성
-3. **20250119000003_migrate_existing_data.sql** - 데이터 변환 마이그레이션
-4. **20250119000004_create_indexes_and_functions.sql** - 인덱스 및 함수 생성
-5. **20250119000005_cleanup_old_tables.sql** - 기존 테이블 정리
-
-## Flutter 모델 변경사항
-
-- **기존**: `lib/data/models/celebrity.dart` → `celebrity_old.dart`로 백업
-- **신규**: 새로운 `Celebrity` 모델 클래스 생성
-  - 8가지 직업 유형 지원 (`CelebrityType` enum)
-  - 직군별 특화 정보 (`professionData` JSON 필드)
-  - 외부 링크 정보 (`ExternalIds` 클래스)
-  - 다국어 이름 및 별칭 지원
-
-## 주요 개선사항
-
-### 🎯 스키마 설계
-- **유연성**: JSON 필드를 통한 직업별 특화 정보 저장
-- **확장성**: 새로운 직업 유형 쉽게 추가 가능
-- **성능**: 최적화된 인덱스로 빠른 검색 지원
-- **국제화**: 다국어 이름 및 별칭 지원
-
-### 📊 데이터 구조
-- **8가지 직업 유형**: 프로게이머, 스트리머, 정치인, 기업인, 솔로가수, 아이돌멤버, 배우, 운동선수
-- **외부 링크 통합**: Wikipedia, YouTube, Instagram, X(Twitter) 등
-- **검색 최적화**: 전문 검색 및 필터링 함수 제공
-
-### 🔧 개발자 경험
-- **타입 안전성**: 강화된 Dart enum 및 모델 클래스
-- **편의 함수**: 직업별 특화 검색 함수 제공
-- **문서화**: 상세한 사용법 및 예시 코드
-- **에러 처리**: 포괄적인 예외 처리 가이드
-
-## 사용 방법
-
-### 1. 마이그레이션 실행
-```bash
-# Supabase CLI 사용
-supabase db push
-
-# 또는 수동 실행
-psql "connection_string" -f supabase/migrations/20250119000001_backup_existing_celebrities.sql
-# ... 나머지 마이그레이션 파일들 순서대로 실행
-```
-
-### 2. Flutter 코드 업데이트
-```dart
-// 새로운 Celebrity 모델 사용
-import 'package:fortune/data/models/celebrity.dart';
-
-// 서비스 클래스에서 새로운 검색 함수 활용
-final celebrities = await celebrityService.searchCelebrities('아이유');
-final actors = await celebrityService.getCelebritiesByType(CelebrityType.actor);
-```
-
-### 3. 문서 참고
-- 데이터베이스 구조: `DB_SCHEMA.md`
-- 마이그레이션 과정: `MIGRATION_GUIDE.md`
-- 개발 가이드: `API_USAGE.md`
-
-## 주의사항
-
-⚠️ **운영 환경 적용 전 필수 확인사항**:
-1. 스테이징 환경에서 전체 마이그레이션 테스트
-2. 충분한 데이터 백업 준비
-3. 다운타임 최소화를 위한 배포 계획 수립
-4. 롤백 계획 준비
-
-## 지원 및 문의
-
-- **마이그레이션 관련**: MIGRATION_GUIDE.md의 문제해결 섹션 참고
-- **API 사용법**: API_USAGE.md의 예시 코드 참고
-- **스키마 구조**: DB_SCHEMA.md의 상세 설명 참고
+Fortune 앱 개발을 위한 통합 문서 색인입니다.
 
 ---
 
-**최종 업데이트**: 2025년 1월 19일
-**작성자**: Claude Code Assistant
+## 📂 문서 구조
+
+모든 프로젝트 문서는 주제별로 분류되어 있습니다. 작업 시작 전 관련 폴더를 확인하세요.
+
+```
+docs/
+├── getting-started/    # 프로젝트 시작
+├── design/            # 디자인 시스템
+├── data/              # 데이터 & API
+├── native/            # 네이티브 기능
+├── testing/           # 테스팅
+├── deployment/        # 배포 & 보안
+├── development/       # 개발 도구 & 자동화
+├── legal/             # 법률 & 정책
+└── troubleshooting/   # 문제 해결
+```
+
+---
+
+## 🚀 빠른 시작 (getting-started/)
+
+- [프로젝트 개요](getting-started/PROJECT_OVERVIEW.md) - 아키텍처, 기술 스택, 프로젝트 구조
+- [개발 환경 설정](getting-started/SETUP_GUIDE.md) - Flutter, Firebase, Supabase 설정
+
+---
+
+## 🎨 디자인 시스템 (design/)
+
+- [TOSS 디자인 시스템](design/TOSS_DESIGN_SYSTEM.md) ⭐️ - TOSS 통합 가이드 (색상, 타이포그래피, 컴포넌트)
+- [디자인 시스템](design/DESIGN_SYSTEM.md) - Fortune 디자인 철학 및 컴포넌트
+- [UI/UX 마스터 정책](design/UI_UX_MASTER_POLICY.md) - UI/UX 개발 원칙 및 정책
+- [UI/UX 확장 로드맵](design/UI_UX_EXPANSION_ROADMAP.md) - 향후 UI/UX 개선 계획
+- [위젯 아키텍처](design/WIDGET_ARCHITECTURE_DESIGN.md) - Flutter 위젯 설계 패턴
+
+---
+
+## 💾 데이터 & API (data/)
+
+- [데이터베이스 가이드](data/DATABASE_GUIDE.md) ⭐️ - 통합 DB 문서 (스키마, RLS, Celebrity DB, 마이그레이션)
+- [API 사용법](data/API_USAGE.md) - Supabase API 사용 패턴
+
+---
+
+## 📱 네이티브 기능 (native/)
+
+- [네이티브 기능 가이드](native/NATIVE_FEATURES_GUIDE.md) ⭐️ - 통합 네이티브 기능 (홈 위젯, Lock Screen, Dynamic Island 등)
+- [워치 앱 가이드](native/WATCH_COMPANION_APPS_GUIDE.md) - Apple Watch 및 Wear OS 앱 개발
+
+---
+
+## 🧪 테스팅 & 최적화 (testing/)
+
+- [테스팅 가이드](testing/TESTING_GUIDE.md) - 테스트 전략 및 실행 방법
+- [A/B 테스팅 가이드](testing/AB_TESTING_GUIDE.md) ⭐️ - Firebase A/B Testing 완벽 가이드
+- [Resilient Service 가이드](testing/RESILIENT_SERVICE_GUIDE.md) - 안정적인 서비스 패턴
+
+---
+
+## 🚢 배포 & 보안 (deployment/)
+
+- [배포 완벽 가이드](deployment/DEPLOYMENT_COMPLETE_GUIDE.md) ⭐️ - Android/iOS 배포 전체 프로세스
+- [앱 스토어 가이드](deployment/APP_STORE_GUIDE.md) ⭐️ - App Store Connect 및 Google Play Console
+- [보안 체크리스트](deployment/SECURITY_CHECKLIST.md) - 배포 전 보안 점검
+
+---
+
+## 🛠 개발 도구 & 자동화 (development/)
+
+### JIRA 자동화
+- [CLAUDE 자동화 가이드](development/CLAUDE_AUTOMATION.md) ⭐️ - JIRA 자동화 및 워크플로우
+- [Git + JIRA 워크플로우](development/GIT_JIRA_WORKFLOW.md) - Git과 JIRA 통합
+- [JIRA 설정](development/JIRA_CONFIG.md) - JIRA 프로젝트 설정
+- [UX 요청 처리 가이드](development/UX_REQUEST_GUIDE.md) - UX 피드백 자동 처리
+
+### MCP & Agent
+- [MCP 설정 가이드](development/MCP_SETUP_GUIDE.md) - Model Context Protocol 서버 설정
+- [Agent 사양](development/AGENTS.md) - Claude Agent 상세 사양
+
+---
+
+## ⚖️ 법률 & 정책 (legal/)
+
+- [개인정보 처리방침](legal/PRIVACY_POLICY_CONTENT.md) - 앱 개인정보 처리방침 전문
+
+---
+
+## 🛠 문제 해결 (troubleshooting/)
+
+- [406 에러 수정 가이드](troubleshooting/FIX_406_ERROR_GUIDE.md) - HTTP 406 에러 해결 방법
+
+---
+
+## 📋 작업별 문서 찾기
+
+### 프로젝트 시작할 때
+→ `getting-started/` 폴더 확인
+- PROJECT_OVERVIEW.md (아키텍처 이해)
+- SETUP_GUIDE.md (환경 구축)
+
+### UI/디자인 작업할 때
+→ `design/` 폴더 확인
+- 새 UI 컴포넌트 → TOSS_DESIGN_SYSTEM.md
+- 색상/폰트 변경 → TOSS_DESIGN_SYSTEM.md
+- 위젯 구조 설계 → WIDGET_ARCHITECTURE_DESIGN.md
+
+### 데이터베이스 작업할 때
+→ `data/` 폴더 확인
+- 새 테이블 추가 → DATABASE_GUIDE.md
+- RLS 정책 설정 → DATABASE_GUIDE.md
+- API 호출 패턴 → API_USAGE.md
+
+### 네이티브 기능 개발할 때
+→ `native/` 폴더 확인
+- 홈 위젯 추가 → NATIVE_FEATURES_GUIDE.md
+- iOS 잠금화면 기능 → NATIVE_FEATURES_GUIDE.md
+- 워치 앱 개발 → WATCH_COMPANION_APPS_GUIDE.md
+
+### 테스트/최적화 작업할 때
+→ `testing/` 폴더 확인
+- A/B 테스트 설정 → AB_TESTING_GUIDE.md
+- 서비스 안정성 개선 → RESILIENT_SERVICE_GUIDE.md
+- 테스트 코드 작성 → TESTING_GUIDE.md
+
+### 배포/출시 준비할 때
+→ `deployment/` 폴더 확인
+- Android/iOS 배포 → DEPLOYMENT_COMPLETE_GUIDE.md
+- 앱스토어 등록 → APP_STORE_GUIDE.md
+- 보안 검토 → SECURITY_CHECKLIST.md
+
+### 자동화/워크플로우 설정할 때
+→ `development/` 폴더 확인
+- JIRA 자동 등록 → CLAUDE_AUTOMATION.md
+- Git 커밋 자동화 → GIT_JIRA_WORKFLOW.md
+- MCP 서버 설정 → MCP_SETUP_GUIDE.md
+
+---
+
+## 📝 문서 정리 히스토리
+
+### 2025-09-30: 문서 구조 재정비
+- **주제별 폴더 분류**: 9개 카테고리로 체계화
+- **루트 정리**: 프로젝트 루트 문서 10개 → 2개 (README.md, CLAUDE.md)
+- **경로 통일**: 모든 문서를 `docs/` 하위로 이동
+- **탐색 개선**: 작업별 문서 찾기 가이드 추가
+
+### 2025-09-30: 통합 문서 생성 ⭐️
+아래 문서들은 여러 중복 파일들을 하나로 통합한 최신 버전입니다:
+
+1. **DEPLOYMENT_COMPLETE_GUIDE.md** - 4개 파일 통합 (배포 관련 모든 정보)
+2. **TOSS_DESIGN_SYSTEM.md** - 7개 파일 통합 (TOSS 디자인 시스템 완벽 가이드)
+3. **AB_TESTING_GUIDE.md** - 3개 파일 통합 (A/B 테스팅 완벽 가이드)
+4. **DATABASE_GUIDE.md** - 3개 파일 통합 (DB 스키마, RLS, 마이그레이션)
+5. **NATIVE_FEATURES_GUIDE.md** - 3개 파일 통합 (네이티브 기능 통합 가이드)
+6. **APP_STORE_GUIDE.md** - 4개 파일 통합 (앱스토어 출시 완벽 가이드)
+
+---
+
+## 프로젝트 루트 문서
+
+프로젝트 루트에는 핵심 진입점 문서만 유지합니다:
+
+- [README.md](../README.md) - 프로젝트 소개 및 시작 방법
+- [CLAUDE.md](../CLAUDE.md) - Claude Code 개발 규칙 및 자동화 워크플로우
+
+---
+
+## 기여
+
+문서 개선 제안이 있으시면 JIRA 티켓을 생성하거나 직접 PR을 제출해주세요.
+
+**백업 위치**: `/Users/jacobmac/Desktop/Dev/fortune-docs-backup-20250930/`

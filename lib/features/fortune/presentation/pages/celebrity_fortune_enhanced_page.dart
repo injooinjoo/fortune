@@ -6,6 +6,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/models/celebrity_simple.dart';
@@ -80,30 +81,37 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildInputScreen() {
-    return Column(
+    return Stack(
       children: [
-        // Progress indicator
-        _buildProgressIndicator(),
-        
-        // Step content
-        Expanded(
-          child: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentStep = index;
-              });
-            },
-            children: [
-              _buildStep1CategorySelection(),
-              _buildStep2CelebritySelection(),
-              _buildStep3QuestionType(),
-            ],
-          ),
+        Column(
+          children: [
+            // Progress indicator
+            _buildProgressIndicator(),
+
+            // Step content
+            Expanded(
+              child: PageView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentStep = index;
+                  });
+                },
+                children: [
+                  _buildStep1CategorySelection(),
+                  _buildStep2CelebritySelection(),
+                  _buildStep3QuestionType(),
+                ],
+              ),
+            ),
+
+            // 버튼 높이만큼 여백 확보
+            const BottomButtonSpacing(),
+          ],
         ),
-        
-        // Bottom button
+
+        // Floating 버튼
         _buildBottomButton(),
       ],
     );
@@ -699,19 +707,29 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     final canProceed = (_currentStep == 0 && _selectedCategory != null) ||
                       (_currentStep == 1 && _selectedCelebrity != null) ||
                       (_currentStep == 2);
-    
-    return Container(
-      padding: const EdgeInsets.all(20),
-      color: TossTheme.backgroundWhite,
-      child: SafeArea(
-        child: Row(
-          children: [
-            if (_currentStep > 0) ...[
+
+    // 이전/다음 버튼이 있는 경우 Row로 구성
+    if (_currentStep > 0) {
+      return Positioned(
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: Container(
+          color: Colors.transparent,
+          padding: EdgeInsets.fromLTRB(
+            20,
+            0,
+            20,
+            16 + MediaQuery.of(context).padding.bottom,
+          ),
+          child: Row(
+            children: [
               Expanded(
                 flex: 1,
                 child: TossButton(
                   text: '이전',
                   style: TossButtonStyle.secondary,
+                  size: TossButtonSize.large,
                   onPressed: () {
                     _pageController.animateToPage(
                       _currentStep - 1,
@@ -722,18 +740,26 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 ),
               ),
               const SizedBox(width: 12),
-            ],
-            Expanded(
-              flex: 2,
-              child: TossButton(
-                text: _currentStep < 2 ? '다음' : _isLoading ? '운세 생성 중...' : '운세 보기',
-                isLoading: _isLoading,
-                onPressed: canProceed ? _handleButtonPress : null,
+              Expanded(
+                flex: 2,
+                child: TossButton(
+                  text: _currentStep < 2 ? '다음' : _isLoading ? '운세 생성 중...' : '운세 보기',
+                  isLoading: _isLoading,
+                  size: TossButtonSize.large,
+                  onPressed: canProceed ? _handleButtonPress : null,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      );
+    }
+
+    // 첫 번째 스텝에서는 단일 버튼
+    return FloatingBottomButton(
+      text: '다음',
+      isLoading: _isLoading,
+      onPressed: canProceed ? _handleButtonPress : null,
     );
   }
 
@@ -801,10 +827,12 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   Widget _buildResultScreen() {
     if (_fortune == null) return const SizedBox();
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
           // Celebrity info header
           Container(
             padding: const EdgeInsets.all(20),
@@ -984,37 +1012,56 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             ),
             const SizedBox(height: 20),
           ],
-          
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: TossButton(
-                  text: '다시 해보기',
-                  style: TossButtonStyle.secondary,
-                  onPressed: () => setState(() {
-                    _fortune = null;
-                    _currentStep = 0;
-                    _selectedCelebrity = null;
-                  }),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TossButton(
-                  text: '공유하기',
-                  onPressed: () {
-                    // TODO: 공유 기능 구현
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
-                    );
-                  },
-                ),
-              ),
+
+              // 버튼 높이만큼 여백 확보
+              const BottomButtonSpacing(),
             ],
           ),
-        ],
-      ),
+        ),
+
+        // Floating 버튼
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Container(
+            color: Colors.transparent,
+            padding: EdgeInsets.fromLTRB(
+              20,
+              0,
+              20,
+              16 + MediaQuery.of(context).padding.bottom,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TossButton(
+                    text: '다시 해보기',
+                    style: TossButtonStyle.secondary,
+                    onPressed: () => setState(() {
+                      _fortune = null;
+                      _currentStep = 0;
+                      _selectedCelebrity = null;
+                    }),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TossButton(
+                    text: '공유하기',
+                    onPressed: () {
+                      // TODO: 공유 기능 구현
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     ).animate().fadeIn(duration: 600.ms);
   }
 

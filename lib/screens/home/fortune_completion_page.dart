@@ -94,8 +94,8 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
   void _handleScroll() {
     final currentScrollPosition = _scrollController.position.pixels;
     const scrollDownThreshold = 10.0; // Minimum scroll down distance
-    const scrollUpThreshold = 3.0; // Ultra sensitive scroll up detection
-    
+    const scrollUpThreshold = 1.5; // Ultra sensitive scroll up detection (더 예민하게)
+
     // Always show navigation when at the top
     if (currentScrollPosition <= 10.0) {
       if (_isScrollingDown) {
@@ -105,7 +105,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       _lastScrollPosition = currentScrollPosition;
       return;
     }
-    
+
     if (currentScrollPosition > _lastScrollPosition + scrollDownThreshold && !_isScrollingDown) {
       // Scrolling down - hide navigation
       _isScrollingDown = true;
@@ -115,7 +115,7 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
       _isScrollingDown = false;
       ref.read(navigationVisibilityProvider.notifier).show();
     }
-    
+
     _lastScrollPosition = currentScrollPosition;
   }
 

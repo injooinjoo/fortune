@@ -2,23 +2,89 @@
 
 ## 🤖 **필수 자동화 워크플로우** - 절대 건너뛰지 말 것! 🤖
 
-### 📋 **모든 불만/개선 요청 → 자동 JIRA 등록 (필수)**
-사용자의 다음 표현을 감지하면 **즉시** `./scripts/parse_ux_request.sh` 실행:
-- **불만**: "문제야", "이상해", "버그", "안돼", "작동안해", "짜증", "불편"
-- **개선**: "~하면 좋겠어", "바꿔줘", "개선", "수정해줘"
-- **UX**: "사용하기 어려워", "터치하기 어려워", "보기 힘들어"
-- **디자인**: "폰트", "색상", "크기", "간격", "레이아웃", "애니메이션"
+### 🔴 **JIRA 등록 최우선 원칙 (CRITICAL RULE)**
 
-### ✅ **문제 해결 → 자동 JIRA 완료 처리 (필수)**
+**모든 개발 작업은 반드시 JIRA 티켓 생성부터 시작합니다!**
+
+```
+잘못된 순서 ❌:
+사용자: "버튼 색상 바꿔줘"
+→ 바로 코드 수정 시작 (WRONG!)
+
+올바른 순서 ✅:
+사용자: "버튼 색상 바꿔줘"
+→ 1️⃣ JIRA 티켓 생성 (parse_ux_request.sh)
+→ 2️⃣ 티켓 번호 확인 (예: KAN-123)
+→ 3️⃣ 코드 수정 시작
+→ 4️⃣ 완료 후 JIRA 완료 처리 (git_jira_commit.sh)
+```
+
+### 📋 **1단계: JIRA 티켓 자동 생성 (필수 선행)**
+
+사용자의 다음 표현을 감지하면 **코드 작업 전에 반드시** `./scripts/parse_ux_request.sh` 실행:
+
+**문제 관련**:
+- **버그**: "버그", "에러", "오류", "안돼", "작동안해", "깨져", "이상해"
+- **불만**: "문제야", "짜증", "불편해", "답답해"
+- **성능**: "느려", "버벅여", "멈춰", "렉", "끊겨"
+
+**개선 관련**:
+- **기능**: "~하면 좋겠어", "추가해줘", "만들어줘", "구현해줘"
+- **수정**: "바꿔줘", "고쳐줘", "수정해줘", "개선해줘"
+- **UX**: "사용하기 어려워", "터치하기 어려워", "보기 힘들어", "불편해"
+- **디자인**: "폰트", "색상", "크기", "간격", "레이아웃", "애니메이션", "디자인"
+
+**JIRA 생성 명령어**:
+```bash
+./scripts/parse_ux_request.sh
+```
+
+### 2️⃣ **2단계: 개발 작업 진행**
+
+JIRA 티켓이 생성된 후에만 코드 작업을 시작합니다.
+
+### ✅ **3단계: JIRA 완료 처리 (필수)**
+
 코드 수정 완료 시 **반드시** `./scripts/git_jira_commit.sh "해결내용" "JIRA번호" "done"` 실행
 
-**예시 플로우**:
+**완료 처리 명령어**:
+```bash
+./scripts/git_jira_commit.sh "버튼 색상을 TOSS 디자인 시스템으로 변경" "KAN-123" "done"
+```
+
+### 📝 **완전한 워크플로우 예시**
+
 ```
 사용자: "홈 화면이 너무 느려"
-→ [자동] parse_ux_request.sh 실행 → KAN-XX 생성
-→ [코드 수정 후] git_jira_commit.sh 실행 → 완료 처리
-→ "해결 완료! JIRA에서도 완료 처리했습니다."
+
+Claude Code 동작:
+→ 1️⃣ [자동] JIRA 등록 먼저!
+   $ ./scripts/parse_ux_request.sh
+   ✅ KAN-124 생성됨: "홈 화면 성능 개선"
+
+→ 2️⃣ "JIRA KAN-124가 생성되었습니다. 이제 코드 수정을 시작합니다."
+
+→ 3️⃣ [코드 수정 작업]
+   - 홈 화면 로딩 최적화
+   - 불필요한 리빌드 제거
+   - 이미지 캐싱 추가
+
+→ 4️⃣ [완료 처리]
+   $ ./scripts/git_jira_commit.sh "홈 화면 로딩 최적화 완료" "KAN-124" "done"
+   ✅ Git 커밋 완료
+   ✅ JIRA 완료 처리
+
+→ 5️⃣ "해결 완료! JIRA KAN-124도 완료 처리했습니다."
 ```
+
+### 🚫 **절대 하지 말아야 할 것**
+
+❌ JIRA 등록 없이 바로 코드 수정
+❌ "나중에 JIRA 등록하지" 하고 코드부터 수정
+❌ 작은 수정이라고 JIRA 건너뛰기
+❌ JIRA 생성했는데 완료 처리 안하기
+
+**모든 작업은 JIRA에 기록되어야 합니다!**
 
 ## 🚨 절대 금지 사항 - CRITICAL RULES 🚨
 
@@ -109,6 +175,108 @@ flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527
 - 로그인 상태와 관계없이 모든 플로우가 정상 작동하는지 확인
 - 프로필 완성도에 따른 라우팅 로직 검증
 - Hot Restart 후 초기 상태에서의 동작 확인
+
+---
+
+## 📚 문서 관리 정책
+
+### 📂 문서 위치 원칙
+
+**모든 프로젝트 문서는 `docs/` 폴더에서 관리합니다.**
+
+```
+docs/
+├── getting-started/    # 프로젝트 시작
+├── design/            # 디자인 시스템
+├── data/              # 데이터 & API
+├── native/            # 네이티브 기능
+├── testing/           # 테스팅
+├── deployment/        # 배포 & 보안
+├── development/       # 개발 도구 & 자동화
+├── legal/             # 법률 & 정책
+└── troubleshooting/   # 문제 해결
+```
+
+**루트 레벨 문서는 2개만 유지**:
+- `README.md` - 프로젝트 소개 및 진입점
+- `CLAUDE.md` - Claude Code 개발 규칙 (이 파일)
+
+---
+
+### 📌 빠른 문서 탐색
+
+**작업 시작 전 항상 [docs/README.md](docs/README.md) 확인!**
+
+#### 주제별 폴더 구조
+
+| 작업 유형 | 폴더 | 주요 문서 |
+|----------|------|----------|
+| 🚀 **프로젝트 시작** | `docs/getting-started/` | PROJECT_OVERVIEW.md, SETUP_GUIDE.md |
+| 🎨 **UI 개발** | `docs/design/` | TOSS_DESIGN_SYSTEM.md ⭐️, WIDGET_ARCHITECTURE_DESIGN.md |
+| 💾 **DB 작업** | `docs/data/` | DATABASE_GUIDE.md ⭐️, API_USAGE.md |
+| 📱 **네이티브 기능** | `docs/native/` | NATIVE_FEATURES_GUIDE.md ⭐️, WATCH_COMPANION_APPS_GUIDE.md |
+| 🧪 **테스트** | `docs/testing/` | AB_TESTING_GUIDE.md ⭐️, TESTING_GUIDE.md |
+| 🚢 **배포** | `docs/deployment/` | DEPLOYMENT_COMPLETE_GUIDE.md ⭐️, APP_STORE_GUIDE.md ⭐️, SECURITY_CHECKLIST.md |
+| 🛠 **개발 자동화** | `docs/development/` | CLAUDE_AUTOMATION.md ⭐️, GIT_JIRA_WORKFLOW.md, MCP_SETUP_GUIDE.md |
+| ⚖️ **법률/정책** | `docs/legal/` | PRIVACY_POLICY_CONTENT.md |
+| 🐛 **문제 해결** | `docs/troubleshooting/` | FIX_406_ERROR_GUIDE.md |
+
+**⭐️ 표시**: 여러 문서를 통합한 최신 통합 가이드
+
+---
+
+### 🎯 작업별 문서 찾기 가이드
+
+**프로젝트 시작**:
+1. [docs/README.md](docs/README.md) 열기
+2. `getting-started/` 폴더로 이동
+3. PROJECT_OVERVIEW.md → SETUP_GUIDE.md 순서로 읽기
+
+**UI 컴포넌트 개발**:
+1. `docs/design/` 폴더 확인
+2. 새 컴포넌트 → TOSS_DESIGN_SYSTEM.md에서 패턴 찾기
+3. 위젯 설계 → WIDGET_ARCHITECTURE_DESIGN.md 참고
+
+**데이터베이스 작업**:
+1. `docs/data/` 폴더 확인
+2. DATABASE_GUIDE.md에서 스키마/RLS/마이그레이션 확인
+3. API 호출 → API_USAGE.md 패턴 참고
+
+**배포 준비**:
+1. `docs/deployment/` 폴더 확인
+2. DEPLOYMENT_COMPLETE_GUIDE.md로 전체 프로세스 파악
+3. APP_STORE_GUIDE.md로 스토어 등록
+4. SECURITY_CHECKLIST.md로 보안 검증
+
+**JIRA 자동화**:
+1. `docs/development/` 폴더 확인
+2. CLAUDE_AUTOMATION.md로 워크플로우 이해
+3. GIT_JIRA_WORKFLOW.md로 Git 통합 확인
+
+---
+
+### 📝 문서 관리 규칙
+
+#### ✅ DO (해야 할 것)
+- 새 문서는 반드시 `docs/` 하위 적절한 폴더에 생성
+- docs/README.md에 새 문서 추가 시 색인 업데이트
+- 통합 가이드 (⭐️) 우선 참고
+- 주제별 폴더 구조 유지
+
+#### ❌ DON'T (하지 말아야 할 것)
+- 프로젝트 루트에 새 문서 생성 금지
+- 중복 문서 생성 금지 (기존 문서 업데이트)
+- 개인 메모나 임시 파일 docs/에 커밋 금지
+- 문서 이동 시 링크 업데이트 누락 금지
+
+---
+
+### 🔍 문서 검색 팁
+
+1. **전체 검색**: `docs/README.md`에서 키워드로 Ctrl+F
+2. **카테고리 검색**: 작업 유형에 맞는 폴더로 직접 이동
+3. **통합 문서 우선**: ⭐️ 표시 문서가 가장 최신이고 완전함
+4. **크로스 레퍼런스**: 각 문서 하단의 "관련 문서" 섹션 확인
 
 ---
 
