@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'dart:math' as math;
 
 import '../../domain/entities/fortune.dart' as fortune_entity;
@@ -1040,8 +1041,38 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
                   // 공유 섹션 (동적 카운트 사용)
                   FortuneInfographicWidgets.buildTossStyleShareSection(
                     shareCount: widget.fortune?.metadata?['share_count']?.toString() ?? '2,753,170',
-                    onShare: () {
-                      // TODO: 공유 기능 구현
+                    onShare: () async {
+                      // 공유 기능 구현
+                      final fortune = widget.fortune;
+                      if (fortune == null) return;
+
+                      final score = fortune.score;
+                      final userName = widget.userName ?? '나';
+                      final date = DateTime.now();
+                      final dateStr = '${date.year}년 ${date.month}월 ${date.day}일';
+
+                      final shareText = '''
+🔮 $userName의 오늘의 운세 ($dateStr)
+
+⭐️ 총운: $score점
+${fortune.message ?? ''}
+
+✨ Beyond 앱에서 더 자세한 운세를 확인하세요!
+https://fortune.beyond.app
+''';
+
+                      try {
+                        await Share.share(
+                          shareText,
+                          subject: '$userName의 오늘의 운세',
+                        );
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('공유하기에 실패했습니다')),
+                          );
+                        }
+                      }
                     },
                     onSave: () {
                       // TODO: 저장 기능 구현  
