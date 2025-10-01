@@ -609,7 +609,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         top: 12,
       ),
       decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
+        color: Colors.transparent,
         boxShadow: [
           BoxShadow(
             color: TossDesignSystem.gray900.withValues(alpha:0.05),

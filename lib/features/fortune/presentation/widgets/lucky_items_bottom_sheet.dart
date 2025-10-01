@@ -281,7 +281,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.white
-                        : Color(0xFF191F28),
+                        : TossDesignSystem.grayDark900,
                   ),
                 ),
                 const SizedBox(height: 16),

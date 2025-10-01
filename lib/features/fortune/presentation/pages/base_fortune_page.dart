@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
@@ -28,6 +29,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../services/fortune_history_service.dart';
 
 abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final String title;
@@ -158,6 +160,69 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     }
   }
 
+  /// 운세를 fortune_history 테이블에 영구 저장 (모든 운세 타입 공통)
+  Future<void> _saveFortuneToHistory(Fortune fortune, Map<String, dynamic> fortuneParams) async {
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) {
+        Logger.warning('[BaseFortunePage] User not authenticated, skipping fortune history save');
+        return;
+      }
+
+      final now = DateTime.now();
+      final fortuneTypeName = FortuneTypeNames.getName(widget.fortuneType);
+      final title = '$fortuneTypeName - ${now.year}년 ${now.month}월 ${now.day}일';
+
+      // 운세 요약 데이터 생성
+      final summary = {
+        'score': fortune.overallScore ?? 75,
+        'content': fortune.content,
+        'advice': fortune.advice ?? fortune.recommendations?.firstOrNull,
+        'caution': fortune.caution ?? fortune.warnings?.firstOrNull,
+        'summary': fortune.summary,
+        'greeting': fortune.greeting,
+        'luckyColor': fortune.luckyColor,
+        'luckyNumber': fortune.luckyNumber,
+      };
+
+      // 메타데이터 (사용자 입력 정보 포함)
+      final metadata = {
+        'fortuneParams': fortuneParams,
+        'userParams': _userParams,
+        'hexagonScores': fortune.hexagonScores,
+        'scoreBreakdown': fortune.scoreBreakdown,
+        'recommendations': fortune.recommendations,
+        'warnings': fortune.warnings,
+        'luckyItems': fortune.luckyItems,
+      };
+
+      // 태그 생성
+      final tags = <String>[fortuneTypeName, '${now.year}년${now.month}월'];
+      final score = fortune.overallScore ?? 75;
+      if (score >= 90) tags.add('최고운');
+      else if (score >= 80) tags.add('대길');
+      else if (score >= 70) tags.add('길');
+      else if (score >= 60) tags.add('보통');
+      else tags.add('주의');
+
+      // FortuneHistoryService에 저장
+      final historyService = FortuneHistoryService();
+      await historyService.saveFortuneResult(
+        fortuneType: widget.fortuneType,
+        title: title,
+        summary: summary,
+        fortuneData: fortune.toJson(),
+        metadata: metadata,
+        tags: tags,
+        score: fortune.overallScore,
+      );
+
+      Logger.info('[BaseFortunePage] Fortune saved to history: $title');
+    } catch (error) {
+      Logger.error('[BaseFortunePage] Error saving fortune to history', error);
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
@@ -282,6 +347,9 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           'hasDescription': fortune.description?.isNotEmpty ?? false,
           'luckyItemsCount': null,
         });
+
+        // ✅ 운세를 fortune_history 테이블에 영구 저장
+        await _saveFortuneToHistory(fortune, fortuneParams);
 
         setState(() {
           _fortune = fortune;

@@ -122,12 +122,24 @@ Claude Code 동작:
 
 ---
 
-## 앱 개발 완료 후 필수 작업
+## 🚀 앱 개발 완료 후 필수 작업 (CRITICAL - ALWAYS DO THIS!)
 
-### 🔄 앱 완전 재설치 및 실행 필수
-- **모든 개발 작업 완료 후 반드시 앱을 완전히 재설치하여 변경사항 검증**
-- Hot Restart나 Hot Reload는 변경사항이 제대로 반영되지 않을 수 있음
-- 다음 명령어 순서로 완전 재설치 실행:
+### 📱 **실제 디바이스 자동 배포 (기본값)**
+
+**모든 수정 작업 완료 후 반드시 실제 디바이스에 릴리즈 빌드를 자동으로 배포합니다!**
+
+#### ✅ 표준 배포 명령어 (기본값)
+```bash
+flutter run --release -d 00008140-00120304260B001C 2>&1 | tee /tmp/flutter_release_logs.txt
+```
+
+**이 명령어가 하는 일**:
+- `--release`: 최적화된 릴리즈 빌드 생성 (프로덕션 환경)
+- `-d 00008140-00120304260B001C`: 실제 iPhone 디바이스에 설치
+- `2>&1 | tee /tmp/flutter_release_logs.txt`: 로그를 파일과 화면에 동시 출력
+
+#### 🔄 개발 중 빠른 테스트 (시뮬레이터)
+개발 중에는 시뮬레이터에서 빠르게 테스트할 수 있습니다:
 
 ```bash
 # 1. 기존 Flutter 프로세스 종료
@@ -142,9 +154,23 @@ flutter pub get
 # 4. 시뮬레이터에서 앱 삭제
 xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.fortune
 
-# 5. 앱 새로 빌드 및 실행
+# 5. 앱 새로 빌드 및 실행 (시뮬레이터)
 flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527
 ```
+
+#### 📋 배포 체크리스트
+
+**수정 작업 완료 시 반드시 실행:**
+1. ✅ 코드 수정 완료
+2. ✅ `flutter analyze` 실행 (에러 없는지 확인)
+3. ✅ **실제 디바이스에 릴리즈 빌드 배포** (기본값!)
+   ```bash
+   flutter run --release -d 00008140-00120304260B001C 2>&1 | tee /tmp/flutter_release_logs.txt
+   ```
+4. ✅ 실제 디바이스에서 변경사항 검증
+5. ✅ JIRA 완료 처리 (git_jira_commit.sh)
+
+**⚠️ 중요**: Hot Restart나 Hot Reload로는 변경사항이 제대로 반영되지 않을 수 있습니다!
 
 ## Flutter 개발 워크플로우
 

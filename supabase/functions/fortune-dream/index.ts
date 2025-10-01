@@ -356,7 +356,7 @@ serve(async (req) => {
 
       // OpenAI API 호출
       const completion = await openai.chat.completions.create({
-        model: 'gpt-oss-20b',
+        model: 'gpt-5-nano',
         messages: [
           {
             role: 'system',

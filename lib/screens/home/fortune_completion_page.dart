@@ -1787,13 +1787,16 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
     if (widget.categories != null) {
       return widget.categories!;
     }
-    
-    // Generate fallback category data (5대 운세 표준화)
+
+    // Generate fallback category data (6대 운세 표준화 - 학업운 추가)
     return {
       'total': {
         'score': currentScore,
         'short': '전체적인 운세',
-        'advice': '균형잡힌 하루를 보내세요',
+        'advice': {
+          'idiom': '만사형통',
+          'description': '균형잡힌 하루를 보내세요. 모든 일이 순조롭게 풀려나갈 것입니다.'
+        },
         'title': '전체 운세'
       },
       'love': {
@@ -1813,6 +1816,12 @@ class _FortuneCompletionPageState extends ConsumerState<FortuneCompletionPage> {
         'short': '발전하는 직장운',
         'advice': '꾸준한 노력이 성과로 이어질 것입니다',
         'title': '직장 운세'
+      },
+      'study': {
+        'score': _generateFallbackScore(currentScore, 'study'),
+        'short': '향상되는 학업운',
+        'advice': '배움에 대한 열정으로 성과를 거둘 수 있습니다',
+        'title': '학업 운세'
       },
       'health': {
         'score': _generateFallbackScore(currentScore, 'health'),

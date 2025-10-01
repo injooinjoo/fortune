@@ -176,6 +176,17 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
     _selectedDate = date;
   }
 
+  // DB 캐시와 동기화를 위한 메서드
+  void updateFortune(Fortune fortune) {
+    Logger.debug('🔄 [DailyFortuneNotifier] Updating fortune from external source', {
+      'fortuneId': fortune.id,
+      'overallScore': fortune.overallScore});
+    state = state.copyWith(
+      isLoading: false,
+      fortune: fortune,
+      error: null);
+  }
+
   // 날짜 키 생성 (CacheService와 동일한 로직)
   String _getDateKey() {
     final date = _selectedDate ?? DateTime.now();

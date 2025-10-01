@@ -268,12 +268,13 @@ class TossButton extends StatelessWidget {
   
   ButtonStyle _getPrimaryButtonStyle(bool isDark, bool enabled) {
     return ElevatedButton.styleFrom(
-      backgroundColor: enabled 
+      backgroundColor: enabled
           ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
           : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
       foregroundColor: TossDesignSystem.white,
       disabledBackgroundColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
       minimumSize: Size(0, _getHeight()),
@@ -287,11 +288,12 @@ class TossButton extends StatelessWidget {
   ButtonStyle _getSecondaryButtonStyle(bool isDark, bool enabled) {
     return ElevatedButton.styleFrom(
       backgroundColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-      foregroundColor: enabled 
+      foregroundColor: enabled
           ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
           : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
       disabledBackgroundColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
       minimumSize: Size(0, _getHeight()),
@@ -304,15 +306,16 @@ class TossButton extends StatelessWidget {
   
   ButtonStyle _getGhostButtonStyle(bool isDark, bool enabled) {
     return OutlinedButton.styleFrom(
-      foregroundColor: enabled 
+      foregroundColor: enabled
           ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
           : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
       side: BorderSide(
-        color: enabled 
+        color: enabled
             ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
             : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
         width: 1,
@@ -325,10 +328,11 @@ class TossButton extends StatelessWidget {
   
   ButtonStyle _getTextButtonStyle(bool isDark, bool enabled) {
     return TextButton.styleFrom(
-      foregroundColor: enabled 
+      foregroundColor: enabled
           ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
           : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       disabledForegroundColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
       padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS),
       shape: RoundedRectangleBorder(
@@ -378,7 +382,8 @@ class TossIconButton extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     
     Widget button = Material(
-      color: backgroundColor ?? TossDesignSystem.white.withValues(alpha: 0.0),
+      color: backgroundColor ?? Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
       child: InkWell(
         onTap: onPressed != null ? () {

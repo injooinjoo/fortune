@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../shared/components/toss_button.dart';
 
 /// Collection of infographic widgets for fortune completion page
 class FortuneInfographicWidgets {
@@ -650,14 +651,17 @@ class FortuneInfographicWidgets {
     Map<String, dynamic> categories, {
     required bool isDarkMode,
   }) {
-    // 카테고리 데이터 정리
+    // total 카테고리 추출
+    final totalData = categories['total'] as Map<String, dynamic>?;
+
+    // 나머지 카테고리 데이터 정리 (5개: love, money, work, study, health)
     final categoryEntries = categories.entries.where((entry) =>
       entry.value is Map &&
       entry.value['score'] != null &&
-      entry.key != 'total' // total은 전체 점수로 제외
+      entry.key != 'total' // total은 별도로 표시
     ).toList();
 
-    if (categoryEntries.isEmpty) {
+    if (categoryEntries.isEmpty && totalData == null) {
       return Container(
         height: 120,
         padding: const EdgeInsets.all(16),
@@ -682,13 +686,22 @@ class FortuneInfographicWidgets {
 
     return Column(
       children: [
-        // 카테고리 그리드
+        // 총운 카드 (4자성어 표시)
+        if (totalData != null) ...[
+          _buildTotalFortuneCard(
+            totalData: totalData,
+            isDarkMode: isDarkMode,
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // 나머지 카테고리 그리드 (5개)
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 2.5,
+            childAspectRatio: 0.85,  // 높이 증가 (2.5 → 0.85)
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
           ),
@@ -699,17 +712,142 @@ class FortuneInfographicWidgets {
             final categoryData = entry.value as Map<String, dynamic>;
             final score = categoryData['score'] as int? ?? 0;
             final title = categoryData['title'] as String? ?? _getDefaultCategoryTitle(categoryKey);
-            final short = categoryData['short'] as String? ?? _getDefaultCategoryShort(categoryKey, score);
+
+            // advice 필드 사용 (100자 텍스트), 없으면 short 또는 fallback
+            String description;
+            final advice = categoryData['advice'];
+            if (advice is String && advice.isNotEmpty) {
+              description = advice;  // 100자 조언
+            } else {
+              description = categoryData['short'] as String? ?? _getDefaultCategoryShort(categoryKey, score);
+            }
 
             return _buildCategoryCard(
               title: title,
               score: score,
-              description: short,
+              description: description,
               isDarkMode: isDarkMode,
             );
           },
         ),
       ],
+    );
+  }
+
+  /// 총운 카드 (4자성어 표시)
+  static Widget _buildTotalFortuneCard({
+    required Map<String, dynamic> totalData,
+    required bool isDarkMode,
+  }) {
+    final score = totalData['score'] as int? ?? 0;
+    final scoreColor = _getCategoryScoreColor(score, isDarkMode);
+
+    // advice가 객체인 경우와 문자열인 경우 모두 처리
+    String idiom = '만사형통';
+    String description = '균형잡힌 하루를 보내세요';
+
+    final advice = totalData['advice'];
+    if (advice is Map<String, dynamic>) {
+      idiom = advice['idiom'] as String? ?? '만사형통';
+      description = advice['description'] as String? ?? '균형잡힌 하루를 보내세요';
+    } else if (advice is String) {
+      description = advice;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDarkMode
+            ? [
+                TossDesignSystem.grayDark200,
+                TossDesignSystem.grayDark300.withOpacity(0.5),
+              ]
+            : [
+                TossDesignSystem.white,
+                scoreColor.withOpacity(0.05),
+              ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: scoreColor.withOpacity(0.3),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 제목과 점수
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '오늘의 총운',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: scoreColor.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$score점',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: scoreColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 4자성어 (가장 눈에 띄게)
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: scoreColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: scoreColor.withOpacity(0.2),
+                ),
+              ),
+              child: Text(
+                idiom,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: scoreColor,
+                  letterSpacing: 2,
+                  height: 1.2,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 설명 텍스트
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray700,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -769,10 +907,8 @@ class FortuneInfographicWidgets {
             style: TextStyle(
               fontSize: 12,
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-              height: 1.3,
+              height: 1.4,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -800,6 +936,8 @@ class FortuneInfographicWidgets {
       case 'work':
       case 'career':
         return '직장운';
+      case 'study':
+        return '학업운';
       case 'health':
         return '건강운';
       default:
@@ -816,6 +954,8 @@ class FortuneInfographicWidgets {
       case 'work':
       case 'career':
         return score >= 70 ? '발전하는 직장운' : score >= 50 ? '평범한 직장운' : '주의가 필요한 시기';
+      case 'study':
+        return score >= 70 ? '향상되는 학업운' : score >= 50 ? '평범한 학업운' : '집중력 관리 필요';
       case 'health':
         return score >= 70 ? '건강한 컨디션' : score >= 50 ? '보통의 건강상태' : '건강 관리 필요';
       default:
@@ -1886,37 +2026,64 @@ class FortuneInfographicWidgets {
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Container(
-          height: 100,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '공유하기',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Column(
+            children: [
+              // 공유 카운트 텍스트
+              Text(
+                '$shareCount명이 공유했어요',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '$shareCount명이 공유했어요',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 12,
+              ),
+
+              const SizedBox(height: 16),
+
+              // 3개 버튼
+              Row(
+                children: [
+                  // 다시 뽑기
+                  Expanded(
+                    child: TossButton.secondary(
+                      text: '다시 뽑기',
+                      onPressed: onOtherFortune ?? () {},
+                      size: TossButtonSize.medium,
+                    ),
                   ),
-                ),
-              ],
-            ),
+
+                  const SizedBox(width: 8),
+
+                  // 스토리 다시 보기
+                  Expanded(
+                    child: TossButton.secondary(
+                      text: '스토리 다시 보기',
+                      onPressed: onReview ?? () {},
+                      size: TossButtonSize.medium,
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // 공유하기
+                  Expanded(
+                    child: TossButton.primary(
+                      text: '공유하기',
+                      onPressed: onShare,
+                      size: TossButtonSize.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/tarot_deck_metadata.dart';
@@ -8,6 +9,7 @@ import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../services/fortune_history_service.dart';
 import '../../../fortune/presentation/widgets/tarot/tarot_input_view.dart';
 import '../../../fortune/presentation/widgets/tarot/tarot_selection_view.dart';
 import '../../../fortune/presentation/widgets/tarot/tarot_result_view.dart';
@@ -211,21 +213,81 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     }
   }
 
+  /// 타로 운세를 fortune_history 테이블에 저장
+  Future<void> _saveTarotFortuneToHistory({
+    required Map<String, dynamic> fortuneData,
+    required String question,
+    required String spreadType,
+    required List<int> selectedCards,
+  }) async {
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) {
+        debugPrint('❌ User not authenticated, skipping tarot fortune history save');
+        return;
+      }
+
+      final now = DateTime.now();
+      final title = '타로 운세 - $question';
+
+      // 타로 운세 요약 데이터 생성
+      final summary = {
+        'question': question,
+        'spreadType': spreadType,
+        'selectedCards': selectedCards,
+        'interpretation': fortuneData['interpretation'] ?? fortuneData['summary'],
+        'advice': fortuneData['advice'],
+        'score': fortuneData['score'] ?? 75, // 타로는 점수가 없을 수 있음
+      };
+
+      // 메타데이터
+      final metadata = {
+        'deckId': selectedDeck?.id,
+        'deckName': selectedDeck?.name,
+        'spreadType': spreadType,
+        'cardCount': selectedCards.length,
+        'question': question,
+      };
+
+      // 태그 생성
+      final tags = <String>['타로', '${now.year}년${now.month}월'];
+      if (spreadType == 'three') tags.add('쓰리카드');
+      else if (spreadType == 'celtic') tags.add('켈틱크로스');
+      else if (spreadType == 'relationship') tags.add('연애운');
+
+      // FortuneHistoryService에 저장
+      final historyService = FortuneHistoryService();
+      await historyService.saveFortuneResult(
+        fortuneType: 'tarot',
+        title: title,
+        summary: summary,
+        fortuneData: fortuneData,
+        metadata: metadata,
+        tags: tags,
+        score: fortuneData['score'] ?? 75,
+      );
+
+      debugPrint('✅ Tarot fortune saved to history: $title');
+    } catch (error) {
+      debugPrint('❌ Error saving tarot fortune to history: $error');
+    }
+  }
+
   Future<void> _performReading(List<int> selectedCards) async {
     final state = ref.read(tarotReadingStateProvider);
     final stateNotifier = ref.read(tarotReadingStateProvider.notifier);
     final apiService = ref.read(fortuneApiServiceProvider);
     final tokenService = ref.read(tokenServiceProvider.notifier);
-    
+
     stateNotifier.setLoading(true);
-    
+
     try {
       // Check token balance
       final tokenCost = _getTokenCost(state.spreadType);
       final hasEnoughTokens = await tokenService.checkAndConsumeTokens(
         tokenCost,
         'tarot');
-      
+
       if (!hasEnoughTokens) {
         Toast.show(
           context,
@@ -250,7 +312,17 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        stateNotifier.setReadingResult(response['data']);
+        final fortuneData = response['data'] as Map<String, dynamic>;
+
+        // ✅ 타로 운세를 DB에 영구 저장
+        await _saveTarotFortuneToHistory(
+          fortuneData: fortuneData,
+          question: state.question,
+          spreadType: state.spreadType,
+          selectedCards: selectedCards,
+        );
+
+        stateNotifier.setReadingResult(fortuneData);
       } else {
         throw Exception(response['error'] ?? '타로 카드 해석에 실패했습니다');
       }
