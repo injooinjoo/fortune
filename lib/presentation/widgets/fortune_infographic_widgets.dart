@@ -15,6 +15,7 @@ class FortuneInfographicWidgets {
   }) {
     return Builder(
       builder: (context) => Container(
+        width: double.infinity,
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
@@ -860,7 +861,7 @@ class FortuneInfographicWidgets {
     final scoreColor = _getCategoryScoreColor(score, isDarkMode);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
@@ -878,14 +879,14 @@ class FortuneInfographicWidgets {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: scoreColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -893,7 +894,7 @@ class FortuneInfographicWidgets {
                 child: Text(
                   '$score점',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: scoreColor,
                   ),
@@ -901,7 +902,7 @@ class FortuneInfographicWidgets {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             description,
             style: TextStyle(
@@ -1538,78 +1539,10 @@ class FortuneInfographicWidgets {
     required int currentHour,
     required double height,
   }) {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return Container(
-          height: height,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-            ),
-          ),
-          child: Column(
-            children: [
-              // Chart header with current hour indicator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '현재 ${currentHour}시',
-                    style: TextStyle(
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '${hourlyScores[currentHour]}점',
-                    style: TextStyle(
-                      color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Timeline chart
-              Expanded(
-                child: CustomPaint(
-                  size: Size.infinite,
-                  painter: TimelineChartPainter(
-                    hourlyScores: hourlyScores,
-                    currentHour: currentHour,
-                    isDark: isDark,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Time labels
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (int i = 0; i < 24; i += 6)
-                    Text(
-                      '${i.toString().padLeft(2, '0')}:00',
-                      style: TextStyle(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                        fontSize: 10,
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+    return _InteractiveTimelineChart(
+      hourlyScores: hourlyScores,
+      currentHour: currentHour,
+      height: height,
     );
   }
 
@@ -2385,5 +2318,129 @@ class RadarChartPainter extends CustomPainter {
     return oldDelegate.scores != scores ||
            oldDelegate.isDark != isDark ||
            oldDelegate.primaryColor != primaryColor;
+  }
+}
+
+/// Interactive Timeline Chart with touch support
+class _InteractiveTimelineChart extends StatefulWidget {
+  final List<int> hourlyScores;
+  final int currentHour;
+  final double height;
+
+  const _InteractiveTimelineChart({
+    required this.hourlyScores,
+    required this.currentHour,
+    required this.height,
+  });
+
+  @override
+  State<_InteractiveTimelineChart> createState() => _InteractiveTimelineChartState();
+}
+
+class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
+  int? _touchedHour;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final displayHour = _touchedHour ?? widget.currentHour;
+    final displayScore = widget.hourlyScores[displayHour];
+
+    return Container(
+      height: widget.height,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+        ),
+      ),
+      child: Column(
+        children: [
+          // Chart header with current/touched hour indicator
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _touchedHour != null ? '${displayHour}시' : '현재 ${displayHour}시',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '${displayScore}점',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Timeline chart with touch detection
+          Expanded(
+            child: GestureDetector(
+              onTapDown: (details) {
+                _handleTouch(details.localPosition);
+              },
+              onPanUpdate: (details) {
+                _handleTouch(details.localPosition);
+              },
+              onPanEnd: (_) {
+                setState(() {
+                  _touchedHour = null;
+                });
+              },
+              child: CustomPaint(
+                size: Size.infinite,
+                painter: TimelineChartPainter(
+                  hourlyScores: widget.hourlyScores,
+                  currentHour: _touchedHour ?? widget.currentHour,
+                  isDark: isDark,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Time labels
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (int i = 0; i < 24; i += 6)
+                Text(
+                  '${i.toString().padLeft(2, '0')}:00',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 10,
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleTouch(Offset position) {
+    // Get the chart area dimensions (excluding padding)
+    const padding = 16.0 + 8.0; // Container padding + chart internal padding
+    final chartWidth = MediaQuery.of(context).size.width - (padding * 2);
+
+    // Calculate which hour was touched
+    final relativeX = position.dx - 8.0; // Internal chart padding
+    final hourIndex = ((relativeX / chartWidth) * widget.hourlyScores.length).round();
+
+    if (hourIndex >= 0 && hourIndex < widget.hourlyScores.length) {
+      setState(() {
+        _touchedHour = hourIndex;
+      });
+    }
   }
 }
