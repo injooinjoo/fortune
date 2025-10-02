@@ -11,6 +11,7 @@ class FortuneInfographicWidgets {
   static Widget buildTossStyleMainScore({
     required int score,
     required String message,
+    String? subtitle,
     double size = 280,
   }) {
     return Builder(
@@ -49,7 +50,7 @@ class FortuneInfographicWidgets {
 
             const SizedBox(height: 24),
 
-            // 메시지
+            // 메시지 (사자성어)
             Text(
               message,
               style: TextStyle(
@@ -63,6 +64,24 @@ class FortuneInfographicWidgets {
             ).animate()
               .fadeIn(duration: 800.ms, delay: 400.ms)
               .slideY(begin: 0.3, curve: Curves.easeOut),
+
+            // 사자성어 설명 (있을 경우)
+            if (subtitle != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark600
+                      : TossDesignSystem.gray600,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ).animate()
+                .fadeIn(duration: 800.ms, delay: 600.ms)
+                .slideY(begin: 0.3, curve: Curves.easeOut),
+            ],
           ],
         ),
       ),
@@ -696,40 +715,33 @@ class FortuneInfographicWidgets {
           const SizedBox(height: 16),
         ],
 
-        // 나머지 카테고리 그리드 (5개)
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.85,  // 높이 증가 (2.5 → 0.85)
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemCount: categoryEntries.length,
-          itemBuilder: (context, index) {
-            final entry = categoryEntries[index];
+        // 나머지 카테고리 세로 나열 (5개) - 각 카드가 전체 너비 사용
+        Column(
+          children: categoryEntries.map((entry) {
             final categoryKey = entry.key;
             final categoryData = entry.value as Map<String, dynamic>;
             final score = categoryData['score'] as int? ?? 0;
             final title = categoryData['title'] as String? ?? _getDefaultCategoryTitle(categoryKey);
 
-            // advice 필드 사용 (100자 텍스트), 없으면 short 또는 fallback
+            // advice 필드 사용 (300자 텍스트), 없으면 short 또는 fallback
             String description;
             final advice = categoryData['advice'];
             if (advice is String && advice.isNotEmpty) {
-              description = advice;  // 100자 조언
+              description = advice;  // 300자 조언
             } else {
               description = categoryData['short'] as String? ?? _getDefaultCategoryShort(categoryKey, score);
             }
 
-            return _buildCategoryCard(
-              title: title,
-              score: score,
-              description: description,
-              isDarkMode: isDarkMode,
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildCategoryCard(
+                title: title,
+                score: score,
+                description: description,
+                isDarkMode: isDarkMode,
+              ),
             );
-          },
+          }).toList(),
         ),
       ],
     );
@@ -861,6 +873,7 @@ class FortuneInfographicWidgets {
     final scoreColor = _getCategoryScoreColor(score, isDarkMode);
 
     return Container(
+      width: double.infinity,  // 전체 너비 사용
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
@@ -879,7 +892,7 @@ class FortuneInfographicWidgets {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
@@ -894,7 +907,7 @@ class FortuneInfographicWidgets {
                 child: Text(
                   '$score점',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: scoreColor,
                   ),
@@ -902,13 +915,14 @@ class FortuneInfographicWidgets {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
+          // 높이 제한 없이 자연스럽게 표시 (300자 설명 모두 보임)
           Text(
             description,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-              height: 1.4,
+              height: 1.5,
             ),
           ),
         ],

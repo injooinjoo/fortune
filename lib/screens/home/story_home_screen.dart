@@ -17,7 +17,7 @@ import '../../widgets/emotional_loading_checklist.dart';
 import '../../widgets/profile_completion_dialog.dart';
 import '../../core/utils/profile_validation.dart';
 import 'fortune_story_viewer.dart';
-import 'fortune_completion_page.dart';
+import 'fortune_completion_page_tinder.dart';
 import 'preview_screen.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
@@ -212,9 +212,41 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
-    // 이미 데이터가 있다면 초기화 건너뛰기 (네비게이션 바 홈 클릭 최적화)
+    // 이미 데이터가 있어도 DB 캐시와 동기화 확인 (Single Source of Truth 유지)
     if (todaysFortune != null && storySegments != null && storySegments!.isNotEmpty) {
-      debugPrint('✅ Data already available, skipping initialization');
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) {
+        // DB 캐시 확인 (항상 최신 상태 유지)
+        final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
+
+        // DB 캐시가 메모리 데이터와 다르면 업데이트 (운세 API 결과 반영)
+        if (cachedFortuneData != null) {
+          final cachedFortune = cachedFortuneData.toEntity();
+
+          // ID나 점수가 다르면 새로운 데이터로 교체
+          if (todaysFortune?.id != cachedFortune.id ||
+              todaysFortune?.overallScore != cachedFortune.overallScore) {
+            debugPrint('🔄 DB cache updated - syncing memory data');
+            debugPrint('  Old: ${todaysFortune?.id}, score: ${todaysFortune?.overallScore}');
+            debugPrint('  New: ${cachedFortune.id}, score: ${cachedFortune.overallScore}');
+
+            // 스토리도 재확인
+            final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+
+            setState(() {
+              todaysFortune = cachedFortune;
+              if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+                storySegments = cachedStorySegments;
+              }
+              isLoadingFortune = false;
+            });
+            return;
+          }
+        }
+      }
+
+      // DB 캐시와 메모리가 동일하면 그대로 사용
+      debugPrint('✅ Memory data synced with DB cache, using existing data');
       setState(() {
         isLoadingFortune = false;
       });
@@ -1067,34 +1099,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   void _showCompletionPage() {
     // 스토리를 봤다고 기록
     _markAsViewed();
-    
-    // 네비게이션 바 표시 (FortuneCompletionPage에서도 설정하지만 안전장치)
+
+    // 네비게이션 바 표시
     ref.read(navigationVisibilityProvider.notifier).show();
-    
-    // Use push instead of pushReplacement to avoid page-based route issues
+
+    // Navigator push로 완료 페이지 열기
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FortuneCompletionPage(
+        builder: (context) => FortuneCompletionPageTinder(
           fortune: todaysFortune,
           userName: userProfile?.name,
           userProfile: userProfile,
-          sajuAnalysis: sajuAnalysisData,
-          meta: metaData,
-          weatherSummary: weatherSummaryData,
           overall: overallData,
           categories: categoriesData,
           sajuInsight: sajuInsightData,
-          personalActions: personalActionsData,
-          notification: notificationData,
-          shareCard: shareCardData,
-          onReplay: () {
-            // 다시 스토리 보기 - pop back to story screen
-            Navigator.of(context).pop();
-            // Reset the story viewer state
-            setState(() {
-              _hasViewedStoryToday = false;
-            });
-          },
         ),
       ),
     );
@@ -1168,35 +1186,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
     }
     
-    // 오늘 이미 스토리를 봤다면 바로 완료 페이지 표시
-    if (_hasViewedStoryToday) {
-      // 네비게이션 바 표시
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(navigationVisibilityProvider.notifier).show();
-      });
-
-      return FortuneCompletionPage(
-        fortune: todaysFortune,
-        userName: userProfile?.name,
-        userProfile: userProfile,
-        sajuAnalysis: sajuAnalysisData,
-        meta: metaData,
-        weatherSummary: weatherSummaryData,
-        overall: overallData,
-        categories: categoriesData,
-        sajuInsight: sajuInsightData,
-        personalActions: personalActionsData,
-        notification: notificationData,
-        shareCard: shareCardData,
-        onReplay: () {
-          // 다시 스토리 보기
-          setState(() {
-            _hasViewedStoryToday = false;
-          });
-        },
-      );
-    }
-    
     // 스토리 뷰어 또는 기본 화면
     if (storySegments != null && storySegments!.isNotEmpty) {
       return FortuneStoryViewer(
@@ -1216,26 +1205,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 네비게이션 바 표시
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(navigationVisibilityProvider.notifier).show();
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => FortuneCompletionPageTinder(
+                fortune: todaysFortune,
+                userName: userProfile?.name,
+                userProfile: userProfile,
+                overall: overallData,
+                categories: categoriesData,
+                sajuInsight: sajuInsightData,
+              ),
+            ),
+          );
+        }
       });
-      
-      return FortuneCompletionPage(
-        fortune: todaysFortune,
-        userName: userProfile?.name,
-        userProfile: userProfile,
-        sajuAnalysis: sajuAnalysisData,
-        meta: metaData,
-        weatherSummary: weatherSummaryData,
-        overall: overallData,
-        categories: categoriesData,
-        sajuInsight: sajuInsightData,
-        personalActions: personalActionsData,
-        notification: notificationData,
-        shareCard: shareCardData,
-        onReplay: () {
-          // 다시 시도
-          _initializeData();
-        },
-      );
+
+      return const Center(child: CircularProgressIndicator());
     }
   }
 }

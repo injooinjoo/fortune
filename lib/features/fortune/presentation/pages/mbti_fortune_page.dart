@@ -125,39 +125,70 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Future<void> _handleGenerateFortune() async {
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+    bool isDialogShowing = false;
 
-    // Show ad with callback
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        Navigator.of(context).pop(); // Close loading dialog
-        await generateFortuneAction(); // Generate fortune after ad
-      },
-      onAdFailed: () async {
-        Navigator.of(context).pop(); // Close loading dialog
-        await generateFortuneAction(); // Generate fortune even if ad fails
-      },
-    );
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          isDialogShowing = true;
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      // Show ad with callback
+      await AdService.instance.showInterstitialAdWithCallback(
+        onAdCompleted: () async {
+          if (isDialogShowing && mounted) {
+            Navigator.of(context).pop(); // Close loading dialog
+            isDialogShowing = false;
+          }
+          await generateFortuneAction(); // Generate fortune after ad
+        },
+        onAdFailed: () async {
+          if (isDialogShowing && mounted) {
+            Navigator.of(context).pop(); // Close loading dialog
+            isDialogShowing = false;
+          }
+          await generateFortuneAction(); // Generate fortune even if ad fails
+        },
+      );
+    } catch (e) {
+      // Ensure dialog is closed on any error
+      if (isDialogShowing && mounted) {
+        Navigator.of(context).pop();
+        isDialogShowing = false;
+      }
+      print('⚠️ [MbtiFortunePage] Error in _handleGenerateFortune: $e');
+
+      // Still try to generate fortune with fallback
+      if (mounted) {
+        await generateFortuneAction();
+      }
+    }
   }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final user = ref.read(userProvider).value;
     if (user == null) {
-      throw Exception('로그인이 필요합니다');
+      // Don't throw - return fallback instead
+      print('⚠️ [MbtiFortunePage] User not logged in, using fallback fortune');
+      return _createFallbackFortune('temp_user_id');
     }
 
     // Generate random energy level for demonstration
     _energyLevel = 0.5 + (math.Random().nextDouble() * 0.5);
+
+    // Calculate cognitive functions for today (do this early so it's always available)
+    _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
+      _selectedMbti!,
+      DateTime.now(),
+    );
 
     // Set MBTI data and call API
     final mbtiNotifier = ref.read(mbtiFortuneProvider.notifier);
@@ -168,53 +199,46 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
     try {
       await mbtiNotifier.loadFortune();
+
+      final state = ref.read(mbtiFortuneProvider);
+
+      // If API succeeded and we have a fortune, return it
+      if (state.fortune != null && state.error == null) {
+        print('✅ [MbtiFortunePage] API fortune loaded successfully');
+        return state.fortune!;
+      }
+
+      // Otherwise fall through to fallback
+      print('⚠️ [MbtiFortunePage] API returned no fortune, using fallback');
+      return _createFallbackFortune(user.id);
+
     } catch (e) {
-      // Log error but continue with fallback
-      print('⚠️ [MbtiFortunePage] Fortune API failed: $e');
+      // Log error and return fallback - NEVER throw
+      print('⚠️ [MbtiFortunePage] Fortune API failed: $e - using fallback');
+      return _createFallbackFortune(user.id);
     }
+  }
 
-    final state = ref.read(mbtiFortuneProvider);
+  Fortune _createFallbackFortune(String userId) {
+    print('🔄 [MbtiFortunePage] Creating fallback fortune for MBTI: $_selectedMbti');
 
-    // If there's an error or no fortune, create a fallback fortune
-    if (state.error != null || state.fortune == null) {
-      // Log the error but don't throw - provide fallback instead
-      print('⚠️ [MbtiFortunePage] Using fallback fortune due to: ${state.error ?? "No fortune data"}');
-
-      // Create a fallback fortune
-      final fallbackFortune = Fortune(
-        id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',
-        userId: user.id,
-        type: 'mbti',
-        content: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
-        createdAt: DateTime.now(),
-        overallScore: 75,
-        description: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
-        metadata: {
-          'mbtiType': _selectedMbti!,
-          'categories': _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
-          'energyLevel': _energyLevel,
-          'compatibility': _getCompatibleTypes(_selectedMbti!),
-          'generatedAt': DateTime.now().toIso8601String(),
-          'fallback': true,
-        }
-      );
-
-      // Calculate cognitive functions for today
-      _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
-        _selectedMbti!,
-        DateTime.now(),
-      );
-
-      return fallbackFortune;
-    }
-
-    // Calculate cognitive functions for today
-    _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
-      _selectedMbti!,
-      DateTime.now(),
+    return Fortune(
+      id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',
+      userId: userId,
+      type: 'mbti',
+      content: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
+      createdAt: DateTime.now(),
+      overallScore: 75,
+      description: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
+      metadata: {
+        'mbtiType': _selectedMbti!,
+        'categories': _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
+        'energyLevel': _energyLevel,
+        'compatibility': _getCompatibleTypes(_selectedMbti!),
+        'generatedAt': DateTime.now().toIso8601String(),
+        'fallback': true,
+      }
     );
-
-    return state.fortune!;
   }
 
   // Override build to show MBTI selection UI
