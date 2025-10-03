@@ -215,6 +215,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
       print('📡 [MbtiFortunePage] Calling API - type: $_selectedMbti, categories: $categories, name: $userName, birthDate: $userBirthDate');
 
+      final apiStartTime = DateTime.now();
       final fortune = await apiService.getMbtiFortune(
         userId: user.id,
         mbtiType: _selectedMbti!,
@@ -222,14 +223,21 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
         name: userName,
         birthDate: userBirthDate,
       );
+      final apiDuration = DateTime.now().difference(apiStartTime).inMilliseconds;
 
-      print('✅ [MbtiFortunePage] API fortune loaded successfully');
+      print('✅ [MbtiFortunePage] API fortune loaded successfully in ${apiDuration}ms');
+      print('📊 [MbtiFortunePage] Fortune details: id=${fortune.id}, type=${fortune.type}, score=${fortune.overallScore}');
+      print('🔄 [MbtiFortunePage] Returning fortune to BaseFortunePage...');
       return fortune;
 
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Log error and return fallback - NEVER throw
-      print('⚠️ [MbtiFortunePage] API failed ($e), using fallback fortune');
-      return _createFallbackFortune(user.id);
+      print('❌ [MbtiFortunePage] API failed with error: $e');
+      print('📚 [MbtiFortunePage] Stack trace: $stackTrace');
+      print('🔄 [MbtiFortunePage] Creating fallback fortune...');
+      final fallback = _createFallbackFortune(user.id);
+      print('✅ [MbtiFortunePage] Fallback fortune created: ${fallback.id}');
+      return fallback;
     }
   }
 
