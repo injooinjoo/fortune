@@ -503,7 +503,9 @@ class FortuneApiService {
   Future<Fortune> getMbtiFortune({
     required String userId,
     required String mbtiType,
-    List<String>? categories}) async {
+    List<String>? categories,
+    String? name,
+    String? birthDate}) async {
     final stopwatch = Logger.startTimer('getMbtiFortune - Total');
 
     // Enhanced parameter validation
@@ -536,17 +538,23 @@ class FortuneApiService {
       'userId': userId,
       'mbtiType': mbtiType,
       'categoriesCount': categories?.length ?? 0,
-      'categories': categories});
+      'categories': categories,
+      'name': name,
+      'birthDate': birthDate});
 
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.mbtiFortune,
         'mbtiType': mbtiType,
-        'hasCategories': categories != null});
+        'hasCategories': categories != null,
+        'hasName': name != null,
+        'hasBirthDate': birthDate != null});
 
       final requestData = {
-        'mbtiType': mbtiType,
+        'mbti': mbtiType,
         'userId': userId,
+        'name': name ?? 'Unknown',
+        'birthDate': birthDate ?? DateTime.now().toIso8601String().split('T')[0],
         if (categories != null && categories.isNotEmpty) 'categories': categories,
       };
 

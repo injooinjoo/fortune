@@ -12,7 +12,7 @@ import '../../../../shared/components/toss_card.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import 'dart:math' as math;
 
@@ -176,7 +176,6 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final user = ref.read(userProvider).value;
     if (user == null) {
-      // Don't throw - return fallback instead
       print('⚠️ [MbtiFortunePage] User not logged in, using fallback fortune');
       return _createFallbackFortune('temp_user_id');
     }
@@ -190,31 +189,46 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       DateTime.now(),
     );
 
-    // Set MBTI data and call API
-    final mbtiNotifier = ref.read(mbtiFortuneProvider.notifier);
-    mbtiNotifier.setMbtiData(
-      mbtiType: _selectedMbti!,
-      categories: _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
-    );
+    print('🔮 [MbtiFortunePage] Generating fortune for MBTI: $_selectedMbti');
+
+    // Fetch user profile for name and birthDate
+    String userName = 'Unknown';
+    String userBirthDate = DateTime.now().toIso8601String().split('T')[0];
 
     try {
-      await mbtiNotifier.loadFortune();
-
-      final state = ref.read(mbtiFortuneProvider);
-
-      // If API succeeded and we have a fortune, return it
-      if (state.fortune != null && state.error == null) {
-        print('✅ [MbtiFortunePage] API fortune loaded successfully');
-        return state.fortune!;
+      final userProfile = await ref.read(userProfileProvider.future);
+      if (userProfile != null) {
+        userName = userProfile.name ?? 'Unknown';
+        userBirthDate = userProfile.birthDate?.toIso8601String().split('T')[0] ?? userBirthDate;
+        print('📋 [MbtiFortunePage] User profile loaded: $userName, $userBirthDate');
+      } else {
+        print('⚠️ [MbtiFortunePage] User profile is null, using defaults');
       }
+    } catch (e) {
+      print('⚠️ [MbtiFortunePage] Failed to load user profile: $e, using defaults');
+    }
 
-      // Otherwise fall through to fallback
-      print('⚠️ [MbtiFortunePage] API returned no fortune, using fallback');
-      return _createFallbackFortune(user.id);
+    // Try API call directly (without Notifier to avoid state conflicts)
+    try {
+      final apiService = ref.read(fortuneApiServiceProvider);
+      final categories = _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'];
+
+      print('📡 [MbtiFortunePage] Calling API - type: $_selectedMbti, categories: $categories, name: $userName, birthDate: $userBirthDate');
+
+      final fortune = await apiService.getMbtiFortune(
+        userId: user.id,
+        mbtiType: _selectedMbti!,
+        categories: categories,
+        name: userName,
+        birthDate: userBirthDate,
+      );
+
+      print('✅ [MbtiFortunePage] API fortune loaded successfully');
+      return fortune;
 
     } catch (e) {
       // Log error and return fallback - NEVER throw
-      print('⚠️ [MbtiFortunePage] Fortune API failed: $e - using fallback');
+      print('⚠️ [MbtiFortunePage] API failed ($e), using fallback fortune');
       return _createFallbackFortune(user.id);
     }
   }

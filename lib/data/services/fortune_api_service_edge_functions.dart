@@ -343,20 +343,29 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getMbtiFortune({
     required String userId,
     required String mbtiType,
-    List<String>? categories}) async {
+    List<String>? categories,
+    String? name,
+    String? birthDate}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.mbtiFortune,
         userId: userId,
         fortuneType: 'mbti',
         data: {
-          'mbtiType': mbtiType,
+          'mbti': mbtiType,
+          'name': name ?? 'Unknown',
+          'birthDate': birthDate ?? DateTime.now().toIso8601String().split('T')[0],
           if (categories != null && categories.isNotEmpty) 'categories': categories,
         });
     }
 
     // Fall back to parent class method
-    return super.getMbtiFortune(userId: userId, mbtiType: mbtiType, categories: categories);
+    return super.getMbtiFortune(
+      userId: userId,
+      mbtiType: mbtiType,
+      categories: categories,
+      name: name,
+      birthDate: birthDate);
   }
 
   @override
