@@ -187,7 +187,7 @@ class FortuneData {
   final String? advice;
   final String? caution;
   final String? bestTime;
-  final String? compatibility;
+  final List<String>? compatibility;
   final Map<String, int>? elements;
   
   // Saju fortune fields
@@ -207,6 +207,7 @@ class FortuneData {
   final String? todayMood;
   final String? strengths;
   final String? weaknesses;
+  final List<String>? cognitiveStrengths;
   final String? careerAdvice;
   final String? relationshipAdvice;
   final int? energyLevel;
@@ -274,6 +275,7 @@ class FortuneData {
     this.todayMood,
     this.strengths,
     this.weaknesses,
+    this.cognitiveStrengths,
     this.careerAdvice,
     this.relationshipAdvice,
     this.energyLevel,
@@ -324,9 +326,13 @@ class FortuneData {
       advice: json['advice'],
       caution: json['caution'],
       bestTime: json['bestTime'] ?? json['lucky_items']?['time'],
-      compatibility: json['compatibility'],
-      elements: json['elements'] != null 
-          ? Map<String, int>.from(json['elements']) 
+      compatibility: json['compatibility'] != null
+          ? (json['compatibility'] is List
+              ? List<String>.from(json['compatibility'])
+              : [json['compatibility'].toString()])
+          : null,
+      elements: json['elements'] != null
+          ? Map<String, int>.from(json['elements'])
           : null,
       
       // Saju fortune fields,
@@ -346,6 +352,9 @@ class FortuneData {
       todayMood: json['todayMood'],
       strengths: json['strengths'],
       weaknesses: json['weaknesses'],
+      cognitiveStrengths: json['cognitiveStrengths'] != null
+          ? List<String>.from(json['cognitiveStrengths'])
+          : null,
       careerAdvice: json['careerAdvice'],
       relationshipAdvice: json['relationshipAdvice'],
       energyLevel: json['energyLevel'],
@@ -402,7 +411,7 @@ class FortuneData {
       advice: advice ?? '',
       caution: caution ?? '',
       bestTime: bestTime ?? '오후 2시-4시',
-      compatibility: compatibility ?? '',
+      compatibility: compatibility?.join(', ') ?? '',
       elements: FortuneElements(
         love: elements?['love'] ?? 50,
         career: elements?['career'] ?? 50,
@@ -436,7 +445,7 @@ class FortuneData {
       strengths: strengths ?? '',
       weaknesses: weaknesses ?? '',
       advice: advice ?? '',
-      compatibility: compatibility ?? '',
+      compatibility: compatibility?.join(', ') ?? '',
       careerAdvice: careerAdvice ?? '',
       relationshipAdvice: relationshipAdvice ?? '',
       energyLevel: energyLevel ?? 70,
