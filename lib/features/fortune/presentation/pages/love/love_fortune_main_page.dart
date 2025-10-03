@@ -80,7 +80,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     // 광고 표시
     print('[LoveFortune] Attempting to show interstitial ad...');
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         print('[LoveFortune] Ad completed successfully');
         // 로딩 다이얼로그 닫기
         Navigator.of(context).pop();
@@ -94,7 +94,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
           ),
         );
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         print('[LoveFortune] Ad failed to load or show');
         // 로딩 다이얼로그 닫기
         Navigator.of(context).pop();

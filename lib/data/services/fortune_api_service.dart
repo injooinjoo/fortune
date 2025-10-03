@@ -576,10 +576,19 @@ class FortuneApiService {
       final responseData = _getResponseData(response);
       Logger.debug('🔍 [FortuneApiService] Processing response data', {
         'responseType': responseData.runtimeType.toString(),
-        'hasFortuneKey': responseData is Map ? responseData.containsKey('fortune') : false
+        'hasSuccessKey': responseData is Map ? responseData.containsKey('success') : false,
+        'hasDataKey': responseData is Map ? responseData.containsKey('data') : false
       });
 
-      final fortuneResponse = FortuneResponseModel.fromJson(responseData);
+      // MBTI Edge Function returns {success: true, data: {...}}
+      Map<String, dynamic> fortuneData;
+      if (responseData is Map && responseData.containsKey('success') && responseData['success'] == true) {
+        fortuneData = responseData['data'] as Map<String, dynamic>;
+      } else {
+        fortuneData = responseData as Map<String, dynamic>;
+      }
+
+      final fortuneResponse = FortuneResponseModel.fromJson(fortuneData);
       final fortune = fortuneResponse.toEntity();
 
       Logger.endTimer('getMbtiFortune - Total', stopwatch);

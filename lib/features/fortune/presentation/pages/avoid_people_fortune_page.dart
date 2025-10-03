@@ -79,13 +79,13 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
     // Show ad before showing result
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         context.pushNamed(
           'fortune-avoid-people-result',
           extra: input,
         );
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // Navigate even if ad fails
         context.pushNamed(
           'fortune-avoid-people-result',

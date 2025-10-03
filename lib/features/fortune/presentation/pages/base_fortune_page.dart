@@ -1082,7 +1082,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
 
           // Show interstitial ad before opening bottom sheet
           await AdService.instance.showInterstitialAdWithCallback(
-            onAdCompleted: () {
+            onAdCompleted: () async {
               Logger.debug('✅ [BaseFortunePage] Ad completed, opening fortune explanation bottom sheet', {
                 'fortuneType': widget.fortuneType});
 
@@ -1099,7 +1099,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 }
               );
             },
-            onAdFailed: () {
+            onAdFailed: () async {
               Logger.debug('❌ [BaseFortunePage] Ad failed, still opening fortune explanation bottom sheet', {
                 'fortuneType': widget.fortuneType});
 

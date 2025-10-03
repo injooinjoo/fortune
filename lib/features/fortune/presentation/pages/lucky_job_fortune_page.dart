@@ -249,7 +249,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           onPressed: _canSubmit()
               ? () async {
                   await AdService.instance.showInterstitialAdWithCallback(
-                    onAdCompleted: () {
+                    onAdCompleted: () async {
                       onSubmit({
                         'name': _name,
                         'birthdate': _birthdate!.toIso8601String(),
@@ -257,7 +257,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                         'interests': _interests,
                       });
                     },
-                    onAdFailed: () {
+                    onAdFailed: () async {
                       // Still allow fortune generation even if ad fails
                       onSubmit({
                         'name': _name,

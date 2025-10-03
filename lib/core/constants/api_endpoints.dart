@@ -30,7 +30,7 @@ class ApiEndpoints {
   static const String faceReading = '/api/fortune/face-reading';
 
   // 성격/심리
-  static const String mbtiFortune = '/api/fortune/mbti';
+  static const String mbtiFortune = '/fortune-mbti';  // Edge Function 경로로 수정
   static const String personality = '/api/fortune/personality';
   static const String bloodType = '/api/fortune/blood-type';
   static const String sajuPsychology = '/api/fortune/saju-psychology';

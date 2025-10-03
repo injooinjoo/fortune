@@ -171,14 +171,14 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
                   if (!_hasShownFirstMessageAd) {
                     _hasShownFirstMessageAd = true;
                     await AdService.instance.showInterstitialAdWithCallback(
-                      onAdCompleted: () {
+                      onAdCompleted: () async {
                         _scrollToBottom();
                         // Consume soul on first message if not done yet
                         if (!_hasConsumedSoul) {
                           _consumeSoulIfNeeded();
                         }
                       },
-                      onAdFailed: () {
+                      onAdFailed: () async {
                         _scrollToBottom();
                         // Consume soul on first message if not done yet
                         if (!_hasConsumedSoul) {

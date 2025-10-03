@@ -137,12 +137,12 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
 
     // 광고 표시 후 신의 응답 표시
     AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         if (mounted) {
           _generateDivineResponse();
         }
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // 광고 실패 시에도 결과 표시
         if (mounted) {
           _generateDivineResponse();

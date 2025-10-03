@@ -68,10 +68,10 @@ class _EmploymentInputForm extends StatelessWidget {
           text: '운세 확인하기',
           onPressed: () async {
             await AdService.instance.showInterstitialAdWithCallback(
-              onAdCompleted: () {
+              onAdCompleted: () async {
                 onSubmit({});
               },
-              onAdFailed: () {
+              onAdFailed: () async {
                 // Still allow fortune generation even if ad fails
                 onSubmit({});
               },

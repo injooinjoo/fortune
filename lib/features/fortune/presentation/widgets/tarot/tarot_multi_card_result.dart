@@ -552,10 +552,10 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
             text: '다시 뽑기',
             onPressed: () async {
               await AdService.instance.showInterstitialAdWithCallback(
-                onAdCompleted: () {
+                onAdCompleted: () async {
                   widget.onRetry();
                 },
-                onAdFailed: () {
+                onAdFailed: () async {
                   widget.onRetry();
                 },
               );

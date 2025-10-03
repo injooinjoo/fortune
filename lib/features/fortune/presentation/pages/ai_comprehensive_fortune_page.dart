@@ -211,10 +211,10 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               text: 'AI 분석 시작',
               onPressed: () async {
                 await AdService.instance.showInterstitialAdWithCallback(
-                  onAdCompleted: () {
+                  onAdCompleted: () async {
                     _startAnalysis();
                   },
-                  onAdFailed: () {
+                  onAdFailed: () async {
                     // Still allow analysis even if ad fails
                     _startAnalysis();
                   },

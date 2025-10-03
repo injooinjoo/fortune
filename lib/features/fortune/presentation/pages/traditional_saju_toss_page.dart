@@ -536,13 +536,13 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
     // 광고 표시
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         setState(() {
           _isFortuneLoading = false;
           _showResults = true;
         });
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // 광고 실패해도 운세 표시
         setState(() {
           _isFortuneLoading = false;

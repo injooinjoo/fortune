@@ -196,19 +196,24 @@ serve(async (req) => {
       )
     }
 
-    // OpenAI API 호출
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-nano',
-        messages: [
-          {
-            role: 'system',
-            content: `당신은 전문적인 MBTI 운세 전문가입니다. 각 MBTI 유형의 특성을 깊이 이해하고 있으며, 한국 전통 운세와 현대 심리학을 결합하여 정확하고 의미있는 운세를 제공합니다.
+    // OpenAI API 호출 (타임아웃 및 에러 핸들링 강화)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30초 타임아웃
+
+    let openaiResponse
+    try {
+      openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4-turbo-preview',
+          messages: [
+            {
+              role: 'system',
+              content: `당신은 전문적인 MBTI 운세 전문가입니다. 각 MBTI 유형의 특성을 깊이 이해하고 있으며, 한국 전통 운세와 현대 심리학을 결합하여 정확하고 의미있는 운세를 제공합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -225,28 +230,44 @@ serve(async (req) => {
 }
 
 모든 내용은 따뜻하고 긍정적이며 실용적인 조언을 포함해야 합니다.`
-          },
-          {
-            role: 'user',
-            content: `이름: ${name}
+            },
+            {
+              role: 'user',
+              content: `이름: ${name}
 MBTI: ${mbti}
 생년월일: ${birthDate}
 오늘 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
 ${mbti} 유형의 특성을 고려하여 오늘의 운세를 봐주세요.`
-          }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.8,
-        max_tokens: 1500
-      }),
-    })
+            }
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.8,
+          max_tokens: 1500
+        }),
+        signal: controller.signal
+      })
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      console.error('OpenAI API fetch error:', fetchError)
+      throw new Error(`OpenAI API 연결 실패: ${fetchError.message}`)
+    } finally {
+      clearTimeout(timeoutId)
+    }
 
     if (!openaiResponse.ok) {
-      throw new Error(`OpenAI API 오류: ${openaiResponse.status}`)
+      const errorText = await openaiResponse.text()
+      console.error('OpenAI API error response:', errorText)
+      throw new Error(`OpenAI API 오류 (${openaiResponse.status}): ${errorText}`)
     }
 
     const openaiResult = await openaiResponse.json()
+
+    if (!openaiResult.choices || !openaiResult.choices[0] || !openaiResult.choices[0].message) {
+      console.error('Invalid OpenAI response structure:', openaiResult)
+      throw new Error('OpenAI API 응답 형식 오류')
+    }
+
     const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
 
     // MBTI 특성 정보 추가
@@ -283,10 +304,21 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 봐주세요.`
   } catch (error) {
     console.error('MBTI Fortune API Error:', error)
 
+    // 에러 상세 로그
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('Error details:', {
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
+      mbti,
+      name,
+      birthDate
+    })
+
     return new Response(
       JSON.stringify({
         success: false,
-        error: '운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+        error: '운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

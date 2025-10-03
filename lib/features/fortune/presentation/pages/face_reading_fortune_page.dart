@@ -300,10 +300,10 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
               onPressed: _isAnalyzing ? null : () async {
                 await AdService.instance.showInterstitialAdWithCallback(
-                  onAdCompleted: () {
+                  onAdCompleted: () async {
                     _startAnalysis(onSubmit);
                   },
-                  onAdFailed: () {
+                  onAdFailed: () async {
                     // Still allow fortune generation even if ad fails
                     _startAnalysis(onSubmit);
                   },
