@@ -193,6 +193,9 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
       print('✅ [MbtiFortunePage] API fortune loaded successfully in ${apiDuration}ms');
       print('📊 [MbtiFortunePage] Fortune details: id=${fortune.id}, type=${fortune.type}, score=${fortune.overallScore}');
+      print('📝 [MbtiFortunePage] Fortune description length: ${fortune.description?.length ?? 0} chars');
+      print('📝 [MbtiFortunePage] Fortune content: ${fortune.description?.substring(0, fortune.description!.length > 200 ? 200 : fortune.description!.length)}...');
+      print('📊 [MbtiFortunePage] Fortune metadata keys: ${fortune.metadata?.keys.toList()}');
       print('🔄 [MbtiFortunePage] Returning fortune to BaseFortunePage...');
       return fortune;
 
