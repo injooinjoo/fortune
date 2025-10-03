@@ -265,8 +265,13 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   // Common method to handle fortune generation - made protected for subclasses
   @protected
   Future<void> generateFortuneAction({Map<String, dynamic>? params}) async {
+    Logger.info('🔵 [TRACE-1] generateFortuneAction() STARTED', {
+      'fortuneType': widget.fortuneType,
+      'hasParams': params != null,
+    });
+
     final stopwatch = Logger.startTimer('Fortune Generation - ${widget.fortuneType}');
-    
+
     Logger.info('🎲 [BaseFortunePage] Starting fortune generation', {
       'fortuneType': widget.fortuneType,
       'hasParams': params != null,
@@ -334,11 +339,16 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
 
       // Function to generate fortune after ad
       Future<void> generateFortuneAfterAd() async {
+        Logger.info('🔵 [TRACE-8] generateFortuneAfterAd() ENTERED');
+
         try {
+          Logger.info('🔵 [TRACE-9] Inside generateFortuneAfterAd try block');
           Logger.debug('🔮 [BaseFortunePage] Calling generateFortune implementation');
           final fortuneStopwatch = Logger.startTimer('API Call - ${widget.fortuneType}');
 
+          Logger.info('🔵 [TRACE-10] About to call generateFortune()');
           final fortune = await generateFortune(fortuneParams);
+          Logger.info('🔵 [TRACE-11] generateFortune() returned', {'fortuneId': fortune.id});
 
           Logger.endTimer('API Call - ${widget.fortuneType}', fortuneStopwatch);
           Logger.info('✨ [BaseFortunePage] Fortune generated successfully', {
@@ -358,11 +368,13 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             Logger.warning('⚠️ [BaseFortunePage] Failed to save fortune to history (non-fatal): $historyError');
           }
 
+          Logger.info('🔵 [TRACE-12] About to call setState()');
           Logger.debug('🔄 [BaseFortunePage] Setting state with fortune...');
           setState(() {
             _fortune = fortune;
             _isLoading = false;
           });
+          Logger.info('🔵 [TRACE-13] setState() completed');
           Logger.debug('✅ [BaseFortunePage] State updated - isLoading: false, fortune: ${fortune.id}');
 
           // Track fortune access in statistics
@@ -441,8 +453,11 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       }
 
       // Try to show ad first
+      Logger.info('🔵 [TRACE-2] Entering ad flow section', {'adShown': false});
+
       bool adShown = false;
       try {
+        Logger.info('🔵 [TRACE-3] Inside ad try block');
         Logger.debug('📺 [BaseFortunePage] Checking ad readiness...');
 
         // Check if ad is ready
@@ -478,14 +493,21 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         } else {
           Logger.warning('⚠️ [BaseFortunePage] Ad still not ready after load attempt');
         }
+
+        Logger.info('🔵 [TRACE-4] Exiting ad try block', {'adShown': adShown});
+
       } catch (e) {
         Logger.error('❌ [BaseFortunePage] Error in ad flow', e);
       }
 
+      Logger.info('🔵 [TRACE-5] After ad try-catch, checking adShown', {'adShown': adShown});
+
       // If ad wasn't shown, generate fortune directly
       if (!adShown) {
+        Logger.info('🔵 [TRACE-6] adShown is false, calling generateFortuneAfterAd()');
         Logger.info('📺 [BaseFortunePage] No ad shown, generating fortune directly');
         await generateFortuneAfterAd();
+        Logger.info('🔵 [TRACE-7] generateFortuneAfterAd() returned');
       } else {
         Logger.debug('📺 [BaseFortunePage] Ad was initiated, fortune will be generated in callback');
         // Ad was shown, fortune will be generated in the callback
