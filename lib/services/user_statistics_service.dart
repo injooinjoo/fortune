@@ -30,13 +30,15 @@ class UserStatistics {
 
   factory UserStatistics.fromJson(Map<String, dynamic> json) {
     return UserStatistics(
-      totalFortunes: json['total_fortunes'],
-      consecutiveDays: json['consecutive_days'],
+      totalFortunes: json['total_fortunes'] ?? 0,
+      consecutiveDays: json['consecutive_days'] ?? 0,
       lastLogin: json['last_login'] != null ? DateTime.parse(json['last_login']) : null,
       favoriteFortuneType: json['favorite_fortune_type'],
-      fortuneTypeCount: Map<String, int>.from(json['fortune_type_count'] ?? {}),
-      totalTokensUsed: json['total_tokens_used'],
-      totalTokensEarned: json['total_tokens_earned']);
+      fortuneTypeCount: json['fortune_type_count'] != null
+          ? Map<String, int>.from(json['fortune_type_count'])
+          : {},
+      totalTokensUsed: json['total_tokens_used'] ?? 0,
+      totalTokensEarned: json['total_tokens_earned'] ?? 0);
   }
 
   Map<String, dynamic> toJson() {

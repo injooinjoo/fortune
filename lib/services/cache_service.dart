@@ -93,8 +93,16 @@ class CacheService {
         return null;
       }
       
-      // JSON 데이터를 FortuneModel로 변환
-      final fortuneData = response['fortune_data'] as Map<String, dynamic>;
+      // JSON 데이터를 FortuneModel로 변환 (null safety)
+      final fortuneDataRaw = response['fortune_data'] ?? response['result'];
+      if (fortuneDataRaw == null) {
+        debugPrint('❌ No fortune data found in cache entry');
+        return null;
+      }
+
+      final fortuneData = fortuneDataRaw is Map<String, dynamic>
+          ? fortuneDataRaw
+          : Map<String, dynamic>.from(fortuneDataRaw as Map);
       debugPrint('✅ Found valid cached fortune in DB');
       return FortuneModel.fromJson(fortuneData);
     } catch (e) {
@@ -120,15 +128,18 @@ class CacheService {
       
       debugPrint('💾 Saving to cache: type=$fortuneType, userId=$userId, dateKey=$dateKey');
       
-      // DB에 운세 데이터 저장 (upsert)
+      // DB에 운세 데이터 저장 (upsert) - result 컬럼 우선, fortune_data fallback
+      final fortuneJson = fortune.toJson();
       await _supabase.from('fortune_cache').upsert({
         'user_id': userId,
         'fortune_type': fortuneType,
         'fortune_date': dateKey,
-        'fortune_data': fortune.toJson(),
+        'result': fortuneJson,  // 새 컬럼명
+        'fortune_data': fortuneJson,  // 호환성을 위한 fallback
+        'cache_key': '$userId:$fortuneType:$dateKey',  // 캐시 키 추가
         'expires_at': expiryDate.toIso8601String(),
         'created_at': DateTime.now().toIso8601String(),
-      }, 
+      },
       onConflict: 'user_id,fortune_type,fortune_date');
       
       debugPrint('✅ Fortune cached to DB successfully');
@@ -437,7 +448,12 @@ class CacheService {
       final fortunes = <FortuneModel>[];
       for (final entry in response) {
         try {
-          final fortuneData = entry['fortune_data'] as Map<String, dynamic>;
+          final fortuneDataRaw = entry['fortune_data'] ?? entry['result'];
+          if (fortuneDataRaw == null) continue;
+
+          final fortuneData = fortuneDataRaw is Map<String, dynamic>
+              ? fortuneDataRaw
+              : Map<String, dynamic>.from(fortuneDataRaw as Map);
           fortunes.add(FortuneModel.fromJson(fortuneData));
         } catch (e) {
           debugPrint('Error parsing cached fortune: $e');
@@ -473,7 +489,12 @@ class CacheService {
       final fortunes = <FortuneModel>[];
       for (final entry in response) {
         try {
-          final fortuneData = entry['fortune_data'] as Map<String, dynamic>;
+          final fortuneDataRaw = entry['fortune_data'] ?? entry['result'];
+          if (fortuneDataRaw == null) continue;
+
+          final fortuneData = fortuneDataRaw is Map<String, dynamic>
+              ? fortuneDataRaw
+              : Map<String, dynamic>.from(fortuneDataRaw as Map);
           fortunes.add(FortuneModel.fromJson(fortuneData));
         } catch (e) {
           debugPrint('Error parsing cached fortune: $e');
@@ -525,7 +546,15 @@ class CacheService {
       if (response == null) return null;
       
       try {
-        final fortuneData = response['fortune_data'] as Map<String, dynamic>;
+        final fortuneDataRaw = response['fortune_data'] ?? response['result'];
+        if (fortuneDataRaw == null) {
+          debugPrint('No fortune data found in cache entry');
+          return null;
+        }
+
+        final fortuneData = fortuneDataRaw is Map<String, dynamic>
+            ? fortuneDataRaw
+            : Map<String, dynamic>.from(fortuneDataRaw as Map);
         return FortuneModel.fromJson(fortuneData);
       } catch (e) {
         debugPrint('Error parsing cached fortune: $e');
