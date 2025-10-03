@@ -125,50 +125,16 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Future<void> _handleGenerateFortune() async {
-    bool isDialogShowing = false;
+    print('🔵 [MBTI-TRACE-1] _handleGenerateFortune() started');
 
+    // Just call generateFortuneAction() directly - it handles ads and loading internally
     try {
-      // Show loading dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          isDialogShowing = true;
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
-
-      // Show ad with callback
-      await AdService.instance.showInterstitialAdWithCallback(
-        onAdCompleted: () async {
-          if (isDialogShowing && mounted) {
-            Navigator.of(context).pop(); // Close loading dialog
-            isDialogShowing = false;
-          }
-          await generateFortuneAction(); // Generate fortune after ad
-        },
-        onAdFailed: () async {
-          if (isDialogShowing && mounted) {
-            Navigator.of(context).pop(); // Close loading dialog
-            isDialogShowing = false;
-          }
-          await generateFortuneAction(); // Generate fortune even if ad fails
-        },
-      );
-    } catch (e) {
-      // Ensure dialog is closed on any error
-      if (isDialogShowing && mounted) {
-        Navigator.of(context).pop();
-        isDialogShowing = false;
-      }
-      print('⚠️ [MbtiFortunePage] Error in _handleGenerateFortune: $e');
-
-      // Still try to generate fortune with fallback
-      if (mounted) {
-        await generateFortuneAction();
-      }
+      print('🔵 [MBTI-TRACE-2] Calling generateFortuneAction()');
+      await generateFortuneAction();
+      print('🔵 [MBTI-TRACE-3] generateFortuneAction() returned');
+    } catch (e, stackTrace) {
+      print('❌ [MbtiFortunePage] Error in _handleGenerateFortune: $e');
+      print('📚 [MbtiFortunePage] Stack trace: $stackTrace');
     }
   }
 
