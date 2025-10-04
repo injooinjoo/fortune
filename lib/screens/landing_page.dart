@@ -45,10 +45,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     
     _socialAuthService = SocialAuthService(Supabase.instance.client);
     
-    // Ensure auth check happens after first build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      print('🔄 PostFrameCallback: Starting auth check');
-      _checkAuthState();
+    // Use Future.microtask instead of PostFrameCallback to avoid event loop freeze in release mode
+    Future.microtask(() async {
+      await _checkAuthState();
       _checkUrlParameters();
     });
     
@@ -321,12 +320,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');
-    } finally {
-      print('🔍 _checkAuthState: Finally block - setting _isCheckingAuth to false');
       if (mounted) {
         setState(() {
           _isCheckingAuth = false;
-          print('✅ _checkAuthState: Finally - _isCheckingAuth set to false');
         });
       }
     }
