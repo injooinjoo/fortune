@@ -40,14 +40,24 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     
     // 상태 초기화 명확히 하기
     _isAuthProcessing = false;
+    _isCheckingAuth = false; // Initialize as false instead of true
     print('🔵 initState: _isAuthProcessing initialized to false');
-    print('🔵 initState: _isCheckingAuth is $_isCheckingAuth');
-    
+    print('🔵 initState: _isCheckingAuth initialized to false');
+
     _socialAuthService = SocialAuthService(Supabase.instance.client);
-    
-    // Use Future.microtask instead of PostFrameCallback to avoid event loop freeze in release mode
+
+    // Check auth in background without blocking UI
     Future.microtask(() async {
-      await _checkAuthState();
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        // Only show loading if there's a session to check
+        if (mounted) {
+          setState(() {
+            _isCheckingAuth = true;
+          });
+        }
+        await _checkAuthState();
+      }
       _checkUrlParameters();
     });
     
@@ -288,6 +298,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             _isCheckingAuth = false;
             print('✅ _checkAuthState: _isCheckingAuth set to false');
           });
+          // Force visual update in release mode
+          WidgetsBinding.instance.ensureVisualUpdate();
+          print('🔍 _checkAuthState: ensureVisualUpdate() called');
         }
         return;
       }
