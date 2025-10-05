@@ -102,7 +102,7 @@ ${category}에 맞는 구체적이고 실용적인 조언을 제공하세요.`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-5-nano',
         messages: [
           {
             role: 'system',
