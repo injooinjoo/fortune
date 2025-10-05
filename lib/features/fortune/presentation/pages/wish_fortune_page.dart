@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/services/divine_wish_analyzer.dart';
+import '../../domain/models/wish_fortune_result.dart';
+import '../widgets/divine_loading_animation.dart';
+import './wish_fortune_result_tinder.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../services/ad_service.dart';
@@ -109,25 +113,118 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
     // Auto generation removed as we now start with input page
   }
 
-  /// 신의 응답 생성
-  void _generateDivineResponse() {
+  /// 신의 응답 생성 (API 호출)
+  void _generateDivineResponse() async {
     final wishText = _wishController.text.trim();
     final category = _selectedCategory.name;
     final urgency = _urgencyLevel;
 
+    // 로딩 화면 표시
+    if (!mounted) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DivineLoadingAnimation(
+          durationSeconds: 4,
+          onComplete: () async {
+            // API 호출
+            try {
+              final supabase = Supabase.instance.client;
+              final session = supabase.auth.currentSession;
+              final userProfile = await _getUserProfile();
+
+              final response = await supabase.functions.invoke(
+                'analyze-wish',
+                body: {
+                  'wish_text': wishText,
+                  'category': category,
+                  'urgency': urgency,
+                  'user_profile': userProfile != null
+                      ? {
+                          'birth_date': userProfile['birth_date'],
+                          'zodiac': userProfile['chinese_zodiac'],
+                        }
+                      : null,
+                },
+              );
+
+              if (!mounted) return;
+
+              if (response.status == 200 && response.data['success'] == true) {
+                final result = WishFortuneResult.fromJson(response.data['data']);
+
+                // 틴더 스타일 결과 페이지로 이동
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => WishFortuneResultTinder(
+                      result: result,
+                      wishText: wishText,
+                      category: category,
+                      urgency: urgency,
+                    ),
+                  ),
+                );
+              } else {
+                // API 실패 시 fallback (기존 로직)
+                _showFallbackResponse(wishText, category, urgency);
+              }
+            } catch (e) {
+              debugPrint('소원 분석 API 오류: $e');
+              // 오류 시 fallback
+              if (mounted) {
+                _showFallbackResponse(wishText, category, urgency);
+              }
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  /// 사용자 프로필 가져오기
+  Future<Map<String, dynamic>?> _getUserProfile() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final userId = supabase.auth.currentUser?.id;
+
+      if (userId == null) return null;
+
+      final data = await supabase
+          .from('user_profiles')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+
+      return data;
+    } catch (e) {
+      debugPrint('프로필 가져오기 오류: $e');
+      return null;
+    }
+  }
+
+  /// Fallback 응답 (API 실패 시)
+  void _showFallbackResponse(String wishText, String category, int urgency) {
+    final divineResponse = DivineWishAnalyzer.generateDivineResponse(
+      wishText: wishText,
+      category: category,
+      urgency: urgency,
+    );
+
+    if (!mounted) return;
+
     setState(() {
-      _divineResponse = DivineWishAnalyzer.generateDivineResponse(
-        wishText: wishText,
-        category: category,
-        urgency: urgency,
-      );
+      _divineResponse = divineResponse;
       _currentState = WishPageState.divineResponse;
     });
+
+    Navigator.of(context).pop(); // 로딩 화면 닫기
 
     // 애니메이션 시작
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 300), () {
-      _slideController.forward();
+      if (mounted) {
+        _slideController.forward();
+      }
     });
   }
 
