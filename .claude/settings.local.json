@@ -106,7 +106,9 @@
       "Bash(npx supabase db diff:*)",
       "Bash(curl:*)",
       "Bash(claude mcp add:*)",
-      "Bash(claude mcp call supabase execute_sql:*)"
+      "Bash(claude mcp call supabase execute_sql:*)",
+      "Bash(supabase functions deploy:*)",
+      "Bash(supabase db:*)"
     ],
     "deny": [],
     "ask": [],
