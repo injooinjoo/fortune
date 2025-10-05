@@ -48,62 +48,76 @@ class AdService {
     if (_isInitialized) return;
 
     try {
-      Logger.info('Starting AdMob SDK initialization...');
+      Logger.info('🎯 [AdMob] Starting AdMob SDK initialization...');
+      Logger.info('🎯 [AdMob] ENABLE_ADS flag: ${Environment.enableAds}');
+      Logger.info('🎯 [AdMob] AdMob App ID: ${Environment.admobAppId}');
+      Logger.info('🎯 [AdMob] Banner Ad Unit ID: ${Environment.admobBannerAdUnitId}');
 
       // Check if ads are enabled
       if (!Environment.enableAds) {
-        Logger.info('Ads are disabled via feature flag');
+        Logger.warning('⚠️ [AdMob] Ads are disabled via feature flag (ENABLE_ADS=false)');
+        return;
+      }
+
+      // Check if AdMob App ID is configured
+      if (Environment.admobAppId.isEmpty) {
+        Logger.error('❌ [AdMob] AdMob App ID is not configured in .env file');
         return;
       }
 
       // Initialize MobileAds SDK with timeout - don't block the app
       try {
+        Logger.info('🎯 [AdMob] Initializing MobileAds SDK...');
         final initFuture = MobileAds.instance.initialize();
         final status = await initFuture.timeout(
-          const Duration(seconds: 3),
+          const Duration(seconds: 5),
           onTimeout: () {
-            Logger.warning('AdMob SDK initialization timed out after 3 seconds - continuing without ads');
-            // Return empty status on timeout
+            Logger.warning('⚠️ [AdMob] SDK initialization timed out after 5 seconds - continuing without ads');
             return InitializationStatus({});
           },
         );
-        Logger.info('AdMob SDK initialized successfully');
+        Logger.info('✅ [AdMob] MobileAds SDK initialized successfully: $status');
       } catch (e) {
-        Logger.warning('AdMob SDK initialization failed: $e - continuing without ads');
+        Logger.error('❌ [AdMob] SDK initialization failed: $e - continuing without ads', e);
         // Don't rethrow - let the app continue
       }
 
       // Configure test devices for development
       if (kDebugMode) {
         try {
+          Logger.info('🎯 [AdMob] Debug mode: Configuring test device settings...');
           final testDeviceIds = <String>[];
           if (Platform.isAndroid) {
-            // Add Android test device IDs here
-            testDeviceIds.add('YOUR_ANDROID_TEST_DEVICE_ID');
+            // Add Android test device IDs here if needed
+            // testDeviceIds.add('YOUR_ANDROID_TEST_DEVICE_ID');
           } else if (Platform.isIOS) {
-            // Add iOS test device IDs here
-            testDeviceIds.add('YOUR_IOS_TEST_DEVICE_ID');
+            // Add iOS test device IDs here if needed
+            // testDeviceIds.add('YOUR_IOS_TEST_DEVICE_ID');
           }
 
-          await MobileAds.instance.updateRequestConfiguration(
-            RequestConfiguration(testDeviceIds: testDeviceIds)).timeout(
-              const Duration(seconds: 1),
-              onTimeout: () {
-                Logger.warning('Test device configuration timed out');
-              },
-            );
+          final config = RequestConfiguration(
+            testDeviceIds: testDeviceIds,
+          );
+
+          await MobileAds.instance.updateRequestConfiguration(config).timeout(
+            const Duration(seconds: 1),
+            onTimeout: () {
+              Logger.warning('⚠️ [AdMob] Test device configuration timed out');
+            },
+          );
+          Logger.info('✅ [AdMob] Test device configuration complete');
         } catch (e) {
-          Logger.warning('Failed to configure test devices: $e');
+          Logger.warning('⚠️ [AdMob] Failed to configure test devices: $e');
         }
       }
 
       _isInitialized = true;
-      Logger.info('AdMob SDK initialized successfully');
+      Logger.info('✅ [AdMob] AdService initialized successfully (isInitialized: $_isInitialized)');
 
       // Don't preload ads automatically - this can cause delays on real devices
       // Ads will be loaded on-demand when needed
     } catch (e) {
-      Logger.warning('[AdService] AdMob SDK 초기화 실패 (광고 없이 진행): $e');
+      Logger.error('❌ [AdMob] AdService initialization failed (continuing without ads): $e', e);
       // Don't throw - let the app continue without ads
       _isInitialized = false;
     }
@@ -158,30 +172,33 @@ class AdService {
     void Function(Ad)? onAdLoaded,
     void Function(Ad, LoadAdError)? onAdFailedToLoad}) async {
     if (!_isInitialized) {
-      Logger.warning('AdMob SDK not initialized');
+      Logger.warning('⚠️ [AdMob] SDK not initialized, cannot load banner ad');
       return;
     }
 
+    final adUnitId = _getAdUnitId('banner');
+    Logger.info('🎯 [AdMob] Loading banner ad with unit ID: $adUnitId');
+
     _bannerAd = BannerAd(
-      adUnitId: _getAdUnitId('banner'),
+      adUnitId: adUnitId,
       size: adSize,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           _isBannerAdReady = true;
-          Logger.info('Banner ad loaded successfully');
+          Logger.info('✅ [AdMob] Banner ad loaded successfully');
           onAdLoaded?.call(ad);
         },
         onAdFailedToLoad: (ad, error) {
           _isBannerAdReady = false;
           ad.dispose();
-          Logger.warning('[AdService] 배너 광고 로드 실패 (광고 없이 진행): $error');
+          Logger.error('❌ [AdMob] Banner ad failed to load: ${error.message} (code: ${error.code})', error);
           onAdFailedToLoad?.call(ad, error);
         },
-        onAdOpened: (ad) => Logger.info('Banner ad opened'),
-        onAdClosed: (ad) => Logger.info('Banner ad closed'),
-        onAdImpression: (ad) => Logger.info('Banner ad impression'),
-        onAdClicked: (ad) => Logger.info('Banner ad clicked')));
+        onAdOpened: (ad) => Logger.info('📱 [AdMob] Banner ad opened'),
+        onAdClosed: (ad) => Logger.info('📱 [AdMob] Banner ad closed'),
+        onAdImpression: (ad) => Logger.info('👁️ [AdMob] Banner ad impression'),
+        onAdClicked: (ad) => Logger.info('👆 [AdMob] Banner ad clicked')));
 
     await _bannerAd!.load();
   }
@@ -191,18 +208,21 @@ class AdService {
     void Function(InterstitialAd)? onAdLoaded,
     void Function(LoadAdError)? onAdFailedToLoad}) async {
     if (!_isInitialized) {
-      Logger.warning('AdMob SDK not initialized');
+      Logger.warning('⚠️ [AdMob] SDK not initialized, cannot load interstitial ad');
       return;
     }
 
+    final adUnitId = _getAdUnitId('interstitial');
+    Logger.info('🎯 [AdMob] Loading interstitial ad with unit ID: $adUnitId');
+
     await InterstitialAd.load(
-      adUnitId: _getAdUnitId('interstitial'),
+      adUnitId: adUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialAdReady = true;
-          Logger.info('Interstitial ad loaded successfully');
+          Logger.info('✅ [AdMob] Interstitial ad loaded successfully');
           onAdLoaded?.call(ad);
 
           // Set full screen content callback
@@ -210,21 +230,22 @@ class AdService {
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
               _isInterstitialAdReady = false;
+              Logger.info('📱 [AdMob] Interstitial ad dismissed');
               // Load next interstitial ad
               loadInterstitialAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
               _isInterstitialAdReady = false;
-              Logger.warning('[AdService] 전면 광고 표시 실패 (무시): $error');
+              Logger.error('❌ [AdMob] Interstitial ad failed to show: ${error.message} (code: ${error.code})', error);
             },
             onAdShowedFullScreenContent: (ad) {
-              Logger.info('Interstitial ad showed');
+              Logger.info('📱 [AdMob] Interstitial ad showed');
             });
         },
         onAdFailedToLoad: (error) {
           _isInterstitialAdReady = false;
-          Logger.warning('[AdService] 전면 광고 로드 실패 (광고 없이 진행): $error');
+          Logger.error('❌ [AdMob] Interstitial ad failed to load: ${error.message} (code: ${error.code})', error);
           onAdFailedToLoad?.call(error);
         },
       ),
