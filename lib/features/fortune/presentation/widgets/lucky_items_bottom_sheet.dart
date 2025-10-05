@@ -199,7 +199,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                         fontSize: 16,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray500,
+                            : TossDesignSystem.gray700,
                       ),
                     ),
                   ],
@@ -264,7 +264,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                           height: 1.5,
                           color: Theme.of(context).brightness == Brightness.dark
                               ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray600,
+                              : TossDesignSystem.gray800,
                         ),
                       ),
                     ],
@@ -304,10 +304,12 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? TossDesignSystem.gray800
-                            : TossDesignSystem.white,
+                            : TossDesignSystem.gray50,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: TossDesignSystem.gray300.withValues(alpha: 0.2),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.gray700
+                              : TossDesignSystem.gray200,
                         ),
                       ),
                       child: Row(
@@ -331,10 +333,10 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                               category['title'],
                               style: TextStyle(
                                 fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 color: Theme.of(context).brightness == Brightness.dark
                                     ? TossDesignSystem.white
-                                    : TossDesignSystem.grayDark900,
+                                    : TossDesignSystem.black,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
