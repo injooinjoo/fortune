@@ -44,7 +44,9 @@
       "Bash(./scripts/parse_ux_request.sh:*)",
       "Bash(nc localhost 63353)",
       "Bash(dart format:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(git pull:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": [],
