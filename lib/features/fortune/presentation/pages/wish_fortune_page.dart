@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../domain/services/divine_wish_analyzer.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import '../widgets/divine_loading_animation.dart';
 import './wish_fortune_result_tinder.dart';
@@ -42,7 +41,6 @@ class WishFortunePage extends ConsumerStatefulWidget {
 
 enum WishPageState {
   input,         // 소원 입력 화면
-  divineResponse // 신의 응답
 }
 
 class _WishFortunePageState extends ConsumerState<WishFortunePage>
@@ -55,10 +53,8 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   // Controllers for input fields
   final TextEditingController _wishController = TextEditingController();
 
-  WishPageState _currentState = WishPageState.input;
   WishCategory _selectedCategory = WishCategory.love;
   int _urgencyLevel = 3;
-  String _divineResponse = '';
 
   @override
   void initState() {
@@ -165,14 +161,16 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                   ),
                 );
               } else {
-                // API 실패 시 fallback (기존 로직)
-                _showFallbackResponse(wishText, category, urgency);
+                // API 실패 시 에러 표시
+                Navigator.of(context).pop(); // 로딩 화면 닫기
+                _showErrorDialog('소원 분석에 실패했습니다.\n잠시 후 다시 시도해주세요.');
               }
             } catch (e) {
               debugPrint('소원 분석 API 오류: $e');
-              // 오류 시 fallback
+              // 오류 시 에러 표시
               if (mounted) {
-                _showFallbackResponse(wishText, category, urgency);
+                Navigator.of(context).pop(); // 로딩 화면 닫기
+                _showErrorDialog('소원 분석 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
               }
             }
           },
@@ -202,30 +200,21 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
     }
   }
 
-  /// Fallback 응답 (API 실패 시)
-  void _showFallbackResponse(String wishText, String category, int urgency) {
-    final divineResponse = DivineWishAnalyzer.generateDivineResponse(
-      wishText: wishText,
-      category: category,
-      urgency: urgency,
+  /// 에러 다이얼로그 표시
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('오류'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
     );
-
-    if (!mounted) return;
-
-    setState(() {
-      _divineResponse = divineResponse;
-      _currentState = WishPageState.divineResponse;
-    });
-
-    Navigator.of(context).pop(); // 로딩 화면 닫기
-
-    // 애니메이션 시작
-    _fadeController.forward();
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        _slideController.forward();
-      }
-    });
   }
 
   /// 소원 빌기 - 광고 표시 후 신의 응답
@@ -253,28 +242,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   }
 
 
-  /// 새로운 소원 빌기
-  void _makeNewWish() {
-    setState(() {
-      _currentState = WishPageState.input;
-      _wishController.clear();
-      _selectedCategory = WishCategory.love;
-      _urgencyLevel = 3;
-      _divineResponse = '';
-    });
-
-    _fadeController.reset();
-    _slideController.reset();
-  }
 
   @override
   Widget build(BuildContext context) {
-    switch (_currentState) {
-      case WishPageState.input:
-        return _buildInputView();
-      case WishPageState.divineResponse:
-        return _buildDivineResponseView();
-    }
+    return _buildInputView();
   }
 
   /// 소원 입력 화면
@@ -348,178 +319,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   // }
 
   /// 신의 응답 화면 - 토스 스타일로 개편
-  Widget _buildDivineResponseView() {
-    return Scaffold(
-      backgroundColor: TossDesignSystem.backgroundPrimary,
-      appBar: AppHeader(
-        title: '신의 응답',
-        showBackButton: true,
-        centerTitle: true,
-        onBackPressed: () {
-          ref.read(navigationVisibilityProvider.notifier).show();
-          context.pop();
-        },
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh, color: TossDesignSystem.gray600),
-            onPressed: _makeNewWish,
-          ),
-        ],
-      ),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: TossTheme.spacingL),
-                
-                // 신의 응답 헤더
-                _buildResponseHeader(),
-                
-                const SizedBox(height: TossTheme.spacingXL),
-                
-                // 원본 소원 카드
-                _buildOriginalWishCard(),
-                
-                const SizedBox(height: TossTheme.spacingL),
-                
-                // 신의 응답 카드
-                _buildDivineResponseCard(),
-                
-                const SizedBox(height: TossTheme.spacingXL),
-                
-                // 새 소원 버튼
-                TossButton(
-                  text: '새로운 소원 빌기',
-                  onPressed: _makeNewWish,
-                  size: TossButtonSize.large,
-                  width: double.infinity,
-                ),
-                
-                const SizedBox(height: TossTheme.spacingXXL),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  /// 응답 헤더
-  Widget _buildResponseHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '✨ 신의 응답이 도착했어요',
-          style: TossTheme.heading2,
-        ),
-        const SizedBox(height: TossTheme.spacingS),
-        Text(
-          '당신의 소원에 대한 특별한 메시지예요',
-          style: TossTheme.subtitle1,
-        ),
-      ],
-    );
-  }
-
-  /// 원본 소원 카드
-  Widget _buildOriginalWishCard() {
-    return TossCard(
-      style: TossCardStyle.outlined,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.favorite,
-                color: TossDesignSystem.tossBlue,
-                size: 20,
-              ),
-              const SizedBox(width: TossTheme.spacingS),
-              Text(
-                '당신의 소원',
-                style: TossTheme.heading5.copyWith(color: TossDesignSystem.tossBlue),
-              ),
-            ],
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(TossTheme.spacingM),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(TossTheme.radiusS),
-            ),
-            child: Text(
-              _wishController.text.trim(),
-              style: TossTheme.body3,
-            ),
-          ),
-          const SizedBox(height: TossTheme.spacingS),
-          Text(
-            '카테고리: ${_selectedCategory.name}  •  긴급도: $_urgencyLevel/5',
-            style: TossTheme.caption,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 신의 응답 카드
-  Widget _buildDivineResponseCard() {
-    return TossCard(
-      style: TossCardStyle.filled,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(TossTheme.radiusL),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              TossDesignSystem.tossBlue,
-              TossDesignSystem.tossBlue.withOpacity(0.8),
-            ],
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: TossDesignSystem.white,
-                  size: 24,
-                ),
-                const SizedBox(width: TossTheme.spacingS),
-                Text(
-                  '신의 응답',
-                  style: TossTheme.heading4.copyWith(
-                    color: TossDesignSystem.white,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: TossTheme.spacingL),
-            Text(
-              _divineResponse,
-              style: TossTheme.body2.copyWith(
-                color: TossDesignSystem.white,
-                height: 1.6,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// 메인 헤더
   Widget _buildMainHeader() {
