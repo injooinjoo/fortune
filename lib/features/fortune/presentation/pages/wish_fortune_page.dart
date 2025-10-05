@@ -217,9 +217,40 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
     );
   }
 
+  /// 오늘 이미 소원을 빌었는지 체크
+  Future<bool> _hasWishedToday() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final userId = supabase.auth.currentUser?.id;
+
+      if (userId == null) return false;
+
+      final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD
+
+      final data = await supabase
+          .from('wish_fortunes')
+          .select()
+          .eq('user_id', userId)
+          .eq('wish_date', today)
+          .maybeSingle();
+
+      return data != null;
+    } catch (e) {
+      debugPrint('오늘 소원 체크 오류: $e');
+      return false;
+    }
+  }
+
   /// 소원 빌기 - 광고 표시 후 신의 응답
-  void _submitWish() {
+  void _submitWish() async {
     if (!_canSubmit()) return;
+
+    // 하루 1회 제한 체크
+    final alreadyWished = await _hasWishedToday();
+    if (alreadyWished) {
+      _showErrorDialog('오늘은 이미 소원을 빌었어요.\n내일 다시 시도해주세요.');
+      return;
+    }
 
     // 광고 표시 후 신의 응답 표시
     AdService.instance.showInterstitialAdWithCallback(
