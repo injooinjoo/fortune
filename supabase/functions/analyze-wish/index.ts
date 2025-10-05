@@ -113,7 +113,6 @@ ${category}에 맞는 구체적이고 실용적인 조언을 제공하세요.`
             content: aiPrompt
           }
         ],
-        temperature: 0.8,
         response_format: { type: "json_object" }
       }),
     })
