@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -34,6 +34,7 @@ import 'services/remote_config_service.dart';
 import 'presentation/providers/font_size_provider.dart';
 import 'core/services/test_auth_service.dart';
 import 'core/services/supabase_connection_service.dart';
+import 'core/utils/route_observer_logger.dart';
 
 void main() async {
   print('🚀 [STARTUP] App main() started');
@@ -167,6 +168,17 @@ void main() async {
       print('🔧 [TEST] Test authentication initialized');
     } catch (e) {
       print('🔧 [TEST] Test authentication failed: $e');
+    }
+  }
+
+  // Initialize RouteObserver Logger (debug mode only)
+  if (kDebugMode) {
+    try {
+      print('🔍 [STARTUP] Initializing RouteObserver Logger...');
+      await RouteObserverLogger().loadFromFile();
+      print('🔍 [STARTUP] RouteObserver Logger initialized');
+    } catch (e) {
+      print('⚠️ [STARTUP] RouteObserver Logger initialization failed: $e');
     }
   }
 

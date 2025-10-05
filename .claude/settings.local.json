@@ -108,7 +108,9 @@
       "Bash(claude mcp add:*)",
       "Bash(claude mcp call supabase execute_sql:*)",
       "Bash(supabase functions deploy:*)",
-      "Bash(supabase db:*)"
+      "Bash(supabase db:*)",
+      "Bash(chmod:*)",
+      "Bash(dart run:*)"
     ],
     "deny": [],
     "ask": [],

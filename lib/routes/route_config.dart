@@ -74,11 +74,14 @@ import 'routes/interactive_routes.dart';
 import '../core/utils/profile_validation.dart';
 import '../core/utils/page_transitions.dart';
 import '../services/storage_service.dart';
+import '../core/utils/route_observer_logger.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false, // Disabled to prevent freezing on real devices
+    observers: kDebugMode ? [RouteObserverLogger()] : [],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Text('Page not found: ${state.error}'),

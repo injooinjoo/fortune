@@ -88,3 +88,7 @@ coverage/
 *.tmp
 *.temp
 *.cache
+
+# Screen analysis results (debug mode only)
+visited_screens.json
+screen_analysis_result.json

@@ -306,4 +306,200 @@ docs/
 
 ---
 
+## 🧹 미사용 스크린 자동 정리 시스템
+
+### 📊 시스템 개요
+
+Flutter 프로젝트의 `lib/screens/` 폴더에 있는 화면 파일들을 자동으로 분석하고,
+실제로 사용되지 않는 화면을 탐지하여 정리하는 자동화 시스템입니다.
+
+**주요 구성 요소:**
+1. **정적 분석 도구** (`tools/screen_analyzer.dart`)
+2. **런타임 추적** (`lib/core/utils/route_observer_logger.dart`)
+3. **자동 정리 스크립트** (`scripts/cleanup_unused_screens.sh`)
+4. **Pre-commit 훅** (`scripts/pre-commit-screen-check.sh`)
+
+---
+
+### 🔍 1. 정적 분석 도구 사용법
+
+**기본 실행:**
+```bash
+dart run tools/screen_analyzer.dart
+```
+
+**JSON 결과 저장:**
+```bash
+dart run tools/screen_analyzer.dart --output analysis.json
+```
+
+**분석 항목:**
+- ✅ GoRouter에 등록된 화면 (`route_config.dart`, 서브 라우트 파일)
+- ✅ MaterialPageRoute로 동적 생성되는 화면
+- ✅ showDialog, showBottomSheet로 사용되는 다이얼로그
+- ✅ 다른 화면에서 위젯으로 참조되는 컴포넌트
+
+**출력 예시:**
+```
+📊 분석 결과:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+총 스크린 클래스: 29개
+사용 중인 스크린: 29개
+미사용 스크린: 0개
+위젯 컴포넌트: 23개
+
+🧩 위젯 컴포넌트 (screens/ → widgets/ 이동 고려):
+  - TossNumberPad (lib/screens/onboarding/widgets/toss_number_pad.dart)
+  - PaymentConfirmationDialog (lib/screens/payment/payment_confirmation_dialog.dart)
+```
+
+---
+
+### 📝 2. 런타임 화면 방문 추적
+
+**자동 활성화:** 디버그 모드에서 자동으로 활성화됩니다.
+
+**방문 기록 확인:**
+```bash
+cat visited_screens.json
+```
+
+**기록 내용:**
+```json
+{
+  "last_updated": "2025-01-06T10:30:00Z",
+  "total_screens": 15,
+  "total_visits": 142,
+  "visits": [
+    {
+      "screen_name": "HomeScreen",
+      "route_name": "/home",
+      "first_visit": "2025-01-06T09:00:00Z",
+      "last_visit": "2025-01-06T10:25:00Z",
+      "visit_count": 45
+    }
+  ]
+}
+```
+
+**활용 방법:**
+- 실제 사용 패턴 분석
+- 정적 분석으로 놓친 화면 발견
+- 인기 있는 화면 파악
+
+---
+
+### 🚚 3. 자동 정리 스크립트
+
+**시뮬레이션 (실제 이동 없음):**
+```bash
+./scripts/cleanup_unused_screens.sh --dry-run
+```
+
+**실제 실행 (확인 프롬프트 있음):**
+```bash
+./scripts/cleanup_unused_screens.sh
+```
+
+**자동 실행 (확인 없음):**
+```bash
+./scripts/cleanup_unused_screens.sh --auto
+```
+
+**스크립트 동작:**
+1. `screen_analyzer.dart` 실행하여 미사용 화면 탐지
+2. 사용자 확인 요청 (--auto가 아닐 때)
+3. 백업 브랜치 자동 생성 (`backup/unused-screens-cleanup-YYYYMMDD-HHMMSS`)
+4. `lib/screens_unused/` 폴더로 파일 이동 (git mv 사용)
+5. `flutter analyze` 실행하여 에러 체크
+6. 에러 발생 시 자동 롤백 (`git restore`)
+7. 성공 시 커밋 가이드 출력
+
+**안전 장치:**
+- ✅ 백업 브랜치 자동 생성
+- ✅ git mv로 이동 (히스토리 보존)
+- ✅ flutter analyze 자동 검증
+- ✅ 에러 시 즉시 롤백
+
+---
+
+### 🎯 4. Pre-commit 훅 (선택사항)
+
+**설치:**
+```bash
+ln -sf ../../scripts/pre-commit-screen-check.sh .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+**동작:**
+- `lib/screens/`에 새 화면 파일 커밋 시 자동 체크
+- GoRouter에 라우트 등록 여부 확인
+- 경고 메시지 출력 (커밋은 차단하지 않음)
+
+**출력 예시:**
+```
+🔍 Pre-commit: 새 화면 라우트 등록 체크
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 새로 추가된 스크린 파일:
+  ✓ lib/screens/new_feature_screen.dart
+
+⚠️  경고: 다음 화면이 라우트에 등록되지 않았을 수 있습니다
+  - NewFeatureScreen (lib/screens/new_feature_screen.dart)
+
+💡 lib/routes/route_config.dart에 GoRoute를 추가하거나,
+   위젯 컴포넌트라면 lib/core/widgets/로 이동하세요
+```
+
+---
+
+### 💡 권장 워크플로우
+
+**월 1회 정기 정리:**
+```bash
+# 1. 정적 분석 실행
+dart run tools/screen_analyzer.dart
+
+# 2. 분석 결과 검토
+cat screen_analysis_result.json
+
+# 3. 시뮬레이션으로 미리보기
+./scripts/cleanup_unused_screens.sh --dry-run
+
+# 4. 실제 정리 실행
+./scripts/cleanup_unused_screens.sh
+
+# 5. 앱 테스트 후 커밋
+./scripts/git_jira_commit.sh "Remove unused screens" "KAN-XX" "done"
+```
+
+**새 화면 추가 시:**
+1. `lib/screens/`에 화면 파일 작성
+2. `lib/routes/route_config.dart`에 라우트 등록
+3. Pre-commit 훅이 자동 체크 (설치된 경우)
+4. 커밋 전 경고 메시지 확인
+
+---
+
+### 🔧 문제 해결
+
+**"미사용으로 표시되는데 실제로 사용 중"인 경우:**
+- MaterialPageRoute, showDialog 등 동적 패턴 사용 여부 확인
+- `visited_screens.json`에서 런타임 방문 기록 확인
+- 필요시 `screen_analyzer.dart` 패턴 추가
+
+**롤백이 필요한 경우:**
+```bash
+# 백업 브랜치로 복구
+git restore .
+git checkout backup/unused-screens-cleanup-YYYYMMDD-HHMMSS
+```
+
+**Pre-commit 훅 제거:**
+```bash
+rm .git/hooks/pre-commit
+```
+
+---
+
 이 파일은 Claude Code가 이 프로젝트에서 작업할 때 자동으로 참조하는 개발 규칙입니다.
