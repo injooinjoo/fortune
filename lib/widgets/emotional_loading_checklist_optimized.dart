@@ -204,16 +204,19 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
       child: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 80),
-            
+            const SizedBox(height: 60),
+
             // 최적화된 로딩 리스트
             Expanded(
-              child: Center(
-                child: _OptimizedLoadingList(
-                  steps: _coreLoadingMessages,
-                  currentStep: _currentStep,
-                  checkAnimation: _checkAnimation,
-                  isDark: isDark,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 40.0),
+                child: Center(
+                  child: _OptimizedLoadingList(
+                    steps: _coreLoadingMessages,
+                    currentStep: _currentStep,
+                    checkAnimation: _checkAnimation,
+                    isDark: isDark,
+                  ),
                 ),
               ),
             ),

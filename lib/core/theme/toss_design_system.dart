@@ -575,10 +575,9 @@ class TossDesignSystem {
       ),
       
       // Elevated Button Theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: primaryButtonStyle(),
-      ),
-      
+      // REMOVED: elevatedButtonTheme to allow per-button customization
+      // Each button should define its own style using ElevatedButton.styleFrom()
+
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: ghostButtonStyle(),

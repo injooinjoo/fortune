@@ -64,7 +64,7 @@ void main() async {
   print('🚀 [STARTUP] Initializing date formatting...');
   await initializeDateFormatting('ko_KR', null);
   print('🚀 [STARTUP] Date formatting initialized');
-  
+
   // Initialize Hive
   try {
     print('🚀 [STARTUP] Initializing Hive...');
@@ -76,58 +76,41 @@ void main() async {
     Logger.error('Hive initialization failed', e);
   }
 
-  // Initialize Firebase and Firebase-dependent services in background
-  Future(() async {
-    try {
-      print('🚀 [STARTUP] Initializing Firebase in background...');
-      await Firebase.initializeApp(
-        options: SecureFirebaseOptions.currentPlatform,
-      );
-      print('🚀 [STARTUP] Firebase initialized successfully in background');
-      Logger.info('Firebase initialized successfully in background');
-
-      // Initialize Firebase-dependent services after Firebase is ready
-      try {
-        await RemoteConfigService().initialize();
-        Logger.info('Remote Config initialized in background');
-      } catch (e) {
-        Logger.error('Remote Config initialization failed in background', e);
-      }
-
-      try {
-        await AnalyticsService.instance.initialize();
-        Logger.info('Analytics initialized in background');
-      } catch (e) {
-        Logger.error('Analytics initialization failed in background', e);
-      }
-
-    } catch (e) {
-      print('❌ [STARTUP] Firebase initialization failed in background: $e');
-      Logger.error('Firebase initialization failed in background', e);
-    }
-  });
+  // Firebase is initialized automatically by the firebase_core plugin
+  // No manual initialization needed here
+  print('🚀 [STARTUP] Using Firebase (auto-initialized by plugin)');
 
   // Initialize Supabase with enhanced connection management
-  print('🚀 [STARTUP] Initializing Supabase with enhanced connection service...');
-  // 백그라운드에서 Supabase 연결 초기화 (앱 시작을 막지 않도록)
+  try {
+    print('🚀 [STARTUP] Initializing Supabase...');
+    final success = await SupabaseConnectionService.initialize(
+      maxRetries: 3,
+      timeout: Duration(seconds: 10),
+      retryDelay: Duration(seconds: 2),
+    );
+
+    if (success) {
+      print('🚀 [STARTUP] Supabase initialized successfully');
+      Logger.info('Supabase initialized successfully');
+    } else {
+      print('⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
+      Logger.warning('Supabase connection failed (optional feature, using offline mode)');
+    }
+  } catch (e) {
+    print('❌ [STARTUP] Supabase initialization error: $e');
+    Logger.warning('Supabase initialization failed (optional feature, using offline mode): $e');
+  }
+
+  // Initialize Firebase Remote Config (after Firebase initialization)
   Future(() async {
     try {
-      final success = await SupabaseConnectionService.initialize(
-        maxRetries: 3,
-        timeout: Duration(seconds: 15),
-        retryDelay: Duration(seconds: 2),
-      );
-
-      if (success) {
-        print('🚀 [STARTUP] Supabase 강화된 연결 서비스 초기화 성공');
-        Logger.info('Supabase 강화된 연결 서비스 초기화 성공');
-      } else {
-        print('⚠️ [STARTUP] Supabase 연결 실패, 오프라인 모드 활성화');
-        Logger.warning('Supabase 연결 실패 (선택적 기능, 오프라인 모드 사용): 네트워크 또는 설정 확인 필요');
-      }
+      print('🚀 [STARTUP] Initializing Firebase Remote Config...');
+      await RemoteConfigService().initialize();
+      print('🚀 [STARTUP] Remote Config initialized successfully');
+      Logger.info('Remote Config initialized successfully');
     } catch (e) {
-      print('❌ [STARTUP] Supabase 연결 서비스 초기화 오류: $e');
-      Logger.warning('Supabase 연결 서비스 초기화 실패 (선택적 기능, 오프라인 모드 사용): $e');
+      print('⚠️ [STARTUP] Remote Config initialization failed: $e');
+      Logger.warning('Remote Config initialization failed (using default values): $e');
     }
   });
 

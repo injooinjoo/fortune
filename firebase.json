@@ -1,0 +1,20 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fortune-ai-beyond",
+          "appId": "1:676247567847:android:YOUR_ANDROID_APP_ID",
+          "messagingSenderId": "676247567847"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "fortune-ai-beyond",
+          "appId": "1:676247567847:ios:YOUR_IOS_APP_ID",
+          "messagingSenderId": "676247567847"
+        }
+      }
+    }
+  }
+}

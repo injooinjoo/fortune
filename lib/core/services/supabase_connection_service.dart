@@ -147,8 +147,13 @@ class SupabaseConnectionService extends ResilientService {
   Future<void> _verifyConnection() async {
     final client = Supabase.instance.client;
 
-    // 간단한 쿼리로 연결 상태 확인
-    await client.rpc('current_timestamp').timeout(Duration(seconds: 5));
+    // REST API health check로 연결 상태 확인
+    // 실제 테이블 쿼리 대신 REST API 엔드포인트 사용
+    await client
+        .from('user_profiles')
+        .select('id')
+        .limit(1)
+        .timeout(Duration(seconds: 5));
   }
 
   /// 연결 상태 지속 모니터링

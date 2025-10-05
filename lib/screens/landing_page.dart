@@ -17,6 +17,7 @@ import '../core/utils/url_cleaner_stub.dart'
 import '../presentation/providers/theme_provider.dart';
 import '../core/utils/profile_validation.dart';
 import '../core/theme/toss_design_system.dart';
+import '../presentation/widgets/social_login_bottom_sheet.dart';
 
 class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
@@ -25,7 +26,8 @@ class LandingPage extends ConsumerStatefulWidget {
   ConsumerState<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingObserver {
+class _LandingPageState extends ConsumerState<LandingPage>
+    with WidgetsBindingObserver {
   bool _isCheckingAuth = true;
   bool _isAuthProcessing = false;
   final _authService = AuthService();
@@ -37,7 +39,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // 상태 초기화 명확히 하기
     _isAuthProcessing = false;
     _isCheckingAuth = false; // Initialize as false instead of true
@@ -60,7 +62,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       }
       _checkUrlParameters();
     });
-    
+
     // Add timeout fallback to prevent infinite loading
     Timer(const Duration(seconds: 5), () {
       if (_isCheckingAuth && mounted) {
@@ -68,24 +70,26 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         setState(() => _isCheckingAuth = false);
       }
     });
-    
+
     // Listen for auth state changes
     Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
       debugPrint('🔔 Auth state changed: ${data.event}');
-      
+
       // OAuth 로그인 성공 후 처리 (SignedIn 이벤트)
-      if (data.event == AuthChangeEvent.signedIn && data.session != null && mounted) {
+      if (data.event == AuthChangeEvent.signedIn &&
+          data.session != null &&
+          mounted) {
         debugPrint('🟢 User signed in via OAuth, processing...');
-        
+
         // OAuth 처리 중 상태 해제
         if (_isAuthProcessing) {
           setState(() => _isAuthProcessing = false);
           _authTimeoutTimer?.cancel();
         }
-        
+
         // 프로필 동기화 (이미 프로필 저장 로직이 포함됨)
         await _syncProfileFromSupabase();
-        
+
         // 로그인 성공 메시지 표시
         if (mounted) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -96,7 +100,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             ),
           );
         }
-        
+
         // 온보딩 필요 여부 확인 후 라우팅
         final needsOnboarding = await ProfileValidation.needsOnboarding();
         if (needsOnboarding && mounted) {
@@ -113,7 +117,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     // 페이지로 돌아왔을 때 OAuth 상태 체크
     if (_isAuthProcessing) {
       // 세션이 없으면 OAuth가 취소된 것으로 판단
@@ -151,14 +155,15 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   }
 
   void _resetAuthProcessing() {
-    debugPrint('🔄 _resetAuthProcessing called - _isAuthProcessing: $_isAuthProcessing');
+    debugPrint(
+        '🔄 _resetAuthProcessing called - _isAuthProcessing: $_isAuthProcessing');
     if (mounted) {
       setState(() {
         _isAuthProcessing = false;
       });
       _authTimeoutTimer?.cancel();
       debugPrint('🔄 Auth processing reset complete');
-      
+
       // 사용자에게 취소되었음을 알림
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -184,36 +189,36 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     try {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
-      
+
       debugPrint('user: ${user.id}');
-      
+
       // Try to get profile from Supabase
       var response = await Supabase.instance.client
           .from('user_profiles')
           .select()
           .eq('id', user.id)
           .maybeSingle();
-      
+
       if (response != null) {
         debugPrint('Profile found in Supabase, saving to local storage');
-        
+
         // Ensure onboarding_completed is set if all required fields are present
-        if (response['name'] != null && 
-            response['birth_date'] != null && 
+        if (response['name'] != null &&
+            response['birth_date'] != null &&
             response['gender'] != null) {
           response['onboarding_completed'] = true;
         }
-        
+
         // Save to local storage
         await _storageService.saveUserProfile(response);
       } else {
         debugPrint('No profile found in Supabase');
-        
+
         // Create profile automatically for OAuth users
         debugPrint('Creating new profile for OAuth user...');
         debugPrint('metadata: ${user.userMetadata}');
         debugPrint('metadata: ${user.appMetadata}');
-        
+
         // Start with basic profile data that's always supported
         final profileData = {
           'id': user.id,
@@ -221,7 +226,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': null
         };
-        
+
         // Add additional info from user metadata if available
         if (user.userMetadata != null) {
           if (user.userMetadata?['full_name'] != null) {
@@ -231,7 +236,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           } else {
             profileData['name'] = '사용자';
           }
-          
+
           if (user.userMetadata?['avatar_url'] != null) {
             profileData['profile_image_url'] = user.userMetadata?['avatar_url'];
           } else if (user.userMetadata?['picture'] != null) {
@@ -240,33 +245,38 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         } else {
           profileData['name'] = '사용자';
         }
-        
+
         try {
           // First try with social auth columns
           final profileWithSocialAuth = Map<String, dynamic>.from(profileData);
-          profileWithSocialAuth['primary_provider'] = user.appMetadata['provider'] ?? 'google';
-          profileWithSocialAuth['linked_providers'] = [user.appMetadata['provider'] ?? 'google'];
-          
+          profileWithSocialAuth['primary_provider'] =
+              user.appMetadata['provider'] ?? 'google';
+          profileWithSocialAuth['linked_providers'] = [
+            user.appMetadata['provider'] ?? 'google'
+          ];
+
           await Supabase.instance.client
               .from('user_profiles')
               .insert(profileWithSocialAuth);
           debugPrint('Profile created successfully with social auth columns');
-          
+
           // Save to local storage
           await _storageService.saveUserProfile(profileWithSocialAuth);
         } catch (insertError) {
           debugPrint('Error saving profile: $insertError');
-          
+
           // If social auth columns don't exist, try without them
-          if (insertError.toString().contains('linked_providers') || 
+          if (insertError.toString().contains('linked_providers') ||
               insertError.toString().contains('primary_provider')) {
-            debugPrint('Social auth columns not found, creating profile without them...');
+            debugPrint(
+                'Social auth columns not found, creating profile without them...');
             try {
               await Supabase.instance.client
                   .from('user_profiles')
                   .insert(profileData);
-              debugPrint('Profile created successfully without social auth columns');
-              
+              debugPrint(
+                  'Profile created successfully without social auth columns');
+
               // Save to local storage
               await _storageService.saveUserProfile(profileData);
             } catch (fallbackError) {
@@ -285,10 +295,11 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   }
 
   Future<void> _checkAuthState() async {
-    print('🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
+    print(
+        '🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
     try {
       final session = Supabase.instance.client.auth.currentSession;
-      
+
       // If no session, stay on landing page
       if (session == null) {
         debugPrint('No session found, staying on landing page');
@@ -304,13 +315,13 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         }
         return;
       }
-      
+
       // Try to sync profile from Supabase first
       await _syncProfileFromSupabase();
-      
+
       // Check if user needs onboarding (only for authenticated users)
       final needsOnboarding = await ProfileValidation.needsOnboarding();
-      
+
       if (needsOnboarding) {
         // Don't auto-redirect to onboarding from landing page
         // Let user click "시작하기" button
@@ -319,7 +330,6 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         // Profile is complete, check for returnUrl or go to home
         final uri = Uri.base;
         final returnUrl = uri.queryParameters['returnUrl'];
-        
 
         if (returnUrl != null && mounted) {
           // Clean URL before navigation
@@ -344,7 +354,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   void _checkUrlParameters() {
     final uri = Uri.base;
     final error = uri.queryParameters['error'];
-    
+
     if (error != null) {
       String message = '';
       switch (error) {
@@ -366,13 +376,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         default:
           message = '로그인 중 문제가 발생했습니다.';
       }
-      
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(message),
             backgroundColor: TossDesignSystem.errorRed));
-        
+
         // Clean error parameter from URL after showing message
         if (kIsWeb) {
           final cleanUrl = uri.path;
@@ -385,32 +394,32 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   Future<void> _handleAppleLogin() async {
     print('🍎 _handleAppleLogin() called');
     print('🍎 _isAuthProcessing at start: $_isAuthProcessing');
-    
+
     if (_isAuthProcessing) {
       print('🍎 Already processing, returning early');
       return;
     }
-    
+
     print('🍎 Setting _isAuthProcessing to true');
     setState(() => _isAuthProcessing = true);
     _startAuthTimeout(); // 타임아웃 시작
-    
+
     try {
       print('🍎 Calling _socialAuthService.signInWithApple()');
       // Apple OAuth 로그인 - SocialAuthService 사용
       final result = await _socialAuthService.signInWithApple();
-      
+
       print('🍎 signInWithApple() result: $result');
-      
+
       if (result != null) {
         // Native Apple Sign-In 성공
         print('🍎 Native Apple Sign-In successful');
-        
+
         // 프로필은 social_auth_service에서 이미 저장됨
-        
+
         // 프로필 검증 후 라우팅
         final needsOnboarding = await ProfileValidation.needsOnboarding();
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -418,7 +427,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
               backgroundColor: TossDesignSystem.successGreen,
             ),
           );
-          
+
           // 화면 전환
           if (needsOnboarding) {
             context.go('/onboarding');
@@ -442,8 +451,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       print('🍎 Apple login error: $e');
       debugPrint('Error saving profile: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? TossDesignSystem.errorRedDark
@@ -459,46 +467,38 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
 
   Future<void> _handleNaverLogin() async {
     if (_isAuthProcessing) return;
-    
+
     setState(() => _isAuthProcessing = true);
     _startAuthTimeout(); // 타임아웃 시작
-    
+
     try {
       // Naver OAuth 로그인 - SocialAuthService 사용
       final result = await _socialAuthService.signInWithNaver();
-      
+
       if (result != null) {
         // Naver Sign-In 성공
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('네이버 로그인 성공!'),
-              backgroundColor: TossDesignSystem.successGreen,
-            )
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('네이버 로그인 성공!'),
+            backgroundColor: TossDesignSystem.successGreen,
+          ));
         }
       } else {
         // OAuth 방식인 경우
         // _startAuthTimeout(); // 이미 시작됨
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('네이버 로그인을 처리하고 있습니다...')
-            )
-          );
+              const SnackBar(content: Text('네이버 로그인을 처리하고 있습니다...')));
         }
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? TossDesignSystem.errorRedDark
-                : TossDesignSystem.errorRed
-          )
-        );
+                : TossDesignSystem.errorRed));
       }
     } finally {
       if (mounted) {
@@ -506,21 +506,18 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       }
     }
   }
-  
+
   Future<void> _handleInstagramLogin() async {
     if (_isAuthProcessing) return;
-    
+
     setState(() => _isAuthProcessing = true);
-    
+
     try {
       // Instagram login coming soon
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Instagram 로그인은 준비 중입니다.'),
-            backgroundColor: TossDesignSystem.warningOrange
-          )
-        );
+            backgroundColor: TossDesignSystem.warningOrange));
       }
     } finally {
       if (mounted) {
@@ -528,21 +525,18 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       }
     }
   }
-  
+
   Future<void> _handleTikTokLogin() async {
     if (_isAuthProcessing) return;
-    
+
     setState(() => _isAuthProcessing = true);
-    
+
     try {
       // TikTok login coming soon
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('TikTok 로그인은 준비 중입니다.'),
-            backgroundColor: TossDesignSystem.warningOrange
-          )
-        );
+            backgroundColor: TossDesignSystem.warningOrange));
       }
     } finally {
       if (mounted) {
@@ -552,8 +546,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
   }
 
   void _startOnboarding() async {
-    // Navigate directly to onboarding flow
-    context.go('/onboarding');
+    // Show social login bottom sheet first
+    _showSocialLoginBottomSheet();
   }
 
   void _showSocialLoginBottomSheet() async {
@@ -562,168 +556,46 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       setState(() => _isAuthProcessing = false);
       _authTimeoutTimer?.cancel();
     }
-    
-    // Modal이 닫힐 때 처리하는 로직 추가
-    final result = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => DraggableScrollableSheet(
-          initialChildSize: 0.7,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark50
-                : TossDesignSystem.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25)),
-          ),
-          child: Column(
-            children: [
-              // Drag handle
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark300
-                      : TossDesignSystem.gray300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              
-              // Content
-              Expanded(
-                child: SingleChildScrollView(
-      controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  child: Column(
-      children: [
-                      // Title
-                      Text(
-                        '시작하기',
-                        style: TextStyle(
-      fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark900
-                              : TossDesignSystem.gray900,
-                          letterSpacing: -0.5)),
-                      const SizedBox(height: 12),
-                      Text(
-                        '소셜 계정으로 간편하게 시작해보세요',
-                        style: TextStyle(
-      fontSize: 16,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark700
-                              : TossDesignSystem.gray700)),
-                      
-                      const SizedBox(height: 40),
-                      
-                      // Social Login Buttons
-                      Column(
-                        children: [
-                          // Google Login
-                          _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () {
-                              Navigator.pop(context);
-                              _handleSocialLogin('Google');
-                            },
-                            type: 'google'),
-                          const SizedBox(height: 12),
-                          
-                          // Apple Login
-                          _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () async {
-                              print('🍎 Apple login button clicked');
-                              print('🍎 _isAuthProcessing: $_isAuthProcessing');
-                              
-                              // 모달을 먼저 닫기
-                              if (Navigator.canPop(context)) {
-                                Navigator.pop(context);
-                              }
-                              
-                              // 잠시 기다렸다가 로그인 처리 (UI가 완전히 업데이트되도록)
-                              await Future.delayed(Duration(milliseconds: 100));
-                              _handleAppleLogin();
-                            },
-                            type: 'apple'),
-                          const SizedBox(height: 12),
-                          
-                          // Kakao Login
-                          _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () {
-                              Navigator.pop(context);
-                              _handleSocialLogin('Kakao');
-                            },
-                            type: 'kakao'),
-                          const SizedBox(height: 12),
-                          
-                          // Naver Login
-                          _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () {
-                              Navigator.pop(context);
-                              _handleNaverLogin();
-                            },
-                            type: 'naver'),
-                          const SizedBox(height: 12),
-                          
-                          // Instagram Login
-                          _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () {
-                              Navigator.pop(context);
-                              _handleInstagramLogin();
-                            },
-                            type: 'instagram'),
-                          const SizedBox(height: 12),
-                          
-                          // TikTok Login
-                          _buildModernSocialButton(
-                            onPressed: _isAuthProcessing ? null : () {
-                              Navigator.pop(context);
-                              _handleTikTokLogin();
-                            },
-                            type: 'tiktok')]),
-                      
-                      const SizedBox(height: 30),
-                      
-                      Divider(
-                        height: 1,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark300
-                            : TossDesignSystem.gray300,
-                      ),
-                      
-                      const SizedBox(height: 20),
-                      
-                      // Terms text
-                      Text(
-                        '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark600
-                              : TossDesignSystem.gray700,
-                          height: 1.5),
-                        textAlign: TextAlign.center),
-                      
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          ),
-        ),
-      ),
+
+    // 공통 BottomSheet 위젯 사용
+    final result = await SocialLoginBottomSheet.show(
+      context,
+      onGoogleLogin: () {
+        Navigator.pop(context);
+        _handleSocialLogin('Google');
+      },
+      onAppleLogin: () async {
+        print('🍎 Apple login button clicked');
+        print('🍎 _isAuthProcessing: $_isAuthProcessing');
+
+        // 모달을 먼저 닫기
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // 잠시 기다렸다가 로그인 처리 (UI가 완전히 업데이트되도록)
+        await Future.delayed(Duration(milliseconds: 100));
+        _handleAppleLogin();
+      },
+      onKakaoLogin: () {
+        Navigator.pop(context);
+        _handleSocialLogin('Kakao');
+      },
+      onNaverLogin: () {
+        Navigator.pop(context);
+        _handleNaverLogin();
+      },
+      onInstagramLogin: () {
+        Navigator.pop(context);
+        _handleInstagramLogin();
+      },
+      onTikTokLogin: () {
+        Navigator.pop(context);
+        _handleTikTokLogin();
+      },
+      isProcessing: _isAuthProcessing,
     );
-    
+
     // Modal이 닫힌 후 처리
     // result가 null이면 사용자가 직접 modal을 닫은 것
     // _isAuthProcessing이 true이면 OAuth 진행 중이었던 것
@@ -735,10 +607,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
 
   Future<void> _handleSocialLogin(String provider) async {
     if (_isAuthProcessing) return;
-    
+
     setState(() => _isAuthProcessing = true);
     _startAuthTimeout(); // 모든 소셜 로그인에 타임아웃 적용
-    
+
     try {
       if (provider == 'Google') {
         // 즉시 로딩 피드백 표시
@@ -751,8 +623,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white)),
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            TossDesignSystem.white)),
                   ),
                   SizedBox(width: 16),
                   Text('Google 로그인 진행 중...'),
@@ -762,27 +635,29 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             ),
           );
         }
-        
+
         // 브라우저 확장 프로그램 간섭 제거
         final prefs = await SharedPreferences.getInstance();
-        final keys = prefs.getKeys().where((key) => 
-          key.contains('fortune-auth-token-code-verifier') || 
-          (key.contains('code-verifier') && !key.startsWith('sb-'))
-        ).toList();
-        
+        final keys = prefs
+            .getKeys()
+            .where((key) =>
+                key.contains('fortune-auth-token-code-verifier') ||
+                (key.contains('code-verifier') && !key.startsWith('sb-')))
+            .toList();
+
         for (final key in keys) {
           await prefs.remove(key);
         }
-        
+
         // Google Sign-In OAuth 사용
         try {
           final response = await _socialAuthService.signInWithGoogle();
-          
+
           // 로딩 스낵바 닫기
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
-          
+
           // OAuth 리다이렉트 방식은 항상 null을 반환
           // 실제 인증은 브라우저에서 진행되고 콜백으로 처리됨
           if (mounted) {
@@ -798,21 +673,20 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
-          
+
           debugPrint('Google 로그인 에러: $e');
-          
+
           // Show error message
           if (mounted) {
             String errorMessage = '로그인 중 문제가 발생했습니다. 다시 시도해주세요.';
-            
+
             if (e.toString().contains('Invalid API key')) {
               errorMessage = '인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.';
             } else if (e.toString().contains('sign in failed to start')) {
               errorMessage = 'Google 로그인을 시작할 수 없습니다. 다시 시도해주세요.';
             }
-            
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(errorMessage),
                 backgroundColor: TossDesignSystem.errorRed));
           }
@@ -829,8 +703,9 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white)),
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            TossDesignSystem.white)),
                   ),
                   SizedBox(width: 16),
                   Text('카카오 로그인 진행 중...'),
@@ -840,22 +715,22 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             ),
           );
         }
-        
+
         try {
           debugPrint('🟡 Starting Kakao login...');
           final response = await _socialAuthService.signInWithKakao();
-          
+
           // 로딩 스낵바 닫기
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
-          
+
           debugPrint('🟡 Kakao login response: $response');
-          
+
           // 카카오 네이티브 로그인은 AuthResponse를 반환할 수 있음
           if (response != null && response.user != null) {
             debugPrint('🟡 Kakao login successful, user: ${response.user?.id}');
-            
+
             // 성공 메시지 표시
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -865,10 +740,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                 ),
               );
             }
-            
+
             // 명시적으로 프로필 동기화 및 페이지 이동 처리
             await _syncProfileFromSupabase();
-            
+
             // 프로필 상태 확인 후 페이지 이동
             final needsOnboarding = await ProfileValidation.needsOnboarding();
             if (needsOnboarding && mounted) {
@@ -880,7 +755,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
             }
           } else {
             // OAuth 방식인 경우 (response == null)
-            debugPrint('🟡 Kakao OAuth flow initiated, waiting for callback...');
+            debugPrint(
+                '🟡 Kakao OAuth flow initiated, waiting for callback...');
             // _startAuthTimeout(); 이미 _handleSocialLogin에서 시작됨
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -893,12 +769,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           }
         } catch (kakaoError) {
           debugPrint('🟡 Kakao login error: $kakaoError');
-          
+
           // 로딩 스낵바 닫기
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
-          
+
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -912,8 +788,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         }
       } else if (provider == 'Instagram') {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('인스타그램 로그인은 현재 준비 중입니다.'),
               backgroundColor: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.warningOrange
@@ -923,8 +798,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     } catch (e) {
       debugPrint('Error saving profile: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? TossDesignSystem.errorRedDark
@@ -936,24 +810,25 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
       }
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    print('🎨 Building LandingPage: _isCheckingAuth=$_isCheckingAuth, _isAuthProcessing=$_isAuthProcessing');
-    
+    print(
+        '🎨 Building LandingPage: _isCheckingAuth=$_isCheckingAuth, _isAuthProcessing=$_isAuthProcessing');
+
     // Build 시마다 OAuth 상태 체크
     if (_isAuthProcessing) {
       final session = Supabase.instance.client.auth.currentSession;
       if (session == null) {
         // 세션이 없는데 아직 processing 중이면 즉시 리셋
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          debugPrint('🔄 Build detected no session while auth processing - resetting');
+          debugPrint(
+              '🔄 Build detected no session while auth processing - resetting');
           _resetAuthProcessing();
         });
       }
     }
-    
+
     if (_isCheckingAuth) {
       print('🅿️ Showing loading screen because _isCheckingAuth is true');
       return Scaffold(
@@ -968,16 +843,17 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                     : 'assets/images/flower_transparent.png',
                 width: 64,
                 height: 64,
-              ).animate(onPlay: (controller) => controller.repeat())
-                .rotate(duration: 2.seconds),
+              )
+                  .animate(onPlay: (controller) => controller.repeat())
+                  .rotate(duration: 2.seconds),
               const SizedBox(height: 16),
               Text(
                 '로그인 상태를 확인하고 있습니다...',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark400
-                      : TossDesignSystem.gray600),
+                    fontSize: 16,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.grayDark400
+                        : TossDesignSystem.gray600),
               ),
             ],
           ),
@@ -996,10 +872,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFF1a1a2e),  // 진한 남색
-                        Color(0xFF16213e),  // 어두운 파란색
-                        Color(0xFF0f1624),  // 거의 검정
-                        Color(0xFF1a1a2e),  // 진한 남색
+                        Color(0xFF1a1a2e), // 진한 남색
+                        Color(0xFF16213e), // 어두운 파란색
+                        Color(0xFF0f1624), // 거의 검정
+                        Color(0xFF1a1a2e), // 진한 남색
                       ],
                       stops: [0.0, 0.3, 0.6, 1.0],
                     )
@@ -1007,16 +883,16 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFFF5E6FF),  // 연한 보라
-                        Color(0xFFFFE6F0),  // 연한 핑크
-                        Color(0xFFFFEFE6),  // 연한 살구색
-                        Color(0xFFFFF9E6),  // 연한 노란색
+                        Color(0xFFF5E6FF), // 연한 보라
+                        Color(0xFFFFE6F0), // 연한 핑크
+                        Color(0xFFFFEFE6), // 연한 살구색
+                        Color(0xFFFFF9E6), // 연한 노란색
                       ],
                       stops: [0.0, 0.3, 0.6, 1.0],
                     ),
             ),
           ),
-          
+
           // 부드러운 색상 블러 효과 (GPT-5 스타일)
           if (Theme.of(context).brightness == Brightness.light) ...[
             Positioned(
@@ -1029,15 +905,25 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFFE8B4FF).withValues(alpha: 0.5),  // 보라색
+                      Color(0xFFE8B4FF).withValues(alpha: 0.5), // 보라색
                       Color(0xFFE8B4FF).withValues(alpha: 0.3),
                       TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
-              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(begin: 0, end: 50, duration: 15.seconds, curve: Curves.easeInOut)
-                .moveY(begin: 0, end: 30, duration: 20.seconds, curve: Curves.easeInOut),
+              )
+                  .animate(
+                      onPlay: (controller) => controller.repeat(reverse: true))
+                  .moveX(
+                      begin: 0,
+                      end: 50,
+                      duration: 15.seconds,
+                      curve: Curves.easeInOut)
+                  .moveY(
+                      begin: 0,
+                      end: 30,
+                      duration: 20.seconds,
+                      curve: Curves.easeInOut),
             ),
             Positioned(
               bottom: -150,
@@ -1049,15 +935,25 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFFFFB4B4).withValues(alpha: 0.5),  // 분홍색
+                      Color(0xFFFFB4B4).withValues(alpha: 0.5), // 분홍색
                       Color(0xFFFFB4B4).withValues(alpha: 0.3),
                       TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
-              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(begin: 0, end: -40, duration: 18.seconds, curve: Curves.easeInOut)
-                .moveY(begin: 0, end: -40, duration: 22.seconds, curve: Curves.easeInOut),
+              )
+                  .animate(
+                      onPlay: (controller) => controller.repeat(reverse: true))
+                  .moveX(
+                      begin: 0,
+                      end: -40,
+                      duration: 18.seconds,
+                      curve: Curves.easeInOut)
+                  .moveY(
+                      begin: 0,
+                      end: -40,
+                      duration: 22.seconds,
+                      curve: Curves.easeInOut),
             ),
             Positioned(
               top: MediaQuery.of(context).size.height * 0.3,
@@ -1069,15 +965,25 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFFFFE4B4).withValues(alpha: 0.4),  // 노란색
+                      Color(0xFFFFE4B4).withValues(alpha: 0.4), // 노란색
                       Color(0xFFFFE4B4).withValues(alpha: 0.2),
                       TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
-              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(begin: 0, end: 60, duration: 25.seconds, curve: Curves.easeInOut)
-                .moveY(begin: 0, end: -30, duration: 20.seconds, curve: Curves.easeInOut),
+              )
+                  .animate(
+                      onPlay: (controller) => controller.repeat(reverse: true))
+                  .moveX(
+                      begin: 0,
+                      end: 60,
+                      duration: 25.seconds,
+                      curve: Curves.easeInOut)
+                  .moveY(
+                      begin: 0,
+                      end: -30,
+                      duration: 20.seconds,
+                      curve: Curves.easeInOut),
             ),
           ] else ...[
             // 다크 모드용 은은한 색상 효과
@@ -1091,15 +997,25 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFF6B46C1).withValues(alpha: 0.15),  // 보라색
+                      Color(0xFF6B46C1).withValues(alpha: 0.15), // 보라색
                       Color(0xFF6B46C1).withValues(alpha: 0.08),
                       TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
-              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(begin: 0, end: 50, duration: 15.seconds, curve: Curves.easeInOut)
-                .moveY(begin: 0, end: 30, duration: 20.seconds, curve: Curves.easeInOut),
+              )
+                  .animate(
+                      onPlay: (controller) => controller.repeat(reverse: true))
+                  .moveX(
+                      begin: 0,
+                      end: 50,
+                      duration: 15.seconds,
+                      curve: Curves.easeInOut)
+                  .moveY(
+                      begin: 0,
+                      end: 30,
+                      duration: 20.seconds,
+                      curve: Curves.easeInOut),
             ),
             Positioned(
               bottom: -150,
@@ -1111,35 +1027,47 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Color(0xFF2563EB).withValues(alpha: 0.15),  // 파란색
+                      Color(0xFF2563EB).withValues(alpha: 0.15), // 파란색
                       Color(0xFF2563EB).withValues(alpha: 0.08),
                       TossDesignSystem.white.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
-              ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(begin: 0, end: -40, duration: 18.seconds, curve: Curves.easeInOut)
-                .moveY(begin: 0, end: -40, duration: 22.seconds, curve: Curves.easeInOut),
+              )
+                  .animate(
+                      onPlay: (controller) => controller.repeat(reverse: true))
+                  .moveX(
+                      begin: 0,
+                      end: -40,
+                      duration: 18.seconds,
+                      curve: Curves.easeInOut)
+                  .moveY(
+                      begin: 0,
+                      end: -40,
+                      duration: 22.seconds,
+                      curve: Curves.easeInOut),
             ),
           ],
-          
+
           SafeArea(
             child: Column(
-      children: [
+              children: [
                 // Header with dark mode toggle
                 Container(
                   padding: EdgeInsets.all(16),
                   alignment: Alignment.topRight,
                   child: InkWell(
-      onTap: () {
+                    onTap: () {
                       ref.read(themeModeProvider.notifier).toggleTheme();
-                      
-                      final themeNotifier = ref.read(themeModeProvider.notifier);
+
+                      final themeNotifier =
+                          ref.read(themeModeProvider.notifier);
                       final isDark = themeNotifier.isDarkMode(context);
-                      
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(isDark ? '다크 모드로 전환되었습니다' : '라이트 모드로 전환되었습니다'),
+                          content: Text(
+                              isDark ? '다크 모드로 전환되었습니다' : '라이트 모드로 전환되었습니다'),
                           duration: Duration(seconds: 1),
                         ),
                       );
@@ -1151,23 +1079,24 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark300
-                              : TossDesignSystem.gray300,
-                          width: 1),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? TossDesignSystem.grayDark300
+                                    : TossDesignSystem.gray300,
+                            width: 1),
                       ),
                       child: Icon(
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Icons.light_mode_outlined
-                            : Icons.dark_mode_outlined,
-                        size: 24,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark300
-                            : TossDesignSystem.gray600),
-                      ),
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Icons.light_mode_outlined
+                              : Icons.dark_mode_outlined,
+                          size: 24,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? TossDesignSystem.grayDark300
+                              : TossDesignSystem.gray600),
                     ),
                   ),
-                
+                ),
+
                 // Main content
                 Expanded(
                   child: Padding(
@@ -1182,60 +1111,62 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                               : 'assets/images/flower_transparent.png',
                           width: 100,
                           height: 100,
-                        ).animate()
-                          .fadeIn(duration: 800.ms)
-                          .scale(
+                        ).animate().fadeIn(duration: 800.ms).scale(
                             begin: Offset(0.8, 0.8),
                             end: Offset(1.0, 1.0),
                             duration: 600.ms,
                             curve: Curves.easeOutBack),
-                        
+
                         const SizedBox(height: 40),
-                        
+
                         // App Name
                         Text(
                           'Fortune',
                           style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            letterSpacing: -1),
-                        ).animate()
-                          .fadeIn(delay: 300.ms, duration: 600.ms),
-                        
+                              fontSize: 36,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.onSurface,
+                              letterSpacing: -1),
+                        ).animate().fadeIn(delay: 300.ms, duration: 600.ms),
+
                         const SizedBox(height: 12),
-                        
+
                         // Subtitle
                         Text(
                           '매일 새로운 운세를 만나보세요',
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark400
-                                : TossDesignSystem.gray600),
-                        ).animate()
-                          .fadeIn(delay: 400.ms, duration: 600.ms),
-                        
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? TossDesignSystem.grayDark400
+                                  : TossDesignSystem.gray600),
+                        ).animate().fadeIn(delay: 400.ms, duration: 600.ms),
+
                         const SizedBox(height: 80),
 
                         // Start Button with Hero Animation
                         Hero(
                           tag: 'start-button-hero',
                           child: Material(
-                            color: TossDesignSystem.white.withValues(alpha: 0.0),
+                            color:
+                                TossDesignSystem.white.withValues(alpha: 0.0),
                             child: SizedBox(
                               width: double.infinity,
                               height: 56,
                               child: ElevatedButton(
                                 onPressed: _startOnboarding,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context).brightness == Brightness.dark
-                                      ? TossDesignSystem.white
-                                      : TossDesignSystem.black,
-                                  foregroundColor: Theme.of(context).brightness == Brightness.dark
-                                      ? TossDesignSystem.black
-                                      : TossDesignSystem.white,
+                                  backgroundColor:
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? TossDesignSystem.white
+                                          : TossDesignSystem.black,
+                                  foregroundColor:
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? TossDesignSystem.black
+                                          : TossDesignSystem.white,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(28),
@@ -1244,18 +1175,19 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
                                 child: Text(
                                   '시작하기',
                                   style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ),
                           ),
-                        ).animate()
-                          .fadeIn(delay: 600.ms, duration: 600.ms)
-                          .scale(
-                            begin: Offset(0.9, 0.9),
-                            end: Offset(1.0, 1.0),
-                            duration: 400.ms),
+                        )
+                            .animate()
+                            .fadeIn(delay: 600.ms, duration: 600.ms)
+                            .scale(
+                                begin: Offset(0.9, 0.9),
+                                end: Offset(1.0, 1.0),
+                                duration: 400.ms),
                       ],
                     ),
                   ),
@@ -1268,15 +1200,15 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
     );
   }
 
-  Widget _buildSocialLoginButton({
-    required VoidCallback? onPressed,
-    required String type,
-    required int delay}) {
+  Widget _buildSocialLoginButton(
+      {required VoidCallback? onPressed,
+      required String type,
+      required int delay}) {
     Widget icon;
     String text;
     Color? backgroundColor;
     Color? foregroundColor;
-    
+
     switch (type) {
       case 'apple':
         icon = Icon(Icons.apple, size: 24, color: TossDesignSystem.white);
@@ -1286,7 +1218,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         break;
       case 'google':
         // Use icon instead of network image to prevent loading issues on real devices
-        icon = Icon(Icons.g_mobiledata, size: 24, color: TossDesignSystem.tossBlue);
+        icon = Icon(Icons.g_mobiledata,
+            size: 24, color: TossDesignSystem.tossBlue);
         text = 'Google로 계속하기';
         backgroundColor = TossDesignSystem.white;
         foregroundColor = TossDesignSystem.black;
@@ -1295,16 +1228,15 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFFFEE500),
-            shape: BoxShape.circle),
+          decoration:
+              BoxDecoration(color: Color(0xFFFEE500), shape: BoxShape.circle),
           child: Center(
             child: Text(
               'K',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: TossDesignSystem.black),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: TossDesignSystem.black),
             ),
           ),
         );
@@ -1316,16 +1248,15 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFF03C75A),
-            shape: BoxShape.circle),
+          decoration:
+              BoxDecoration(color: Color(0xFF03C75A), shape: BoxShape.circle),
           child: Center(
             child: Text(
               'N',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: TossDesignSystem.white),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: TossDesignSystem.white),
             ),
           ),
         );
@@ -1339,7 +1270,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         backgroundColor = TossDesignSystem.gray300;
         foregroundColor = TossDesignSystem.white;
     }
-    
+
     return SizedBox(
       width: double.infinity,
       height: 52,
@@ -1350,14 +1281,14 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           foregroundColor: foregroundColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-            side: type == 'google'
-                ? BorderSide(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark300
-                        : TossDesignSystem.gray300,
-                    width: 1)
-                : BorderSide.none),
+              borderRadius: BorderRadius.circular(26),
+              side: type == 'google'
+                  ? BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.grayDark300
+                          : TossDesignSystem.gray300,
+                      width: 1)
+                  : BorderSide.none),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1375,164 +1306,17 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           ],
         ),
       ),
-    ).animate()
-      .fadeIn(delay: Duration(milliseconds: delay), duration: 600.ms)
-      .slideY(begin: 0.2, end: 0);
+    )
+        .animate()
+        .fadeIn(delay: Duration(milliseconds: delay), duration: 600.ms)
+        .slideY(begin: 0.2, end: 0);
   }
-  
-  Widget _buildModernSocialButton({
-    required VoidCallback? onPressed,
-    required String type}) {
+
+  Widget _buildTikTokStyleButton(
+      {required VoidCallback? onPressed, required String type}) {
     Widget icon;
     String text;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // 라이트모드와 다크모드에서 모두 읽기 쉽도록 배경과 텍스트 색상 개선
-    final backgroundColor = isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white;
-    final foregroundColor = isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
-    final borderColor = isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300;
-    
-    switch (type) {
-      case 'apple':
-        icon = SvgPicture.asset(
-          'assets/images/social/apple.svg',
-          width: 24,
-          height: 24,
-          colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
-        );
-        text = 'Apple로 계속하기';
-        break;
-      case 'google':
-        icon = SvgPicture.asset(
-          'assets/images/social/google.svg',
-          width: 24,
-          height: 24,
-        );
-        text = 'Google로 계속하기';
-        break;
-      case 'kakao':
-        icon = SvgPicture.asset(
-          'assets/images/social/kakao.svg',
-          width: 24,
-          height: 24,
-        );
-        text = '카카오로 계속하기';
-        break;
-      case 'naver':
-        icon = SvgPicture.asset(
-          'assets/images/social/naver.svg',
-          width: 24,
-          height: 24,
-        );
-        text = '네이버로 계속하기';
-        break;
-      case 'instagram':
-        icon = SvgPicture.asset(
-          'assets/images/social/instagram.svg',
-          width: 24,
-          height: 24,
-        );
-        text = 'Instagram으로 계속하기';
-        break;
-      case 'tiktok':
-        icon = SvgPicture.asset(
-          'assets/images/social/tiktok.svg',
-          width: 24,
-          height: 24,
-          colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
-        );
-        text = 'TikTok으로 계속하기';
-        break;
-      default:
-        icon = Container();
-        text = '';
-    }
-    
-    // 🔥 상세 디버깅 로그 - 정확한 원인 파악
-    print('');
-    print('🔥🔥🔥 [$type] 소셜 버튼 빌딩 시작 🔥🔥🔥');
-    print('🎨 Theme brightness: ${Theme.of(context).brightness}');
-    print('🌓 isDark: $isDark');
-    print('📱 backgroundColor: $backgroundColor (${backgroundColor.value.toRadixString(16)})');
-    print('✏️ foregroundColor: $foregroundColor (${foregroundColor.value.toRadixString(16)})');
-    print('🔤 text: "$text"');
-    print('🎯 onPressed: ${onPressed != null ? 'enabled' : 'disabled'}');
-    print('📐 borderColor: $borderColor');
-
-    // TossDesignSystem 색상 값 확인
-    if (!isDark) {
-      print('💡 라이트 모드 - TossDesignSystem.white: ${TossDesignSystem.white.value.toRadixString(16)}');
-      print('💡 라이트 모드 - TossDesignSystem.gray900: ${TossDesignSystem.gray900.value.toRadixString(16)}');
-    } else {
-      print('🌙 다크 모드 - TossDesignSystem.grayDark100: ${TossDesignSystem.grayDark100.value.toRadixString(16)}');
-      print('🌙 다크 모드 - TossDesignSystem.grayDark900: ${TossDesignSystem.grayDark900.value.toRadixString(16)}');
-    }
-
-    // 🚨 강제로 bottomsheet 테스트 (첫 번째 빌드에서만)
-    if (type == 'apple') {
-      Future.delayed(Duration(seconds: 3), () {
-        print('🚨🚨🚨 강제로 bottomsheet 테스트 시작! 🚨🚨🚨');
-        _showSocialLoginBottomSheet();
-      });
-    }
-    
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(backgroundColor),
-          foregroundColor: MaterialStateProperty.all(Colors.transparent), // 🔥 완전히 투명하게
-          overlayColor: MaterialStateProperty.all(Colors.transparent),
-          elevation: MaterialStateProperty.all(0),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-            side: BorderSide(
-              color: borderColor ?? TossDesignSystem.white.withValues(alpha: 0.0),
-              width: 1),
-          )),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon,
-            const SizedBox(width: 12),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.red, // 🔥 강력한 빨간색 배경
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.blue, width: 2), // 🔥 파란색 테두리
-              ),
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 18, // 🔥 더 큰 폰트
-                  fontWeight: FontWeight.w900, // 🔥 가장 굵게
-                  color: Colors.white, // 🔥 흰색 텍스트
-                  shadows: [
-                    Shadow(
-                      offset: Offset(2, 2),
-                      blurRadius: 3.0,
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildTikTokStyleButton({
-    required VoidCallback? onPressed,
-    required String type}) {
-    Widget icon;
-    String text;
-    
     switch (type) {
       case 'apple':
         icon = Icon(Icons.apple, size: 24, color: TossDesignSystem.black);
@@ -1543,8 +1327,8 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
           height: 24,
           width: 24,
-          errorBuilder: (context, error, stackTrace) => 
-              Icon(Icons.g_mobiledata, size: 24, color: TossDesignSystem.tossBlue),
+          errorBuilder: (context, error, stackTrace) => Icon(Icons.g_mobiledata,
+              size: 24, color: TossDesignSystem.tossBlue),
         );
         text = 'Continue with Google';
         break;
@@ -1552,16 +1336,15 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFFFEE500),
-            shape: BoxShape.circle),
+          decoration:
+              BoxDecoration(color: Color(0xFFFEE500), shape: BoxShape.circle),
           child: Center(
             child: Text(
               'K',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: TossDesignSystem.black),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: TossDesignSystem.black),
             ),
           ),
         );
@@ -1571,16 +1354,15 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFF03C75A),
-            shape: BoxShape.circle),
+          decoration:
+              BoxDecoration(color: Color(0xFF03C75A), shape: BoxShape.circle),
           child: Center(
             child: Text(
               'N',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: TossDesignSystem.white),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: TossDesignSystem.white),
             ),
           ),
         );
@@ -1591,16 +1373,14 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
+              gradient: LinearGradient(colors: [
                 Color(0xFF000000),
                 Color(0xFF333333),
-                Color(0xFF666666)]),
-            shape: BoxShape.circle),
-          child: Icon(
-            Icons.camera_alt,
-            size: 16,
-            color: TossDesignSystem.white),
+                Color(0xFF666666)
+              ]),
+              shape: BoxShape.circle),
+          child:
+              Icon(Icons.camera_alt, size: 16, color: TossDesignSystem.white),
         );
         text = 'Continue with Instagram';
         break;
@@ -1608,7 +1388,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
         icon = Container();
         text = '';
     }
-    
+
     return SizedBox(
       width: double.infinity,
       height: 54,
@@ -1625,25 +1405,24 @@ class _LandingPageState extends ConsumerState<LandingPage> with WidgetsBindingOb
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(27),
             side: BorderSide(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.gray300
-                  : TossDesignSystem.gray800,
-              width: 1),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.gray300
+                    : TossDesignSystem.gray800,
+                width: 1),
           ),
         ),
         child: Row(
           children: [
             icon,
             Expanded(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.black
-                      : TossDesignSystem.white),
-                textAlign: TextAlign.center),
+              child: Text(text,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.black
+                          : TossDesignSystem.white),
+                  textAlign: TextAlign.center),
             ),
             SizedBox(width: 24), // Balance the icon on left
           ],
