@@ -204,7 +204,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
 
     // Show ad before navigating to analysis
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         Navigator.of(context).push(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
@@ -225,7 +225,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
           ),
         );
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // Navigate even if ad fails
         Navigator.of(context).push(
           PageRouteBuilder(

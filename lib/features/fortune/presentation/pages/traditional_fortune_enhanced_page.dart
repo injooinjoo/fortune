@@ -340,11 +340,11 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
       onTap: () async {
         // Show ad before navigating to fortune page
         await AdService.instance.showInterstitialAdWithCallback(
-          onAdCompleted: () {
+          onAdCompleted: () async {
             // Navigate to fortune generation after ad
             context.push('/fortune/traditional-unified');
           },
-          onAdFailed: () {
+          onAdFailed: () async {
             // Navigate even if ad fails
             context.push('/fortune/traditional-unified');
           },

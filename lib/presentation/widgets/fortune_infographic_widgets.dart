@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../shared/components/toss_button.dart';
 
 /// Collection of infographic widgets for fortune completion page
 class FortuneInfographicWidgets {
@@ -10,10 +11,12 @@ class FortuneInfographicWidgets {
   static Widget buildTossStyleMainScore({
     required int score,
     required String message,
+    String? subtitle,
     double size = 280,
   }) {
     return Builder(
       builder: (context) => Container(
+        width: double.infinity,
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
@@ -47,7 +50,7 @@ class FortuneInfographicWidgets {
 
             const SizedBox(height: 24),
 
-            // 메시지
+            // 메시지 (사자성어)
             Text(
               message,
               style: TextStyle(
@@ -61,6 +64,24 @@ class FortuneInfographicWidgets {
             ).animate()
               .fadeIn(duration: 800.ms, delay: 400.ms)
               .slideY(begin: 0.3, curve: Curves.easeOut),
+
+            // 사자성어 설명 (있을 경우)
+            if (subtitle != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark600
+                      : TossDesignSystem.gray600,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ).animate()
+                .fadeIn(duration: 800.ms, delay: 600.ms)
+                .slideY(begin: 0.3, curve: Curves.easeOut),
+            ],
           ],
         ),
       ),
@@ -650,14 +671,17 @@ class FortuneInfographicWidgets {
     Map<String, dynamic> categories, {
     required bool isDarkMode,
   }) {
-    // 카테고리 데이터 정리
+    // total 카테고리 추출
+    final totalData = categories['total'] as Map<String, dynamic>?;
+
+    // 나머지 카테고리 데이터 정리 (5개: love, money, work, study, health)
     final categoryEntries = categories.entries.where((entry) =>
       entry.value is Map &&
       entry.value['score'] != null &&
-      entry.key != 'total' // total은 전체 점수로 제외
+      entry.key != 'total' // total은 별도로 표시
     ).toList();
 
-    if (categoryEntries.isEmpty) {
+    if (categoryEntries.isEmpty && totalData == null) {
       return Container(
         height: 120,
         padding: const EdgeInsets.all(16),
@@ -682,34 +706,161 @@ class FortuneInfographicWidgets {
 
     return Column(
       children: [
-        // 카테고리 그리드
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2.5,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
+        // 총운 카드 (4자성어 표시)
+        if (totalData != null) ...[
+          _buildTotalFortuneCard(
+            totalData: totalData,
+            isDarkMode: isDarkMode,
           ),
-          itemCount: categoryEntries.length,
-          itemBuilder: (context, index) {
-            final entry = categoryEntries[index];
+          const SizedBox(height: 16),
+        ],
+
+        // 나머지 카테고리 세로 나열 (5개) - 각 카드가 전체 너비 사용
+        Column(
+          children: categoryEntries.map((entry) {
             final categoryKey = entry.key;
             final categoryData = entry.value as Map<String, dynamic>;
             final score = categoryData['score'] as int? ?? 0;
             final title = categoryData['title'] as String? ?? _getDefaultCategoryTitle(categoryKey);
-            final short = categoryData['short'] as String? ?? _getDefaultCategoryShort(categoryKey, score);
 
-            return _buildCategoryCard(
-              title: title,
-              score: score,
-              description: short,
-              isDarkMode: isDarkMode,
+            // advice 필드 사용 (300자 텍스트), 없으면 short 또는 fallback
+            String description;
+            final advice = categoryData['advice'];
+            if (advice is String && advice.isNotEmpty) {
+              description = advice;  // 300자 조언
+            } else {
+              description = categoryData['short'] as String? ?? _getDefaultCategoryShort(categoryKey, score);
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildCategoryCard(
+                title: title,
+                score: score,
+                description: description,
+                isDarkMode: isDarkMode,
+              ),
             );
-          },
+          }).toList(),
         ),
       ],
+    );
+  }
+
+  /// 총운 카드 (4자성어 표시)
+  static Widget _buildTotalFortuneCard({
+    required Map<String, dynamic> totalData,
+    required bool isDarkMode,
+  }) {
+    final score = totalData['score'] as int? ?? 0;
+    final scoreColor = _getCategoryScoreColor(score, isDarkMode);
+
+    // advice가 객체인 경우와 문자열인 경우 모두 처리
+    String idiom = '만사형통';
+    String description = '균형잡힌 하루를 보내세요';
+
+    final advice = totalData['advice'];
+    if (advice is Map<String, dynamic>) {
+      idiom = advice['idiom'] as String? ?? '만사형통';
+      description = advice['description'] as String? ?? '균형잡힌 하루를 보내세요';
+    } else if (advice is String) {
+      description = advice;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDarkMode
+            ? [
+                TossDesignSystem.grayDark200,
+                TossDesignSystem.grayDark300.withOpacity(0.5),
+              ]
+            : [
+                TossDesignSystem.white,
+                scoreColor.withOpacity(0.05),
+              ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: scoreColor.withOpacity(0.3),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 제목과 점수
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '오늘의 총운',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: scoreColor.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$score점',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: scoreColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 4자성어 (가장 눈에 띄게)
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: scoreColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: scoreColor.withOpacity(0.2),
+                ),
+              ),
+              child: Text(
+                idiom,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: scoreColor,
+                  letterSpacing: 2,
+                  height: 1.2,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 설명 텍스트
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray700,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -722,7 +873,8 @@ class FortuneInfographicWidgets {
     final scoreColor = _getCategoryScoreColor(score, isDarkMode);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,  // 전체 너비 사용
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
@@ -740,14 +892,14 @@ class FortuneInfographicWidgets {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: scoreColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -755,7 +907,7 @@ class FortuneInfographicWidgets {
                 child: Text(
                   '$score점',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: scoreColor,
                   ),
@@ -763,16 +915,15 @@ class FortuneInfographicWidgets {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          // 높이 제한 없이 자연스럽게 표시 (300자 설명 모두 보임)
           Text(
             description,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-              height: 1.3,
+              height: 1.5,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -800,6 +951,8 @@ class FortuneInfographicWidgets {
       case 'work':
       case 'career':
         return '직장운';
+      case 'study':
+        return '학업운';
       case 'health':
         return '건강운';
       default:
@@ -816,6 +969,8 @@ class FortuneInfographicWidgets {
       case 'work':
       case 'career':
         return score >= 70 ? '발전하는 직장운' : score >= 50 ? '평범한 직장운' : '주의가 필요한 시기';
+      case 'study':
+        return score >= 70 ? '향상되는 학업운' : score >= 50 ? '평범한 학업운' : '집중력 관리 필요';
       case 'health':
         return score >= 70 ? '건강한 컨디션' : score >= 50 ? '보통의 건강상태' : '건강 관리 필요';
       default:
@@ -1398,78 +1553,10 @@ class FortuneInfographicWidgets {
     required int currentHour,
     required double height,
   }) {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return Container(
-          height: height,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-            ),
-          ),
-          child: Column(
-            children: [
-              // Chart header with current hour indicator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '현재 ${currentHour}시',
-                    style: TextStyle(
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '${hourlyScores[currentHour]}점',
-                    style: TextStyle(
-                      color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Timeline chart
-              Expanded(
-                child: CustomPaint(
-                  size: Size.infinite,
-                  painter: TimelineChartPainter(
-                    hourlyScores: hourlyScores,
-                    currentHour: currentHour,
-                    isDark: isDark,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Time labels
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (int i = 0; i < 24; i += 6)
-                    Text(
-                      '${i.toString().padLeft(2, '0')}:00',
-                      style: TextStyle(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                        fontSize: 10,
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+    return _InteractiveTimelineChart(
+      hourlyScores: hourlyScores,
+      currentHour: currentHour,
+      height: height,
     );
   }
 
@@ -1886,37 +1973,64 @@ class FortuneInfographicWidgets {
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Container(
-          height: 100,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '공유하기',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Column(
+            children: [
+              // 공유 카운트 텍스트
+              Text(
+                '$shareCount명이 공유했어요',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '$shareCount명이 공유했어요',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 12,
+              ),
+
+              const SizedBox(height: 16),
+
+              // 3개 버튼
+              Row(
+                children: [
+                  // 다시 뽑기
+                  Expanded(
+                    child: TossButton.secondary(
+                      text: '다시 뽑기',
+                      onPressed: onOtherFortune ?? () {},
+                      size: TossButtonSize.medium,
+                    ),
                   ),
-                ),
-              ],
-            ),
+
+                  const SizedBox(width: 8),
+
+                  // 스토리 다시 보기
+                  Expanded(
+                    child: TossButton.secondary(
+                      text: '스토리 다시 보기',
+                      onPressed: onReview ?? () {},
+                      size: TossButtonSize.medium,
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // 공유하기
+                  Expanded(
+                    child: TossButton.primary(
+                      text: '공유하기',
+                      onPressed: onShare,
+                      size: TossButtonSize.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
@@ -2218,5 +2332,129 @@ class RadarChartPainter extends CustomPainter {
     return oldDelegate.scores != scores ||
            oldDelegate.isDark != isDark ||
            oldDelegate.primaryColor != primaryColor;
+  }
+}
+
+/// Interactive Timeline Chart with touch support
+class _InteractiveTimelineChart extends StatefulWidget {
+  final List<int> hourlyScores;
+  final int currentHour;
+  final double height;
+
+  const _InteractiveTimelineChart({
+    required this.hourlyScores,
+    required this.currentHour,
+    required this.height,
+  });
+
+  @override
+  State<_InteractiveTimelineChart> createState() => _InteractiveTimelineChartState();
+}
+
+class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
+  int? _touchedHour;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final displayHour = _touchedHour ?? widget.currentHour;
+    final displayScore = widget.hourlyScores[displayHour];
+
+    return Container(
+      height: widget.height,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+        ),
+      ),
+      child: Column(
+        children: [
+          // Chart header with current/touched hour indicator
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _touchedHour != null ? '${displayHour}시' : '현재 ${displayHour}시',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '${displayScore}점',
+                style: TextStyle(
+                  color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Timeline chart with touch detection
+          Expanded(
+            child: GestureDetector(
+              onTapDown: (details) {
+                _handleTouch(details.localPosition);
+              },
+              onPanUpdate: (details) {
+                _handleTouch(details.localPosition);
+              },
+              onPanEnd: (_) {
+                setState(() {
+                  _touchedHour = null;
+                });
+              },
+              child: CustomPaint(
+                size: Size.infinite,
+                painter: TimelineChartPainter(
+                  hourlyScores: widget.hourlyScores,
+                  currentHour: _touchedHour ?? widget.currentHour,
+                  isDark: isDark,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Time labels
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (int i = 0; i < 24; i += 6)
+                Text(
+                  '${i.toString().padLeft(2, '0')}:00',
+                  style: TextStyle(
+                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    fontSize: 10,
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleTouch(Offset position) {
+    // Get the chart area dimensions (excluding padding)
+    const padding = 16.0 + 8.0; // Container padding + chart internal padding
+    final chartWidth = MediaQuery.of(context).size.width - (padding * 2);
+
+    // Calculate which hour was touched
+    final relativeX = position.dx - 8.0; // Internal chart padding
+    final hourIndex = ((relativeX / chartWidth) * widget.hourlyScores.length).round();
+
+    if (hourIndex >= 0 && hourIndex < widget.hourlyScores.length) {
+      setState(() {
+        _touchedHour = hourIndex;
+      });
+    }
   }
 }

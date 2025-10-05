@@ -93,8 +93,17 @@ class CacheService {
         return null;
       }
       
-      // JSON 데이터를 FortuneModel로 변환
-      final fortuneData = response['fortune_data'] as Map<String, dynamic>;
+      // JSON 데이터를 FortuneModel로 변환 (null safety)
+      // DB 컬럼명이 result로 변경되었으므로 result를 우선으로 확인
+      final fortuneDataRaw = response['result'] ?? response['fortune_data'];
+      if (fortuneDataRaw == null) {
+        debugPrint('❌ No fortune data found in cache entry');
+        return null;
+      }
+
+      final fortuneData = fortuneDataRaw is Map<String, dynamic>
+          ? fortuneDataRaw
+          : Map<String, dynamic>.from(fortuneDataRaw as Map);
       debugPrint('✅ Found valid cached fortune in DB');
       return FortuneModel.fromJson(fortuneData);
     } catch (e) {
@@ -120,15 +129,17 @@ class CacheService {
       
       debugPrint('💾 Saving to cache: type=$fortuneType, userId=$userId, dateKey=$dateKey');
       
-      // DB에 운세 데이터 저장 (upsert)
+      // DB에 운세 데이터 저장 (upsert) - result 컬럼만 사용
+      final fortuneJson = fortune.toJson();
       await _supabase.from('fortune_cache').upsert({
         'user_id': userId,
         'fortune_type': fortuneType,
         'fortune_date': dateKey,
-        'fortune_data': fortune.toJson(),
+        'result': fortuneJson,  // DB 컬럼명
+        'cache_key': '$userId:$fortuneType:$dateKey',  // 캐시 키
         'expires_at': expiryDate.toIso8601String(),
         'created_at': DateTime.now().toIso8601String(),
-      }, 
+      },
       onConflict: 'user_id,fortune_type,fortune_date');
       
       debugPrint('✅ Fortune cached to DB successfully');
@@ -433,17 +444,23 @@ class CacheService {
           .order('created_at', ascending: false);
       
       if (response == null || response is! List) return [];
-      
+
       final fortunes = <FortuneModel>[];
       for (final entry in response) {
         try {
-          final fortuneData = entry['fortune_data'] as Map<String, dynamic>;
+          // result 컬럼 우선 사용
+          final fortuneDataRaw = entry['result'] ?? entry['fortune_data'];
+          if (fortuneDataRaw == null) continue;
+
+          final fortuneData = fortuneDataRaw is Map<String, dynamic>
+              ? fortuneDataRaw
+              : Map<String, dynamic>.from(fortuneDataRaw as Map);
           fortunes.add(FortuneModel.fromJson(fortuneData));
         } catch (e) {
           debugPrint('Error parsing cached fortune: $e');
         }
       }
-      
+
       return fortunes;
     } catch (e) {
       debugPrint('DB cache retrieval error: $e');
@@ -473,13 +490,19 @@ class CacheService {
       final fortunes = <FortuneModel>[];
       for (final entry in response) {
         try {
-          final fortuneData = entry['fortune_data'] as Map<String, dynamic>;
+          // result 컬럼 우선 사용
+          final fortuneDataRaw = entry['result'] ?? entry['fortune_data'];
+          if (fortuneDataRaw == null) continue;
+
+          final fortuneData = fortuneDataRaw is Map<String, dynamic>
+              ? fortuneDataRaw
+              : Map<String, dynamic>.from(fortuneDataRaw as Map);
           fortunes.add(FortuneModel.fromJson(fortuneData));
         } catch (e) {
           debugPrint('Error parsing cached fortune: $e');
         }
       }
-      
+
       return fortunes;
     } catch (e) {
       debugPrint('DB cache retrieval error: $e');
@@ -523,9 +546,18 @@ class CacheService {
           .maybeSingle();
       
       if (response == null) return null;
-      
+
       try {
-        final fortuneData = response['fortune_data'] as Map<String, dynamic>;
+        // result 컬럼 우선 사용
+        final fortuneDataRaw = response['result'] ?? response['fortune_data'];
+        if (fortuneDataRaw == null) {
+          debugPrint('No fortune data found in cache entry');
+          return null;
+        }
+
+        final fortuneData = fortuneDataRaw is Map<String, dynamic>
+            ? fortuneDataRaw
+            : Map<String, dynamic>.from(fortuneDataRaw as Map);
         return FortuneModel.fromJson(fortuneData);
       } catch (e) {
         debugPrint('Error parsing cached fortune: $e');

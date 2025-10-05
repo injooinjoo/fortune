@@ -242,27 +242,35 @@ class AdService {
 
   /// Show an interstitial ad with callback when completed
   Future<void> showInterstitialAdWithCallback({
-    VoidCallback? onAdCompleted,
-    VoidCallback? onAdFailed,
+    Future<void> Function()? onAdCompleted,
+    Future<void> Function()? onAdFailed,
   }) async {
     if (_isInterstitialAdReady && _interstitialAd != null) {
       // Set up callback for when ad is completed
       _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (ad) {
+        onAdDismissedFullScreenContent: (ad) async {
           ad.dispose();
           _isInterstitialAdReady = false;
           Logger.info('Interstitial ad dismissed');
           // Execute callback when ad is completed
-          onAdCompleted?.call();
+          try {
+            await onAdCompleted?.call();
+          } catch (e, stackTrace) {
+            Logger.error('[AdService] Error in onAdCompleted callback', e, stackTrace);
+          }
           // Load next interstitial ad
           loadInterstitialAd();
         },
-        onAdFailedToShowFullScreenContent: (ad, error) {
+        onAdFailedToShowFullScreenContent: (ad, error) async {
           ad.dispose();
           _isInterstitialAdReady = false;
           Logger.warning('[AdService] 전면 광고 표시 실패 (콜백 실행): $error');
           // Execute failure callback
-          onAdFailed?.call();
+          try {
+            await onAdFailed?.call();
+          } catch (e, stackTrace) {
+            Logger.error('[AdService] Error in onAdFailed callback', e, stackTrace);
+          }
         },
         onAdShowedFullScreenContent: (ad) {
           Logger.info('Interstitial ad showed');
@@ -273,7 +281,11 @@ class AdService {
     } else {
       Logger.warning('Interstitial ad not ready - executing callback immediately');
       // If ad is not ready, execute the callback immediately
-      onAdCompleted?.call();
+      try {
+        await onAdCompleted?.call();
+      } catch (e, stackTrace) {
+        Logger.error('[AdService] Error in immediate onAdCompleted callback', e, stackTrace);
+      }
     }
   }
 

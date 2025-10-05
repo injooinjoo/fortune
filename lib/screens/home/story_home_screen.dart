@@ -17,7 +17,7 @@ import '../../widgets/emotional_loading_checklist.dart';
 import '../../widgets/profile_completion_dialog.dart';
 import '../../core/utils/profile_validation.dart';
 import 'fortune_story_viewer.dart';
-import 'fortune_completion_page.dart';
+import 'fortune_completion_page_tinder.dart';
 import 'preview_screen.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
@@ -212,9 +212,41 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
-    // 이미 데이터가 있다면 초기화 건너뛰기 (네비게이션 바 홈 클릭 최적화)
+    // 이미 데이터가 있어도 DB 캐시와 동기화 확인 (Single Source of Truth 유지)
     if (todaysFortune != null && storySegments != null && storySegments!.isNotEmpty) {
-      debugPrint('✅ Data already available, skipping initialization');
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) {
+        // DB 캐시 확인 (항상 최신 상태 유지)
+        final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
+
+        // DB 캐시가 메모리 데이터와 다르면 업데이트 (운세 API 결과 반영)
+        if (cachedFortuneData != null) {
+          final cachedFortune = cachedFortuneData.toEntity();
+
+          // ID나 점수가 다르면 새로운 데이터로 교체
+          if (todaysFortune?.id != cachedFortune.id ||
+              todaysFortune?.overallScore != cachedFortune.overallScore) {
+            debugPrint('🔄 DB cache updated - syncing memory data');
+            debugPrint('  Old: ${todaysFortune?.id}, score: ${todaysFortune?.overallScore}');
+            debugPrint('  New: ${cachedFortune.id}, score: ${cachedFortune.overallScore}');
+
+            // 스토리도 재확인
+            final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+
+            setState(() {
+              todaysFortune = cachedFortune;
+              if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+                storySegments = cachedStorySegments;
+              }
+              isLoadingFortune = false;
+            });
+            return;
+          }
+        }
+      }
+
+      // DB 캐시와 메모리가 동일하면 그대로 사용
+      debugPrint('✅ Memory data synced with DB cache, using existing data');
       setState(() {
         isLoadingFortune = false;
       });
@@ -525,83 +557,61 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
       debugPrint('📅 Current date key: $dateKey');
 
-      // 1. 캐시된 운세와 스토리 모두 확인 (Provider 상태보다 우선)
+      // 1. DB 캐시 우선 확인 (오늘 날짜의 캐시가 있으면 무조건 사용)
       final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
       final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
 
       debugPrint('📦 Cache check - fortune: ${cachedFortuneData != null}, story: ${cachedStorySegments != null && cachedStorySegments.isNotEmpty}');
 
-      // 2. Provider 상태 우선 확인 (최신 데이터)
-      final currentProviderState = ref.read(dailyFortuneProvider);
-      final hasProviderFortune = currentProviderState.fortune != null && !currentProviderState.isLoading;
-
-      debugPrint('📊 Provider state - hasFortune: $hasProviderFortune, isLoading: ${currentProviderState.isLoading}');
-      
-      // 3. Provider에 데이터가 있으면 Provider 우선 사용 (캐시보다 최신)
-      if (hasProviderFortune) {
-        final providerFortune = currentProviderState.fortune!;
-        debugPrint('🚀 Using Provider data (latest) - score: ${providerFortune.overallScore}');
-
-        // 중복 데이터 설정 방지 - 이미 같은 데이터가 있으면 스킵
-        if (todaysFortune?.id == providerFortune.id &&
-            todaysFortune?.overallScore == providerFortune.overallScore) {
-          debugPrint('✅ Same Provider data already set, skipping duplicate');
-          return;
-        }
-
-        setState(() {
-          todaysFortune = providerFortune;
-          isLoadingFortune = false;
-        });
-
-        // Provider 데이터가 있으면 스토리만 생성/확인
-        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty && storySegments == null) {
-          debugPrint('✅ Using cached story segments');
-          setState(() {
-            storySegments = cachedStorySegments;
-          });
-        } else if (storySegments == null) {
-          debugPrint('📝 Generating new story for Provider fortune');
-          await _generateStory(providerFortune);
-        }
-        return;
-      }
-      
-      // 4. Provider에 없으면 캐시 확인 (단, 유효한 데이터만)
-      if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+      // 2. 캐시가 있으면 DB 캐시를 Single Source of Truth로 사용
+      if (cachedFortuneData != null) {
         final cachedFortune = cachedFortuneData.toEntity();
 
-        // 디버그: 캐시 데이터 상세 정보 확인
         debugPrint('🔍 DEBUG - Cached data analysis:');
         debugPrint('  - Metadata: ${cachedFortuneData.metadata}');
         debugPrint('  - Mapped overallScore: ${cachedFortune.overallScore}');
-        debugPrint('  - Metadata overallScore: ${cachedFortuneData.metadata?['overallScore']}');
 
         // 캐시된 운세에 유효한 점수가 있는지 확인
         if (cachedFortune.overallScore != null) {
           // 중복 데이터 설정 방지 - 이미 같은 캐시 데이터가 있으면 스킵
           if (todaysFortune?.id == cachedFortune.id &&
               todaysFortune?.overallScore == cachedFortune.overallScore &&
-              storySegments != null) {
+              (cachedStorySegments == null || storySegments != null)) {
             debugPrint('✅ Same cached data already set, skipping duplicate');
             return;
           }
 
-          debugPrint('✅ Using cached data as fallback - score: ${cachedFortune.overallScore}');
+          debugPrint('✅ Using DB cache (Single Source of Truth) - score: ${cachedFortune.overallScore}');
 
           setState(() {
             todaysFortune = cachedFortune;
-            storySegments = cachedStorySegments;
             isLoadingFortune = false; // 로딩 화면 스킵
+            if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+              storySegments = cachedStorySegments;
+            }
           });
-          return; // 더 이상 처리할 필요 없음
+
+          // Provider도 동일한 데이터로 동기화
+          final currentProviderState = ref.read(dailyFortuneProvider);
+          if (currentProviderState.fortune?.id != cachedFortune.id) {
+            debugPrint('🔄 Syncing Provider with DB cache');
+            ref.read(dailyFortuneProvider.notifier).updateFortune(cachedFortune);
+          }
+
+          // 스토리가 없으면 생성
+          if (cachedStorySegments == null || cachedStorySegments.isEmpty) {
+            debugPrint('📝 Generating story for cached fortune');
+            await _generateStory(cachedFortune);
+          }
+
+          return; // DB 캐시 사용 완료
         } else {
           debugPrint('⚠️ Cached fortune has invalid overallScore, will fetch fresh data');
         }
       }
-      
-      // 5. 캐시가 없거나 불완전한 경우에만 API 호출 및 로딩 상태 관리
-      debugPrint('📡 Need to fetch fresh data from API');
+
+      // 3. 캐시가 없는 경우에만 API 호출
+      debugPrint('📡 No valid cache found, fetching fresh data from API');
       await _fetchFortuneFromAPI();
       
       // 스토리가 캐시되어 있으면 사용, 없으면 생성
@@ -1089,34 +1099,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   void _showCompletionPage() {
     // 스토리를 봤다고 기록
     _markAsViewed();
-    
-    // 네비게이션 바 표시 (FortuneCompletionPage에서도 설정하지만 안전장치)
+
+    // 네비게이션 바 표시
     ref.read(navigationVisibilityProvider.notifier).show();
-    
-    // Use push instead of pushReplacement to avoid page-based route issues
+
+    // Navigator push로 완료 페이지 열기
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FortuneCompletionPage(
+        builder: (context) => FortuneCompletionPageTinder(
           fortune: todaysFortune,
           userName: userProfile?.name,
           userProfile: userProfile,
-          sajuAnalysis: sajuAnalysisData,
-          meta: metaData,
-          weatherSummary: weatherSummaryData,
           overall: overallData,
           categories: categoriesData,
           sajuInsight: sajuInsightData,
-          personalActions: personalActionsData,
-          notification: notificationData,
-          shareCard: shareCardData,
-          onReplay: () {
-            // 다시 스토리 보기 - pop back to story screen
-            Navigator.of(context).pop();
-            // Reset the story viewer state
-            setState(() {
-              _hasViewedStoryToday = false;
-            });
-          },
         ),
       ),
     );
@@ -1190,35 +1186,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
     }
     
-    // 오늘 이미 스토리를 봤다면 바로 완료 페이지 표시
-    if (_hasViewedStoryToday) {
-      // 네비게이션 바 표시
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(navigationVisibilityProvider.notifier).show();
-      });
-
-      return FortuneCompletionPage(
-        fortune: todaysFortune,
-        userName: userProfile?.name,
-        userProfile: userProfile,
-        sajuAnalysis: sajuAnalysisData,
-        meta: metaData,
-        weatherSummary: weatherSummaryData,
-        overall: overallData,
-        categories: categoriesData,
-        sajuInsight: sajuInsightData,
-        personalActions: personalActionsData,
-        notification: notificationData,
-        shareCard: shareCardData,
-        onReplay: () {
-          // 다시 스토리 보기
-          setState(() {
-            _hasViewedStoryToday = false;
-          });
-        },
-      );
-    }
-    
     // 스토리 뷰어 또는 기본 화면
     if (storySegments != null && storySegments!.isNotEmpty) {
       return FortuneStoryViewer(
@@ -1238,26 +1205,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // 네비게이션 바 표시
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(navigationVisibilityProvider.notifier).show();
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => FortuneCompletionPageTinder(
+                fortune: todaysFortune,
+                userName: userProfile?.name,
+                userProfile: userProfile,
+                overall: overallData,
+                categories: categoriesData,
+                sajuInsight: sajuInsightData,
+              ),
+            ),
+          );
+        }
       });
-      
-      return FortuneCompletionPage(
-        fortune: todaysFortune,
-        userName: userProfile?.name,
-        userProfile: userProfile,
-        sajuAnalysis: sajuAnalysisData,
-        meta: metaData,
-        weatherSummary: weatherSummaryData,
-        overall: overallData,
-        categories: categoriesData,
-        sajuInsight: sajuInsightData,
-        personalActions: personalActionsData,
-        notification: notificationData,
-        shareCard: shareCardData,
-        onReplay: () {
-          // 다시 시도
-          _initializeData();
-        },
-      );
+
+      return const Center(child: CircularProgressIndicator());
     }
   }
 }

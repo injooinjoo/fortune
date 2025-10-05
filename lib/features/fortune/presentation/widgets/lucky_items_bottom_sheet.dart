@@ -111,7 +111,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
 
       // AdService를 사용하여 실제 광고 표시
       await AdService.instance.showInterstitialAdWithCallback(
-        onAdCompleted: () {
+        onAdCompleted: () async {
           if (mounted) {
             setState(() {
               _isLoadingAd = false;
@@ -119,7 +119,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
             _navigateToLuckyItems();
           }
         },
-        onAdFailed: () {
+        onAdFailed: () async {
           // 광고 실패 시에도 페이지로 이동
           if (mounted) {
             setState(() {
@@ -281,7 +281,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.white
-                        : Color(0xFF191F28),
+                        : TossDesignSystem.grayDark900,
                   ),
                 ),
                 const SizedBox(height: 16),

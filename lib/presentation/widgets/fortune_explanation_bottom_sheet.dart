@@ -634,12 +634,12 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                       if (AdService.instance.isInterstitialAdReady) {
                         Logger.debug('📺 [FortuneExplanationBottomSheet] Showing interstitial ad');
                         await AdService.instance.showInterstitialAdWithCallback(
-                          onAdCompleted: () {
+                          onAdCompleted: () async {
                             Logger.debug('📺 [FortuneExplanationBottomSheet] Ad completed, navigating to fortune page');
                             // Navigate to fortune route after ad completes
                             context.go(fortuneRoute, extra: fortuneParams);
                           },
-                          onAdFailed: () {
+                          onAdFailed: () async {
                             Logger.debug('📺 [FortuneExplanationBottomSheet] Ad failed, navigating to fortune page anyway');
                             // Navigate even if ad fails
                             context.go(fortuneRoute, extra: fortuneParams);

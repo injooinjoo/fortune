@@ -246,10 +246,10 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
 
     // 광고 표시 후 재능 발견 페이지로 이동
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         _navigateToTalentPage();
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // 광고 실패해도 페이지로 이동
         _navigateToTalentPage();
       },

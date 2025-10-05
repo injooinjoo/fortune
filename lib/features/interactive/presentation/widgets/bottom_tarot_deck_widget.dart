@@ -165,11 +165,11 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 HapticFeedback.mediumImpact();
                 // Show ad before selecting card
                 AdService.instance.showInterstitialAdWithCallback(
-                  onAdCompleted: () {
+                  onAdCompleted: () async {
                     // Select card after ad is completed or if ad is not ready
                     widget.onCardSelected(index);
                   },
-                  onAdFailed: () {
+                  onAdFailed: () async {
                     // If ad fails, still select the card
                     widget.onCardSelected(index);
                   },

@@ -5,6 +5,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// OpenAI API 설정
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+
 // 완전한 일일 운세 응답 스키마 정의
 interface DailyFortuneResponse {
   // 필수 기본 정보
@@ -17,10 +21,11 @@ interface DailyFortuneResponse {
   
   // 필수 카테고리별 운세 (모든 필드 필수)
   categories: {
-    total: { score: number; advice: string; };
+    total: { score: number; advice: { idiom: string; description: string; }; };
     love: { score: number; advice: string; };
     money: { score: number; advice: string; };
     work: { score: number; advice: string; };
+    study: { score: number; advice: string; };
     health: { score: number; advice: string; };
   };
   
@@ -116,13 +121,26 @@ function validateFortuneResponse(fortune: any): fortune is DailyFortuneResponse 
   }
   
   // 카테고리 필드 검증
-  const requiredCategories = ['total', 'love', 'money', 'work', 'health'];
+  const requiredCategories = ['total', 'love', 'money', 'work', 'study', 'health'];
   for (const category of requiredCategories) {
-    if (!(category in fortune.categories) || 
-        !fortune.categories[category].score || 
-        !fortune.categories[category].advice) {
+    if (!(category in fortune.categories) ||
+        !fortune.categories[category].score) {
       console.error(`Missing category field: ${category}`);
       return false;
+    }
+
+    // total의 advice는 객체, 나머지는 문자열
+    if (category === 'total') {
+      if (!fortune.categories[category].advice?.idiom ||
+          !fortune.categories[category].advice?.description) {
+        console.error(`Missing total advice idiom or description`);
+        return false;
+      }
+    } else {
+      if (!fortune.categories[category].advice) {
+        console.error(`Missing ${category} advice`);
+        return false;
+      }
     }
   }
   
@@ -408,66 +426,176 @@ serve(async (req) => {
       return Math.max(60, Math.min(100, baseScore + variation));
     }
 
-    const generateCategoryAdvice = (category: string, categoryScore: number) => {
-      const adviceOptions = {
-        total: [
-          '전체적으로 균형잡힌 하루입니다.',
-          '모든 영역에서 조화로운 흐름을 만들어가세요.',
-          '전반적으로 안정적인 에너지가 흐르고 있습니다.'
-        ],
-        love: [
-          '진솔한 마음으로 소통하세요.',
-          '상대방의 입장을 이해하려 노력해보세요.',
-          '따뜻한 말 한마디가 관계를 더욱 깊게 만들어줄 것입니다.'
-        ],
-        money: [
-          '계획적인 소비가 중요합니다.',
-          '투자보다는 저축에 집중하는 것이 좋겠습니다.',
-          '신중한 판단으로 경제적 안정을 도모하세요.'
-        ],
-        health: [
-          '충분한 휴식을 취하세요.',
-          '규칙적인 생활 리듬을 유지하는 것이 중요합니다.',
-          '스트레스 관리에 특별히 신경 써주세요.'
-        ],
-        work: [
-          '집중력을 발휘할 때입니다.',
-          '동료들과의 협력이 좋은 결과를 가져올 것입니다.',
-          '체계적인 계획으로 업무를 진행하세요.'
-        ]
+    // 4자성어 생성 함수
+    const generateFourCharacterIdiom = (categoryScore: number) => {
+      const highScoreIdioms = [
+        '일취월장', '전화위복', '금의환향', '상승작용', '일석이조',
+        '호사다마', '대기만성', '화룡점정', '백전백승', '만사형통'
+      ];
+      const mediumScoreIdioms = [
+        '무병장수', '안빈낙도', '중용지도', '온고지신', '인과응보',
+        '자강불식', '중화보합', '태연자약', '불언실행', '침착냉정'
+      ];
+      const lowScoreIdioms = [
+        '역지사지', '온고지신', '인내천', '새옹지마', '전화위복',
+        '와신상담', '칠전팔기', '견토재래', '수양순덕', '반성자성'
+      ];
+
+      if (categoryScore >= 85) {
+        const index = Math.floor(seededRandom(combinedSeed * 19) * highScoreIdioms.length);
+        return highScoreIdioms[index];
+      } else if (categoryScore >= 70) {
+        const index = Math.floor(seededRandom(combinedSeed * 20) * mediumScoreIdioms.length);
+        return mediumScoreIdioms[index];
+      } else {
+        const index = Math.floor(seededRandom(combinedSeed * 21) * lowScoreIdioms.length);
+        return lowScoreIdioms[index];
       }
-      
-      const options = adviceOptions[category as keyof typeof adviceOptions] || adviceOptions.total;
-      const adviceSeed = combinedSeed + category.charCodeAt(0) * 7;
-      const index = Math.floor(seededRandom(adviceSeed) * options.length);
-      return options[index];
     }
 
+    // OpenAI GPT로 조언 생성 (비동기 함수)
+    const generateCategoryAdviceWithGPT = async (category: string, categoryScore: number, idiom?: string) => {
+      try {
+        // 카테고리별 프롬프트 생성
+        const categoryNames: Record<string, string> = {
+          'total': '전체 운세',
+          'love': '애정운',
+          'money': '금전운',
+          'work': '직장운',
+          'study': '학업운',
+          'health': '건강운'
+        };
+
+        const categoryName = categoryNames[category] || '운세';
+
+        let prompt = '';
+        if (category === 'total' && idiom) {
+          prompt = `당신은 전문 운세 상담가입니다. 오늘의 ${categoryName} 조언을 작성해주세요.
+
+조건:
+- 4자성어: ${idiom}
+- 운세 점수: ${categoryScore}점 (100점 만점)
+- 최소 300자 이상의 상세한 조언
+- 따뜻하고 긍정적인 어조
+- 구체적이고 실용적인 조언 포함
+- 한국어로 작성
+
+${idiom}의 의미를 자연스럽게 녹여내면서 오늘 하루를 어떻게 보내면 좋을지 구체적으로 안내해주세요.`;
+        } else {
+          prompt = `당신은 전문 운세 상담가입니다. 오늘의 ${categoryName} 조언을 작성해주세요.
+
+조건:
+- 운세 점수: ${categoryScore}점 (100점 만점)
+- 최소 300자 이상의 상세한 조언
+- 따뜻하고 긍정적인 어조
+- 구체적이고 실용적인 조언 포함
+- ${categoryName}에 특화된 내용
+- 한국어로 작성
+
+점수에 맞는 적절한 톤으로 ${categoryName}에 대한 오늘의 조언을 작성해주세요.`;
+        }
+
+        const response = await fetch(OPENAI_API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-5-nano',
+            messages: [
+              {
+                role: 'system',
+                content: '당신은 따뜻하고 지혜로운 운세 상담가입니다. 사용자에게 긍정적인 에너지와 실용적인 조언을 제공합니다.'
+              },
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            max_tokens: 800,
+            temperature: 0.8,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`OpenAI API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
+      } catch (error) {
+        console.error(`GPT API 호출 실패 (${category}):`, error);
+        // Fallback: 기본 조언 반환
+        return generateFallbackAdvice(category, categoryScore);
+      }
+    };
+
+    // Fallback 조언 생성 (GPT API 실패 시)
+    const generateFallbackAdvice = (category: string, categoryScore: number) => {
+      const fallbackMessages: Record<string, string> = {
+        'total': '오늘은 전반적으로 균형잡힌 에너지가 흐르는 하루입니다. 긍정적인 마음가짐으로 하루를 시작하면 좋은 기회들이 찾아올 것입니다. 주변 사람들과의 관계에서도 원만한 소통이 이루어지며, 모든 일이 순조롭게 진행될 것으로 보입니다.',
+        'love': '진솔하고 따뜻한 마음으로 소통하면 관계가 더욱 깊어질 수 있는 시간입니다. 상대방의 입장을 이해하려 노력하고 진심을 표현해보세요. 작은 배려와 관심이 큰 감동을 선사할 것입니다.',
+        'money': '계획적이고 신중한 소비가 필요한 시기입니다. 저축에 집중하며 장기적인 경제적 안정을 도모하는 것이 현명한 선택입니다. 충동적인 지출을 피하고 체계적으로 재정을 관리하세요.',
+        'work': '집중력을 최대한 발휘하며 핵심 업무에 몰입할 수 있는 시간입니다. 동료들과의 협력이 좋은 결과를 가져올 것이니 적극적으로 소통하고 협업하세요. 체계적인 계획으로 업무를 진행하면 좋은 성과를 거둘 수 있습니다.',
+        'study': '새로운 지식을 습득하기에 좋은 시기입니다. 배움에 대한 열정으로 학습에 임하세요. 꾸준한 노력이 실력 향상으로 이어질 것입니다. 복습과 예습을 균형있게 병행하면 성취도가 향상될 것입니다.',
+        'health': '충분한 휴식과 균형잡힌 식사가 중요한 시기입니다. 규칙적인 생활 리듬을 유지하며 스트레스 관리에 신경 쓰세요. 가벼운 운동으로 몸과 마음을 건강하게 관리하는 시간을 가져보세요.'
+      };
+      return fallbackMessages[category] || fallbackMessages['total'];
+    };
+
+    // GPT API로 각 카테고리 조언 생성 (비동기 병렬 처리)
+    const totalScore = score;
+    const totalIdiom = generateFourCharacterIdiom(totalScore);
+    const loveScore = generateCategoryScore(score, 1);
+    const moneyScore = generateCategoryScore(score, 2);
+    const workScore = generateCategoryScore(score, 3);
+    const studyScore = generateCategoryScore(score, 4);
+    const healthScore = generateCategoryScore(score, 5);
+
+    // 모든 GPT API 호출을 병렬로 처리
+    const [totalAdvice, loveAdvice, moneyAdvice, workAdvice, studyAdvice, healthAdvice] = await Promise.all([
+      generateCategoryAdviceWithGPT('total', totalScore, totalIdiom),
+      generateCategoryAdviceWithGPT('love', loveScore),
+      generateCategoryAdviceWithGPT('money', moneyScore),
+      generateCategoryAdviceWithGPT('work', workScore),
+      generateCategoryAdviceWithGPT('study', studyScore),
+      generateCategoryAdviceWithGPT('health', healthScore),
+    ]);
+
     const categories = {
-      total: { 
-        score: score, 
-        advice: generateCategoryAdvice('total', score),
+      total: {
+        score: totalScore,
+        advice: {
+          idiom: totalIdiom,
+          description: totalAdvice
+        },
         title: '전체 운세'
       },
-      love: { 
-        score: generateCategoryScore(score, 1), 
-        advice: generateCategoryAdvice('love', generateCategoryScore(score, 1)),
-        title: '연애 운세'
+      love: {
+        score: loveScore,
+        advice: loveAdvice,
+        title: '애정 운세'
       },
-      money: { 
-        score: generateCategoryScore(score, 2), 
-        advice: generateCategoryAdvice('money', generateCategoryScore(score, 2)),
+      money: {
+        score: moneyScore,
+        advice: moneyAdvice,
         title: '금전 운세'
       },
-      health: { 
-        score: generateCategoryScore(score, 3), 
-        advice: generateCategoryAdvice('health', generateCategoryScore(score, 3)),
-        title: '건강 운세'
-      },
-      work: { 
-        score: generateCategoryScore(score, 4), 
-        advice: generateCategoryAdvice('work', generateCategoryScore(score, 4)),
+      work: {
+        score: workScore,
+        advice: workAdvice,
         title: '직장 운세'
+      },
+      study: {
+        score: studyScore,
+        advice: studyAdvice,
+        title: '학업 운세'
+      },
+      health: {
+        score: healthScore,
+        advice: healthAdvice,
+        title: '건강 운세'
       }
     }
 

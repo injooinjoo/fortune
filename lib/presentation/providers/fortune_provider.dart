@@ -176,6 +176,17 @@ class DailyFortuneNotifier extends BaseFortuneNotifier {
     _selectedDate = date;
   }
 
+  // DB 캐시와 동기화를 위한 메서드
+  void updateFortune(Fortune fortune) {
+    Logger.debug('🔄 [DailyFortuneNotifier] Updating fortune from external source', {
+      'fortuneId': fortune.id,
+      'overallScore': fortune.overallScore});
+    state = state.copyWith(
+      isLoading: false,
+      fortune: fortune,
+      error: null);
+  }
+
   // 날짜 키 생성 (CacheService와 동일한 로직)
   String _getDateKey() {
     final date = _selectedDate ?? DateTime.now();
@@ -485,13 +496,13 @@ class MbtiFortuneNotifier extends BaseFortuneNotifier {
       throw const ValidationException(message: 'MBTI 타입을 선택해주세요');
     }
 
+    // Allow empty categories - will default to '종합운' in the API
     if (_categories.isEmpty) {
-      Logger.error('❌ [MbtiFortuneNotifier] No categories selected', {
+      Logger.info('ℹ️ [MbtiFortuneNotifier] No categories selected, using default', {
         'mbtiType': _mbtiType,
-        'categoriesCount': _categories.length,
         'userId': userId
       });
-      throw const ValidationException(message: '카테고리를 하나 이상 선택해주세요');
+      _categories = ['종합운']; // Set default category
     }
 
     // Validate MBTI type format (should be 4 characters like INTJ, ENFP)

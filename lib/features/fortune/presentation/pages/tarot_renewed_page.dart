@@ -282,12 +282,12 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                 text: '🔮 카드가 전하는 메시지',
                 onPressed: () async {
                   await AdService.instance.showInterstitialAdWithCallback(
-                    onAdCompleted: () {
+                    onAdCompleted: () async {
                       setState(() {
                         _currentState = TarotFlowState.questioning;
                       });
                     },
-                    onAdFailed: () {
+                    onAdFailed: () async {
                       // Still allow tarot reading even if ad fails
                       setState(() {
                         _currentState = TarotFlowState.questioning;

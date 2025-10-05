@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/components/loading_elevated_button.dart';
 import '../../shared/components/toss_button.dart';
+import '../../shared/components/floating_bottom_button.dart';
 import '../../services/ad_service.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
@@ -153,22 +154,10 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                 : _buildSummaryView(),
           ),
           
-          // Bottom Button (토스 스타일)
+          // Bottom Button (Floating 스타일 - 배경 없음)
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark100
-                  : TossDesignSystem.white,
-              border: Border(
-                top: BorderSide(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark300
-                      : TossDesignSystem.gray200,
-                  width: 1,
-                ),
-              ),
-            ),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+            color: Colors.transparent, // 완전히 투명한 배경
             child: SafeArea(
               child: _showDetailedView
                   ? Row(

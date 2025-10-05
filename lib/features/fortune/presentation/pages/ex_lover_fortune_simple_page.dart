@@ -137,7 +137,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     
     // Show AdMob interstitial ad
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         // Close loading dialog
         Navigator.pop(context);
         
@@ -147,7 +147,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           extra: input,
         );
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // Close loading dialog even if ad fails
         Navigator.pop(context);
         

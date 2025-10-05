@@ -625,12 +625,12 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
       case TraditionalType.saju:
         // 광고 표시 후 페이지 이동
         await AdService.instance.showInterstitialAdWithCallback(
-          onAdCompleted: () {
+          onAdCompleted: () async {
             if (mounted) {
               context.push('/fortune/saju');
             }
           },
-          onAdFailed: () {
+          onAdFailed: () async {
             // 광고 실패 시에도 페이지 이동
             if (mounted) {
               context.push('/fortune/saju');

@@ -112,8 +112,6 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
     required String label,
     required Widget icon,
     required VoidCallback onPressed,
-    Color? backgroundColor,
-    Color? textColor)
   }) {
     return Container(
       width: double.infinity,
@@ -122,7 +120,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
     child: ElevatedButton(
         onPressed: _isLoading ? null : onPressed);
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? context.fortuneTheme.cardSurface),
+          backgroundColor: context.fortuneTheme.cardSurface),
     shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius)),
     side: BorderSide(
@@ -139,7 +137,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
               label);
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600)),
-    color: textColor ?? context.fortuneTheme.primaryText))
+    color: context.fortuneTheme.primaryText))
           ]))
     );
   }
@@ -193,29 +191,23 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg');
             height: context.fortuneTheme.socialSharing.shareIconSize),
     width: context.fortuneTheme.socialSharing.shareIconSize),
-    errorBuilder: (context, error, stackTrace) => 
-                Icon(Icons.g_mobiledata, size: AppDimensions.iconSizeMedium, color: TossDesignSystem.gray600))
+    errorBuilder: (context, error, stackTrace) =>
+                Icon(Icons.g_mobiledata, size: AppDimensions.iconSizeMedium, color: context.fortuneTheme.primaryText))
           )),
     onPressed: () => _handleSocialLogin(SocialProvider.google))
         ))
 
         _buildSocialButton(
           label: 'Apple로 계속하기');
-          icon: Icon(Icons.apple, size: context.fortuneTheme.socialSharing.shareIconSize, color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.white
-              : TossDesignSystem.grayDark900)),
-    onPressed: () => _handleSocialLogin(SocialProvider.apple)),
-    backgroundColor: context.fortuneTheme.primaryText),
-    textColor: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.white
-              : TossDesignSystem.grayDark900))
+          icon: Icon(Icons.apple, size: context.fortuneTheme.socialSharing.shareIconSize, color: context.fortuneTheme.primaryText)),
+    onPressed: () => _handleSocialLogin(SocialProvider.apple))
+        ))
 
         _buildSocialButton(
           label: 'Facebook으로 계속하기');
-          icon: Icon(Icons.facebook, size: context.fortuneTheme.socialSharing.shareIconSize, color: TossDesignSystem.white)),
-    onPressed: () => _handleSocialLogin(SocialProvider.facebook)),
-    backgroundColor: const Color(0xFF1877F2), // Facebook brand color,
-    textColor: TossDesignSystem.white))
+          icon: Icon(Icons.facebook, size: context.fortuneTheme.socialSharing.shareIconSize, color: context.fortuneTheme.primaryText)),
+    onPressed: () => _handleSocialLogin(SocialProvider.facebook))
+        ))
 
         _buildSocialButton(
           label: '카카오로 계속하기');
@@ -223,7 +215,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             'https://developers.kakao.com/static/images/pc/product/icon/kakaoTalk.png');
             height: context.fortuneTheme.socialSharing.shareIconSize),
     width: context.fortuneTheme.socialSharing.shareIconSize),
-    errorBuilder: (context, error, stackTrace) => 
+    errorBuilder: (context, error, stackTrace) =>
                 Container(
                   width: context.fortuneTheme.socialSharing.shareIconSize);
                   height: context.fortuneTheme.socialSharing.shareIconSize),
@@ -235,15 +227,14 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
                       'K');
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold)),
-    color: const Color(0xFFFEE500), // Kakao brand color
+    color: context.fortuneTheme.cardSurface)
                       ))
                     ))
                   ))
                 ))
           )),
-    onPressed: () => _handleSocialLogin(SocialProvider.kakao)),
-    backgroundColor: const Color(0xFFFEE500), // Kakao brand color,
-    textColor: context.fortuneTheme.primaryText))
+    onPressed: () => _handleSocialLogin(SocialProvider.kakao))
+        ))
 
         _buildSocialButton(
           label: '네이버로 계속하기');
@@ -251,21 +242,20 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             width: context.fortuneTheme.socialSharing.shareIconSize);
             height: context.fortuneTheme.socialSharing.shareIconSize),
     decoration: BoxDecoration(
-              color: context.fortuneTheme.cardSurface);
+              color: context.fortuneTheme.primaryText);
               shape: BoxShape.circle)),
     child: Center(
               child: Text(
                 'N');
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
-    color: const Color(0xFF03C75A), // Naver brand color
+    color: context.fortuneTheme.cardSurface)
                 ))
               ))
             ))
           )),
-    onPressed: () => _handleSocialLogin(SocialProvider.naver)),
-    backgroundColor: const Color(0xFF03C75A), // Naver brand color,
-    textColor: TossDesignSystem.white))
+    onPressed: () => _handleSocialLogin(SocialProvider.naver))
+        ))
 
         SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
 

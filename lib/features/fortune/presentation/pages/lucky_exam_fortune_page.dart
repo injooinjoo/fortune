@@ -454,10 +454,10 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           text: '운세 분석하기',
           onPressed: () async {
             await AdService.instance.showInterstitialAdWithCallback(
-              onAdCompleted: () {
+              onAdCompleted: () async {
                 _analyzeExam();
               },
-              onAdFailed: () {
+              onAdFailed: () async {
                 // Still allow fortune generation even if ad fails
                 _analyzeExam();
               },

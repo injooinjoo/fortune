@@ -67,17 +67,18 @@ class TarotResult {
     final data = json['data'] ?? {};
     return TarotResult(
       situation: data['situation'] ?? '',
-      cards: (data['cards'],
+      cards: (data['cards'] as List<dynamic>?)
           ?.map((card) => TarotCard.fromJson(card))
-          .toList() ?? []),
-    interpretation: data['interpretation'] ?? '',
-      advice: data['advice'] ?? ''
+          .toList() ?? [],
+      interpretation: data['interpretation'] ?? '',
+      advice: data['advice'] ?? '',
     );
   }
 }
 
 final tarotReadingProvider = StateNotifierProvider.family<TarotReadingNotifier, AsyncValue<TarotResult?>, TarotCardInput>(
-  (ref, input) => TarotReadingNotifier(ref, input);
+  (ref, input) => TarotReadingNotifier(ref, input),
+);
 
 class TarotReadingNotifier extends StateNotifier<AsyncValue<TarotResult?>> {
   final Ref ref;

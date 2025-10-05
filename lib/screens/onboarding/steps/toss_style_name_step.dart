@@ -364,7 +364,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? TossDesignSystem.white
-                    : TossDesignSystem.grayDark900,
+                    : TossDesignSystem.gray900,
               ),
             ),
           ],

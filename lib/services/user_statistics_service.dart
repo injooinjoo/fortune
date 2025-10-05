@@ -30,23 +30,25 @@ class UserStatistics {
 
   factory UserStatistics.fromJson(Map<String, dynamic> json) {
     return UserStatistics(
-      totalFortunes: json['total_fortunes'],
-      consecutiveDays: json['consecutive_days'],
+      totalFortunes: json['total_fortunes_viewed'] ?? 0,
+      consecutiveDays: json['consecutive_days'] ?? 0,
       lastLogin: json['last_login'] != null ? DateTime.parse(json['last_login']) : null,
       favoriteFortuneType: json['favorite_fortune_type'],
-      fortuneTypeCount: Map<String, int>.from(json['fortune_type_count'] ?? {}),
-      totalTokensUsed: json['total_tokens_used'],
-      totalTokensEarned: json['total_tokens_earned']);
+      fortuneTypeCount: json['fortune_type_count'] != null
+          ? Map<String, int>.from(json['fortune_type_count'])
+          : {},
+      totalTokensUsed: json['total_tokens_spent'] ?? 0,
+      totalTokensEarned: json['total_tokens_earned'] ?? 0);
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'total_fortunes': totalFortunes,
+      'total_fortunes_viewed': totalFortunes,
       'consecutive_days': consecutiveDays,
       'last_login': lastLogin?.toIso8601String(),
       'favorite_fortune_type': favoriteFortuneType,
       'fortune_type_count': fortuneTypeCount,
-      'total_tokens_used': totalTokensUsed,
+      'total_tokens_spent': totalTokensUsed,
       'total_tokens_earned': totalTokensEarned};
   }
 }
@@ -200,7 +202,7 @@ class UserStatisticsService {
 
       // Update statistics
       await _supabase.from('user_statistics').update({
-        'total_fortunes': stats.totalFortunes + 1,
+        'total_fortunes_viewed': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
         'favorite_fortune_type': favoriteType,
         'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
@@ -209,7 +211,7 @@ class UserStatisticsService {
 
       // Update local storage
       await _storageService.saveUserStatistics({
-        'total_fortunes': stats.totalFortunes + 1,
+        'total_fortunes_viewed': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
         'favorite_fortune_type': favoriteType});
 
@@ -277,7 +279,7 @@ class UserStatisticsService {
       final stats = await getUserStatistics(userId);
 
       await _supabase.from('user_statistics').update({
-        'total_tokens_used': stats.totalTokensUsed + tokensUsed,
+        'total_tokens_spent': stats.totalTokensUsed + tokensUsed,
         'total_tokens_earned': stats.totalTokensEarned + tokensEarned,
         'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
 

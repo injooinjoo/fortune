@@ -1929,10 +1929,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
 
     // Show ad first
     await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () {
+      onAdCompleted: () async {
         _proceedWithFortune(data);
       },
-      onAdFailed: () {
+      onAdFailed: () async {
         // Still proceed even if ad fails
         _proceedWithFortune(data);
       },

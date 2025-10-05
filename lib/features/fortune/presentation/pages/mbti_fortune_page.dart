@@ -12,7 +12,7 @@ import '../../../../shared/components/toss_card.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import 'dart:math' as math;
 
@@ -125,96 +125,111 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Future<void> _handleGenerateFortune() async {
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+    print('🔵 [MBTI-TRACE-1] _handleGenerateFortune() started');
 
-    // Show ad with callback
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        Navigator.of(context).pop(); // Close loading dialog
-        await generateFortuneAction(); // Generate fortune after ad
-      },
-      onAdFailed: () async {
-        Navigator.of(context).pop(); // Close loading dialog
-        await generateFortuneAction(); // Generate fortune even if ad fails
-      },
-    );
+    // Just call generateFortuneAction() directly - it handles ads and loading internally
+    try {
+      print('🔵 [MBTI-TRACE-2] Calling generateFortuneAction()');
+      await generateFortuneAction();
+      print('🔵 [MBTI-TRACE-3] generateFortuneAction() returned');
+    } catch (e, stackTrace) {
+      print('❌ [MbtiFortunePage] Error in _handleGenerateFortune: $e');
+      print('📚 [MbtiFortunePage] Stack trace: $stackTrace');
+    }
   }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final user = ref.read(userProvider).value;
     if (user == null) {
-      throw Exception('로그인이 필요합니다');
+      print('⚠️ [MbtiFortunePage] User not logged in, using fallback fortune');
+      return _createFallbackFortune('temp_user_id');
     }
 
     // Generate random energy level for demonstration
     _energyLevel = 0.5 + (math.Random().nextDouble() * 0.5);
 
-    // Set MBTI data and call API
-    final mbtiNotifier = ref.read(mbtiFortuneProvider.notifier);
-    mbtiNotifier.setMbtiData(
-      mbtiType: _selectedMbti!,
-      categories: _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
-    );
-
-    try {
-      await mbtiNotifier.loadFortune();
-    } catch (e) {
-      // Log error but continue with fallback
-      print('⚠️ [MbtiFortunePage] Fortune API failed: $e');
-    }
-
-    final state = ref.read(mbtiFortuneProvider);
-
-    // If there's an error or no fortune, create a fallback fortune
-    if (state.error != null || state.fortune == null) {
-      // Log the error but don't throw - provide fallback instead
-      print('⚠️ [MbtiFortunePage] Using fallback fortune due to: ${state.error ?? "No fortune data"}');
-
-      // Create a fallback fortune
-      final fallbackFortune = Fortune(
-        id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',
-        userId: user.id,
-        type: 'mbti',
-        content: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
-        createdAt: DateTime.now(),
-        overallScore: 75,
-        description: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
-        metadata: {
-          'mbtiType': _selectedMbti!,
-          'categories': _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
-          'energyLevel': _energyLevel,
-          'compatibility': _getCompatibleTypes(_selectedMbti!),
-          'generatedAt': DateTime.now().toIso8601String(),
-          'fallback': true,
-        }
-      );
-
-      // Calculate cognitive functions for today
-      _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
-        _selectedMbti!,
-        DateTime.now(),
-      );
-
-      return fallbackFortune;
-    }
-
-    // Calculate cognitive functions for today
+    // Calculate cognitive functions for today (do this early so it's always available)
     _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
       _selectedMbti!,
       DateTime.now(),
     );
 
-    return state.fortune!;
+    print('🔮 [MbtiFortunePage] Generating fortune for MBTI: $_selectedMbti');
+
+    // Fetch user profile for name and birthDate
+    String userName = 'Unknown';
+    String userBirthDate = DateTime.now().toIso8601String().split('T')[0];
+
+    try {
+      final userProfile = await ref.read(userProfileProvider.future);
+      if (userProfile != null) {
+        userName = userProfile.name ?? 'Unknown';
+        userBirthDate = userProfile.birthDate?.toIso8601String().split('T')[0] ?? userBirthDate;
+        print('📋 [MbtiFortunePage] User profile loaded: $userName, $userBirthDate');
+      } else {
+        print('⚠️ [MbtiFortunePage] User profile is null, using defaults');
+      }
+    } catch (e) {
+      print('⚠️ [MbtiFortunePage] Failed to load user profile: $e, using defaults');
+    }
+
+    // Try API call directly (without Notifier to avoid state conflicts)
+    try {
+      final apiService = ref.read(fortuneApiServiceProvider);
+      final categories = _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'];
+
+      print('📡 [MbtiFortunePage] Calling API - type: $_selectedMbti, categories: $categories, name: $userName, birthDate: $userBirthDate');
+
+      final apiStartTime = DateTime.now();
+      final fortune = await apiService.getMbtiFortune(
+        userId: user.id,
+        mbtiType: _selectedMbti!,
+        categories: categories,
+        name: userName,
+        birthDate: userBirthDate,
+      );
+      final apiDuration = DateTime.now().difference(apiStartTime).inMilliseconds;
+
+      print('✅ [MbtiFortunePage] API fortune loaded successfully in ${apiDuration}ms');
+      print('📊 [MbtiFortunePage] Fortune details: id=${fortune.id}, type=${fortune.type}, score=${fortune.overallScore}');
+      print('📝 [MbtiFortunePage] Fortune description length: ${fortune.description?.length ?? 0} chars');
+      print('📝 [MbtiFortunePage] Fortune content: ${fortune.description?.substring(0, fortune.description!.length > 200 ? 200 : fortune.description!.length)}...');
+      print('📊 [MbtiFortunePage] Fortune metadata keys: ${fortune.metadata?.keys.toList()}');
+      print('🔄 [MbtiFortunePage] Returning fortune to BaseFortunePage...');
+      return fortune;
+
+    } catch (e, stackTrace) {
+      // Log error and return fallback - NEVER throw
+      print('❌ [MbtiFortunePage] API failed with error: $e');
+      print('📚 [MbtiFortunePage] Stack trace: $stackTrace');
+      print('🔄 [MbtiFortunePage] Creating fallback fortune...');
+      final fallback = _createFallbackFortune(user.id);
+      print('✅ [MbtiFortunePage] Fallback fortune created: ${fallback.id}');
+      return fallback;
+    }
+  }
+
+  Fortune _createFallbackFortune(String userId) {
+    print('🔄 [MbtiFortunePage] Creating fallback fortune for MBTI: $_selectedMbti');
+
+    return Fortune(
+      id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',
+      userId: userId,
+      type: 'mbti',
+      content: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
+      createdAt: DateTime.now(),
+      overallScore: 75,
+      description: 'MBTI ${_selectedMbti!} 타입의 오늘 운세입니다.\n\n오늘은 당신의 고유한 성격 특성이 빛을 발하는 날입니다. ${_selectedMbti!} 타입의 강점을 활용하면 좋은 결과를 얻을 수 있을 것입니다.',
+      metadata: {
+        'mbtiType': _selectedMbti!,
+        'categories': _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'],
+        'energyLevel': _energyLevel,
+        'compatibility': _getCompatibleTypes(_selectedMbti!),
+        'generatedAt': DateTime.now().toIso8601String(),
+        'fallback': true,
+      }
+    );
   }
 
   // Override build to show MBTI selection UI

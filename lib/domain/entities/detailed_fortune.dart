@@ -10,27 +10,20 @@ class DetailedFortune extends Fortune {
     required super.createdAt,
     super.metadata,
     super.tokenCost = 1,
-    required String category,
-    required int overallScore,
-    required String description,
-    required Map<String, dynamic> scoreBreakdown,
-    required Map<String, dynamic> luckyItems,
-    required List<String> recommendations,
-  }) : super(
-    category: category,
-    overallScore: overallScore,
-    description: description,
-    scoreBreakdown: scoreBreakdown,
-    luckyItems: luckyItems,
-    recommendations: recommendations,
-  );
+    required String super.category,
+    required int super.overallScore,
+    required String super.description,
+    required Map<String, dynamic> super.scoreBreakdown,
+    required Map<String, dynamic> super.luckyItems,
+    required List<String> super.recommendations,
+  });
 
   factory DetailedFortune.fromFortune(
     Fortune fortune, {
     required String category,
     required int overallScore,
     required String description,
-    required Map<String, int> scoreBreakdown,
+    required Map<String, dynamic> scoreBreakdown,
     required Map<String, dynamic> luckyItems,
     required List<String> recommendations,
   }) {
@@ -53,18 +46,18 @@ class DetailedFortune extends Fortune {
 
   DetailedFortune copyWith({
     String? id,
-    String? userId);
-    String? type)
-    String? content)
-    DateTime? createdAt)
-    Map<String, dynamic>? metadata)
-    int? tokenCost)
-    String? category)
-    int? overallScore)
-    String? description)
-    Map<String, dynamic>? scoreBreakdown)
-    Map<String, dynamic>? luckyItems)
-    List<String>? recommendations)
+    String? userId,
+    String? type,
+    String? content,
+    DateTime? createdAt,
+    Map<String, dynamic>? metadata,
+    int? tokenCost,
+    String? category,
+    int? overallScore,
+    String? description,
+    Map<String, dynamic>? scoreBreakdown,
+    Map<String, dynamic>? luckyItems,
+    List<String>? recommendations,
   }) {
     return DetailedFortune(
       id: id ?? this.id,
@@ -75,46 +68,48 @@ class DetailedFortune extends Fortune {
       metadata: metadata ?? this.metadata,
       tokenCost: tokenCost ?? this.tokenCost,
       category: category ?? this.category ?? '',
-      overallScore: overallScore ?? this.overallScore ?? 0);
-      description: description ?? this.description ?? ''$1',
-    scoreBreakdown: scoreBreakdown ?? this.scoreBreakdown ?? {}),
-    luckyItems: luckyItems ?? this.luckyItems ?? {},
-      recommendations: recommendations ?? this.recommendations ?? []
+      overallScore: overallScore ?? this.overallScore ?? 0,
+      description: description ?? this.description ?? '',
+      scoreBreakdown: scoreBreakdown ?? this.scoreBreakdown ?? {},
+      luckyItems: luckyItems ?? this.luckyItems ?? {},
+      recommendations: recommendations ?? this.recommendations ?? [],
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'userId': userId,
       'type': type,
-      'content': content)
+      'content': content,
       'createdAt': createdAt.toIso8601String(),
-      'metadata': metadata)
+      'metadata': metadata,
       'tokenCost': tokenCost,
-      'category': category)
+      'category': category,
       'overallScore': overallScore,
-      'description': description)
+      'description': description,
       'scoreBreakdown': scoreBreakdown,
-      'luckyItems': luckyItems)
-      'recommendations': recommendations)
+      'luckyItems': luckyItems,
+      'recommendations': recommendations,
     };
   }
 
   factory DetailedFortune.fromJson(Map<String, dynamic> json) {
     return DetailedFortune(
-      id: json['id'],
-      userId: json['userId'],
-      type: json['type'],
-      content: json['content'],
-      createdAt: DateTime.parse(json['createdAt'],
-      metadata: json['metadata'],
-      tokenCost: json['tokenCost'],
-      category: json['category'],
-      overallScore: json['overallScore'],
-      description: json['description'],
-      scoreBreakdown: Map<String, dynamic>.from(json['scoreBreakdown'],
-      luckyItems: json['luckyItems'],
-      recommendations: List<String>.from(json['recommendations']);
+      id: json['id'] as String,
+      userId: json['userId'] as String,
+      type: json['type'] as String,
+      content: json['content'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      metadata: json['metadata'] as Map<String, dynamic>?,
+      tokenCost: json['tokenCost'] as int? ?? 1,
+      category: json['category'] as String,
+      overallScore: json['overallScore'] as int,
+      description: json['description'] as String,
+      scoreBreakdown: Map<String, dynamic>.from(json['scoreBreakdown'] as Map),
+      luckyItems: Map<String, dynamic>.from(json['luckyItems'] as Map),
+      recommendations: List<String>.from(json['recommendations'] as List),
+    );
   }
 }

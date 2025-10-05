@@ -222,8 +222,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.indigo.withOpacity(0.2),
-          TossDesignSystem.indigo.withOpacity(0.05)]),
+          TossDesignSystem.tossBlue.withOpacity(0.2),
+          TossDesignSystem.tossBlue.withOpacity(0.05)]),
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(24),
       child: Column(
