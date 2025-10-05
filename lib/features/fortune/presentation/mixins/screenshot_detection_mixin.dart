@@ -57,11 +57,12 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
     if (mounted) {
       _screenshotService.showScreenshotSharingDialog(
         context: context,
-        fortuneType: fortuneType);
-        fortuneTitle: fortuneTitle),
-    fortuneContent: fortuneContent),
-    userName: userName),
-    additionalInfo: additionalInfo);
+        fortuneType: fortuneType,
+        fortuneTitle: fortuneTitle,
+        fortuneContent: fortuneContent,
+        userName: userName,
+        additionalInfo: additionalInfo,
+      );
     }
   }
   
@@ -69,11 +70,12 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
   Future<void> shareEnhancedFortune() async {
     await _screenshotService.showScreenshotSharingDialog(
       context: context,
-      fortuneType: fortuneType);
-      fortuneTitle: fortuneTitle),
-    fortuneContent: fortuneContent),
-    userName: userName),
-    additionalInfo: additionalInfo);
+      fortuneType: fortuneType,
+      fortuneTitle: fortuneTitle,
+      fortuneContent: fortuneContent,
+      userName: userName,
+      additionalInfo: additionalInfo,
+    );
   }
   
   /// Build a share button widget

@@ -1,12 +1,5 @@
-// This file exports the enums and models from the input page
-export '../../presentation/pages/investment_fortune_input_page.dart' 
-  show 
-    InvestmentStyle,
-    RiskTolerance, 
-    InvestmentGoal,
-    InvestmentExperience,
-    InvestmentFortuneParams,
-    InvestmentStyleExtension,
-    RiskToleranceExtension,
-    InvestmentGoalExtension,
-    InvestmentExperienceExtension;
+// This file previously exported enums from investment_fortune_input_page.dart
+// That file has been removed and the functionality is now in investment_fortune_enhanced_page.dart
+// The page uses String values directly instead of enums
+
+// TODO: If enums are needed in the future, define them here
