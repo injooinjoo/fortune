@@ -17,8 +17,8 @@ import '../../widgets/emotional_loading_checklist.dart';
 import '../../widgets/profile_completion_dialog.dart';
 import '../../core/utils/profile_validation.dart';
 import 'fortune_story_viewer.dart';
-import 'fortune_completion_page_tinder.dart';
-import 'preview_screen.dart';
+import 'fortune_completion_page.dart';
+// import 'preview_screen.dart'; // File deleted
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
 
@@ -1106,7 +1106,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // Navigator push로 완료 페이지 열기
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FortuneCompletionPageTinder(
+        builder: (context) => FortuneCompletionPage(
           fortune: todaysFortune,
           userName: userProfile?.name,
           userProfile: userProfile,
@@ -1208,7 +1208,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => FortuneCompletionPageTinder(
+              builder: (context) => FortuneCompletionPage(
                 fortune: todaysFortune,
                 userName: userProfile?.name,
                 userProfile: userProfile,
