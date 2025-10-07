@@ -1186,23 +1186,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
     }
     
-    // 이미 오늘 스토리를 본 경우 바로 Tinder 완료 페이지 표시
-    if (_hasViewedStoryToday && todaysFortune != null) {
-      debugPrint('🎯 Already viewed story today - showing Tinder completion page directly');
-      // 네비게이션 바 표시
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(navigationVisibilityProvider.notifier).show();
-      });
-      return FortuneCompletionPageTinder(
-        fortune: todaysFortune,
-        userName: userProfile?.name,
-        userProfile: userProfile,
-        overall: overallData,
-        categories: categoriesData,
-        sajuInsight: sajuInsightData,
-      );
-    }
-
     // 스토리 뷰어 또는 기본 화면
     if (storySegments != null && storySegments!.isNotEmpty) {
       return FortuneStoryViewer(
