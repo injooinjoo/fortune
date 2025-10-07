@@ -13,6 +13,8 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../constants/fortune_button_spacing.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/standard_fortune_page_layout.dart';
 
 class PetCompatibilityPage extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -102,45 +104,29 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   @override
   Widget build(BuildContext context) {
     final petState = ref.watch(petProvider);
-    
+
     return Scaffold(
       backgroundColor: TossTheme.backgroundSecondary,
-      appBar: _buildAppBar(),
-      body: _fortune != null 
-        ? _buildFortuneResult()
-        : _buildPetSelection(petState),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: TossDesignSystem.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: TossDesignSystem.white.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(Icons.arrow_back_ios, size: 18, color: TossTheme.textBlack),
-        ),
-        onPressed: () => context.pop(),
-      ),
-      actions: [
-        IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+      appBar: StandardFortuneAppBar(
+        title: widget.title,
+        actions: [
+          IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.add, size: 20, color: TossTheme.primaryBlue),
             ),
-            child: Icon(Icons.add, size: 20, color: TossTheme.primaryBlue),
+            onPressed: () => _showAddPetBottomSheet(),
           ),
-          onPressed: () => _showAddPetBottomSheet(),
-        ),
-        const SizedBox(width: 16),
-      ],
+          const SizedBox(width: 16),
+        ],
+      ),
+      body: _fortune != null
+          ? _buildFortuneResult()
+          : _buildPetSelection(petState),
     );
   }
 
@@ -705,15 +691,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   Widget _buildFortuneResult() {
     final petState = ref.watch(petProvider);
     final selectedPet = petState.selectedPet;
-    
+
     if (_fortune == null || selectedPet == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
     final species = PetSpecies.fromString(selectedPet.species);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+    return StandardFortuneResultLayout(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

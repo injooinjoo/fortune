@@ -8,6 +8,7 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../services/ad_service.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
@@ -166,30 +167,15 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
-      appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            if (_currentStep > 0) {
-              _previousStep();
-            } else {
-              Navigator.pop(context);
-            }
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-            size: 20,
-          ),
-        ),
-        title: Text(
-          '헤어진 애인',
-          style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-          ),
-        ),
-        centerTitle: true,
+      appBar: StandardFortuneAppBar(
+        title: '헤어진 애인',
+        onBackPressed: () {
+          if (_currentStep > 0) {
+            _previousStep();
+          } else {
+            Navigator.pop(context);
+          }
+        },
       ),
       body: Column(
         children: [

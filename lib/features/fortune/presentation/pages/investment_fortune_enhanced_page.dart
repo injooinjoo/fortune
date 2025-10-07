@@ -16,6 +16,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/fortune_button.dart';
 import '../constants/fortune_button_spacing.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 
 // Step 관리를 위한 StateNotifier
@@ -179,10 +180,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
-      appBar: AppHeader(
+      appBar: StandardFortuneAppBar(
         title: '투자 운세',
-        showBackButton: true,
-        centerTitle: true,
         onBackPressed: () {
           if (currentStep > 0) {
             ref.read(investmentStepProvider.notifier).previousStep();

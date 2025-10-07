@@ -12,6 +12,8 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../constants/fortune_button_spacing.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/standard_fortune_page_layout.dart';
 import '../../../../services/ad_service.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
@@ -39,7 +41,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   @override
   void initState() {
     super.initState();
-    
+
     // 사용자 프로필 정보로 미리 채우기
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final userProfileAsync = ref.read(userProfileProvider);
@@ -227,36 +229,10 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            style: IconButton.styleFrom(
-              backgroundColor: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-              size: 20,
-            ),
-          ),
-        ),
-        title: Text(
-          '궁합 분석',
-          style: TossTheme.heading3.copyWith(
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-          ),
-        ),
-        centerTitle: true,
+      appBar: const StandardFortuneAppBar(
+        title: '궁합 분석',
       ),
-      body: _compatibilityData != null 
+      body: _compatibilityData != null
           ? _buildResultView()
           : _buildInputView(),
     );

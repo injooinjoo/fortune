@@ -10,6 +10,8 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/standard_fortune_page_layout.dart';
 
 enum FamilyType {
   children('자녀 운세', 'children', '우리 아이의 운세와 성장', Icons.child_care_rounded, [Color(0xFFFBBF24), Color(0xFFF59E0B)]),
@@ -51,26 +53,12 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TossTheme.backgroundSecondary,
-      appBar: AppBar(
-        backgroundColor: TossTheme.backgroundWhite,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: TossTheme.textBlack),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          '가족 운세',
-          style: TextStyle(
-            color: TossTheme.textBlack,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
+      appBar: const StandardFortuneAppBar(
+        title: '가족 운세',
       ),
-      body: _fortune != null 
-        ? _buildResultScreen() 
-        : _buildInputScreen(),
+      body: _fortune != null
+          ? _buildResultScreen()
+          : _buildInputScreen(),
     );
   }
 

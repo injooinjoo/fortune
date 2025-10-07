@@ -7,6 +7,7 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
 import '../../domain/models/avoid_person_analysis.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
   const AvoidPeopleFortunePage({super.key});
@@ -98,27 +99,11 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
-      appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.grayDark900.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context), // Always go back to fortune page
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-            size: 20,
-          ),
-        ),
-        title: Text(
-          '피해야 할 사람',
-          style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-          ),
-        ),
-        centerTitle: true,
+      appBar: const StandardFortuneAppBar(
+        title: '피해야 할 사람',
       ),
       body: Column(
         children: [

@@ -14,6 +14,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 // import 'ex_lover_fortune_result_page.dart'; // Removed - unused
 
 // Step 관리를 위한 StateNotifier
@@ -259,29 +260,19 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-        elevation: 0,
-        title: Text(
-          '헤어진 애인 운세',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            color: TossDesignSystem.white,
-            fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: TossDesignSystem.white),
-          onPressed: () {
-            if (currentStep > 0) {
-              ref.read(exLoverStepProvider.notifier).previousStep();
-              _pageController.previousPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut
-              );
-            } else {
-              context.pop();
-            }
-          },
-        ),
+      appBar: StandardFortuneAppBar(
+        title: '헤어진 애인 운세',
+        onBackPressed: () {
+          if (currentStep > 0) {
+            ref.read(exLoverStepProvider.notifier).previousStep();
+            _pageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          } else {
+            context.pop();
+          }
+        },
       ),
       body: AnimatedBuilder(
         animation: _fadeAnimation,

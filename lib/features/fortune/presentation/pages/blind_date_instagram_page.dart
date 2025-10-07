@@ -7,6 +7,7 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/blind_date_instagram_model.dart';
 import '../../../../services/ad_service.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 class BlindDateInstagramPage extends ConsumerStatefulWidget {
   const BlindDateInstagramPage({super.key});
@@ -189,60 +190,32 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(isDark),
-            
-            // Progress Indicator
-            _buildProgressIndicator(isDark),
-            
-            // Content
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _buildStep1(isDark),
-                  _buildStep2(isDark),
-                ],
-              ),
-            ),
-          ],
-        ),
+      appBar: StandardFortuneAppBar(
+        title: '소개팅 AI 코칭',
+        onBackPressed: () {
+          if (_currentStep > 0) {
+            _previousStep();
+          } else {
+            Navigator.pop(context);
+          }
+        },
       ),
-    );
-  }
-
-  Widget _buildHeader(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
+      body: Column(
         children: [
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-            ),
-            onPressed: () {
-              if (_currentStep > 0) {
-                _previousStep();
-              } else {
-                Navigator.pop(context);
-              }
-            },
-          ),
+          // Progress Indicator
+          _buildProgressIndicator(isDark),
+
+          // Content
           Expanded(
-            child: Text(
-              '소개팅 AI 코칭',
-              style: TossDesignSystem.heading3.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              ),
-              textAlign: TextAlign.center,
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _buildStep1(isDark),
+                _buildStep2(isDark),
+              ],
             ),
           ),
-          const SizedBox(width: 48),
         ],
       ),
     );

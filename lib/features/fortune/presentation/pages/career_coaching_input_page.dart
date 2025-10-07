@@ -7,6 +7,7 @@ import '../widgets/fortune_button.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 class CareerCoachingInputPage extends ConsumerStatefulWidget {
   const CareerCoachingInputPage({super.key});
@@ -141,20 +142,8 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
 
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
-      appBar: AppBar(
-        backgroundColor: TossDesignSystem.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          '커리어 코칭',
-          style: TossDesignSystem.heading3,
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, 
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: const StandardFortuneAppBar(
+        title: '커리어 코칭',
       ),
       body: Column(
         children: [

@@ -9,6 +9,7 @@ import 'talisman_steps/talisman_type_selection_step.dart';
 import 'talisman_steps/talisman_customization_step.dart';
 import 'talisman_steps/talisman_generation_step.dart';
 import 'talisman_result_page.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 // Provider for managing talisman creation state
 final talismanCreationProvider = StateNotifierProvider<TalismanCreationNotifier, TalismanCreationState>(
@@ -159,11 +160,9 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
 
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
-      appBar: AppHeader(
+      appBar: const StandardFortuneAppBar(
         title: '부적 만들기',
-        showBackButton: true,
-        backgroundColor: TossDesignSystem.white,
-        elevation: 0),
+      ),
       body: Column(
         children: [
           // Progress indicator

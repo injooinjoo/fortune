@@ -13,6 +13,8 @@ import '../../../../data/models/celebrity_simple.dart';
 import '../../../../core/utils/logger.dart';
 import '../widgets/fortune_card.dart';
 import '../widgets/fortune_result_card.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/standard_fortune_page_layout.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../widgets/fortune_button.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -57,26 +59,12 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TossTheme.backgroundSecondary,
-      appBar: AppBar(
-        backgroundColor: TossTheme.backgroundWhite,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: TossTheme.textBlack, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          '유명인 운세',
-          style: TextStyle(
-            color: TossTheme.textBlack,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
+      appBar: const StandardFortuneAppBar(
+        title: '유명인 운세',
       ),
-      body: _fortune != null 
-        ? _buildResultScreen() 
-        : _buildInputScreen(),
+      body: _fortune != null
+          ? _buildResultScreen()
+          : _buildInputScreen(),
     );
   }
 

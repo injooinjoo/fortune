@@ -11,6 +11,7 @@ import '../../../../core/utils/logger.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
 import '../../../fortune/presentation/widgets/fortune_button.dart';
+import '../../../fortune/presentation/widgets/standard_fortune_app_bar.dart';
 
 /// 포춘쿠키 타입
 enum CookieType {
@@ -140,38 +141,19 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
-      appBar: _buildAppBar(),
+      appBar: StandardFortuneAppBar(
+        title: '포춘 쿠키',
+        actions: _showPaper
+            ? [
+                IconButton(
+                  icon: Icon(Icons.refresh, color: TossDesignSystem.gray900),
+                  onPressed: _resetCookie,
+                ),
+                const SizedBox(width: 16),
+              ]
+            : null,
+      ),
       body: _showPaper ? _buildResultView() : _buildMainView(),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: TossDesignSystem.white,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios, color: TossDesignSystem.gray900),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      title: Text(
-        '포춘 쿠키',
-        style: TossDesignSystem.heading3.copyWith(
-          color: TossDesignSystem.gray900,
-        ),
-      ),
-      centerTitle: true,
-      actions: [
-        if (_showPaper)
-          IconButton(
-            icon: Icon(Icons.refresh, color: TossDesignSystem.gray900),
-            onPressed: _resetCookie,
-          ),
-      ],
     );
   }
 

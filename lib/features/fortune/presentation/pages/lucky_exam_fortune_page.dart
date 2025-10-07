@@ -8,6 +8,8 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/fortune_button.dart';
 import '../constants/fortune_button_spacing.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/standard_fortune_page_layout.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/services/fortune_api_service.dart';
@@ -38,25 +40,13 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
-      appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, 
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          '시험 운세',
-          style: TossDesignSystem.heading3,
-        ),
-        centerTitle: true,
+      appBar: const StandardFortuneAppBar(
+        title: '시험 운세',
       ),
-      body: _fortuneResult != null 
+      body: _fortuneResult != null
           ? _buildResultView(isDark)
           : _buildInputView(isDark),
     );
@@ -175,13 +165,24 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   }
 
   Widget _buildInputView(bool isDark) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    return StandardFortunePageLayout(
+      buttonText: '운세 분석하기',
+      onButtonPressed: () async {
+        await AdService.instance.showInterstitialAdWithCallback(
+          onAdCompleted: () async {
+            _analyzeExam();
+          },
+          onAdFailed: () async {
+            // Still allow fortune generation even if ad fails
+            _analyzeExam();
+          },
+        );
+      },
+      isLoading: _isLoading,
+      buttonIcon: const Icon(Icons.auto_awesome),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           // 헤더 카드
           TossCard(
             padding: const EdgeInsets.all(24),
@@ -440,46 +441,18 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               ],
             ),
           ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
-
-              const SizedBox(height: 32),
-
-              // 하단 버튼 공간만큼 여백 추가
-              const BottomButtonSpacing(),
-            ],
-          ),
-        ),
-        
-        // Floating 버튼
-        FloatingBottomButton(
-          text: '운세 분석하기',
-          onPressed: () async {
-            await AdService.instance.showInterstitialAdWithCallback(
-              onAdCompleted: () async {
-                _analyzeExam();
-              },
-              onAdFailed: () async {
-                // Still allow fortune generation even if ad fails
-                _analyzeExam();
-              },
-            );
-          },
-          isLoading: _isLoading,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.auto_awesome),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildResultView(bool isDark) {
     if (_fortuneResult == null) return const SizedBox.shrink();
-    
+
     final fortune = _fortuneResult!;
     final score = fortune.overallScore ?? 75;
-    
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+
+    return StandardFortuneResultLayout(
       child: Column(
         children: [
           // 메인 결과 카드
@@ -761,7 +734,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               ),
             ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
           ],
-          
+
+
           const SizedBox(height: 40),
         ],
       ),

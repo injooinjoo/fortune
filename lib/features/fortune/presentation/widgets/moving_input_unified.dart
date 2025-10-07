@@ -5,6 +5,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/region_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import 'standard_fortune_app_bar.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
 class MovingInputUnified extends StatefulWidget {
@@ -147,83 +148,71 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TossTheme.backgroundWhite,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 헤더
-            Padding(
-              padding: const EdgeInsets.all(TossTheme.spacingL),
-              child: Row(
+      appBar: const StandardFortuneAppBar(
+        title: '이사운',
+      ),
+      body: Column(
+        children: [
+          // 콘텐츠
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.close, color: TossTheme.textBlack),
-                    onPressed: () => Navigator.of(context).pop(),
+                  // 제목
+                  Text(
+                    '이사 정보 입력',
+                    style: TossTheme.heading1.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
                   ),
+
+                  const SizedBox(height: TossTheme.spacingL),
+
+                  // 지역 선택
+                  _buildLocationSection(),
+
+                  const SizedBox(height: TossTheme.spacingXL),
+
+                  // 시기 선택
+                  _buildPeriodSection(),
+
+                  const SizedBox(height: TossTheme.spacingXL),
+
+                  // 목적 선택
+                  _buildPurposeSection(),
+
+                  const SizedBox(height: TossTheme.spacingXXL),
                 ],
               ),
             ),
+          ),
 
-            // 콘텐츠
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 제목
-                    Text(
-                      '이사 정보 입력',
-                      style: TossTheme.heading1.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        height: 1.2,
-                      ),
+          // 하단 CTA 버튼
+          Padding(
+            padding: const EdgeInsets.all(TossTheme.spacingL),
+            child: AnimatedBuilder(
+              animation: _buttonAnimation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _buttonAnimation.value,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: TossButton(
+                      text: _isLoading ? '이사운 분석중...' : '이사운 보기',
+                      onPressed: _canContinue() ? _handleComplete : null,
+                      style: TossButtonStyle.primary,
+                      size: TossButtonSize.large,
                     ),
-                    
-                    const SizedBox(height: TossTheme.spacingL),
-                    
-                    // 지역 선택
-                    _buildLocationSection(),
-                    
-                    const SizedBox(height: TossTheme.spacingXL),
-                    
-                    // 시기 선택
-                    _buildPeriodSection(),
-                    
-                    const SizedBox(height: TossTheme.spacingXL),
-                    
-                    // 목적 선택
-                    _buildPurposeSection(),
-                    
-                    const SizedBox(height: TossTheme.spacingXXL),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
-
-            // 하단 CTA 버튼
-            Padding(
-              padding: const EdgeInsets.all(TossTheme.spacingL),
-              child: AnimatedBuilder(
-                animation: _buttonAnimation,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _buttonAnimation.value,
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: TossButton(
-                        text: _isLoading ? '이사운 분석중...' : '이사운 보기',
-                        onPressed: _canContinue() ? _handleComplete : null,
-                        style: TossButtonStyle.primary,
-                        size: TossButtonSize.large,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

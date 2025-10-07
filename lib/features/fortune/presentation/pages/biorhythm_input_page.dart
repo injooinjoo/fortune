@@ -11,6 +11,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../models/user_profile.dart' as models;
 import 'biorhythm_loading_page.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 class BiorhythmInputPage extends StatefulWidget {
   const BiorhythmInputPage({super.key});
@@ -257,25 +258,8 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
     
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
-      appBar: AppBar(
-        backgroundColor: TossDesignSystem.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-            size: 20,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          '바이오리듬 분석',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-          ),
-        ),
-        centerTitle: true,
+      appBar: const StandardFortuneAppBar(
+        title: '바이오리듬 분석',
       ),
       body: SafeArea(
         child: Padding(

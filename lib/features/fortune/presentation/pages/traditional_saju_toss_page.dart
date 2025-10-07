@@ -10,6 +10,7 @@ import '../providers/saju_provider.dart';
 import '../widgets/saju_table_toss.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../services/ad_service.dart';
 
@@ -67,21 +68,13 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
-      appBar: AppBar(
-        backgroundColor: TossTheme.backgroundPrimary,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: TossTheme.textBlack),
-          onPressed: () {
-            // 네비게이션 바 다시 보이기
-            ref.read(navigationVisibilityProvider.notifier).show();
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          '전통 사주팔자',
-          style: TossTheme.heading3.copyWith(color: TossTheme.textBlack),
-        ),
+      appBar: StandardFortuneAppBar(
+        title: '전통 사주팔자',
+        onBackPressed: () {
+          // 네비게이션 바 다시 보이기
+          ref.read(navigationVisibilityProvider.notifier).show();
+          Navigator.pop(context);
+        },
       ),
       body: _buildBody(sajuState),
     );

@@ -28,6 +28,7 @@ import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../services/fortune_history_service.dart';
 
@@ -947,18 +948,15 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
-      appBar: AppHeader(
+      appBar: StandardFortuneAppBar(
         title: widget.title,
-        showShareButton: widget.showShareButton,
-        showFontSizeSelector: widget.showFontSizeSelector,
-        currentFontSize: ref.watch(fontSizeProvider),
-        onFontSizeChanged: (size) {
-          ref.read(fontSizeProvider.notifier).setFontSize(size);
-        },
-        onBackPressed: _fortune != null ? () {
-          // When fortune result is displayed, navigate to fortune list
-          GoRouter.of(context).go('/fortune');
-        } : null),
+        onBackPressed: _fortune != null
+            ? () {
+                // When fortune result is displayed, navigate to fortune list
+                GoRouter.of(context).go('/fortune');
+              }
+            : null,
+      ),
       body: SafeArea(
         child: Column(
           children: [

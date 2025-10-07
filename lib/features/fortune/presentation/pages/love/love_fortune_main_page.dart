@@ -5,6 +5,7 @@ import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../services/ad_service.dart';
+import '../../widgets/standard_fortune_app_bar.dart';
 import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
 import 'love_input_step3_page.dart';
@@ -117,34 +118,9 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          child: IconButton(
-            onPressed: _currentStep == 0 ? () => Navigator.pop(context) : _previousStep,
-            style: IconButton.styleFrom(
-              backgroundColor: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-              size: 20,
-            ),
-          ),
-        ),
-        title: Text(
-          '연애운세',
-          style: TossTheme.heading3.copyWith(
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-          ),
-        ),
-        centerTitle: true,
+      appBar: StandardFortuneAppBar(
+        title: '연애운세',
+        onBackPressed: _currentStep == 0 ? () => Navigator.pop(context) : _previousStep,
       ),
       body: Column(
         children: [
