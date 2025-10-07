@@ -17,8 +17,8 @@ import '../../widgets/emotional_loading_checklist.dart';
 import '../../widgets/profile_completion_dialog.dart';
 import '../../core/utils/profile_validation.dart';
 import 'fortune_story_viewer.dart';
-import 'fortune_completion_page.dart';
-// import 'preview_screen.dart'; // File deleted
+import 'fortune_completion_page_tinder.dart';
+import 'preview_screen.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
 
@@ -1106,7 +1106,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // Navigator push로 완료 페이지 열기
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FortuneCompletionPage(
+        builder: (context) => FortuneCompletionPageTinder(
           fortune: todaysFortune,
           userName: userProfile?.name,
           userProfile: userProfile,
@@ -1186,6 +1186,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
     }
     
+    // 이미 오늘 스토리를 본 경우 바로 Tinder 완료 페이지 표시
+    if (_hasViewedStoryToday && todaysFortune != null) {
+      debugPrint('🎯 Already viewed story today - showing Tinder completion page directly');
+      return FortuneCompletionPageTinder(
+        fortune: todaysFortune,
+        userName: userProfile?.name,
+        userProfile: userProfile,
+        overall: overallData,
+        categories: categoriesData,
+        sajuInsight: sajuInsightData,
+      );
+    }
+
     // 스토리 뷰어 또는 기본 화면
     if (storySegments != null && storySegments!.isNotEmpty) {
       return FortuneStoryViewer(
@@ -1208,7 +1221,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => FortuneCompletionPage(
+              builder: (context) => FortuneCompletionPageTinder(
                 fortune: todaysFortune,
                 userName: userProfile?.name,
                 userProfile: userProfile,
