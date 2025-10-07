@@ -85,16 +85,70 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F9FA),
-      extendBodyBehindAppBar: true,
-      body: Stack(
+      // extendBodyBehindAppBar 제거 - 네비게이션 바가 보이도록
+      body: Column(
         children: [
-          // PageView (틴더 카드 스타일) - 네비게이션바 공간 제외
-          Positioned.fill(
-            bottom: navBarHeight,
+          // 프로그레스 바 (맨 위)
+          Container(
+            height: 3,
+            margin: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top,
+              left: 20,
+              right: 20,
+            ),
+            decoration: BoxDecoration(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: (_currentPage + 1) / 18,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF3182F6),
+                      Color(0xFF1B64DA),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+
+          // 고정 헤더 (이름 · 날짜)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  displayUserName,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  DateTime.now().toString().split(' ')[0],
+                  style: TextStyle(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // PageView (Expanded로 나머지 공간 차지)
+          Expanded(
             child: PageView.builder(
               controller: _pageController,
               scrollDirection: Axis.vertical,
-              itemCount: 18,  // 10개 → 18개로 확장
+              itemCount: 18,
               itemBuilder: (context, index) {
                 return _buildFullSizeCard(
                   context,
@@ -107,66 +161,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             ),
           ),
 
-          // 프로그레스 바 (맨 위)
-          Positioned(
-            top: MediaQuery.of(context).padding.top,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 3,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: (_currentPage + 1) / 18,  // 18개 카드 기준
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF3182F6),
-                        Color(0xFF1B64DA),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // 고정 헤더 (이름 · 날짜)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 12,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    displayUserName,
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    DateTime.now().toString().split(' ')[0],
-                    style: TextStyle(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // 네비게이션 바 공간 확보
+          SizedBox(height: navBarHeight),
         ],
       ),
     );
