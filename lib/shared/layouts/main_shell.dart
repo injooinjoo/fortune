@@ -139,8 +139,10 @@ class _MainShellState extends ConsumerState<MainShell>
               animation: _paddingAnimation,
               builder: (context, child) {
                 final totalNavHeight = _navBarHeight + bottomPadding;
+                // Add bottom padding when navigation bar is visible
+                final bottomPaddingValue = navigationState.isVisible ? totalNavHeight * _paddingAnimation.value : 0.0;
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 0),
+                  padding: EdgeInsets.only(bottom: bottomPaddingValue),
                   child: widget.child);
               },
             ),

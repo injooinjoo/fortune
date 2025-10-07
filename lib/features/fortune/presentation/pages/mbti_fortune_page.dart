@@ -9,11 +9,10 @@ import '../../../../services/ad_service.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_card.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../data/services/fortune_api_service.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import 'dart:math' as math;
 
 class MbtiFortunePage extends BaseFortunePage {
@@ -111,16 +110,12 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   @override
   void initState() {
     super.initState();
-    // Hide navigation bar when entering MBTI fortune page
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).hide();
-    });
+    // No need to hide navigation bar - Scaffold structure handles this automatically
   }
 
   @override
   void dispose() {
-    // Show navigation bar when leaving MBTI fortune page
-    ref.read(navigationVisibilityProvider.notifier).show();
+    // No need to show navigation bar - Scaffold structure handles this automatically
     super.dispose();
   }
 
@@ -245,9 +240,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     // Show MBTI selection UI
     return Scaffold(
       backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
-      appBar: AppHeader(
+      appBar: StandardFortuneAppBar(
         title: widget.title,
-        showShareButton: false,
       ),
       body: SafeArea(
         child: Stack(

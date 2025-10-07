@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';

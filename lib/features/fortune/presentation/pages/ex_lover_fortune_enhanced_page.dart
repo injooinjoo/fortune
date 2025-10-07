@@ -14,6 +14,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 // import 'ex_lover_fortune_result_page.dart'; // Removed - unused
 

@@ -6,6 +6,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_button.dart';
 
 /// 인포그래픽 스타일 이사운 결과 페이지
 class MovingResultInfographic extends StatefulWidget {
@@ -190,37 +192,49 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
     return Scaffold(
       backgroundColor: TossTheme.backgroundPrimary,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // 상단 헤더
-            _buildHeader(),
-            
-            // 페이지 인디케이터
-            _buildPageIndicator(),
-            
-            // 메인 콘텐츠 (PageView)
-            Expanded(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() => _currentPage = index);
-                    HapticFeedback.lightImpact();
-                  },
-                  children: [
-                    _buildOverviewPage(),
-                    _buildTimingPage(),
-                    _buildDirectionPage(),
-                    _buildChecklistPage(),
-                    _buildBudgetPage(),
-                  ],
+            Column(
+              children: [
+                // 상단 헤더
+                _buildHeader(),
+
+                // 페이지 인디케이터
+                _buildPageIndicator(),
+
+                // 메인 콘텐츠 (PageView)
+                Expanded(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() => _currentPage = index);
+                        HapticFeedback.lightImpact();
+                      },
+                      children: [
+                        _buildOverviewPage(),
+                        _buildTimingPage(),
+                        _buildDirectionPage(),
+                        _buildChecklistPage(),
+                        _buildBudgetPage(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+
+                // 하단 버튼 공간 확보
+                const BottomButtonSpacing(),
+              ],
             ),
-            
-            // 하단 액션 버튼
-            _buildBottomActions(),
+
+            // Floating 버튼
+            FloatingBottomButton(
+              text: '다시 보기',
+              onPressed: widget.onRetry,
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+            ),
           ],
         ),
       ),
@@ -1179,82 +1193,6 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
         const SizedBox(width: 4),
         Text(label, style: TossTheme.caption),
       ],
-    );
-  }
-
-  Widget _buildBottomActions() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: _shareResult,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(52),
-                side: BorderSide(color: TossTheme.primaryBlue),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.share_rounded, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    '공유하기',
-                    style: TossTheme.button.copyWith(
-                      color: TossTheme.primaryBlue,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: widget.onRetry,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(52),
-                backgroundColor: TossTheme.primaryBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                '다시 보기',
-                style: TossTheme.button.copyWith(
-                  color: TossDesignSystem.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _shareResult() {
-    HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('결과가 클립보드에 복사되었습니다'),
-        backgroundColor: TossTheme.primaryBlue,
-        behavior: SnackBarBehavior.floating,
-      ),
     );
   }
 

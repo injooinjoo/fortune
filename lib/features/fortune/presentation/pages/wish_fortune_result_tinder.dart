@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 
 import '../../domain/models/wish_fortune_result.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 /// 틴더 스타일 소원 빌기 결과 페이지 (공감/희망/조언/응원 중심)
@@ -37,10 +36,10 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
     _pageController = PageController();
     _pageController.addListener(_handlePageScroll);
 
-    // 네비게이션 바 숨기기
+    // 페이지 초기화
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        ref.read(navigationVisibilityProvider.notifier).hide();
+        // Navigation bar is automatically hidden by Scaffold structure
       }
     });
   }
@@ -115,7 +114,6 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
             right: 20,
             child: GestureDetector(
               onTap: () {
-                ref.read(navigationVisibilityProvider.notifier).show();
                 context.pop();
               },
               child: Container(

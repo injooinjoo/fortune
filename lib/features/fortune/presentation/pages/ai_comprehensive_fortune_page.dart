@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -174,61 +175,65 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
 
   Widget _buildInitial() {
     final theme = Theme.of(context);
-    
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.psychology_outlined,
-              size: 120,
-              color: theme.colorScheme.primary,
-            ).animate()
-              .fadeIn(duration: 600.ms)
-              .scaleXY(delay: 300.ms),
-            const SizedBox(height: 16),
-            Text(
-              'AI 종합 운세 분석',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ).animate()
-              .fadeIn(delay: 400.ms),
-            const SizedBox(height: 8),
-            Text(
-              '인공지능이 당신의 모든 정보를 종합하여\n가장 정확한 운세를 제공합니다',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha:0.7),
-              ),
-              textAlign: TextAlign.center,
-            ).animate()
-              .fadeIn(delay: 600.ms),
-            const SizedBox(height: 24),
-            TossButton(
-              text: 'AI 분석 시작',
-              onPressed: () async {
-                await AdService.instance.showInterstitialAdWithCallback(
-                  onAdCompleted: () async {
-                    _startAnalysis();
-                  },
-                  onAdFailed: () async {
-                    // Still allow analysis even if ad fails
-                    _startAnalysis();
-                  },
-                );
-              },
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-              icon: Icon(Icons.auto_awesome),
-            ).animate()
-              .fadeIn(delay: 800.ms)
-              .scaleXY(delay: 800.ms),
-          ],
+
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.psychology_outlined,
+                size: 120,
+                color: theme.colorScheme.primary,
+              ).animate()
+                .fadeIn(duration: 600.ms)
+                .scaleXY(delay: 300.ms),
+              const SizedBox(height: 16),
+              Text(
+                'AI 종합 운세 분석',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ).animate()
+                .fadeIn(delay: 400.ms),
+              const SizedBox(height: 8),
+              Text(
+                '인공지능이 당신의 모든 정보를 종합하여\n가장 정확한 운세를 제공합니다',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha:0.7),
+                ),
+                textAlign: TextAlign.center,
+              ).animate()
+                .fadeIn(delay: 600.ms),
+              const SizedBox(height: 24),
+
+              // 하단 버튼 공간 확보
+              const BottomButtonSpacing(),
+            ],
+          ),
         ),
-      ),
+
+        // Floating 버튼
+        FloatingBottomButton(
+          text: 'AI 분석 시작',
+          onPressed: () async {
+            await AdService.instance.showInterstitialAdWithCallback(
+              onAdCompleted: () async {
+                _startAnalysis();
+              },
+              onAdFailed: () async {
+                _startAnalysis();
+              },
+            );
+          },
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.auto_awesome),
+        ),
+      ],
     );
   }
 
@@ -443,42 +448,49 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
 
   Widget _buildError() {
     final theme = Theme.of(context);
-    
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: theme.colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '분석 중 오류가 발생했습니다',
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _error ?? '알 수 없는 오류',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha:0.7),
+
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 80,
+                color: theme.colorScheme.error,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            TossButton(
-              text: '다시 시도',
-              onPressed: _reset,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.medium,
-              icon: Icon(Icons.refresh),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                '분석 중 오류가 발생했습니다',
+                style: theme.textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _error ?? '알 수 없는 오류',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha:0.7),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+
+              // 하단 버튼 공간 확보
+              const BottomButtonSpacing(),
+            ],
+          ),
         ),
-      ),
+
+        // Floating 버튼
+        FloatingBottomButton(
+          text: '다시 시도',
+          onPressed: _reset,
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: Icon(Icons.refresh),
+        ),
+      ],
     );
   }
 

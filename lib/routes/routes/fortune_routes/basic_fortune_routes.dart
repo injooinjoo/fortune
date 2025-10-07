@@ -15,19 +15,16 @@ final basicFortuneRoutes = [
       final extra = state.extra as Map<String, dynamic>?;
       return const SajuPage();
     }),
-  
-  
+
   // MBTI
   GoRoute(
     path: '/mbti',
     name: 'fortune-mbti',
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
-      return MbtiFortunePage(
-        initialParams: extra);
+      return MbtiFortunePage(initialParams: extra);
     }),
-  
-  
+
   // Destiny
   GoRoute(
     path: '/destiny',

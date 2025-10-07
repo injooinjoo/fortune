@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';

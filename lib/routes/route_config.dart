@@ -62,6 +62,7 @@ import '../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.d
 import '../features/fortune/presentation/pages/pet_compatibility_page.dart';
 import '../features/fortune/presentation/pages/family_fortune_unified_page.dart';
 import '../features/fortune/presentation/pages/daily_calendar_fortune_page.dart';
+// import '../features/fortune/presentation/pages/mbti_fortune_page.dart'; // Now in fortuneRoutes
 
 // Import admin pages
 import '../features/admin/pages/celebrity_crawling_page.dart';
@@ -173,15 +174,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               const FortuneListPage(),
             ),
           ),
-          
-          // Fortune routes (inside shell for navigation bar)
-          ...fortuneRoutes,
-          
+
           // Interactive routes (inside shell)
           ...interactiveRoutes,
         ],
       ),
-      
+
+      // Fortune routes (outside shell - no navigation bar for consistent UX)
+      ...fortuneRoutes,
+
       // Settings routes (outside shell - no navigation bar)
       GoRoute(
         path: '/settings',
@@ -301,6 +302,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'fortune-lucky-exam',
         builder: (context, state) => const LuckyExamFortunePage(),
       ),
+      // MBTI - now included in fortuneRoutes (moved back to basic_fortune_routes.dart)
       
       
       // Fortune Cookie (outside shell - no navigation bar)

@@ -8,6 +8,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/image_upload_selector.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import 'package:fortune/data/services/fortune_api_service.dart';
 import 'package:fortune/presentation/providers/providers.dart';

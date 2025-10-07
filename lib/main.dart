@@ -136,18 +136,26 @@ void main() async {
   // DISABLE ADS FOR TESTING ON REAL DEVICES
   const bool DISABLE_ADS_FOR_TESTING = false; // Enable ads for release build
 
+  print('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $DISABLE_ADS_FOR_TESTING');
+  print('🎯 [ADMOB] Environment.enableAds: ${Environment.enableAds}');
+  print('🎯 [ADMOB] Environment.admobAppId: ${Environment.admobAppId}');
+
   if (!kIsWeb && !DISABLE_ADS_FOR_TESTING) {
     // Don't await - let it run in the background
     Future(() async {
       try {
+        print('🎯 [ADMOB] Starting Ad Service initialization in background...');
         Logger.info('Initializing Ad Service in background...');
         await AdService.instance.initialize();
+        print('✅ [ADMOB] Ad Service initialized successfully in background');
         Logger.info('Ad Service initialized successfully in background');
       } catch (e) {
+        print('❌ [ADMOB] Ad Service initialization failed in background: $e');
         Logger.error('Ad Service initialization failed in background: $e');
       }
     });
   } else {
+    print('⚠️ [ADMOB] Ad Service disabled for testing');
     Logger.info('Ad Service disabled for testing');
   }
   

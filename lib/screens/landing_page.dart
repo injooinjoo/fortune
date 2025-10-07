@@ -30,10 +30,10 @@ class _LandingPageState extends ConsumerState<LandingPage>
     with WidgetsBindingObserver {
   bool _isCheckingAuth = true;
   bool _isAuthProcessing = false;
-  final _authService = AuthService();
-  late final SocialAuthService _socialAuthService;
+  SocialAuthService? _socialAuthService; // nullable로 변경
   final _storageService = StorageService();
   Timer? _authTimeoutTimer;
+  bool _isSupabaseAvailable = false; // Supabase 사용 가능 여부
 
   @override
   void initState() {
@@ -46,10 +46,25 @@ class _LandingPageState extends ConsumerState<LandingPage>
     print('🔵 initState: _isAuthProcessing initialized to false');
     print('🔵 initState: _isCheckingAuth initialized to false');
 
-    _socialAuthService = SocialAuthService(Supabase.instance.client);
+    // Supabase 안전하게 초기화
+    try {
+      final client = Supabase.instance.client;
+      _socialAuthService = SocialAuthService(client);
+      _isSupabaseAvailable = true;
+      print('✅ [LandingPage] Supabase client initialized successfully');
+    } catch (e) {
+      print('⚠️ [LandingPage] Supabase client not available, using offline mode: $e');
+      _isSupabaseAvailable = false;
+      _socialAuthService = null;
+    }
 
     // Check auth in background without blocking UI
     Future.microtask(() async {
+      if (!_isSupabaseAvailable) {
+        print('⚠️ [LandingPage] Skipping auth check - Supabase not available');
+        return;
+      }
+
       final session = Supabase.instance.client.auth.currentSession;
       if (session != null) {
         // Only show loading if there's a session to check
@@ -71,8 +86,9 @@ class _LandingPageState extends ConsumerState<LandingPage>
       }
     });
 
-    // Listen for auth state changes
-    Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
+    // Listen for auth state changes (only if Supabase is available)
+    if (_isSupabaseAvailable) {
+      Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
       debugPrint('🔔 Auth state changed: ${data.event}');
 
       // OAuth 로그인 성공 후 처리 (SignedIn 이벤트)
@@ -112,6 +128,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
         }
       }
     });
+    } // Supabase available check 종료
   }
 
   @override
@@ -119,7 +136,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
     super.didChangeDependencies();
 
     // 페이지로 돌아왔을 때 OAuth 상태 체크
-    if (_isAuthProcessing) {
+    if (_isAuthProcessing && _isSupabaseAvailable) {
       // 세션이 없으면 OAuth가 취소된 것으로 판단
       final session = Supabase.instance.client.auth.currentSession;
       if (session == null) {
@@ -143,6 +160,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
       if (_isAuthProcessing) {
         // OAuth 프로세스 중이었다면, 짧은 지연 후 상태 체크
         Future.delayed(const Duration(seconds: 1), () {
+          if (!_isSupabaseAvailable) return;
+
           // 세션이 없으면 OAuth가 취소된 것으로 판단
           final session = Supabase.instance.client.auth.currentSession;
           if (session == null && _isAuthProcessing && mounted) {
@@ -186,6 +205,11 @@ class _LandingPageState extends ConsumerState<LandingPage>
   }
 
   Future<void> _syncProfileFromSupabase() async {
+    if (!_isSupabaseAvailable) {
+      print('⚠️ [LandingPage] Skipping profile sync - Supabase not available');
+      return;
+    }
+
     try {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
@@ -295,6 +319,11 @@ class _LandingPageState extends ConsumerState<LandingPage>
   }
 
   Future<void> _checkAuthState() async {
+    if (!_isSupabaseAvailable) {
+      print('⚠️ [LandingPage] Skipping auth state check - Supabase not available');
+      return;
+    }
+
     print(
         '🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
     try {
@@ -407,7 +436,10 @@ class _LandingPageState extends ConsumerState<LandingPage>
     try {
       print('🍎 Calling _socialAuthService.signInWithApple()');
       // Apple OAuth 로그인 - SocialAuthService 사용
-      final result = await _socialAuthService.signInWithApple();
+      if (_socialAuthService == null) {
+        throw Exception('Social auth service not available');
+      }
+      final result = await _socialAuthService!.signInWithApple();
 
       print('🍎 signInWithApple() result: $result');
 
@@ -473,7 +505,11 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
     try {
       // Naver OAuth 로그인 - SocialAuthService 사용
-      final result = await _socialAuthService.signInWithNaver();
+      if (_socialAuthService == null) {
+        throw Exception('Social auth service not available');
+      }
+
+      final result = await _socialAuthService!.signInWithNaver();
 
       if (result != null) {
         // Naver Sign-In 성공
@@ -651,7 +687,11 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
         // Google Sign-In OAuth 사용
         try {
-          final response = await _socialAuthService.signInWithGoogle();
+          if (_socialAuthService == null) {
+            throw Exception('Social auth service not available');
+          }
+
+          final response = await _socialAuthService!.signInWithGoogle();
 
           // 로딩 스낵바 닫기
           if (mounted) {
@@ -718,7 +758,11 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
         try {
           debugPrint('🟡 Starting Kakao login...');
-          final response = await _socialAuthService.signInWithKakao();
+          if (_socialAuthService == null) {
+            throw Exception('Social auth service not available');
+          }
+
+          final response = await _socialAuthService!.signInWithKakao();
 
           // 로딩 스낵바 닫기
           if (mounted) {
@@ -817,7 +861,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
         '🎨 Building LandingPage: _isCheckingAuth=$_isCheckingAuth, _isAuthProcessing=$_isAuthProcessing');
 
     // Build 시마다 OAuth 상태 체크
-    if (_isAuthProcessing) {
+    if (_isAuthProcessing && _isSupabaseAvailable) {
       final session = Supabase.instance.client.auth.currentSession;
       if (session == null) {
         // 세션이 없는데 아직 processing 중이면 즉시 리셋

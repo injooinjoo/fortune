@@ -5,8 +5,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -101,11 +102,8 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
-      appBar: AppHeader(
+      appBar: StandardFortuneAppBar(
         title: '부적 완성',
-        showBackButton: true,
-        backgroundColor: TossDesignSystem.white,
-        elevation: 0,
         actions: [
           IconButton(
             icon: _isCapturing 

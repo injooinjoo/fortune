@@ -28,6 +28,7 @@ import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../services/fortune_history_service.dart';
@@ -958,18 +959,39 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             : null,
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: _isLoading
-                  ? const FortuneResultSkeleton()
-                  : _error != null
-                      ? _buildErrorState()
-                      : _fortune != null
-                          ? buildFortuneResult()
-                          : _buildInitialState(),
-            ),
-            if (_fortune == null && !_isLoading && _error == null) _buildGenerateButton(),
+            _isLoading
+                ? const FortuneResultSkeleton()
+                : _error != null
+                    ? _buildErrorState()
+                    : _fortune != null
+                        ? buildFortuneResult()
+                        : _buildInitialState(),
+            if (_fortune == null && !_isLoading && _error == null)
+              FloatingBottomButton(
+                text: '운세 보기',
+                onPressed: () async {
+                  Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button', {
+                    'fortuneType': widget.fortuneType,
+                    'title': widget.title,
+                    'hasUserProfile': _userProfile != null,
+                    'requiresUserInfo': widget.requiresUserInfo,
+                  });
+
+                  await AdService.instance.showInterstitialAdWithCallback(
+                    onAdCompleted: () async {
+                      await generateFortuneAction();
+                    },
+                    onAdFailed: () async {
+                      await generateFortuneAction();
+                    },
+                  );
+                },
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                icon: Icon(Icons.auto_awesome_rounded),
+              ),
           ],
         ),
       ),
@@ -1044,6 +1066,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               ],
             ),
           ),
+          const BottomButtonSpacing(),
         ],
       ),
     );

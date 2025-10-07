@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/avoid_person_analysis.dart';
 
@@ -52,11 +53,13 @@ class AvoidPeopleResultPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             // 전체 위험도 요약
             _buildRiskSummary(input, isDark).animate()
               .fadeIn(duration: 400.ms)
@@ -92,20 +95,21 @@ class AvoidPeopleResultPage extends ConsumerWidget {
               .slideY(begin: 0.1, end: 0),
             
             const SizedBox(height: 24),
-            
-            // 액션 버튼
-            SizedBox(
-              width: double.infinity,
-              child: TossButton(
-                text: '다시 분석하기',
-                onPressed: () => Navigator.pop(context),
-                style: TossButtonStyle.primary,
-              ),
+
+            // 하단 버튼 공간 확보
+            const BottomButtonSpacing(),
+              ],
             ),
-            
-            const SizedBox(height: 40),
-          ],
-        ),
+          ),
+
+          // Floating 버튼
+          FloatingBottomButton(
+            text: '다시 분석하기',
+            onPressed: () => Navigator.pop(context),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+          ),
+        ],
       ),
     );
   }

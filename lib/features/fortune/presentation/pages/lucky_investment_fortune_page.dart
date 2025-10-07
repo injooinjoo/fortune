@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';

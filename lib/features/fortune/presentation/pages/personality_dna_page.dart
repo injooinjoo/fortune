@@ -5,7 +5,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
 import '../../../../shared/components/loading_states.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 /// 성격 DNA 결과 페이지 (토스 디자인 시스템 적용)
@@ -33,10 +32,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
     super.initState();
     _currentDNA = widget.initialDNA;
     
-    // 네비게이션 바 즉시 숨기기
+    // 애니메이션 초기화
     Future.microtask(() {
       if (mounted) {
-        ref.read(navigationVisibilityProvider.notifier).hide();
+        // Navigation bar is automatically hidden by Scaffold structure
       }
     });
     
@@ -70,11 +69,6 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
 
   @override
   void dispose() {
-    // 네비게이션 바 즉시 복원 - dispose 전에 실행
-    if (mounted) {
-      ref.read(navigationVisibilityProvider.notifier).show();
-    }
-
     _animationController.dispose();
     super.dispose();
   }

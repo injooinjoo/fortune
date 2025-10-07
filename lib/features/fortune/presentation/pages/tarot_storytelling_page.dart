@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../widgets/tarot_card_reveal_widget.dart';
 import '../widgets/tarot_interpretation_bubble.dart';
@@ -176,20 +178,16 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
 
     return Scaffold(
       backgroundColor: TossDesignSystem.black,
+      appBar: const StandardFortuneAppBar(
+        title: '타로 리딩',
+      ),
       body: MysticalBackground(
         child: SafeArea(
           child: Column(
-
             children: [
-              AppHeader(
-                title: '타로 리딩',
-                showBackButton: true,
-                backgroundColor: TossDesignSystem.transparent,
-              ),
-              
               // Progress indicator
               _buildProgressIndicator(),
-              
+
               // Main content
               Expanded(
                 child: SingleChildScrollView(

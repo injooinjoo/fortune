@@ -4,8 +4,10 @@ import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 // Adjusted const usage for gradient button
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/api_endpoints.dart';
@@ -115,14 +117,12 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-    body: SafeArea(
+      appBar: const StandardFortuneAppBar(
+        title: '타로 리딩',
+      ),
+      body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: '타로 리딩',
-              showBackButton: true,
-              showActions: true,
-            ),
             Expanded(
               child: Stack(
                 children: [

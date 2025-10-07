@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
@@ -8,7 +9,8 @@ import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../providers/tarot_storytelling_provider.dart';
@@ -170,45 +172,48 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
 
     return Scaffold(
       backgroundColor: TossDesignSystem.black,
+      appBar: StandardFortuneAppBar(
+        title: '타로 리딩 완료',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _shareReading,
+          ),
+        ],
+      ),
       body: MysticalBackground(
         child: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              AppHeader(
-                title: '타로 리딩 완료',
-                showBackButton: true,
-                backgroundColor: TossDesignSystem.transparent,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.share),
-                    onPressed: _shareReading,
-                  ),
-                ],
-              ),
-              
-              Expanded(
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        _buildHeader(fontScale),
-                        const SizedBox(height: 24),
-                        _buildCardSpread(fontScale),
-                        const SizedBox(height: 32),
-                        if (_isLoadingSummary) _buildLoadingIndicator()
-                        else if (_summaryData != null) _buildSummarySection(fontScale),
-                        const SizedBox(height: 24),
-                        // Share section
-                        _buildShareSection(fontScale),
-                        const SizedBox(height: 32),
-                        _buildActionButtons(fontScale),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      _buildHeader(fontScale),
+                      const SizedBox(height: 24),
+                      _buildCardSpread(fontScale),
+                      const SizedBox(height: 32),
+                      if (_isLoadingSummary) _buildLoadingIndicator()
+                      else if (_summaryData != null) _buildSummarySection(fontScale),
+                      const SizedBox(height: 24),
+                      // Share section
+                      _buildShareSection(fontScale),
+                      const SizedBox(height: 32),
+                      const BottomButtonSpacing(),
+                    ],
                   ),
                 ),
+              ),
+              FloatingBottomButton(
+                text: '새로운 리딩 시작하기',
+                onPressed: () {
+                  context.goNamed('interactive-tarot');
+                },
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                icon: Icon(Icons.refresh),
               ),
             ],
           ),

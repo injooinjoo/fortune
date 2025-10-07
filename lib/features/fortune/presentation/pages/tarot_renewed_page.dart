@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'dart:math' as dart_math;
 import 'dart:math';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_loading_button.dart';
@@ -50,12 +50,6 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   @override
   void initState() {
     super.initState();
-    
-    // 네비게이션 바 숨기기
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).hide();
-    });
-    
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -101,10 +95,10 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
   @override
   Widget build(BuildContext context) {
-    // 네비게이션 바 숨기기 - 빌드할 때마다 확인
+    // Navigation bar is automatically hidden by Scaffold structure
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        ref.read(navigationVisibilityProvider.notifier).hide();
+        // No need to hide navigation bar explicitly
       }
     });
     

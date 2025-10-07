@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/ad_service.dart';
@@ -262,173 +263,173 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
         title: '바이오리듬 분석',
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              
-              // 메인 설명 카드
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: TossCard(
-                  style: TossCardStyle.elevated,
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      // 바이오리듬 아이콘
-                      AnimatedBuilder(
-                        animation: _pulseAnimation,
-                        builder: (context, child) => Transform.scale(
-                          scale: _pulseAnimation.value,
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  TossTheme.primaryBlue,
-                                  const Color(0xFF00C896),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: TossTheme.primaryBlue.withOpacity(0.3),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.timeline_rounded,
-                              color: TossDesignSystem.white,
-                              size: 36,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      
-                      Text(
-                        '당신의 생체 리듬을 분석하고\n최적의 타이밍을 찾아드릴게요',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                          height: 1.4,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
-                      
-                      Text(
-                        '신체·감정·지적 리듬의 3가지 주기를 분석해\n오늘의 컨디션과 앞으로의 흐름을 알려드려요',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: TossTheme.textGray600,
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // 생년월일 입력 카드
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: TossCard(
-                  style: TossCardStyle.outlined,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '생년월일',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      GestureDetector(
-                        onTap: _showDatePicker,
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: _selectedDate != null
-                                  ? TossTheme.primaryBlue
-                                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
-                              width: _selectedDate != null ? 2 : 1,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                _selectedDate != null
-                                    ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
-                                    : '생년월일을 선택해주세요',
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  color: _selectedDate != null
-                                      ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
-                                      : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
-                                  fontWeight: _selectedDate != null 
-                                      ? FontWeight.w500 
-                                      : FontWeight.w400,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+
+                    // 메인 설명 카드
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: TossCard(
+                        style: TossCardStyle.elevated,
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            // 바이오리듬 아이콘
+                            AnimatedBuilder(
+                              animation: _pulseAnimation,
+                              builder: (context, child) => Transform.scale(
+                                scale: _pulseAnimation.value,
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        TossTheme.primaryBlue,
+                                        const Color(0xFF00C896),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: TossTheme.primaryBlue.withOpacity(0.3),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.timeline_rounded,
+                                    color: TossDesignSystem.white,
+                                    size: 36,
+                                  ),
                                 ),
                               ),
-                              Icon(
-                                Icons.calendar_today_rounded,
-                                color: _selectedDate != null
-                                    ? TossTheme.primaryBlue
-                                    : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
-                                size: 20,
+                            ),
+                            const SizedBox(height: 24),
+
+                            Text(
+                              '당신의 생체 리듬을 분석하고\n최적의 타이밍을 찾아드릴게요',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                height: 1.4,
                               ),
-                            ],
-                          ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 12),
+
+                            Text(
+                              '신체·감정·지적 리듬의 3가지 주기를 분석해\n오늘의 컨디션과 앞으로의 흐름을 알려드려요',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: TossTheme.textGray600,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // 생년월일 입력 카드
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: TossCard(
+                        style: TossCardStyle.outlined,
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '생년월일',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            GestureDetector(
+                              onTap: _showDatePicker,
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: _selectedDate != null
+                                        ? TossTheme.primaryBlue
+                                        : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
+                                    width: _selectedDate != null ? 2 : 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _selectedDate != null
+                                          ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
+                                          : '생년월일을 선택해주세요',
+                                      style: theme.textTheme.bodyLarge?.copyWith(
+                                        color: _selectedDate != null
+                                            ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
+                                            : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
+                                        fontWeight: _selectedDate != null
+                                            ? FontWeight.w500
+                                            : FontWeight.w400,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.calendar_today_rounded,
+                                      color: _selectedDate != null
+                                          ? TossTheme.primaryBlue
+                                          : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // 안내 문구
+                    Text(
+                      '분석 결과는 참고용으로만 활용해 주세요',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const BottomButtonSpacing(),
+                  ],
                 ),
               ),
-              
-              const Spacer(),
-              
-              // 분석 시작 버튼
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: TossButton(
-                  text: '바이오리듬 분석하기',
-                  onPressed: _selectedDate != null ? _analyzeBiorhythm : null,
-                  style: TossButtonStyle.primary,
-                  size: TossButtonSize.large,
-                  width: double.infinity,
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // 안내 문구
-              Text(
-                '분석 결과는 참고용으로만 활용해 주세요',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+            ),
+            FloatingBottomButton(
+              text: '바이오리듬 분석하기',
+              onPressed: _selectedDate != null ? _analyzeBiorhythm : null,
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+            ),
+          ],
         ),
       ),
     );

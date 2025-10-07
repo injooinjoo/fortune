@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
 import '../../domain/models/avoid_person_analysis.dart';
@@ -105,22 +106,36 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
       appBar: const StandardFortuneAppBar(
         title: '피해야 할 사람',
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Progress Indicator
-          _buildProgressIndicator(isDark),
-          
-          // Page Content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildStep1(isDark),
-                _buildStep2(isDark),
-                _buildStep3(isDark),
-              ],
-            ),
+          Column(
+            children: [
+              // Progress Indicator
+              _buildProgressIndicator(isDark),
+
+              // Page Content
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildStep1(isDark),
+                    _buildStep2(isDark),
+                    _buildStep3(isDark),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          // Floating 버튼
+          FloatingBottomButton(
+            text: _currentStep == 2 ? '분석 결과 보기' : '다음',
+            onPressed: _currentStep == 0
+                ? (_environment.isNotEmpty && _importantSchedule.isNotEmpty ? _nextStep : null)
+                : (_currentStep == 1 ? _nextStep : _analyzeAndShowResult),
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ],
       ),
@@ -255,17 +270,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           ),
           
           const SizedBox(height: 40),
-          
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '다음',
-              onPressed: _environment.isNotEmpty && _importantSchedule.isNotEmpty
-                  ? _nextStep
-                  : null,
-              style: TossButtonStyle.primary,
-            ),
-          ),
+
+          // 하단 버튼 공간 확보
+          const BottomButtonSpacing(),
         ],
       ),
     );
@@ -347,15 +354,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           ),
           
           const SizedBox(height: 40),
-          
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '다음',
-              onPressed: _nextStep,
-              style: TossButtonStyle.primary,
-            ),
-          ),
+
+          // 하단 버튼 공간 확보
+          const BottomButtonSpacing(),
         ],
       ),
     );
@@ -437,18 +438,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           ),
           
           const SizedBox(height: 40),
-          
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '분석 결과 보기',
-              onPressed: _analyzeAndShowResult,
-              style: TossButtonStyle.primary,
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
+
           Text(
             '분석 결과는 참고용으로만 활용해주세요',
             style: TossDesignSystem.caption.copyWith(
@@ -456,6 +446,11 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             ),
             textAlign: TextAlign.center,
           ),
+
+          const SizedBox(height: 16),
+
+          // 하단 버튼 공간 확보
+          const BottomButtonSpacing(),
         ],
       ),
     );

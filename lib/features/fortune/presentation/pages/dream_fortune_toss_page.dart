@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class DreamFortuneTossPage extends ConsumerStatefulWidget {
@@ -28,12 +28,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
   @override
   void initState() {
     super.initState();
-    
-    // 네비게이션 바 숨기기
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).hide();
-    });
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -83,10 +78,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
   
   void _onStartInterpretation() {
     if (_dreamController.text.trim().isEmpty) return;
-    
-    // 네비게이션 바 복원
-    ref.read(navigationVisibilityProvider.notifier).show();
-    
+
     // 꿈해몽 채팅 페이지로 이동하며 꿈 내용 전달
     context.push(
       '/interactive/dream-interpretation-chat',
@@ -101,12 +93,9 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
-      appBar: AppHeader(
+      appBar: StandardFortuneAppBar(
         title: '꿈 해몽',
-        showBackButton: true,
-        centerTitle: true,
         onBackPressed: () {
-          ref.read(navigationVisibilityProvider.notifier).show();
           context.pop();
         },
       ),

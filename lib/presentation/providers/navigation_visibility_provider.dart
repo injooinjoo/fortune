@@ -23,16 +23,10 @@ class NavigationVisibilityNotifier extends StateNotifier<NavigationVisibilitySta
   NavigationVisibilityNotifier() : super(const NavigationVisibilityState());
 
   void show() {
-    if (!state.isVisible && !state.isAnimating) {
-      state = state.copyWith(isAnimating: true);
-      // Add a small delay before showing to ensure smooth transition
-      Future.delayed(const Duration(milliseconds: 50), () {
-        state = state.copyWith(isVisible: true);
-        // Reset animating state after animation completes
-        Future.delayed(const Duration(milliseconds: 300), () {
-          state = state.copyWith(isAnimating: false);
-        });
-      });
+    // Always update to visible state, even if already visible
+    // This ensures navigation bar shows when needed
+    if (!state.isVisible) {
+      state = state.copyWith(isVisible: true, isAnimating: false);
     }
   }
 

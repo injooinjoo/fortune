@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_table_toss.dart';
@@ -44,9 +44,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     // 애니메이션 즉시 시작 - 오행 차트 표시를 위해
     _resultAnimationController.forward();
 
-    // 네비게이션 바 숨기기
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).hide();
       // 바로 사주 데이터 로드
       ref.read(sajuProvider.notifier).fetchUserSaju();
     });
@@ -71,8 +69,6 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       appBar: StandardFortuneAppBar(
         title: '전통 사주팔자',
         onBackPressed: () {
-          // 네비게이션 바 다시 보이기
-          ref.read(navigationVisibilityProvider.notifier).show();
           Navigator.pop(context);
         },
       ),
@@ -144,64 +140,66 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     if (_showResults) {
       return _buildResultScreen(sajuData);
     }
-    
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
-      child: Column(
-        children: [
-          // 기본 사주 정보만 표시
-          _buildBasicSajuInfo(sajuData),
-          const SizedBox(height: TossTheme.spacingL),
-          
-          // 질문 선택 섹션
-          _buildQuestionSelectionSection(),
-          const SizedBox(height: TossTheme.spacingL),
-          
-          // 운세보기 버튼
-          _buildFortuneButton(),
-          const SizedBox(height: TossTheme.spacingXXL),
-        ],
-      ),
+
+    final hasQuestion = _selectedQuestion != null && _selectedQuestion!.isNotEmpty;
+
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(TossTheme.spacingM),
+          child: Column(
+            children: [
+              // 기본 사주 정보만 표시
+              _buildBasicSajuInfo(sajuData),
+              const SizedBox(height: TossTheme.spacingL),
+
+              // 질문 선택 섹션
+              _buildQuestionSelectionSection(),
+              const SizedBox(height: TossTheme.spacingL),
+
+              const BottomButtonSpacing(),
+            ],
+          ),
+        ),
+        FloatingBottomButton(
+          text: _isFortuneLoading ? '운세를 보고 있어요...' : '📿 하늘이 정한 나의 운명',
+          onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+        ),
+      ],
     );
   }
 
   Widget _buildResultScreen(Map<String, dynamic> sajuData) {
     _resultAnimationController.forward();
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
-      child: Column(
-        children: [
-          // 운세 결과
-          _buildFortuneResult(sajuData),
-          const SizedBox(height: TossTheme.spacingL),
-          
-          // 다시 보기 버튼
-          TossButton(
-            text: '다른 운세 보기',
-            onPressed: () {
-              setState(() {
-                _showResults = false;
-                _selectedQuestion = null;
-                _customQuestionController.clear();
-              });
-            },
-            style: TossButtonStyle.primary,
-            width: double.infinity,
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(TossTheme.spacingM),
+          child: Column(
+            children: [
+              // 운세 결과
+              _buildFortuneResult(sajuData),
+              const SizedBox(height: TossTheme.spacingL),
+
+              const BottomButtonSpacing(),
+            ],
           ),
-          const SizedBox(height: TossTheme.spacingL),
-          
-          // 공유 버튼
-          TossButton(
-            text: '결과 공유하기',
-            onPressed: () {
-              // TODO: 공유 기능 구현
-            },
-            style: TossButtonStyle.secondary,
-            width: double.infinity,
-          ),
-          const SizedBox(height: TossTheme.spacingXXL),
-        ],
-      ),
+        ),
+        FloatingBottomButton(
+          text: '다른 운세 보기',
+          onPressed: () {
+            setState(() {
+              _showResults = false;
+              _selectedQuestion = null;
+              _customQuestionController.clear();
+            });
+          },
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+        ),
+      ],
     );
   }
   
@@ -507,20 +505,6 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     );
   }
 
-  Widget _buildFortuneButton() {
-    final hasQuestion = _selectedQuestion != null && _selectedQuestion!.isNotEmpty;
-    
-    return Container(
-      width: double.infinity,
-      height: 60,
-      child: TossButton(
-        text: _isFortuneLoading ? '운세를 보고 있어요...' : '📿 하늘이 정한 나의 운명',
-        onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
-        style: TossButtonStyle.primary,
-        isLoading: _isFortuneLoading,
-      ),
-    );
-  }
 
   Future<void> _onFortuneButtonPressed() async {
     setState(() {

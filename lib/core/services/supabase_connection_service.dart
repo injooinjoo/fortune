@@ -139,8 +139,9 @@ class SupabaseConnectionService extends ResilientService {
       Future.delayed(timeout, () => throw TimeoutException('연결 타임아웃', timeout)),
     ]);
 
-    // 연결 검증
-    await _verifyConnection();
+    // 연결 검증 - celebrities 테이블이 없거나 RLS로 차단되면 실패하므로 주석 처리
+    // OAuth는 테이블 접근 없이도 동작함
+    // await _verifyConnection();
   }
 
   /// 연결 상태 검증

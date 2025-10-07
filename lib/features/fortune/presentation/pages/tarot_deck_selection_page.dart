@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../widgets/mystical_background.dart';
@@ -93,17 +94,15 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
 
     return Scaffold(
       backgroundColor: TossDesignSystem.gray900,
+      appBar: const StandardFortuneAppBar(
+        title: '타로 덱 선택',
+      ),
       body: MysticalBackground(
         child: SafeArea(
           child: Stack(
             children: [
               Column(
                 children: [
-                  AppHeader(
-                    title: '타로 덱 선택',
-                    showBackButton: true,
-                    backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-                  ),
                   Expanded(
                     child: FadeTransition(
                       opacity: _fadeAnimation,

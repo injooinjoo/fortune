@@ -5,12 +5,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import '../widgets/divine_loading_animation.dart';
 import './wish_fortune_result_tinder.dart';
-import '../../../../shared/components/app_header.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 소원 카테고리 정의
@@ -86,9 +86,8 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
       curve: Curves.easeOutCubic,
     ));
 
-    // 페이지 로드시 네비게이션 숨기기 및 광고 미리 로드
+    // 페이지 로드시 광고 미리 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).hide();
       _checkForAutoGeneration();
 
       // 광고 미리 로드하여 버튼 클릭 시 바로 표시되도록 함
@@ -283,12 +282,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   Widget _buildInputView() {
     return Scaffold(
       backgroundColor: TossDesignSystem.backgroundPrimary,
-      appBar: AppHeader(
+      appBar: StandardFortuneAppBar(
         title: '소원 빌기',
-        showBackButton: true,
-        centerTitle: true,
         onBackPressed: () {
-          ref.read(navigationVisibilityProvider.notifier).show();
           context.pop();
         },
         actions: [
@@ -298,44 +294,46 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: TossTheme.spacingXL),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: TossTheme.spacingXL),
 
-            // 메인 헤더
-            _buildMainHeader(),
+                // 메인 헤더
+                _buildMainHeader(),
 
-            const SizedBox(height: TossTheme.spacingXL),
+                const SizedBox(height: TossTheme.spacingXL),
 
-            // 카테고리 선택
-            _buildCategorySelection(),
+                // 카테고리 선택
+                _buildCategorySelection(),
 
-            const SizedBox(height: TossTheme.spacingXL),
+                const SizedBox(height: TossTheme.spacingXL),
 
-            // 소원 입력
-            _buildWishInput(),
+                // 소원 입력
+                _buildWishInput(),
 
-            const SizedBox(height: TossTheme.spacingXL),
+                const SizedBox(height: TossTheme.spacingXL),
 
-            // 긴급도 설정
-            _buildUrgencyLevel(),
+                // 긴급도 설정
+                _buildUrgencyLevel(),
 
-            const SizedBox(height: TossTheme.spacingXL),
+                const SizedBox(height: TossTheme.spacingXL),
 
-            // 제출 버튼
-            TossButton(
-              text: '소원 빌기',
-              onPressed: _canSubmit() ? _submitWish : null,
-              size: TossButtonSize.large,
-              width: double.infinity,
+                const BottomButtonSpacing(),
+              ],
             ),
-
-            const SizedBox(height: TossTheme.spacingXXL),
-          ],
-        ),
+          ),
+          FloatingBottomButton(
+            text: '소원 빌기',
+            onPressed: _canSubmit() ? _submitWish : null,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+          ),
+        ],
       ),
     );
   }

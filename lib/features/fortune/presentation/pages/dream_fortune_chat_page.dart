@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../shared/components/app_header.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../core/theme/toss_theme.dart';
@@ -38,9 +37,6 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
     
     // Start the chat
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Hide navigation bar
-      ref.read(navigationVisibilityProvider.notifier).hide();
-      
       ref.read(dreamChatProvider.notifier).startChat();
       
       // Check if we should auto-generate (coming from ad screen),
@@ -118,20 +114,15 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
     
     return Scaffold(
       backgroundColor: TossTheme.backgroundWhite,
+      appBar: StandardFortuneAppBar(
+        title: '꿈 해몽',
+        onBackPressed: () {
+          _showExitConfirmDialog();
+        },
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            AppHeader(
-              title: '꿈 해몽',
-              showBackButton: true,
-              centerTitle: true,
-              onBackPressed: () {
-                // Show navigation bar when going back
-                ref.read(navigationVisibilityProvider.notifier).show();
-                _showExitConfirmDialog();
-              },
-            ),
             
             // Chat messages
             Expanded(
@@ -252,10 +243,6 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
               Navigator.of(context).pop();
               // Then pop the page and reset state
               Navigator.of(context).pop();
-              // Show navigation bar after navigation is complete
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ref.read(navigationVisibilityProvider.notifier).show();
-              });
               // Reset the chat state
               ref.read(dreamChatProvider.notifier).resetChat();
             },
