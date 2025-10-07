@@ -1186,8 +1186,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       );
     }
     
-    // 스토리 뷰어 또는 기본 화면
-    if (storySegments != null && storySegments!.isNotEmpty) {
+    // 기본: Tinder 페이지 표시
+    // 예외: 새로운 스토리가 있고 아직 보지 않은 경우에만 스토리 뷰어
+    if (storySegments != null && storySegments!.isNotEmpty && !_hasViewedStoryToday) {
+      debugPrint('🎬 New story available - showing FortuneStoryViewer');
       return FortuneStoryViewer(
         segments: storySegments!,
         userName: userProfile?.name,
@@ -1200,28 +1202,17 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           _showCompletionPage();
         },
       );
-    } else {
-      // 운세 데이터가 없는 경우 기본 완료 화면 표시
-      // 네비게이션 바 표시
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(navigationVisibilityProvider.notifier).show();
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => FortuneCompletionPageTinder(
-                fortune: todaysFortune,
-                userName: userProfile?.name,
-                userProfile: userProfile,
-                overall: overallData,
-                categories: categoriesData,
-                sajuInsight: sajuInsightData,
-              ),
-            ),
-          );
-        }
-      });
-
-      return const Center(child: CircularProgressIndicator());
     }
+
+    // 기본 화면: Tinder 완료 페이지
+    debugPrint('🎯 Showing default FortuneCompletionPageTinder');
+    return FortuneCompletionPageTinder(
+      fortune: todaysFortune,
+      userName: userProfile?.name,
+      userProfile: userProfile,
+      overall: overallData,
+      categories: categoriesData,
+      sajuInsight: sajuInsightData,
+    );
   }
 }
