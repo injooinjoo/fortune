@@ -1245,12 +1245,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // 기본 화면: Tinder 완료 페이지
     debugPrint('🎯 Showing default FortuneCompletionPageTinder');
 
-    // 네비게이션 바 표시 보장
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(navigationVisibilityProvider.notifier).show();
-      }
-    });
+    // 네비게이션 바 즉시 표시 (build 전에)
+    // FortuneStoryViewer가 hide()를 호출했을 수 있으므로 명시적으로 show() 필요
+    final navNotifier = ref.read(navigationVisibilityProvider.notifier);
+    if (!ref.read(navigationVisibilityProvider).isVisible) {
+      debugPrint('⚠️ Navigation bar was hidden, showing it now');
+      navNotifier.show();
+    }
 
     return FortuneCompletionPageTinder(
       fortune: todaysFortune,
