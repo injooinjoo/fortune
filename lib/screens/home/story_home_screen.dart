@@ -49,12 +49,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Map<String, dynamic>? notificationData;
   Map<String, dynamic>? shareCardData;
   
-  bool isLoadingFortune = true;
+  bool isLoadingFortune = true; // 초기값은 true이지만 initState에서 캐시 확인 후 조정
   bool _isLoadingProfile = false; // Prevent duplicate loading
   bool _hasViewedStoryToday = false; // 오늘 스토리를 이미 봤는지 확인
   bool _isReallyLoggedIn = false; // 실제 로그인 여부 (익명 아닌)
   bool _showPreviewScreen = false; // 프리뷰 화면 표시 여부
   bool _isInitializing = false; // 초기화 중복 방지
+  bool _hasCachedData = false; // 캐시 데이터 존재 여부
   
   // Pull-to-refresh를 위한 새로고침 함수 (하루 1회 제한)
   Future<void> _refreshFortuneData() async {
@@ -106,6 +107,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     super.initState();
     _checkIfAlreadyViewed();
     _checkRealLoginStatus(); // 초기 로그인 상태 확인
+    _quickCacheCheck(); // 캐시 빠른 확인으로 로딩 상태 결정
     _initializeDataWithCacheCheck();
 
     // 인증 상태 변화 리스너 추가
@@ -144,6 +146,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     });
   }
   
+  // 캐시 빠른 확인 (동기적으로 실행되어 첫 build 전에 완료)
+  Future<void> _quickCacheCheck() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) {
+        final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
+        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+
+        // 캐시가 완전하면 로딩 없이 바로 시작
+        if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+          debugPrint('⚡ Quick cache check: Found cached data, skipping loading screen');
+          if (mounted) {
+            setState(() {
+              isLoadingFortune = false;
+              _hasCachedData = true;
+              todaysFortune = cachedFortuneData.toEntity();
+              storySegments = cachedStorySegments;
+              _hasViewedStoryToday = true; // 캐시가 있으면 이미 본 것으로 간주
+            });
+          }
+        } else {
+          debugPrint('⚡ Quick cache check: No cache, will show loading screen');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Quick cache check failed: $e');
+    }
+  }
+
   // 오늘 이미 스토리를 봤는지 확인
   Future<void> _checkIfAlreadyViewed() async {
     try {
@@ -209,6 +240,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _initializeDataWithCacheCheck() async {
     if (_isInitializing) {
       debugPrint('⚠️ Already initializing, skipping duplicate call');
+      return;
+    }
+
+    // Quick cache check에서 이미 로드했으면 스킵
+    if (_hasCachedData && todaysFortune != null && storySegments != null) {
+      debugPrint('✅ Data already loaded by quick cache check, loading user profile only');
+      await _loadUserProfile();
       return;
     }
 
@@ -1206,6 +1244,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     // 기본 화면: Tinder 완료 페이지
     debugPrint('🎯 Showing default FortuneCompletionPageTinder');
+
+    // 네비게이션 바 표시 보장
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(navigationVisibilityProvider.notifier).show();
+      }
+    });
+
     return FortuneCompletionPageTinder(
       fortune: todaysFortune,
       userName: userProfile?.name,
