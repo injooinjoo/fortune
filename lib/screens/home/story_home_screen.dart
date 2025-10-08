@@ -145,6 +145,55 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
     });
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // 화면 재진입 시 todaysFortune이 null이면 캐시에서 복원
+    if (todaysFortune == null && !isLoadingFortune && !_isInitializing) {
+      debugPrint('🔄 [StoryHomeScreen] Screen re-entered with null fortune - attempting cache restore');
+      _restoreFortuneFromCache();
+    } else {
+      debugPrint('✅ [StoryHomeScreen] Screen re-entered - fortune exists: ${todaysFortune != null}');
+    }
+  }
+
+  /// 화면 재진입 시 캐시에서 운세 데이터 복원
+  Future<void> _restoreFortuneFromCache() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        debugPrint('⚠️ [Cache Restore] No user ID - skipping restore');
+        return;
+      }
+
+      debugPrint('🔍 [Cache Restore] Checking cache for user: $userId');
+
+      final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
+      final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+
+      if (cachedFortuneData != null) {
+        final cachedFortune = cachedFortuneData.toEntity();
+
+        debugPrint('✅ [Cache Restore] Found cached fortune - score: ${cachedFortune.overallScore}');
+
+        setState(() {
+          todaysFortune = cachedFortune;
+          if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+            storySegments = cachedStorySegments;
+            debugPrint('✅ [Cache Restore] Restored ${cachedStorySegments.length} story segments');
+          }
+          isLoadingFortune = false;
+          _hasViewedStoryToday = true; // 캐시가 있으면 이미 본 것으로 간주
+        });
+      } else {
+        debugPrint('⚠️ [Cache Restore] No cached fortune found');
+      }
+    } catch (e) {
+      debugPrint('❌ [Cache Restore] Error: $e');
+    }
+  }
   
   // 캐시 빠른 확인 (동기적으로 실행되어 첫 build 전에 완료)
   Future<void> _quickCacheCheck() async {

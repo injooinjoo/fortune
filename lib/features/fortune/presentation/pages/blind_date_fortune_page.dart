@@ -452,6 +452,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   @override
   Widget buildInputForm() {
+    final theme = Theme.of(context);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
         left: 20,
@@ -477,26 +479,27 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             _buildChatAnalysisSection(),
             const SizedBox(height: 16),
           ],
-        // Meeting Details
-        GlassCard(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              Row(
+
+          // Meeting Details
+          GlassCard(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.calendar_month,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '만남 정보',
-                    style: theme.textTheme.headlineSmall
-                  )
-                ]
-              ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_month,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '만남 정보',
+                      style: theme.textTheme.headlineSmall
+                    )
+                  ]
+                ),
               const SizedBox(height: 16),
               // Meeting Date
               InkWell(
@@ -630,13 +633,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   );
                 }).toList(),
               ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-        const SizedBox(height: 16),
-        // Preferences
-        GlassCard(
+          ),
+          const SizedBox(height: 16),
+
+          // Preferences
+          GlassCard(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -921,7 +925,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ),
         ),
       ),
-      ],
+        ],
+      ),
     );
   }
 

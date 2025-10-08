@@ -4,7 +4,7 @@ import '../../../features/fortune/presentation/pages/traditional_saju_fortune_pa
 import '../../../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
 import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/saju_psychology_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/saju_psychology_fortune_page.dart'; // File removed
 import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart';
 import '../../../features/fortune/presentation/pages/face_reading_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_renewed_page.dart';
@@ -38,11 +38,11 @@ final traditionalFortuneRoutes = [
     name: 'fortune-salpuli',
     builder: (context, state) => const SalpuliFortunePage()),
   
-  // Saju Psychology
-  GoRoute(
-    path: '/saju-psychology',
-    name: 'fortune-saju-psychology',
-    builder: (context, state) => const SajuPsychologyFortunePage()),
+  // Saju Psychology - Page removed
+  // GoRoute(
+  //   path: '/saju-psychology',
+  //   name: 'fortune-saju-psychology',
+  //   builder: (context, state) => const SajuPsychologyFortunePage()),
   
   // Face Reading
   GoRoute(
