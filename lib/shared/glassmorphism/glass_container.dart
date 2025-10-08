@@ -1,184 +1,76 @@
-import 'dart:ui';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme_extensions.dart';
-import '../../core/utils/theme_utils.dart';
+import '../../core/theme/toss_design_system.dart';
 
-class GlassContainer extends StatelessWidget {
-  final Widget child;
-  final double? width;
-  final double? height;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final BorderRadiusGeometry? borderRadius;
-  final double blur;
-  final Color? borderColor;
-  final double borderWidth;
-  final Border? border;
-  final Gradient? gradient;
-  final List<BoxShadow>? boxShadow;
-  final AlignmentGeometry? alignment;
-
-  const GlassContainer({
-    Key? key,
-    required this.child,
-    this.width,
-    this.height,
-    this.padding,
-    this.margin,
-    this.borderRadius,
-    this.blur = 10,
-    this.borderColor,
-    this.borderWidth = 1.5,
-    this.border,
-    this.gradient,
-    this.boxShadow,
-    this.alignment}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
-    final glassColors = ThemeUtils.getGlassColors(context);
-    final isDark = ThemeUtils.isDarkMode(context);
-
-    final defaultGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: isDark
-          ? [
-              glassColors.background,
-              glassColors.background.withValues(alpha: 0.5)]
-          : [
-              TossDesignSystem.grayDark900.withValues(alpha: 0.6),
-              TossDesignSystem.grayDark900.withValues(alpha: 0.3)]
-    );
-
-    final defaultBorderColor = borderColor ?? glassColors.border;
-
-    final defaultShadow = [
-      BoxShadow(
-        color: fortuneTheme.shadowColor.withValues(alpha: 0.15),
-        blurRadius: 20,
-        offset: const Offset(0, 10))];
-
-    return Container(
-      width: width,
-      height: height,
-      margin: margin,
-      alignment: alignment,
-      child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusXL),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: gradient ?? defaultGradient,
-              borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusXL),
-              border: border ?? Border.all(
-                color: borderColor ?? defaultBorderColor,
-                width: borderWidth),
-              boxShadow: boxShadow ?? defaultShadow),
-            padding: padding,
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class GlassButton extends StatelessWidget {
-  final VoidCallback? onPressed;
-  final Widget child;
-  final double? width;
-  final double? height;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadiusGeometry? borderRadius;
-  final double blur;
-  final Color? splashColor;
-  final Gradient? gradient;
-  final Border? border;
-
-  const GlassButton({
-    Key? key,
-    required this.onPressed,
-    required this.child,
-    this.width,
-    this.height,
-    this.padding,
-    this.borderRadius,
-    this.blur = 10,
-    this.splashColor,
-    this.gradient,
-    this.border}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: borderRadius as BorderRadius? ?? BorderRadius.circular(TossDesignSystem.radiusL),
-        splashColor: splashColor ?? Theme.of(context).primaryColor.withValues(alpha: 0.2),
-        child: GlassContainer(
-          width: width,
-          height: height,
-          padding: padding ?? const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXL, vertical: TossDesignSystem.spacingXS),
-          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),
-          blur: blur,
-          gradient: gradient,
-          border: border,
-          child: child)));
-  }
-}
-
+/// Toss-style Card Container (replacing GlassCard)
 class GlassCard extends StatelessWidget {
   final Widget child;
+  final EdgeInsets? padding;
   final double? width;
   final double? height;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final VoidCallback? onTap;
-  final double elevation;
-  final Gradient? gradient;
 
   const GlassCard({
     Key? key,
     required this.child,
+    this.padding,
     this.width,
     this.height,
-    this.padding,
-    this.margin,
-    this.onTap,
-    this.elevation = 8,
-    this.gradient}) : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final card = GlassContainer(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: padding ?? const EdgeInsets.all(20),
       width: width,
       height: height,
-      padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingL),
-      margin: margin,
-      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-      blur: 20,
-      gradient: gradient,
-      boxShadow: [
-        BoxShadow(
-          color: TossDesignSystem.gray900.withValues(alpha: 0.1),
-          blurRadius: elevation * 2,
-          offset: Offset(0, elevation))],
-      child: child);
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+          width: 1,
+        ),
+      ),
+      child: child,
+    );
+  }
+}
 
-    if (onTap != null) {
-      return Material(
-        color: TossDesignSystem.white.withValues(alpha: 0.0),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-          child: card));
-    }
+/// Toss-style Container (replacing GlassContainer)
+class GlassContainer extends StatelessWidget {
+  final Widget child;
+  final EdgeInsets? padding;
+  final BorderRadius? borderRadius;
+  final double? blur;
+  final Color? borderColor;
+  final double? borderWidth;
 
-    return card;
+  const GlassContainer({
+    Key? key,
+    required this.child,
+    this.padding,
+    this.borderRadius,
+    this.blur,
+    this.borderColor,
+    this.borderWidth,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+        borderRadius: borderRadius ?? BorderRadius.circular(12),
+        border: Border.all(
+          color: borderColor ?? (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200),
+          width: borderWidth ?? 1,
+        ),
+      ),
+      child: child,
+    );
   }
 }

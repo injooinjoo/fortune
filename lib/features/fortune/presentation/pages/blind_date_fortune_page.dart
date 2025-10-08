@@ -208,9 +208,19 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   }
 
   Widget _buildErrorState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
-      child: GlassCard(
+      child: Container(
         padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+            width: 1,
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -270,11 +280,19 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   Widget buildUserInfoForm() {
     final theme = Theme.of(context);
-    
-    return GlassCard(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+          width: 1,
+        ),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -382,8 +400,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ),
         ],
       ),
-    ),
-  );
+    );
   }
 
   @override
@@ -453,6 +470,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   @override
   Widget buildInputForm() {
     final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
@@ -481,25 +499,32 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ],
 
           // Meeting Details
-          GlassCard(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              Row(
                 children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_month,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '만남 정보',
-                      style: theme.textTheme.headlineSmall
-                    )
-                  ]
-                ),
+                  Icon(
+                    Icons.calendar_month,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '만남 정보',
+                    style: theme.textTheme.headlineSmall
+                  )
+                ]
+              ),
               const SizedBox(height: 16),
               // Meeting Date
               InkWell(
@@ -633,16 +658,22 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   );
                 }).toList(),
               ),
-              ],
-            ),
+            ],
           ),
           ),
           const SizedBox(height: 16),
 
           // Preferences
-          GlassCard(
-          child: Padding(
+          Container(
             padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+                width: 1,
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -786,11 +817,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               ),
             ],
           ),
-        ),
-      ),
-      const SizedBox(height: 16),
-      // Self Assessment
-      GlassCard(
+          ),
+          const SizedBox(height: 16),
+
+          // Self Assessment
+          GlassCard(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
