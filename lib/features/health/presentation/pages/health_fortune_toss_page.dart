@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/body_part_selector.dart';
 import '../widgets/body_part_grid_selector.dart';
 import '../widgets/health_score_card.dart';
@@ -12,17 +13,31 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../presentation/providers/providers.dart';
 
-class HealthFortuneTossPage extends StatefulWidget {
+class HealthFortuneTossPage extends ConsumerStatefulWidget {
   const HealthFortuneTossPage({super.key});
 
   @override
-  State<HealthFortuneTossPage> createState() => _HealthFortuneTossPageState();
+  ConsumerState<HealthFortuneTossPage> createState() => _HealthFortuneTossPageState();
 }
 
-class _HealthFortuneTossPageState extends State<HealthFortuneTossPage> {
+class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
   final PageController _pageController = PageController();
   final HealthFortuneService _healthService = HealthFortuneService();
+
+  @override
+  void initState() {
+    super.initState();
+    // API 서비스 주입 (didChangeDependencies에서 처리)
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // API 서비스 주입
+    _healthService.setApiService(ref.read(fortuneServiceProvider));
+  }
   
   int _currentStep = 1; // Start from condition selection
   bool _isLoading = false;

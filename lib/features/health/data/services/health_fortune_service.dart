@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../data/services/fortune_api_service.dart';
+import '../../../../domain/entities/fortune.dart';
 
 class HealthFortuneService {
   static final HealthFortuneService _instance = HealthFortuneService._internal();
@@ -8,6 +10,11 @@ class HealthFortuneService {
   HealthFortuneService._internal();
 
   final Random _random = Random();
+  FortuneApiService? _apiService;
+
+  void setApiService(FortuneApiService apiService) {
+    _apiService = apiService;
+  }
 
   /// 건강운세 생성
   Future<HealthFortuneResult> generateHealthFortune(
@@ -16,7 +23,21 @@ class HealthFortuneService {
     try {
       Logger.info('Generating health fortune for user: ${input.userId}');
 
-      // 실제로는 AI API 호출이나 복잡한 로직
+      // AI API 호출로 실제 운세 생성
+      if (_apiService != null) {
+        final fortune = await _apiService!.getFortune(
+          userId: input.userId,
+          fortuneType: 'health',
+          params: {
+            'currentCondition': input.currentCondition?.name,
+            'concernedBodyParts': input.concernedBodyParts?.map((p) => p.name).toList() ?? [],
+          },
+        );
+
+        return _convertFortuneToHealthResult(fortune, input);
+      }
+
+      // Fallback: 기존 하드코딩 로직 (API 서비스가 없을 때만)
       await Future.delayed(const Duration(seconds: 2));
 
       // 기본 점수 계산 (현재 컨디션 기반)
@@ -341,5 +362,159 @@ class HealthFortuneService {
   String _generateId() {
     return DateTime.now().millisecondsSinceEpoch.toString() +
         _random.nextInt(1000).toString();
+  }
+
+  /// Fortune 객체를 HealthFortuneResult로 변환
+  HealthFortuneResult _convertFortuneToHealthResult(
+    Fortune fortune,
+    HealthFortuneInput input,
+  ) {
+    // API 응답에서 신체 부위별 정보 파싱
+    final bodyPartHealthList = _parseBodyPartHealthFromFortune(fortune);
+
+    return HealthFortuneResult(
+      id: fortune.id,
+      userId: input.userId,
+      createdAt: DateTime.now(),
+      overallScore: fortune.overallScore ?? 75,
+      mainMessage: fortune.description ?? fortune.content,
+      bodyPartHealthList: bodyPartHealthList,
+      recommendations: _parseRecommendations(fortune),
+      avoidanceList: _parseAvoidanceList(fortune),
+      timeline: _parseTimeline(fortune),
+      tomorrowPreview: _parseTomorrowPreview(fortune),
+      additionalInfo: fortune.additionalInfo ?? {},
+    );
+  }
+
+  List<BodyPartHealth> _parseBodyPartHealthFromFortune(Fortune fortune) {
+    // API 응답의 additionalInfo에서 신체 부위 정보 파싱
+    if (fortune.additionalInfo != null && fortune.additionalInfo!['bodyParts'] != null) {
+      final bodyPartsData = fortune.additionalInfo!['bodyParts'] as List;
+      return bodyPartsData.map((data) {
+        final partName = data['bodyPart'] as String;
+        final bodyPart = BodyPart.values.firstWhere(
+          (p) => p.name == partName,
+          orElse: () => BodyPart.whole,
+        );
+
+        return BodyPartHealth(
+          bodyPart: bodyPart,
+          score: data['score'] as int? ?? 75,
+          level: _parseHealthLevel(data['level'] as String?),
+          description: data['description'] as String? ?? '',
+          specificTips: (data['tips'] as List?)?.cast<String>() ?? [],
+        );
+      }).toList();
+    }
+
+    // 기본값: 전체 신체 상태만 반환
+    return [
+      BodyPartHealth(
+        bodyPart: BodyPart.whole,
+        score: fortune.overallScore ?? 75,
+        level: _getHealthLevel(fortune.overallScore ?? 75),
+        description: fortune.description ?? '',
+        specificTips: fortune.recommendations ?? [],
+      ),
+    ];
+  }
+
+  HealthLevel _parseHealthLevel(String? levelStr) {
+    switch (levelStr) {
+      case 'excellent':
+        return HealthLevel.excellent;
+      case 'good':
+        return HealthLevel.good;
+      case 'caution':
+        return HealthLevel.caution;
+      case 'warning':
+        return HealthLevel.warning;
+      default:
+        return HealthLevel.good;
+    }
+  }
+
+  List<HealthRecommendation> _parseRecommendations(Fortune fortune) {
+    if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) {
+      return fortune.recommendations!.asMap().entries.map((entry) {
+        return HealthRecommendation(
+          type: HealthRecommendationType.lifestyle,
+          title: '건강 관리 ${entry.key + 1}',
+          description: entry.value,
+          priority: entry.key + 1,
+        );
+      }).toList();
+    }
+    return [];
+  }
+
+  List<String> _parseAvoidanceList(Fortune fortune) {
+    if (fortune.additionalInfo != null && fortune.additionalInfo!['avoidanceList'] != null) {
+      return (fortune.additionalInfo!['avoidanceList'] as List).cast<String>();
+    }
+    return [];
+  }
+
+  HealthTimeline _parseTimeline(Fortune fortune) {
+    // additionalInfo에서 시간대별 정보 파싱
+    if (fortune.additionalInfo != null && fortune.additionalInfo!['timeline'] != null) {
+      final timelineData = fortune.additionalInfo!['timeline'] as Map<String, dynamic>;
+
+      return HealthTimeline(
+        morning: _parseTimeSlot(timelineData['morning'] as Map<String, dynamic>?, '오전'),
+        afternoon: _parseTimeSlot(timelineData['afternoon'] as Map<String, dynamic>?, '오후'),
+        evening: _parseTimeSlot(timelineData['evening'] as Map<String, dynamic>?, '저녁'),
+        bestTimeActivity: timelineData['bestTimeActivity'] as String?,
+      );
+    }
+
+    // 기본값: 전체적으로 좋은 컨디션
+    final defaultScore = fortune.overallScore ?? 75;
+    return HealthTimeline(
+      morning: HealthTimeSlot(
+        timeLabel: '오전',
+        conditionScore: defaultScore,
+        description: '전반적으로 양호한 컨디션입니다',
+        recommendations: ['가벼운 운동', '아침 식사'],
+      ),
+      afternoon: HealthTimeSlot(
+        timeLabel: '오후',
+        conditionScore: defaultScore,
+        description: '전반적으로 양호한 컨디션입니다',
+        recommendations: ['업무', '산책'],
+      ),
+      evening: HealthTimeSlot(
+        timeLabel: '저녁',
+        conditionScore: defaultScore,
+        description: '전반적으로 양호한 컨디션입니다',
+        recommendations: ['휴식', '스트레칭'],
+      ),
+    );
+  }
+
+  HealthTimeSlot _parseTimeSlot(Map<String, dynamic>? data, String label) {
+    if (data == null) {
+      return HealthTimeSlot(
+        timeLabel: label,
+        conditionScore: 75,
+        description: '양호한 컨디션',
+        recommendations: [],
+      );
+    }
+
+    return HealthTimeSlot(
+      timeLabel: label,
+      conditionScore: data['score'] as int? ?? 75,
+      description: data['description'] as String? ?? '',
+      recommendations: (data['activities'] as List?)?.cast<String>() ?? [],
+    );
+  }
+
+  String _parseTomorrowPreview(Fortune fortune) {
+    if (fortune.additionalInfo != null && fortune.additionalInfo!['tomorrowPreview'] != null) {
+      return fortune.additionalInfo!['tomorrowPreview'] as String;
+    }
+    return '내일의 건강 상태를 예측하고 있어요.';
   }
 }
