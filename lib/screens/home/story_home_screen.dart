@@ -837,9 +837,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // 유효한 운세 데이터가 없으면 빈 세그먼트 반환하고 새로 로드 시도
     if (fortune.overallScore == null) {
       debugPrint('⚠️ Fortune overallScore is null, triggering fortune reload');
-      // 비동기로 운세 다시 로드
+      // 비동기로 운세 다시 로드 (Provider를 통해)
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _fetchFortuneFromAPI();
+        _loadTodaysFortune();
       });
       return [
         StorySegment(
