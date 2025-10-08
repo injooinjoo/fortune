@@ -50,8 +50,8 @@ import '../features/health/presentation/pages/health_fortune_toss_page.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
 import '../features/fortune/presentation/pages/compatibility_page.dart';
 import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
-import '../features/fortune/presentation/pages/avoid_people_result_page.dart';
-import '../features/fortune/domain/models/avoid_person_analysis.dart';
+// import '../features/fortune/presentation/pages/avoid_people_result_page.dart'; // Removed - file not found
+// import '../features/fortune/domain/models/avoid_person_analysis.dart'; // Removed - file not found
 // import '../features/fortune/presentation/pages/career_fortune_page.dart'; // Removed - unused
 import '../features/fortune/presentation/pages/career_coaching_input_page.dart';
 import '../features/fortune/presentation/pages/career_coaching_result_page.dart';
@@ -269,17 +269,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/avoid-people',
         name: 'fortune-avoid-people',
         builder: (context, state) => const AvoidPeopleFortunePage(),
-      ),
-      GoRoute(
-        path: '/avoid-people-result',
-        name: 'fortune-avoid-people-result',
-        builder: (context, state) {
-          final input = state.extra as AvoidPersonInput?;
-          if (input == null) {
-            return const AvoidPeopleFortunePage();
-          }
-          return AvoidPeopleResultPage(input: input);
-        },
       ),
       GoRoute(
         path: '/career',
