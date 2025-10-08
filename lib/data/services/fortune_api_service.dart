@@ -13,12 +13,16 @@ import 'package:fortune/models/fortune_model.dart';
 import 'package:flutter/foundation.dart';
 import '../../core/config/feature_flags.dart';
 import 'fortune_api_service_edge_functions.dart';
+import 'fortune_api_decision_service.dart';
 
 class FortuneApiService {
   final ApiClient _apiClient;
   final CacheService _cacheService;
+  final FortuneApiDecisionService _decisionService;
 
-  FortuneApiService(this._apiClient) : _cacheService = CacheService();
+  FortuneApiService(this._apiClient)
+      : _cacheService = CacheService(),
+        _decisionService = FortuneApiDecisionService();
 
   // Daily Fortune
   Future<Fortune> getDailyFortune({
@@ -879,14 +883,68 @@ class FortuneApiService {
       Logger.endTimer('getFortune - $fortuneType', stopwatch);
       return _fortuneModelToEntity(cachedFortune);
     }
-    Logger.debug('🔍 [FortuneApiService] Cache miss - fetching from API');
+    Logger.debug('🔍 [FortuneApiService] Cache miss - making decision...');
 
+    // 🎯 API 호출 여부 결정 (비용 최적화)
+    final supabase = Supabase.instance.client;
+    final userProfile = await supabase
+        .from('user_profiles')
+        .select('name, birth_date, gender, mbti')
+        .eq('id', userId)
+        .maybeSingle();
+
+    final shouldCallApi = await _decisionService.shouldCallApi(
+      userId: userId,
+      fortuneType: fortuneType,
+      userProfile: userProfile ?? {},
+    );
+
+    // 💰 API 호출하지 않기로 결정 - 유사 운세 재사용
+    if (!shouldCallApi) {
+      Logger.info('💡 [API Decision] Reusing similar fortune to save cost');
+
+      final similarFortune = await _decisionService.getSimilarFortune(
+        fortuneType: fortuneType,
+        userProfile: userProfile ?? {},
+      );
+
+      if (similarFortune != null) {
+        // 개인화 적용 (이름, 날짜 교체)
+        final userName = userProfile?['name'] as String? ?? '사용자';
+        final personalizedFortune = _decisionService.personalizeFortune(
+          similarFortune,
+          userId,
+          userName,
+        );
+
+        Logger.info('✅ [API Decision] Successfully reused similar fortune', {
+          'originalId': similarFortune.id,
+          'fortuneType': fortuneType,
+        });
+
+        // 캐시 저장
+        await _cacheService.cacheFortune(
+          fortuneType,
+          cacheParams,
+          _entityToFortuneModel(personalizedFortune, fortuneType),
+        );
+
+        Logger.endTimer('getFortune - $fortuneType', stopwatch);
+        return personalizedFortune;
+      }
+
+      Logger.warning('⚠️ [API Decision] No similar fortune found, fallback to API');
+    }
+
+    // 🚀 API 호출 (새로운 운세 생성)
     try {
       final endpoint = '/api/fortune/$fortuneType';
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': endpoint,
         'method': params != null ? 'POST' : 'GET',
-        'fortuneType': fortuneType});
+        'fortuneType': fortuneType,
+        'decision': shouldCallApi ? 'API' : 'FALLBACK',
+      });
 
       // Add detailed logging for face-reading
       if (fortuneType == 'face-reading') {
