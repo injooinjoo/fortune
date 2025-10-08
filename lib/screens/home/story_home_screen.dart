@@ -150,77 +150,87 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // 화면 재진입 시 todaysFortune이 null이면 캐시에서 복원
+    // 화면 재진입 시 todaysFortune이 null이면 Provider에서 복원
     if (todaysFortune == null && !isLoadingFortune && !_isInitializing) {
-      debugPrint('🔄 [StoryHomeScreen] Screen re-entered with null fortune - attempting cache restore');
-      _restoreFortuneFromCache();
+      debugPrint('🔄 [StoryHomeScreen] Screen re-entered with null fortune - restoring from Provider');
+      _restoreFortuneFromProvider();
     } else {
       debugPrint('✅ [StoryHomeScreen] Screen re-entered - fortune exists: ${todaysFortune != null}');
     }
   }
 
-  /// 화면 재진입 시 캐시에서 운세 데이터 복원
-  Future<void> _restoreFortuneFromCache() async {
+  /// 화면 재진입 시 Provider에서 운세 데이터 복원
+  Future<void> _restoreFortuneFromProvider() async {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) {
-        debugPrint('⚠️ [Cache Restore] No user ID - skipping restore');
+        debugPrint('⚠️ [Provider Restore] No user ID - skipping restore');
         return;
       }
 
-      debugPrint('🔍 [Cache Restore] Checking cache for user: $userId');
+      debugPrint('🔍 [Provider Restore] Checking Provider state for user: $userId');
 
-      final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
-      final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+      // Provider 상태 확인 (Single Source of Truth)
+      final providerState = ref.read(dailyFortuneProvider);
 
-      if (cachedFortuneData != null) {
-        final cachedFortune = cachedFortuneData.toEntity();
-
-        debugPrint('✅ [Cache Restore] Found cached fortune - score: ${cachedFortune.overallScore}');
+      if (providerState.fortune != null && providerState.fortune!.overallScore != null) {
+        debugPrint('✅ [Provider Restore] Found fortune in Provider - score: ${providerState.fortune!.overallScore}');
 
         setState(() {
-          todaysFortune = cachedFortune;
-          if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-            storySegments = cachedStorySegments;
-            debugPrint('✅ [Cache Restore] Restored ${cachedStorySegments.length} story segments');
-          }
+          todaysFortune = providerState.fortune;
           isLoadingFortune = false;
-          _hasViewedStoryToday = true; // 캐시가 있으면 이미 본 것으로 간주
+          _hasViewedStoryToday = true; // Provider에 있으면 이미 본 것으로 간주
         });
+
+        // 스토리 복원
+        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+          setState(() {
+            storySegments = cachedStorySegments;
+          });
+          debugPrint('✅ [Provider Restore] Restored ${cachedStorySegments.length} story segments');
+        }
       } else {
-        debugPrint('⚠️ [Cache Restore] No cached fortune found');
+        debugPrint('⚠️ [Provider Restore] No fortune in Provider - will load fresh data');
       }
     } catch (e) {
-      debugPrint('❌ [Cache Restore] Error: $e');
+      debugPrint('❌ [Provider Restore] Error: $e');
     }
   }
   
-  // 캐시 빠른 확인 (동기적으로 실행되어 첫 build 전에 완료)
+  // Provider 빠른 확인 (동기적으로 실행되어 첫 build 전에 완료)
   Future<void> _quickCacheCheck() async {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
-        final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
-        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+        // Provider 상태 우선 확인
+        final providerState = ref.read(dailyFortuneProvider);
 
-        // 캐시가 완전하면 로딩 없이 바로 시작
-        if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-          debugPrint('⚡ Quick cache check: Found cached data, skipping loading screen');
+        if (providerState.fortune != null && providerState.fortune!.overallScore != null) {
+          debugPrint('⚡ Quick check: Found fortune in Provider, skipping loading screen');
+
           if (mounted) {
             setState(() {
               isLoadingFortune = false;
               _hasCachedData = true;
-              todaysFortune = cachedFortuneData.toEntity();
+              todaysFortune = providerState.fortune;
+              _hasViewedStoryToday = true;
+            });
+          }
+
+          // 스토리 복원
+          final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+          if (cachedStorySegments != null && cachedStorySegments.isNotEmpty && mounted) {
+            setState(() {
               storySegments = cachedStorySegments;
-              _hasViewedStoryToday = true; // 캐시가 있으면 이미 본 것으로 간주
             });
           }
         } else {
-          debugPrint('⚡ Quick cache check: No cache, will show loading screen');
+          debugPrint('⚡ Quick check: No data in Provider, will show loading screen');
         }
       }
     } catch (e) {
-      debugPrint('❌ Quick cache check failed: $e');
+      debugPrint('❌ Quick check failed: $e');
     }
   }
 
@@ -285,7 +295,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
   }
   
-  // 캐시 체크와 함께 데이터 초기화
+  // Provider를 통한 데이터 초기화 (캐시는 Provider가 자동 처리)
   Future<void> _initializeDataWithCacheCheck() async {
     if (_isInitializing) {
       debugPrint('⚠️ Already initializing, skipping duplicate call');
@@ -299,83 +309,39 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
-    // 이미 데이터가 있어도 DB 캐시와 동기화 확인 (Single Source of Truth 유지)
-    if (todaysFortune != null && storySegments != null && storySegments!.isNotEmpty) {
+    // Provider 상태 확인 (Single Source of Truth)
+    final providerState = ref.read(dailyFortuneProvider);
+    if (providerState.fortune != null && providerState.fortune!.overallScore != null) {
+      debugPrint('✅ Provider already has fortune - using it directly');
+
+      setState(() {
+        todaysFortune = providerState.fortune;
+        isLoadingFortune = false;
+      });
+
+      // 스토리 복원
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
-        // DB 캐시 확인 (항상 최신 상태 유지)
-        final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
-
-        // DB 캐시가 메모리 데이터와 다르면 업데이트 (운세 API 결과 반영)
-        if (cachedFortuneData != null) {
-          final cachedFortune = cachedFortuneData.toEntity();
-
-          // ID나 점수가 다르면 새로운 데이터로 교체
-          if (todaysFortune?.id != cachedFortune.id ||
-              todaysFortune?.overallScore != cachedFortune.overallScore) {
-            debugPrint('🔄 DB cache updated - syncing memory data');
-            debugPrint('  Old: ${todaysFortune?.id}, score: ${todaysFortune?.overallScore}');
-            debugPrint('  New: ${cachedFortune.id}, score: ${cachedFortune.overallScore}');
-
-            // 스토리도 재확인
-            final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
-
-            setState(() {
-              todaysFortune = cachedFortune;
-              if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-                storySegments = cachedStorySegments;
-              }
-              isLoadingFortune = false;
-            });
-            return;
-          }
+        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+          setState(() {
+            storySegments = cachedStorySegments;
+          });
         }
       }
 
-      // DB 캐시와 메모리가 동일하면 그대로 사용
-      debugPrint('✅ Memory data synced with DB cache, using existing data');
-      setState(() {
-        isLoadingFortune = false;
-      });
       return;
     }
 
+    // Provider에 없으면 일반 초기화 진행
     try {
       setState(() {
         _isInitializing = true;
       });
 
-      // 먼저 캐시가 있는지 확인
-      final userId = supabase.auth.currentUser?.id;
-      if (userId != null) {
-        final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
-        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
-
-        // 캐시된 데이터가 완전하면 로딩 상태를 false로 시작
-        if (cachedFortuneData != null && cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-          debugPrint('🚀 Found complete cached data - starting without loading screen');
-
-          final fortuneEntity = cachedFortuneData.toEntity();
-
-          // 캐시 로딩 시에도 사용자 프로필 로드 필요
-          await _loadUserProfile();
-
-          setState(() {
-            isLoadingFortune = false;
-            todaysFortune = fortuneEntity;
-            storySegments = cachedStorySegments;
-            _isInitializing = false;
-          });
-
-          return; // 캐시 데이터로 완료, 추가 초기화 불필요
-        }
-      }
-
-      // 캐시가 없는 경우에만 일반적인 초기화 진행
       await _initializeData();
     } catch (e) {
-      debugPrint('❌ Error in cache check initialization: $e');
-      // 에러가 발생하면 일반적인 초기화로 fallback
+      debugPrint('❌ Error in initialization: $e');
       await _initializeData();
     } finally {
       if (mounted) {
@@ -638,135 +604,74 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
       debugPrint('🎯 Loading today\'s fortune for user: $userId');
 
-      // 현재 날짜 키 생성 (CacheService와 동일한 로직)
+      // 현재 날짜 키 생성
       final now = DateTime.now();
       final dateKey = '${now.year}-${now.month}-${now.day}';
-
       debugPrint('📅 Current date key: $dateKey');
 
-      // 1. DB 캐시 우선 확인 (오늘 날짜의 캐시가 있으면 무조건 사용)
-      final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
-      final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+      // 1. Provider 상태 우선 확인 (Single Source of Truth)
+      final providerState = ref.read(dailyFortuneProvider);
 
-      debugPrint('📦 Cache check - fortune: ${cachedFortuneData != null}, story: ${cachedStorySegments != null && cachedStorySegments.isNotEmpty}');
+      if (providerState.fortune != null && providerState.fortune!.overallScore != null) {
+        debugPrint('✅ Using Provider state (already loaded) - score: ${providerState.fortune!.overallScore}');
 
-      // 2. 캐시가 있으면 DB 캐시를 Single Source of Truth로 사용
-      if (cachedFortuneData != null) {
-        final cachedFortune = cachedFortuneData.toEntity();
+        // Provider에 운세가 있으면 바로 사용
+        setState(() {
+          todaysFortune = providerState.fortune;
+          isLoadingFortune = false;
+        });
 
-        debugPrint('🔍 DEBUG - Cached data analysis:');
-        debugPrint('  - Metadata: ${cachedFortuneData.metadata}');
-        debugPrint('  - Mapped overallScore: ${cachedFortune.overallScore}');
-
-        // 캐시된 운세에 유효한 점수가 있는지 확인
-        if (cachedFortune.overallScore != null) {
-          // 중복 데이터 설정 방지 - 이미 같은 캐시 데이터가 있으면 스킵
-          if (todaysFortune?.id == cachedFortune.id &&
-              todaysFortune?.overallScore == cachedFortune.overallScore &&
-              (cachedStorySegments == null || storySegments != null)) {
-            debugPrint('✅ Same cached data already set, skipping duplicate');
-            return;
-          }
-
-          debugPrint('✅ Using DB cache (Single Source of Truth) - score: ${cachedFortune.overallScore}');
-
+        // 스토리 확인
+        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
           setState(() {
-            todaysFortune = cachedFortune;
-            isLoadingFortune = false; // 로딩 화면 스킵
-            if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
-              storySegments = cachedStorySegments;
-            }
+            storySegments = cachedStorySegments;
           });
-
-          // Provider도 동일한 데이터로 동기화
-          final currentProviderState = ref.read(dailyFortuneProvider);
-          if (currentProviderState.fortune?.id != cachedFortune.id) {
-            debugPrint('🔄 Syncing Provider with DB cache');
-            ref.read(dailyFortuneProvider.notifier).updateFortune(cachedFortune);
-          }
-
-          // 스토리가 없으면 생성
-          if (cachedStorySegments == null || cachedStorySegments.isEmpty) {
-            debugPrint('📝 Generating story for cached fortune');
-            await _generateStory(cachedFortune);
-          }
-
-          return; // DB 캐시 사용 완료
         } else {
-          debugPrint('⚠️ Cached fortune has invalid overallScore, will fetch fresh data');
+          await _generateStory(providerState.fortune!);
         }
+
+        return;
       }
 
-      // 3. 캐시가 없는 경우에만 API 호출
-      debugPrint('📡 No valid cache found, fetching fresh data from API');
-      await _fetchFortuneFromAPI();
-      
-      // 스토리가 캐시되어 있으면 사용, 없으면 생성
-      if (cachedStorySegments != null && cachedStorySegments.isNotEmpty && todaysFortune != null) {
-        debugPrint('✅ Using cached story segments');
+      // 2. Provider에 없으면 로드 (Provider가 캐시를 자동으로 체크함)
+      debugPrint('📡 Loading fortune via Provider (checks cache automatically)');
+      final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
+      dailyFortuneNotifier.setDate(now);
+      await dailyFortuneNotifier.loadFortune();
+
+      final fortuneState = ref.read(dailyFortuneProvider);
+
+      if (fortuneState.fortune != null && fortuneState.fortune!.overallScore != null) {
+        debugPrint('✅ Fortune loaded via Provider - score: ${fortuneState.fortune!.overallScore}');
+
         setState(() {
-          storySegments = cachedStorySegments;
+          todaysFortune = fortuneState.fortune;
           isLoadingFortune = false;
         });
-      } else if (todaysFortune != null) {
-        debugPrint('📝 Generating new story');
-        await _generateStory(todaysFortune!);
-        setState(() {
-          isLoadingFortune = false;
-        });
+
+        // 일일 운세를 히스토리에 저장
+        await _saveDailyFortuneToHistory(fortuneState.fortune!);
+
+        // 스토리 생성
+        final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+        if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+          setState(() {
+            storySegments = cachedStorySegments;
+          });
+        } else {
+          await _generateStory(fortuneState.fortune!);
+        }
+      } else if (fortuneState.error != null) {
+        debugPrint('❌ Fortune loading error: ${fortuneState.error}');
+        throw Exception(fortuneState.error);
       }
     } catch (e) {
       debugPrint('❌ Error loading fortune: $e');
-      // 에러를 다시 throw하여 상위에서 처리하도록 함
       rethrow;
     }
   }
   
-  Future<void> _fetchFortuneFromAPI() async {
-    try {
-      debugPrint('📡 Loading fortune via Provider (handles caching automatically)...');
-      final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
-      final today = DateTime.now();
-      
-      dailyFortuneNotifier.setDate(today);
-      await dailyFortuneNotifier.loadFortune();
-      
-      final fortuneState = ref.read(dailyFortuneProvider);
-      
-      debugPrint('📡 Provider response - hasData: ${fortuneState.fortune != null}, isLoading: ${fortuneState.isLoading}, hasError: ${fortuneState.error != null}');
-      
-      if (fortuneState.fortune != null && !fortuneState.isLoading) {
-        final fortune = fortuneState.fortune!;
-        debugPrint('✅ Fortune loaded successfully - score: ${fortune.overallScore}, content length: ${fortune.content?.length ?? 0}');
-        
-        // 유효한 점수가 있는지 확인
-        if (fortune.overallScore != null) {
-          debugPrint('✅ Fortune has valid overallScore: ${fortune.overallScore}');
-          
-          // 캐시 삭제 로직 제거 - 같은 날의 캐시는 유지하여 재사용
-          debugPrint('✅ New fortune loaded - keeping cache for future use');
-          
-          setState(() {
-            todaysFortune = fortune;
-          });
-          
-          // 일일 운세를 히스토리에 저장
-          await _saveDailyFortuneToHistory(fortune);
-          
-          // Provider가 이미 캐싱을 처리하므로 여기서는 스토리만 생성
-          await _generateStory(fortune);
-        } else {
-          debugPrint('⚠️ Fortune loaded but overallScore is null, retrying...');
-          // 점수가 없는 운세는 무효하므로 다시 시도
-          throw Exception('Fortune data incomplete - missing overallScore');
-        }
-      } else if (fortuneState.error != null) {
-        debugPrint('❌ Fortune loading error: ${fortuneState.error}');
-      }
-    } catch (e) {
-      debugPrint('❌ Error loading fortune via Provider: $e');
-    }
-  }
   
   /// 일일 운세를 히스토리에 저장
   Future<void> _saveDailyFortuneToHistory(fortune_entity.Fortune fortune) async {
