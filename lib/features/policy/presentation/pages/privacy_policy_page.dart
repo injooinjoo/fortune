@@ -22,10 +22,6 @@ class PrivacyPolicyPage extends ConsumerWidget {
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: GlassContainer(
-                    gradient: LinearGradient(
-                      colors: [
-                        TossDesignSystem.white.withOpacity(0.1),
-                        TossDesignSystem.white.withOpacity(0.05)]),
                     borderRadius: BorderRadius.circular(20),
                     padding: const EdgeInsets.all(24),
                     child: Column(

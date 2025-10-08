@@ -7,6 +7,7 @@ class GlassCard extends StatelessWidget {
   final EdgeInsets? padding;
   final double? width;
   final double? height;
+  final Gradient? gradient; // Deprecated, kept for compatibility
 
   const GlassCard({
     Key? key,
@@ -14,6 +15,7 @@ class GlassCard extends StatelessWidget {
     this.padding,
     this.width,
     this.height,
+    this.gradient, // Deprecated, ignored in Toss design
   }) : super(key: key);
 
   @override
@@ -37,6 +39,51 @@ class GlassCard extends StatelessWidget {
   }
 }
 
+/// Toss-style Button (replacing GlassButton)
+class GlassButton extends StatelessWidget {
+  final Widget child;
+  final VoidCallback? onPressed;
+  final EdgeInsets? padding;
+  final double? width;
+  final double? height;
+
+  const GlassButton({
+    Key? key,
+    required this.child,
+    this.onPressed,
+    this.padding,
+    this.width,
+    this.height,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding ?? const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+              width: 1,
+            ),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
 /// Toss-style Container (replacing GlassContainer)
 class GlassContainer extends StatelessWidget {
   final Widget child;
@@ -45,6 +92,10 @@ class GlassContainer extends StatelessWidget {
   final double? blur;
   final Color? borderColor;
   final double? borderWidth;
+  final Border? border; // Direct border parameter
+  final Gradient? gradient; // Deprecated, kept for compatibility
+  final double? width;
+  final double? height;
 
   const GlassContainer({
     Key? key,
@@ -54,6 +105,10 @@ class GlassContainer extends StatelessWidget {
     this.blur,
     this.borderColor,
     this.borderWidth,
+    this.border, // Direct border control
+    this.gradient, // Deprecated, ignored in Toss design
+    this.width,
+    this.height,
   }) : super(key: key);
 
   @override
@@ -61,11 +116,13 @@ class GlassContainer extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
+      width: width,
+      height: height,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
         borderRadius: borderRadius ?? BorderRadius.circular(12),
-        border: Border.all(
+        border: border ?? Border.all(
           color: borderColor ?? (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200),
           width: borderWidth ?? 1,
         ),
