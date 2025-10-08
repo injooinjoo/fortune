@@ -190,7 +190,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     isDark: Theme.of(context).brightness == Brightness.dark,
                   )
                 : error != null
-                    ? buildErrorState()
+                    ? _buildErrorState()
                     : fortune != null
                         ? buildFortuneResult()
                         : buildInputForm(),
@@ -211,6 +211,42 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 size: TossButtonSize.large,
                 icon: Icon(Icons.auto_awesome_rounded),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: GlassCard(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '오류가 발생했습니다',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error ?? '알 수 없는 오류',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            TossButton(
+              text: '다시 시도',
+              onPressed: generateFortuneAction,
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.medium,
+            ),
           ],
         ),
       ),
