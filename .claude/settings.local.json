@@ -165,7 +165,12 @@
       "Bash(adb:*)",
       "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb devices)",
       "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb kill-server)",
-      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb start-server)"
+      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb start-server)",
+      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb:*)",
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_edge_api_test.txt)",
+      "Bash(if grep -q \"Error:\" /tmp/flutter_edge_api_test.txt)",
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_3_fortunes_test.txt)",
+      "Bash(if grep -q \"Error:\" /tmp/flutter_3_fortunes_test.txt)"
     ],
     "deny": [],
     "ask": [],
