@@ -152,7 +152,10 @@
       "Bash(if grep -q \"extends BaseFortunePage\" \"$file\")",
       "Bash(if grep -q \"FortuneButton\" \"$file\")",
       "Bash(while IFS= read -r file)",
-      "Bash(do echo \"=== $f ===\")"
+      "Bash(do echo \"=== $f ===\")",
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_test_base_v2.txt)",
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_test_base_v2_fix.txt)",
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_final_test.txt)"
     ],
     "deny": [],
     "ask": [],

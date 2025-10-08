@@ -4,7 +4,6 @@ import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -204,32 +203,53 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppHeader(
         title: widget.title,
-        showShareButton: widget.showShareButton && _fortuneResult != null,
+        showShareButton: false,
         showFontSizeSelector: false,
       ),
       body: SafeArea(
-        child: _isLoading
-            ? const Center(child: FortuneResultSkeleton())
-            : _error != null
-                ? _buildErrorState()
-                : _fortuneResult != null
-                    ? FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(16),
-                          child: widget.resultBuilder(
-                            context,
-                            _fortuneResult!,
-                            _handleShare,
+        child: Stack(
+          children: [
+            _isLoading
+                ? const Center(child: FortuneResultSkeleton())
+                : _error != null
+                    ? _buildErrorState()
+                    : _fortuneResult != null
+                        ? FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  widget.resultBuilder(
+                                    context,
+                                    _fortuneResult!,
+                                    _handleShare,
+                                  ),
+                                  const SizedBox(height: 88),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                widget.inputBuilder(context, _generateFortune),
+                                const SizedBox(height: 88),
+                              ],
+                            ),
                           ),
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.all(16),
-                        child: widget.inputBuilder(context, _generateFortune),
-                      ),
+            if (_fortuneResult != null && widget.showShareButton)
+              FloatingBottomButton(
+                text: '공유하기',
+                onPressed: _handleShare,
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                icon: const Icon(Icons.share),
+              ),
+          ],
+        ),
       ),
-      bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: 1),
     );
   }
 
