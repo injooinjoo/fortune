@@ -163,7 +163,9 @@
       "Bash(psql:*)",
       "Bash(git restore:*)",
       "Bash(adb:*)",
-      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb devices)"
+      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb devices)",
+      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb kill-server)",
+      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb start-server)"
     ],
     "deny": [],
     "ask": [],
