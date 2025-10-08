@@ -3,6 +3,7 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
@@ -13,6 +14,9 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../widgets/multi_photo_selector.dart';
 import '../../../../services/vision_api_service.dart';
+import '../../../../services/ad_service.dart';
+import '../../../../shared/layouts/fortune_result_skeleton.dart';
+import '../../../../shared/layouts/standard_fortune_app_bar.dart';
 
 class BlindDateFortunePage extends BaseFortunePage {
   const BlindDateFortunePage({Key? key})
@@ -164,6 +168,51 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     _chatContentController.dispose();
     _tabController.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
+      appBar: StandardFortuneAppBar(
+        title: widget.title,
+        onBackPressed: fortune != null
+            ? () {
+                GoRouter.of(context).go('/fortune');
+              }
+            : null,
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            isLoading
+                ? const FortuneResultSkeleton()
+                : error != null
+                    ? buildErrorState()
+                    : fortune != null
+                        ? buildFortuneResult()
+                        : buildInputForm(),
+            if (fortune == null && !isLoading && error == null)
+              FloatingBottomButton(
+                text: '운세 보기',
+                onPressed: () async {
+                  await AdService.instance.showInterstitialAdWithCallback(
+                    onAdCompleted: () async {
+                      await generateFortuneAction();
+                    },
+                    onAdFailed: () async {
+                      await generateFortuneAction();
+                    },
+                  );
+                },
+                style: TossButtonStyle.primary,
+                size: TossButtonSize.large,
+                icon: Icon(Icons.auto_awesome_rounded),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
