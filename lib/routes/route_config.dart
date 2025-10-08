@@ -39,9 +39,7 @@ import '../features/fortune/presentation/pages/ex_lover_fortune_enhanced_page.da
 import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
 import '../features/fortune/domain/models/ex_lover_simple_model.dart';
-import '../features/fortune/presentation/pages/blind_date_instagram_page.dart';
-import '../features/fortune/presentation/pages/blind_date_coaching_page.dart';
-import '../features/fortune/domain/models/blind_date_instagram_model.dart';
+import '../features/fortune/presentation/pages/blind_date_fortune_page.dart';
 import '../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
 import '../screens/subscription/subscription_page.dart';
 
@@ -415,22 +413,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const InvestmentFortuneEnhancedPage(),
       ),
       
-      // Blind Date pages (outside shell - no navigation bar)
+      // Blind Date Fortune (with Edge Function)
       GoRoute(
         path: '/blind-date',
         name: 'fortune-blind-date',
-        builder: (context, state) => const BlindDateInstagramPage(),
-      ),
-      GoRoute(
-        path: '/blind-date-coaching',
-        name: 'fortune-blind-date-coaching',
-        builder: (context, state) {
-          final input = state.extra as BlindDateInstagramInput?;
-          if (input == null) {
-            return const BlindDateInstagramPage();
-          }
-          return BlindDateCoachingPage(input: input);
-        },
+        builder: (context, state) => const BlindDateFortunePage(),
       ),
 
       // Admin routes (outside shell - no navigation bar)
