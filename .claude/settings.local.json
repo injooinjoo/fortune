@@ -155,7 +155,8 @@
       "Bash(do echo \"=== $f ===\")",
       "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_test_base_v2.txt)",
       "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_test_base_v2_fix.txt)",
-      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_final_test.txt)"
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_final_test.txt)",
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_blind_date.txt)"
     ],
     "deny": [],
     "ask": [],

@@ -201,21 +201,31 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
           }
         },
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Progress Indicator
-          _buildProgressIndicator(isDark),
+          Column(
+            children: [
+              // Progress Indicator
+              _buildProgressIndicator(isDark),
 
-          // Content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildStep1(isDark),
-                _buildStep2(isDark),
-              ],
-            ),
+              // Content
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildStep1(isDark),
+                    _buildStep2(isDark),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          FloatingBottomButton(
+            text: _currentStep == 0 ? '다음' : (_isAnalyzing ? 'AI 분석 중...' : 'AI 코칭 받기'),
+            onPressed: _nextStep,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ],
       ),
@@ -533,18 +543,8 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
               _buildTypeChip('activity', '활동', '🎮', isDark),
             ],
           ).animate().fadeIn(duration: 500.ms, delay: 600.ms),
-          
-          const SizedBox(height: 32),
-          
-          // Next Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton.primary(
-              text: '다음',
-              onPressed: _nextStep,
-              isEnabled: _validateStep1(),
-            ),
-          ),
+
+          const SizedBox(height: 88),
         ],
       ),
     );
@@ -782,30 +782,9 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
               ],
             ),
           ).animate().fadeIn(duration: 500.ms, delay: 600.ms),
-          
-          const SizedBox(height: 32),
-          
-          // Analyze Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton.primary(
-              text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 분석 시작',
-              onPressed: _isAnalyzing ? null : _analyzeAndShowResult,
-              isEnabled: _validateStep2() && !_isAnalyzing,
-              isLoading: _isAnalyzing,
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Previous Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton.secondary(
-              text: '이전',
-              onPressed: _previousStep,
-            ),
-          ),
+
+
+          const SizedBox(height: 88),
         ],
       ),
     );
