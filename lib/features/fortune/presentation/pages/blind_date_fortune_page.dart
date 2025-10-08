@@ -134,11 +134,15 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   void initState() {
     super.initState();
 
+    print('🎯 [BlindDateFortunePage] initState() called - Page is ACTIVE');
+    print('🎯 [BlindDateFortunePage] Creating 3 tabs: 기본 정보, 사진 분석, 대화 분석');
+
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _selectedTabIndex = _tabController.index;
       });
+      print('🎯 [BlindDateFortunePage] Tab changed to index: $_selectedTabIndex');
     });
     
     // Pre-fill user data with profile if available
