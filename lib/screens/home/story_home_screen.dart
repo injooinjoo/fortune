@@ -157,6 +157,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     } else {
       debugPrint('✅ [StoryHomeScreen] Screen re-entered - fortune exists: ${todaysFortune != null}');
     }
+
+    // 화면 재진입 시 userProfile이 null이면 다시 로드
+    if (userProfile == null && !_isInitializing && _isReallyLoggedIn) {
+      debugPrint('🔄 [StoryHomeScreen] Screen re-entered with null userProfile - reloading');
+      _loadUserProfile();
+    }
   }
 
   /// 화면 재진입 시 Provider에서 운세 데이터 복원

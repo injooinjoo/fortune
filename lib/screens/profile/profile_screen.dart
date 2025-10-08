@@ -13,7 +13,6 @@ import '../../presentation/widgets/user_info_card.dart';
 import '../../presentation/widgets/five_elements_widget.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../shared/components/base_card.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../core/services/test_account_service.dart';
 import '../../data/models/user_profile.dart';
@@ -37,11 +36,70 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<int> fortuneScores = [];
   bool isLoading = true;
   bool isLoadingHistory = false;
-  
+
   // Scroll controller and variables for navigation bar hiding
   late ScrollController _scrollController;
   double _lastScrollOffset = 0.0;
   bool _isScrollingDown = false;
+
+  // TOSS Design System Helper Methods
+  bool _isDarkMode(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark;
+  }
+
+  Color _getTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark900
+        : TossDesignSystem.gray900;
+  }
+
+  Color _getSecondaryTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark400
+        : TossDesignSystem.gray600;
+  }
+
+  Color _getBackgroundColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark900
+        : TossDesignSystem.white;
+  }
+
+  Color _getCardColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.white;
+  }
+
+  Color _getBorderColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getDividerColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getSurfaceColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark200
+        : TossDesignSystem.gray100;
+  }
+
+  List<BoxShadow> _getCardShadow(BuildContext context) {
+    return [
+      BoxShadow(
+        color: _isDarkMode(context)
+            ? TossDesignSystem.white.withValues(alpha: 0.02)
+            : TossDesignSystem.gray900.withValues(alpha: 0.02),
+        blurRadius: 6,
+        offset: const Offset(0, 1),
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -224,7 +282,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+      backgroundColor: _getBackgroundColor(context),
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
@@ -239,19 +297,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Expanded(
                       child: Text(
                         '내 프로필',
-                        style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.5,
+                        style: TossDesignSystem.heading2.copyWith(
+                          color: _getTextColor(context),
                         ),
                       ),
                     ),
                     IconButton(
                       icon: Icon(
                         isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                        size: 24,
+                        color: _getSecondaryTextColor(context),
+                        size: TossDesignSystem.iconSizeMedium,
                       ),
                       onPressed: () {
                         ref.read(themeModeProvider.notifier).toggleTheme();
@@ -259,9 +314,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.settings_outlined, 
-                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                        size: 24,
+                        Icons.settings_outlined,
+                        color: _getSecondaryTextColor(context),
+                        size: TossDesignSystem.iconSizeMedium,
                       ),
                       onPressed: () => context.push('/settings'),
                     ),
@@ -289,46 +344,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   if (profile != null && profile.isTestAccount) {
                     return Column(
                       children: [
-                        const SizedBox(height: 16),
+                        const SizedBox(height: TossDesignSystem.spacingM),
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                            borderRadius: BorderRadius.circular(16),
+                            color: _getCardColor(context),
+                            borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                             border: Border.all(
-                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                              color: _getBorderColor(context),
                               width: 0.5,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? TossDesignSystem.white.withValues(alpha: 0.02)
-                                    : TossDesignSystem.black.withValues(alpha: 0.02),
-                                blurRadius: 6,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
+                            boxShadow: _getCardShadow(context),
                           ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.all(TossDesignSystem.spacingL),
                                   child: Row(
                                     children: [
                                       Icon(
                                         Icons.bug_report,
                                         color: TossDesignSystem.tossBlue,
-                                        size: 24,
+                                        size: TossDesignSystem.iconSizeMedium,
                                       ),
-                                      const SizedBox(width: 12),
+                                      const SizedBox(width: TossDesignSystem.spacingM),
                                       Text(
                                         '테스트 계정 설정',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 20,
-                                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                                          letterSpacing: -0.3,
+                                        style: TossDesignSystem.heading4.copyWith(
+                                          color: _getTextColor(context),
                                         ),
                                       ),
                                     ],
@@ -509,21 +553,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
 
               // 활동 통계 섹션
-              const SizedBox(height: 24),
+              const SizedBox(height: TossDesignSystem.spacingL),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.white.withValues(alpha: 0.02)
-                          : TossDesignSystem.gray900.withValues(alpha: 0.02),
-                      blurRadius: 6,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
+                  color: _getCardColor(context),
+                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
+                  boxShadow: _getCardShadow(context),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -538,19 +574,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               Text(
                                 '활동 통계',
-                                style: TextStyle(
-                                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                  letterSpacing: -0.3,
+                                style: TossDesignSystem.heading4.copyWith(
+                                  color: _getTextColor(context),
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: TossDesignSystem.spacingXS),
                               Text(
                                 _getDateRange(),
-                                style: TextStyle(
-                                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                                  fontSize: 14,
+                                style: TossDesignSystem.body3.copyWith(
+                                  color: _getSecondaryTextColor(context),
                                 ),
                               ),
                             ],
@@ -608,21 +640,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
 
               // 추천 활동 섹션
-              const SizedBox(height: 24),
+              const SizedBox(height: TossDesignSystem.spacingL),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.white.withValues(alpha: 0.02)
-                          : TossDesignSystem.gray900.withValues(alpha: 0.02),
-                      blurRadius: 6,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
+                  color: _getCardColor(context),
+                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
+                  boxShadow: _getCardShadow(context),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -631,11 +655,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     children: [
                       Text(
                         '추천 활동',
-                        style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.3,
+                        style: TossDesignSystem.heading4.copyWith(
+                          color: _getTextColor(context),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -674,21 +695,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
 
               // 내 도구 섹션
-              const SizedBox(height: 24),
+              const SizedBox(height: TossDesignSystem.spacingL),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.white.withValues(alpha: 0.02)
-                          : TossDesignSystem.gray900.withValues(alpha: 0.02),
-                      blurRadius: 6,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
+                  color: _getCardColor(context),
+                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
+                  boxShadow: _getCardShadow(context),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -697,11 +710,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       padding: const EdgeInsets.all(20),
                       child: Text(
                         '내 도구',
-                        style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
-                          letterSpacing: -0.3,
+                        style: TossDesignSystem.heading4.copyWith(
+                          color: _getTextColor(context),
                         ),
                       ),
                     ),
@@ -744,14 +754,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
 
               // 계정 설정 버튼
-              const SizedBox(height: 32),
+              const SizedBox(height: TossDesignSystem.spacingXL),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-                  borderRadius: BorderRadius.circular(16),
+                  color: _getSurfaceColor(context),
+                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
                   border: Border.all(
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+                    color: _getBorderColor(context),
                     width: 0.5,
                   ),
                 ),
@@ -766,10 +776,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Text(
                         '계정 설정',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        style: TossDesignSystem.body2.copyWith(
+                          color: _getTextColor(context),
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
                         ),
                       ),
                     ),
@@ -879,7 +888,7 @@ https://fortune.app''';
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                    color: _getDividerColor(context),
                     width: 0.5,
                   ),
           ),
@@ -907,9 +916,8 @@ https://fortune.app''';
                 ],
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: TossDesignSystem.body2.copyWith(
+                    color: _getTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -923,15 +931,15 @@ https://fortune.app''';
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: isText && value == '없음'
-                        ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600
-                        : Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        ? _getSecondaryTextColor(context)
+                        : _getTextColor(context),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Icon(
                   Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                  size: TossDesignSystem.iconSizeSmall,
+                  color: _getSecondaryTextColor(context),
                 ),
               ],
             ),
@@ -954,7 +962,7 @@ https://fortune.app''';
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+          color: _getSurfaceColor(context),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -979,18 +987,16 @@ https://fortune.app''';
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TossDesignSystem.body2.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      color: _getTextColor(context),
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                    style: TossDesignSystem.body3.copyWith(
+                      color: _getSecondaryTextColor(context),
                     ),
                   ),
                 ],
@@ -1032,7 +1038,7 @@ https://fortune.app''';
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                    color: _getDividerColor(context),
                     width: 0.5,
                   ),
           ),
@@ -1043,7 +1049,7 @@ https://fortune.app''';
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+                color: _getSurfaceColor(context),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

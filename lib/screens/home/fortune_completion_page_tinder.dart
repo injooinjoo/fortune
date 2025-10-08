@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:math' as math;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
@@ -76,7 +77,17 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final displayUserName = widget.userName ?? widget.userProfile?.name ?? '회원';
+
+    // 이름 우선순위: 1) widget.userName, 2) userProfile.name, 3) Supabase Auth metadata, 4) '회원'
+    String displayUserName = widget.userName ?? widget.userProfile?.name ?? '';
+
+    if (displayUserName.isEmpty) {
+      final user = Supabase.instance.client.auth.currentUser;
+      displayUserName = user?.userMetadata?['name'] as String? ??
+                       user?.userMetadata?['full_name'] as String? ??
+                       '회원';
+    }
+
     final score = widget.fortune?.overallScore ?? 75;
 
     // 디버그: 이름 확인
@@ -105,7 +116,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             ),
           ),
 
-          // 프로그레스 바 (맨 위)
+          // 프로그레스 바 (맨 위, Status Bar 바로 아래)
           Positioned(
             top: MediaQuery.of(context).padding.top,
             left: 0,
