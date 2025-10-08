@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,8 +33,7 @@ class BlindDateFortunePage extends BaseFortunePage {
   ConsumerState<BlindDateFortunePage> createState() => _BlindDateFortunePageState();
 }
 
-class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePage> 
-    with TickerProviderStateMixin {
+class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePage> {
   // Meeting Info
   DateTime? _meetingDate;
   String? _meetingTime;
@@ -61,8 +61,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   final _chatContentController = TextEditingController();
   String? _chatPlatform;
 
-  // Tab Controller
-  late TabController _tabController;
+  // Manual Tab Index (no TabController)
   int _selectedTabIndex = 0;
   
   final Map<String, String> _meetingTimes = {
@@ -139,16 +138,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     super.initState();
 
     print('🎯 [BlindDateFortunePage] initState() called - Page is ACTIVE');
-    print('🎯 [BlindDateFortunePage] Creating 3 tabs: 기본 정보, 사진 분석, 대화 분석');
+    print('🎯 [BlindDateFortunePage] Manual tab system initialized with 3 tabs: 기본 정보, 사진 분석, 대화 분석');
 
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _selectedTabIndex = _tabController.index;
-      });
-      print('🎯 [BlindDateFortunePage] Tab changed to index: $_selectedTabIndex');
-    });
-    
     // Pre-fill user data with profile if available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (userProfile != null) {
@@ -166,7 +157,6 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   void dispose() {
     _nameController.dispose();
     _chatContentController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -462,56 +452,31 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   @override
   Widget buildInputForm() {
-    final theme = Theme.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: 100, // Space for FloatingBottomButton
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Toss-style Tab Selector
+          _buildTabSelector(),
+          const SizedBox(height: 24),
 
-    return Column(
-      children: [
-        // Tab Bar for Input Method Selection
-        Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: TabBar(
-            controller: _tabController,
-            indicator: BoxDecoration(
-              color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            labelColor: TossDesignSystem.white,
-            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
-            tabs: [
-              Tab(
-                icon: Icon(Icons.edit),
-                text: '기본 정보',
-              ),
-              Tab(
-                icon: Icon(Icons.photo_camera),
-                text: '사진 분석',
-              ),
-              Tab(
-                icon: Icon(Icons.chat_bubble),
-                text: '대화 분석',
-              ),
-            ],
-          ),
-        ),
-
-        // Tab Views
-        if (_selectedTabIndex == 0) ...[
-          // Original Form
-          buildUserInfoForm(),
-          const SizedBox(height: 16),
-        ] else if (_selectedTabIndex == 1) ...[
-          // Photo Analysis Section
-          _buildPhotoAnalysisSection(),
-          const SizedBox(height: 16),
-        ] else if (_selectedTabIndex == 2) ...[
-          // Chat Analysis Section
-          _buildChatAnalysisSection(),
-          const SizedBox(height: 16),
-        ],
+          // Selected Tab Content
+          if (_selectedTabIndex == 0) ...[
+            buildUserInfoForm(),
+            const SizedBox(height: 16),
+          ] else if (_selectedTabIndex == 1) ...[
+            _buildPhotoAnalysisSection(),
+            const SizedBox(height: 16),
+          ] else if (_selectedTabIndex == 2) ...[
+            _buildChatAnalysisSection(),
+            const SizedBox(height: 16),
+          ],
         // Meeting Details
         GlassCard(
           child: Padding(
@@ -2185,6 +2150,90 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ],
         ),
       ),
+    );
+  }
+
+  /// Toss-style Tab Selector with card-based design
+  Widget _buildTabSelector() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final tabOptions = [
+      {'index': 0, 'icon': Icons.edit, 'label': '기본 정보'},
+      {'index': 1, 'icon': Icons.photo_camera, 'label': '사진 분석'},
+      {'index': 2, 'icon': Icons.chat_bubble, 'label': '대화 분석'},
+    ];
+
+    return Row(
+      children: tabOptions.map((tab) {
+        final index = tab['index'] as int;
+        final icon = tab['icon'] as IconData;
+        final label = tab['label'] as String;
+        final isSelected = _selectedTabIndex == index;
+
+        return Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() => _selectedTabIndex = index);
+              HapticFeedback.lightImpact();
+              print('🎯 [BlindDateFortunePage] Tab changed to index: $index ($label)');
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              margin: EdgeInsets.only(
+                right: index < 2 ? 8 : 0,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                gradient: isSelected
+                    ? LinearGradient(
+                        colors: [
+                          TossDesignSystem.tossBlue,
+                          TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                color: isSelected
+                    ? null
+                    : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected
+                      ? TossDesignSystem.tossBlue
+                      : (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200),
+                  width: isSelected ? 2 : 1,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
+                    color: isSelected
+                        ? TossDesignSystem.white
+                        : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
+                    size: 24,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected
+                          ? TossDesignSystem.white
+                          : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
